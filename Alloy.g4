@@ -19,7 +19,7 @@ importDecl      : 'open' qname ( '[' qnames ']' )? ( 'as' name )? ;
 sigDecl         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? '}' block? ;
 enumDecl        : p='private'? 'enum' name '{' names '}';
 factDecl        : 'fact' name? block ;
-predDecl        : 'pred' ( qname '.') name arguments? block ;
+predDecl        : 'pred' ( qname '.')? name arguments? block ;
 funDecl         : 'fun' ( qname '.')?  name arguments? ':' multiplicity? value value;
 assertDecl      : 'assert' name? block ;
 macroDecl       : 'let' name ( '[' names ']' )? '='? expr ;
