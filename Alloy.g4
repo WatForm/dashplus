@@ -20,7 +20,7 @@ sigDecl         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( 
 enumDecl        : p='private'? 'enum' name '{' names '}';
 factDecl        : 'fact' name? block ;
 predDecl        : 'pred' ( qname '.') name arguments? block ;
-funDecl         : 'fun' ( qname '.')  name arguments? ':' multiplicity? value value;
+funDecl         : 'fun' ( qname '.')?  name arguments? ':' multiplicity? value value;
 assertDecl      : 'assert' name? block ;
 macroDecl       : 'let' name ( '[' names ']' )? '='? expr ;
 
