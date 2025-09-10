@@ -52,7 +52,7 @@ value           : value '.' qname ('[' value (',' value)* ']')?                 
 implies         : <assoc=right> formula ('=>'|'implies') expr ('else' expr)? ;
 
 formula         : ('no' | 'lone' | 'one' | 'some' | 'set') value                    # multiplicityFormula
-                | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '=<' | '>=') value # comparisonFormula
+                | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '>=') value # comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) formula  # unaryFormula
                 | formula ( 'releases' | 'since' | 'triggered' ) formula            # binaryFormula
                 | formula ('&&' | 'and')? formula                                   # andFormula
