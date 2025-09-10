@@ -15,14 +15,16 @@ paragraph       : moduleDecl
                 ;
 
 moduleDecl      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
-importDecl      : 'open' qname ( '[' qnames ']' )? ( 'as' name )? ;
+importDecl      : p='private'? 'open' qname ( '[' qnames ']' )? ( 'as' name )? ;
+// name should be qname according to CUP
 sigDecl         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? '}' block? ;
 enumDecl        : p='private'? 'enum' name '{' names '}';
+// names should be qnames according to CUP
 factDecl        : 'fact' name? block ;
-predDecl        : 'pred' ( qname '.')? name arguments? block ;
-funDecl         : 'fun' ( qname '.')?  name arguments? ':' multiplicity? value value;
+predDecl        : p='private'? 'pred' ( qname '.')? name arguments? block ;
+funDecl         : p='private'? 'fun' ( qname '.')?  name arguments? ':' multiplicity? value value;
 assertDecl      : 'assert' name? block ;
-macroDecl       : 'let' name ( '[' names ']' )? '='? expr ;
+macroDecl       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
 
 value           : value '.' qname ('[' value (',' value)* ']')?                     # boxValue
                 | qname '[' value (',' value)* ']'                                  # boxValue
