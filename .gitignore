@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# Allow these files
+!.gitignore
+!Alloy.cup
+!Alloy.g4
+!map.md
+!todo.md
+!README.md
+

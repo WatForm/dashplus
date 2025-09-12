@@ -48,41 +48,56 @@ value           : value '.' qname ('[' value (',' value)* ']')?                 
                 | qname '$'                                                         # metaValue 
                 | number                                                            # numberValue
                 ;
+
                   
 implies         : <assoc=right> formula ('=>'|'implies') expr ('else' expr)? ;
 
-formula         : ('no' | 'lone' | 'one' | 'some' | 'set') value                    # multiplicityFormula
+formula         : countingQuantifier value                    						# countingQuantifierFormula
+				| bindingQuantifier decl ( ',' decl )* ( block | bar ) 				# bindingQuantifierFormula 
                 | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '>=') value # comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) formula  # unaryFormula
                 | formula ( 'releases' | 'since' | 'triggered' ) formula            # binaryFormula
                 | formula ('&&' | 'and')? formula                                   # andFormula
                 | formula ('<=>' | 'iff') formula                                   # iffFormula
                 | formula ('||'|'or') formula                                       # orFormula
-                | ( let | quantification )                                          # letOrQuantificationFormula
+                | let                                           					# letFormula
                 | formula ';' formula                                               # sequenceFormula
                 | '(' formula ')'                                                   # parenthesisFormula
                 | block                                                             # blockFormula
                 | ( value '.' )? qname ('[' value ( ',' value )*  ']' )?            # predicateFormula
                 ;
     
+
 expr           : '{' expr '}'
                 | value
                 | formula
                 ;
 
 let             : 'let' name '=' value ( ',' name '=' value )* ( block | bar ) ;
-quantification  : ('all'|'no'|'lone'|'one'| 'some') decl ( ',' decl )* ( block | bar )  ;
 
-decl            : disj? names ':' disj? multiplicity? value  ;
+
+
+// x: lone S in declarations
+cardinality     : 'lone' | 'one' | 'some' | 'set' ; // LONEOF, ONEOF, SOMEOF, SETOF
+decl            : disj? names ':' disj? cardinality? value  ;
 varDecl         : var? decl ;
 arguments       : '(' ( decl ( ',' decl )* )? ')'
                 | '[' ( decl ( ',' decl )* )? ']'
                 ;
 
-number          : ('-'|'+')? NUMBER ;
+// no S means is the relation S empty
+countingQuantifier		: 'lone' | 'one' | 'some' | 'no' ; 
+
+// some x: e | F means is F true for some binding of the variable x
+bindingQuantifier		: 'lone' | 'one' | 'some' | 'no' | 'all' ; 
 
 multiplicity    : 'lone' | 'one' | 'some' |  'set' ;
+
 qualifier       : 'var' | 'abstract' | 'private'| 'lone' | 'one' | 'some' ;
+
+number          : ('-'|'+')? NUMBER ;
+
+
 disj            : 'disj';
 var             : 'var';
 check           : 'check' ;
