@@ -9,6 +9,7 @@ paragraph       : moduleDecl
                 | macroDecl
                 | sigDecl
                 | factDecl 
+				| funDecl
                 | predDecl 
                 | assertDecl
                 | labelCommandDecl
@@ -16,23 +17,25 @@ paragraph       : moduleDecl
 
 moduleDecl      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 importDecl      : p='private'? 'open' qname ( '[' qnames ']' )? ( 'as' name )? ;
-// name should be qname according to CUP
 sigDecl         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? '}' block? ;
 enumDecl        : p='private'? 'enum' name '{' names '}';
-// names should be qnames according to CUP
 factDecl        : 'fact' name? block ;
 predDecl        : p='private'? 'pred' ( qname '.')? name arguments? block ;
 funDecl         : p='private'? 'fun' ( qname '.')?  name arguments? ':' multiplicity? value value;
 assertDecl      : 'assert' name? block ;
 macroDecl       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
 
-value           : value '.' qname ('[' value (',' value)* ']')?                     # boxValue
-                | qname '[' value (',' value)* ']'                                  # boxValue
+// Relational or Integer Expr
+
+value			: value '.' arithmatic ('[' value (',' value)* ']')?                     # joinBoxArithmaticValue
+                | arithmatic '[' value (',' value)* ']'                                  # boxArithmaticValue
+				//| value '.' qname ('[' value (',' value)* ']')?                     # boxValue // maybe can remove
+                //| qname '[' value (',' value)* ']'                                  # boxValue // maybe can remove
                 | qname                                                             # qnameValue
                 | ('~'|'^'|'*') value                                               # unaryOpValue
                 | value '\''                                                        # primeValue
-                | value '.' value                                                   # joinValue
-                | value '[' value (',' value)* ']'                                  # boxJoinValue
+                | value '.' value                                                   # joinValue // definitly need this
+                | value '[' value (',' value)* ']'                                  # boxJoinValue // keep
                 | value ('<:'|':>') value                                           # restrictionValue
                 | value multiplicity? '->' multiplicity? value                      # arrowValue
                 | value '&' value                                                   # intersectionValue
@@ -76,6 +79,7 @@ expr           : '{' expr '}'
 let             : 'let' name '=' value ( ',' name '=' value )* ( block | bar ) ;
 
 
+arithmatic 		: 'plus' | 'minus' | 'mul' | 'div' | 'rem'	;
 
 // x: lone S in declarations
 cardinality     : 'lone' | 'one' | 'some' | 'set' ; // LONEOF, ONEOF, SOMEOF, SETOF
