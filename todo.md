@@ -1,4 +1,27 @@
 TODO:
+
+ExprConstant
+                    TRUE("true"),
+                    /** false */
+                    FALSE("false"),
+                    /** the builtin "iden" relation */
+                    IDEN("iden"),
+                    /** the minimum integer constant */
+                    MIN("min"),
+                    /** the maximum integer constant */
+                    MAX("max"),
+                    /** the "next" relation between integers */
+                    NEXT("next"),
+                    /** the emptyness relation whose type is UNIV */
+                    EMPTYNESS("none"),
+                    /** a String constant */
+                    STRING("STRING"),
+                    /** an integer constant */
+                    NUMBER("NUMBER");
+
+ExprUnary: CAST2INT, CAST2SIGINT
+
+
 group rules together
 enum decl is not used
 

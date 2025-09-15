@@ -54,13 +54,12 @@ formula         : countingQuantifier value                    						# countingQu
     
 // Relational or Integer Expr
 
-value			: value '.' arithmatic ('[' value (',' value)* ']')?                     # joinBoxArithmaticValue
-                | arithmatic '[' value (',' value)* ']'                                  # boxArithmaticValue
-				//| value '.' qname ('[' value (',' value)* ']')?                     # boxValue // maybe can remove
-                //| qname '[' value (',' value)* ']'                                  # boxValue // maybe can remove
-                | qname                                                             # qnameValue
+value			: ('plus' | 'minus' | 'mul' | 'div' | 'rem')							# arithmatic	
+	            | qname                                                             # qnameValue
                 | ('~'|'^'|'*') value                                               # unaryOpValue
                 | value '\''                                                        # primeValue
+    //             | qname '[' value (',' value)* ']'                                  # boxValue // maybe can remove
+				// | value '.' qname ('[' value (',' value)* ']')?                     # boxValue // maybe can remove
                 | value '[' value (',' value)* ']'                                  # boxJoinValue // keep
                 | value '.' value                                                   # joinValue // definitly need this
                 | value ('<:'|':>') value                                           # restrictionValue
@@ -85,8 +84,6 @@ implies         : <assoc=right> formula ('=>'|'implies') expr ('else' expr)? ;
 
 let             : 'let' name '=' value ( ',' name '=' value )* ( block | bar ) ;
 
-
-arithmatic 		: 'plus' | 'minus' | 'mul' | 'div' | 'rem'	;
 
 // x: lone S in declarations
 cardinality     : 'lone' | 'one' | 'some' | 'set' ; // LONEOF, ONEOF, SOMEOF, SETOF
