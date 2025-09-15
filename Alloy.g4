@@ -57,7 +57,7 @@ implies         : <assoc=right> formula ('=>'|'implies') expr ('else' expr)? ;
 
 formula         : countingQuantifier value                    						# countingQuantifierFormula
 				| bindingQuantifier decl ( ',' decl )* ( block | bar ) 				# bindingQuantifierFormula 
-                | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '>=') value # comparisonFormula
+                | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') value # comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) formula  # unaryFormula
                 | formula ( 'releases' | 'since' | 'triggered' ) formula            # binaryFormula
                 | formula ('&&' | 'and')? formula                                   # andFormula
