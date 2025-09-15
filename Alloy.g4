@@ -26,7 +26,7 @@ assertDecl      : 'assert' name? block ;
 macroDecl       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
 
 
-block           : '{' formula? '}' ;
+block           : '{' formula* '}' ;
 
 expr           : '{' expr '}'
                 | value
@@ -39,7 +39,7 @@ formula         : countingQuantifier value                    						# countingQu
                 | value '[' value (',' value)* ']'                                  # boxFormula
 				| value '.' value													# joinFormula
                 // | ( value '.' )? qname ('[' value ( ',' value )*  ']' )?            # predicateFormula
-                | formula ('&&' | 'and')? formula                                   # andFormula
+                | formula ('&&' | 'and') formula                                   # andFormula
                 | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') value # comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) formula  # unaryFormula
                 | formula ( 'releases' | 'since' | 'triggered' ) formula            # binaryFormula
