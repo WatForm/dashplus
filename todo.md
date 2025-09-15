@@ -1,11 +1,5 @@
 TODO:
-
-=< operator
-
-reorder the rules
 group rules together
-
-
 enum decl is not used
 
 According to book, 
@@ -13,15 +7,6 @@ According to book,
 rost operators apply only to expr type with exceptions: conditional construct, let, join&box
 
 - IMPLIES is not used
-
-working on adding arithmatic operations
-
-
-
-so many issues with the join operator
-a.plus[b] should be parsed as (a.plus)[b]
-
-
 
 - CUP always uses Name (allows both ID and QNAME), but in ANTLR we use both name and qname
 - CUP is accepting a lot more things than the grammar defined in Book. Not sure which one to follow.
@@ -42,3 +27,12 @@ CHECKED:
 - some
 - one
 - lone
+
+=< operator
+
+reorder the rules
+
+arithmatic operations (not just join or box)
+
+so many issues with the join operator
+a.plus[b] should be parsed as (a.plus)[b]

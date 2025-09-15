@@ -25,6 +25,33 @@ funDecl         : p='private'? 'fun' ( qname '.')?  name arguments? ':' multipli
 assertDecl      : 'assert' name? block ;
 macroDecl       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
 
+
+block           : '{' formula? '}' ;
+bar             : '|' formula ;  
+
+expr           : '{' expr '}'
+                | value
+                | formula
+                ;
+
+
+formula         : countingQuantifier value                    						# countingQuantifierFormula
+				| bindingQuantifier decl ( ',' decl )* ( block | bar ) 				# bindingQuantifierFormula 
+                | value '[' value (',' value)* ']'                                  # boxFormula
+				| value '.' value													# joinFormula
+                // | ( value '.' )? qname ('[' value ( ',' value )*  ']' )?            # predicateFormula
+                | formula ('&&' | 'and')? formula                                   # andFormula
+                | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') value # comparisonFormula
+                | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) formula  # unaryFormula
+                | formula ( 'releases' | 'since' | 'triggered' ) formula            # binaryFormula
+                | formula ('<=>' | 'iff') formula                                   # iffFormula
+                | formula ('||'|'or') formula                                       # orFormula
+                | let                                           					# letFormula
+                | formula ';' formula                                               # sequenceFormula
+                | '(' formula ')'                                                   # parenthesisFormula
+                | block                                                             # blockFormula
+                ;
+    
 // Relational or Integer Expr
 
 value			: value '.' arithmatic ('[' value (',' value)* ']')?                     # joinBoxArithmaticValue
@@ -34,8 +61,8 @@ value			: value '.' arithmatic ('[' value (',' value)* ']')?                    
                 | qname                                                             # qnameValue
                 | ('~'|'^'|'*') value                                               # unaryOpValue
                 | value '\''                                                        # primeValue
-                | value '.' value                                                   # joinValue // definitly need this
                 | value '[' value (',' value)* ']'                                  # boxJoinValue // keep
+                | value '.' value                                                   # joinValue // definitly need this
                 | value ('<:'|':>') value                                           # restrictionValue
                 | value multiplicity? '->' multiplicity? value                      # arrowValue
                 | value '&' value                                                   # intersectionValue
@@ -55,26 +82,6 @@ value			: value '.' arithmatic ('[' value (',' value)* ']')?                    
                   
 implies         : <assoc=right> formula ('=>'|'implies') expr ('else' expr)? ;
 
-formula         : countingQuantifier value                    						# countingQuantifierFormula
-				| bindingQuantifier decl ( ',' decl )* ( block | bar ) 				# bindingQuantifierFormula 
-                | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') value # comparisonFormula
-                | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) formula  # unaryFormula
-                | formula ( 'releases' | 'since' | 'triggered' ) formula            # binaryFormula
-                | formula ('&&' | 'and')? formula                                   # andFormula
-                | formula ('<=>' | 'iff') formula                                   # iffFormula
-                | formula ('||'|'or') formula                                       # orFormula
-                | let                                           					# letFormula
-                | formula ';' formula                                               # sequenceFormula
-                | '(' formula ')'                                                   # parenthesisFormula
-                | block                                                             # blockFormula
-                | ( value '.' )? qname ('[' value ( ',' value )*  ']' )?            # predicateFormula
-                ;
-    
-
-expr           : '{' expr '}'
-                | value
-                | formula
-                ;
 
 let             : 'let' name '=' value ( ',' name '=' value )* ( block | bar ) ;
 
@@ -113,9 +120,6 @@ qnames          : qname ( ',' qname )* ;
 name            : ID;
 names          : name ( ',' name )* ;
 
-
-block           : '{' formula? '}' ;
-bar             : '|' formula ;  
 
 
 // COMMANDS 
