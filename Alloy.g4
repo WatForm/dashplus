@@ -27,7 +27,6 @@ macroDecl       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
 
 
 block           : '{' formula? '}' ;
-bar             : '|' formula ;  
 
 expr           : '{' expr '}'
                 | value
@@ -36,7 +35,7 @@ expr           : '{' expr '}'
 
 
 formula         : countingQuantifier value                    						# countingQuantifierFormula
-				| bindingQuantifier decl ( ',' decl )* ( block | bar ) 				# bindingQuantifierFormula 
+				| bindingQuantifier decl ( ',' decl )* ( block | ('|' formula) ) 				# bindingQuantifierFormula 
                 | value '[' value (',' value)* ']'                                  # boxFormula
 				| value '.' value													# joinFormula
                 // | ( value '.' )? qname ('[' value ( ',' value )*  ']' )?            # predicateFormula
@@ -68,7 +67,7 @@ value			: ('plus' | 'minus' | 'mul' | 'div' | 'rem')							# arithmatic
                 | value '++' value                                                  # relationOverrideValue
                 | '#' value                                                         # cardinalityValue
                 | value ('+'|'-') value                                             # unionDifferenceValue
-                | '{' decl ( ',' decl )* ( block | bar ) '}'                        # comprehensionValue
+                | '{' decl ( ',' decl )* ( block | ('|' formula) ) '}'                        # comprehensionValue
                 | 'sum' decl ( ',' decl )* '|' value                                # sumValue        
                 | value qname value                                                 # primitiveValue
                 | '(' value ')'                                                     # parenthesisValue                
@@ -82,7 +81,7 @@ value			: ('plus' | 'minus' | 'mul' | 'div' | 'rem')							# arithmatic
 implies         : <assoc=right> formula ('=>'|'implies') expr ('else' expr)? ;
 
 
-let             : 'let' name '=' value ( ',' name '=' value )* ( block | bar ) ;
+let             : 'let' name '=' value ( ',' name '=' value )* ( block | ('|' formula) ) ;
 
 
 // x: lone S in declarations
