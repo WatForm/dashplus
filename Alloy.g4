@@ -53,14 +53,12 @@ formula         : countingQuantifier value                    						# countingQu
     
 // Relational or Integer Expr
 
-value			: ('plus' | 'minus' | 'mul' | 'div' | 'rem')							# arithmatic	
-	            | qname                                                             # qnameValue
-                | ('~'|'^'|'*') value                                               # unaryOpValue
+value           : ('~'|'^'|'*') value                                               # unaryOpValue
                 | value '\''                                                        # primeValue
     //             | qname '[' value (',' value)* ']'                                  # boxValue // maybe can remove
-				// | value '.' qname ('[' value (',' value)* ']')?                     # boxValue // maybe can remove
-                | value '[' value (',' value)* ']'                                  # boxJoinValue // keep
                 | value '.' value                                                   # joinValue // definitly need this
+				// | value '.' (qname | arithmatic) '[' value (',' value)* ']'         # boxValue // maybe can remove
+                | value '[' value (',' value)* ']'                                  # boxJoinValue // keep
                 | value ('<:'|':>') value                                           # restrictionValue
                 | value multiplicity? '->' multiplicity? value                      # arrowValue
                 | value '&' value                                                   # intersectionValue
@@ -75,8 +73,10 @@ value			: ('plus' | 'minus' | 'mul' | 'div' | 'rem')							# arithmatic
                 | '@' name                                                          # atnameValue
                 | qname '$'                                                         # metaValue 
                 | number                                                            # numberValue
+				| (qname | arithmatic)                                                             # qnameValue
                 ;
 
+arithmatic 		:  ('plus' | 'minus' | 'mul' | 'div' | 'rem') ;	
                   
 implies         : <assoc=right> formula ('=>'|'implies') expr ('else' expr)? ;
 
