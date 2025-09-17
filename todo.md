@@ -22,6 +22,11 @@ ExprConstant
 ExprUnary: CAST2INT, CAST2SIGINT
 
 
+precedence:
+non-binop that ends with formula needs to come before binop
+binop arrange according to precedence described in book
+
+
 group rules together
 enum decl is not used
 

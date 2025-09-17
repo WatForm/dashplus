@@ -36,16 +36,19 @@ expr           : '{' expr '}'
 
 formula         : countingQuantifier value                    						# countingQuantifierFormula
 				| bindingQuantifier decl ( ',' decl )* ( block | ('|' formula) ) 				# bindingQuantifierFormula 
-                | value '[' value (',' value)* ']'                                  # boxFormula
+				| 'let' name '=' value ( ',' name '=' value )* ( ('|' formula) | block )  #letFormula
+                | value ('[' value (',' value)* ']')?                                  # boxFormula
 				| value '.' value													# joinFormula
                 // | ( value '.' )? qname ('[' value ( ',' value )*  ']' )?            # predicateFormula
                 | formula ('&&' | 'and') formula                                   # andFormula
                 | value ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') value # comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) formula  # unaryFormula
                 | formula ( 'releases' | 'since' | 'triggered' ) formula            # binaryFormula
+				| <assoc=right>formula ('implies' | '=>') formula								# impliesFormula
+				| <assoc=right> formula ('=>'|'implies') formula 'else' formula 	# conditionalFormula 
                 | formula ('<=>' | 'iff') formula                                   # iffFormula
                 | formula ('||'|'or') formula                                       # orFormula
-                | let                                           					# letFormula
+                // | let                                           					# letFormula
                 | formula ';' formula                                               # sequenceFormula
                 | '(' formula ')'                                                   # parenthesisFormula
                 | block                                                             # blockFormula
@@ -74,15 +77,14 @@ value           : ('~'|'^'|'*') value                                           
                 | qname '$'                                                         # metaValue 
                 | number                                                            # numberValue
 				| (qname | arithmatic)                                                             # qnameValue
+				| 'let' name '=' value ( ',' name '=' value )* ( ('|' value) | ('{' value '}') )  #letValue
                 ;
 
 arithmatic 		:  ('plus' | 'minus' | 'mul' | 'div' | 'rem') ;	
+
+conditional 	: <assoc=right> formula ('=>'|'implies') value 'else' value ;	
                   
-implies         : <assoc=right> formula ('=>'|'implies') expr ('else' expr)? ;
-
-
 let             : 'let' name '=' value ( ',' name '=' value )* ( block | ('|' formula) ) ;
-
 
 // x: lone S in declarations
 cardinality     : 'lone' | 'one' | 'some' | 'set' ; // LONEOF, ONEOF, SOMEOF, SETOF
