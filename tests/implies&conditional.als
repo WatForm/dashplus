@@ -21,8 +21,11 @@ pred huh {
 fact {
 	(huh) => true else false
 	f = 1
+	true => true => true else false
 }
 
 fun f: Int {
 	true => n1.value else n2.value
 }
+
+

@@ -1,3 +1,9 @@
+parser-visitor:
+typecheck: see bool when expecting bool
+maybe some weird if then else cases
+
+
+
 TODO:
 
 ExprConstant
@@ -27,6 +33,7 @@ non-binop that ends with formula needs to come before binop
 binop arrange according to precedence described in book
 
 
+
 group rules together
 enum decl is not used
 
@@ -35,6 +42,13 @@ According to book,
 rost operators apply only to expr type with exceptions: conditional construct, let, join&box
 
 - IMPLIES is not used
+1) merge value and formula, but we can distinguish from operators
+    with three exceptions:
+        - implies
+        - let
+        - join&dot
+2) use branch of antlr
+3) rewrite rules (too hard, not maintainable)
 
 - CUP always uses Name (allows both ID and QNAME), but in ANTLR we use both name and qname
 - CUP is accepting a lot more things than the grammar defined in Book. Not sure which one to follow.
