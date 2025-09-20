@@ -35,8 +35,8 @@ fact {
 	!true or true
 	let t=true, f=false | !t and f => t && t <=> t=>t=>f else t || some n1
 	let t=true, f=false | ((((!t and f) => (t && t)) <=> (t=>(t=>f else t))) || (some n1))
-	true => false => true
-	true => true => true else false
+	let t=true, f=false | !t and f => t && t <=> some n1=>t=>f else t || some n1
+
 }
 
 fact {

@@ -1,6 +1,14 @@
 parser-visitor:
 typecheck: see bool when expecting bool
-maybe some weird if then else cases
+if then else cases; almost like reparsing it
+comprehensionValue: decl cannot contain multiplicity words 288
+make someof, loneof, etc
+
+
+
+what does @, $ do? precedence? 
+precedence of prime?
+
 
 
 
