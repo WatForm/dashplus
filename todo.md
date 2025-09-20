@@ -6,6 +6,7 @@ make someof, loneof, etc
 
 
 
+
 what does @, $ do? precedence? 
 precedence of prime?
 
@@ -86,3 +87,6 @@ arithmatic operations (not just join or box)
 
 so many issues with the join operator
 a.plus[b] should be parsed as (a.plus)[b]
+
+comprehension is a formula
+

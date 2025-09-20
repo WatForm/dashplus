@@ -32,47 +32,45 @@ macroDecl       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
 
 block           : '{' expr* '}' ;
 
-expr			: expr '\''                                                        # primeValue
-	          	| ('~'|'^'|'*') expr                                               # unaryOpValue
-                | expr '.' expr                                                   # join 
-                | expr '[' expr (',' expr)* ']'                                  # box
-                | expr ('<:'|':>') expr                                           # restrictionValue
-                | expr multiplicity? '->' multiplicity? expr                      # arrowValue
-                | expr '&' expr                                                   # intersectionValue
-                | expr '++' expr                                                  # relationOverrideValue
-                | '#' expr                                                         # cardinalityValue
-                | expr ('+'|'-') expr                                             # unionDifferenceValue
+expr	        : ('~'|'^'|'*') expr                                               								# unaryOpValue
+				| expr '\''                                                        								# primeValue
+                | expr '.' expr                                                   								# join 
+                | expr '[' expr (',' expr)* ']'                                  								# box
+                | expr ('<:'|':>') expr                                           								# restrictionValue
+                | expr multiplicity? '->' multiplicity? expr                      								# arrowValue
+                | expr '&' expr                                                   								# intersectionValue
+                | expr '++' expr                                                  								# relationOverrideValue
+                | '#' expr                                                         								# cardinalityValue
+                | expr ('+'|'-') expr                                             								# unionDifferenceValue
+                | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
+                // | expr qname expr                                                 							# primitiveValue // not sure
 
-                | '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              # comprehensionValue
-                | 'sum' decl ( ',' decl )* '|' expr                                # sumValue        // pg 289
-                | expr qname expr                                                 # primitiveValue
-                | '(' expr ')'                                                     # parenthesisValue                
-                | '{' expr '}'                                                     # parenthesisValue                
+				| countingQuantifier expr                    													# countingQuantifierFormula
+                | expr ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') expr 						# comparisonFormula
+                | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) expr  	# unaryFormula
+                | expr ( 'until' | 'releases' | 'since' | 'triggered' ) expr            						# binaryFormula
+                | expr ('&&' | 'and') expr                                   									# andFormula
+				| <assoc=right> expr {inImpliesRHS}? 'else' {inImpliesRHS=false;} expr                          # elseFormula
+				| <assoc=right> expr ('implies' | '=>') {inImpliesRHS=true;} expr {inImpliesRHS=false;}         # impliesFormula
+                | expr ('<=>' | 'iff') expr                                   									# iffFormula
+                | expr ('||'|'or') expr                                       									# orFormula
+				| 'let' name '=' expr ( ',' name '=' expr )* ( ('|' expr) | block )  							# letFormula
+				| bindingQuantifier decl ( ',' decl )* ( block | ('|' expr) ) 									# bindingQuantifierFormula
+                | expr ';' expr                                               									# sequenceFormula
+				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
-                | '@' name                                                          # atnameValue
-                | qname '$'                                                         # metaValue 
-                | number                                                            # numberValue
-				| qname                                                             # qnameValue
+                | '(' expr ')'                                                     	# parenthesisValue                
+                | '{' expr '}'                                                     	# parenthesisValue                
+                | block                                                            	# blockFormula
+
+                | '@' name                                                         	# atnameValue
+                | qname '$'                                                        	# metaValue 
+                | number                                                           	# numberValue
+				| qname                                                            	# qnameValue
 				| ('plus' | 'minus' | 'mul' | 'div' | 'rem')						# arithmaticOpValue
 				| 'this'															# thisValue
 				| ('none' | 'univ' | 'iden')										# constValue
 
-				| countingQuantifier expr                    														# countingQuantifierFormula
-                | expr ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') expr 							# comparisonFormula
-
-                | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) expr  	# unaryFormula
-                | expr ('&&' | 'and') expr                                   									# andFormula
-                | expr ( 'releases' | 'since' | 'triggered' ) expr            								# binaryFormula
-				| <assoc=right> expr {inImpliesRHS}? 'else' {inImpliesRHS=false;} expr                                      {System.out.println("else");}                   # elseFormula
-				| <assoc=right> expr ('implies' | '=>') {inImpliesRHS=true;} expr {inImpliesRHS=false;}  {System.out.println("implies");}                                                                # impliesFormula
-                | expr ('<=>' | 'iff') expr                                   								# iffFormula
-                | expr ('||'|'or') expr                                       		{System.out.println("or");}						# orFormula
-				| 'let' name '=' expr ( ',' name '=' expr )* ( ('|' expr) | block )  							# letFormula
-				| bindingQuantifier decl ( ',' decl )* ( block | ('|' expr) ) 									# bindingQuantifierFormula
-
-                | expr ';' expr                                               								# sequenceFormula
-                | '(' expr ')'                                                   								# parenthesisFormula
-                | block                                                             								# blockFormula
 
 				// | <assoc=right> formula ('implies' | '=>') formula ('else' formula)?					{System.out.println("else");}			# impliesFormula
 				// | <assoc=right> formula {inImpliesRHS}? 'else' {inImpliesRHS=false;} formula {isElse=true;}                                     {System.out.println("else");}                   # elseFormula
@@ -108,7 +106,7 @@ moduleArg       : ('exactly'? name ) ;
 qname           : ID | QNAME;
 qnames          : qname ( ',' qname )* ;
 name            : ID;
-names          : name ( ',' name )* ;
+names          	: name ( ',' name )* ;
 
 
 
