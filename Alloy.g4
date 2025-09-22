@@ -22,7 +22,7 @@ paragraph       : moduleDecl
 
 moduleDecl      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 importDecl      : p='private'? 'open' qname ( '[' qnames ']' )? ( 'as' name )? ;
-sigDecl         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? '}' block? ;
+sigDecl         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
 enumDecl        : p='private'? 'enum' name '{' names '}';
 factDecl        : 'fact' name? block ;
 predDecl        : p='private'? 'pred' ( qname '.')? name arguments? block ;
@@ -45,7 +45,7 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
                 // | expr qname expr                                                 							# primitiveValue // not sure
 
-				| countingQuantifier expr                    													# countingQuantifierFormula
+				| cardinalityConstraint expr                    													# cardinalityConstraintFormula
                 | expr ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') expr 						# comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) expr  	# unaryFormula
                 | expr ( 'until' | 'releases' | 'since' | 'triggered' ) expr            						# binaryFormula
@@ -86,7 +86,7 @@ arguments       : '(' ( decl ( ',' decl )* )? ')'
                 ;
 
 // no S means is the relation S empty
-countingQuantifier		: 'lone' | 'one' | 'some' | 'no' ; 
+cardinalityConstraint		: 'lone' | 'one' | 'some' | 'no' ; 
 
 // some x: e | F means is F true for some binding of the variable x
 bindingQuantifier		: 'lone' | 'one' | 'some' | 'no' | 'all' ; 

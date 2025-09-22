@@ -79,14 +79,15 @@ CHECKED:
 - one
 - lone
 
-=< operator
+=< operator: needed both <= and =<
 
 reorder the rules
 
-arithmatic operations (not just join or box)
+arithmatic operations (not just join or box): they are built-ins
 
-so many issues with the join operator
+
 a.plus[b] should be parsed as (a.plus)[b]
 
 comprehension is a formula
+
 
