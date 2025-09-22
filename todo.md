@@ -1,19 +1,44 @@
-parser-visitor:
-typecheck: see bool when expecting bool
+# remaining issues:
+- what is value qname value
+- what is enumDecl
+
+# parser-visitor & 'resolve':
 if then else cases; almost like reparsing it
+
+typecheck: see formula when expecting formula (prob use the the operators can distinguish, but not ite, let and join&join)
 comprehensionValue: decl cannot contain multiplicity words 288
-make someof, loneof, etc
+create LONEOF, ONEOF, SOMEOF, SETOF from cardinality, or maybe don't need to
+circularity
+declarations
+arity
+transitive closure
 
+# changes (some WIP)
+- ( qname '.' ) should be optional in 'funDecl' and 'predDecl'
+- accept '<=' for less or equal to; not documented in book, but CUP accepts it
+- separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
+- added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
+- comprehensionValue should be comprehensionFormula
+- added the 'until' keyword
+- accept trailing commas in 'sigDecl', (WIP there may be more the I need to accept)
+- accept 'funDecl' in 'paragraph'
+- removed the two 'boxValue' rules in 'value'
 
+- 'formula' concatenation in 'block': 
+    - Before: optional AND operators, but this causes precedence issues with other binop rules
+    - After: mandatory AND operators, but accept sequence of 'formula's in 'block'; this is consistent with CUP
+- merged 'formula' and 'value', because 'ite' causes indirect left recursion between formula and value (starts with 'formula' in a 'value ite')
+    - merged them to expr and ANTLR handles direct left recursion
+    - need to check for usage of grammar rules (formula or value) in parser-visitors
+    - most rules can be distinguished by the operator tokens alone, with exceptions such as 'ite', 'let', 'join' and 'box'
+- integrated ITE
+    - made two binop rules: 'implies' and 'else'
+    - a 'ite's (ternary op) precedence is not handled correctly in the midst of other binop rules
+    - used ANTLR's semantic predicates to reject 'else' if not in rhs 'expr' of 'implies'
+    - parser-visitors need to check and restructure the ast, because some tricky cases cannot be handled by semantic predicates alone
 
-
-what does @, $ do? precedence? 
-precedence of prime?
-
-
-
-
-TODO:
+# todo
+- need to reorganize the tokens, ExprConstant
 
 ExprConstant
                     TRUE("true"),
@@ -65,29 +90,5 @@ rost operators apply only to expr type with exceptions: conditional construct, l
 - seems like CUP doesn't create ExprBinary.Op.JOIN directly
 - what is ExprCall
 
-- UNTIL keyword
 - bit manipulation operators
-
-CHECKED:
-- moduleDecl
-- importDecl
-- enumDecl
-- factDecl
-- assertDecl
-
-- some
-- one
-- lone
-
-=< operator: needed both <= and =<
-
-reorder the rules
-
-arithmatic operations (not just join or box): they are built-ins
-
-
-a.plus[b] should be parsed as (a.plus)[b]
-
-comprehension is a formula
-
 

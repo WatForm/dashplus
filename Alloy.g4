@@ -45,7 +45,7 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
                 // | expr qname expr                                                 							# primitiveValue // not sure
 
-				| cardinalityConstraint expr                    													# cardinalityConstraintFormula
+				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
                 | expr ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') expr 						# comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) expr  	# unaryFormula
                 | expr ( 'until' | 'releases' | 'since' | 'triggered' ) expr            						# binaryFormula
@@ -57,7 +57,7 @@ expr	        : ('~'|'^'|'*') expr                                               
 				| 'let' name '=' expr ( ',' name '=' expr )* ( ('|' expr) | block )  							# letFormula
 				| bindingQuantifier decl ( ',' decl )* ( block | ('|' expr) ) 									# bindingQuantifierFormula
                 | expr ';' expr                                               									# sequenceFormula
-				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
+				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionFormula
 
                 | '(' expr ')'                                                     	# parenthesisValue                
                 | '{' expr '}'                                                     	# parenthesisValue                
