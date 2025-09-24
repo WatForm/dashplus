@@ -18,7 +18,6 @@ transitive closure
 - accept '<=' for less or equal to; not documented in book, but CUP accepts it
 - separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
 - added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
-- comprehensionValue should be comprehensionFormula
 - added the 'until' keyword
 - accept trailing commas in 'sigDecl', (WIP there may be more the I need to accept)
 - accept 'funDecl' in 'paragraph'

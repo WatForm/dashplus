@@ -44,6 +44,7 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | expr ('+'|'-') expr                                             								# unionDifferenceValue
                 | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
                 // | expr qname expr                                                 							# primitiveValue // not sure
+				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
 				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
                 | expr ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') expr 						# comparisonFormula
@@ -57,7 +58,6 @@ expr	        : ('~'|'^'|'*') expr                                               
 				| 'let' name '=' expr ( ',' name '=' expr )* ( ('|' expr) | block )  							# letFormula
 				| bindingQuantifier decl ( ',' decl )* ( block | ('|' expr) ) 									# bindingQuantifierFormula
                 | expr ';' expr                                               									# sequenceFormula
-				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionFormula
 
                 | '(' expr ')'                                                     	# parenthesisValue                
                 | '{' expr '}'                                                     	# parenthesisValue                
