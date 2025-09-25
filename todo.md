@@ -1,9 +1,9 @@
 # remaining issues:
 - what is value qname value
-- what is enumDecl
 
 # parser-visitor & 'resolve':
 if then else cases; almost like reparsing it
+
 
 typecheck: see formula when expecting formula (prob use the the operators can distinguish, but not ite, let and join&join)
 comprehensionValue: decl cannot contain multiplicity words 288
@@ -13,8 +13,34 @@ declarations
 arity
 transitive closure
 
+`
+StringBuilder sb = new StringBuilder("This cannot be a legal relational join where\nleft hand side is ");
+left.toString(sb, -1);
+sb.append(" (type = ").append(left.type).append(")\nright hand side is ");
+right.toString(sb, -1);
+sb.append(" (type = ").append(right.type).append(")\n");
+errors = errors.make(new ErrorType(pos, sb.toString()));
+`
+
+`
+return new ExprBad(p, toString(), new ErrorType(p, "Macro substitution too deep; possibly indicating an infinite recursion."));
+`
+
+`
+throw new ErrorType(field.pos, "Two overlapping signatures cannot have\n" + "two fields with the same name \"" + field.label + "\":\n\n1) one is in sig \"" + field.sig + "\"\n" + field.pos + "\n\n2) the other is in sig \"" + field2.sig + "\"\n" + field2.pos);
+ex:
+sig s {
+	value: Int
+}
+sig sExtended extends s {
+	value:Bool
+}
+`
+
+
+
+
 # changes (some WIP)
-enum decl is not used
 - ( qname '.' ) should be optional in 'funDecl' and 'predDecl'
 - accept '<=' for less or equal to; not documented in book, but CUP accepts it
 - separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context

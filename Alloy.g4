@@ -1,6 +1,5 @@
 grammar Alloy;
 
-
 @parser::members {
     boolean inImpliesRHS = false;
 }
@@ -68,14 +67,8 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | qname '$'                                                        	# metaValue 
                 | number                                                           	# numberValue
 				| qname                                                            	# qnameValue
-				| ('plus' | 'minus' | 'mul' | 'div' | 'rem')						# arithmaticOpValue
 				| 'this'															# thisValue
 				| ('none' | 'univ' | 'iden')										# constValue
-
-
-				// | <assoc=right> formula ('implies' | '=>') formula ('else' formula)?					{System.out.println("else");}			# impliesFormula
-				// | <assoc=right> formula {inImpliesRHS}? 'else' {inImpliesRHS=false;} formula {isElse=true;}                                     {System.out.println("else");}                   # elseFormula
-				// | <assoc=right> formula {!isElse}? {isElse=false;} ('implies' | '=>') {inImpliesRHS=true;} formula {inImpliesRHS=false; isElse=false;}  {System.out.println("implies");}                                                                # impliesFormula
                 ;
 
 // x: lone S in declarations
