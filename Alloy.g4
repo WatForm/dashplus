@@ -13,6 +13,7 @@ paragraph       : moduleDecl
                 | importDecl
                 | macroDecl
                 | sigDecl
+				| enumDecl
                 | factDecl 
 				| funDecl
                 | predDecl 
@@ -43,7 +44,7 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | '#' expr                                                         								# cardinalityValue
                 | expr ('+'|'-') expr                                             								# unionDifferenceValue
                 | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
-                // | expr qname expr                                                 							# primitiveValue // not sure
+                | expr qname expr                                                 								# primitiveValue // n1 fun/add n2
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
 				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
@@ -81,8 +82,8 @@ expr	        : ('~'|'^'|'*') expr                                               
 cardinality     : 'lone' | 'one' | 'some' | 'set' ; // LONEOF, ONEOF, SOMEOF, SETOF
 decl            : disj? names ':' disj? cardinality? expr  ;
 varDecl         : var? decl ;
-arguments       : '(' ( decl ( ',' decl )* )? ')'
-                | '[' ( decl ( ',' decl )* )? ']'
+arguments       : '(' ( decl ( ',' decl )* ','? )? ')'
+                | '[' ( decl ( ',' decl )* ','? )? ']'
                 ;
 
 // no S means is the relation S empty

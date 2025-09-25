@@ -14,12 +14,13 @@ arity
 transitive closure
 
 # changes (some WIP)
+enum decl is not used
 - ( qname '.' ) should be optional in 'funDecl' and 'predDecl'
 - accept '<=' for less or equal to; not documented in book, but CUP accepts it
 - separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
 - added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
 - added the 'until' keyword
-- accept trailing commas in 'sigDecl', (WIP there may be more the I need to accept)
+- accept trailing commas in 'sigDecl' and 'arguments'
 - accept 'funDecl' in 'paragraph'
 - removed the two 'boxValue' rules in 'value'
 
@@ -38,6 +39,9 @@ transitive closure
 
 # todo
 - need to reorganize the tokens, ExprConstant
+    - prob need to make builtin tokens a separate rule and add it to places where you can redefine rules
+- expr qname expr should be in another spot
+- enum see dash-testing
 
 ExprConstant
                     TRUE("true"),
@@ -58,7 +62,7 @@ ExprConstant
                     /** an integer constant */
                     NUMBER("NUMBER");
 
-ExprUnary: CAST2INT, CAST2SIGINT
+ExprUnary: CAST2INT, CAST2SIGINT, like int[]
 
 
 precedence:
@@ -68,7 +72,6 @@ binop arrange according to precedence described in book
 
 
 group rules together
-enum decl is not used
 
 According to book, 
 3 types of expr: relational expr, boolean expr, integer expr
