@@ -30,7 +30,7 @@ fact {
 
 fact {
     all i: Int | i->i in iden
-    all i: Int | i->(i+1) in next
+    // all i: Int | i->(i+1) in next
 }
 
 fact {

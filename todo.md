@@ -47,7 +47,8 @@ sig sExtended extends s {
 - added the 'until' keyword
 - accept trailing commas in 'sigDecl' and 'arguments'
 - removed the two 'boxValue' rules in 'value'
-- tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', and 'fun/next'
+- tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', 'fun/next', and STRING_LITERAL
+- tokens for 'pred/totalOrder' and 'disj' as a predCall list, not just qname
 
 - separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
 - 'formula' concatenation in 'block': 
@@ -68,8 +69,6 @@ sig sExtended extends s {
 
 
 # todo
-- StringLiteral
-- predTotalorder and disj: exprList
 - bit shiffting operators
 - enum see dash-testing
 - how to treat tokens, always as strings or tokens
