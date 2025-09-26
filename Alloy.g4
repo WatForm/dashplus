@@ -34,16 +34,16 @@ block           : '{' expr* '}' ;
 
 expr	        : ('~'|'^'|'*') expr                                               								# unaryOpValue
 				| expr '\''                                                        								# primeValue
-                | expr '.' expr                                                   								# join 
+				| expr '.' expr                                                   								# join 
                 | expr '[' expr (',' expr)* ']'                                  								# box
-                | expr ('<:'|':>') expr                                           								# restrictionValue
-                | expr multiplicity? '->' multiplicity? expr                      								# arrowValue
-                | expr '&' expr                                                   								# intersectionValue
-                | expr '++' expr                                                  								# relationOverrideValue
+				| expr ('<:'|':>') expr                                           								# restrictionValue
+				| expr multiplicity? '->' multiplicity? expr                      								# arrowValue
+				| expr '&' expr                                                   								# intersectionValue
+				| expr '++' expr                                                  								# relationOverrideValue
+				| expr ('fun/mul' | 'fun/div' | 'fun/rem') expr													# mulDivRemValue
                 | '#' expr                                                         								# cardinalityValue
-                | expr ('+'|'-') expr                                             								# unionDifferenceValue
+				| expr ('+' | '-' | 'fun/add' | 'fun/sub') expr                                             	# unionDiffAddSubValue
                 | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
-                | expr qname expr                                                 								# primitiveValue // n1 fun/add n2
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
 				| cardinalityConstraint expr                    												# cardinalityConstraintFormula

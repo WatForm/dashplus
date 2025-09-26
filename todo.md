@@ -1,10 +1,10 @@
 # remaining issues:
-- what is value qname value
 
-# parser-visitor & 'resolve':
+# parser-visitor:
 if then else cases; almost like reparsing it
 
-
+# well-formedness check
+decide if qnames are builtins like 'plus' 'True'; check if they are overriden by user; perform checks
 typecheck: see formula when expecting formula (prob use the the operators can distinguish, but not ite, let and join&join)
 comprehensionValue: decl cannot contain multiplicity words 288
 create LONEOF, ONEOF, SOMEOF, SETOF from cardinality, or maybe don't need to
@@ -62,11 +62,13 @@ sig sExtended extends s {
     - a 'ite's (ternary op) precedence is not handled correctly in the midst of other binop rules
     - used ANTLR's semantic predicates to reject 'else' if not in rhs 'expr' of 'implies'
     - parser-visitors need to check and restructure the ast, because some tricky cases cannot be handled by semantic predicates alone
+- replaced ('expr' 'qname' 'expr') 
+    - changed to (expr ('fun/mul' | 'fun/div' | 'fun/rem') expr) and (expr ('+' | '-' | 'fun/add' | 'fun/sub') expr)
+    - placed them in the correct order of precedence
+
 
 # todo
-- need to reorganize the tokens, ExprConstant
-    - prob need to make builtin tokens a separate rule and add it to places where you can redefine rules
-- expr qname expr should be in another spot
+- bit shiffting operators
 - enum see dash-testing
 
 ExprConstant
