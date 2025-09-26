@@ -1,5 +1,15 @@
 open util/boolean
 
+one sig stringLiteral {
+	value: String
+} {
+	value = "this is a string literal"
+}
+
+fact {
+	stringLiteral.value = "this is a string literal"
+}
+
 one sig S {
     val: one String
 } {

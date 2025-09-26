@@ -68,7 +68,8 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | number                                                           	# numberValue
 				| qname                                                            	# qnameValue
 				| 'this'															# thisValue
-				| ('none' | 'univ' | 'iden' | 'fun/min' | 'fun/max' | 'fun/next')	# constValue
+				| ('none' | 'univ' | 'iden' | 'fun/min' | 'fun/max' | 'fun/next')	# constValue	 // exprConstant
+				| ('pred/totalOrder' | 'disj')										# listFormula      // exprList
                 ;
 
 // x: lone S in declarations

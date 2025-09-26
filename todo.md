@@ -68,8 +68,11 @@ sig sExtended extends s {
 
 
 # todo
+- StringLiteral
+- predTotalorder and disj: exprList
 - bit shiffting operators
 - enum see dash-testing
+- how to treat tokens, always as strings or tokens
 
 ExprConstant
                     TRUE("true"),
