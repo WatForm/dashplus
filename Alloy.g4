@@ -68,7 +68,7 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | number                                                           	# numberValue
 				| qname                                                            	# qnameValue
 				| 'this'															# thisValue
-				| ('none' | 'univ' | 'iden')										# constValue
+				| ('none' | 'univ' | 'iden' | 'fun/min' | 'fun/max' | 'fun/next')	# constValue
                 ;
 
 // x: lone S in declarations

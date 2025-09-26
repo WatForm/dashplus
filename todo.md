@@ -43,13 +43,13 @@ sig sExtended extends s {
 # changes (some WIP)
 - ( qname '.' ) should be optional in 'funDecl' and 'predDecl'
 - accept '<=' for less or equal to; not documented in book, but CUP accepts it
-- separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
 - added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
 - added the 'until' keyword
 - accept trailing commas in 'sigDecl' and 'arguments'
-- accept 'funDecl' in 'paragraph'
 - removed the two 'boxValue' rules in 'value'
+- tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', and 'fun/next'
 
+- separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
 - 'formula' concatenation in 'block': 
     - Before: optional AND operators, but this causes precedence issues with other binop rules
     - After: mandatory AND operators, but accept sequence of 'formula's in 'block'; this is consistent with CUP
