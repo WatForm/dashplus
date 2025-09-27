@@ -43,12 +43,13 @@ sig sExtended extends s {
 # changes (some WIP)
 - ( qname '.' ) should be optional in 'funDecl' and 'predDecl'
 - accept '<=' for less or equal to; not documented in book, but CUP accepts it
+- accept trailing commas in 'sigDecl' and 'arguments'
 - added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
 - added the 'until' keyword
-- accept trailing commas in 'sigDecl' and 'arguments'
+- added bit shift operators
+- added tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', 'fun/next', and STRING_LITERAL
+- added tokens for 'pred/totalOrder' and 'disj' as a predCall list, not just qname
 - removed the two 'boxValue' rules in 'value'
-- tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', 'fun/next', and STRING_LITERAL
-- tokens for 'pred/totalOrder' and 'disj' as a predCall list, not just qname
 
 - separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
 - 'formula' concatenation in 'block': 
@@ -69,9 +70,7 @@ sig sExtended extends s {
 
 
 # todo
-- bit shiffting operators
 - enum see dash-testing
-- how to treat tokens, always as strings or tokens
 
 ExprConstant
                     TRUE("true"),
@@ -96,11 +95,6 @@ ExprUnary: CAST2INT, CAST2SIGINT, like int[]
 
 
 precedence:
-non-binop that ends with formula needs to come before binop
-binop arrange according to precedence described in book
-
-
-
 group rules together
 
 According to book, 
@@ -122,5 +116,4 @@ rost operators apply only to expr type with exceptions: conditional construct, l
 - seems like CUP doesn't create ExprBinary.Op.JOIN directly
 - what is ExprCall
 
-- bit manipulation operators
 

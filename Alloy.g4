@@ -43,6 +43,7 @@ expr	        : ('~'|'^'|'*') expr                                               
 				| expr ('fun/mul' | 'fun/div' | 'fun/rem') expr													# mulDivRemValue
                 | '#' expr                                                         								# cardinalityValue
 				| expr ('+' | '-' | 'fun/add' | 'fun/sub') expr                                             	# unionDiffAddSubValue
+				| expr ('<<' | '>>' | '>>>') expr 																# bitShiftValue
                 | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
