@@ -37,7 +37,7 @@ expr	        : ('~'|'^'|'*') expr                                               
 				| expr '.' expr                                                   								# join 
                 | expr '[' expr (',' expr)* ']'                                  								# box
 				| expr ('<:'|':>') expr                                           								# restrictionValue
-				| expr multiplicity? '->' multiplicity? expr                      								# arrowValue
+				| expr arrow expr                      															# arrowValue
 				| expr '&' expr                                                   								# intersectionValue
 				| expr '++' expr                                                  								# relationOverrideValue
 				| expr ('fun/mul' | 'fun/div' | 'fun/rem') expr													# mulDivRemValue
@@ -48,7 +48,7 @@ expr	        : ('~'|'^'|'*') expr                                               
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
 				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
-                | expr ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') expr 						# comparisonFormula
+                | expr comparison expr 						# comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) expr  	# unaryFormula
                 | expr ( 'until' | 'releases' | 'since' | 'triggered' ) expr            						# binaryFormula
                 | expr ('&&' | 'and') expr                                   									# andFormula
@@ -73,6 +73,9 @@ expr	        : ('~'|'^'|'*') expr                                               
 						| 'fun/next' | STRING_LITERAL)								# constValue	 // exprConstant
 				| ('pred/totalOrder' | 'disj')										# listFormula      // exprList
                 ;
+
+arrow			: multiplicity? '->' multiplicity? ;
+comparison 		: ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') ;	
 
 // x: lone S in declarations
 cardinality     : 'lone' | 'one' | 'some' | 'set' ; // LONEOF, ONEOF, SOMEOF, SETOF
@@ -129,3 +132,4 @@ WS              : [ \t\r\n]+ -> skip ;
 LINE_COMMENT    : '//' ~[\r\n]* -> skip ;
 OPTION_COMMENT  : '--'~[0-9] ~[\r\n]* -> skip ; // 1--1 is not a comment
 BLOCK_COMMENT   : '/*' .*? '*/' -> skip ;
+

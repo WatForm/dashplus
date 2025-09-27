@@ -1,5 +1,3 @@
-
-
 one sig n1 {value: Int} {
 	value = 1
 }
@@ -24,7 +22,13 @@ pred b [value: Int] {
 	value=1
 }
 
+pred p1[arg1: n1 some -> some n2] {}
+pred p2[arg1: n1 one -> some n2] {}
+
 fact {
+	n1 != n2
+	n1 ! = n2
+	n1 !  = n2
 	true => true
 	true implies not true || some n1
 	t=>t=>f else t
@@ -46,6 +50,7 @@ fact {
 	t => t else t => t
 }
 
+// not pass
 fact {
 	t else t
 }
