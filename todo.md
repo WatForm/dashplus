@@ -47,7 +47,8 @@ sig sExtended extends s {
 - added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
 - added the 'until' keyword
 - added bit shift operators
-- added tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', 'fun/next', and STRING_LITERAL
+- added tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', 'fun/next', STRING_LITERAL,
+                    'int', 'Int', 'steps'
 - added tokens for 'pred/totalOrder' and 'disj' as a predCall list, not just qname
 - removed the two 'boxValue' rules in 'value'
 
@@ -90,9 +91,6 @@ ExprConstant
                     STRING("STRING"),
                     /** an integer constant */
                     NUMBER("NUMBER");
-
-ExprUnary: CAST2INT, CAST2SIGINT, like int[]
-
 
 precedence:
 group rules together

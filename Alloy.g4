@@ -69,6 +69,9 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | number                                                           	# numberValue
 				| qname                                                            	# qnameValue
 				| 'this'															# thisValue
+				| 'int'																# castToIntValue
+				| 'Int'																# sigIntValue
+				| 'steps'															# timeValue
 				| ('none' | 'univ' | 'iden' | 'fun/min' | 'fun/max' 
 						| 'fun/next' | STRING_LITERAL)								# constValue	 // exprConstant
 				| ('pred/totalOrder' | 'disj')										# listFormula      // exprList

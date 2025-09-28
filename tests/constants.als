@@ -40,3 +40,8 @@ fact {
 
 run {} for 5
 
+// cannot parse
+ sig int {}
+ sig Int {}
+ sig steps {}
+
