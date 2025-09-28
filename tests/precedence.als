@@ -50,6 +50,46 @@ fact {
 	t => t else t => t
 }
 
+fact {
+	true => {true true=>true else true} else {true true}
+}
+
+fact {
+	true => {
+		true
+		true => {
+			true
+		} else {
+			false
+		}
+	} else {
+		false
+		true => {
+			true
+		} else {
+			false
+		}
+	}
+}
+
+fact {
+		true => {
+            true
+            true => {
+                true
+            } else {
+                false
+            }
+        } else {
+            false
+            true => {
+				true
+            } else {
+                false
+            }
+        }
+}
+
 // not pass
 fact {
 	t else t

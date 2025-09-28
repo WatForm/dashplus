@@ -1,7 +1,11 @@
 grammar Alloy;
 
 @parser::members {
-    boolean inImpliesRHS = false;
+  private final java.util.Deque<Boolean> _inImpliesRHSStack = new java.util.ArrayDeque<>();
+  {_inImpliesRHSStack.push(Boolean.FALSE);}
+  private boolean inImpliesRHS() { return _inImpliesRHSStack.peek(); }
+  private void pushImpliesRHS(boolean v) { _inImpliesRHSStack.push(v); }
+  private void popImpliesRHS() { _inImpliesRHSStack.pop(); }
 }
 
 alloyFile
@@ -48,12 +52,12 @@ expr	        : ('~'|'^'|'*') expr                                               
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
 				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
-                | expr comparison expr 						# comparisonFormula
+                | expr comparison expr 																			# comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) expr  	# unaryFormula
                 | expr ( 'until' | 'releases' | 'since' | 'triggered' ) expr            						# binaryFormula
                 | expr ('&&' | 'and') expr                                   									# andFormula
-				| <assoc=right> expr {inImpliesRHS}? 'else' {inImpliesRHS=false;} expr                          # elseFormula
-				| <assoc=right> expr ('implies' | '=>') {inImpliesRHS=true;} expr {inImpliesRHS=false;}         # impliesFormula
+				| <assoc=right> expr {inImpliesRHS()}? 'else' expr                                     			# elseFormula
+				| <assoc=right> expr ( 'implies' | '=>' ) {pushImpliesRHS(true);} expr {popImpliesRHS();}      		# impliesFormula
                 | expr ('<=>' | 'iff') expr                                   									# iffFormula
                 | expr ('||'|'or') expr                                       									# orFormula
 				| 'let' name '=' expr ( ',' name '=' expr )* ( ('|' expr) | block )  							# letFormula
