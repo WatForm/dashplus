@@ -1,0 +1,16 @@
+# Gradle
+.gradle/
+build/
+bin/
+
+# Metals
+.metals/
+.worksheet/
+
+# Eclipse metadata
+.project
+.classpath
+.settings/
+
+.DS_Store
+
