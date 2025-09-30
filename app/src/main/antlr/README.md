@@ -9,6 +9,7 @@
         - Generates the source files for all test ANTLR grammars.
         - Default path: src/test/antlr
         - compileTestJava's dependency
+        - Note: see app/src/test/java/org/antlr for JUnit tests for ANTLR; not using generateTestGrammarSource
 
     3) generateSourceSetGrammarSource
         - Generates the source files for all ANTLR grammars for the given source set.
