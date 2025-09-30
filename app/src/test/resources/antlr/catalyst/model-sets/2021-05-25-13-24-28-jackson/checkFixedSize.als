@@ -22,7 +22,7 @@ readOk: check {
 
 // This check should not find a counterexample
 writeOk: check {
-	all fm, fm': fmemory/Memory_H, a: Addr, d: Data, am, am': amemory/Memory |
-		fmemory/write [fm, fm', a, d] and alpha [fm, am] and alpha [fm', am']
- 		implies amemory/write [am, am', a, d]
+	all fm, fmPrime: fmemory/Memory_H, a: Addr, d: Data, am, amPrime: amemory/Memory |
+		fmemory/write [fm, fmPrime, a, d] and alpha [fm, am] and alpha [fmPrime, amPrime]
+ 		implies amemory/write [am, amPrime, a, d]
 	}

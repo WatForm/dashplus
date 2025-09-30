@@ -74,12 +74,12 @@ fact Traces {
 	init [first]
 	all e: Event | e.post = e.pre.next
 	all t: Time-last |
-		let t' = t.next |
+		let tPrime = t.next |
 			one e: Event {
-				e.pre = t and e.post = t'
-				currentKey.t != currentKey.t' => e in Entry
-				occupant.t != occupant.t' => e in Checkin + Checkout
-				(lastKey.t != lastKey.t' or keys.t != keys.t') => e in Checkin
+				e.pre = t and e.post = tPrime
+				currentKey.t != currentKey.tPrime => e in Entry
+				occupant.t != occupant.tPrime => e in Checkin + Checkout
+				(lastKey.t != lastKey.tPrime or keys.t != keys.tPrime) => e in Checkin
 			}
 	}
 

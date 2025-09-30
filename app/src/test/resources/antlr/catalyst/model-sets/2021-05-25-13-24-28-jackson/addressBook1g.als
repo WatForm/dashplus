@@ -6,12 +6,12 @@ sig Book {
 	addr: Name -> lone Addr
 }
 
-pred add [b, b': Book, n: Name, a: Addr] {
-	b'.addr = b.addr + n->a
+pred add [b, bPrime: Book, n: Name, a: Addr] {
+	bPrime.addr = b.addr + n->a
 }
 
-pred del [b, b': Book, n: Name] {
-	b'.addr = b.addr - n->Addr
+pred del [b, bPrime: Book, n: Name] {
+	bPrime.addr = b.addr - n->Addr
 }
 
 fun lookup [b: Book, n: Name] : set Addr {
@@ -19,10 +19,10 @@ fun lookup [b: Book, n: Name] : set Addr {
 }
 
 assert delUndoesAdd {
-	all b, b', b'': Book, n: Name, a: Addr |
-		add [b, b', n, a] and del [b', b'', n]
+	all b, bPrime, bPrimePrime: Book, n: Name, a: Addr |
+		add [b, bPrime, n, a] and del [bPrime, bPrimePrime, n]
 		implies
-		b.addr = b''.addr
+		b.addr = bPrimePrime.addr
 }
 
 // This command generates an instance similar to Fig 2.6

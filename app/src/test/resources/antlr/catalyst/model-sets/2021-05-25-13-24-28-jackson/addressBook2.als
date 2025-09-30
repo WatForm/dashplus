@@ -14,12 +14,12 @@ pred inv [b: Book] {
 		}
 	}
 
-pred add [b, b': Book, n: Name, t: Name+Addr] {
-	b'.addr = b.addr + n->t
+pred add [b, bPrime: Book, n: Name, t: Name+Addr] {
+	bPrime.addr = b.addr + n->t
 	}
 
-pred del [b, b': Book, n: Name, t: Name+Addr] {
-	b'.addr = b.addr - n->t
+pred del [b, bPrime: Book, n: Name, t: Name+Addr] {
+	bPrime.addr = b.addr - n->t
 	}
 
 fun lookup [b: Book, n: Name] : set Addr {

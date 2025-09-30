@@ -35,66 +35,66 @@ pred init [t: Time] {
 	all r: Room | FrontDesk.lastKey.t [r] = r.currentKey.t
 	}
 
-pred entry [t, t': Time, g: Guest, r: Room, k: Key] {
+pred entry [t, tPrime: Time, g: Guest, r: Room, k: Key] {
 	k in g.keys.t
 	let ck = r.currentKey |
-		(k = ck.t and ck.t' = ck.t) or 
-		(k = nextKey[ck.t, r.keys] and ck.t' = k)
-	noRoomChangeExcept [t, t', r]
-	noGuestChangeExcept [t, t', none]
-	noFrontDeskChange [t, t']
+		(k = ck.t and ck.tPrime = ck.t) or 
+		(k = nextKey[ck.t, r.keys] and ck.tPrime = k)
+	noRoomChangeExcept [t, tPrime, r]
+	noGuestChangeExcept [t, tPrime, none]
+	noFrontDeskChange [t, tPrime]
 	}
 
-pred noFrontDeskChange [t, t': Time] {
-	FrontDesk.lastKey.t = FrontDesk.lastKey.t'
-	FrontDesk.occupant.t = FrontDesk.occupant.t'
+pred noFrontDeskChange [t, tPrime: Time] {
+	FrontDesk.lastKey.t = FrontDesk.lastKey.tPrime
+	FrontDesk.occupant.t = FrontDesk.occupant.tPrime
 	}
 
-pred noRoomChangeExcept [t, t': Time, rs: set Room] {
-	all r: Room - rs | r.currentKey.t = r.currentKey.t'
+pred noRoomChangeExcept [t, tPrime: Time, rs: set Room] {
+	all r: Room - rs | r.currentKey.t = r.currentKey.tPrime
 	}
 	
-pred noGuestChangeExcept [t, t': Time, gs: set Guest] {
-	all g: Guest - gs | g.keys.t = g.keys.t'
+pred noGuestChangeExcept [t, tPrime: Time, gs: set Guest] {
+	all g: Guest - gs | g.keys.t = g.keys.tPrime
 	}
 
-pred checkout [t, t': Time, g: Guest] {
+pred checkout [t, tPrime: Time, g: Guest] {
 	let occ = FrontDesk.occupant {
 		some occ.t.g
-		occ.t' = occ.t - Room ->g
+		occ.tPrime = occ.t - Room ->g
 		}
-	FrontDesk.lastKey.t = FrontDesk.lastKey.t'
-	noRoomChangeExcept [t, t', none]
-	noGuestChangeExcept [t, t', none]
+	FrontDesk.lastKey.t = FrontDesk.lastKey.tPrime
+	noRoomChangeExcept [t, tPrime, none]
+	noGuestChangeExcept [t, tPrime, none]
 	}
 
-pred checkin [t, t': Time, g: Guest, r: Room, k: Key] {
-	g.keys.t' = g.keys.t + k
+pred checkin [t, tPrime: Time, g: Guest, r: Room, k: Key] {
+	g.keys.tPrime = g.keys.t + k
 	let occ = FrontDesk.occupant {
 		no occ.t [r]
-		occ.t' = occ.t + r -> g
+		occ.tPrime = occ.t + r -> g
 		}
 	let lk = FrontDesk.lastKey {
-		lk.t' = lk.t ++ r -> k
+		lk.tPrime = lk.t ++ r -> k
 		k = nextKey [lk.t [r], r.keys]
 		}
-	noRoomChangeExcept [t, t', none]
-	noGuestChangeExcept [t, t', g]
+	noRoomChangeExcept [t, tPrime, none]
+	noGuestChangeExcept [t, tPrime, g]
 	}
 
 fact traces {
 	init [first]
-	all t: Time-last | let t' = t.next |
+	all t: Time-last | let tPrime = t.next |
 		some g: Guest, r: Room, k: Key |
-			entry [t, t', g, r, k]
-			or checkin [t, t', g, r, k]
-			or checkout [t, t', g]
+			entry [t, tPrime, g, r, k]
+			or checkin [t, tPrime, g, r, k]
+			or checkout [t, tPrime, g]
 	}
 
 assert NoBadEntry {
 	all t: Time, r: Room, g: Guest, k: Key |
-		let t' = t.next, o = FrontDesk.occupant.t[r] | 
-			entry [t, t', g, r, k] and some o => g in o
+		let tPrime = t.next, o = FrontDesk.occupant.t[r] | 
+			entry [t, tPrime, g, r, k] and some o => g in o
 	}
 
 // This generates a counterexample similar to Fig 6.6

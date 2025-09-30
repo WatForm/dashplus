@@ -1,6 +1,6 @@
 module appendixA/closure_koen
 
-pred transClosure' [	r, R:  univ -> univ, C: univ -> univ -> univ ] {
+pred transClosurePrime [	r, R:  univ -> univ, C: univ -> univ -> univ ] {
 	R = {x, y: univ | x -> y -> y in C or x = y}
 	all x, y, z, u: univ {
 		x -> x -> y not in C
@@ -13,6 +13,6 @@ pred transClosure' [	r, R:  univ -> univ, C: univ -> univ -> univ ] {
 	}
 
 check {
-	all r, R:  univ -> univ, C: univ -> univ -> univ | transClosure' [r, R, C] implies R = *r
+	all r, R:  univ -> univ, C: univ -> univ -> univ | transClosurePrime [r, R, C] implies R = *r
 	}
 

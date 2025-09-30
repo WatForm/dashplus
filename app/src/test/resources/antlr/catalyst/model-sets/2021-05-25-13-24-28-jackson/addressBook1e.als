@@ -6,8 +6,8 @@ sig Book {
 	addr: Name -> lone Addr
 }
 
-pred add [b, b': Book, n: Name, a: Addr] {
-	b'.addr = b.addr + n->a
+pred add [b, bPrime: Book, n: Name, a: Addr] {
+	bPrime.addr = b.addr + n->a
 }
 
 // This command generates an instance similar to Fig 2.4

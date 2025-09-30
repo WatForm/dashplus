@@ -18,18 +18,18 @@ pred mostlyRed [s: LightState, j: Junction] {
 	lone j.lights - redLights[s]
 	}
 
-pred trans [s, s': LightState, j: Junction] {
-	lone x: j.lights | s.color[x] != s'.color[x]
+pred trans [s, sPrime: LightState, j: Junction] {
+	lone x: j.lights | s.color[x] != sPrime.color[x]
 	all x: j.lights |
-		let step = s.color[x] -> s'.color[x] {
+		let step = s.color[x] -> sPrime.color[x] {
 			step in colorSequence
 			step in Red->(Color-Red) => j.lights in redLights[s]
 		}
 	}
 
 assert Safe {
-	all s, s': LightState, j: Junction |
-		mostlyRed [s, j] and trans [s, s', j] => mostlyRed [s', j]
+	all s, sPrime: LightState, j: Junction |
+		mostlyRed [s, j] and trans [s, sPrime, j] => mostlyRed [sPrime, j]
 	}
 
 check Safe for 3 but 1 Junction

@@ -27,90 +27,90 @@ pred appInv [xs: ApplicationState] {
 	all cs: xs.catalogs | catalogInv [xs.catalogState[cs]]
 	}
 
-pred showSelected [cs, cs': CatalogState] {
+pred showSelected [cs, csPrime: CatalogState] {
 	cs.selection != Undefined
-	cs'.showing = cs.selection
-	cs'.selection = cs.selection
-	cs'.assets = cs.assets
+	csPrime.showing = cs.selection
+	csPrime.selection = cs.selection
+	csPrime.assets = cs.assets
 	}
 
-pred hideSelected [cs, cs': CatalogState] {
+pred hideSelected [cs, csPrime: CatalogState] {
 	cs.selection != Undefined
-	cs'.hidden = cs.hidden + cs.selection
-	cs'.selection = Undefined
-	cs'.assets = cs.assets
+	csPrime.hidden = cs.hidden + cs.selection
+	csPrime.selection = Undefined
+	csPrime.assets = cs.assets
 	}
 
-pred cut [xs, xs': ApplicationState] {
+pred cut [xs, xsPrime: ApplicationState] {
 	let cs = xs.currentCatalog.(xs.catalogState), sel = cs.selection {
 		sel != Undefined
-		xs'.buffer = sel
-		some cs': CatalogState {
-			cs'.assets = cs.assets - sel
-			cs'.showing = cs.showing - sel
-			cs'.selection = Undefined
-			xs'.catalogState = xs.catalogState ++ xs.currentCatalog -> cs'
+		xsPrime.buffer = sel
+		some csPrime: CatalogState {
+			csPrime.assets = cs.assets - sel
+			csPrime.showing = cs.showing - sel
+			csPrime.selection = Undefined
+			xsPrime.catalogState = xs.catalogState ++ xs.currentCatalog -> csPrime
 			}
 		}
-	xs'.catalogs = xs.catalogs
-	xs'.currentCatalog = xs.currentCatalog
+	xsPrime.catalogs = xs.catalogs
+	xsPrime.currentCatalog = xs.currentCatalog
 	}
 
-pred paste [xs, xs': ApplicationState] {
+pred paste [xs, xsPrime: ApplicationState] {
 	let cs = xs.currentCatalog.(xs.catalogState), buf = xs.buffer {
-		xs'.buffer = buf
-		some cs': CatalogState {
-			cs'.assets = cs.assets + buf
-			cs'.showing = cs.showing + (buf - cs.assets)
-			cs'.selection = buf - cs.assets
-			xs'.catalogState = xs.catalogState ++ xs.currentCatalog -> cs'
+		xsPrime.buffer = buf
+		some csPrime: CatalogState {
+			csPrime.assets = cs.assets + buf
+			csPrime.showing = cs.showing + (buf - cs.assets)
+			csPrime.selection = buf - cs.assets
+			xsPrime.catalogState = xs.catalogState ++ xs.currentCatalog -> csPrime
 			}
 		}
-	xs'.catalogs = xs.catalogs
-	xs'.currentCatalog = xs.currentCatalog
+	xsPrime.catalogs = xs.catalogs
+	xsPrime.currentCatalog = xs.currentCatalog
 	}
 
 assert HidePreservesInv {
-	all cs, cs': CatalogState |
-		catalogInv [cs] and hideSelected [cs, cs'] => catalogInv [cs']
+	all cs, csPrime: CatalogState |
+		catalogInv [cs] and hideSelected [cs, csPrime] => catalogInv [csPrime]
 	}
 
 // This check should not find any counterexample
 check HidePreservesInv
 
-pred sameApplicationState [xs, xs': ApplicationState] {
-	xs'.catalogs = xs.catalogs
-	all c: xs.catalogs | sameCatalogState [c.(xs.catalogState), c.(xs'.catalogState)]
-	xs'.currentCatalog = xs.currentCatalog
-	xs'.buffer = xs.buffer
+pred sameApplicationState [xs, xsPrime: ApplicationState] {
+	xsPrime.catalogs = xs.catalogs
+	all c: xs.catalogs | sameCatalogState [c.(xs.catalogState), c.(xsPrime.catalogState)]
+	xsPrime.currentCatalog = xs.currentCatalog
+	xsPrime.buffer = xs.buffer
 	}
 
-pred sameCatalogState [cs, cs': CatalogState] {
-	cs'.assets = cs.assets
-	cs'.showing = cs.showing
-	cs'.selection = cs.selection
+pred sameCatalogState [cs, csPrime: CatalogState] {
+	csPrime.assets = cs.assets
+	csPrime.showing = cs.showing
+	csPrime.selection = cs.selection
 	}
 
 assert CutPaste {
-	all xs, xs', xs": ApplicationState |
-		(appInv [xs] and cut [xs, xs'] and paste [xs', xs"]) => sameApplicationState [xs, xs"] 
+	all xs, xsPrime, xs": ApplicationState |
+		(appInv [xs] and cut [xs, xsPrime] and paste [xsPrime, xs"]) => sameApplicationState [xs, xs"] 
 	}
 
 // This check should find a counterexample
 check CutPaste
 
 assert PasteCut {
-	all xs, xs', xs": ApplicationState |
-		(appInv [xs] and paste [xs, xs'] and cut [xs', xs"]) => sameApplicationState [xs, xs"] 
+	all xs, xsPrime, xs": ApplicationState |
+		(appInv [xs] and paste [xs, xsPrime] and cut [xsPrime, xs"]) => sameApplicationState [xs, xs"] 
 	}
 
 // This check should find a counterexample
 check PasteCut
 
 assert PasteNotAffectHidden {
-	all xs, xs': ApplicationState |
-		(appInv [xs] and paste [xs, xs']) => 
-			let c = xs.currentCatalog | xs'.catalogState[c].hidden = xs.catalogState[c].hidden
+	all xs, xsPrime: ApplicationState |
+		(appInv [xs] and paste [xs, xsPrime]) => 
+			let c = xs.currentCatalog | xsPrime.catalogState[c].hidden = xs.catalogState[c].hidden
 	}
 
 // This check should not find any counterexample

@@ -34,14 +34,26 @@ public class AntlrTest {
 	}
 
 	@Test
-	public void parseAll() throws Exception {
-		Path set1 = Paths.get("src/test/resources/antlr/catalyst/model-sets/2021-05-06-10-28-11-watform");
-		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(set1, "*.als")) {
+	public void parseCatalyst2021_05_06_10_28_11_watform() throws Exception {
+		Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/2021-05-06-10-28-11-watform");
+		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(p, "*.als")) {
 			for(Path filePath : dirStream) {
 				CharStream input = CharStreams.fromPath(filePath);
 				assertDoesNotThrow(()->this.tryParse(input, filePath), "Parse failed");
 			}
 		}
 	}
+
+	@Test
+	public void parseCatalyst2021_05_25_13_24_28_jackson() throws Exception {
+		Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/2021-05-25-13-24-28-jackson");
+		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(p, "*.als")) {
+			for(Path filePath : dirStream) {
+				CharStream input = CharStreams.fromPath(filePath);
+				assertDoesNotThrow(()->this.tryParse(input, filePath), "Parse failed");
+			}
+		}
+	}
+
 }
 
