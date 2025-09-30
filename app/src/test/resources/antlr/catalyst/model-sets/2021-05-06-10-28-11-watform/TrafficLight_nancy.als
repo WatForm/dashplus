@@ -43,33 +43,33 @@ open util/boolean
         }
     }
 
-    pred pos_TrafficLight_NorthSouth_Green_T1[s, s':Snapshot] {
-        s'.conf = s.conf - TrafficLight_NorthSouth_Green + {
+    pred pos_TrafficLight_NorthSouth_Green_T1[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - TrafficLight_NorthSouth_Green + {
             TrafficLight_NorthSouth_Yellow
         }
     
-        testIfNextStable[s, s', {none}, TrafficLight_NorthSouth_Green_T1] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, TrafficLight_NorthSouth_Green_T1] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred TrafficLight_NorthSouth_Green_T1[s, s': Snapshot] {
+    pred TrafficLight_NorthSouth_Green_T1[s, sPrime: Snapshot] {
         pre_TrafficLight_NorthSouth_Green_T1[s]
-        pos_TrafficLight_NorthSouth_Green_T1[s, s']
-        semantics_TrafficLight_NorthSouth_Green_T1[s, s']
+        pos_TrafficLight_NorthSouth_Green_T1[s, sPrime]
+        semantics_TrafficLight_NorthSouth_Green_T1[s, sPrime]
     }
 
     pred enabledAfterStep_TrafficLight_NorthSouth_Green_T1[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -91,13 +91,13 @@ open util/boolean
             TrafficLight_End in {_s.events  + genEvents}
         }
     }
-    pred semantics_TrafficLight_NorthSouth_Green_T1[s, s': Snapshot] {
+    pred semantics_TrafficLight_NorthSouth_Green_T1[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = TrafficLight_NorthSouth_Green_T1
+            sPrime.taken = TrafficLight_NorthSouth_Green_T1
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + TrafficLight_NorthSouth_Green_T1
+            sPrime.taken = s.taken + TrafficLight_NorthSouth_Green_T1
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 TrafficLight_NorthSouth_Yellow_T2 + 
@@ -116,33 +116,33 @@ open util/boolean
         }
     }
 
-    pred pos_TrafficLight_NorthSouth_Yellow_T2[s, s':Snapshot] {
-        s'.conf = s.conf - TrafficLight_NorthSouth_Yellow + {
+    pred pos_TrafficLight_NorthSouth_Yellow_T2[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - TrafficLight_NorthSouth_Yellow + {
             TrafficLight_NorthSouth_Red
         }
     
-        testIfNextStable[s, s', {none}, TrafficLight_NorthSouth_Yellow_T2] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, TrafficLight_NorthSouth_Yellow_T2] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred TrafficLight_NorthSouth_Yellow_T2[s, s': Snapshot] {
+    pred TrafficLight_NorthSouth_Yellow_T2[s, sPrime: Snapshot] {
         pre_TrafficLight_NorthSouth_Yellow_T2[s]
-        pos_TrafficLight_NorthSouth_Yellow_T2[s, s']
-        semantics_TrafficLight_NorthSouth_Yellow_T2[s, s']
+        pos_TrafficLight_NorthSouth_Yellow_T2[s, sPrime]
+        semantics_TrafficLight_NorthSouth_Yellow_T2[s, sPrime]
     }
 
     pred enabledAfterStep_TrafficLight_NorthSouth_Yellow_T2[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -164,13 +164,13 @@ open util/boolean
             TrafficLight_Change in {_s.events  + genEvents}
         }
     }
-    pred semantics_TrafficLight_NorthSouth_Yellow_T2[s, s': Snapshot] {
+    pred semantics_TrafficLight_NorthSouth_Yellow_T2[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = TrafficLight_NorthSouth_Yellow_T2
+            sPrime.taken = TrafficLight_NorthSouth_Yellow_T2
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + TrafficLight_NorthSouth_Yellow_T2
+            sPrime.taken = s.taken + TrafficLight_NorthSouth_Yellow_T2
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 TrafficLight_NorthSouth_Yellow_T2 + 
@@ -189,33 +189,33 @@ open util/boolean
         }
     }
 
-    pred pos_TrafficLight_NorthSouth_Red_T3[s, s':Snapshot] {
-        s'.conf = s.conf - TrafficLight_NorthSouth_Red + {
+    pred pos_TrafficLight_NorthSouth_Red_T3[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - TrafficLight_NorthSouth_Red + {
             TrafficLight_NorthSouth_Green
         }
     
-        testIfNextStable[s, s', {none}, TrafficLight_NorthSouth_Red_T3] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, TrafficLight_NorthSouth_Red_T3] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred TrafficLight_NorthSouth_Red_T3[s, s': Snapshot] {
+    pred TrafficLight_NorthSouth_Red_T3[s, sPrime: Snapshot] {
         pre_TrafficLight_NorthSouth_Red_T3[s]
-        pos_TrafficLight_NorthSouth_Red_T3[s, s']
-        semantics_TrafficLight_NorthSouth_Red_T3[s, s']
+        pos_TrafficLight_NorthSouth_Red_T3[s, sPrime]
+        semantics_TrafficLight_NorthSouth_Red_T3[s, sPrime]
     }
 
     pred enabledAfterStep_TrafficLight_NorthSouth_Red_T3[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -237,13 +237,13 @@ open util/boolean
             TrafficLight_Change in {_s.events  + genEvents}
         }
     }
-    pred semantics_TrafficLight_NorthSouth_Red_T3[s, s': Snapshot] {
+    pred semantics_TrafficLight_NorthSouth_Red_T3[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = TrafficLight_NorthSouth_Red_T3
+            sPrime.taken = TrafficLight_NorthSouth_Red_T3
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + TrafficLight_NorthSouth_Red_T3
+            sPrime.taken = s.taken + TrafficLight_NorthSouth_Red_T3
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 TrafficLight_NorthSouth_Yellow_T2 + 
@@ -262,33 +262,33 @@ open util/boolean
         }
     }
 
-    pred pos_TrafficLight_EastWest_Green_T5[s, s':Snapshot] {
-        s'.conf = s.conf - TrafficLight_EastWest_Green + {
+    pred pos_TrafficLight_EastWest_Green_T5[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - TrafficLight_EastWest_Green + {
             TrafficLight_EastWest_Yellow
         }
     
-        testIfNextStable[s, s', {none}, TrafficLight_EastWest_Green_T5] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, TrafficLight_EastWest_Green_T5] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred TrafficLight_EastWest_Green_T5[s, s': Snapshot] {
+    pred TrafficLight_EastWest_Green_T5[s, sPrime: Snapshot] {
         pre_TrafficLight_EastWest_Green_T5[s]
-        pos_TrafficLight_EastWest_Green_T5[s, s']
-        semantics_TrafficLight_EastWest_Green_T5[s, s']
+        pos_TrafficLight_EastWest_Green_T5[s, sPrime]
+        semantics_TrafficLight_EastWest_Green_T5[s, sPrime]
     }
 
     pred enabledAfterStep_TrafficLight_EastWest_Green_T5[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -310,13 +310,13 @@ open util/boolean
             TrafficLight_End in {_s.events  + genEvents}
         }
     }
-    pred semantics_TrafficLight_EastWest_Green_T5[s, s': Snapshot] {
+    pred semantics_TrafficLight_EastWest_Green_T5[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = TrafficLight_EastWest_Green_T5
+            sPrime.taken = TrafficLight_EastWest_Green_T5
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + TrafficLight_EastWest_Green_T5
+            sPrime.taken = s.taken + TrafficLight_EastWest_Green_T5
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 TrafficLight_EastWest_Red_T4 + 
@@ -335,33 +335,33 @@ open util/boolean
         }
     }
 
-    pred pos_TrafficLight_EastWest_Yellow_T6[s, s':Snapshot] {
-        s'.conf = s.conf - TrafficLight_EastWest_Yellow + {
+    pred pos_TrafficLight_EastWest_Yellow_T6[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - TrafficLight_EastWest_Yellow + {
             TrafficLight_EastWest_Red
         }
     
-        testIfNextStable[s, s', {none}, TrafficLight_EastWest_Yellow_T6] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, TrafficLight_EastWest_Yellow_T6] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred TrafficLight_EastWest_Yellow_T6[s, s': Snapshot] {
+    pred TrafficLight_EastWest_Yellow_T6[s, sPrime: Snapshot] {
         pre_TrafficLight_EastWest_Yellow_T6[s]
-        pos_TrafficLight_EastWest_Yellow_T6[s, s']
-        semantics_TrafficLight_EastWest_Yellow_T6[s, s']
+        pos_TrafficLight_EastWest_Yellow_T6[s, sPrime]
+        semantics_TrafficLight_EastWest_Yellow_T6[s, sPrime]
     }
 
     pred enabledAfterStep_TrafficLight_EastWest_Yellow_T6[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -383,13 +383,13 @@ open util/boolean
             TrafficLight_Change in {_s.events  + genEvents}
         }
     }
-    pred semantics_TrafficLight_EastWest_Yellow_T6[s, s': Snapshot] {
+    pred semantics_TrafficLight_EastWest_Yellow_T6[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = TrafficLight_EastWest_Yellow_T6
+            sPrime.taken = TrafficLight_EastWest_Yellow_T6
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + TrafficLight_EastWest_Yellow_T6
+            sPrime.taken = s.taken + TrafficLight_EastWest_Yellow_T6
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 TrafficLight_EastWest_Red_T4 + 
@@ -408,33 +408,33 @@ open util/boolean
         }
     }
 
-    pred pos_TrafficLight_EastWest_Red_T4[s, s':Snapshot] {
-        s'.conf = s.conf - TrafficLight_EastWest_Red + {
+    pred pos_TrafficLight_EastWest_Red_T4[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - TrafficLight_EastWest_Red + {
             TrafficLight_EastWest_Green
         }
     
-        testIfNextStable[s, s', {none}, TrafficLight_EastWest_Red_T4] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, TrafficLight_EastWest_Red_T4] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred TrafficLight_EastWest_Red_T4[s, s': Snapshot] {
+    pred TrafficLight_EastWest_Red_T4[s, sPrime: Snapshot] {
         pre_TrafficLight_EastWest_Red_T4[s]
-        pos_TrafficLight_EastWest_Red_T4[s, s']
-        semantics_TrafficLight_EastWest_Red_T4[s, s']
+        pos_TrafficLight_EastWest_Red_T4[s, sPrime]
+        semantics_TrafficLight_EastWest_Red_T4[s, sPrime]
     }
 
     pred enabledAfterStep_TrafficLight_EastWest_Red_T4[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -456,13 +456,13 @@ open util/boolean
             TrafficLight_Change in {_s.events  + genEvents}
         }
     }
-    pred semantics_TrafficLight_EastWest_Red_T4[s, s': Snapshot] {
+    pred semantics_TrafficLight_EastWest_Red_T4[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = TrafficLight_EastWest_Red_T4
+            sPrime.taken = TrafficLight_EastWest_Red_T4
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + TrafficLight_EastWest_Red_T4
+            sPrime.taken = s.taken + TrafficLight_EastWest_Red_T4
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 TrafficLight_EastWest_Red_T4 + 
@@ -484,26 +484,26 @@ open util/boolean
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        TrafficLight_NorthSouth_Green_T1[s, s'] or
-        TrafficLight_NorthSouth_Yellow_T2[s, s'] or
-        TrafficLight_NorthSouth_Red_T3[s, s'] or
-        TrafficLight_EastWest_Green_T5[s, s'] or
-        TrafficLight_EastWest_Yellow_T6[s, s'] or
-        TrafficLight_EastWest_Red_T4[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        TrafficLight_NorthSouth_Green_T1[s, sPrime] or
+        TrafficLight_NorthSouth_Yellow_T2[s, sPrime] or
+        TrafficLight_NorthSouth_Red_T3[s, sPrime] or
+        TrafficLight_EastWest_Green_T5[s, sPrime] or
+        TrafficLight_EastWest_Yellow_T6[s, sPrime] or
+        TrafficLight_EastWest_Red_T4[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred testIfNextStable[s, s': Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
-        !enabledAfterStep_TrafficLight_NorthSouth_Green_T1[s, s', t, genEvents]
-        !enabledAfterStep_TrafficLight_NorthSouth_Yellow_T2[s, s', t, genEvents]
-        !enabledAfterStep_TrafficLight_NorthSouth_Red_T3[s, s', t, genEvents]
-        !enabledAfterStep_TrafficLight_EastWest_Green_T5[s, s', t, genEvents]
-        !enabledAfterStep_TrafficLight_EastWest_Yellow_T6[s, s', t, genEvents]
-        !enabledAfterStep_TrafficLight_EastWest_Red_T4[s, s', t, genEvents]
+    pred testIfNextStable[s, sPrime: Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
+        !enabledAfterStep_TrafficLight_NorthSouth_Green_T1[s, sPrime, t, genEvents]
+        !enabledAfterStep_TrafficLight_NorthSouth_Yellow_T2[s, sPrime, t, genEvents]
+        !enabledAfterStep_TrafficLight_NorthSouth_Red_T3[s, sPrime, t, genEvents]
+        !enabledAfterStep_TrafficLight_EastWest_Green_T5[s, sPrime, t, genEvents]
+        !enabledAfterStep_TrafficLight_EastWest_Yellow_T6[s, sPrime, t, genEvents]
+        !enabledAfterStep_TrafficLight_EastWest_Red_T4[s, sPrime, t, genEvents]
     }
 
     pred isEnabled[s:Snapshot] {
@@ -515,23 +515,23 @@ open util/boolean
         pre_TrafficLight_EastWest_Red_T4[s]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.events = s.events
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.events = s.events
+        sPrime.taken = s.taken
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
-        all s: Snapshot | (isEnabled[s] && no s': Snapshot | small_step[s, s']) => s.stable = False
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
+        all s: Snapshot | (isEnabled[s] && no sPrime: Snapshot | small_step[s, sPrime]) => s.stable = False
         all s: Snapshot | s.stable = False => some s.nextStep
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 2 EventLabel
@@ -550,11 +550,11 @@ open util/boolean
             init[s] => s.events = TrafficLight_End
         }
         // Events alternate after each stable snapshot
-        all s, s': Snapshot | s->s' in nextState => {
-            s.stable = True and s'.stable = True => s'.events != s.events
-            s.stable = False and s'.stable = True => s'.events != s.events
-            s.stable = True and s'.stable = False => s'.events = s.events
-            s.stable = False and s'.stable = False => s'.events = s.events
+        all s, sPrime: Snapshot | s->sPrime in nextState => {
+            s.stable = True and sPrime.stable = True => sPrime.events != s.events
+            s.stable = False and sPrime.stable = True => sPrime.events != s.events
+            s.stable = True and sPrime.stable = False => sPrime.events = s.events
+            s.stable = False and sPrime.stable = False => sPrime.events = s.events
         }
     }
     

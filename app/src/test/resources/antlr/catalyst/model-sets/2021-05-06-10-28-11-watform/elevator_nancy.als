@@ -32,29 +32,29 @@ open util/ordering[Snapshot]
         (s.Elevator_maintenance) = 2
     }
 
-    pred pos_Elevator_maintenance[s, s':Snapshot] {
-        s'.conf = s.conf - Elevator + {
+    pred pos_Elevator_maintenance[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Elevator + {
             Elevator
         }
         {
-            (s'.Elevator_current) = min[ Floor]
-            (s'.Elevator_direction) = Down
-            (s'.Elevator_maintenance) = 0
+            (sPrime.Elevator_current) = min[ Floor]
+            (sPrime.Elevator_direction) = Down
+            (sPrime.Elevator_maintenance) = 0
             {
-                (s.Elevator_called) - (s'.Elevator_current)
+                (s.Elevator_called) - (sPrime.Elevator_current)
             }
-             in (s'.Elevator_called)
-            (s'.Elevator_current) !in (s'.Elevator_called)
+             in (sPrime.Elevator_called)
+            (sPrime.Elevator_current) !in (sPrime.Elevator_called)
         }
     }
 
-    pred Elevator_maintenance[s, s': Snapshot] {
+    pred Elevator_maintenance[s, sPrime: Snapshot] {
         pre_Elevator_maintenance[s]
-        pos_Elevator_maintenance[s, s']
-        semantics_Elevator_maintenance[s, s']
+        pos_Elevator_maintenance[s, sPrime]
+        semantics_Elevator_maintenance[s, sPrime]
     }
-    pred semantics_Elevator_maintenance[s, s': Snapshot] {
-        s'.taken = Elevator_maintenance
+    pred semantics_Elevator_maintenance[s, sPrime: Snapshot] {
+        sPrime.taken = Elevator_maintenance
     }
     // Transition Elevator_ChangeDirToDown
     pred pre_Elevator_ChangeDirToDown[s:Snapshot] {
@@ -67,28 +67,28 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_Elevator_ChangeDirToDown[s, s':Snapshot] {
-        s'.conf = s.conf - Elevator + {
+    pred pos_Elevator_ChangeDirToDown[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Elevator + {
             Elevator
         }
         {
-            (s'.Elevator_direction) = Down
-            (s'.Elevator_maintenance) = (s.Elevator_maintenance).plus[ 1]
+            (sPrime.Elevator_direction) = Down
+            (sPrime.Elevator_maintenance) = (s.Elevator_maintenance).plus[ 1]
             {
-                (s.Elevator_called) - (s'.Elevator_current)
+                (s.Elevator_called) - (sPrime.Elevator_current)
             }
-             in (s'.Elevator_called)
-            (s'.Elevator_current) !in (s'.Elevator_called)
+             in (sPrime.Elevator_called)
+            (sPrime.Elevator_current) !in (sPrime.Elevator_called)
         }
     }
 
-    pred Elevator_ChangeDirToDown[s, s': Snapshot] {
+    pred Elevator_ChangeDirToDown[s, sPrime: Snapshot] {
         pre_Elevator_ChangeDirToDown[s]
-        pos_Elevator_ChangeDirToDown[s, s']
-        semantics_Elevator_ChangeDirToDown[s, s']
+        pos_Elevator_ChangeDirToDown[s, sPrime]
+        semantics_Elevator_ChangeDirToDown[s, sPrime]
     }
-    pred semantics_Elevator_ChangeDirToDown[s, s': Snapshot] {
-        s'.taken = Elevator_ChangeDirToDown
+    pred semantics_Elevator_ChangeDirToDown[s, sPrime: Snapshot] {
+        sPrime.taken = Elevator_ChangeDirToDown
     }
     // Transition Elevator_ChangeDirToUp
     pred pre_Elevator_ChangeDirToUp[s:Snapshot] {
@@ -101,28 +101,28 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_Elevator_ChangeDirToUp[s, s':Snapshot] {
-        s'.conf = s.conf - Elevator + {
+    pred pos_Elevator_ChangeDirToUp[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Elevator + {
             Elevator
         }
         {
-            (s'.Elevator_direction) = Up
-            (s'.Elevator_maintenance) = (s.Elevator_maintenance).plus[ 1]
+            (sPrime.Elevator_direction) = Up
+            (sPrime.Elevator_maintenance) = (s.Elevator_maintenance).plus[ 1]
             {
-                (s.Elevator_called) - (s'.Elevator_current)
+                (s.Elevator_called) - (sPrime.Elevator_current)
             }
-             in (s'.Elevator_called)
-            (s'.Elevator_current) !in (s'.Elevator_called)
+             in (sPrime.Elevator_called)
+            (sPrime.Elevator_current) !in (sPrime.Elevator_called)
         }
     }
 
-    pred Elevator_ChangeDirToUp[s, s': Snapshot] {
+    pred Elevator_ChangeDirToUp[s, sPrime: Snapshot] {
         pre_Elevator_ChangeDirToUp[s]
-        pos_Elevator_ChangeDirToUp[s, s']
-        semantics_Elevator_ChangeDirToUp[s, s']
+        pos_Elevator_ChangeDirToUp[s, sPrime]
+        semantics_Elevator_ChangeDirToUp[s, sPrime]
     }
-    pred semantics_Elevator_ChangeDirToUp[s, s': Snapshot] {
-        s'.taken = Elevator_ChangeDirToUp
+    pred semantics_Elevator_ChangeDirToUp[s, sPrime: Snapshot] {
+        sPrime.taken = Elevator_ChangeDirToUp
     }
     // Transition Elevator_MoveUp
     pred pre_Elevator_MoveUp[s:Snapshot] {
@@ -134,29 +134,29 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_Elevator_MoveUp[s, s':Snapshot] {
-        s'.conf = s.conf - Elevator + {
+    pred pos_Elevator_MoveUp[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Elevator + {
             Elevator
         }
-        s'.Elevator_direction = s.Elevator_direction
-        s'.Elevator_maintenance = s.Elevator_maintenance
+        sPrime.Elevator_direction = s.Elevator_direction
+        sPrime.Elevator_maintenance = s.Elevator_maintenance
         {
-            (s'.Elevator_current) = min[ (nexts[ (s.Elevator_current)] & (s.Elevator_called))]
-            (s'.Elevator_current) !in (s'.Elevator_called)
+            (sPrime.Elevator_current) = min[ (nexts[ (s.Elevator_current)] & (s.Elevator_called))]
+            (sPrime.Elevator_current) !in (sPrime.Elevator_called)
             {
-                (s.Elevator_called) - (s'.Elevator_current)
+                (s.Elevator_called) - (sPrime.Elevator_current)
             }
-             in (s'.Elevator_called)
+             in (sPrime.Elevator_called)
         }
     }
 
-    pred Elevator_MoveUp[s, s': Snapshot] {
+    pred Elevator_MoveUp[s, sPrime: Snapshot] {
         pre_Elevator_MoveUp[s]
-        pos_Elevator_MoveUp[s, s']
-        semantics_Elevator_MoveUp[s, s']
+        pos_Elevator_MoveUp[s, sPrime]
+        semantics_Elevator_MoveUp[s, sPrime]
     }
-    pred semantics_Elevator_MoveUp[s, s': Snapshot] {
-        s'.taken = Elevator_MoveUp
+    pred semantics_Elevator_MoveUp[s, sPrime: Snapshot] {
+        sPrime.taken = Elevator_MoveUp
     }
     // Transition Elevator_MoveDown
     pred pre_Elevator_MoveDown[s:Snapshot] {
@@ -168,29 +168,29 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_Elevator_MoveDown[s, s':Snapshot] {
-        s'.conf = s.conf - Elevator + {
+    pred pos_Elevator_MoveDown[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Elevator + {
             Elevator
         }
-        s'.Elevator_direction = s.Elevator_direction
-        s'.Elevator_maintenance = s.Elevator_maintenance
+        sPrime.Elevator_direction = s.Elevator_direction
+        sPrime.Elevator_maintenance = s.Elevator_maintenance
         {
-            (s'.Elevator_current) = max[ (prevs[ (s.Elevator_current)] & (s.Elevator_called))]
-            (s'.Elevator_current) !in (s'.Elevator_called)
+            (sPrime.Elevator_current) = max[ (prevs[ (s.Elevator_current)] & (s.Elevator_called))]
+            (sPrime.Elevator_current) !in (sPrime.Elevator_called)
             {
-                (s.Elevator_called) - (s'.Elevator_current)
+                (s.Elevator_called) - (sPrime.Elevator_current)
             }
-             in (s'.Elevator_called)
+             in (sPrime.Elevator_called)
         }
     }
 
-    pred Elevator_MoveDown[s, s': Snapshot] {
+    pred Elevator_MoveDown[s, sPrime: Snapshot] {
         pre_Elevator_MoveDown[s]
-        pos_Elevator_MoveDown[s, s']
-        semantics_Elevator_MoveDown[s, s']
+        pos_Elevator_MoveDown[s, sPrime]
+        semantics_Elevator_MoveDown[s, sPrime]
     }
-    pred semantics_Elevator_MoveDown[s, s': Snapshot] {
-        s'.taken = Elevator_MoveDown
+    pred semantics_Elevator_MoveDown[s, sPrime: Snapshot] {
+        sPrime.taken = Elevator_MoveDown
     }
     // Transition Elevator_DefaultToGround
     pred pre_Elevator_DefaultToGround[s:Snapshot] {
@@ -201,29 +201,29 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_Elevator_DefaultToGround[s, s':Snapshot] {
-        s'.conf = s.conf - Elevator + {
+    pred pos_Elevator_DefaultToGround[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Elevator + {
             Elevator
         }
-        s'.Elevator_maintenance = s.Elevator_maintenance
+        sPrime.Elevator_maintenance = s.Elevator_maintenance
         {
-            (s'.Elevator_current) = min[ Floor]
-            (s'.Elevator_direction) = Down
+            (sPrime.Elevator_current) = min[ Floor]
+            (sPrime.Elevator_direction) = Down
             {
-                (s.Elevator_called) - (s'.Elevator_current)
+                (s.Elevator_called) - (sPrime.Elevator_current)
             }
-             in (s'.Elevator_called)
-            (s'.Elevator_current) !in (s'.Elevator_called)
+             in (sPrime.Elevator_called)
+            (sPrime.Elevator_current) !in (sPrime.Elevator_called)
         }
     }
 
-    pred Elevator_DefaultToGround[s, s': Snapshot] {
+    pred Elevator_DefaultToGround[s, sPrime: Snapshot] {
         pre_Elevator_DefaultToGround[s]
-        pos_Elevator_DefaultToGround[s, s']
-        semantics_Elevator_DefaultToGround[s, s']
+        pos_Elevator_DefaultToGround[s, sPrime]
+        semantics_Elevator_DefaultToGround[s, sPrime]
     }
-    pred semantics_Elevator_DefaultToGround[s, s': Snapshot] {
-        s'.taken = Elevator_DefaultToGround
+    pred semantics_Elevator_DefaultToGround[s, sPrime: Snapshot] {
+        sPrime.taken = Elevator_DefaultToGround
     }
     // Transition Elevator_Idle
     pred pre_Elevator_Idle[s:Snapshot] {
@@ -234,28 +234,28 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_Elevator_Idle[s, s':Snapshot] {
-        s'.conf = s.conf - Elevator + {
+    pred pos_Elevator_Idle[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Elevator + {
             Elevator
         }
-        s'.Elevator_direction = s.Elevator_direction
+        sPrime.Elevator_direction = s.Elevator_direction
         {
-            (s'.Elevator_maintenance) = 0
+            (sPrime.Elevator_maintenance) = 0
             {
-                (s.Elevator_called) - (s'.Elevator_current)
+                (s.Elevator_called) - (sPrime.Elevator_current)
             }
-             in (s'.Elevator_called)
-            (s'.Elevator_current) !in (s'.Elevator_called)
+             in (sPrime.Elevator_called)
+            (sPrime.Elevator_current) !in (sPrime.Elevator_called)
         }
     }
 
-    pred Elevator_Idle[s, s': Snapshot] {
+    pred Elevator_Idle[s, sPrime: Snapshot] {
         pre_Elevator_Idle[s]
-        pos_Elevator_Idle[s, s']
-        semantics_Elevator_Idle[s, s']
+        pos_Elevator_Idle[s, sPrime]
+        semantics_Elevator_Idle[s, sPrime]
     }
-    pred semantics_Elevator_Idle[s, s': Snapshot] {
-        s'.taken = Elevator_Idle
+    pred semantics_Elevator_Idle[s, sPrime: Snapshot] {
+        sPrime.taken = Elevator_Idle
     }
 /****************************** INITIAL CONDITIONS ****************************/
     pred init[s: Snapshot] {
@@ -272,39 +272,39 @@ open util/ordering[Snapshot]
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        Elevator_maintenance[s, s'] or
-        Elevator_ChangeDirToDown[s, s'] or
-        Elevator_ChangeDirToUp[s, s'] or
-        Elevator_MoveUp[s, s'] or
-        Elevator_MoveDown[s, s'] or
-        Elevator_DefaultToGround[s, s'] or
-        Elevator_Idle[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        Elevator_maintenance[s, sPrime] or
+        Elevator_ChangeDirToDown[s, sPrime] or
+        Elevator_ChangeDirToUp[s, sPrime] or
+        Elevator_MoveUp[s, sPrime] or
+        Elevator_MoveDown[s, sPrime] or
+        Elevator_DefaultToGround[s, sPrime] or
+        Elevator_Idle[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.taken = s.taken
         // Model specific declarations
-        s'.Elevator_direction = s.Elevator_direction
-        s'.Elevator_called = s.Elevator_called
-        s'.Elevator_maintenance = s.Elevator_maintenance
-        s'.Elevator_current = s.Elevator_current
+        sPrime.Elevator_direction = s.Elevator_direction
+        sPrime.Elevator_called = s.Elevator_called
+        sPrime.Elevator_maintenance = s.Elevator_maintenance
+        sPrime.Elevator_current = s.Elevator_current
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 0 EventLabel,

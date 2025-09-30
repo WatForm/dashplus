@@ -72,20 +72,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadSleepTime in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_2[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_2[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_TimedWaiting
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_2[s, s': Snapshot] {
+    pred ThreadStates_t_2[s, sPrime: Snapshot] {
         pre_ThreadStates_t_2[s]
-        pos_ThreadStates_t_2[s, s']
-        semantics_ThreadStates_t_2[s, s']
+        pos_ThreadStates_t_2[s, sPrime]
+        semantics_ThreadStates_t_2[s, sPrime]
     }
-    pred semantics_ThreadStates_t_2[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_2
+    pred semantics_ThreadStates_t_2[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_2
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -97,20 +97,20 @@ open util/ordering[Snapshot]
         ThreadStates_ObjectWaitTimeOut in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_3[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_3[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_TimedWaiting
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_3[s, s': Snapshot] {
+    pred ThreadStates_t_3[s, sPrime: Snapshot] {
         pre_ThreadStates_t_3[s]
-        pos_ThreadStates_t_3[s, s']
-        semantics_ThreadStates_t_3[s, s']
+        pos_ThreadStates_t_3[s, sPrime]
+        semantics_ThreadStates_t_3[s, sPrime]
     }
-    pred semantics_ThreadStates_t_3[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_3
+    pred semantics_ThreadStates_t_3[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_3
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -122,20 +122,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadJoinTimeout in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_4[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_4[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_TimedWaiting
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_4[s, s': Snapshot] {
+    pred ThreadStates_t_4[s, sPrime: Snapshot] {
         pre_ThreadStates_t_4[s]
-        pos_ThreadStates_t_4[s, s']
-        semantics_ThreadStates_t_4[s, s']
+        pos_ThreadStates_t_4[s, sPrime]
+        semantics_ThreadStates_t_4[s, sPrime]
     }
-    pred semantics_ThreadStates_t_4[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_4
+    pred semantics_ThreadStates_t_4[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_4
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -147,20 +147,20 @@ open util/ordering[Snapshot]
         ThreadStates_LockSupportParkNanos in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_5[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_5[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_TimedWaiting
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_5[s, s': Snapshot] {
+    pred ThreadStates_t_5[s, sPrime: Snapshot] {
         pre_ThreadStates_t_5[s]
-        pos_ThreadStates_t_5[s, s']
-        semantics_ThreadStates_t_5[s, s']
+        pos_ThreadStates_t_5[s, sPrime]
+        semantics_ThreadStates_t_5[s, sPrime]
     }
-    pred semantics_ThreadStates_t_5[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_5
+    pred semantics_ThreadStates_t_5[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_5
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -172,20 +172,20 @@ open util/ordering[Snapshot]
         ThreadStates_LockSupportParkUntil in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_6[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_6[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_TimedWaiting
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_6[s, s': Snapshot] {
+    pred ThreadStates_t_6[s, sPrime: Snapshot] {
         pre_ThreadStates_t_6[s]
-        pos_ThreadStates_t_6[s, s']
-        semantics_ThreadStates_t_6[s, s']
+        pos_ThreadStates_t_6[s, sPrime]
+        semantics_ThreadStates_t_6[s, sPrime]
     }
-    pred semantics_ThreadStates_t_6[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_6
+    pred semantics_ThreadStates_t_6[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_6
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -197,20 +197,20 @@ open util/ordering[Snapshot]
         ThreadStates_ObjectWait in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_7[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_7[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_Waiting
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_7[s, s': Snapshot] {
+    pred ThreadStates_t_7[s, sPrime: Snapshot] {
         pre_ThreadStates_t_7[s]
-        pos_ThreadStates_t_7[s, s']
-        semantics_ThreadStates_t_7[s, s']
+        pos_ThreadStates_t_7[s, sPrime]
+        semantics_ThreadStates_t_7[s, sPrime]
     }
-    pred semantics_ThreadStates_t_7[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_7
+    pred semantics_ThreadStates_t_7[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_7
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -222,20 +222,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadJoin in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_8[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_8[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_Waiting
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_8[s, s': Snapshot] {
+    pred ThreadStates_t_8[s, sPrime: Snapshot] {
         pre_ThreadStates_t_8[s]
-        pos_ThreadStates_t_8[s, s']
-        semantics_ThreadStates_t_8[s, s']
+        pos_ThreadStates_t_8[s, sPrime]
+        semantics_ThreadStates_t_8[s, sPrime]
     }
-    pred semantics_ThreadStates_t_8[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_8
+    pred semantics_ThreadStates_t_8[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_8
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -247,20 +247,20 @@ open util/ordering[Snapshot]
         ThreadStates_LockSupportPark in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_9[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_9[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_Waiting
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_9[s, s': Snapshot] {
+    pred ThreadStates_t_9[s, sPrime: Snapshot] {
         pre_ThreadStates_t_9[s]
-        pos_ThreadStates_t_9[s, s']
-        semantics_ThreadStates_t_9[s, s']
+        pos_ThreadStates_t_9[s, sPrime]
+        semantics_ThreadStates_t_9[s, sPrime]
     }
-    pred semantics_ThreadStates_t_9[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_9
+    pred semantics_ThreadStates_t_9[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_9
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -272,20 +272,20 @@ open util/ordering[Snapshot]
         ThreadStates_WaitForLockToEnterSynchro in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_10[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_10[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_Blocked
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_10[s, s': Snapshot] {
+    pred ThreadStates_t_10[s, sPrime: Snapshot] {
         pre_ThreadStates_t_10[s]
-        pos_ThreadStates_t_10[s, s']
-        semantics_ThreadStates_t_10[s, s']
+        pos_ThreadStates_t_10[s, sPrime]
+        semantics_ThreadStates_t_10[s, sPrime]
     }
-    pred semantics_ThreadStates_t_10[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_10
+    pred semantics_ThreadStates_t_10[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_10
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -297,20 +297,20 @@ open util/ordering[Snapshot]
         ThreadStates_WaitForLockToReEnterSynchro in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_11[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates_t_11[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_Blocked
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_11[s, s': Snapshot] {
+    pred ThreadStates_t_11[s, sPrime: Snapshot] {
         pre_ThreadStates_t_11[s]
-        pos_ThreadStates_t_11[s, s']
-        semantics_ThreadStates_t_11[s, s']
+        pos_ThreadStates_t_11[s, sPrime]
+        semantics_ThreadStates_t_11[s, sPrime]
     }
-    pred semantics_ThreadStates_t_11[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_11
+    pred semantics_ThreadStates_t_11[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_11
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -322,20 +322,20 @@ open util/ordering[Snapshot]
         ThreadStates_MonitorLockAcquired in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_14[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Blocked + {
+    pred pos_ThreadStates_t_14[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Blocked + {
             ThreadStates_Runnable_Ready
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_14[s, s': Snapshot] {
+    pred ThreadStates_t_14[s, sPrime: Snapshot] {
         pre_ThreadStates_t_14[s]
-        pos_ThreadStates_t_14[s, s']
-        semantics_ThreadStates_t_14[s, s']
+        pos_ThreadStates_t_14[s, sPrime]
+        semantics_ThreadStates_t_14[s, sPrime]
     }
-    pred semantics_ThreadStates_t_14[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_14
+    pred semantics_ThreadStates_t_14[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_14
     }
     // Transition ThreadStates_t_15
     pred pre_ThreadStates_t_15[s:Snapshot] {
@@ -343,20 +343,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadSleepTimeElapsed in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_t_15[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_TimedWaiting + {
+    pred pos_ThreadStates_t_15[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_TimedWaiting + {
             ThreadStates_Runnable_Ready
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_t_15[s, s': Snapshot] {
+    pred ThreadStates_t_15[s, sPrime: Snapshot] {
         pre_ThreadStates_t_15[s]
-        pos_ThreadStates_t_15[s, s']
-        semantics_ThreadStates_t_15[s, s']
+        pos_ThreadStates_t_15[s, sPrime]
+        semantics_ThreadStates_t_15[s, sPrime]
     }
-    pred semantics_ThreadStates_t_15[s, s': Snapshot] {
-        s'.taken = ThreadStates_t_15
+    pred semantics_ThreadStates_t_15[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_t_15
     }
     // Transition ThreadStates_New_t_16
     pred pre_ThreadStates_New_t_16[s:Snapshot] {
@@ -364,20 +364,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadStart in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_New_t_16[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_New + {
+    pred pos_ThreadStates_New_t_16[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_New + {
             ThreadStates_Runnable_Ready
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_New_t_16[s, s': Snapshot] {
+    pred ThreadStates_New_t_16[s, sPrime: Snapshot] {
         pre_ThreadStates_New_t_16[s]
-        pos_ThreadStates_New_t_16[s, s']
-        semantics_ThreadStates_New_t_16[s, s']
+        pos_ThreadStates_New_t_16[s, sPrime]
+        semantics_ThreadStates_New_t_16[s, sPrime]
     }
-    pred semantics_ThreadStates_New_t_16[s, s': Snapshot] {
-        s'.taken = ThreadStates_New_t_16
+    pred semantics_ThreadStates_New_t_16[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_New_t_16
     }
     // Transition ThreadStates_Runnable_t_17
     pred pre_ThreadStates_Runnable_t_17[s:Snapshot] {
@@ -385,20 +385,20 @@ open util/ordering[Snapshot]
         ThreadStates_SchedulerSelected in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_Runnable_t_17[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable_Ready + {
+    pred pos_ThreadStates_Runnable_t_17[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable_Ready + {
             ThreadStates_Runnable_Running
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_Runnable_t_17[s, s': Snapshot] {
+    pred ThreadStates_Runnable_t_17[s, sPrime: Snapshot] {
         pre_ThreadStates_Runnable_t_17[s]
-        pos_ThreadStates_Runnable_t_17[s, s']
-        semantics_ThreadStates_Runnable_t_17[s, s']
+        pos_ThreadStates_Runnable_t_17[s, sPrime]
+        semantics_ThreadStates_Runnable_t_17[s, sPrime]
     }
-    pred semantics_ThreadStates_Runnable_t_17[s, s': Snapshot] {
-        s'.taken = ThreadStates_Runnable_t_17
+    pred semantics_ThreadStates_Runnable_t_17[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_Runnable_t_17
     }
     // Transition ThreadStates_Runnable_t_18
     pred pre_ThreadStates_Runnable_t_18[s:Snapshot] {
@@ -406,20 +406,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadYield in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_Runnable_t_18[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable_Running + {
+    pred pos_ThreadStates_Runnable_t_18[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable_Running + {
             ThreadStates_Runnable_Ready
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_Runnable_t_18[s, s': Snapshot] {
+    pred ThreadStates_Runnable_t_18[s, sPrime: Snapshot] {
         pre_ThreadStates_Runnable_t_18[s]
-        pos_ThreadStates_Runnable_t_18[s, s']
-        semantics_ThreadStates_Runnable_t_18[s, s']
+        pos_ThreadStates_Runnable_t_18[s, sPrime]
+        semantics_ThreadStates_Runnable_t_18[s, sPrime]
     }
-    pred semantics_ThreadStates_Runnable_t_18[s, s': Snapshot] {
-        s'.taken = ThreadStates_Runnable_t_18
+    pred semantics_ThreadStates_Runnable_t_18[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_Runnable_t_18
     }
     // Transition ThreadStates_Runnable_t_19
     pred pre_ThreadStates_Runnable_t_19[s:Snapshot] {
@@ -427,20 +427,20 @@ open util/ordering[Snapshot]
         ThreadStates_SchedulerSuspended in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates_Runnable_t_19[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable_Running + {
+    pred pos_ThreadStates_Runnable_t_19[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable_Running + {
             ThreadStates_Runnable_Ready
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates_Runnable_t_19[s, s': Snapshot] {
+    pred ThreadStates_Runnable_t_19[s, sPrime: Snapshot] {
         pre_ThreadStates_Runnable_t_19[s]
-        pos_ThreadStates_Runnable_t_19[s, s']
-        semantics_ThreadStates_Runnable_t_19[s, s']
+        pos_ThreadStates_Runnable_t_19[s, sPrime]
+        semantics_ThreadStates_Runnable_t_19[s, sPrime]
     }
-    pred semantics_ThreadStates_Runnable_t_19[s, s': Snapshot] {
-        s'.taken = ThreadStates_Runnable_t_19
+    pred semantics_ThreadStates_Runnable_t_19[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates_Runnable_t_19
     }
     // Transition ThreadStates__1
     pred pre_ThreadStates__1[s:Snapshot] {
@@ -448,20 +448,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadTerminated in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates__1[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Runnable + {
+    pred pos_ThreadStates__1[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Runnable + {
             ThreadStates_Terminated
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates__1[s, s': Snapshot] {
+    pred ThreadStates__1[s, sPrime: Snapshot] {
         pre_ThreadStates__1[s]
-        pos_ThreadStates__1[s, s']
-        semantics_ThreadStates__1[s, s']
+        pos_ThreadStates__1[s, sPrime]
+        semantics_ThreadStates__1[s, sPrime]
     }
-    pred semantics_ThreadStates__1[s, s': Snapshot] {
-        s'.taken = ThreadStates__1
+    pred semantics_ThreadStates__1[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates__1
         // Priority "SOURCE-PARENT" semantics
         !pre_ThreadStates_Runnable_t_17[s]
         !pre_ThreadStates_Runnable_t_18[s]
@@ -473,20 +473,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadTerminated in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates__2[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_TimedWaiting + {
+    pred pos_ThreadStates__2[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_TimedWaiting + {
             ThreadStates_Terminated
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates__2[s, s': Snapshot] {
+    pred ThreadStates__2[s, sPrime: Snapshot] {
         pre_ThreadStates__2[s]
-        pos_ThreadStates__2[s, s']
-        semantics_ThreadStates__2[s, s']
+        pos_ThreadStates__2[s, sPrime]
+        semantics_ThreadStates__2[s, sPrime]
     }
-    pred semantics_ThreadStates__2[s, s': Snapshot] {
-        s'.taken = ThreadStates__2
+    pred semantics_ThreadStates__2[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates__2
     }
     // Transition ThreadStates__3
     pred pre_ThreadStates__3[s:Snapshot] {
@@ -494,20 +494,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadTerminated in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates__3[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Waiting + {
+    pred pos_ThreadStates__3[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Waiting + {
             ThreadStates_Terminated
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates__3[s, s': Snapshot] {
+    pred ThreadStates__3[s, sPrime: Snapshot] {
         pre_ThreadStates__3[s]
-        pos_ThreadStates__3[s, s']
-        semantics_ThreadStates__3[s, s']
+        pos_ThreadStates__3[s, sPrime]
+        semantics_ThreadStates__3[s, sPrime]
     }
-    pred semantics_ThreadStates__3[s, s': Snapshot] {
-        s'.taken = ThreadStates__3
+    pred semantics_ThreadStates__3[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates__3
     }
     // Transition ThreadStates__4
     pred pre_ThreadStates__4[s:Snapshot] {
@@ -515,20 +515,20 @@ open util/ordering[Snapshot]
         ThreadStates_ThreadTerminated in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates__4[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Blocked + {
+    pred pos_ThreadStates__4[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Blocked + {
             ThreadStates_Terminated
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates__4[s, s': Snapshot] {
+    pred ThreadStates__4[s, sPrime: Snapshot] {
         pre_ThreadStates__4[s]
-        pos_ThreadStates__4[s, s']
-        semantics_ThreadStates__4[s, s']
+        pos_ThreadStates__4[s, sPrime]
+        semantics_ThreadStates__4[s, sPrime]
     }
-    pred semantics_ThreadStates__4[s, s': Snapshot] {
-        s'.taken = ThreadStates__4
+    pred semantics_ThreadStates__4[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates__4
     }
     // Transition ThreadStates__5
     pred pre_ThreadStates__5[s:Snapshot] {
@@ -536,20 +536,20 @@ open util/ordering[Snapshot]
         ThreadStates_ObjectNotify in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates__5[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_TimedWaiting + {
+    pred pos_ThreadStates__5[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_TimedWaiting + {
             ThreadStates_Blocked
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates__5[s, s': Snapshot] {
+    pred ThreadStates__5[s, sPrime: Snapshot] {
         pre_ThreadStates__5[s]
-        pos_ThreadStates__5[s, s']
-        semantics_ThreadStates__5[s, s']
+        pos_ThreadStates__5[s, sPrime]
+        semantics_ThreadStates__5[s, sPrime]
     }
-    pred semantics_ThreadStates__5[s, s': Snapshot] {
-        s'.taken = ThreadStates__5
+    pred semantics_ThreadStates__5[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates__5
     }
     // Transition ThreadStates__6
     pred pre_ThreadStates__6[s:Snapshot] {
@@ -557,20 +557,20 @@ open util/ordering[Snapshot]
         ThreadStates_ObjectNotify in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates__6[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Waiting + {
+    pred pos_ThreadStates__6[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Waiting + {
             ThreadStates_Blocked
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates__6[s, s': Snapshot] {
+    pred ThreadStates__6[s, sPrime: Snapshot] {
         pre_ThreadStates__6[s]
-        pos_ThreadStates__6[s, s']
-        semantics_ThreadStates__6[s, s']
+        pos_ThreadStates__6[s, sPrime]
+        semantics_ThreadStates__6[s, sPrime]
     }
-    pred semantics_ThreadStates__6[s, s': Snapshot] {
-        s'.taken = ThreadStates__6
+    pred semantics_ThreadStates__6[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates__6
     }
     // Transition ThreadStates__7
     pred pre_ThreadStates__7[s:Snapshot] {
@@ -578,20 +578,20 @@ open util/ordering[Snapshot]
         ThreadStates_ObjectNotifyAll in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates__7[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_TimedWaiting + {
+    pred pos_ThreadStates__7[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_TimedWaiting + {
             ThreadStates_Blocked
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates__7[s, s': Snapshot] {
+    pred ThreadStates__7[s, sPrime: Snapshot] {
         pre_ThreadStates__7[s]
-        pos_ThreadStates__7[s, s']
-        semantics_ThreadStates__7[s, s']
+        pos_ThreadStates__7[s, sPrime]
+        semantics_ThreadStates__7[s, sPrime]
     }
-    pred semantics_ThreadStates__7[s, s': Snapshot] {
-        s'.taken = ThreadStates__7
+    pred semantics_ThreadStates__7[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates__7
     }
     // Transition ThreadStates__8
     pred pre_ThreadStates__8[s:Snapshot] {
@@ -599,20 +599,20 @@ open util/ordering[Snapshot]
         ThreadStates_ObjectNotifyAll in (s.events & EnvironmentEvent)
     }
 
-    pred pos_ThreadStates__8[s, s':Snapshot] {
-        s'.conf = s.conf - ThreadStates_Waiting + {
+    pred pos_ThreadStates__8[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - ThreadStates_Waiting + {
             ThreadStates_Blocked
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred ThreadStates__8[s, s': Snapshot] {
+    pred ThreadStates__8[s, sPrime: Snapshot] {
         pre_ThreadStates__8[s]
-        pos_ThreadStates__8[s, s']
-        semantics_ThreadStates__8[s, s']
+        pos_ThreadStates__8[s, sPrime]
+        semantics_ThreadStates__8[s, sPrime]
     }
-    pred semantics_ThreadStates__8[s, s': Snapshot] {
-        s'.taken = ThreadStates__8
+    pred semantics_ThreadStates__8[s, sPrime: Snapshot] {
+        sPrime.taken = ThreadStates__8
     }
 /****************************** INITIAL CONDITIONS ****************************/
     pred init[s: Snapshot] {
@@ -625,52 +625,52 @@ open util/ordering[Snapshot]
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        ThreadStates_t_2[s, s'] or
-        ThreadStates_t_3[s, s'] or
-        ThreadStates_t_4[s, s'] or
-        ThreadStates_t_5[s, s'] or
-        ThreadStates_t_6[s, s'] or
-        ThreadStates_t_7[s, s'] or
-        ThreadStates_t_8[s, s'] or
-        ThreadStates_t_9[s, s'] or
-        ThreadStates_t_10[s, s'] or
-        ThreadStates_t_11[s, s'] or
-        ThreadStates_t_14[s, s'] or
-        ThreadStates_t_15[s, s'] or
-        ThreadStates_New_t_16[s, s'] or
-        ThreadStates_Runnable_t_17[s, s'] or
-        ThreadStates_Runnable_t_18[s, s'] or
-        ThreadStates_Runnable_t_19[s, s'] or
-        ThreadStates__1[s, s'] or
-        ThreadStates__2[s, s'] or
-        ThreadStates__3[s, s'] or
-        ThreadStates__4[s, s'] or
-        ThreadStates__5[s, s'] or
-        ThreadStates__6[s, s'] or
-        ThreadStates__7[s, s'] or
-        ThreadStates__8[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        ThreadStates_t_2[s, sPrime] or
+        ThreadStates_t_3[s, sPrime] or
+        ThreadStates_t_4[s, sPrime] or
+        ThreadStates_t_5[s, sPrime] or
+        ThreadStates_t_6[s, sPrime] or
+        ThreadStates_t_7[s, sPrime] or
+        ThreadStates_t_8[s, sPrime] or
+        ThreadStates_t_9[s, sPrime] or
+        ThreadStates_t_10[s, sPrime] or
+        ThreadStates_t_11[s, sPrime] or
+        ThreadStates_t_14[s, sPrime] or
+        ThreadStates_t_15[s, sPrime] or
+        ThreadStates_New_t_16[s, sPrime] or
+        ThreadStates_Runnable_t_17[s, sPrime] or
+        ThreadStates_Runnable_t_18[s, sPrime] or
+        ThreadStates_Runnable_t_19[s, sPrime] or
+        ThreadStates__1[s, sPrime] or
+        ThreadStates__2[s, sPrime] or
+        ThreadStates__3[s, sPrime] or
+        ThreadStates__4[s, sPrime] or
+        ThreadStates__5[s, sPrime] or
+        ThreadStates__6[s, sPrime] or
+        ThreadStates__7[s, sPrime] or
+        ThreadStates__8[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.events = s.events
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.events = s.events
+        sPrime.taken = s.taken
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 19 EventLabel

@@ -37,23 +37,23 @@ open util/boolean
         Mutex_Process1_NonCritical in s.conf
     }
 
-    pred pos_Mutex_Process1_wait[s, s':Snapshot] {
-        s'.conf = s.conf - Mutex_Process1_NonCritical + {
+    pred pos_Mutex_Process1_wait[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Mutex_Process1_NonCritical + {
             Mutex_Process1_Wait
         }
-        s'.Mutex_semaphore_free = s.Mutex_semaphore_free
+        sPrime.Mutex_semaphore_free = s.Mutex_semaphore_free
     
-        testIfNextStable[s, s', {none}, Mutex_Process1_wait] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Mutex_Process1_wait] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
+            sPrime.stable = False
         }
     }
 
-    pred Mutex_Process1_wait[s, s': Snapshot] {
+    pred Mutex_Process1_wait[s, sPrime: Snapshot] {
         pre_Mutex_Process1_wait[s]
-        pos_Mutex_Process1_wait[s, s']
-        semantics_Mutex_Process1_wait[s, s']
+        pos_Mutex_Process1_wait[s, sPrime]
+        semantics_Mutex_Process1_wait[s, sPrime]
     }
 
     pred enabledAfterStep_Mutex_Process1_wait[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -75,13 +75,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_Mutex_Process1_wait[s, s': Snapshot] {
+    pred semantics_Mutex_Process1_wait[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Mutex_Process1_wait
+            sPrime.taken = Mutex_Process1_wait
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Mutex_Process1_wait
+            sPrime.taken = s.taken + Mutex_Process1_wait
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Mutex_Process1_give_up + 
@@ -96,23 +96,23 @@ open util/boolean
         Mutex_Process1_Wait in s.conf
     }
 
-    pred pos_Mutex_Process1_give_up[s, s':Snapshot] {
-        s'.conf = s.conf - Mutex_Process1_Wait + {
+    pred pos_Mutex_Process1_give_up[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Mutex_Process1_Wait + {
             Mutex_Process1_NonCritical
         }
-        s'.Mutex_semaphore_free = s.Mutex_semaphore_free
+        sPrime.Mutex_semaphore_free = s.Mutex_semaphore_free
     
-        testIfNextStable[s, s', {none}, Mutex_Process1_give_up] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Mutex_Process1_give_up] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
+            sPrime.stable = False
         }
     }
 
-    pred Mutex_Process1_give_up[s, s': Snapshot] {
+    pred Mutex_Process1_give_up[s, sPrime: Snapshot] {
         pre_Mutex_Process1_give_up[s]
-        pos_Mutex_Process1_give_up[s, s']
-        semantics_Mutex_Process1_give_up[s, s']
+        pos_Mutex_Process1_give_up[s, sPrime]
+        semantics_Mutex_Process1_give_up[s, sPrime]
     }
 
     pred enabledAfterStep_Mutex_Process1_give_up[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -134,13 +134,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_Mutex_Process1_give_up[s, s': Snapshot] {
+    pred semantics_Mutex_Process1_give_up[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Mutex_Process1_give_up
+            sPrime.taken = Mutex_Process1_give_up
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Mutex_Process1_give_up
+            sPrime.taken = s.taken + Mutex_Process1_give_up
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Mutex_Process1_give_up + 
@@ -156,23 +156,23 @@ open util/boolean
         (s.Mutex_semaphore_free) = True
     }
 
-    pred pos_Mutex_Process1_enter_critical_section[s, s':Snapshot] {
-        s'.conf = s.conf - Mutex_Process1_Wait + {
+    pred pos_Mutex_Process1_enter_critical_section[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Mutex_Process1_Wait + {
             Mutex_Process1_Critical
         }
-        (s'.Mutex_semaphore_free) = False
+        (sPrime.Mutex_semaphore_free) = False
     
-        testIfNextStable[s, s', {none}, Mutex_Process1_enter_critical_section] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Mutex_Process1_enter_critical_section] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
+            sPrime.stable = False
         }
     }
 
-    pred Mutex_Process1_enter_critical_section[s, s': Snapshot] {
+    pred Mutex_Process1_enter_critical_section[s, sPrime: Snapshot] {
         pre_Mutex_Process1_enter_critical_section[s]
-        pos_Mutex_Process1_enter_critical_section[s, s']
-        semantics_Mutex_Process1_enter_critical_section[s, s']
+        pos_Mutex_Process1_enter_critical_section[s, sPrime]
+        semantics_Mutex_Process1_enter_critical_section[s, sPrime]
     }
 
     pred enabledAfterStep_Mutex_Process1_enter_critical_section[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -195,13 +195,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_Mutex_Process1_enter_critical_section[s, s': Snapshot] {
+    pred semantics_Mutex_Process1_enter_critical_section[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Mutex_Process1_enter_critical_section
+            sPrime.taken = Mutex_Process1_enter_critical_section
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Mutex_Process1_enter_critical_section
+            sPrime.taken = s.taken + Mutex_Process1_enter_critical_section
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Mutex_Process1_give_up + 
@@ -217,23 +217,23 @@ open util/boolean
         (s.Mutex_semaphore_free) = False
     }
 
-    pred pos_Mutex_Process1_exit_critical_section[s, s':Snapshot] {
-        s'.conf = s.conf - Mutex_Process1_Critical + {
+    pred pos_Mutex_Process1_exit_critical_section[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Mutex_Process1_Critical + {
             Mutex_Process1_NonCritical
         }
-        (s'.Mutex_semaphore_free) = True
+        (sPrime.Mutex_semaphore_free) = True
     
-        testIfNextStable[s, s', {none}, Mutex_Process1_exit_critical_section] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Mutex_Process1_exit_critical_section] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
+            sPrime.stable = False
         }
     }
 
-    pred Mutex_Process1_exit_critical_section[s, s': Snapshot] {
+    pred Mutex_Process1_exit_critical_section[s, sPrime: Snapshot] {
         pre_Mutex_Process1_exit_critical_section[s]
-        pos_Mutex_Process1_exit_critical_section[s, s']
-        semantics_Mutex_Process1_exit_critical_section[s, s']
+        pos_Mutex_Process1_exit_critical_section[s, sPrime]
+        semantics_Mutex_Process1_exit_critical_section[s, sPrime]
     }
 
     pred enabledAfterStep_Mutex_Process1_exit_critical_section[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -256,13 +256,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_Mutex_Process1_exit_critical_section[s, s': Snapshot] {
+    pred semantics_Mutex_Process1_exit_critical_section[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Mutex_Process1_exit_critical_section
+            sPrime.taken = Mutex_Process1_exit_critical_section
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Mutex_Process1_exit_critical_section
+            sPrime.taken = s.taken + Mutex_Process1_exit_critical_section
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Mutex_Process1_give_up + 
@@ -277,23 +277,23 @@ open util/boolean
         Mutex_Process2_NonCritical in s.conf
     }
 
-    pred pos_Mutex_Process2_wait[s, s':Snapshot] {
-        s'.conf = s.conf - Mutex_Process2_NonCritical + {
+    pred pos_Mutex_Process2_wait[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Mutex_Process2_NonCritical + {
             Mutex_Process2_Wait
         }
-        s'.Mutex_semaphore_free = s.Mutex_semaphore_free
+        sPrime.Mutex_semaphore_free = s.Mutex_semaphore_free
     
-        testIfNextStable[s, s', {none}, Mutex_Process2_wait] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Mutex_Process2_wait] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
+            sPrime.stable = False
         }
     }
 
-    pred Mutex_Process2_wait[s, s': Snapshot] {
+    pred Mutex_Process2_wait[s, sPrime: Snapshot] {
         pre_Mutex_Process2_wait[s]
-        pos_Mutex_Process2_wait[s, s']
-        semantics_Mutex_Process2_wait[s, s']
+        pos_Mutex_Process2_wait[s, sPrime]
+        semantics_Mutex_Process2_wait[s, sPrime]
     }
 
     pred enabledAfterStep_Mutex_Process2_wait[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -315,13 +315,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_Mutex_Process2_wait[s, s': Snapshot] {
+    pred semantics_Mutex_Process2_wait[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Mutex_Process2_wait
+            sPrime.taken = Mutex_Process2_wait
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Mutex_Process2_wait
+            sPrime.taken = s.taken + Mutex_Process2_wait
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Mutex_Process2_give_up + 
@@ -336,23 +336,23 @@ open util/boolean
         Mutex_Process2_Wait in s.conf
     }
 
-    pred pos_Mutex_Process2_give_up[s, s':Snapshot] {
-        s'.conf = s.conf - Mutex_Process2_Wait + {
+    pred pos_Mutex_Process2_give_up[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Mutex_Process2_Wait + {
             Mutex_Process2_NonCritical
         }
-        s'.Mutex_semaphore_free = s.Mutex_semaphore_free
+        sPrime.Mutex_semaphore_free = s.Mutex_semaphore_free
     
-        testIfNextStable[s, s', {none}, Mutex_Process2_give_up] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Mutex_Process2_give_up] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
+            sPrime.stable = False
         }
     }
 
-    pred Mutex_Process2_give_up[s, s': Snapshot] {
+    pred Mutex_Process2_give_up[s, sPrime: Snapshot] {
         pre_Mutex_Process2_give_up[s]
-        pos_Mutex_Process2_give_up[s, s']
-        semantics_Mutex_Process2_give_up[s, s']
+        pos_Mutex_Process2_give_up[s, sPrime]
+        semantics_Mutex_Process2_give_up[s, sPrime]
     }
 
     pred enabledAfterStep_Mutex_Process2_give_up[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -374,13 +374,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_Mutex_Process2_give_up[s, s': Snapshot] {
+    pred semantics_Mutex_Process2_give_up[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Mutex_Process2_give_up
+            sPrime.taken = Mutex_Process2_give_up
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Mutex_Process2_give_up
+            sPrime.taken = s.taken + Mutex_Process2_give_up
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Mutex_Process2_give_up + 
@@ -396,23 +396,23 @@ open util/boolean
         (s.Mutex_semaphore_free) = True
     }
 
-    pred pos_Mutex_Process2_enter_critical_section[s, s':Snapshot] {
-        s'.conf = s.conf - Mutex_Process2_Wait + {
+    pred pos_Mutex_Process2_enter_critical_section[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Mutex_Process2_Wait + {
             Mutex_Process2_Critical
         }
-        (s'.Mutex_semaphore_free) = False
+        (sPrime.Mutex_semaphore_free) = False
     
-        testIfNextStable[s, s', {none}, Mutex_Process2_enter_critical_section] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Mutex_Process2_enter_critical_section] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
+            sPrime.stable = False
         }
     }
 
-    pred Mutex_Process2_enter_critical_section[s, s': Snapshot] {
+    pred Mutex_Process2_enter_critical_section[s, sPrime: Snapshot] {
         pre_Mutex_Process2_enter_critical_section[s]
-        pos_Mutex_Process2_enter_critical_section[s, s']
-        semantics_Mutex_Process2_enter_critical_section[s, s']
+        pos_Mutex_Process2_enter_critical_section[s, sPrime]
+        semantics_Mutex_Process2_enter_critical_section[s, sPrime]
     }
 
     pred enabledAfterStep_Mutex_Process2_enter_critical_section[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -435,13 +435,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_Mutex_Process2_enter_critical_section[s, s': Snapshot] {
+    pred semantics_Mutex_Process2_enter_critical_section[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Mutex_Process2_enter_critical_section
+            sPrime.taken = Mutex_Process2_enter_critical_section
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Mutex_Process2_enter_critical_section
+            sPrime.taken = s.taken + Mutex_Process2_enter_critical_section
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Mutex_Process2_give_up + 
@@ -457,23 +457,23 @@ open util/boolean
         (s.Mutex_semaphore_free) = False
     }
 
-    pred pos_Mutex_Process2_exit_critical_section[s, s':Snapshot] {
-        s'.conf = s.conf - Mutex_Process2_Critical + {
+    pred pos_Mutex_Process2_exit_critical_section[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Mutex_Process2_Critical + {
             Mutex_Process2_NonCritical
         }
-        (s'.Mutex_semaphore_free) = True
+        (sPrime.Mutex_semaphore_free) = True
     
-        testIfNextStable[s, s', {none}, Mutex_Process2_exit_critical_section] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Mutex_Process2_exit_critical_section] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
+            sPrime.stable = False
         }
     }
 
-    pred Mutex_Process2_exit_critical_section[s, s': Snapshot] {
+    pred Mutex_Process2_exit_critical_section[s, sPrime: Snapshot] {
         pre_Mutex_Process2_exit_critical_section[s]
-        pos_Mutex_Process2_exit_critical_section[s, s']
-        semantics_Mutex_Process2_exit_critical_section[s, s']
+        pos_Mutex_Process2_exit_critical_section[s, sPrime]
+        semantics_Mutex_Process2_exit_critical_section[s, sPrime]
     }
 
     pred enabledAfterStep_Mutex_Process2_exit_critical_section[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -496,13 +496,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_Mutex_Process2_exit_critical_section[s, s': Snapshot] {
+    pred semantics_Mutex_Process2_exit_critical_section[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Mutex_Process2_exit_critical_section
+            sPrime.taken = Mutex_Process2_exit_critical_section
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Mutex_Process2_exit_critical_section
+            sPrime.taken = s.taken + Mutex_Process2_exit_critical_section
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Mutex_Process2_give_up + 
@@ -526,30 +526,30 @@ open util/boolean
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        Mutex_Process1_wait[s, s'] or
-        Mutex_Process1_give_up[s, s'] or
-        Mutex_Process1_enter_critical_section[s, s'] or
-        Mutex_Process1_exit_critical_section[s, s'] or
-        Mutex_Process2_wait[s, s'] or
-        Mutex_Process2_give_up[s, s'] or
-        Mutex_Process2_enter_critical_section[s, s'] or
-        Mutex_Process2_exit_critical_section[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        Mutex_Process1_wait[s, sPrime] or
+        Mutex_Process1_give_up[s, sPrime] or
+        Mutex_Process1_enter_critical_section[s, sPrime] or
+        Mutex_Process1_exit_critical_section[s, sPrime] or
+        Mutex_Process2_wait[s, sPrime] or
+        Mutex_Process2_give_up[s, sPrime] or
+        Mutex_Process2_enter_critical_section[s, sPrime] or
+        Mutex_Process2_exit_critical_section[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred testIfNextStable[s, s': Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
-        !enabledAfterStep_Mutex_Process1_wait[s, s', t, genEvents]
-        !enabledAfterStep_Mutex_Process1_give_up[s, s', t, genEvents]
-        !enabledAfterStep_Mutex_Process1_enter_critical_section[s, s', t, genEvents]
-        !enabledAfterStep_Mutex_Process1_exit_critical_section[s, s', t, genEvents]
-        !enabledAfterStep_Mutex_Process2_wait[s, s', t, genEvents]
-        !enabledAfterStep_Mutex_Process2_give_up[s, s', t, genEvents]
-        !enabledAfterStep_Mutex_Process2_enter_critical_section[s, s', t, genEvents]
-        !enabledAfterStep_Mutex_Process2_exit_critical_section[s, s', t, genEvents]
+    pred testIfNextStable[s, sPrime: Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
+        !enabledAfterStep_Mutex_Process1_wait[s, sPrime, t, genEvents]
+        !enabledAfterStep_Mutex_Process1_give_up[s, sPrime, t, genEvents]
+        !enabledAfterStep_Mutex_Process1_enter_critical_section[s, sPrime, t, genEvents]
+        !enabledAfterStep_Mutex_Process1_exit_critical_section[s, sPrime, t, genEvents]
+        !enabledAfterStep_Mutex_Process2_wait[s, sPrime, t, genEvents]
+        !enabledAfterStep_Mutex_Process2_give_up[s, sPrime, t, genEvents]
+        !enabledAfterStep_Mutex_Process2_enter_critical_section[s, sPrime, t, genEvents]
+        !enabledAfterStep_Mutex_Process2_exit_critical_section[s, sPrime, t, genEvents]
     }
 
     pred isEnabled[s:Snapshot] {
@@ -563,24 +563,24 @@ open util/boolean
         pre_Mutex_Process2_exit_critical_section[s]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.taken = s.taken
         // Model specific declarations
-        s'.Mutex_semaphore_free = s.Mutex_semaphore_free
+        sPrime.Mutex_semaphore_free = s.Mutex_semaphore_free
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
-        all s: Snapshot | (isEnabled[s] && no s': Snapshot | small_step[s, s']) => s.stable = False
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
+        all s: Snapshot | (isEnabled[s] && no sPrime: Snapshot | small_step[s, sPrime]) => s.stable = False
         all s: Snapshot | s.stable = False => some s.nextStep
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 0 EventLabel

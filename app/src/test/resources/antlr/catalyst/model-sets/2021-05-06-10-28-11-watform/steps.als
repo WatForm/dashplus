@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-module steps[S]
+// module steps[S]
 
 open ctl[S]
 
@@ -57,7 +57,7 @@ open ctl[S]
     }
 
     pred equalityAxiom {
-        all s, s': S |  s->s' in Step.equality => s = s'
+        all s, sPrime: S |  s->sPrime in Step.equality => s = sPrime
     }
 
     // The system is always in some state

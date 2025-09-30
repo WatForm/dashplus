@@ -36,23 +36,23 @@ open util/ordering[Snapshot]
         #(s.Game_active_players) > 1
     }
 
-    pred pos_Game_Start_Walk[s, s':Snapshot] {
-        s'.conf = s.conf - Game_Start + {
+    pred pos_Game_Start_Walk[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Game_Start + {
             Game_Walking
         }
-        s'.Game_active_players = s.Game_active_players
-        s'.Game_active_chairs = s.Game_active_chairs
-        (s'.Game_occupied) = none -> none
-        no ((s'.events & InternalEvent) )
+        sPrime.Game_active_players = s.Game_active_players
+        sPrime.Game_active_chairs = s.Game_active_chairs
+        (sPrime.Game_occupied) = none -> none
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred Game_Start_Walk[s, s': Snapshot] {
+    pred Game_Start_Walk[s, sPrime: Snapshot] {
         pre_Game_Start_Walk[s]
-        pos_Game_Start_Walk[s, s']
-        semantics_Game_Start_Walk[s, s']
+        pos_Game_Start_Walk[s, sPrime]
+        semantics_Game_Start_Walk[s, sPrime]
     }
-    pred semantics_Game_Start_Walk[s, s': Snapshot] {
-        s'.taken = Game_Start_Walk
+    pred semantics_Game_Start_Walk[s, sPrime: Snapshot] {
+        sPrime.taken = Game_Start_Walk
     }
     // Transition Game_Start_DeclareWinner
     pred pre_Game_Start_DeclareWinner[s:Snapshot] {
@@ -60,23 +60,23 @@ open util/ordering[Snapshot]
         one (s.Game_active_players)
     }
 
-    pred pos_Game_Start_DeclareWinner[s, s':Snapshot] {
-        s'.conf = s.conf - Game_Start + {
+    pred pos_Game_Start_DeclareWinner[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Game_Start + {
             Game_End
         }
-        s'.Game_active_players = s.Game_active_players
-        s'.Game_active_chairs = s.Game_active_chairs
-        s'.Game_occupied = s.Game_occupied
-        no ((s'.events & InternalEvent) )
+        sPrime.Game_active_players = s.Game_active_players
+        sPrime.Game_active_chairs = s.Game_active_chairs
+        sPrime.Game_occupied = s.Game_occupied
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred Game_Start_DeclareWinner[s, s': Snapshot] {
+    pred Game_Start_DeclareWinner[s, sPrime: Snapshot] {
         pre_Game_Start_DeclareWinner[s]
-        pos_Game_Start_DeclareWinner[s, s']
-        semantics_Game_Start_DeclareWinner[s, s']
+        pos_Game_Start_DeclareWinner[s, sPrime]
+        semantics_Game_Start_DeclareWinner[s, sPrime]
     }
-    pred semantics_Game_Start_DeclareWinner[s, s': Snapshot] {
-        s'.taken = Game_Start_DeclareWinner
+    pred semantics_Game_Start_DeclareWinner[s, sPrime: Snapshot] {
+        sPrime.taken = Game_Start_DeclareWinner
     }
     // Transition Game_Walking_Sit
     pred pre_Game_Walking_Sit[s:Snapshot] {
@@ -84,54 +84,54 @@ open util/ordering[Snapshot]
         Game_MusicStops in (s.events & EnvironmentEvent)
     }
 
-    pred pos_Game_Walking_Sit[s, s':Snapshot] {
-        s'.conf = s.conf - Game_Walking + {
+    pred pos_Game_Walking_Sit[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Game_Walking + {
             Game_Sitting
         }
         {
-            (s'.Game_occupied) in (s.Game_active_chairs) -> (s.Game_active_players)
-            (s'.Game_active_chairs) = (s.Game_active_chairs)
-            (s'.Game_active_players) = (s.Game_active_players)
-            all c : (s'.Game_active_chairs)
-             | one c.((s'.Game_occupied))
-            all p : Chair.((s'.Game_occupied))
-             | one (s'.Game_occupied).p
+            (sPrime.Game_occupied) in (s.Game_active_chairs) -> (s.Game_active_players)
+            (sPrime.Game_active_chairs) = (s.Game_active_chairs)
+            (sPrime.Game_active_players) = (s.Game_active_players)
+            all c : (sPrime.Game_active_chairs)
+             | one c.((sPrime.Game_occupied))
+            all p : Chair.((sPrime.Game_occupied))
+             | one (sPrime.Game_occupied).p
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred Game_Walking_Sit[s, s': Snapshot] {
+    pred Game_Walking_Sit[s, sPrime: Snapshot] {
         pre_Game_Walking_Sit[s]
-        pos_Game_Walking_Sit[s, s']
-        semantics_Game_Walking_Sit[s, s']
+        pos_Game_Walking_Sit[s, sPrime]
+        semantics_Game_Walking_Sit[s, sPrime]
     }
-    pred semantics_Game_Walking_Sit[s, s': Snapshot] {
-        s'.taken = Game_Walking_Sit
+    pred semantics_Game_Walking_Sit[s, sPrime: Snapshot] {
+        sPrime.taken = Game_Walking_Sit
     }
     // Transition Game_Sitting_EliminateLoser
     pred pre_Game_Sitting_EliminateLoser[s:Snapshot] {
         Game_Sitting in s.conf
     }
 
-    pred pos_Game_Sitting_EliminateLoser[s, s':Snapshot] {
-        s'.conf = s.conf - Game_Sitting + {
+    pred pos_Game_Sitting_EliminateLoser[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Game_Sitting + {
             Game_Start
         }
-        s'.Game_occupied = s.Game_occupied
+        sPrime.Game_occupied = s.Game_occupied
         {
-            (s'.Game_active_players) = Chair.(s.Game_occupied)
-            #(s'.Game_active_chairs) = (#(s.Game_active_chairs)).minus[ 1]
+            (sPrime.Game_active_players) = Chair.(s.Game_occupied)
+            #(sPrime.Game_active_chairs) = (#(s.Game_active_chairs)).minus[ 1]
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred Game_Sitting_EliminateLoser[s, s': Snapshot] {
+    pred Game_Sitting_EliminateLoser[s, sPrime: Snapshot] {
         pre_Game_Sitting_EliminateLoser[s]
-        pos_Game_Sitting_EliminateLoser[s, s']
-        semantics_Game_Sitting_EliminateLoser[s, s']
+        pos_Game_Sitting_EliminateLoser[s, sPrime]
+        semantics_Game_Sitting_EliminateLoser[s, sPrime]
     }
-    pred semantics_Game_Sitting_EliminateLoser[s, s': Snapshot] {
-        s'.taken = Game_Sitting_EliminateLoser
+    pred semantics_Game_Sitting_EliminateLoser[s, sPrime: Snapshot] {
+        sPrime.taken = Game_Sitting_EliminateLoser
     }
 /****************************** INITIAL CONDITIONS ****************************/
     pred init[s: Snapshot] {
@@ -150,36 +150,36 @@ open util/ordering[Snapshot]
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        Game_Start_Walk[s, s'] or
-        Game_Start_DeclareWinner[s, s'] or
-        Game_Walking_Sit[s, s'] or
-        Game_Sitting_EliminateLoser[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        Game_Start_Walk[s, sPrime] or
+        Game_Start_DeclareWinner[s, sPrime] or
+        Game_Walking_Sit[s, sPrime] or
+        Game_Sitting_EliminateLoser[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.events = s.events
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.events = s.events
+        sPrime.taken = s.taken
         // Model specific declarations
-        s'.Game_active_players = s.Game_active_players
-        s'.Game_active_chairs = s.Game_active_chairs
-        s'.Game_occupied = s.Game_occupied
+        sPrime.Game_active_players = s.Game_active_players
+        sPrime.Game_active_chairs = s.Game_active_chairs
+        sPrime.Game_occupied = s.Game_occupied
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 2 EventLabel,

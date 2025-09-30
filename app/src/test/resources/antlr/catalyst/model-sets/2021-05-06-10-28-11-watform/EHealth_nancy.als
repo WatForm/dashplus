@@ -31,23 +31,23 @@ open util/ordering[Snapshot]
         !(((s.EHealthSystem_in_p) in (s.EHealthSystem_patients)))
     }
 
-    pred pos_EHealthSystem_add_patient[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_add_patient[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        (s'.EHealthSystem_patients) = (s.EHealthSystem_patients) + (s.EHealthSystem_in_p)
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        (sPrime.EHealthSystem_patients) = (s.EHealthSystem_patients) + (s.EHealthSystem_in_p)
     }
 
-    pred EHealthSystem_add_patient[s, s': Snapshot] {
+    pred EHealthSystem_add_patient[s, sPrime: Snapshot] {
         pre_EHealthSystem_add_patient[s]
-        pos_EHealthSystem_add_patient[s, s']
-        semantics_EHealthSystem_add_patient[s, s']
+        pos_EHealthSystem_add_patient[s, sPrime]
+        semantics_EHealthSystem_add_patient[s, sPrime]
     }
-    pred semantics_EHealthSystem_add_patient[s, s': Snapshot] {
-        s'.taken = EHealthSystem_add_patient
+    pred semantics_EHealthSystem_add_patient[s, sPrime: Snapshot] {
+        sPrime.taken = EHealthSystem_add_patient
     }
     // Transition EHealthSystem_add_medication
     pred pre_EHealthSystem_add_medication[s:Snapshot] {
@@ -55,23 +55,23 @@ open util/ordering[Snapshot]
         !(((s.EHealthSystem_in_m1) in (s.EHealthSystem_medications)))
     }
 
-    pred pos_EHealthSystem_add_medication[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_add_medication[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        (s'.EHealthSystem_medications) = (s.EHealthSystem_medications) + (s.EHealthSystem_in_m1)
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        (sPrime.EHealthSystem_medications) = (s.EHealthSystem_medications) + (s.EHealthSystem_in_m1)
     }
 
-    pred EHealthSystem_add_medication[s, s': Snapshot] {
+    pred EHealthSystem_add_medication[s, sPrime: Snapshot] {
         pre_EHealthSystem_add_medication[s]
-        pos_EHealthSystem_add_medication[s, s']
-        semantics_EHealthSystem_add_medication[s, s']
+        pos_EHealthSystem_add_medication[s, sPrime]
+        semantics_EHealthSystem_add_medication[s, sPrime]
     }
-    pred semantics_EHealthSystem_add_medication[s, s': Snapshot] {
-        s'.taken = EHealthSystem_add_medication
+    pred semantics_EHealthSystem_add_medication[s, sPrime: Snapshot] {
+        sPrime.taken = EHealthSystem_add_medication
     }
     // Transition EHealthSystem_add_interaction
     pred pre_EHealthSystem_add_interaction[s:Snapshot] {
@@ -84,25 +84,25 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_EHealthSystem_add_interaction[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_add_interaction[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        (s'.EHealthSystem_interactions) = (s.EHealthSystem_interactions) + {
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        (sPrime.EHealthSystem_interactions) = (s.EHealthSystem_interactions) + {
             (s.EHealthSystem_in_m1) -> (s.EHealthSystem_in_m2) + (s.EHealthSystem_in_m2) -> (s.EHealthSystem_in_m1)
         }
     }
 
-    pred EHealthSystem_add_interaction[s, s': Snapshot] {
+    pred EHealthSystem_add_interaction[s, sPrime: Snapshot] {
         pre_EHealthSystem_add_interaction[s]
-        pos_EHealthSystem_add_interaction[s, s']
-        semantics_EHealthSystem_add_interaction[s, s']
+        pos_EHealthSystem_add_interaction[s, sPrime]
+        semantics_EHealthSystem_add_interaction[s, sPrime]
     }
-    pred semantics_EHealthSystem_add_interaction[s, s': Snapshot] {
-        s'.taken = EHealthSystem_add_interaction
+    pred semantics_EHealthSystem_add_interaction[s, sPrime: Snapshot] {
+        sPrime.taken = EHealthSystem_add_interaction
     }
     // Transition EHealthSystem_add_prescription
     pred pre_EHealthSystem_add_prescription[s:Snapshot] {
@@ -115,23 +115,23 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_EHealthSystem_add_prescription[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_add_prescription[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        (s'.EHealthSystem_prescriptions) = (s.EHealthSystem_prescriptions) + (s.EHealthSystem_in_p) -> (s.EHealthSystem_in_m1)
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        (sPrime.EHealthSystem_prescriptions) = (s.EHealthSystem_prescriptions) + (s.EHealthSystem_in_p) -> (s.EHealthSystem_in_m1)
     }
 
-    pred EHealthSystem_add_prescription[s, s': Snapshot] {
+    pred EHealthSystem_add_prescription[s, sPrime: Snapshot] {
         pre_EHealthSystem_add_prescription[s]
-        pos_EHealthSystem_add_prescription[s, s']
-        semantics_EHealthSystem_add_prescription[s, s']
+        pos_EHealthSystem_add_prescription[s, sPrime]
+        semantics_EHealthSystem_add_prescription[s, sPrime]
     }
-    pred semantics_EHealthSystem_add_prescription[s, s': Snapshot] {
-        s'.taken = EHealthSystem_add_prescription
+    pred semantics_EHealthSystem_add_prescription[s, sPrime: Snapshot] {
+        sPrime.taken = EHealthSystem_add_prescription
     }
     // Transition EHealthSystem_remove_interaction
     pred pre_EHealthSystem_remove_interaction[s:Snapshot] {
@@ -143,25 +143,25 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_EHealthSystem_remove_interaction[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_remove_interaction[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        (s'.EHealthSystem_interactions) = (s.EHealthSystem_interactions) - {
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        (sPrime.EHealthSystem_interactions) = (s.EHealthSystem_interactions) - {
             (s.EHealthSystem_in_m1) -> (s.EHealthSystem_in_m2) + (s.EHealthSystem_in_m2) -> (s.EHealthSystem_in_m1)
         }
     }
 
-    pred EHealthSystem_remove_interaction[s, s': Snapshot] {
+    pred EHealthSystem_remove_interaction[s, sPrime: Snapshot] {
         pre_EHealthSystem_remove_interaction[s]
-        pos_EHealthSystem_remove_interaction[s, s']
-        semantics_EHealthSystem_remove_interaction[s, s']
+        pos_EHealthSystem_remove_interaction[s, sPrime]
+        semantics_EHealthSystem_remove_interaction[s, sPrime]
     }
-    pred semantics_EHealthSystem_remove_interaction[s, s': Snapshot] {
-        s'.taken = EHealthSystem_remove_interaction
+    pred semantics_EHealthSystem_remove_interaction[s, sPrime: Snapshot] {
+        sPrime.taken = EHealthSystem_remove_interaction
     }
     // Transition EHealthSystem_remove_prescription
     pred pre_EHealthSystem_remove_prescription[s:Snapshot] {
@@ -173,23 +173,23 @@ open util/ordering[Snapshot]
         }
     }
 
-    pred pos_EHealthSystem_remove_prescription[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_remove_prescription[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        (s'.EHealthSystem_prescriptions) = (s.EHealthSystem_prescriptions) - (s.EHealthSystem_in_p) -> (s.EHealthSystem_in_m1)
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        (sPrime.EHealthSystem_prescriptions) = (s.EHealthSystem_prescriptions) - (s.EHealthSystem_in_p) -> (s.EHealthSystem_in_m1)
     }
 
-    pred EHealthSystem_remove_prescription[s, s': Snapshot] {
+    pred EHealthSystem_remove_prescription[s, sPrime: Snapshot] {
         pre_EHealthSystem_remove_prescription[s]
-        pos_EHealthSystem_remove_prescription[s, s']
-        semantics_EHealthSystem_remove_prescription[s, s']
+        pos_EHealthSystem_remove_prescription[s, sPrime]
+        semantics_EHealthSystem_remove_prescription[s, sPrime]
     }
-    pred semantics_EHealthSystem_remove_prescription[s, s': Snapshot] {
-        s'.taken = EHealthSystem_remove_prescription
+    pred semantics_EHealthSystem_remove_prescription[s, sPrime: Snapshot] {
+        sPrime.taken = EHealthSystem_remove_prescription
     }
 /****************************** INITIAL CONDITIONS ****************************/
     pred init[s: Snapshot] {
@@ -206,41 +206,41 @@ open util/ordering[Snapshot]
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        EHealthSystem_add_patient[s, s'] or
-        EHealthSystem_add_medication[s, s'] or
-        EHealthSystem_add_interaction[s, s'] or
-        EHealthSystem_add_prescription[s, s'] or
-        EHealthSystem_remove_interaction[s, s'] or
-        EHealthSystem_remove_prescription[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        EHealthSystem_add_patient[s, sPrime] or
+        EHealthSystem_add_medication[s, sPrime] or
+        EHealthSystem_add_interaction[s, sPrime] or
+        EHealthSystem_add_prescription[s, sPrime] or
+        EHealthSystem_remove_interaction[s, sPrime] or
+        EHealthSystem_remove_prescription[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.taken = s.taken
         // Model specific declarations
-        s'.EHealthSystem_in_p = s.EHealthSystem_in_p
-        s'.EHealthSystem_in_m1 = s.EHealthSystem_in_m1
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        s'.EHealthSystem_in_m2 = s.EHealthSystem_in_m2
+        sPrime.EHealthSystem_in_p = s.EHealthSystem_in_p
+        sPrime.EHealthSystem_in_m1 = s.EHealthSystem_in_m1
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        sPrime.EHealthSystem_in_m2 = s.EHealthSystem_in_m2
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 0 EventLabel,

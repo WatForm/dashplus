@@ -52,29 +52,29 @@ sig State {
 pred pre_add_patient[s: State] {
   !(s.in_patient in s.patients)
 }
-pred post_add_patient[s, s': State] {
-  s'.patients = s.patients + s.in_patient
-  s'.medications = s.medications
-  s'.interactions = s.interactions
-  s'.prescriptions = s.prescriptions
+pred post_add_patient[s, sPrime: State] {
+  sPrime.patients = s.patients + s.in_patient
+  sPrime.medications = s.medications
+  sPrime.interactions = s.interactions
+  sPrime.prescriptions = s.prescriptions
 }
-pred add_patient[s, s': State] {
+pred add_patient[s, sPrime: State] {
   pre_add_patient[s]
-  post_add_patient[s, s']
+  post_add_patient[s, sPrime]
 }
 
 pred pre_add_medication[s: State] {
   !(s.in_medication1 in s.medications)
 }
-pred post_add_medication[s, s': State] {
-  s'.medications = s.medications + s.in_medication1
-  s'.patients = s.patients
-  s'.interactions = s.interactions
-  s'.prescriptions = s.prescriptions
+pred post_add_medication[s, sPrime: State] {
+  sPrime.medications = s.medications + s.in_medication1
+  sPrime.patients = s.patients
+  sPrime.interactions = s.interactions
+  sPrime.prescriptions = s.prescriptions
 }
-pred add_medication[s, s': State] {
+pred add_medication[s, sPrime: State] {
   pre_add_medication[s]
-  post_add_medication[s, s']
+  post_add_medication[s, sPrime]
 }
 
 pred pre_add_interaction[s: State] {
@@ -86,16 +86,16 @@ pred pre_add_interaction[s: State] {
     !((p->s.in_medication1 in s.prescriptions) and
       (p->s.in_medication2 in s.prescriptions))
 }
-pred post_add_interaction[s, s': State] {
-  s'.interactions = s.interactions + { s.in_medication1->s.in_medication2 +
+pred post_add_interaction[s, sPrime: State] {
+  sPrime.interactions = s.interactions + { s.in_medication1->s.in_medication2 +
                                        s.in_medication2->s.in_medication1 }
-  s'.patients = s.patients
-  s'.medications = s.medications
-  s'.prescriptions = s.prescriptions
+  sPrime.patients = s.patients
+  sPrime.medications = s.medications
+  sPrime.prescriptions = s.prescriptions
 }
-pred add_interaction[s, s': State] {
+pred add_interaction[s, sPrime: State] {
   pre_add_interaction[s]
-  post_add_interaction[s, s']
+  post_add_interaction[s, sPrime]
 }
 
 pred pre_add_prescription[s: State] {
@@ -104,15 +104,15 @@ pred pre_add_prescription[s: State] {
   !(s.in_patient->s.in_medication1 in s.prescriptions)
   all m0: s.prescriptions[s.in_patient] | !(s.in_medication1->m0 in s.interactions)
 }
-pred post_add_prescription[s, s': State] {
-  s'.prescriptions = s.prescriptions + s.in_patient->s.in_medication1
-  s'.patients = s.patients
-  s'.medications = s.medications
-  s'.interactions = s.interactions
+pred post_add_prescription[s, sPrime: State] {
+  sPrime.prescriptions = s.prescriptions + s.in_patient->s.in_medication1
+  sPrime.patients = s.patients
+  sPrime.medications = s.medications
+  sPrime.interactions = s.interactions
 }
-pred add_prescription[s, s': State] {
+pred add_prescription[s, sPrime: State] {
   pre_add_prescription[s]
-  post_add_prescription[s, s']
+  post_add_prescription[s, sPrime]
 }
 
 pred pre_remove_interaction[s: State] {
@@ -120,16 +120,16 @@ pred pre_remove_interaction[s: State] {
   s.in_medication2 in s.medications
   s.in_medication1->s.in_medication2 in s.interactions
 }
-pred post_remove_interaction[s, s': State] {
-  s'.interactions = s.interactions - { s.in_medication1->s.in_medication2 +
+pred post_remove_interaction[s, sPrime: State] {
+  sPrime.interactions = s.interactions - { s.in_medication1->s.in_medication2 +
                                        s.in_medication2->s.in_medication1 }
-  s'.patients = s.patients
-  s'.medications = s.medications
-  s'.prescriptions = s.prescriptions
+  sPrime.patients = s.patients
+  sPrime.medications = s.medications
+  sPrime.prescriptions = s.prescriptions
 }
-pred remove_interaction[s, s': State] {
+pred remove_interaction[s, sPrime: State] {
   pre_remove_interaction[s]
-  post_remove_interaction[s, s']
+  post_remove_interaction[s, sPrime]
 }
 
 pred pre_remove_prescription[s: State] {
@@ -137,15 +137,15 @@ pred pre_remove_prescription[s: State] {
   s.in_medication1 in s.medications
   s.in_patient->s.in_medication1 in s.prescriptions
 }
-pred post_remove_prescription[s, s': State] {
-  s'.prescriptions = s.prescriptions - s.in_patient->s.in_medication1
-  s'.patients = s.patients
-  s'.medications = s.medications
-  s'.interactions = s.interactions
+pred post_remove_prescription[s, sPrime: State] {
+  sPrime.prescriptions = s.prescriptions - s.in_patient->s.in_medication1
+  sPrime.patients = s.patients
+  sPrime.medications = s.medications
+  sPrime.interactions = s.interactions
 }
-pred remove_prescription[s, s': State] {
+pred remove_prescription[s, sPrime: State] {
   pre_remove_prescription[s]
-  post_remove_prescription[s, s']
+  post_remove_prescription[s, sPrime]
 }
 
 pred init[s: State] {
@@ -155,20 +155,20 @@ pred init[s: State] {
   no s.prescriptions
 }
 
-pred next[s, s': State] {
-     add_patient[s, s']
-  or add_medication[s, s']
-  or add_interaction[s, s']
-  or remove_interaction[s, s']
-  or add_prescription[s, s']
-  or remove_prescription[s, s']
+pred next[s, sPrime: State] {
+     add_patient[s, sPrime]
+  or add_medication[s, sPrime]
+  or add_interaction[s, sPrime]
+  or remove_interaction[s, sPrime]
+  or add_prescription[s, sPrime]
+  or remove_prescription[s, sPrime]
 }
 
 fact traces {
   init[StateOrdering/first]
   all s: State-StateOrdering/last |
-    let s' = s.StateOrdering/next |
-      next[s, s']
+    let sPrime = s.StateOrdering/next |
+      next[s, sPrime]
 }
 
 pred symmetry {
