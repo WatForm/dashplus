@@ -4,6 +4,7 @@
 package org.antlr;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.IOException;
@@ -23,9 +24,9 @@ public class AntlrTest {
 	private void tryParse(CharStream input, Path filename) throws ParseCancellationException {
 		BailLexer bailLexer = new BailLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(bailLexer);
-		BailParser parser = new BailParser(tokens);
+		BailParser bailParser = new BailParser(tokens);
 		try{
-			parser.alloyFile();
+			bailParser.alloyFile();
 		} catch (ParseCancellationException pce) {
 			IO.println("ParseCancellationException thrown while parsing " + filename);
 			throw pce;

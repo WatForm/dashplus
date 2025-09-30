@@ -29,7 +29,7 @@ paragraph       : moduleDecl
                 ;
 
 moduleDecl      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
-importDecl      : p='private'? 'open' qname ( '[' qnames ']' )? ( 'as' name )? ;
+importDecl      : p='private'? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
 sigDecl         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
 enumDecl        : p='private'? 'enum' name '{' names '}';
 factDecl        : 'fact' name? block ;

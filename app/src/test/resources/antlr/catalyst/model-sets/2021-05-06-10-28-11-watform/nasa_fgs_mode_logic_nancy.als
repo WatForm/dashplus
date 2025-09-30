@@ -184,86 +184,86 @@ open util/boolean
         (s.FlightModes_FD_Switch_Pressed) = True or (s.FlightModes_When_AP_Engaged) = True or (s.FlightModes_Overspeed) = True or (s.FlightModes_HDG_Switch_Pressed) = True or (s.FlightModes_NAV_Switch_Pressed) = True or (s.FlightModes_APPR_Switch_Pressed) = True or (s.FlightModes_GA_Switch_Pressed) = True or (s.FlightModes_VS_Switch_Pressed) = True or (s.FlightModes_FLC_Switch_Pressed) = True or (s.FlightModes_ALT_Switch_Pressed) = True or (s.FlightModes_APPR_Switch_Pressed) = True or (s.FlightModes_GA_Switch_Pressed) = True or ((s.FlightModes_VS_Pitch_Wheel_Rotated) = True and (s.FlightModes_VS_Active) = False and (s.FlightModes_VAPPR_Active) = False and (s.FlightModes_Overspeed) = False) or ((s.FlightModes_Pilot_Flying_Transfer) = True and (s.FlightModes_Pilot_Flying_Side) = True and (s.FlightModes_Modes_On) = True)
     }
 
-    pred pos_FlightModes_FD_TurnFDOn[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_FD_OFF + {
+    pred pos_FlightModes_FD_TurnFDOn[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_FD_OFF + {
             FlightModes_FD_ON
         }
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_FD_TurnFDOn] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_FD_TurnFDOn] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_FD_ON[s']
+        enter_FlightModes_FD_ON[sPrime]
     }
 
-    pred FlightModes_FD_TurnFDOn[s, s': Snapshot] {
+    pred FlightModes_FD_TurnFDOn[s, sPrime: Snapshot] {
         pre_FlightModes_FD_TurnFDOn[s]
-        pos_FlightModes_FD_TurnFDOn[s, s']
-        semantics_FlightModes_FD_TurnFDOn[s, s']
+        pos_FlightModes_FD_TurnFDOn[s, sPrime]
+        semantics_FlightModes_FD_TurnFDOn[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_FD_TurnFDOn[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -282,13 +282,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_FD_TurnFDOn[s, s': Snapshot] {
+    pred semantics_FlightModes_FD_TurnFDOn[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_FD_TurnFDOn
+            sPrime.taken = FlightModes_FD_TurnFDOn
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_FD_TurnFDOn
+            sPrime.taken = s.taken + FlightModes_FD_TurnFDOn
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_FD_TurnFDOn + 
@@ -304,86 +304,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_FD_TurnFDOff[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_FD_ON + {
+    pred pos_FlightModes_FD_TurnFDOff[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_FD_ON + {
             FlightModes_FD_OFF
         }
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_FD_TurnFDOff] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_FD_TurnFDOff] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_FD_ON in s.conf => exit_FlightModes_FD_ON[s']
+        FlightModes_FD_ON in s.conf => exit_FlightModes_FD_ON[sPrime]
     }
 
-    pred FlightModes_FD_TurnFDOff[s, s': Snapshot] {
+    pred FlightModes_FD_TurnFDOff[s, sPrime: Snapshot] {
         pre_FlightModes_FD_TurnFDOff[s]
-        pos_FlightModes_FD_TurnFDOff[s, s']
-        semantics_FlightModes_FD_TurnFDOff[s, s']
+        pos_FlightModes_FD_TurnFDOff[s, sPrime]
+        semantics_FlightModes_FD_TurnFDOff[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_FD_TurnFDOff[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -404,13 +404,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_FD_TurnFDOff[s, s': Snapshot] {
+    pred semantics_FlightModes_FD_TurnFDOff[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_FD_TurnFDOff
+            sPrime.taken = FlightModes_FD_TurnFDOff
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_FD_TurnFDOff
+            sPrime.taken = s.taken + FlightModes_FD_TurnFDOff
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_FD_TurnFDOn + 
@@ -426,87 +426,87 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_ANNUNCIATIONS_OFF + {
+    pred pos_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_ANNUNCIATIONS_OFF + {
             FlightModes_ANNUNCIATIONS_ON
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_ANNUNCIATIONS_ON[s']
-        FlightModes_ANNUNCIATIONS_OFF in s.conf => exit_FlightModes_ANNUNCIATIONS_OFF[s']
+        enter_FlightModes_ANNUNCIATIONS_ON[sPrime]
+        FlightModes_ANNUNCIATIONS_OFF in s.conf => exit_FlightModes_ANNUNCIATIONS_OFF[sPrime]
     }
 
-    pred FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, s': Snapshot] {
+    pred FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, sPrime: Snapshot] {
         pre_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s]
-        pos_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, s']
-        semantics_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, s']
+        pos_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, sPrime]
+        semantics_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -527,13 +527,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, s': Snapshot] {
+    pred semantics_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn
+            sPrime.taken = FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn
+            sPrime.taken = s.taken + FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff + 
@@ -549,87 +549,87 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_ANNUNCIATIONS_ON + {
+    pred pos_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_ANNUNCIATIONS_ON + {
             FlightModes_ANNUNCIATIONS_OFF
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_ANNUNCIATIONS_OFF[s']
-        FlightModes_ANNUNCIATIONS_ON in s.conf => exit_FlightModes_ANNUNCIATIONS_ON[s']
+        enter_FlightModes_ANNUNCIATIONS_OFF[sPrime]
+        FlightModes_ANNUNCIATIONS_ON in s.conf => exit_FlightModes_ANNUNCIATIONS_ON[sPrime]
     }
 
-    pred FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, s': Snapshot] {
+    pred FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, sPrime: Snapshot] {
         pre_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s]
-        pos_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, s']
-        semantics_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, s']
+        pos_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, sPrime]
+        semantics_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -650,13 +650,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, s': Snapshot] {
+    pred semantics_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff
+            sPrime.taken = FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff
+            sPrime.taken = s.taken + FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff + 
@@ -670,87 +670,87 @@ open util/boolean
         (s.FlightModes_HDG_Switch_Pressed) = True
     }
 
-    pred pos_FlightModes_LATERAL_HDG_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_HDG_CLEARED + {
+    pred pos_FlightModes_LATERAL_HDG_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_HDG_CLEARED + {
             FlightModes_LATERAL_HDG_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_LATERAL_New_Lateral_Mode_Activated}, FlightModes_LATERAL_HDG_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_LATERAL_New_Lateral_Mode_Activated}, FlightModes_LATERAL_HDG_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_LATERAL_New_Lateral_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_LATERAL_New_Lateral_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_LATERAL_New_Lateral_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_LATERAL_New_Lateral_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_LATERAL_New_Lateral_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_LATERAL_New_Lateral_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_LATERAL_New_Lateral_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_LATERAL_New_Lateral_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_LATERAL_New_Lateral_Mode_Activated} in s'.events
-        enter_FlightModes_LATERAL_HDG_SELECTED[s']
-        enter_FlightModes_LATERAL_HDG_SELECTED_ACTIVE[s']
+        {FlightModes_LATERAL_New_Lateral_Mode_Activated} in sPrime.events
+        enter_FlightModes_LATERAL_HDG_SELECTED[sPrime]
+        enter_FlightModes_LATERAL_HDG_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_LATERAL_HDG_Select[s, s': Snapshot] {
+    pred FlightModes_LATERAL_HDG_Select[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_HDG_Select[s]
-        pos_FlightModes_LATERAL_HDG_Select[s, s']
-        semantics_FlightModes_LATERAL_HDG_Select[s, s']
+        pos_FlightModes_LATERAL_HDG_Select[s, sPrime]
+        semantics_FlightModes_LATERAL_HDG_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_HDG_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -771,13 +771,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_HDG_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_HDG_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_HDG_Select
+            sPrime.taken = FlightModes_LATERAL_HDG_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_HDG_Select
+            sPrime.taken = s.taken + FlightModes_LATERAL_HDG_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_HDG_Clear + 
@@ -794,86 +794,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_LATERAL_HDG_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_HDG_SELECTED + {
+    pred pos_FlightModes_LATERAL_HDG_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_HDG_SELECTED + {
             FlightModes_LATERAL_HDG_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_HDG_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_HDG_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_HDG_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_HDG_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_HDG_SELECTED & s.conf) => exit_FlightModes_LATERAL_HDG_SELECTED[s']
+        FlightModes_LATERAL_HDG_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_HDG_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_HDG_SELECTED & s.conf) => exit_FlightModes_LATERAL_HDG_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_HDG_Clear[s, s': Snapshot] {
+    pred FlightModes_LATERAL_HDG_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_HDG_Clear[s]
-        pos_FlightModes_LATERAL_HDG_Clear[s, s']
-        semantics_FlightModes_LATERAL_HDG_Clear[s, s']
+        pos_FlightModes_LATERAL_HDG_Clear[s, sPrime]
+        semantics_FlightModes_LATERAL_HDG_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_HDG_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -896,13 +896,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_HDG_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_HDG_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_HDG_Clear
+            sPrime.taken = FlightModes_LATERAL_HDG_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_HDG_Clear
+            sPrime.taken = s.taken + FlightModes_LATERAL_HDG_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_HDG_Clear + 
@@ -923,86 +923,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_HDG_SELECTED + {
+    pred pos_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_HDG_SELECTED + {
             FlightModes_LATERAL_HDG_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_HDG_NewLateralModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_HDG_NewLateralModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_HDG_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_HDG_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_HDG_SELECTED & s.conf) => exit_FlightModes_LATERAL_HDG_SELECTED[s']
+        FlightModes_LATERAL_HDG_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_HDG_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_HDG_SELECTED & s.conf) => exit_FlightModes_LATERAL_HDG_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_HDG_NewLateralModeActivated[s, s': Snapshot] {
+    pred FlightModes_LATERAL_HDG_NewLateralModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_HDG_NewLateralModeActivated[s]
-        pos_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, s']
-        semantics_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, s']
+        pos_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, sPrime]
+        semantics_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_HDG_NewLateralModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1024,13 +1024,13 @@ open util/boolean
             FlightModes_LATERAL_New_Lateral_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_HDG_NewLateralModeActivated
+            sPrime.taken = FlightModes_LATERAL_HDG_NewLateralModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_HDG_NewLateralModeActivated
+            sPrime.taken = s.taken + FlightModes_LATERAL_HDG_NewLateralModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_HDG_Clear + 
@@ -1045,86 +1045,86 @@ open util/boolean
         (s.FlightModes_NAV_Switch_Pressed) = True
     }
 
-    pred pos_FlightModes_LATERAL_NAV_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_NAV_CLEARED + {
+    pred pos_FlightModes_LATERAL_NAV_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_NAV_CLEARED + {
             FlightModes_LATERAL_NAV_SELECTED_ARMED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_NAV_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_NAV_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_LATERAL_NAV_SELECTED[s']
+        enter_FlightModes_LATERAL_NAV_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_NAV_Select[s, s': Snapshot] {
+    pred FlightModes_LATERAL_NAV_Select[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_NAV_Select[s]
-        pos_FlightModes_LATERAL_NAV_Select[s, s']
-        semantics_FlightModes_LATERAL_NAV_Select[s, s']
+        pos_FlightModes_LATERAL_NAV_Select[s, sPrime]
+        semantics_FlightModes_LATERAL_NAV_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_NAV_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1147,13 +1147,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_NAV_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_NAV_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_NAV_Select
+            sPrime.taken = FlightModes_LATERAL_NAV_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_NAV_Select
+            sPrime.taken = s.taken + FlightModes_LATERAL_NAV_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_NAV_Select + 
@@ -1169,87 +1169,87 @@ open util/boolean
         (s.FlightModes_NAV_Capture_Condition_Met) = True
     }
 
-    pred pos_FlightModes_LATERAL_NAV_Capture[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_NAV_SELECTED_ARMED + {
+    pred pos_FlightModes_LATERAL_NAV_Capture[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_NAV_SELECTED_ARMED + {
             FlightModes_LATERAL_NAV_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_LATERAL_New_Lateral_Mode_Activated}, FlightModes_LATERAL_NAV_Capture] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_LATERAL_New_Lateral_Mode_Activated}, FlightModes_LATERAL_NAV_Capture] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_LATERAL_New_Lateral_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_LATERAL_New_Lateral_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_LATERAL_New_Lateral_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_LATERAL_New_Lateral_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_LATERAL_New_Lateral_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_LATERAL_New_Lateral_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_LATERAL_New_Lateral_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_LATERAL_New_Lateral_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_LATERAL_New_Lateral_Mode_Activated} in s'.events
-        enter_FlightModes_LATERAL_NAV_SELECTED_ACTIVE[s']
+        {FlightModes_LATERAL_New_Lateral_Mode_Activated} in sPrime.events
+        enter_FlightModes_LATERAL_NAV_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_LATERAL_NAV_Capture[s, s': Snapshot] {
+    pred FlightModes_LATERAL_NAV_Capture[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_NAV_Capture[s]
-        pos_FlightModes_LATERAL_NAV_Capture[s, s']
-        semantics_FlightModes_LATERAL_NAV_Capture[s, s']
+        pos_FlightModes_LATERAL_NAV_Capture[s, sPrime]
+        semantics_FlightModes_LATERAL_NAV_Capture[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_NAV_Capture[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1266,13 +1266,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_NAV_Capture[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_NAV_Capture[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_NAV_Capture
+            sPrime.taken = FlightModes_LATERAL_NAV_Capture
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_NAV_Capture
+            sPrime.taken = s.taken + FlightModes_LATERAL_NAV_Capture
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_NAV_Capture
@@ -1287,86 +1287,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_LATERAL_NAV_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_NAV_SELECTED + {
+    pred pos_FlightModes_LATERAL_NAV_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_NAV_SELECTED + {
             FlightModes_LATERAL_NAV_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_NAV_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_NAV_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_NAV_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_NAV_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_NAV_SELECTED & s.conf) => exit_FlightModes_LATERAL_NAV_SELECTED[s']
+        FlightModes_LATERAL_NAV_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_NAV_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_NAV_SELECTED & s.conf) => exit_FlightModes_LATERAL_NAV_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_NAV_Clear[s, s': Snapshot] {
+    pred FlightModes_LATERAL_NAV_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_NAV_Clear[s]
-        pos_FlightModes_LATERAL_NAV_Clear[s, s']
-        semantics_FlightModes_LATERAL_NAV_Clear[s, s']
+        pos_FlightModes_LATERAL_NAV_Clear[s, sPrime]
+        semantics_FlightModes_LATERAL_NAV_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_NAV_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1391,13 +1391,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_NAV_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_NAV_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_NAV_Clear
+            sPrime.taken = FlightModes_LATERAL_NAV_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_NAV_Clear
+            sPrime.taken = s.taken + FlightModes_LATERAL_NAV_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_NAV_Select + 
@@ -1420,86 +1420,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_NAV_SELECTED + {
+    pred pos_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_NAV_SELECTED + {
             FlightModes_LATERAL_NAV_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_NAV_NewLateralModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_NAV_NewLateralModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_NAV_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_NAV_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_NAV_SELECTED & s.conf) => exit_FlightModes_LATERAL_NAV_SELECTED[s']
+        FlightModes_LATERAL_NAV_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_NAV_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_NAV_SELECTED & s.conf) => exit_FlightModes_LATERAL_NAV_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_NAV_NewLateralModeActivated[s, s': Snapshot] {
+    pred FlightModes_LATERAL_NAV_NewLateralModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_NAV_NewLateralModeActivated[s]
-        pos_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, s']
-        semantics_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, s']
+        pos_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, sPrime]
+        semantics_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_NAV_NewLateralModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1523,13 +1523,13 @@ open util/boolean
             FlightModes_LATERAL_New_Lateral_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_NAV_NewLateralModeActivated
+            sPrime.taken = FlightModes_LATERAL_NAV_NewLateralModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_NAV_NewLateralModeActivated
+            sPrime.taken = s.taken + FlightModes_LATERAL_NAV_NewLateralModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_NAV_Select + 
@@ -1545,86 +1545,86 @@ open util/boolean
         (s.FlightModes_APPR_Switch_Pressed) = True
     }
 
-    pred pos_FlightModes_LATERAL_LAPPR_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_LAPPR_CLEARED + {
+    pred pos_FlightModes_LATERAL_LAPPR_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_LAPPR_CLEARED + {
             FlightModes_LATERAL_LAPPR_SELECTED_ARMED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_LAPPR_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_LAPPR_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_LATERAL_LAPPR_SELECTED[s']
+        enter_FlightModes_LATERAL_LAPPR_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_LAPPR_Select[s, s': Snapshot] {
+    pred FlightModes_LATERAL_LAPPR_Select[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_LAPPR_Select[s]
-        pos_FlightModes_LATERAL_LAPPR_Select[s, s']
-        semantics_FlightModes_LATERAL_LAPPR_Select[s, s']
+        pos_FlightModes_LATERAL_LAPPR_Select[s, sPrime]
+        semantics_FlightModes_LATERAL_LAPPR_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_LAPPR_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1647,13 +1647,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_LAPPR_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_LAPPR_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_LAPPR_Select
+            sPrime.taken = FlightModes_LATERAL_LAPPR_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_LAPPR_Select
+            sPrime.taken = s.taken + FlightModes_LATERAL_LAPPR_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_LAPPR_NewLateralModeActivated + 
@@ -1669,87 +1669,87 @@ open util/boolean
         (s.FlightModes_LAPPR_Capture_Condition_Met) = True
     }
 
-    pred pos_FlightModes_LATERAL_LAPPR_Capture[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_LAPPR_SELECTED_ARMED + {
+    pred pos_FlightModes_LATERAL_LAPPR_Capture[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_LAPPR_SELECTED_ARMED + {
             FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_LATERAL_New_Lateral_Mode_Activated}, FlightModes_LATERAL_LAPPR_Capture] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_LATERAL_New_Lateral_Mode_Activated}, FlightModes_LATERAL_LAPPR_Capture] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_LATERAL_New_Lateral_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_LATERAL_New_Lateral_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_LATERAL_New_Lateral_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_LATERAL_New_Lateral_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_LATERAL_New_Lateral_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_LATERAL_New_Lateral_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_LATERAL_New_Lateral_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_LATERAL_New_Lateral_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_LATERAL_New_Lateral_Mode_Activated} in s'.events
-        enter_FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE[s']
+        {FlightModes_LATERAL_New_Lateral_Mode_Activated} in sPrime.events
+        enter_FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_LATERAL_LAPPR_Capture[s, s': Snapshot] {
+    pred FlightModes_LATERAL_LAPPR_Capture[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_LAPPR_Capture[s]
-        pos_FlightModes_LATERAL_LAPPR_Capture[s, s']
-        semantics_FlightModes_LATERAL_LAPPR_Capture[s, s']
+        pos_FlightModes_LATERAL_LAPPR_Capture[s, sPrime]
+        semantics_FlightModes_LATERAL_LAPPR_Capture[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_LAPPR_Capture[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1766,13 +1766,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_LAPPR_Capture[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_LAPPR_Capture[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_LAPPR_Capture
+            sPrime.taken = FlightModes_LATERAL_LAPPR_Capture
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_LAPPR_Capture
+            sPrime.taken = s.taken + FlightModes_LATERAL_LAPPR_Capture
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_LAPPR_Capture
@@ -1787,86 +1787,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_LATERAL_LAPPR_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_LAPPR_SELECTED + {
+    pred pos_FlightModes_LATERAL_LAPPR_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_LAPPR_SELECTED + {
             FlightModes_LATERAL_LAPPR_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_LAPPR_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_LAPPR_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_LAPPR_SELECTED & s.conf) => exit_FlightModes_LATERAL_LAPPR_SELECTED[s']
+        FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_LAPPR_SELECTED & s.conf) => exit_FlightModes_LATERAL_LAPPR_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_LAPPR_Clear[s, s': Snapshot] {
+    pred FlightModes_LATERAL_LAPPR_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_LAPPR_Clear[s]
-        pos_FlightModes_LATERAL_LAPPR_Clear[s, s']
-        semantics_FlightModes_LATERAL_LAPPR_Clear[s, s']
+        pos_FlightModes_LATERAL_LAPPR_Clear[s, sPrime]
+        semantics_FlightModes_LATERAL_LAPPR_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_LAPPR_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1891,13 +1891,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_LAPPR_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_LAPPR_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_LAPPR_Clear
+            sPrime.taken = FlightModes_LATERAL_LAPPR_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_LAPPR_Clear
+            sPrime.taken = s.taken + FlightModes_LATERAL_LAPPR_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_LAPPR_NewLateralModeActivated + 
@@ -1920,86 +1920,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_LAPPR_SELECTED + {
+    pred pos_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_LAPPR_SELECTED + {
             FlightModes_LATERAL_LAPPR_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_LAPPR_NewLateralModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_LAPPR_NewLateralModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_LAPPR_SELECTED & s.conf) => exit_FlightModes_LATERAL_LAPPR_SELECTED[s']
+        FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_LAPPR_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_LAPPR_SELECTED & s.conf) => exit_FlightModes_LATERAL_LAPPR_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, s': Snapshot] {
+    pred FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s]
-        pos_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, s']
-        semantics_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, s']
+        pos_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, sPrime]
+        semantics_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -2023,13 +2023,13 @@ open util/boolean
             FlightModes_LATERAL_New_Lateral_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_LAPPR_NewLateralModeActivated
+            sPrime.taken = FlightModes_LATERAL_LAPPR_NewLateralModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_LAPPR_NewLateralModeActivated
+            sPrime.taken = s.taken + FlightModes_LATERAL_LAPPR_NewLateralModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_LAPPR_NewLateralModeActivated + 
@@ -2045,87 +2045,87 @@ open util/boolean
         (s.FlightModes_GA_Switch_Pressed) = True and (s.FlightModes_Overspeed) = False
     }
 
-    pred pos_FlightModes_LATERAL_LGA_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_LGA_CLEARED + {
+    pred pos_FlightModes_LATERAL_LGA_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_LGA_CLEARED + {
             FlightModes_LATERAL_LGA_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_LATERAL_New_Lateral_Mode_Activated}, FlightModes_LATERAL_LGA_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_LATERAL_New_Lateral_Mode_Activated}, FlightModes_LATERAL_LGA_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_LATERAL_New_Lateral_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_LATERAL_New_Lateral_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_LATERAL_New_Lateral_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_LATERAL_New_Lateral_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_LATERAL_New_Lateral_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_LATERAL_New_Lateral_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_LATERAL_New_Lateral_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_LATERAL_New_Lateral_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_LATERAL_New_Lateral_Mode_Activated} in s'.events
-        enter_FlightModes_LATERAL_LGA_SELECTED[s']
-        enter_FlightModes_LATERAL_LGA_SELECTED_ACTIVE[s']
+        {FlightModes_LATERAL_New_Lateral_Mode_Activated} in sPrime.events
+        enter_FlightModes_LATERAL_LGA_SELECTED[sPrime]
+        enter_FlightModes_LATERAL_LGA_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_LATERAL_LGA_Select[s, s': Snapshot] {
+    pred FlightModes_LATERAL_LGA_Select[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_LGA_Select[s]
-        pos_FlightModes_LATERAL_LGA_Select[s, s']
-        semantics_FlightModes_LATERAL_LGA_Select[s, s']
+        pos_FlightModes_LATERAL_LGA_Select[s, sPrime]
+        semantics_FlightModes_LATERAL_LGA_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_LGA_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -2146,13 +2146,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_LGA_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_LGA_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_LGA_Select
+            sPrime.taken = FlightModes_LATERAL_LGA_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_LGA_Select
+            sPrime.taken = s.taken + FlightModes_LATERAL_LGA_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_LGA_NewLateralModeActivated + 
@@ -2169,86 +2169,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_LATERAL_LGA_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_LGA_SELECTED + {
+    pred pos_FlightModes_LATERAL_LGA_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_LGA_SELECTED + {
             FlightModes_LATERAL_LGA_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_LGA_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_LGA_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_LGA_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_LGA_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_LGA_SELECTED & s.conf) => exit_FlightModes_LATERAL_LGA_SELECTED[s']
+        FlightModes_LATERAL_LGA_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_LGA_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_LGA_SELECTED & s.conf) => exit_FlightModes_LATERAL_LGA_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_LGA_Clear[s, s': Snapshot] {
+    pred FlightModes_LATERAL_LGA_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_LGA_Clear[s]
-        pos_FlightModes_LATERAL_LGA_Clear[s, s']
-        semantics_FlightModes_LATERAL_LGA_Clear[s, s']
+        pos_FlightModes_LATERAL_LGA_Clear[s, sPrime]
+        semantics_FlightModes_LATERAL_LGA_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_LGA_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -2271,13 +2271,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_LGA_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_LGA_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_LGA_Clear
+            sPrime.taken = FlightModes_LATERAL_LGA_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_LGA_Clear
+            sPrime.taken = s.taken + FlightModes_LATERAL_LGA_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_LGA_NewLateralModeActivated + 
@@ -2298,86 +2298,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_LGA_SELECTED + {
+    pred pos_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_LGA_SELECTED + {
             FlightModes_LATERAL_LGA_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_LGA_NewLateralModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_LGA_NewLateralModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_LGA_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_LGA_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_LGA_SELECTED & s.conf) => exit_FlightModes_LATERAL_LGA_SELECTED[s']
+        FlightModes_LATERAL_LGA_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_LGA_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_LGA_SELECTED & s.conf) => exit_FlightModes_LATERAL_LGA_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_LGA_NewLateralModeActivated[s, s': Snapshot] {
+    pred FlightModes_LATERAL_LGA_NewLateralModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_LGA_NewLateralModeActivated[s]
-        pos_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, s']
-        semantics_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, s']
+        pos_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, sPrime]
+        semantics_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_LGA_NewLateralModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -2399,13 +2399,13 @@ open util/boolean
             FlightModes_LATERAL_New_Lateral_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_LGA_NewLateralModeActivated
+            sPrime.taken = FlightModes_LATERAL_LGA_NewLateralModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_LGA_NewLateralModeActivated
+            sPrime.taken = s.taken + FlightModes_LATERAL_LGA_NewLateralModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_LGA_NewLateralModeActivated + 
@@ -2420,86 +2420,86 @@ open util/boolean
         !((s.FlightModes_HDG_Active) = True or (s.FlightModes_NAV_Active) = True or (s.FlightModes_LAPPR_Active) = True or (s.FlightModes_LGA_Active) = True)
     }
 
-    pred pos_FlightModes_LATERAL_ROLL_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_ROLL_CLEARED + {
+    pred pos_FlightModes_LATERAL_ROLL_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_ROLL_CLEARED + {
             FlightModes_LATERAL_ROLL_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_ROLL_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_ROLL_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_LATERAL_ROLL_SELECTED[s']
-        enter_FlightModes_LATERAL_ROLL_SELECTED_ACTIVE[s']
+        enter_FlightModes_LATERAL_ROLL_SELECTED[sPrime]
+        enter_FlightModes_LATERAL_ROLL_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_LATERAL_ROLL_Select[s, s': Snapshot] {
+    pred FlightModes_LATERAL_ROLL_Select[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_ROLL_Select[s]
-        pos_FlightModes_LATERAL_ROLL_Select[s, s']
-        semantics_FlightModes_LATERAL_ROLL_Select[s, s']
+        pos_FlightModes_LATERAL_ROLL_Select[s, sPrime]
+        semantics_FlightModes_LATERAL_ROLL_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_ROLL_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -2518,13 +2518,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_ROLL_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_ROLL_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_ROLL_Select
+            sPrime.taken = FlightModes_LATERAL_ROLL_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_ROLL_Select
+            sPrime.taken = s.taken + FlightModes_LATERAL_ROLL_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_ROLL_Clear + 
@@ -2538,86 +2538,86 @@ open util/boolean
         (s.FlightModes_HDG_Active) = True or (s.FlightModes_NAV_Active) = True or (s.FlightModes_LAPPR_Active) = True or (s.FlightModes_LGA_Active) = True
     }
 
-    pred pos_FlightModes_LATERAL_ROLL_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_LATERAL_ROLL_SELECTED + {
+    pred pos_FlightModes_LATERAL_ROLL_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_LATERAL_ROLL_SELECTED + {
             FlightModes_LATERAL_ROLL_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_LATERAL_ROLL_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_LATERAL_ROLL_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_LATERAL_ROLL_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_ROLL_SELECTED_ACTIVE[s']
-        (some FlightModes_LATERAL_ROLL_SELECTED & s.conf) => exit_FlightModes_LATERAL_ROLL_SELECTED[s']
+        FlightModes_LATERAL_ROLL_SELECTED_ACTIVE in s.conf => exit_FlightModes_LATERAL_ROLL_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_LATERAL_ROLL_SELECTED & s.conf) => exit_FlightModes_LATERAL_ROLL_SELECTED[sPrime]
     }
 
-    pred FlightModes_LATERAL_ROLL_Clear[s, s': Snapshot] {
+    pred FlightModes_LATERAL_ROLL_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_LATERAL_ROLL_Clear[s]
-        pos_FlightModes_LATERAL_ROLL_Clear[s, s']
-        semantics_FlightModes_LATERAL_ROLL_Clear[s, s']
+        pos_FlightModes_LATERAL_ROLL_Clear[s, sPrime]
+        semantics_FlightModes_LATERAL_ROLL_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_LATERAL_ROLL_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -2636,13 +2636,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_LATERAL_ROLL_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_LATERAL_ROLL_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_LATERAL_ROLL_Clear
+            sPrime.taken = FlightModes_LATERAL_ROLL_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_LATERAL_ROLL_Clear
+            sPrime.taken = s.taken + FlightModes_LATERAL_ROLL_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_LATERAL_ROLL_Clear + 
@@ -2658,87 +2658,87 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_VS_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VS_CLEARED + {
+    pred pos_FlightModes_VERTICAL_VS_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VS_CLEARED + {
             FlightModes_VERTICAL_VS_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_VS_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_VS_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in s'.events
-        enter_FlightModes_VERTICAL_VS_SELECTED[s']
-        enter_FlightModes_VERTICAL_VS_SELECTED_ACTIVE[s']
+        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in sPrime.events
+        enter_FlightModes_VERTICAL_VS_SELECTED[sPrime]
+        enter_FlightModes_VERTICAL_VS_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VS_Select[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VS_Select[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VS_Select[s]
-        pos_FlightModes_VERTICAL_VS_Select[s, s']
-        semantics_FlightModes_VERTICAL_VS_Select[s, s']
+        pos_FlightModes_VERTICAL_VS_Select[s, sPrime]
+        semantics_FlightModes_VERTICAL_VS_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VS_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -2761,13 +2761,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_VS_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VS_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VS_Select
+            sPrime.taken = FlightModes_VERTICAL_VS_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VS_Select
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VS_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VS_NewVerticalModeActivated + 
@@ -2784,86 +2784,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_VS_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VS_SELECTED + {
+    pred pos_FlightModes_VERTICAL_VS_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VS_SELECTED + {
             FlightModes_VERTICAL_VS_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_VS_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_VS_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_VS_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VS_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_VS_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VS_SELECTED[s']
+        FlightModes_VERTICAL_VS_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VS_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_VS_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VS_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VS_Clear[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VS_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VS_Clear[s]
-        pos_FlightModes_VERTICAL_VS_Clear[s, s']
-        semantics_FlightModes_VERTICAL_VS_Clear[s, s']
+        pos_FlightModes_VERTICAL_VS_Clear[s, sPrime]
+        semantics_FlightModes_VERTICAL_VS_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VS_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -2886,13 +2886,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_VS_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VS_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VS_Clear
+            sPrime.taken = FlightModes_VERTICAL_VS_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VS_Clear
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VS_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VS_NewVerticalModeActivated + 
@@ -2913,86 +2913,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VS_SELECTED + {
+    pred pos_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VS_SELECTED + {
             FlightModes_VERTICAL_VS_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_VS_NewVerticalModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_VS_NewVerticalModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_VS_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VS_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_VS_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VS_SELECTED[s']
+        FlightModes_VERTICAL_VS_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VS_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_VS_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VS_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s]
-        pos_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, s']
-        semantics_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, s']
+        pos_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, sPrime]
+        semantics_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VS_NewVerticalModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -3014,13 +3014,13 @@ open util/boolean
             FlightModes_VERTICAL_New_Vertical_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VS_NewVerticalModeActivated
+            sPrime.taken = FlightModes_VERTICAL_VS_NewVerticalModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VS_NewVerticalModeActivated
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VS_NewVerticalModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VS_NewVerticalModeActivated + 
@@ -3037,87 +3037,87 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_FLC_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_FLC_CLEARED + {
+    pred pos_FlightModes_VERTICAL_FLC_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_FLC_CLEARED + {
             FlightModes_VERTICAL_FLC_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_FLC_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_FLC_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in s'.events
-        enter_FlightModes_VERTICAL_FLC_SELECTED[s']
-        enter_FlightModes_VERTICAL_FLC_SELECTED_ACTIVE[s']
+        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in sPrime.events
+        enter_FlightModes_VERTICAL_FLC_SELECTED[sPrime]
+        enter_FlightModes_VERTICAL_FLC_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_VERTICAL_FLC_Select[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_FLC_Select[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_FLC_Select[s]
-        pos_FlightModes_VERTICAL_FLC_Select[s, s']
-        semantics_FlightModes_VERTICAL_FLC_Select[s, s']
+        pos_FlightModes_VERTICAL_FLC_Select[s, sPrime]
+        semantics_FlightModes_VERTICAL_FLC_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_FLC_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -3140,13 +3140,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_FLC_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_FLC_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_FLC_Select
+            sPrime.taken = FlightModes_VERTICAL_FLC_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_FLC_Select
+            sPrime.taken = s.taken + FlightModes_VERTICAL_FLC_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_FLC_Select + 
@@ -3163,86 +3163,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_FLC_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_FLC_SELECTED + {
+    pred pos_FlightModes_VERTICAL_FLC_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_FLC_SELECTED + {
             FlightModes_VERTICAL_FLC_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_FLC_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_FLC_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_FLC_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_FLC_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_FLC_SELECTED & s.conf) => exit_FlightModes_VERTICAL_FLC_SELECTED[s']
+        FlightModes_VERTICAL_FLC_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_FLC_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_FLC_SELECTED & s.conf) => exit_FlightModes_VERTICAL_FLC_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_FLC_Clear[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_FLC_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_FLC_Clear[s]
-        pos_FlightModes_VERTICAL_FLC_Clear[s, s']
-        semantics_FlightModes_VERTICAL_FLC_Clear[s, s']
+        pos_FlightModes_VERTICAL_FLC_Clear[s, sPrime]
+        semantics_FlightModes_VERTICAL_FLC_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_FLC_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -3265,13 +3265,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_FLC_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_FLC_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_FLC_Clear
+            sPrime.taken = FlightModes_VERTICAL_FLC_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_FLC_Clear
+            sPrime.taken = s.taken + FlightModes_VERTICAL_FLC_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_FLC_Select + 
@@ -3292,86 +3292,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_FLC_SELECTED + {
+    pred pos_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_FLC_SELECTED + {
             FlightModes_VERTICAL_FLC_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_FLC_NewVerticalModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_FLC_NewVerticalModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_FLC_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_FLC_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_FLC_SELECTED & s.conf) => exit_FlightModes_VERTICAL_FLC_SELECTED[s']
+        FlightModes_VERTICAL_FLC_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_FLC_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_FLC_SELECTED & s.conf) => exit_FlightModes_VERTICAL_FLC_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s]
-        pos_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, s']
-        semantics_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, s']
+        pos_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, sPrime]
+        semantics_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -3393,13 +3393,13 @@ open util/boolean
             FlightModes_VERTICAL_New_Vertical_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_FLC_NewVerticalModeActivated
+            sPrime.taken = FlightModes_VERTICAL_FLC_NewVerticalModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_FLC_NewVerticalModeActivated
+            sPrime.taken = s.taken + FlightModes_VERTICAL_FLC_NewVerticalModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_FLC_Select + 
@@ -3416,87 +3416,87 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_ALT_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_ALT_CLEARED + {
+    pred pos_FlightModes_VERTICAL_ALT_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_ALT_CLEARED + {
             FlightModes_VERTICAL_ALT_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_ALT_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_ALT_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in s'.events
-        enter_FlightModes_VERTICAL_ALT_SELECTED[s']
-        enter_FlightModes_VERTICAL_ALT_SELECTED_ACTIVE[s']
+        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in sPrime.events
+        enter_FlightModes_VERTICAL_ALT_SELECTED[sPrime]
+        enter_FlightModes_VERTICAL_ALT_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_VERTICAL_ALT_Select[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_ALT_Select[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_ALT_Select[s]
-        pos_FlightModes_VERTICAL_ALT_Select[s, s']
-        semantics_FlightModes_VERTICAL_ALT_Select[s, s']
+        pos_FlightModes_VERTICAL_ALT_Select[s, sPrime]
+        semantics_FlightModes_VERTICAL_ALT_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_ALT_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -3519,13 +3519,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_ALT_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_ALT_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_ALT_Select
+            sPrime.taken = FlightModes_VERTICAL_ALT_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_ALT_Select
+            sPrime.taken = s.taken + FlightModes_VERTICAL_ALT_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_ALT_Clear + 
@@ -3542,86 +3542,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_ALT_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_ALT_SELECTED + {
+    pred pos_FlightModes_VERTICAL_ALT_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_ALT_SELECTED + {
             FlightModes_VERTICAL_ALT_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_ALT_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_ALT_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_ALT_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_ALT_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_ALT_SELECTED & s.conf) => exit_FlightModes_VERTICAL_ALT_SELECTED[s']
+        FlightModes_VERTICAL_ALT_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_ALT_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_ALT_SELECTED & s.conf) => exit_FlightModes_VERTICAL_ALT_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_ALT_Clear[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_ALT_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_ALT_Clear[s]
-        pos_FlightModes_VERTICAL_ALT_Clear[s, s']
-        semantics_FlightModes_VERTICAL_ALT_Clear[s, s']
+        pos_FlightModes_VERTICAL_ALT_Clear[s, sPrime]
+        semantics_FlightModes_VERTICAL_ALT_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_ALT_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -3644,13 +3644,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_ALT_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_ALT_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_ALT_Clear
+            sPrime.taken = FlightModes_VERTICAL_ALT_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_ALT_Clear
+            sPrime.taken = s.taken + FlightModes_VERTICAL_ALT_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_ALT_Clear + 
@@ -3671,86 +3671,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_ALT_SELECTED + {
+    pred pos_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_ALT_SELECTED + {
             FlightModes_VERTICAL_ALT_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_ALT_NewVerticalModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_ALT_NewVerticalModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_ALT_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_ALT_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_ALT_SELECTED & s.conf) => exit_FlightModes_VERTICAL_ALT_SELECTED[s']
+        FlightModes_VERTICAL_ALT_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_ALT_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_ALT_SELECTED & s.conf) => exit_FlightModes_VERTICAL_ALT_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s]
-        pos_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, s']
-        semantics_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, s']
+        pos_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, sPrime]
+        semantics_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -3772,13 +3772,13 @@ open util/boolean
             FlightModes_VERTICAL_New_Vertical_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_ALT_NewVerticalModeActivated
+            sPrime.taken = FlightModes_VERTICAL_ALT_NewVerticalModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_ALT_NewVerticalModeActivated
+            sPrime.taken = s.taken + FlightModes_VERTICAL_ALT_NewVerticalModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_ALT_Clear + 
@@ -3795,86 +3795,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_ALTSEL_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_ALTSEL_CLEARED + {
+    pred pos_FlightModes_VERTICAL_ALTSEL_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_ALTSEL_CLEARED + {
             FlightModes_VERTICAL_ALTSEL_SELECTED_ARMED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_ALTSEL_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_ALTSEL_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_VERTICAL_ALTSEL_SELECTED[s']
+        enter_FlightModes_VERTICAL_ALTSEL_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_ALTSEL_Select[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_ALTSEL_Select[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_ALTSEL_Select[s]
-        pos_FlightModes_VERTICAL_ALTSEL_Select[s, s']
-        semantics_FlightModes_VERTICAL_ALTSEL_Select[s, s']
+        pos_FlightModes_VERTICAL_ALTSEL_Select[s, sPrime]
+        semantics_FlightModes_VERTICAL_ALTSEL_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -3901,13 +3901,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_ALTSEL_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_ALTSEL_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_ALTSEL_Select
+            sPrime.taken = FlightModes_VERTICAL_ALTSEL_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_ALTSEL_Select
+            sPrime.taken = s.taken + FlightModes_VERTICAL_ALTSEL_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_ALTSEL_Track + 
@@ -3924,87 +3924,87 @@ open util/boolean
         (s.FlightModes_ALTSEL_Capture_Condition_Met) = True
     }
 
-    pred pos_FlightModes_VERTICAL_ALTSEL_Capture[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_ALTSEL_SELECTED_ARMED + {
+    pred pos_FlightModes_VERTICAL_ALTSEL_Capture[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_ALTSEL_SELECTED_ARMED + {
             FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_CAPTURE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_ALTSEL_Capture] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_ALTSEL_Capture] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in s'.events
-        enter_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE[s']
+        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in sPrime.events
+        enter_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_VERTICAL_ALTSEL_Capture[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_ALTSEL_Capture[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_ALTSEL_Capture[s]
-        pos_FlightModes_VERTICAL_ALTSEL_Capture[s, s']
-        semantics_FlightModes_VERTICAL_ALTSEL_Capture[s, s']
+        pos_FlightModes_VERTICAL_ALTSEL_Capture[s, sPrime]
+        semantics_FlightModes_VERTICAL_ALTSEL_Capture[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Capture[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -4023,13 +4023,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_ALTSEL_Capture[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_ALTSEL_Capture[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_ALTSEL_Capture
+            sPrime.taken = FlightModes_VERTICAL_ALTSEL_Capture
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_ALTSEL_Capture
+            sPrime.taken = s.taken + FlightModes_VERTICAL_ALTSEL_Capture
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_ALTSEL_Track + 
@@ -4043,86 +4043,86 @@ open util/boolean
         (s.FlightModes_ALTSEL_Track_Condition_Met) = True
     }
 
-    pred pos_FlightModes_VERTICAL_ALTSEL_Track[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_CAPTURE + {
+    pred pos_FlightModes_VERTICAL_ALTSEL_Track[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_CAPTURE + {
             FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_ALTSEL_Track] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_ALTSEL_Track] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK[s']
+        enter_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK[sPrime]
     }
 
-    pred FlightModes_VERTICAL_ALTSEL_Track[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_ALTSEL_Track[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_ALTSEL_Track[s]
-        pos_FlightModes_VERTICAL_ALTSEL_Track[s, s']
-        semantics_FlightModes_VERTICAL_ALTSEL_Track[s, s']
+        pos_FlightModes_VERTICAL_ALTSEL_Track[s, sPrime]
+        semantics_FlightModes_VERTICAL_ALTSEL_Track[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Track[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -4139,13 +4139,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_ALTSEL_Track[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_ALTSEL_Track[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_ALTSEL_Track
+            sPrime.taken = FlightModes_VERTICAL_ALTSEL_Track
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_ALTSEL_Track
+            sPrime.taken = s.taken + FlightModes_VERTICAL_ALTSEL_Track
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_ALTSEL_Track
@@ -4160,86 +4160,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_ALTSEL_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_ALTSEL_SELECTED + {
+    pred pos_FlightModes_VERTICAL_ALTSEL_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_ALTSEL_SELECTED + {
             FlightModes_VERTICAL_ALTSEL_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_ALTSEL_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_ALTSEL_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        (some FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE & s.conf) => exit_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE[s']
-        FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK in s.conf => exit_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK[s']
-        (some FlightModes_VERTICAL_ALTSEL_SELECTED & s.conf) => exit_FlightModes_VERTICAL_ALTSEL_SELECTED[s']
+        (some FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE & s.conf) => exit_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE[sPrime]
+        FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK in s.conf => exit_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK[sPrime]
+        (some FlightModes_VERTICAL_ALTSEL_SELECTED & s.conf) => exit_FlightModes_VERTICAL_ALTSEL_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_ALTSEL_Clear[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_ALTSEL_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_ALTSEL_Clear[s]
-        pos_FlightModes_VERTICAL_ALTSEL_Clear[s, s']
-        semantics_FlightModes_VERTICAL_ALTSEL_Clear[s, s']
+        pos_FlightModes_VERTICAL_ALTSEL_Clear[s, sPrime]
+        semantics_FlightModes_VERTICAL_ALTSEL_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -4266,13 +4266,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_ALTSEL_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_ALTSEL_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_ALTSEL_Clear
+            sPrime.taken = FlightModes_VERTICAL_ALTSEL_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_ALTSEL_Clear
+            sPrime.taken = s.taken + FlightModes_VERTICAL_ALTSEL_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_ALTSEL_Track + 
@@ -4297,86 +4297,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_ALTSEL_SELECTED + {
+    pred pos_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_ALTSEL_SELECTED + {
             FlightModes_VERTICAL_ALTSEL_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        (some FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE & s.conf) => exit_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE[s']
-        FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK in s.conf => exit_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK[s']
-        (some FlightModes_VERTICAL_ALTSEL_SELECTED & s.conf) => exit_FlightModes_VERTICAL_ALTSEL_SELECTED[s']
+        (some FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE & s.conf) => exit_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE[sPrime]
+        FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK in s.conf => exit_FlightModes_VERTICAL_ALTSEL_SELECTED_ACTIVE_TRACK[sPrime]
+        (some FlightModes_VERTICAL_ALTSEL_SELECTED & s.conf) => exit_FlightModes_VERTICAL_ALTSEL_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s]
-        pos_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, s']
-        semantics_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, s']
+        pos_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, sPrime]
+        semantics_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -4402,13 +4402,13 @@ open util/boolean
             FlightModes_VERTICAL_New_Vertical_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated
+            sPrime.taken = FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated
+            sPrime.taken = s.taken + FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_ALTSEL_Track + 
@@ -4427,86 +4427,86 @@ open util/boolean
         (s.FlightModes_APPR_Switch_Pressed) = True
     }
 
-    pred pos_FlightModes_VERTICAL_VAPPR_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VAPPR_CLEARED + {
+    pred pos_FlightModes_VERTICAL_VAPPR_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VAPPR_CLEARED + {
             FlightModes_VERTICAL_VAPPR_SELECTED_ARMED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_VAPPR_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_VAPPR_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_VERTICAL_VAPPR_SELECTED[s']
+        enter_FlightModes_VERTICAL_VAPPR_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VAPPR_Select[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VAPPR_Select[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VAPPR_Select[s]
-        pos_FlightModes_VERTICAL_VAPPR_Select[s, s']
-        semantics_FlightModes_VERTICAL_VAPPR_Select[s, s']
+        pos_FlightModes_VERTICAL_VAPPR_Select[s, sPrime]
+        semantics_FlightModes_VERTICAL_VAPPR_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VAPPR_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -4529,13 +4529,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_VAPPR_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VAPPR_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VAPPR_Select
+            sPrime.taken = FlightModes_VERTICAL_VAPPR_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VAPPR_Select
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VAPPR_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated + 
@@ -4553,87 +4553,87 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_VAPPR_Capture[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VAPPR_SELECTED_ARMED + {
+    pred pos_FlightModes_VERTICAL_VAPPR_Capture[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VAPPR_SELECTED_ARMED + {
             FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_VAPPR_Capture] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_VAPPR_Capture] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in s'.events
-        enter_FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE[s']
+        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in sPrime.events
+        enter_FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VAPPR_Capture[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VAPPR_Capture[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VAPPR_Capture[s]
-        pos_FlightModes_VERTICAL_VAPPR_Capture[s, s']
-        semantics_FlightModes_VERTICAL_VAPPR_Capture[s, s']
+        pos_FlightModes_VERTICAL_VAPPR_Capture[s, sPrime]
+        semantics_FlightModes_VERTICAL_VAPPR_Capture[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VAPPR_Capture[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -4652,13 +4652,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_VAPPR_Capture[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VAPPR_Capture[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VAPPR_Capture
+            sPrime.taken = FlightModes_VERTICAL_VAPPR_Capture
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VAPPR_Capture
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VAPPR_Capture
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VAPPR_Capture
@@ -4673,86 +4673,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_VAPPR_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VAPPR_SELECTED + {
+    pred pos_FlightModes_VERTICAL_VAPPR_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VAPPR_SELECTED + {
             FlightModes_VERTICAL_VAPPR_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_VAPPR_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_VAPPR_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_VAPPR_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VAPPR_SELECTED[s']
+        FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_VAPPR_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VAPPR_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VAPPR_Clear[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VAPPR_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VAPPR_Clear[s]
-        pos_FlightModes_VERTICAL_VAPPR_Clear[s, s']
-        semantics_FlightModes_VERTICAL_VAPPR_Clear[s, s']
+        pos_FlightModes_VERTICAL_VAPPR_Clear[s, sPrime]
+        semantics_FlightModes_VERTICAL_VAPPR_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VAPPR_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -4777,13 +4777,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_VAPPR_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VAPPR_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VAPPR_Clear
+            sPrime.taken = FlightModes_VERTICAL_VAPPR_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VAPPR_Clear
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VAPPR_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated + 
@@ -4806,86 +4806,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VAPPR_SELECTED + {
+    pred pos_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VAPPR_SELECTED + {
             FlightModes_VERTICAL_VAPPR_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_VAPPR_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VAPPR_SELECTED[s']
+        FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VAPPR_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_VAPPR_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VAPPR_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s]
-        pos_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, s']
-        semantics_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, s']
+        pos_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, sPrime]
+        semantics_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -4909,13 +4909,13 @@ open util/boolean
             FlightModes_VERTICAL_New_Vertical_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated
+            sPrime.taken = FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated + 
@@ -4931,87 +4931,87 @@ open util/boolean
         (s.FlightModes_GA_Switch_Pressed) = True and (s.FlightModes_Overspeed) = False
     }
 
-    pred pos_FlightModes_VERTICAL_VGA_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VGA_CLEARED + {
+    pred pos_FlightModes_VERTICAL_VGA_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VGA_CLEARED + {
             FlightModes_VERTICAL_VGA_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_VGA_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {FlightModes_VERTICAL_New_Vertical_Mode_Activated}, FlightModes_VERTICAL_VGA_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
+                no ((sPrime.events & InternalEvent) - {FlightModes_VERTICAL_New_Vertical_Mode_Activated})
             } else {
-                no ((s'.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{FlightModes_VERTICAL_New_Vertical_Mode_Activated} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
+                sPrime.events = s.events + {FlightModes_VERTICAL_New_Vertical_Mode_Activated}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in s'.events
-        enter_FlightModes_VERTICAL_VGA_SELECTED[s']
-        enter_FlightModes_VERTICAL_VGA_SELECTED_ACTIVE[s']
+        {FlightModes_VERTICAL_New_Vertical_Mode_Activated} in sPrime.events
+        enter_FlightModes_VERTICAL_VGA_SELECTED[sPrime]
+        enter_FlightModes_VERTICAL_VGA_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VGA_Select[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VGA_Select[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VGA_Select[s]
-        pos_FlightModes_VERTICAL_VGA_Select[s, s']
-        semantics_FlightModes_VERTICAL_VGA_Select[s, s']
+        pos_FlightModes_VERTICAL_VGA_Select[s, sPrime]
+        semantics_FlightModes_VERTICAL_VGA_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VGA_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -5032,13 +5032,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_VGA_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VGA_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VGA_Select
+            sPrime.taken = FlightModes_VERTICAL_VGA_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VGA_Select
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VGA_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VGA_Select + 
@@ -5055,86 +5055,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_VGA_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VGA_SELECTED + {
+    pred pos_FlightModes_VERTICAL_VGA_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VGA_SELECTED + {
             FlightModes_VERTICAL_VGA_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_VGA_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_VGA_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_VGA_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VGA_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_VGA_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VGA_SELECTED[s']
+        FlightModes_VERTICAL_VGA_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VGA_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_VGA_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VGA_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VGA_Clear[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VGA_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VGA_Clear[s]
-        pos_FlightModes_VERTICAL_VGA_Clear[s, s']
-        semantics_FlightModes_VERTICAL_VGA_Clear[s, s']
+        pos_FlightModes_VERTICAL_VGA_Clear[s, sPrime]
+        semantics_FlightModes_VERTICAL_VGA_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VGA_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -5157,13 +5157,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_VGA_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VGA_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VGA_Clear
+            sPrime.taken = FlightModes_VERTICAL_VGA_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VGA_Clear
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VGA_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VGA_Select + 
@@ -5184,86 +5184,86 @@ open util/boolean
         }
     }
 
-    pred pos_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_VGA_SELECTED + {
+    pred pos_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_VGA_SELECTED + {
             FlightModes_VERTICAL_VGA_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_VGA_NewVerticalModeActivated] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_VGA_NewVerticalModeActivated] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_VGA_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VGA_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_VGA_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VGA_SELECTED[s']
+        FlightModes_VERTICAL_VGA_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_VGA_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_VGA_SELECTED & s.conf) => exit_FlightModes_VERTICAL_VGA_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s]
-        pos_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, s']
-        semantics_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, s']
+        pos_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, sPrime]
+        semantics_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -5285,13 +5285,13 @@ open util/boolean
             FlightModes_VERTICAL_New_Vertical_Mode_Activated in {_s.events  + genEvents}
         }
     }
-    pred semantics_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_VGA_NewVerticalModeActivated
+            sPrime.taken = FlightModes_VERTICAL_VGA_NewVerticalModeActivated
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_VGA_NewVerticalModeActivated
+            sPrime.taken = s.taken + FlightModes_VERTICAL_VGA_NewVerticalModeActivated
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_VGA_Select + 
@@ -5306,86 +5306,86 @@ open util/boolean
         !((s.FlightModes_VS_Active) = True or (s.FlightModes_FLC_Active) = True or (s.FlightModes_ALT_Active) = True or (s.FlightModes_ALTSEL_Active) = True or (s.FlightModes_VAPPR_Active) = True or (s.FlightModes_VGA_Active) = True)
     }
 
-    pred pos_FlightModes_VERTICAL_PITCH_Select[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_PITCH_CLEARED + {
+    pred pos_FlightModes_VERTICAL_PITCH_Select[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_PITCH_CLEARED + {
             FlightModes_VERTICAL_PITCH_SELECTED_ACTIVE
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_PITCH_Select] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_PITCH_Select] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        enter_FlightModes_VERTICAL_PITCH_SELECTED[s']
-        enter_FlightModes_VERTICAL_PITCH_SELECTED_ACTIVE[s']
+        enter_FlightModes_VERTICAL_PITCH_SELECTED[sPrime]
+        enter_FlightModes_VERTICAL_PITCH_SELECTED_ACTIVE[sPrime]
     }
 
-    pred FlightModes_VERTICAL_PITCH_Select[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_PITCH_Select[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_PITCH_Select[s]
-        pos_FlightModes_VERTICAL_PITCH_Select[s, s']
-        semantics_FlightModes_VERTICAL_PITCH_Select[s, s']
+        pos_FlightModes_VERTICAL_PITCH_Select[s, sPrime]
+        semantics_FlightModes_VERTICAL_PITCH_Select[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_PITCH_Select[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -5404,13 +5404,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_PITCH_Select[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_PITCH_Select[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_PITCH_Select
+            sPrime.taken = FlightModes_VERTICAL_PITCH_Select
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_PITCH_Select
+            sPrime.taken = s.taken + FlightModes_VERTICAL_PITCH_Select
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_PITCH_Clear + 
@@ -5424,86 +5424,86 @@ open util/boolean
         (s.FlightModes_VS_Active) = True or (s.FlightModes_FLC_Active) = True or (s.FlightModes_ALT_Active) = True or (s.FlightModes_ALTSEL_Active) = True or (s.FlightModes_VAPPR_Active) = True or (s.FlightModes_VGA_Active) = True
     }
 
-    pred pos_FlightModes_VERTICAL_PITCH_Clear[s, s':Snapshot] {
-        s'.conf = s.conf - FlightModes_VERTICAL_PITCH_SELECTED + {
+    pred pos_FlightModes_VERTICAL_PITCH_Clear[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - FlightModes_VERTICAL_PITCH_SELECTED + {
             FlightModes_VERTICAL_PITCH_CLEARED
         }
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     
-        testIfNextStable[s, s', {none}, FlightModes_VERTICAL_PITCH_Clear] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, FlightModes_VERTICAL_PITCH_Clear] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
-            s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-            s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-            s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-            s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-            s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-            s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-            s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-            s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-            s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-            s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-            s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-            s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-            s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-            s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-            s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-            s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-            s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-            s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-            s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-            s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-            s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-            s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-            s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+            sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+            sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+            sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+            sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+            sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+            sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+            sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+            sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+            sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+            sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+            sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+            sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+            sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+            sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+            sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+            sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+            sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+            sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+            sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+            sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+            sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+            sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+            sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
         }
-        FlightModes_VERTICAL_PITCH_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_PITCH_SELECTED_ACTIVE[s']
-        (some FlightModes_VERTICAL_PITCH_SELECTED & s.conf) => exit_FlightModes_VERTICAL_PITCH_SELECTED[s']
+        FlightModes_VERTICAL_PITCH_SELECTED_ACTIVE in s.conf => exit_FlightModes_VERTICAL_PITCH_SELECTED_ACTIVE[sPrime]
+        (some FlightModes_VERTICAL_PITCH_SELECTED & s.conf) => exit_FlightModes_VERTICAL_PITCH_SELECTED[sPrime]
     }
 
-    pred FlightModes_VERTICAL_PITCH_Clear[s, s': Snapshot] {
+    pred FlightModes_VERTICAL_PITCH_Clear[s, sPrime: Snapshot] {
         pre_FlightModes_VERTICAL_PITCH_Clear[s]
-        pos_FlightModes_VERTICAL_PITCH_Clear[s, s']
-        semantics_FlightModes_VERTICAL_PITCH_Clear[s, s']
+        pos_FlightModes_VERTICAL_PITCH_Clear[s, sPrime]
+        semantics_FlightModes_VERTICAL_PITCH_Clear[s, sPrime]
     }
 
     pred enabledAfterStep_FlightModes_VERTICAL_PITCH_Clear[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -5522,13 +5522,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_FlightModes_VERTICAL_PITCH_Clear[s, s': Snapshot] {
+    pred semantics_FlightModes_VERTICAL_PITCH_Clear[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = FlightModes_VERTICAL_PITCH_Clear
+            sPrime.taken = FlightModes_VERTICAL_PITCH_Clear
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + FlightModes_VERTICAL_PITCH_Clear
+            sPrime.taken = s.taken + FlightModes_VERTICAL_PITCH_Clear
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 FlightModes_VERTICAL_PITCH_Clear + 
@@ -5765,100 +5765,100 @@ open util/boolean
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        FlightModes_FD_TurnFDOn[s, s'] or
-        FlightModes_FD_TurnFDOff[s, s'] or
-        FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, s'] or
-        FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, s'] or
-        FlightModes_LATERAL_HDG_Select[s, s'] or
-        FlightModes_LATERAL_HDG_Clear[s, s'] or
-        FlightModes_LATERAL_HDG_NewLateralModeActivated[s, s'] or
-        FlightModes_LATERAL_NAV_Select[s, s'] or
-        FlightModes_LATERAL_NAV_Capture[s, s'] or
-        FlightModes_LATERAL_NAV_Clear[s, s'] or
-        FlightModes_LATERAL_NAV_NewLateralModeActivated[s, s'] or
-        FlightModes_LATERAL_LAPPR_Select[s, s'] or
-        FlightModes_LATERAL_LAPPR_Capture[s, s'] or
-        FlightModes_LATERAL_LAPPR_Clear[s, s'] or
-        FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, s'] or
-        FlightModes_LATERAL_LGA_Select[s, s'] or
-        FlightModes_LATERAL_LGA_Clear[s, s'] or
-        FlightModes_LATERAL_LGA_NewLateralModeActivated[s, s'] or
-        FlightModes_LATERAL_ROLL_Select[s, s'] or
-        FlightModes_LATERAL_ROLL_Clear[s, s'] or
-        FlightModes_VERTICAL_VS_Select[s, s'] or
-        FlightModes_VERTICAL_VS_Clear[s, s'] or
-        FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, s'] or
-        FlightModes_VERTICAL_FLC_Select[s, s'] or
-        FlightModes_VERTICAL_FLC_Clear[s, s'] or
-        FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, s'] or
-        FlightModes_VERTICAL_ALT_Select[s, s'] or
-        FlightModes_VERTICAL_ALT_Clear[s, s'] or
-        FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, s'] or
-        FlightModes_VERTICAL_ALTSEL_Select[s, s'] or
-        FlightModes_VERTICAL_ALTSEL_Capture[s, s'] or
-        FlightModes_VERTICAL_ALTSEL_Track[s, s'] or
-        FlightModes_VERTICAL_ALTSEL_Clear[s, s'] or
-        FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, s'] or
-        FlightModes_VERTICAL_VAPPR_Select[s, s'] or
-        FlightModes_VERTICAL_VAPPR_Capture[s, s'] or
-        FlightModes_VERTICAL_VAPPR_Clear[s, s'] or
-        FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, s'] or
-        FlightModes_VERTICAL_VGA_Select[s, s'] or
-        FlightModes_VERTICAL_VGA_Clear[s, s'] or
-        FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, s'] or
-        FlightModes_VERTICAL_PITCH_Select[s, s'] or
-        FlightModes_VERTICAL_PITCH_Clear[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        FlightModes_FD_TurnFDOn[s, sPrime] or
+        FlightModes_FD_TurnFDOff[s, sPrime] or
+        FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, sPrime] or
+        FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, sPrime] or
+        FlightModes_LATERAL_HDG_Select[s, sPrime] or
+        FlightModes_LATERAL_HDG_Clear[s, sPrime] or
+        FlightModes_LATERAL_HDG_NewLateralModeActivated[s, sPrime] or
+        FlightModes_LATERAL_NAV_Select[s, sPrime] or
+        FlightModes_LATERAL_NAV_Capture[s, sPrime] or
+        FlightModes_LATERAL_NAV_Clear[s, sPrime] or
+        FlightModes_LATERAL_NAV_NewLateralModeActivated[s, sPrime] or
+        FlightModes_LATERAL_LAPPR_Select[s, sPrime] or
+        FlightModes_LATERAL_LAPPR_Capture[s, sPrime] or
+        FlightModes_LATERAL_LAPPR_Clear[s, sPrime] or
+        FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, sPrime] or
+        FlightModes_LATERAL_LGA_Select[s, sPrime] or
+        FlightModes_LATERAL_LGA_Clear[s, sPrime] or
+        FlightModes_LATERAL_LGA_NewLateralModeActivated[s, sPrime] or
+        FlightModes_LATERAL_ROLL_Select[s, sPrime] or
+        FlightModes_LATERAL_ROLL_Clear[s, sPrime] or
+        FlightModes_VERTICAL_VS_Select[s, sPrime] or
+        FlightModes_VERTICAL_VS_Clear[s, sPrime] or
+        FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, sPrime] or
+        FlightModes_VERTICAL_FLC_Select[s, sPrime] or
+        FlightModes_VERTICAL_FLC_Clear[s, sPrime] or
+        FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, sPrime] or
+        FlightModes_VERTICAL_ALT_Select[s, sPrime] or
+        FlightModes_VERTICAL_ALT_Clear[s, sPrime] or
+        FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, sPrime] or
+        FlightModes_VERTICAL_ALTSEL_Select[s, sPrime] or
+        FlightModes_VERTICAL_ALTSEL_Capture[s, sPrime] or
+        FlightModes_VERTICAL_ALTSEL_Track[s, sPrime] or
+        FlightModes_VERTICAL_ALTSEL_Clear[s, sPrime] or
+        FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, sPrime] or
+        FlightModes_VERTICAL_VAPPR_Select[s, sPrime] or
+        FlightModes_VERTICAL_VAPPR_Capture[s, sPrime] or
+        FlightModes_VERTICAL_VAPPR_Clear[s, sPrime] or
+        FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, sPrime] or
+        FlightModes_VERTICAL_VGA_Select[s, sPrime] or
+        FlightModes_VERTICAL_VGA_Clear[s, sPrime] or
+        FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, sPrime] or
+        FlightModes_VERTICAL_PITCH_Select[s, sPrime] or
+        FlightModes_VERTICAL_PITCH_Clear[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred testIfNextStable[s, s': Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
-        !enabledAfterStep_FlightModes_FD_TurnFDOn[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_FD_TurnFDOff[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_HDG_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_HDG_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_NAV_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_NAV_Capture[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_NAV_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_LAPPR_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_LAPPR_Capture[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_LAPPR_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_LGA_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_LGA_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_ROLL_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_LATERAL_ROLL_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VS_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VS_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_FLC_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_FLC_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_ALT_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_ALT_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Capture[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Track[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VAPPR_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VAPPR_Capture[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VAPPR_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VGA_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VGA_Clear[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_PITCH_Select[s, s', t, genEvents]
-        !enabledAfterStep_FlightModes_VERTICAL_PITCH_Clear[s, s', t, genEvents]
+    pred testIfNextStable[s, sPrime: Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
+        !enabledAfterStep_FlightModes_FD_TurnFDOn[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_FD_TurnFDOff[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOn[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_ANNUNCIATIONS_TurnAnnunciationsOff[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_HDG_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_HDG_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_HDG_NewLateralModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_NAV_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_NAV_Capture[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_NAV_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_NAV_NewLateralModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_LAPPR_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_LAPPR_Capture[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_LAPPR_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_LAPPR_NewLateralModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_LGA_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_LGA_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_LGA_NewLateralModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_ROLL_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_LATERAL_ROLL_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VS_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VS_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VS_NewVerticalModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_FLC_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_FLC_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_FLC_NewVerticalModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_ALT_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_ALT_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_ALT_NewVerticalModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Capture[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Track[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_ALTSEL_NewVerticalModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VAPPR_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VAPPR_Capture[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VAPPR_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VAPPR_NewVerticalModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VGA_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VGA_Clear[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_VGA_NewVerticalModeActivated[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_PITCH_Select[s, sPrime, t, genEvents]
+        !enabledAfterStep_FlightModes_VERTICAL_PITCH_Clear[s, sPrime, t, genEvents]
     }
 
     pred isEnabled[s:Snapshot] {
@@ -5907,77 +5907,77 @@ open util/boolean
         pre_FlightModes_VERTICAL_PITCH_Clear[s]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.events = s.events
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.events = s.events
+        sPrime.taken = s.taken
         // Model specific declarations
-        s'.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
-        s'.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
-        s'.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
-        s'.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
-        s'.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
-        s'.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
-        s'.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
-        s'.FlightModes_Overspeed = s.FlightModes_Overspeed
-        s'.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
-        s'.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
-        s'.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
-        s'.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
-        s'.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
-        s'.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
-        s'.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
-        s'.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
-        s'.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
-        s'.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
-        s'.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
-        s'.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
-        s'.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
-        s'.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
-        s'.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
-        s'.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
-        s'.FlightModes_FD_On = s.FlightModes_FD_On
-        s'.FlightModes_Modes_On = s.FlightModes_Modes_On
-        s'.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
-        s'.FlightModes_HDG_Active = s.FlightModes_HDG_Active
-        s'.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
-        s'.FlightModes_NAV_Active = s.FlightModes_NAV_Active
-        s'.FlightModes_VS_Active = s.FlightModes_VS_Active
-        s'.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
-        s'.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
-        s'.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
-        s'.FlightModes_LGA_Active = s.FlightModes_LGA_Active
-        s'.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
-        s'.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
-        s'.FlightModes_VS_Selected = s.FlightModes_VS_Selected
-        s'.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
-        s'.FlightModes_FLC_Active = s.FlightModes_FLC_Active
-        s'.FlightModes_ALT_Active = s.FlightModes_ALT_Active
-        s'.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
-        s'.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
-        s'.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
-        s'.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
-        s'.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
-        s'.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
-        s'.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
-        s'.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
-        s'.FlightModes_VGA_Active = s.FlightModes_VGA_Active
-        s'.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
-        s'.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
-        s'.FlightModes_Active_Side = s.FlightModes_Active_Side
+        sPrime.FlightModes_Pilot_Flying_Side = s.FlightModes_Pilot_Flying_Side
+        sPrime.FlightModes_Pilot_Flying_Transfer = s.FlightModes_Pilot_Flying_Transfer
+        sPrime.FlightModes_HDG_Switch_Pressed = s.FlightModes_HDG_Switch_Pressed
+        sPrime.FlightModes_NAV_Switch_Pressed = s.FlightModes_NAV_Switch_Pressed
+        sPrime.FlightModes_GA_Switch_Pressed = s.FlightModes_GA_Switch_Pressed
+        sPrime.FlightModes_When_AP_Engaged = s.FlightModes_When_AP_Engaged
+        sPrime.FlightModes_FD_Switch_Pressed = s.FlightModes_FD_Switch_Pressed
+        sPrime.FlightModes_Overspeed = s.FlightModes_Overspeed
+        sPrime.FlightModes_VS_Switch_Pressed = s.FlightModes_VS_Switch_Pressed
+        sPrime.FlightModes_FLC_Switch_Pressed = s.FlightModes_FLC_Switch_Pressed
+        sPrime.FlightModes_ALT_Switch_Pressed = s.FlightModes_ALT_Switch_Pressed
+        sPrime.FlightModes_APPR_Switch_Pressed = s.FlightModes_APPR_Switch_Pressed
+        sPrime.FlightModes_VS_Pitch_Wheel_Rotated = s.FlightModes_VS_Pitch_Wheel_Rotated
+        sPrime.FlightModes_Selected_NAV_Source_Changed = s.FlightModes_Selected_NAV_Source_Changed
+        sPrime.FlightModes_Selected_NAV_Frequency_Changed = s.FlightModes_Selected_NAV_Frequency_Changed
+        sPrime.FlightModes_Is_AP_Engaged = s.FlightModes_Is_AP_Engaged
+        sPrime.FlightModes_Is_Offside_FD_On = s.FlightModes_Is_Offside_FD_On
+        sPrime.FlightModes_LAPPR_Capture_Condition_Met = s.FlightModes_LAPPR_Capture_Condition_Met
+        sPrime.FlightModes_SYNC_Switch_Pressed = s.FlightModes_SYNC_Switch_Pressed
+        sPrime.FlightModes_NAV_Capture_Condition_Met = s.FlightModes_NAV_Capture_Condition_Met
+        sPrime.FlightModes_ALTSEL_Target_Changed = s.FlightModes_ALTSEL_Target_Changed
+        sPrime.FlightModes_ALTSEL_Capture_Condition_Met = s.FlightModes_ALTSEL_Capture_Condition_Met
+        sPrime.FlightModes_ALTSEL_Track_Condition_Met = s.FlightModes_ALTSEL_Track_Condition_Met
+        sPrime.FlightModes_VAPPR_Capture_Condition_Met = s.FlightModes_VAPPR_Capture_Condition_Met
+        sPrime.FlightModes_FD_On = s.FlightModes_FD_On
+        sPrime.FlightModes_Modes_On = s.FlightModes_Modes_On
+        sPrime.FlightModes_HDG_Selected = s.FlightModes_HDG_Selected
+        sPrime.FlightModes_HDG_Active = s.FlightModes_HDG_Active
+        sPrime.FlightModes_NAV_Selected = s.FlightModes_NAV_Selected
+        sPrime.FlightModes_NAV_Active = s.FlightModes_NAV_Active
+        sPrime.FlightModes_VS_Active = s.FlightModes_VS_Active
+        sPrime.FlightModes_LAPPR_Selected = s.FlightModes_LAPPR_Selected
+        sPrime.FlightModes_LAPPR_Active = s.FlightModes_LAPPR_Active
+        sPrime.FlightModes_LGA_Selected = s.FlightModes_LGA_Selected
+        sPrime.FlightModes_LGA_Active = s.FlightModes_LGA_Active
+        sPrime.FlightModes_ROLL_Active = s.FlightModes_ROLL_Active
+        sPrime.FlightModes_ROLL_Selected = s.FlightModes_ROLL_Selected
+        sPrime.FlightModes_VS_Selected = s.FlightModes_VS_Selected
+        sPrime.FlightModes_FLC_Selected = s.FlightModes_FLC_Selected
+        sPrime.FlightModes_FLC_Active = s.FlightModes_FLC_Active
+        sPrime.FlightModes_ALT_Active = s.FlightModes_ALT_Active
+        sPrime.FlightModes_ALTSEL_Active = s.FlightModes_ALTSEL_Active
+        sPrime.FlightModes_ALT_Selected = s.FlightModes_ALT_Selected
+        sPrime.FlightModes_ALTSEL_Track = s.FlightModes_ALTSEL_Track
+        sPrime.FlightModes_ALTSEL_Selected = s.FlightModes_ALTSEL_Selected
+        sPrime.FlightModes_PITCH_Selected = s.FlightModes_PITCH_Selected
+        sPrime.FlightModes_VAPPR_Selected = s.FlightModes_VAPPR_Selected
+        sPrime.FlightModes_VAPPR_Active = s.FlightModes_VAPPR_Active
+        sPrime.FlightModes_VGA_Selected = s.FlightModes_VGA_Selected
+        sPrime.FlightModes_VGA_Active = s.FlightModes_VGA_Active
+        sPrime.FlightModes_PITCH_Active = s.FlightModes_PITCH_Active
+        sPrime.FlightModes_Independent_Mode = s.FlightModes_Independent_Mode
+        sPrime.FlightModes_Active_Side = s.FlightModes_Active_Side
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
-        all s: Snapshot | (isEnabled[s] && no s': Snapshot | small_step[s, s']) => s.stable = False
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
+        all s: Snapshot | (isEnabled[s] && no sPrime: Snapshot | small_step[s, sPrime]) => s.stable = False
         all s: Snapshot | s.stable = False => some s.nextStep
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 2 EventLabel
@@ -6261,7 +6261,7 @@ open util/boolean
         // This is because of how our nextStep relation is built and we don't have an
         // easy way to refer to the next stable snapshot
         all s: Snapshot | s.stable = True =>
-            rising[s, FlightModes_Is_AP_Engaged] => some s': s.*nextStep | s'.stable = True and s'.FlightModes_FD_On = True
+            rising[s, FlightModes_Is_AP_Engaged] => some sPrime: s.*nextStep | sPrime.stable = True and sPrime.FlightModes_FD_On = True
     }
     check AP_Engaged_Turns_FD_On for 6 Snapshot, exactly 2 EventLabel
     
