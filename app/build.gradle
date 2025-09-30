@@ -35,6 +35,6 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'org.cli.App'
+    mainClass = 'org.cli.Main'
 }
 

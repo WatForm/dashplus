@@ -1,5 +1,9 @@
 grammar Alloy;
 
+@header {
+	package antlr.generated;
+}
+
 @parser::members {
   private final java.util.Deque<Boolean> _inImpliesRHSStack = new java.util.ArrayDeque<>();
   {_inImpliesRHSStack.push(Boolean.FALSE);}

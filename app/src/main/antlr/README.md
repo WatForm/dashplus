@@ -14,9 +14,15 @@
         - Generates the source files for all ANTLR grammars for the given source set.
         - Default path: src/sourceSet/antlr
         - compileSourceSetJava's dependency
-- So if you run ./gradlew build (or ./gradlew compileJava), Gradle will first execute the generateGrammarSource task, then compile them together with other Java code
-- Then compileJava compiles those generated .java files together with your src/main/java sources
+- So if you run ./gradlew build (or ./gradlew compileJava), Gradle will first execute the generateGrammarSource task
 - You can find ANTLR generated files in app/build/generated-src/antlr/main/
+- This header in Alloy.g4 specifies the package where you can import antlr generated classes like AlloyLexer
+    `
+    @header {
+        package antlr.generated;
+    }
+    `
+- Then compileJava compiles those generated .java files together with src/main/java sources
 - Don't put the antlr generated files in src/
     - https://stackoverflow.com/questions/36469546/what-is-minimal-sample-gradle-project-for-antlr4-with-antlr-plugin
 
