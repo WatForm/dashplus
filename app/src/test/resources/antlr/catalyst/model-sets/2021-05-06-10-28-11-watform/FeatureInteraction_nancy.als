@@ -56,185 +56,185 @@ pred initial[s:State]{
 
 //*****************TRANSITION CONSTRAINTS/OPERATIONS********************//
 
-pred pre_idle_calling[s: State,n,n':PhoneNumber]{
+pred pre_idle_calling[s: State,n,nPrime:PhoneNumber]{
 	n in s.idle
-	n != n'	
+	n != nPrime	
 }
-pred post_idle_calling[s,s': State,n,n':PhoneNumber]{
-	s'.idle = ((s.idle) - n)
-	s'.calling = s.calling + (n->n')	
+pred post_idle_calling[s,sPrime: State,n,nPrime:PhoneNumber]{
+	sPrime.idle = ((s.idle) - n)
+	sPrime.calling = s.calling + (n->nPrime)	
 
-	s'.talkingTo = s.talkingTo
-	s'.busy = s.busy
-	s'.waitingFor = s.waitingFor
-	s'.forwardedTo = s.forwardedTo
+	sPrime.talkingTo = s.talkingTo
+	sPrime.busy = s.busy
+	sPrime.waitingFor = s.waitingFor
+	sPrime.forwardedTo = s.forwardedTo
 }
-pred idle_calling[s,s': State,n,n':PhoneNumber]{
-	pre_idle_calling[s,n,n']	
-	post_idle_calling[s,s',n,n']
-}
-
-
-pred pre_calling_talkingTo[s:State,n,n':PhoneNumber]{
-	n->n' in s.calling
-	n' in s.idle
-}
-pred post_calling_talkingTo[s,s':State,n,n':PhoneNumber]{
-	s'.idle = s.idle - n'
-	s'.calling = s.calling - (n -> n')
-	s'.talkingTo = s.talkingTo + (n -> n')
-
-	s'.busy = s.busy
-	s'.waitingFor = s.waitingFor
-	s'.forwardedTo = s.forwardedTo
-}
-pred calling_talkingTo[s,s':State,n,n':PhoneNumber]{
-	pre_calling_talkingTo[s,n,n']
-	post_calling_talkingTo[s,s',n,n']
+pred idle_calling[s,sPrime: State,n,nPrime:PhoneNumber]{
+	pre_idle_calling[s,n,nPrime]	
+	post_idle_calling[s,sPrime,n,nPrime]
 }
 
-pred pre_talkingTo_idle[s:State,n,n':PhoneNumber]{
-	n -> n' in s.talkingTo
-}
-pred post_talkingTo_idle[s,s':State,n,n':PhoneNumber]{
-	s'.talkingTo = s.talkingTo - (n->n')
-	s'.idle = s.idle + (n + n')
 
-	s'.busy = s.busy
-	s'.calling = s.calling
-	s'.waitingFor = s.waitingFor
-	s'.forwardedTo = s.forwardedTo
+pred pre_calling_talkingTo[s:State,n,nPrime:PhoneNumber]{
+	n->nPrime in s.calling
+	nPrime in s.idle
 }
-pred talkingTo_idle[s,s':State,n,n':PhoneNumber]{
-	pre_talkingTo_idle[s,n,n']
-	post_talkingTo_idle[s,s',n,n']
+pred post_calling_talkingTo[s,sPrime:State,n,nPrime:PhoneNumber]{
+	sPrime.idle = s.idle - nPrime
+	sPrime.calling = s.calling - (n -> nPrime)
+	sPrime.talkingTo = s.talkingTo + (n -> nPrime)
+
+	sPrime.busy = s.busy
+	sPrime.waitingFor = s.waitingFor
+	sPrime.forwardedTo = s.forwardedTo
+}
+pred calling_talkingTo[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_calling_talkingTo[s,n,nPrime]
+	post_calling_talkingTo[s,sPrime,n,nPrime]
 }
 
-pred pre_calling_busy[s:State,n,n':PhoneNumber]{
-	n->n' in s.calling
-	n' not in s.idle
+pred pre_talkingTo_idle[s:State,n,nPrime:PhoneNumber]{
+	n -> nPrime in s.talkingTo
 }
-pred post_calling_busy[s,s':State,n,n':PhoneNumber]{
-	s'.calling = s.calling - (n->n')
-	s'.busy = s.busy + (n->n')
+pred post_talkingTo_idle[s,sPrime:State,n,nPrime:PhoneNumber]{
+	sPrime.talkingTo = s.talkingTo - (n->nPrime)
+	sPrime.idle = s.idle + (n + nPrime)
+
+	sPrime.busy = s.busy
+	sPrime.calling = s.calling
+	sPrime.waitingFor = s.waitingFor
+	sPrime.forwardedTo = s.forwardedTo
+}
+pred talkingTo_idle[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_talkingTo_idle[s,n,nPrime]
+	post_talkingTo_idle[s,sPrime,n,nPrime]
+}
+
+pred pre_calling_busy[s:State,n,nPrime:PhoneNumber]{
+	n->nPrime in s.calling
+	nPrime not in s.idle
+}
+pred post_calling_busy[s,sPrime:State,n,nPrime:PhoneNumber]{
+	sPrime.calling = s.calling - (n->nPrime)
+	sPrime.busy = s.busy + (n->nPrime)
 	
-	s'.idle = s.idle
-	s'.talkingTo = s.talkingTo
-	s'.waitingFor = s.waitingFor
-	s'.forwardedTo = s.forwardedTo
+	sPrime.idle = s.idle
+	sPrime.talkingTo = s.talkingTo
+	sPrime.waitingFor = s.waitingFor
+	sPrime.forwardedTo = s.forwardedTo
 }
-pred calling_busy[s,s':State,n,n':PhoneNumber]{
-	pre_calling_busy[s,n,n']
-	post_calling_busy[s,s',n,n']
+pred calling_busy[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_calling_busy[s,n,nPrime]
+	post_calling_busy[s,sPrime,n,nPrime]
 }
 
-pred pre_busy_waitingFor[s:State,n,n':PhoneNumber]{
-	(n->n') in s.busy
-	CW in n'.feature
+pred pre_busy_waitingFor[s:State,n,nPrime:PhoneNumber]{
+	(n->nPrime) in s.busy
+	CW in nPrime.feature
 	// PN is not already being waited for, i.e.,
 	// can have only one call in CW queue, otherwise stay busy
-	n' not in PhoneNumber.(s.waitingFor)
+	nPrime not in PhoneNumber.(s.waitingFor)
 }
-pred post_busy_waitingFor[s,s':State,n,n':PhoneNumber]{
-	s'.busy = s.busy - (n->n')
-	s'.waitingFor = s.waitingFor + (n->n')
+pred post_busy_waitingFor[s,sPrime:State,n,nPrime:PhoneNumber]{
+	sPrime.busy = s.busy - (n->nPrime)
+	sPrime.waitingFor = s.waitingFor + (n->nPrime)
 
-	s'.forwardedTo = s.forwardedTo	
-	s'.idle = s.idle
-	s'.calling = s.calling
-	s'.talkingTo = s.talkingTo
+	sPrime.forwardedTo = s.forwardedTo	
+	sPrime.idle = s.idle
+	sPrime.calling = s.calling
+	sPrime.talkingTo = s.talkingTo
 }
-pred busy_waitingFor[s,s':State,n,n':PhoneNumber]{
-	pre_busy_waitingFor[s,n,n']
-	post_busy_waitingFor[s,s',n,n']
+pred busy_waitingFor[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_busy_waitingFor[s,n,nPrime]
+	post_busy_waitingFor[s,sPrime,n,nPrime]
 }
 
 // caller on CW hangs up
-pred pre_waitingFor_idle[s:State,n,n':PhoneNumber]{
-	n -> n' in s.waitingFor
+pred pre_waitingFor_idle[s:State,n,nPrime:PhoneNumber]{
+	n -> nPrime in s.waitingFor
 }
-pred post_waitingFor_idle[s,s':State,n,n':PhoneNumber]{	
-	s'.waitingFor = s.waitingFor - (n -> n')	
-	s'.idle = s.idle + n
+pred post_waitingFor_idle[s,sPrime:State,n,nPrime:PhoneNumber]{	
+	sPrime.waitingFor = s.waitingFor - (n -> nPrime)	
+	sPrime.idle = s.idle + n
 
-	s'.calling = s.calling
-	s'.talkingTo = s.talkingTo
-	s'.busy = s.busy
-	s'.forwardedTo = s.forwardedTo
+	sPrime.calling = s.calling
+	sPrime.talkingTo = s.talkingTo
+	sPrime.busy = s.busy
+	sPrime.forwardedTo = s.forwardedTo
 }
-pred waitingFor_idle[s,s':State,n,n':PhoneNumber]{
-	pre_waitingFor_idle[s,n,n']
-	post_waitingFor_idle[s,s',n,n']
-}
-
-pred pre_waitingFor_talkingTo[s:State,n,n':PhoneNumber]{
-	n -> n' in s.waitingFor
-}
-pred post_waitingFor_talkingTo[s,s':State,n,n':PhoneNumber]{
-	s'.waitingFor = s.waitingFor - (n -> n')
-	s'.talkingTo = s.talkingTo + (n -> n')
-
-	s'.idle = s.idle 
-	s.busy = s'.busy
-	s.forwardedTo = s'.forwardedTo
-	s.calling = s'.calling
-}
-pred waitingFor_talkingTo[s,s':State,n,n':PhoneNumber]{
-	pre_waitingFor_talkingTo[s,n,n']
-	post_waitingFor_talkingTo[s,s',n,n']
+pred waitingFor_idle[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_waitingFor_idle[s,n,nPrime]
+	post_waitingFor_idle[s,sPrime,n,nPrime]
 }
 
-pred pre_busy_forwardedTo[s:State,n,n':PhoneNumber]{
-	n -> n' in s.busy
-	CF in n'.feature
+pred pre_waitingFor_talkingTo[s:State,n,nPrime:PhoneNumber]{
+	n -> nPrime in s.waitingFor
 }
-pred post_busy_forwardedTo[s,s':State,n,n':PhoneNumber]{
-	s'.busy = s.busy - (n -> n')
-	s'.forwardedTo = s.forwardedTo + (n -> n'.fw)
+pred post_waitingFor_talkingTo[s,sPrime:State,n,nPrime:PhoneNumber]{
+	sPrime.waitingFor = s.waitingFor - (n -> nPrime)
+	sPrime.talkingTo = s.talkingTo + (n -> nPrime)
 
-	s'.idle = s.idle
-	s'.talkingTo = s.talkingTo
-	s'.calling = s.calling 
-	s'.waitingFor = s.waitingFor
+	sPrime.idle = s.idle 
+	s.busy = sPrime.busy
+	s.forwardedTo = sPrime.forwardedTo
+	s.calling = sPrime.calling
 }
-pred busy_forwardedTo[s,s':State,n,n':PhoneNumber]{
-	pre_busy_forwardedTo[s,n,n']
-	post_busy_forwardedTo[s,s',n,n']
-}
-
-pred pre_forwardedTo_calling[s:State,n,n':PhoneNumber]{
-	n -> n' in s.forwardedTo
-}
-pred post_forwardedTo_calling[s,s':State,n,n':PhoneNumber]{
-	s'.forwardedTo = s.forwardedTo - (n->n')
-	s'.calling = s.calling + (n -> n')
-
-	s'.idle = s.idle
-	s'.busy = s.busy
-	s'.talkingTo = s.talkingTo
-	s'.waitingFor = s.waitingFor
-}
-pred forwardedTo_calling[s,s':State,n,n':PhoneNumber]{
-	pre_forwardedTo_calling[s,n,n']
-	post_forwardedTo_calling[s,s',n,n']
+pred waitingFor_talkingTo[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_waitingFor_talkingTo[s,n,nPrime]
+	post_waitingFor_talkingTo[s,sPrime,n,nPrime]
 }
 
-pred pre_busy_idle[s:State,n,n':PhoneNumber]{
-	n -> n' in s.busy
-	no n'.feature
+pred pre_busy_forwardedTo[s:State,n,nPrime:PhoneNumber]{
+	n -> nPrime in s.busy
+	CF in nPrime.feature
 }
-pred post_busy_idle[s,s':State,n,n':PhoneNumber]{
-	s'.busy = s.busy - (n -> n')
-	s'.idle = s.idle + n
+pred post_busy_forwardedTo[s,sPrime:State,n,nPrime:PhoneNumber]{
+	sPrime.busy = s.busy - (n -> nPrime)
+	sPrime.forwardedTo = s.forwardedTo + (n -> nPrime.fw)
 
-	s.talkingTo = s'.talkingTo
-	s.waitingFor = s'.waitingFor
-	s.forwardedTo = s'.forwardedTo
-	s.calling = s'.calling
+	sPrime.idle = s.idle
+	sPrime.talkingTo = s.talkingTo
+	sPrime.calling = s.calling 
+	sPrime.waitingFor = s.waitingFor
 }
-pred busy_idle[s,s':State,n,n':PhoneNumber]{
-	pre_busy_idle[s,n,n']
-	post_busy_idle[s,s',n,n']
+pred busy_forwardedTo[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_busy_forwardedTo[s,n,nPrime]
+	post_busy_forwardedTo[s,sPrime,n,nPrime]
+}
+
+pred pre_forwardedTo_calling[s:State,n,nPrime:PhoneNumber]{
+	n -> nPrime in s.forwardedTo
+}
+pred post_forwardedTo_calling[s,sPrime:State,n,nPrime:PhoneNumber]{
+	sPrime.forwardedTo = s.forwardedTo - (n->nPrime)
+	sPrime.calling = s.calling + (n -> nPrime)
+
+	sPrime.idle = s.idle
+	sPrime.busy = s.busy
+	sPrime.talkingTo = s.talkingTo
+	sPrime.waitingFor = s.waitingFor
+}
+pred forwardedTo_calling[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_forwardedTo_calling[s,n,nPrime]
+	post_forwardedTo_calling[s,sPrime,n,nPrime]
+}
+
+pred pre_busy_idle[s:State,n,nPrime:PhoneNumber]{
+	n -> nPrime in s.busy
+	no nPrime.feature
+}
+pred post_busy_idle[s,sPrime:State,n,nPrime:PhoneNumber]{
+	sPrime.busy = s.busy - (n -> nPrime)
+	sPrime.idle = s.idle + n
+
+	s.talkingTo = sPrime.talkingTo
+	s.waitingFor = sPrime.waitingFor
+	s.forwardedTo = sPrime.forwardedTo
+	s.calling = sPrime.calling
+}
+pred busy_idle[s,sPrime:State,n,nPrime:PhoneNumber]{
+	pre_busy_idle[s,n,nPrime]
+	post_busy_idle[s,sPrime,n,nPrime]
 }
 
 
@@ -244,18 +244,18 @@ fact md{
 	// init state constraint
 	all s:State | s in initialState iff initial[s]	
 	// transition constraints
-	all s,s': State| 
-		((s->s') in nextState) iff
-		(some n,n':PhoneNumber|(
-			idle_calling[s,s',n,n'] or calling_talkingTo[s,s',n,n'] or talkingTo_idle[s,s',n,n'] or
-			calling_busy[s,s',n,n'] or busy_waitingFor[s,s',n,n'] or busy_forwardedTo[s,s',n,n'] or
-			busy_idle[s,s',n,n'] or waitingFor_idle[s,s',n,n'] or waitingFor_talkingTo[s,s',n,n'] or
-			forwardedTo_calling[s,s',n,n']))
+	all s,sPrime: State| 
+		((s->sPrime) in nextState) iff
+		(some n,nPrime:PhoneNumber|(
+			idle_calling[s,sPrime,n,nPrime] or calling_talkingTo[s,sPrime,n,nPrime] or talkingTo_idle[s,sPrime,n,nPrime] or
+			calling_busy[s,sPrime,n,nPrime] or busy_waitingFor[s,sPrime,n,nPrime] or busy_forwardedTo[s,sPrime,n,nPrime] or
+			busy_idle[s,sPrime,n,nPrime] or waitingFor_idle[s,sPrime,n,nPrime] or waitingFor_talkingTo[s,sPrime,n,nPrime] or
+			forwardedTo_calling[s,sPrime,n,nPrime]))
 	// equality predicate: states are records
-	all s,s':State|(
-		((s.idle = s'.idle) and (s.calling = s'.calling) and 
-		(s.talkingTo = s'.talkingTo) and (s.busy = s'.busy) and
-		(s.waitingFor = s'.waitingFor) and (s.forwardedTo = s'.forwardedTo)) implies (s =s'))
+	all s,sPrime:State|(
+		((s.idle = sPrime.idle) and (s.calling = sPrime.calling) and 
+		(s.talkingTo = sPrime.talkingTo) and (s.busy = sPrime.busy) and
+		(s.waitingFor = sPrime.waitingFor) and (s.forwardedTo = sPrime.forwardedTo)) implies (s =sPrime))
 }
 
 //*****************SIGNIFICANCE AXIOMS********************//
@@ -263,31 +263,31 @@ pred initialStateAxiom {
 	some s: State | s in initialState
 }
 pred totalityAxiom {
-	all s: State | some s':State | s->s' in nextState
+	all s: State | some sPrime:State | s->sPrime in nextState
 }
 pred operationsAxiom {
 	// at least one state must satisfy precons of each op
-	some s:State | some n,n':PhoneNumber | pre_idle_calling[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_calling_talkingTo[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_talkingTo_idle[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_calling_busy[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_busy_waitingFor[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_busy_forwardedTo[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_busy_idle[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_waitingFor_idle[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_waitingFor_talkingTo[s,n,n']
-	some s:State | some n,n':PhoneNumber | pre_forwardedTo_calling[s,n,n']
+	some s:State | some n,nPrime:PhoneNumber | pre_idle_calling[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_calling_talkingTo[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_talkingTo_idle[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_calling_busy[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_busy_waitingFor[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_busy_forwardedTo[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_busy_idle[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_waitingFor_idle[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_waitingFor_talkingTo[s,n,nPrime]
+	some s:State | some n,nPrime:PhoneNumber | pre_forwardedTo_calling[s,n,nPrime]
 	// all possible ops from state must exist
-	all s:State | some n,n':PhoneNumber | pre_idle_calling[s,n,n'] implies some s':State | post_idle_calling[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_calling_talkingTo[s,n,n'] implies some s':State | post_calling_talkingTo[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_talkingTo_idle[s,n,n'] implies some s':State | post_talkingTo_idle[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_calling_busy[s,n,n'] implies some s':State | post_calling_busy[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_busy_waitingFor[s,n,n'] implies some s':State | post_busy_waitingFor[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_busy_forwardedTo[s,n,n'] implies some s':State | post_busy_forwardedTo[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_busy_idle[s,n,n'] implies some s':State | post_busy_idle[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_waitingFor_idle[s,n,n'] implies some s':State | post_waitingFor_idle[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_waitingFor_talkingTo[s,n,n'] implies some s':State | post_waitingFor_talkingTo[s,s',n,n']
-	all s:State | some n,n':PhoneNumber | pre_forwardedTo_calling[s,n,n'] implies some s':State | post_forwardedTo_calling[s,s',n,n']
+	all s:State | some n,nPrime:PhoneNumber | pre_idle_calling[s,n,nPrime] implies some sPrime:State | post_idle_calling[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_calling_talkingTo[s,n,nPrime] implies some sPrime:State | post_calling_talkingTo[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_talkingTo_idle[s,n,nPrime] implies some sPrime:State | post_talkingTo_idle[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_calling_busy[s,n,nPrime] implies some sPrime:State | post_calling_busy[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_busy_waitingFor[s,n,nPrime] implies some sPrime:State | post_busy_waitingFor[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_busy_forwardedTo[s,n,nPrime] implies some sPrime:State | post_busy_forwardedTo[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_busy_idle[s,n,nPrime] implies some sPrime:State | post_busy_idle[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_waitingFor_idle[s,n,nPrime] implies some sPrime:State | post_waitingFor_idle[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_waitingFor_talkingTo[s,n,nPrime] implies some sPrime:State | post_waitingFor_talkingTo[s,sPrime,n,nPrime]
+	all s:State | some n,nPrime:PhoneNumber | pre_forwardedTo_calling[s,n,nPrime] implies some sPrime:State | post_forwardedTo_calling[s,sPrime,n,nPrime]
 }
 pred significanceAxioms {
 	initialStateAxiom

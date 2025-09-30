@@ -42,20 +42,20 @@ open util/ordering[Snapshot]
         SnapshotUI_login in (s.events & EnvironmentEvent)
     }
 
-    pred pos_SnapshotUI_LoginPage_Login[s, s':Snapshot] {
-        s'.conf = s.conf - SnapshotUI_LoginPage + {
+    pred pos_SnapshotUI_LoginPage_Login[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - SnapshotUI_LoginPage + {
             SnapshotUI_Snapshot_Reports_Summary
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred SnapshotUI_LoginPage_Login[s, s': Snapshot] {
+    pred SnapshotUI_LoginPage_Login[s, sPrime: Snapshot] {
         pre_SnapshotUI_LoginPage_Login[s]
-        pos_SnapshotUI_LoginPage_Login[s, s']
-        semantics_SnapshotUI_LoginPage_Login[s, s']
+        pos_SnapshotUI_LoginPage_Login[s, sPrime]
+        semantics_SnapshotUI_LoginPage_Login[s, sPrime]
     }
-    pred semantics_SnapshotUI_LoginPage_Login[s, s': Snapshot] {
-        s'.taken = SnapshotUI_LoginPage_Login
+    pred semantics_SnapshotUI_LoginPage_Login[s, sPrime: Snapshot] {
+        sPrime.taken = SnapshotUI_LoginPage_Login
     }
     // Transition SnapshotUI_Snapshot_Logout
     pred pre_SnapshotUI_Snapshot_Logout[s:Snapshot] {
@@ -63,20 +63,20 @@ open util/ordering[Snapshot]
         SnapshotUI_logout in (s.events & EnvironmentEvent)
     }
 
-    pred pos_SnapshotUI_Snapshot_Logout[s, s':Snapshot] {
-        s'.conf = s.conf - SnapshotUI_Snapshot + {
+    pred pos_SnapshotUI_Snapshot_Logout[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - SnapshotUI_Snapshot + {
             SnapshotUI_LoginPage
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred SnapshotUI_Snapshot_Logout[s, s': Snapshot] {
+    pred SnapshotUI_Snapshot_Logout[s, sPrime: Snapshot] {
         pre_SnapshotUI_Snapshot_Logout[s]
-        pos_SnapshotUI_Snapshot_Logout[s, s']
-        semantics_SnapshotUI_Snapshot_Logout[s, s']
+        pos_SnapshotUI_Snapshot_Logout[s, sPrime]
+        semantics_SnapshotUI_Snapshot_Logout[s, sPrime]
     }
-    pred semantics_SnapshotUI_Snapshot_Logout[s, s': Snapshot] {
-        s'.taken = SnapshotUI_Snapshot_Logout
+    pred semantics_SnapshotUI_Snapshot_Logout[s, sPrime: Snapshot] {
+        sPrime.taken = SnapshotUI_Snapshot_Logout
         // Priority "SOURCE-PARENT" semantics
         !pre_SnapshotUI_Snapshot_Reports_SeeStandards[s]
         !pre_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s]
@@ -90,20 +90,20 @@ open util/ordering[Snapshot]
         SnapshotUI_summary in (s.events & EnvironmentEvent)
     }
 
-    pred pos_SnapshotUI_Snapshot_Reports_SeeSummary[s, s':Snapshot] {
-        s'.conf = s.conf - SnapshotUI_Snapshot_Reports + {
+    pred pos_SnapshotUI_Snapshot_Reports_SeeSummary[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - SnapshotUI_Snapshot_Reports + {
             SnapshotUI_Snapshot_Reports_Summary
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred SnapshotUI_Snapshot_Reports_SeeSummary[s, s': Snapshot] {
+    pred SnapshotUI_Snapshot_Reports_SeeSummary[s, sPrime: Snapshot] {
         pre_SnapshotUI_Snapshot_Reports_SeeSummary[s]
-        pos_SnapshotUI_Snapshot_Reports_SeeSummary[s, s']
-        semantics_SnapshotUI_Snapshot_Reports_SeeSummary[s, s']
+        pos_SnapshotUI_Snapshot_Reports_SeeSummary[s, sPrime]
+        semantics_SnapshotUI_Snapshot_Reports_SeeSummary[s, sPrime]
     }
-    pred semantics_SnapshotUI_Snapshot_Reports_SeeSummary[s, s': Snapshot] {
-        s'.taken = SnapshotUI_Snapshot_Reports_SeeSummary
+    pred semantics_SnapshotUI_Snapshot_Reports_SeeSummary[s, sPrime: Snapshot] {
+        sPrime.taken = SnapshotUI_Snapshot_Reports_SeeSummary
         // Priority "SOURCE-PARENT" semantics
         !pre_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s]
     }
@@ -113,20 +113,20 @@ open util/ordering[Snapshot]
         SnapshotUI_students in (s.events & EnvironmentEvent)
     }
 
-    pred pos_SnapshotUI_Snapshot_Reports_SeeStudents[s, s':Snapshot] {
-        s'.conf = s.conf - SnapshotUI_Snapshot_Reports + {
+    pred pos_SnapshotUI_Snapshot_Reports_SeeStudents[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - SnapshotUI_Snapshot_Reports + {
             SnapshotUI_Snapshot_Reports_Students
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred SnapshotUI_Snapshot_Reports_SeeStudents[s, s': Snapshot] {
+    pred SnapshotUI_Snapshot_Reports_SeeStudents[s, sPrime: Snapshot] {
         pre_SnapshotUI_Snapshot_Reports_SeeStudents[s]
-        pos_SnapshotUI_Snapshot_Reports_SeeStudents[s, s']
-        semantics_SnapshotUI_Snapshot_Reports_SeeStudents[s, s']
+        pos_SnapshotUI_Snapshot_Reports_SeeStudents[s, sPrime]
+        semantics_SnapshotUI_Snapshot_Reports_SeeStudents[s, sPrime]
     }
-    pred semantics_SnapshotUI_Snapshot_Reports_SeeStudents[s, s': Snapshot] {
-        s'.taken = SnapshotUI_Snapshot_Reports_SeeStudents
+    pred semantics_SnapshotUI_Snapshot_Reports_SeeStudents[s, sPrime: Snapshot] {
+        sPrime.taken = SnapshotUI_Snapshot_Reports_SeeStudents
         // Priority "SOURCE-PARENT" semantics
         !pre_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s]
     }
@@ -136,20 +136,20 @@ open util/ordering[Snapshot]
         SnapshotUI_standards in (s.events & EnvironmentEvent)
     }
 
-    pred pos_SnapshotUI_Snapshot_Reports_SeeStandards[s, s':Snapshot] {
-        s'.conf = s.conf - SnapshotUI_Snapshot_Reports + {
+    pred pos_SnapshotUI_Snapshot_Reports_SeeStandards[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - SnapshotUI_Snapshot_Reports + {
             SnapshotUI_Snapshot_Reports_Standards
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred SnapshotUI_Snapshot_Reports_SeeStandards[s, s': Snapshot] {
+    pred SnapshotUI_Snapshot_Reports_SeeStandards[s, sPrime: Snapshot] {
         pre_SnapshotUI_Snapshot_Reports_SeeStandards[s]
-        pos_SnapshotUI_Snapshot_Reports_SeeStandards[s, s']
-        semantics_SnapshotUI_Snapshot_Reports_SeeStandards[s, s']
+        pos_SnapshotUI_Snapshot_Reports_SeeStandards[s, sPrime]
+        semantics_SnapshotUI_Snapshot_Reports_SeeStandards[s, sPrime]
     }
-    pred semantics_SnapshotUI_Snapshot_Reports_SeeStandards[s, s': Snapshot] {
-        s'.taken = SnapshotUI_Snapshot_Reports_SeeStandards
+    pred semantics_SnapshotUI_Snapshot_Reports_SeeStandards[s, sPrime: Snapshot] {
+        sPrime.taken = SnapshotUI_Snapshot_Reports_SeeStandards
         // Priority "SOURCE-PARENT" semantics
         !pre_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s]
     }
@@ -159,20 +159,20 @@ open util/ordering[Snapshot]
         SnapshotUI_answer in (s.events & EnvironmentEvent)
     }
 
-    pred pos_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, s':Snapshot] {
-        s'.conf = s.conf - SnapshotUI_Snapshot_Reports + {
+    pred pos_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - SnapshotUI_Snapshot_Reports + {
             SnapshotUI_Snapshot_Answers
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, s': Snapshot] {
+    pred SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, sPrime: Snapshot] {
         pre_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s]
-        pos_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, s']
-        semantics_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, s']
+        pos_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, sPrime]
+        semantics_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, sPrime]
     }
-    pred semantics_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, s': Snapshot] {
-        s'.taken = SnapshotUI_Snapshot_Reports_Students_SeeAnswers
+    pred semantics_SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, sPrime: Snapshot] {
+        sPrime.taken = SnapshotUI_Snapshot_Reports_Students_SeeAnswers
     }
     // Transition SnapshotUI_Snapshot_Answers_SeeStudents
     pred pre_SnapshotUI_Snapshot_Answers_SeeStudents[s:Snapshot] {
@@ -180,20 +180,20 @@ open util/ordering[Snapshot]
         SnapshotUI_close in (s.events & EnvironmentEvent)
     }
 
-    pred pos_SnapshotUI_Snapshot_Answers_SeeStudents[s, s':Snapshot] {
-        s'.conf = s.conf - SnapshotUI_Snapshot_Answers + {
+    pred pos_SnapshotUI_Snapshot_Answers_SeeStudents[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - SnapshotUI_Snapshot_Answers + {
             SnapshotUI_Snapshot_Reports_Students
         }
-        no ((s'.events & InternalEvent) )
+        no ((sPrime.events & InternalEvent) )
     }
 
-    pred SnapshotUI_Snapshot_Answers_SeeStudents[s, s': Snapshot] {
+    pred SnapshotUI_Snapshot_Answers_SeeStudents[s, sPrime: Snapshot] {
         pre_SnapshotUI_Snapshot_Answers_SeeStudents[s]
-        pos_SnapshotUI_Snapshot_Answers_SeeStudents[s, s']
-        semantics_SnapshotUI_Snapshot_Answers_SeeStudents[s, s']
+        pos_SnapshotUI_Snapshot_Answers_SeeStudents[s, sPrime]
+        semantics_SnapshotUI_Snapshot_Answers_SeeStudents[s, sPrime]
     }
-    pred semantics_SnapshotUI_Snapshot_Answers_SeeStudents[s, s': Snapshot] {
-        s'.taken = SnapshotUI_Snapshot_Answers_SeeStudents
+    pred semantics_SnapshotUI_Snapshot_Answers_SeeStudents[s, sPrime: Snapshot] {
+        sPrime.taken = SnapshotUI_Snapshot_Answers_SeeStudents
     }
 /****************************** INITIAL CONDITIONS ****************************/
     pred init[s: Snapshot] {
@@ -206,35 +206,35 @@ open util/ordering[Snapshot]
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        SnapshotUI_LoginPage_Login[s, s'] or
-        SnapshotUI_Snapshot_Logout[s, s'] or
-        SnapshotUI_Snapshot_Reports_SeeSummary[s, s'] or
-        SnapshotUI_Snapshot_Reports_SeeStudents[s, s'] or
-        SnapshotUI_Snapshot_Reports_SeeStandards[s, s'] or
-        SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, s'] or
-        SnapshotUI_Snapshot_Answers_SeeStudents[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        SnapshotUI_LoginPage_Login[s, sPrime] or
+        SnapshotUI_Snapshot_Logout[s, sPrime] or
+        SnapshotUI_Snapshot_Reports_SeeSummary[s, sPrime] or
+        SnapshotUI_Snapshot_Reports_SeeStudents[s, sPrime] or
+        SnapshotUI_Snapshot_Reports_SeeStandards[s, sPrime] or
+        SnapshotUI_Snapshot_Reports_Students_SeeAnswers[s, sPrime] or
+        SnapshotUI_Snapshot_Answers_SeeStudents[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.events = s.events
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.events = s.events
+        sPrime.taken = s.taken
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 7 EventLabel

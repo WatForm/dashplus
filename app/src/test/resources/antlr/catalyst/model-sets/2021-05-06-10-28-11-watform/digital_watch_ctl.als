@@ -61,32 +61,32 @@ pred pre_light_off_light_on[s: State] {
   s.light = false
   s.pressed[b] = true
 }
-pred post_light_off_light_on[s, s': State] {
-  s'.light = true
-  s'.display = s.display
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_light_off_light_on[s, sPrime: State] {
+  sPrime.light = true
+  sPrime.display = s.display
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred light_off_light_on[s, s': State] {
+pred light_off_light_on[s, sPrime: State] {
   pre_light_off_light_on[s]
-  post_light_off_light_on[s, s']
+  post_light_off_light_on[s, sPrime]
 }
 
 pred pre_light_on_light_off[s: State] {
   s.light = true
   s.pressed[b] = false
 }
-pred post_light_on_light_off[s, s': State] {
-  s'.light = false
-  s'.display = s.display
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_light_on_light_off[s, sPrime: State] {
+  sPrime.light = false
+  sPrime.display = s.display
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred light_on_light_off[s, s': State] {
+pred light_on_light_off[s, sPrime: State] {
   pre_light_on_light_off[s]
-  post_light_on_light_off[s, s']
+  post_light_on_light_off[s, sPrime]
 }
 // </Light>
 
@@ -95,48 +95,48 @@ pred pre_time_show_date[s: State] {
   s.display = Time
   s.pressed[d] = true
 }
-pred post_time_show_date[s, s': State] {
-  s'.display = Date
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_time_show_date[s, sPrime: State] {
+  sPrime.display = Date
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred time_show_date[s, s': State] {
+pred time_show_date[s, sPrime: State] {
   pre_time_show_date[s]
-  post_time_show_date[s, s']
+  post_time_show_date[s, sPrime]
 }
 
 pred pre_time_try_update[s: State] {
   s.display = Time
   s.pressed[c] = true
 }
-pred post_time_try_update[s, s': State] {
-  s'.display = Wait
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_time_try_update[s, sPrime: State] {
+  sPrime.display = Wait
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred time_try_update[s, s': State] {
+pred time_try_update[s, sPrime: State] {
   pre_time_try_update[s]
-  post_time_try_update[s, s']
+  post_time_try_update[s, sPrime]
 }
 
 pred pre_time_go2alarm1[s: State] {
   s.display = Time
   s.pressed[a] = true
 }
-pred post_time_go2alarm1[s, s': State] {
-  s'.display = Alarm1
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_time_go2alarm1[s, sPrime: State] {
+  sPrime.display = Alarm1
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred time_go2alarm1[s, s': State] {
+pred time_go2alarm1[s, sPrime: State] {
   pre_time_go2alarm1[s]
-  post_time_go2alarm1[s, s']
+  post_time_go2alarm1[s, sPrime]
 }
 // </Time>
 
@@ -145,32 +145,32 @@ pred pre_date_show_time[s: State] {
   s.display = Date
   s.pressed[d] = true
 }
-pred post_date_show_time[s, s': State] {
-  s'.display = Time
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_date_show_time[s, sPrime: State] {
+  sPrime.display = Time
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred date_show_time[s, s': State] {
+pred date_show_time[s, sPrime: State] {
   pre_date_show_time[s]
-  post_date_show_time[s, s']
+  post_date_show_time[s, sPrime]
 }
 
 pred pre_date_return_to_time[s: State] {
   s.display = Date
   s.waited_2_min = true
 }
-pred post_date_return_to_time[s, s': State] {
-  s'.display = Time
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_date_return_to_time[s, sPrime: State] {
+  sPrime.display = Time
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred date_return_to_time[s, s': State] {
+pred date_return_to_time[s, sPrime: State] {
   pre_date_return_to_time[s]
-  post_date_return_to_time[s, s']
+  post_date_return_to_time[s, sPrime]
 }
 // </Date>
 
@@ -179,32 +179,32 @@ pred pre_wait_show_time[s: State] {
   s.display = Wait
   s.pressed[c] = false
 }
-pred post_wait_show_time[s, s': State] {
-  s'.display = Time
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_wait_show_time[s, sPrime: State] {
+  sPrime.display = Time
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred wait_show_time[s, s': State] {
+pred wait_show_time[s, sPrime: State] {
   pre_wait_show_time[s]
-  post_wait_show_time[s, s']
+  post_wait_show_time[s, sPrime]
 }
 
 pred pre_wait_show_update[s: State] {
   s.display = Wait
   s.waited_2_sec = true
 }
-pred post_wait_show_update[s, s': State] {
-  s'.display = Update
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_wait_show_update[s, sPrime: State] {
+  sPrime.display = Update
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred wait_show_update[s, s': State] {
+pred wait_show_update[s, sPrime: State] {
   pre_wait_show_update[s]
-  post_wait_show_update[s, s']
+  post_wait_show_update[s, sPrime]
 }
 // </Wait>
 
@@ -213,16 +213,16 @@ pred pre_update_show_time[s: State] {
   s.display = Update
   s.pressed[b] = true
 }
-pred post_update_show_time[s, s': State] {
-  s'.display = Time
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_update_show_time[s, sPrime: State] {
+  sPrime.display = Time
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred update_show_time[s, s': State] {
+pred update_show_time[s, sPrime: State] {
   pre_update_show_time[s]
-  post_update_show_time[s, s']
+  post_update_show_time[s, sPrime]
 }
 // </Update>
 
@@ -231,16 +231,16 @@ pred pre_alarm1_go2alarm2[s: State] {
   s.display = Alarm1
   s.pressed[a] = true
 }
-pred post_alarm1_go2alarm2[s, s': State] {
-  s'.display = Alarm2
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_alarm1_go2alarm2[s, sPrime: State] {
+  sPrime.display = Alarm2
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred alarm1_go2alarm2[s, s': State] {
+pred alarm1_go2alarm2[s, sPrime: State] {
   pre_alarm1_go2alarm2[s]
-  post_alarm1_go2alarm2[s, s']
+  post_alarm1_go2alarm2[s, sPrime]
 }
 // </Alarm1>
 
@@ -249,16 +249,16 @@ pred pre_alarm2_go2chime[s: State] {
   s.display = Alarm2
   s.pressed[a] = true
 }
-pred post_alarm2_go2chime[s, s': State] {
-  s'.display = Chime
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_alarm2_go2chime[s, sPrime: State] {
+  sPrime.display = Chime
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred alarm2_go2chime[s, s': State] {
+pred alarm2_go2chime[s, sPrime: State] {
   pre_alarm2_go2chime[s]
-  post_alarm2_go2chime[s, s']
+  post_alarm2_go2chime[s, sPrime]
 }
 // </Alarm2>
 
@@ -267,16 +267,16 @@ pred pre_chime_go2Stopwatch[s: State] {
   s.display = Chime
   s.pressed[a] = true
 }
-pred post_chime_go2Stopwatch[s, s': State] {
-  s'.display = StopWatch
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_chime_go2Stopwatch[s, sPrime: State] {
+  sPrime.display = StopWatch
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred chime_go2Stopwatch[s, s': State] {
+pred chime_go2Stopwatch[s, sPrime: State] {
   pre_chime_go2Stopwatch[s]
-  post_chime_go2Stopwatch[s, s']
+  post_chime_go2Stopwatch[s, sPrime]
 }
 // </Chime>
 
@@ -285,16 +285,16 @@ pred pre_Stopwatch_go2time[s: State] {
   s.display = StopWatch
   s.pressed[a] = true
 }
-pred post_Stopwatch_go2time[s, s': State] {
-  s'.display = Time
-  s'.light = s.light
-  s'.pressed = s.pressed
-  s'.waited_2_min = s.waited_2_min
-  s'.waited_2_sec = s.waited_2_sec
+pred post_Stopwatch_go2time[s, sPrime: State] {
+  sPrime.display = Time
+  sPrime.light = s.light
+  sPrime.pressed = s.pressed
+  sPrime.waited_2_min = s.waited_2_min
+  sPrime.waited_2_sec = s.waited_2_sec
 }
-pred Stopwatch_go2time[s, s': State] {
+pred Stopwatch_go2time[s, sPrime: State] {
   pre_Stopwatch_go2time[s]
-  post_Stopwatch_go2time[s, s']
+  post_Stopwatch_go2time[s, sPrime]
 }
 // </StopWatch>
 
@@ -310,54 +310,54 @@ pred init[s: State] {
   s.waited_2_sec = false
 }
 
-pred next[s, s': State] {
-     light_off_light_on[s, s']
-  or light_on_light_off[s, s']
-  or time_show_date[s, s']
-  or time_try_update[s, s']
-  or time_go2alarm1[s, s']
-  or date_show_time[s, s']
-  or date_return_to_time[s, s']
-  or wait_show_time[s, s']
-  or wait_show_update[s, s']
-  or update_show_time[s, s']
-  or alarm1_go2alarm2[s, s']
-  or alarm2_go2chime[s, s']
-  or chime_go2Stopwatch[s, s']
-  or Stopwatch_go2time[s, s']
+pred next[s, sPrime: State] {
+     light_off_light_on[s, sPrime]
+  or light_on_light_off[s, sPrime]
+  or time_show_date[s, sPrime]
+  or time_try_update[s, sPrime]
+  or time_go2alarm1[s, sPrime]
+  or date_show_time[s, sPrime]
+  or date_return_to_time[s, sPrime]
+  or wait_show_time[s, sPrime]
+  or wait_show_update[s, sPrime]
+  or update_show_time[s, sPrime]
+  or alarm1_go2alarm2[s, sPrime]
+  or alarm2_go2chime[s, sPrime]
+  or chime_go2Stopwatch[s, sPrime]
+  or Stopwatch_go2time[s, sPrime]
 }
 
 
 fact {
   all s:     State | s in initialState iff init[s]
-  all s, s': State | s->s' in nextState iff next[s, s']
-  all s, s': State |
-        s.light = s'.light
-    and s.display = s'.display
-    and s.pressed = s'.pressed
-    and s.waited_2_min = s'.waited_2_min
-    and s.waited_2_sec = s'.waited_2_sec
-    implies s = s'
+  all s, sPrime: State | s->sPrime in nextState iff next[s, sPrime]
+  all s, sPrime: State |
+        s.light = sPrime.light
+    and s.display = sPrime.display
+    and s.pressed = sPrime.pressed
+    and s.waited_2_min = sPrime.waited_2_min
+    and s.waited_2_sec = sPrime.waited_2_sec
+    implies s = sPrime
 }
 
 pred reachablity_axiom {
   all s: State | s in State.(initialState <: *nextState)
 }
 pred operations_axiom {
-  some s, s': State | light_off_light_on[s, s']
-  some s, s': State | light_on_light_off[s, s']
-  some s, s': State | time_show_date[s, s']
-  some s, s': State | time_try_update[s, s']
-  some s, s': State | time_go2alarm1[s, s']
-  some s, s': State | date_show_time[s, s']
-  some s, s': State | date_return_to_time[s, s']
-  some s, s': State | wait_show_time[s, s']
-  some s, s': State | wait_show_update[s, s']
-  some s, s': State | update_show_time[s, s']
-  some s, s': State | alarm1_go2alarm2[s, s']
-  some s, s': State | alarm2_go2chime[s, s']
-  some s, s': State | chime_go2Stopwatch[s, s']
-  some s, s': State | Stopwatch_go2time[s, s']
+  some s, sPrime: State | light_off_light_on[s, sPrime]
+  some s, sPrime: State | light_on_light_off[s, sPrime]
+  some s, sPrime: State | time_show_date[s, sPrime]
+  some s, sPrime: State | time_try_update[s, sPrime]
+  some s, sPrime: State | time_go2alarm1[s, sPrime]
+  some s, sPrime: State | date_show_time[s, sPrime]
+  some s, sPrime: State | date_return_to_time[s, sPrime]
+  some s, sPrime: State | wait_show_time[s, sPrime]
+  some s, sPrime: State | wait_show_update[s, sPrime]
+  some s, sPrime: State | update_show_time[s, sPrime]
+  some s, sPrime: State | alarm1_go2alarm2[s, sPrime]
+  some s, sPrime: State | alarm2_go2chime[s, sPrime]
+  some s, sPrime: State | chime_go2Stopwatch[s, sPrime]
+  some s, sPrime: State | Stopwatch_go2time[s, sPrime]
 }
 pred significance_axioms {
   reachablity_axiom
@@ -367,5 +367,5 @@ run significance_axioms for 10
 
 check eventually_time {
   ctlfc_mc[ag[ef[{s: State | s.pressed[a] = true implies
-    some s': s.*nextState | s'.display = Time}]]]
+    some sPrime: s.*nextState | sPrime.display = Time}]]]
 } for 10

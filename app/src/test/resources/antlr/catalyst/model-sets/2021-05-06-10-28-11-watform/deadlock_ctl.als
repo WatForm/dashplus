@@ -107,26 +107,26 @@ pred init[s: State] {
   s.RB = 1
 }
 
-pred choose_train[s, s': State] {
-       s.ct = t0 implies s'.ct = t1
-  else s.ct = t1 implies s'.ct = t2
-  else s.ct = t2 implies s'.ct = t3
-  else s.ct = t3 implies s'.ct = t4
-  else s.ct = t4 implies s'.ct = t5
-  else s.ct = t5 implies s'.ct = t6
-  else s.ct = t6 implies s'.ct = t7
-  else s.ct = t7 implies s'.ct = t0
+pred choose_train[s, sPrime: State] {
+       s.ct = t0 implies sPrime.ct = t1
+  else s.ct = t1 implies sPrime.ct = t2
+  else s.ct = t2 implies sPrime.ct = t3
+  else s.ct = t3 implies sPrime.ct = t4
+  else s.ct = t4 implies sPrime.ct = t5
+  else s.ct = t5 implies sPrime.ct = t6
+  else s.ct = t6 implies sPrime.ct = t7
+  else s.ct = t7 implies sPrime.ct = t0
 
-  s'.RA = s.RA
-  s'.RB = s.RB
-  s'.P0 = s.P0
-  s'.P1 = s.P1
-  s'.P2 = s.P2
-  s'.P3 = s.P3
-  s'.P4 = s.P4
-  s'.P5 = s.P5
-  s'.P6 = s.P6
-  s'.P7 = s.P7
+  sPrime.RA = s.RA
+  sPrime.RB = s.RB
+  sPrime.P0 = s.P0
+  sPrime.P1 = s.P1
+  sPrime.P2 = s.P2
+  sPrime.P3 = s.P3
+  sPrime.P4 = s.P4
+  sPrime.P5 = s.P5
+  sPrime.P6 = s.P6
+  sPrime.P7 = s.P7
 }
 
 pred pre_move_train0[s: State] {
@@ -147,21 +147,21 @@ pred pre_move_train0[s: State] {
   s.RA.plus[Const.A0[s.P0.plus[1]]] <= LA
   s.RB.plus[Const.B0[s.P0.plus[1]]] <= LB
 }
-pred post_move_train0[s, s': State] {
-  s'.P0 = s.P0.plus[1]
-  s'.P1 = s.P1
-  s'.P2 = s.P2
-  s'.P3 = s.P3
-  s'.P4 = s.P4
-  s'.P5 = s.P5
-  s'.P6 = s.P6
-  s'.P7 = s.P7
-  s'.RA = s.RA.plus[Const.A0[s'.P0]]
-  s'.RB = s.RB.plus[Const.B0[s'.P0]]
+pred post_move_train0[s, sPrime: State] {
+  sPrime.P0 = s.P0.plus[1]
+  sPrime.P1 = s.P1
+  sPrime.P2 = s.P2
+  sPrime.P3 = s.P3
+  sPrime.P4 = s.P4
+  sPrime.P5 = s.P5
+  sPrime.P6 = s.P6
+  sPrime.P7 = s.P7
+  sPrime.RA = s.RA.plus[Const.A0[sPrime.P0]]
+  sPrime.RB = s.RB.plus[Const.B0[sPrime.P0]]
 }
-pred move_train0[s, s': State] {
+pred move_train0[s, sPrime: State] {
   pre_move_train0[s]
-  post_move_train0[s, s']
+  post_move_train0[s, sPrime]
 }
 
 pred pre_move_train1[s: State] {
@@ -182,21 +182,21 @@ pred pre_move_train1[s: State] {
   s.RA.plus[Const.A1[s.P1.plus[1]]] <= LA
   s.RB.plus[Const.B1[s.P1.plus[1]]] <= LB
 }
-pred post_move_train1[s, s': State] {
-  s'.P1 = s.P1.plus[1]
-  s'.P0 = s.P0
-  s'.P2 = s.P2
-  s'.P3 = s.P3
-  s'.P4 = s.P4
-  s'.P5 = s.P5
-  s'.P6 = s.P6
-  s'.P7 = s.P7
-  s'.RA = s.RA.plus[Const.A1[s'.P1]]
-  s'.RB = s.RB.plus[Const.B1[s'.P1]]
+pred post_move_train1[s, sPrime: State] {
+  sPrime.P1 = s.P1.plus[1]
+  sPrime.P0 = s.P0
+  sPrime.P2 = s.P2
+  sPrime.P3 = s.P3
+  sPrime.P4 = s.P4
+  sPrime.P5 = s.P5
+  sPrime.P6 = s.P6
+  sPrime.P7 = s.P7
+  sPrime.RA = s.RA.plus[Const.A1[sPrime.P1]]
+  sPrime.RB = s.RB.plus[Const.B1[sPrime.P1]]
 }
-pred move_train1[s, s': State] {
+pred move_train1[s, sPrime: State] {
   pre_move_train1[s]
-  post_move_train1[s, s']
+  post_move_train1[s, sPrime]
 }
 
 pred pre_move_train2[s: State] {
@@ -217,21 +217,21 @@ pred pre_move_train2[s: State] {
   s.RA.plus[Const.A2[s.P2.plus[1]]] <= LA
   s.RB.plus[Const.B2[s.P2.plus[1]]] <= LB
 }
-pred post_move_train2[s, s': State] {
-  s'.P2 = s.P2.plus[1]
-  s'.P0 = s.P0
-  s'.P1 = s.P1
-  s'.P3 = s.P3
-  s'.P4 = s.P4
-  s'.P5 = s.P5
-  s'.P6 = s.P6
-  s'.P7 = s.P7
-  s'.RA = s.RA.plus[Const.A2[s'.P2]]
-  s'.RB = s.RB.plus[Const.B2[s'.P2]]
+pred post_move_train2[s, sPrime: State] {
+  sPrime.P2 = s.P2.plus[1]
+  sPrime.P0 = s.P0
+  sPrime.P1 = s.P1
+  sPrime.P3 = s.P3
+  sPrime.P4 = s.P4
+  sPrime.P5 = s.P5
+  sPrime.P6 = s.P6
+  sPrime.P7 = s.P7
+  sPrime.RA = s.RA.plus[Const.A2[sPrime.P2]]
+  sPrime.RB = s.RB.plus[Const.B2[sPrime.P2]]
 }
-pred move_train2[s, s': State] {
+pred move_train2[s, sPrime: State] {
   pre_move_train2[s]
-  post_move_train2[s, s']
+  post_move_train2[s, sPrime]
 }
 
 pred pre_move_train3[s: State] {
@@ -252,21 +252,21 @@ pred pre_move_train3[s: State] {
   s.RA.plus[Const.A3[s.P3.plus[1]]] <= LA
   s.RB.plus[Const.B3[s.P3.plus[1]]] <= LB
 }
-pred post_move_train3[s, s': State] {
-  s'.P3 = s.P3.plus[1]
-  s'.P0 = s.P0
-  s'.P1 = s.P1
-  s'.P2 = s.P2
-  s'.P4 = s.P4
-  s'.P5 = s.P5
-  s'.P6 = s.P6
-  s'.P7 = s.P7
-  s'.RA = s.RA.plus[Const.A3[s'.P3]]
-  s'.RB = s.RB.plus[Const.B3[s'.P3]]
+pred post_move_train3[s, sPrime: State] {
+  sPrime.P3 = s.P3.plus[1]
+  sPrime.P0 = s.P0
+  sPrime.P1 = s.P1
+  sPrime.P2 = s.P2
+  sPrime.P4 = s.P4
+  sPrime.P5 = s.P5
+  sPrime.P6 = s.P6
+  sPrime.P7 = s.P7
+  sPrime.RA = s.RA.plus[Const.A3[sPrime.P3]]
+  sPrime.RB = s.RB.plus[Const.B3[sPrime.P3]]
 }
-pred move_train3[s, s': State] {
+pred move_train3[s, sPrime: State] {
   pre_move_train3[s]
-  post_move_train3[s, s']
+  post_move_train3[s, sPrime]
 }
 
 pred pre_move_train4[s: State] {
@@ -287,21 +287,21 @@ pred pre_move_train4[s: State] {
   s.RA.plus[Const.A4[s.P4.plus[1]]] <= LA
   s.RB.plus[Const.B4[s.P4.plus[1]]] <= LB
 }
-pred post_move_train4[s, s': State] {
-  s'.P4 = s.P4.plus[1]
-  s'.P0 = s.P0
-  s'.P1 = s.P1
-  s'.P2 = s.P2
-  s'.P3 = s.P3
-  s'.P5 = s.P5
-  s'.P6 = s.P6
-  s'.P7 = s.P7
-  s'.RA = s.RA.plus[Const.A4[s'.P4]]
-  s'.RB = s.RB.plus[Const.B4[s'.P4]]
+pred post_move_train4[s, sPrime: State] {
+  sPrime.P4 = s.P4.plus[1]
+  sPrime.P0 = s.P0
+  sPrime.P1 = s.P1
+  sPrime.P2 = s.P2
+  sPrime.P3 = s.P3
+  sPrime.P5 = s.P5
+  sPrime.P6 = s.P6
+  sPrime.P7 = s.P7
+  sPrime.RA = s.RA.plus[Const.A4[sPrime.P4]]
+  sPrime.RB = s.RB.plus[Const.B4[sPrime.P4]]
 }
-pred move_train4[s, s': State] {
+pred move_train4[s, sPrime: State] {
   pre_move_train4[s]
-  post_move_train4[s, s']
+  post_move_train4[s, sPrime]
 }
 
 pred pre_move_train5[s: State] {
@@ -322,21 +322,21 @@ pred pre_move_train5[s: State] {
   s.RA.plus[Const.A5[s.P5.plus[1]]] <= LA
   s.RB.plus[Const.B5[s.P5.plus[1]]] <= LB
 }
-pred post_move_train5[s, s': State] {
-  s'.P5 = s.P5.plus[1]
-  s'.P0 = s.P0
-  s'.P1 = s.P1
-  s'.P2 = s.P2
-  s'.P3 = s.P3
-  s'.P4 = s.P4
-  s'.P6 = s.P6
-  s'.P7 = s.P7
-  s'.RA = s.RA.plus[Const.A5[s'.P5]]
-  s'.RB = s.RB.plus[Const.B5[s'.P5]]
+pred post_move_train5[s, sPrime: State] {
+  sPrime.P5 = s.P5.plus[1]
+  sPrime.P0 = s.P0
+  sPrime.P1 = s.P1
+  sPrime.P2 = s.P2
+  sPrime.P3 = s.P3
+  sPrime.P4 = s.P4
+  sPrime.P6 = s.P6
+  sPrime.P7 = s.P7
+  sPrime.RA = s.RA.plus[Const.A5[sPrime.P5]]
+  sPrime.RB = s.RB.plus[Const.B5[sPrime.P5]]
 }
-pred move_train5[s, s': State] {
+pred move_train5[s, sPrime: State] {
   pre_move_train5[s]
-  post_move_train5[s, s']
+  post_move_train5[s, sPrime]
 }
 
 pred pre_move_train6[s: State] {
@@ -357,21 +357,21 @@ pred pre_move_train6[s: State] {
   s.RA.plus[Const.A6[s.P6.plus[1]]] <= LA
   s.RB.plus[Const.B6[s.P6.plus[1]]] <= LB
 }
-pred post_move_train6[s, s': State] {
-  s'.P6 = s.P6.plus[1]
-  s'.P0 = s.P0
-  s'.P1 = s.P1
-  s'.P2 = s.P2
-  s'.P3 = s.P3
-  s'.P4 = s.P4
-  s'.P5 = s.P5
-  s'.P7 = s.P7
-  s'.RA = s.RA.plus[Const.A6[s'.P6]]
-  s'.RB = s.RB.plus[Const.B6[s'.P6]]
+pred post_move_train6[s, sPrime: State] {
+  sPrime.P6 = s.P6.plus[1]
+  sPrime.P0 = s.P0
+  sPrime.P1 = s.P1
+  sPrime.P2 = s.P2
+  sPrime.P3 = s.P3
+  sPrime.P4 = s.P4
+  sPrime.P5 = s.P5
+  sPrime.P7 = s.P7
+  sPrime.RA = s.RA.plus[Const.A6[sPrime.P6]]
+  sPrime.RB = s.RB.plus[Const.B6[sPrime.P6]]
 }
-pred move_train6[s, s': State] {
+pred move_train6[s, sPrime: State] {
   pre_move_train6[s]
-  post_move_train6[s, s']
+  post_move_train6[s, sPrime]
 }
 
 pred pre_move_train7[s: State] {
@@ -392,66 +392,66 @@ pred pre_move_train7[s: State] {
   s.RA.plus[Const.A7[s.P7.plus[1]]] <= LA
   s.RB.plus[Const.B7[s.P7.plus[1]]] <= LB
 }
-pred post_move_train7[s, s': State] {
-  s'.P7 = s.P7.plus[1]
-  s'.P0 = s.P0
-  s'.P1 = s.P1
-  s'.P2 = s.P2
-  s'.P3 = s.P3
-  s'.P4 = s.P4
-  s'.P5 = s.P5
-  s'.P6 = s.P6
-  s'.RA = s.RA.plus[Const.A7[s'.P7]]
-  s'.RB = s.RB.plus[Const.B7[s'.P7]]
+pred post_move_train7[s, sPrime: State] {
+  sPrime.P7 = s.P7.plus[1]
+  sPrime.P0 = s.P0
+  sPrime.P1 = s.P1
+  sPrime.P2 = s.P2
+  sPrime.P3 = s.P3
+  sPrime.P4 = s.P4
+  sPrime.P5 = s.P5
+  sPrime.P6 = s.P6
+  sPrime.RA = s.RA.plus[Const.A7[sPrime.P7]]
+  sPrime.RB = s.RB.plus[Const.B7[sPrime.P7]]
 }
-pred move_train7[s, s': State] {
+pred move_train7[s, sPrime: State] {
   pre_move_train7[s]
-  post_move_train7[s, s']
+  post_move_train7[s, sPrime]
 }
 
 
-pred next[s, s': State] {
-  /*   choose_train[s, s']
-  or */ move_train0[s, s']
-  or move_train1[s, s']
-  or move_train2[s, s']
-  or move_train3[s, s']
-  or move_train4[s, s']
-  or move_train5[s, s']
-  or move_train6[s, s']
-  or move_train7[s, s']
+pred next[s, sPrime: State] {
+  /*   choose_train[s, sPrime]
+  or */ move_train0[s, sPrime]
+  or move_train1[s, sPrime]
+  or move_train2[s, sPrime]
+  or move_train3[s, sPrime]
+  or move_train4[s, sPrime]
+  or move_train5[s, sPrime]
+  or move_train6[s, sPrime]
+  or move_train7[s, sPrime]
 }
 
 fact {
   all s:     State | s in initialState iff init[s]
-  all s, s': State | s->s' in nextState iff next[s, s']
-  all s, s': State |
-        s.P0 = s'.P0
-    and s.P1 = s'.P1
-    and s.P2 = s'.P2
-    and s.P3 = s'.P3
-    and s.P4 = s'.P4
-    and s.P5 = s'.P5
-    and s.P6 = s'.P6
-    and s.P7 = s'.P7
-    and s.RA = s'.RA
-    and s.RB = s'.RB
-    and s.ct = s'.ct
-    implies s = s'
+  all s, sPrime: State | s->sPrime in nextState iff next[s, sPrime]
+  all s, sPrime: State |
+        s.P0 = sPrime.P0
+    and s.P1 = sPrime.P1
+    and s.P2 = sPrime.P2
+    and s.P3 = sPrime.P3
+    and s.P4 = sPrime.P4
+    and s.P5 = sPrime.P5
+    and s.P6 = sPrime.P6
+    and s.P7 = sPrime.P7
+    and s.RA = sPrime.RA
+    and s.RB = sPrime.RB
+    and s.ct = sPrime.ct
+    implies s = sPrime
 }
 
 pred reachablity_axiom {
   all s: State | s in State.(initialState <: *nextState)
 }
 pred operations_axiom {
-  some s, s': State | move_train0[s, s']
-  some s, s': State | move_train1[s, s']
-  some s, s': State | move_train2[s, s']
-  some s, s': State | move_train3[s, s']
-  some s, s': State | move_train4[s, s']
-  some s, s': State | move_train5[s, s']
-  some s, s': State | move_train6[s, s']
-  some s, s': State | move_train7[s, s']
+  some s, sPrime: State | move_train0[s, sPrime]
+  some s, sPrime: State | move_train1[s, sPrime]
+  some s, sPrime: State | move_train2[s, sPrime]
+  some s, sPrime: State | move_train3[s, sPrime]
+  some s, sPrime: State | move_train4[s, sPrime]
+  some s, sPrime: State | move_train5[s, sPrime]
+  some s, sPrime: State | move_train6[s, sPrime]
+  some s, sPrime: State | move_train7[s, sPrime]
 }
 pred significance_axioms {
   reachablity_axiom

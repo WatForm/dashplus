@@ -59,33 +59,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Sender_OnSendSucess_1[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Sender_ReadySendNext + {
+    pred pos_RDT_Sender_OnSendSucess_1[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Sender_ReadySendNext + {
             RDT_Sender_WaitAck
         }
     
-        testIfNextStable[s, s', {none}, RDT_Sender_OnSendSucess_1] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Sender_OnSendSucess_1] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Sender_OnSendSucess_1[s, s': Snapshot] {
+    pred RDT_Sender_OnSendSucess_1[s, sPrime: Snapshot] {
         pre_RDT_Sender_OnSendSucess_1[s]
-        pos_RDT_Sender_OnSendSucess_1[s, s']
-        semantics_RDT_Sender_OnSendSucess_1[s, s']
+        pos_RDT_Sender_OnSendSucess_1[s, sPrime]
+        semantics_RDT_Sender_OnSendSucess_1[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Sender_OnSendSucess_1[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -117,13 +117,13 @@ open util/boolean
             RDT_SendSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Sender_OnSendSucess_1[s, s': Snapshot] {
+    pred semantics_RDT_Sender_OnSendSucess_1[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Sender_OnSendSucess_1
+            sPrime.taken = RDT_Sender_OnSendSucess_1
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Sender_OnSendSucess_1
+            sPrime.taken = s.taken + RDT_Sender_OnSendSucess_1
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Sender_OnSendError_4 + 
@@ -147,33 +147,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Sender_OnSendSucess_2[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Sender_WaitAck + {
+    pred pos_RDT_Sender_OnSendSucess_2[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Sender_WaitAck + {
             RDT_Sender_WaitAck
         }
     
-        testIfNextStable[s, s', {none}, RDT_Sender_OnSendSucess_2] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Sender_OnSendSucess_2] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Sender_OnSendSucess_2[s, s': Snapshot] {
+    pred RDT_Sender_OnSendSucess_2[s, sPrime: Snapshot] {
         pre_RDT_Sender_OnSendSucess_2[s]
-        pos_RDT_Sender_OnSendSucess_2[s, s']
-        semantics_RDT_Sender_OnSendSucess_2[s, s']
+        pos_RDT_Sender_OnSendSucess_2[s, sPrime]
+        semantics_RDT_Sender_OnSendSucess_2[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Sender_OnSendSucess_2[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -205,13 +205,13 @@ open util/boolean
             RDT_SendSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Sender_OnSendSucess_2[s, s': Snapshot] {
+    pred semantics_RDT_Sender_OnSendSucess_2[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Sender_OnSendSucess_2
+            sPrime.taken = RDT_Sender_OnSendSucess_2
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Sender_OnSendSucess_2
+            sPrime.taken = s.taken + RDT_Sender_OnSendSucess_2
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Sender_OnSendError_4 + 
@@ -235,33 +235,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Sender_OnSendSucess_3[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Sender_ReadyResend + {
+    pred pos_RDT_Sender_OnSendSucess_3[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Sender_ReadyResend + {
             RDT_Sender_WaitAck
         }
     
-        testIfNextStable[s, s', {none}, RDT_Sender_OnSendSucess_3] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Sender_OnSendSucess_3] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Sender_OnSendSucess_3[s, s': Snapshot] {
+    pred RDT_Sender_OnSendSucess_3[s, sPrime: Snapshot] {
         pre_RDT_Sender_OnSendSucess_3[s]
-        pos_RDT_Sender_OnSendSucess_3[s, s']
-        semantics_RDT_Sender_OnSendSucess_3[s, s']
+        pos_RDT_Sender_OnSendSucess_3[s, sPrime]
+        semantics_RDT_Sender_OnSendSucess_3[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Sender_OnSendSucess_3[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -293,13 +293,13 @@ open util/boolean
             RDT_SendSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Sender_OnSendSucess_3[s, s': Snapshot] {
+    pred semantics_RDT_Sender_OnSendSucess_3[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Sender_OnSendSucess_3
+            sPrime.taken = RDT_Sender_OnSendSucess_3
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Sender_OnSendSucess_3
+            sPrime.taken = s.taken + RDT_Sender_OnSendSucess_3
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Sender_OnSendError_4 + 
@@ -323,33 +323,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Sender_OnSendError_4[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Sender_ReadySendNext + {
+    pred pos_RDT_Sender_OnSendError_4[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Sender_ReadySendNext + {
             RDT_Sender_WaitAck
         }
     
-        testIfNextStable[s, s', {none}, RDT_Sender_OnSendError_4] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Sender_OnSendError_4] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Sender_OnSendError_4[s, s': Snapshot] {
+    pred RDT_Sender_OnSendError_4[s, sPrime: Snapshot] {
         pre_RDT_Sender_OnSendError_4[s]
-        pos_RDT_Sender_OnSendError_4[s, s']
-        semantics_RDT_Sender_OnSendError_4[s, s']
+        pos_RDT_Sender_OnSendError_4[s, sPrime]
+        semantics_RDT_Sender_OnSendError_4[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Sender_OnSendError_4[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -381,13 +381,13 @@ open util/boolean
             RDT_SendError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Sender_OnSendError_4[s, s': Snapshot] {
+    pred semantics_RDT_Sender_OnSendError_4[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Sender_OnSendError_4
+            sPrime.taken = RDT_Sender_OnSendError_4
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Sender_OnSendError_4
+            sPrime.taken = s.taken + RDT_Sender_OnSendError_4
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Sender_OnSendError_4 + 
@@ -411,33 +411,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Sender_OnSendError_5[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Sender_WaitAck + {
+    pred pos_RDT_Sender_OnSendError_5[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Sender_WaitAck + {
             RDT_Sender_WaitAck
         }
     
-        testIfNextStable[s, s', {none}, RDT_Sender_OnSendError_5] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Sender_OnSendError_5] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Sender_OnSendError_5[s, s': Snapshot] {
+    pred RDT_Sender_OnSendError_5[s, sPrime: Snapshot] {
         pre_RDT_Sender_OnSendError_5[s]
-        pos_RDT_Sender_OnSendError_5[s, s']
-        semantics_RDT_Sender_OnSendError_5[s, s']
+        pos_RDT_Sender_OnSendError_5[s, sPrime]
+        semantics_RDT_Sender_OnSendError_5[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Sender_OnSendError_5[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -469,13 +469,13 @@ open util/boolean
             RDT_SendError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Sender_OnSendError_5[s, s': Snapshot] {
+    pred semantics_RDT_Sender_OnSendError_5[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Sender_OnSendError_5
+            sPrime.taken = RDT_Sender_OnSendError_5
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Sender_OnSendError_5
+            sPrime.taken = s.taken + RDT_Sender_OnSendError_5
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Sender_OnSendError_4 + 
@@ -499,33 +499,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Sender_OnSendError_6[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Sender_ReadyResend + {
+    pred pos_RDT_Sender_OnSendError_6[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Sender_ReadyResend + {
             RDT_Sender_WaitAck
         }
     
-        testIfNextStable[s, s', {none}, RDT_Sender_OnSendError_6] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Sender_OnSendError_6] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Sender_OnSendError_6[s, s': Snapshot] {
+    pred RDT_Sender_OnSendError_6[s, sPrime: Snapshot] {
         pre_RDT_Sender_OnSendError_6[s]
-        pos_RDT_Sender_OnSendError_6[s, s']
-        semantics_RDT_Sender_OnSendError_6[s, s']
+        pos_RDT_Sender_OnSendError_6[s, sPrime]
+        semantics_RDT_Sender_OnSendError_6[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Sender_OnSendError_6[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -557,13 +557,13 @@ open util/boolean
             RDT_SendError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Sender_OnSendError_6[s, s': Snapshot] {
+    pred semantics_RDT_Sender_OnSendError_6[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Sender_OnSendError_6
+            sPrime.taken = RDT_Sender_OnSendError_6
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Sender_OnSendError_6
+            sPrime.taken = s.taken + RDT_Sender_OnSendError_6
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Sender_OnSendError_4 + 
@@ -587,33 +587,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Sender_t_3[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Sender_WaitAck + {
+    pred pos_RDT_Sender_t_3[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Sender_WaitAck + {
             RDT_Sender_ReadySendNext
         }
     
-        testIfNextStable[s, s', {none}, RDT_Sender_t_3] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Sender_t_3] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Sender_t_3[s, s': Snapshot] {
+    pred RDT_Sender_t_3[s, sPrime: Snapshot] {
         pre_RDT_Sender_t_3[s]
-        pos_RDT_Sender_t_3[s, s']
-        semantics_RDT_Sender_t_3[s, s']
+        pos_RDT_Sender_t_3[s, sPrime]
+        semantics_RDT_Sender_t_3[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Sender_t_3[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -645,13 +645,13 @@ open util/boolean
             RDT_AckSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Sender_t_3[s, s': Snapshot] {
+    pred semantics_RDT_Sender_t_3[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Sender_t_3
+            sPrime.taken = RDT_Sender_t_3
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Sender_t_3
+            sPrime.taken = s.taken + RDT_Sender_t_3
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Sender_OnSendError_4 + 
@@ -675,33 +675,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Sender_t_4[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Sender_WaitAck + {
+    pred pos_RDT_Sender_t_4[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Sender_WaitAck + {
             RDT_Sender_ReadyResend
         }
     
-        testIfNextStable[s, s', {none}, RDT_Sender_t_4] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Sender_t_4] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Sender_t_4[s, s': Snapshot] {
+    pred RDT_Sender_t_4[s, sPrime: Snapshot] {
         pre_RDT_Sender_t_4[s]
-        pos_RDT_Sender_t_4[s, s']
-        semantics_RDT_Sender_t_4[s, s']
+        pos_RDT_Sender_t_4[s, sPrime]
+        semantics_RDT_Sender_t_4[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Sender_t_4[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -733,13 +733,13 @@ open util/boolean
             RDT_AckError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Sender_t_4[s, s': Snapshot] {
+    pred semantics_RDT_Sender_t_4[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Sender_t_4
+            sPrime.taken = RDT_Sender_t_4
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Sender_t_4
+            sPrime.taken = s.taken + RDT_Sender_t_4
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Sender_OnSendError_4 + 
@@ -763,33 +763,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver__7[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReadyReceiveNext + {
+    pred pos_RDT_Receiver__7[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReadyReceiveNext + {
             RDT_Receiver_ReceiveSuccess
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver__7] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver__7] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver__7[s, s': Snapshot] {
+    pred RDT_Receiver__7[s, sPrime: Snapshot] {
         pre_RDT_Receiver__7[s]
-        pos_RDT_Receiver__7[s, s']
-        semantics_RDT_Receiver__7[s, s']
+        pos_RDT_Receiver__7[s, sPrime]
+        semantics_RDT_Receiver__7[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver__7[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -827,13 +827,13 @@ open util/boolean
             RDT_SendSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver__7[s, s': Snapshot] {
+    pred semantics_RDT_Receiver__7[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver__7
+            sPrime.taken = RDT_Receiver__7
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver__7
+            sPrime.taken = s.taken + RDT_Receiver__7
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -860,33 +860,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver__8[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReceiveSuccess + {
+    pred pos_RDT_Receiver__8[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReceiveSuccess + {
             RDT_Receiver_ReceiveSuccess
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver__8] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver__8] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver__8[s, s': Snapshot] {
+    pred RDT_Receiver__8[s, sPrime: Snapshot] {
         pre_RDT_Receiver__8[s]
-        pos_RDT_Receiver__8[s, s']
-        semantics_RDT_Receiver__8[s, s']
+        pos_RDT_Receiver__8[s, sPrime]
+        semantics_RDT_Receiver__8[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver__8[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -924,13 +924,13 @@ open util/boolean
             RDT_SendSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver__8[s, s': Snapshot] {
+    pred semantics_RDT_Receiver__8[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver__8
+            sPrime.taken = RDT_Receiver__8
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver__8
+            sPrime.taken = s.taken + RDT_Receiver__8
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -957,33 +957,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver__9[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReceiveError + {
+    pred pos_RDT_Receiver__9[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReceiveError + {
             RDT_Receiver_ReceiveSuccess
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver__9] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver__9] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver__9[s, s': Snapshot] {
+    pred RDT_Receiver__9[s, sPrime: Snapshot] {
         pre_RDT_Receiver__9[s]
-        pos_RDT_Receiver__9[s, s']
-        semantics_RDT_Receiver__9[s, s']
+        pos_RDT_Receiver__9[s, sPrime]
+        semantics_RDT_Receiver__9[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver__9[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1021,13 +1021,13 @@ open util/boolean
             RDT_SendSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver__9[s, s': Snapshot] {
+    pred semantics_RDT_Receiver__9[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver__9
+            sPrime.taken = RDT_Receiver__9
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver__9
+            sPrime.taken = s.taken + RDT_Receiver__9
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1054,33 +1054,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver__10[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReadyReceiveResend + {
+    pred pos_RDT_Receiver__10[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReadyReceiveResend + {
             RDT_Receiver_ReceiveSuccess
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver__10] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver__10] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver__10[s, s': Snapshot] {
+    pred RDT_Receiver__10[s, sPrime: Snapshot] {
         pre_RDT_Receiver__10[s]
-        pos_RDT_Receiver__10[s, s']
-        semantics_RDT_Receiver__10[s, s']
+        pos_RDT_Receiver__10[s, sPrime]
+        semantics_RDT_Receiver__10[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver__10[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1118,13 +1118,13 @@ open util/boolean
             RDT_SendSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver__10[s, s': Snapshot] {
+    pred semantics_RDT_Receiver__10[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver__10
+            sPrime.taken = RDT_Receiver__10
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver__10
+            sPrime.taken = s.taken + RDT_Receiver__10
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1151,33 +1151,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver__11[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReadyReceiveNext + {
+    pred pos_RDT_Receiver__11[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReadyReceiveNext + {
             RDT_Receiver_ReceiveError
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver__11] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver__11] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver__11[s, s': Snapshot] {
+    pred RDT_Receiver__11[s, sPrime: Snapshot] {
         pre_RDT_Receiver__11[s]
-        pos_RDT_Receiver__11[s, s']
-        semantics_RDT_Receiver__11[s, s']
+        pos_RDT_Receiver__11[s, sPrime]
+        semantics_RDT_Receiver__11[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver__11[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1215,13 +1215,13 @@ open util/boolean
             RDT_SendError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver__11[s, s': Snapshot] {
+    pred semantics_RDT_Receiver__11[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver__11
+            sPrime.taken = RDT_Receiver__11
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver__11
+            sPrime.taken = s.taken + RDT_Receiver__11
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1248,33 +1248,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver__12[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReceiveSuccess + {
+    pred pos_RDT_Receiver__12[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReceiveSuccess + {
             RDT_Receiver_ReceiveError
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver__12] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver__12] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver__12[s, s': Snapshot] {
+    pred RDT_Receiver__12[s, sPrime: Snapshot] {
         pre_RDT_Receiver__12[s]
-        pos_RDT_Receiver__12[s, s']
-        semantics_RDT_Receiver__12[s, s']
+        pos_RDT_Receiver__12[s, sPrime]
+        semantics_RDT_Receiver__12[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver__12[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1312,13 +1312,13 @@ open util/boolean
             RDT_SendError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver__12[s, s': Snapshot] {
+    pred semantics_RDT_Receiver__12[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver__12
+            sPrime.taken = RDT_Receiver__12
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver__12
+            sPrime.taken = s.taken + RDT_Receiver__12
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1345,33 +1345,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver__13[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReceiveError + {
+    pred pos_RDT_Receiver__13[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReceiveError + {
             RDT_Receiver_ReceiveError
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver__13] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver__13] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver__13[s, s': Snapshot] {
+    pred RDT_Receiver__13[s, sPrime: Snapshot] {
         pre_RDT_Receiver__13[s]
-        pos_RDT_Receiver__13[s, s']
-        semantics_RDT_Receiver__13[s, s']
+        pos_RDT_Receiver__13[s, sPrime]
+        semantics_RDT_Receiver__13[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver__13[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1409,13 +1409,13 @@ open util/boolean
             RDT_SendError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver__13[s, s': Snapshot] {
+    pred semantics_RDT_Receiver__13[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver__13
+            sPrime.taken = RDT_Receiver__13
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver__13
+            sPrime.taken = s.taken + RDT_Receiver__13
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1442,33 +1442,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver__14[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReadyReceiveResend + {
+    pred pos_RDT_Receiver__14[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReadyReceiveResend + {
             RDT_Receiver_ReceiveError
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver__14] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver__14] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver__14[s, s': Snapshot] {
+    pred RDT_Receiver__14[s, sPrime: Snapshot] {
         pre_RDT_Receiver__14[s]
-        pos_RDT_Receiver__14[s, s']
-        semantics_RDT_Receiver__14[s, s']
+        pos_RDT_Receiver__14[s, sPrime]
+        semantics_RDT_Receiver__14[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver__14[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1506,13 +1506,13 @@ open util/boolean
             RDT_SendError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver__14[s, s': Snapshot] {
+    pred semantics_RDT_Receiver__14[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver__14
+            sPrime.taken = RDT_Receiver__14
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver__14
+            sPrime.taken = s.taken + RDT_Receiver__14
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1539,33 +1539,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver_t_13[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReceiveError + {
+    pred pos_RDT_Receiver_t_13[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReceiveError + {
             RDT_Receiver_ReadyReceiveResend
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver_t_13] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver_t_13] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver_t_13[s, s': Snapshot] {
+    pred RDT_Receiver_t_13[s, sPrime: Snapshot] {
         pre_RDT_Receiver_t_13[s]
-        pos_RDT_Receiver_t_13[s, s']
-        semantics_RDT_Receiver_t_13[s, s']
+        pos_RDT_Receiver_t_13[s, sPrime]
+        semantics_RDT_Receiver_t_13[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver_t_13[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1603,13 +1603,13 @@ open util/boolean
             RDT_AckError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver_t_13[s, s': Snapshot] {
+    pred semantics_RDT_Receiver_t_13[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver_t_13
+            sPrime.taken = RDT_Receiver_t_13
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver_t_13
+            sPrime.taken = s.taken + RDT_Receiver_t_13
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1636,33 +1636,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver_t_14[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReceiveSuccess + {
+    pred pos_RDT_Receiver_t_14[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReceiveSuccess + {
             RDT_Receiver_ReadyReceiveNext
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver_t_14] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver_t_14] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver_t_14[s, s': Snapshot] {
+    pred RDT_Receiver_t_14[s, sPrime: Snapshot] {
         pre_RDT_Receiver_t_14[s]
-        pos_RDT_Receiver_t_14[s, s']
-        semantics_RDT_Receiver_t_14[s, s']
+        pos_RDT_Receiver_t_14[s, sPrime]
+        semantics_RDT_Receiver_t_14[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver_t_14[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1700,13 +1700,13 @@ open util/boolean
             RDT_AckSuccess in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver_t_14[s, s': Snapshot] {
+    pred semantics_RDT_Receiver_t_14[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver_t_14
+            sPrime.taken = RDT_Receiver_t_14
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver_t_14
+            sPrime.taken = s.taken + RDT_Receiver_t_14
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1733,33 +1733,33 @@ open util/boolean
         }
     }
 
-    pred pos_RDT_Receiver_t_15[s, s':Snapshot] {
-        s'.conf = s.conf - RDT_Receiver_ReceiveSuccess + {
+    pred pos_RDT_Receiver_t_15[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - RDT_Receiver_ReceiveSuccess + {
             RDT_Receiver_ReadyReceiveNext
         }
     
-        testIfNextStable[s, s', {none}, RDT_Receiver_t_15] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, RDT_Receiver_t_15] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred RDT_Receiver_t_15[s, s': Snapshot] {
+    pred RDT_Receiver_t_15[s, sPrime: Snapshot] {
         pre_RDT_Receiver_t_15[s]
-        pos_RDT_Receiver_t_15[s, s']
-        semantics_RDT_Receiver_t_15[s, s']
+        pos_RDT_Receiver_t_15[s, sPrime]
+        semantics_RDT_Receiver_t_15[s, sPrime]
     }
 
     pred enabledAfterStep_RDT_Receiver_t_15[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -1797,13 +1797,13 @@ open util/boolean
             RDT_AckError in {_s.events  + genEvents}
         }
     }
-    pred semantics_RDT_Receiver_t_15[s, s': Snapshot] {
+    pred semantics_RDT_Receiver_t_15[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = RDT_Receiver_t_15
+            sPrime.taken = RDT_Receiver_t_15
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + RDT_Receiver_t_15
+            sPrime.taken = s.taken + RDT_Receiver_t_15
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 RDT_Receiver__11 + 
@@ -1833,52 +1833,52 @@ open util/boolean
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        RDT_Sender_OnSendSucess_1[s, s'] or
-        RDT_Sender_OnSendSucess_2[s, s'] or
-        RDT_Sender_OnSendSucess_3[s, s'] or
-        RDT_Sender_OnSendError_4[s, s'] or
-        RDT_Sender_OnSendError_5[s, s'] or
-        RDT_Sender_OnSendError_6[s, s'] or
-        RDT_Sender_t_3[s, s'] or
-        RDT_Sender_t_4[s, s'] or
-        RDT_Receiver__7[s, s'] or
-        RDT_Receiver__8[s, s'] or
-        RDT_Receiver__9[s, s'] or
-        RDT_Receiver__10[s, s'] or
-        RDT_Receiver__11[s, s'] or
-        RDT_Receiver__12[s, s'] or
-        RDT_Receiver__13[s, s'] or
-        RDT_Receiver__14[s, s'] or
-        RDT_Receiver_t_13[s, s'] or
-        RDT_Receiver_t_14[s, s'] or
-        RDT_Receiver_t_15[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        RDT_Sender_OnSendSucess_1[s, sPrime] or
+        RDT_Sender_OnSendSucess_2[s, sPrime] or
+        RDT_Sender_OnSendSucess_3[s, sPrime] or
+        RDT_Sender_OnSendError_4[s, sPrime] or
+        RDT_Sender_OnSendError_5[s, sPrime] or
+        RDT_Sender_OnSendError_6[s, sPrime] or
+        RDT_Sender_t_3[s, sPrime] or
+        RDT_Sender_t_4[s, sPrime] or
+        RDT_Receiver__7[s, sPrime] or
+        RDT_Receiver__8[s, sPrime] or
+        RDT_Receiver__9[s, sPrime] or
+        RDT_Receiver__10[s, sPrime] or
+        RDT_Receiver__11[s, sPrime] or
+        RDT_Receiver__12[s, sPrime] or
+        RDT_Receiver__13[s, sPrime] or
+        RDT_Receiver__14[s, sPrime] or
+        RDT_Receiver_t_13[s, sPrime] or
+        RDT_Receiver_t_14[s, sPrime] or
+        RDT_Receiver_t_15[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred testIfNextStable[s, s': Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
-        !enabledAfterStep_RDT_Sender_OnSendSucess_1[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Sender_OnSendSucess_2[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Sender_OnSendSucess_3[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Sender_OnSendError_4[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Sender_OnSendError_5[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Sender_OnSendError_6[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Sender_t_3[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Sender_t_4[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver__7[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver__8[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver__9[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver__10[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver__11[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver__12[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver__13[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver__14[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver_t_13[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver_t_14[s, s', t, genEvents]
-        !enabledAfterStep_RDT_Receiver_t_15[s, s', t, genEvents]
+    pred testIfNextStable[s, sPrime: Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
+        !enabledAfterStep_RDT_Sender_OnSendSucess_1[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Sender_OnSendSucess_2[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Sender_OnSendSucess_3[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Sender_OnSendError_4[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Sender_OnSendError_5[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Sender_OnSendError_6[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Sender_t_3[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Sender_t_4[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver__7[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver__8[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver__9[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver__10[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver__11[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver__12[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver__13[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver__14[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver_t_13[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver_t_14[s, sPrime, t, genEvents]
+        !enabledAfterStep_RDT_Receiver_t_15[s, sPrime, t, genEvents]
     }
 
     pred isEnabled[s:Snapshot] {
@@ -1903,23 +1903,23 @@ open util/boolean
         pre_RDT_Receiver_t_15[s]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.events = s.events
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.events = s.events
+        sPrime.taken = s.taken
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
-        all s: Snapshot | (isEnabled[s] && no s': Snapshot | small_step[s, s']) => s.stable = False
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
+        all s: Snapshot | (isEnabled[s] && no sPrime: Snapshot | small_step[s, sPrime]) => s.stable = False
         all s: Snapshot | s.stable = False => some s.nextStep
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 4 EventLabel

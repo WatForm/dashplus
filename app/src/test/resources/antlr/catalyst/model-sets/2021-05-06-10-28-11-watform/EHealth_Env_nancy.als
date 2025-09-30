@@ -34,29 +34,29 @@ open util/boolean
         !(((s.Environment_p) in (s.EHealthSystem_patients)))
     }
 
-    pred pos_EHealthSystem_add_patient[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_add_patient[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        (s'.EHealthSystem_patients) = (s.EHealthSystem_patients) + (s.Environment_p)
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        (sPrime.EHealthSystem_patients) = (s.EHealthSystem_patients) + (s.Environment_p)
     
-        testIfNextStable[s, s', {none}, EHealthSystem_add_patient] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, EHealthSystem_add_patient] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
-            s'.Environment_p = s.Environment_p
-            s'.Environment_m1 = s.Environment_m1
-            s'.Environment_m2 = s.Environment_m2
+            sPrime.stable = False
+            sPrime.Environment_p = s.Environment_p
+            sPrime.Environment_m1 = s.Environment_m1
+            sPrime.Environment_m2 = s.Environment_m2
         }
     }
 
-    pred EHealthSystem_add_patient[s, s': Snapshot] {
+    pred EHealthSystem_add_patient[s, sPrime: Snapshot] {
         pre_EHealthSystem_add_patient[s]
-        pos_EHealthSystem_add_patient[s, s']
-        semantics_EHealthSystem_add_patient[s, s']
+        pos_EHealthSystem_add_patient[s, sPrime]
+        semantics_EHealthSystem_add_patient[s, sPrime]
     }
 
     pred enabledAfterStep_EHealthSystem_add_patient[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -83,13 +83,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_EHealthSystem_add_patient[s, s': Snapshot] {
+    pred semantics_EHealthSystem_add_patient[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = EHealthSystem_add_patient
+            sPrime.taken = EHealthSystem_add_patient
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + EHealthSystem_add_patient
+            sPrime.taken = s.taken + EHealthSystem_add_patient
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 EHealthSystem_add_prescription + 
@@ -107,29 +107,29 @@ open util/boolean
         !(((s.Environment_m1) in (s.EHealthSystem_medications)))
     }
 
-    pred pos_EHealthSystem_add_medication[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_add_medication[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        (s'.EHealthSystem_medications) = (s.EHealthSystem_medications) + (s.Environment_m1)
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        (sPrime.EHealthSystem_medications) = (s.EHealthSystem_medications) + (s.Environment_m1)
     
-        testIfNextStable[s, s', {none}, EHealthSystem_add_medication] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, EHealthSystem_add_medication] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
-            s'.Environment_p = s.Environment_p
-            s'.Environment_m1 = s.Environment_m1
-            s'.Environment_m2 = s.Environment_m2
+            sPrime.stable = False
+            sPrime.Environment_p = s.Environment_p
+            sPrime.Environment_m1 = s.Environment_m1
+            sPrime.Environment_m2 = s.Environment_m2
         }
     }
 
-    pred EHealthSystem_add_medication[s, s': Snapshot] {
+    pred EHealthSystem_add_medication[s, sPrime: Snapshot] {
         pre_EHealthSystem_add_medication[s]
-        pos_EHealthSystem_add_medication[s, s']
-        semantics_EHealthSystem_add_medication[s, s']
+        pos_EHealthSystem_add_medication[s, sPrime]
+        semantics_EHealthSystem_add_medication[s, sPrime]
     }
 
     pred enabledAfterStep_EHealthSystem_add_medication[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -156,13 +156,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_EHealthSystem_add_medication[s, s': Snapshot] {
+    pred semantics_EHealthSystem_add_medication[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = EHealthSystem_add_medication
+            sPrime.taken = EHealthSystem_add_medication
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + EHealthSystem_add_medication
+            sPrime.taken = s.taken + EHealthSystem_add_medication
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 EHealthSystem_add_prescription + 
@@ -185,31 +185,31 @@ open util/boolean
         }
     }
 
-    pred pos_EHealthSystem_add_interaction[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_add_interaction[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        (s'.EHealthSystem_interactions) = (s.EHealthSystem_interactions) + {
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        (sPrime.EHealthSystem_interactions) = (s.EHealthSystem_interactions) + {
             (s.Environment_m1) -> (s.Environment_m2) + (s.Environment_m2) -> (s.Environment_m1)
         }
     
-        testIfNextStable[s, s', {none}, EHealthSystem_add_interaction] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, EHealthSystem_add_interaction] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
-            s'.Environment_p = s.Environment_p
-            s'.Environment_m1 = s.Environment_m1
-            s'.Environment_m2 = s.Environment_m2
+            sPrime.stable = False
+            sPrime.Environment_p = s.Environment_p
+            sPrime.Environment_m1 = s.Environment_m1
+            sPrime.Environment_m2 = s.Environment_m2
         }
     }
 
-    pred EHealthSystem_add_interaction[s, s': Snapshot] {
+    pred EHealthSystem_add_interaction[s, sPrime: Snapshot] {
         pre_EHealthSystem_add_interaction[s]
-        pos_EHealthSystem_add_interaction[s, s']
-        semantics_EHealthSystem_add_interaction[s, s']
+        pos_EHealthSystem_add_interaction[s, sPrime]
+        semantics_EHealthSystem_add_interaction[s, sPrime]
     }
 
     pred enabledAfterStep_EHealthSystem_add_interaction[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -241,13 +241,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_EHealthSystem_add_interaction[s, s': Snapshot] {
+    pred semantics_EHealthSystem_add_interaction[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = EHealthSystem_add_interaction
+            sPrime.taken = EHealthSystem_add_interaction
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + EHealthSystem_add_interaction
+            sPrime.taken = s.taken + EHealthSystem_add_interaction
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 EHealthSystem_add_prescription + 
@@ -270,29 +270,29 @@ open util/boolean
         }
     }
 
-    pred pos_EHealthSystem_add_prescription[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_add_prescription[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        (s'.EHealthSystem_prescriptions) = (s.EHealthSystem_prescriptions) + (s.Environment_p) -> (s.Environment_m1)
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        (sPrime.EHealthSystem_prescriptions) = (s.EHealthSystem_prescriptions) + (s.Environment_p) -> (s.Environment_m1)
     
-        testIfNextStable[s, s', {none}, EHealthSystem_add_prescription] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, EHealthSystem_add_prescription] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
-            s'.Environment_p = s.Environment_p
-            s'.Environment_m1 = s.Environment_m1
-            s'.Environment_m2 = s.Environment_m2
+            sPrime.stable = False
+            sPrime.Environment_p = s.Environment_p
+            sPrime.Environment_m1 = s.Environment_m1
+            sPrime.Environment_m2 = s.Environment_m2
         }
     }
 
-    pred EHealthSystem_add_prescription[s, s': Snapshot] {
+    pred EHealthSystem_add_prescription[s, sPrime: Snapshot] {
         pre_EHealthSystem_add_prescription[s]
-        pos_EHealthSystem_add_prescription[s, s']
-        semantics_EHealthSystem_add_prescription[s, s']
+        pos_EHealthSystem_add_prescription[s, sPrime]
+        semantics_EHealthSystem_add_prescription[s, sPrime]
     }
 
     pred enabledAfterStep_EHealthSystem_add_prescription[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -324,13 +324,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_EHealthSystem_add_prescription[s, s': Snapshot] {
+    pred semantics_EHealthSystem_add_prescription[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = EHealthSystem_add_prescription
+            sPrime.taken = EHealthSystem_add_prescription
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + EHealthSystem_add_prescription
+            sPrime.taken = s.taken + EHealthSystem_add_prescription
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 EHealthSystem_add_prescription + 
@@ -352,31 +352,31 @@ open util/boolean
         }
     }
 
-    pred pos_EHealthSystem_remove_interaction[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_remove_interaction[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        (s'.EHealthSystem_interactions) = (s.EHealthSystem_interactions) - {
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        (sPrime.EHealthSystem_interactions) = (s.EHealthSystem_interactions) - {
             (s.Environment_m1) -> (s.Environment_m2) + (s.Environment_m2) -> (s.Environment_m1)
         }
     
-        testIfNextStable[s, s', {none}, EHealthSystem_remove_interaction] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, EHealthSystem_remove_interaction] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
-            s'.Environment_p = s.Environment_p
-            s'.Environment_m1 = s.Environment_m1
-            s'.Environment_m2 = s.Environment_m2
+            sPrime.stable = False
+            sPrime.Environment_p = s.Environment_p
+            sPrime.Environment_m1 = s.Environment_m1
+            sPrime.Environment_m2 = s.Environment_m2
         }
     }
 
-    pred EHealthSystem_remove_interaction[s, s': Snapshot] {
+    pred EHealthSystem_remove_interaction[s, sPrime: Snapshot] {
         pre_EHealthSystem_remove_interaction[s]
-        pos_EHealthSystem_remove_interaction[s, s']
-        semantics_EHealthSystem_remove_interaction[s, s']
+        pos_EHealthSystem_remove_interaction[s, sPrime]
+        semantics_EHealthSystem_remove_interaction[s, sPrime]
     }
 
     pred enabledAfterStep_EHealthSystem_remove_interaction[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -407,13 +407,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_EHealthSystem_remove_interaction[s, s': Snapshot] {
+    pred semantics_EHealthSystem_remove_interaction[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = EHealthSystem_remove_interaction
+            sPrime.taken = EHealthSystem_remove_interaction
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + EHealthSystem_remove_interaction
+            sPrime.taken = s.taken + EHealthSystem_remove_interaction
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 EHealthSystem_add_prescription + 
@@ -435,29 +435,29 @@ open util/boolean
         }
     }
 
-    pred pos_EHealthSystem_remove_prescription[s, s':Snapshot] {
-        s'.conf = s.conf - EHealthSystem + {
+    pred pos_EHealthSystem_remove_prescription[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - EHealthSystem + {
             EHealthSystem
         }
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
-        (s'.EHealthSystem_prescriptions) = (s.EHealthSystem_prescriptions) - (s.Environment_p) -> (s.Environment_m1)
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
+        (sPrime.EHealthSystem_prescriptions) = (s.EHealthSystem_prescriptions) - (s.Environment_p) -> (s.Environment_m1)
     
-        testIfNextStable[s, s', {none}, EHealthSystem_remove_prescription] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, EHealthSystem_remove_prescription] => {
+            sPrime.stable = True
         } else {
-            s'.stable = False
-            s'.Environment_p = s.Environment_p
-            s'.Environment_m1 = s.Environment_m1
-            s'.Environment_m2 = s.Environment_m2
+            sPrime.stable = False
+            sPrime.Environment_p = s.Environment_p
+            sPrime.Environment_m1 = s.Environment_m1
+            sPrime.Environment_m2 = s.Environment_m2
         }
     }
 
-    pred EHealthSystem_remove_prescription[s, s': Snapshot] {
+    pred EHealthSystem_remove_prescription[s, sPrime: Snapshot] {
         pre_EHealthSystem_remove_prescription[s]
-        pos_EHealthSystem_remove_prescription[s, s']
-        semantics_EHealthSystem_remove_prescription[s, s']
+        pos_EHealthSystem_remove_prescription[s, sPrime]
+        semantics_EHealthSystem_remove_prescription[s, sPrime]
     }
 
     pred enabledAfterStep_EHealthSystem_remove_prescription[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -488,13 +488,13 @@ open util/boolean
             }
         }
     }
-    pred semantics_EHealthSystem_remove_prescription[s, s': Snapshot] {
+    pred semantics_EHealthSystem_remove_prescription[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = EHealthSystem_remove_prescription
+            sPrime.taken = EHealthSystem_remove_prescription
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + EHealthSystem_remove_prescription
+            sPrime.taken = s.taken + EHealthSystem_remove_prescription
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 EHealthSystem_add_prescription + 
@@ -523,26 +523,26 @@ open util/boolean
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        EHealthSystem_add_patient[s, s'] or
-        EHealthSystem_add_medication[s, s'] or
-        EHealthSystem_add_interaction[s, s'] or
-        EHealthSystem_add_prescription[s, s'] or
-        EHealthSystem_remove_interaction[s, s'] or
-        EHealthSystem_remove_prescription[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        EHealthSystem_add_patient[s, sPrime] or
+        EHealthSystem_add_medication[s, sPrime] or
+        EHealthSystem_add_interaction[s, sPrime] or
+        EHealthSystem_add_prescription[s, sPrime] or
+        EHealthSystem_remove_interaction[s, sPrime] or
+        EHealthSystem_remove_prescription[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred testIfNextStable[s, s': Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
-        !enabledAfterStep_EHealthSystem_add_patient[s, s', t, genEvents]
-        !enabledAfterStep_EHealthSystem_add_medication[s, s', t, genEvents]
-        !enabledAfterStep_EHealthSystem_add_interaction[s, s', t, genEvents]
-        !enabledAfterStep_EHealthSystem_add_prescription[s, s', t, genEvents]
-        !enabledAfterStep_EHealthSystem_remove_interaction[s, s', t, genEvents]
-        !enabledAfterStep_EHealthSystem_remove_prescription[s, s', t, genEvents]
+    pred testIfNextStable[s, sPrime: Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
+        !enabledAfterStep_EHealthSystem_add_patient[s, sPrime, t, genEvents]
+        !enabledAfterStep_EHealthSystem_add_medication[s, sPrime, t, genEvents]
+        !enabledAfterStep_EHealthSystem_add_interaction[s, sPrime, t, genEvents]
+        !enabledAfterStep_EHealthSystem_add_prescription[s, sPrime, t, genEvents]
+        !enabledAfterStep_EHealthSystem_remove_interaction[s, sPrime, t, genEvents]
+        !enabledAfterStep_EHealthSystem_remove_prescription[s, sPrime, t, genEvents]
     }
 
     pred isEnabled[s:Snapshot] {
@@ -554,30 +554,30 @@ open util/boolean
         pre_EHealthSystem_remove_prescription[s]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.taken = s.taken
         // Model specific declarations
-        s'.Environment_p = s.Environment_p
-        s'.Environment_m1 = s.Environment_m1
-        s'.Environment_m2 = s.Environment_m2
-        s'.EHealthSystem_medications = s.EHealthSystem_medications
-        s'.EHealthSystem_patients = s.EHealthSystem_patients
-        s'.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
-        s'.EHealthSystem_interactions = s.EHealthSystem_interactions
+        sPrime.Environment_p = s.Environment_p
+        sPrime.Environment_m1 = s.Environment_m1
+        sPrime.Environment_m2 = s.Environment_m2
+        sPrime.EHealthSystem_medications = s.EHealthSystem_medications
+        sPrime.EHealthSystem_patients = s.EHealthSystem_patients
+        sPrime.EHealthSystem_prescriptions = s.EHealthSystem_prescriptions
+        sPrime.EHealthSystem_interactions = s.EHealthSystem_interactions
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
-        all s: Snapshot | (isEnabled[s] && no s': Snapshot | small_step[s, s']) => s.stable = False
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
+        all s: Snapshot | (isEnabled[s] && no sPrime: Snapshot | small_step[s, sPrime]) => s.stable = False
         all s: Snapshot | s.stable = False => some s.nextStep
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 0 EventLabel,

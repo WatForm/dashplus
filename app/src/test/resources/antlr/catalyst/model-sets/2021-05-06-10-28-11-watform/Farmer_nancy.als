@@ -22,30 +22,30 @@ open util/ordering[Snapshot]
         Farmer in (s.Puzzle_near)
     }
 
-    pred pos_Puzzle_near2far[s, s':Snapshot] {
-        s'.conf = s.conf - Puzzle + {
+    pred pos_Puzzle_near2far[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Puzzle + {
             Puzzle
         }
         {
             (one x : (s.Puzzle_near) - Farmer
              | {
-                (s'.Puzzle_near) = (s.Puzzle_near) - Farmer - x - (s'.Puzzle_near).eats
-                (s'.Puzzle_far) = (s.Puzzle_far) + Farmer + x
+                (sPrime.Puzzle_near) = (s.Puzzle_near) - Farmer - x - (sPrime.Puzzle_near).eats
+                (sPrime.Puzzle_far) = (s.Puzzle_far) + Farmer + x
             }
             ) or {
-                (s'.Puzzle_near) = (s.Puzzle_near) - Farmer - (s'.Puzzle_near).eats
-                (s'.Puzzle_far) = (s.Puzzle_far) + Farmer
+                (sPrime.Puzzle_near) = (s.Puzzle_near) - Farmer - (sPrime.Puzzle_near).eats
+                (sPrime.Puzzle_far) = (s.Puzzle_far) + Farmer
             }
         }
     }
 
-    pred Puzzle_near2far[s, s': Snapshot] {
+    pred Puzzle_near2far[s, sPrime: Snapshot] {
         pre_Puzzle_near2far[s]
-        pos_Puzzle_near2far[s, s']
-        semantics_Puzzle_near2far[s, s']
+        pos_Puzzle_near2far[s, sPrime]
+        semantics_Puzzle_near2far[s, sPrime]
     }
-    pred semantics_Puzzle_near2far[s, s': Snapshot] {
-        s'.taken = Puzzle_near2far
+    pred semantics_Puzzle_near2far[s, sPrime: Snapshot] {
+        sPrime.taken = Puzzle_near2far
     }
     // Transition Puzzle_far2near
     pred pre_Puzzle_far2near[s:Snapshot] {
@@ -53,30 +53,30 @@ open util/ordering[Snapshot]
         Farmer in (s.Puzzle_far)
     }
 
-    pred pos_Puzzle_far2near[s, s':Snapshot] {
-        s'.conf = s.conf - Puzzle + {
+    pred pos_Puzzle_far2near[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Puzzle + {
             Puzzle
         }
         {
             (one x : (s.Puzzle_far) - Farmer
              | {
-                (s'.Puzzle_far) = (s.Puzzle_far) - Farmer - x - (s'.Puzzle_far).eats
-                (s'.Puzzle_near) = (s.Puzzle_near) + Farmer + x
+                (sPrime.Puzzle_far) = (s.Puzzle_far) - Farmer - x - (sPrime.Puzzle_far).eats
+                (sPrime.Puzzle_near) = (s.Puzzle_near) + Farmer + x
             }
             ) or {
-                (s'.Puzzle_far) = (s.Puzzle_far) - Farmer - (s'.Puzzle_far).eats
-                (s'.Puzzle_near) = (s.Puzzle_near) + Farmer
+                (sPrime.Puzzle_far) = (s.Puzzle_far) - Farmer - (sPrime.Puzzle_far).eats
+                (sPrime.Puzzle_near) = (s.Puzzle_near) + Farmer
             }
         }
     }
 
-    pred Puzzle_far2near[s, s': Snapshot] {
+    pred Puzzle_far2near[s, sPrime: Snapshot] {
         pre_Puzzle_far2near[s]
-        pos_Puzzle_far2near[s, s']
-        semantics_Puzzle_far2near[s, s']
+        pos_Puzzle_far2near[s, sPrime]
+        semantics_Puzzle_far2near[s, sPrime]
     }
-    pred semantics_Puzzle_far2near[s, s': Snapshot] {
-        s'.taken = Puzzle_far2near
+    pred semantics_Puzzle_far2near[s, sPrime: Snapshot] {
+        sPrime.taken = Puzzle_far2near
     }
 /****************************** INITIAL CONDITIONS ****************************/
     pred init[s: Snapshot] {
@@ -91,32 +91,32 @@ open util/ordering[Snapshot]
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        Puzzle_near2far[s, s'] or
-        Puzzle_far2near[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        Puzzle_near2far[s, sPrime] or
+        Puzzle_far2near[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.taken = s.taken
         // Model specific declarations
-        s'.Puzzle_near = s.Puzzle_near
-        s'.Puzzle_far = s.Puzzle_far
+        sPrime.Puzzle_near = s.Puzzle_near
+        sPrime.Puzzle_far = s.Puzzle_far
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 0 EventLabel

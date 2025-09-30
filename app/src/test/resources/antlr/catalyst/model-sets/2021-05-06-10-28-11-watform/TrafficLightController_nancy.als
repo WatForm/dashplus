@@ -63,17 +63,17 @@ pred pre_N_Go_Unchanged[s:State]{
 	!N_Go_True[s] and !N_Go_False[s]
 }
 
-pred N_Go_[s,s':State]{
+pred N_Go_[s,sPrime:State]{
 	pre_N_Go[s] 
-	N_Go in s'.goes 
+	N_Go in sPrime.goes 
 }
-pred N_Not_Go[s,s':State]{
+pred N_Not_Go[s,sPrime:State]{
 	pre_N_Not_Go[s] 
-	N_Go !in s'.goes
+	N_Go !in sPrime.goes
 }
-pred N_Go_Unchanged[s,s':State]{
+pred N_Go_Unchanged[s,sPrime:State]{
 	pre_N_Go_Unchanged[s] 
-	N_Go in s'.goes iff N_Go in s.goes
+	N_Go in sPrime.goes iff N_Go in s.goes
 }
 
 
@@ -98,17 +98,17 @@ pred pre_S_Go_Unchanged[s:State]{
 	!S_Go_True[s] and !S_Go_False[s]
 }
 
-pred S_Go_[s,s':State]{
+pred S_Go_[s,sPrime:State]{
 	pre_S_Go[s] 
-	S_Go in s'.goes 
+	S_Go in sPrime.goes 
 }
-pred S_Not_Go[s,s':State]{
+pred S_Not_Go[s,sPrime:State]{
 	pre_S_Not_Go[s] 
-	S_Go !in s'.goes
+	S_Go !in sPrime.goes
 }
-pred S_Go_Unchanged[s,s':State]{
+pred S_Go_Unchanged[s,sPrime:State]{
 	pre_S_Go_Unchanged[s] 
-	S_Go in s'.goes iff S_Go in s.goes
+	S_Go in sPrime.goes iff S_Go in s.goes
 }
 
 
@@ -133,17 +133,17 @@ pred pre_E_Go_Unchanged[s:State]{
 	!E_Go_True[s] and !E_Go_False[s]
 }
 
-pred E_Go_[s,s':State]{
+pred E_Go_[s,sPrime:State]{
 	pre_E_Go[s] 
-	E_Go in s'.goes 
+	E_Go in sPrime.goes 
 }
-pred E_Not_Go[s,s':State]{
+pred E_Not_Go[s,sPrime:State]{
 	pre_E_Not_Go[s] 
-	E_Go !in s'.goes
+	E_Go !in sPrime.goes
 }
-pred E_Go_Unchanged[s,s':State]{
+pred E_Go_Unchanged[s,sPrime:State]{
 	pre_E_Go_Unchanged[s] 
-	E_Go in s'.goes iff E_Go in s.goes
+	E_Go in sPrime.goes iff E_Go in s.goes
 }
 
 // Predicates for N_Req
@@ -164,17 +164,17 @@ pred pre_N_Req_Unchanged[s:State]{
 	!N_Req_True[s] and !N_Req_False[s]
 }
 
-pred N_Req_[s,s':State]{
+pred N_Req_[s,sPrime:State]{
 	pre_N_Req[s] 
-	N_Req in s'.req 
+	N_Req in sPrime.req 
 }
-pred N_Not_Req[s,s':State]{
+pred N_Not_Req[s,sPrime:State]{
 	pre_N_Not_Req[s] 
-	N_Req !in s'.req
+	N_Req !in sPrime.req
 }
-pred N_Req_Unchanged[s,s':State]{
+pred N_Req_Unchanged[s,sPrime:State]{
 	pre_N_Req_Unchanged[s]
-	N_Req in s'.req iff N_Req in s.req
+	N_Req in sPrime.req iff N_Req in s.req
 }
 
 
@@ -196,17 +196,17 @@ pred pre_S_Req_Unchanged[s:State]{
 	!S_Req_True[s] and !S_Req_False[s]
 }
 
-pred S_Req_[s,s':State]{
+pred S_Req_[s,sPrime:State]{
 	pre_S_Req[s] 
-	S_Req in s'.req 
+	S_Req in sPrime.req 
 }
-pred S_Not_Req[s,s':State]{
+pred S_Not_Req[s,sPrime:State]{
 	pre_S_Not_Req[s] 
-	S_Req !in s'.req
+	S_Req !in sPrime.req
 }
-pred S_Req_Unchanged[s,s':State]{
+pred S_Req_Unchanged[s,sPrime:State]{
 	pre_S_Req_Unchanged[s] 
-	S_Req in s'.req iff S_Req in s.req
+	S_Req in sPrime.req iff S_Req in s.req
 }
 
 // Predicates for E_Req
@@ -227,17 +227,17 @@ pred pre_E_Req_Unchanged[s:State]{
 	!E_Req_True[s] and !E_Req_False[s]
 }
 
-pred E_Req_[s,s':State]{
+pred E_Req_[s,sPrime:State]{
 	pre_E_Req[s] 
-	E_Req in s'.req 
+	E_Req in sPrime.req 
 }
-pred E_Not_Req[s,s':State]{
+pred E_Not_Req[s,sPrime:State]{
 	pre_E_Not_Req[s] 
-	E_Req !in s'.req
+	E_Req !in sPrime.req
 }
-pred E_Req_Unchanged[s,s':State]{
+pred E_Req_Unchanged[s,sPrime:State]{
 	pre_E_Req_Unchanged[s] 
-	E_Req in s'.req iff E_Req in s.req
+	E_Req in sPrime.req iff E_Req in s.req
 }
 
 // Predicates for NS_Lock
@@ -258,17 +258,17 @@ pred pre_NS_Lock_Unchanged[s:State]{
 	!NS_Lock_True[s] and !NS_Lock_False[s]
 }
 
-pred NS_Lock_[s,s':State]{
+pred NS_Lock_[s,sPrime:State]{
 	pre_NS_Lock[s] 
-	s'.NS_Lock = True
+	sPrime.NS_Lock = True
 }
-pred NS_Not_Lock[s,s':State]{
+pred NS_Not_Lock[s,sPrime:State]{
 	pre_NS_Not_Lock[s] 
-	s'.NS_Lock = False 
+	sPrime.NS_Lock = False 
 }
-pred NS_Lock_Unchanged[s,s':State]{
+pred NS_Lock_Unchanged[s,sPrime:State]{
 	pre_NS_Lock_Unchanged[s] 
-	s'.NS_Lock=s.NS_Lock
+	sPrime.NS_Lock=s.NS_Lock
 }
 
 
@@ -286,11 +286,11 @@ fun E_fair[]:State{
 
 // combines 3 fcs into 1 fc by checking that all 3 fcs occur infinitely often thru a counter
 fact fairness {
-	all s,s':State | s->s' in nextState implies (  (s in N_fair[] and s.counter=f0) implies s'.counter=f1 else
-		(s in S_fair[] and s.counter=f1) implies s'.counter=f2 else
-		(s in E_fair[] and s.counter=f2) implies s'.counter=f3 else 
-		s.counter=f3 implies s'.counter=f0 else 
-		s'.counter=s.counter)
+	all s,sPrime:State | s->sPrime in nextState implies (  (s in N_fair[] and s.counter=f0) implies sPrime.counter=f1 else
+		(s in S_fair[] and s.counter=f1) implies sPrime.counter=f2 else
+		(s in E_fair[] and s.counter=f2) implies sPrime.counter=f3 else 
+		s.counter=f3 implies sPrime.counter=f0 else 
+		sPrime.counter=s.counter)
 	// don't have to keep track of immediate next state fcs when counter=f3
 	// because it doesn't matter in the context of infinitely often  
 }
@@ -305,35 +305,35 @@ fact md{
 	// init state constraints
 	all s:State| initial[s] iff (s in initialState)
 	// transition constraints
-	all s,s':State| s->s' in nextState iff (
-		N_Go_[s,s'] or
-		N_Not_Go[s,s'] or
-		N_Go_Unchanged[s,s'] or 
-		S_Go_[s,s'] or
-		S_Not_Go[s,s'] or
-		S_Go_Unchanged[s,s'] or
-		E_Go_[s,s'] or
-		E_Not_Go[s,s'] or
-		E_Go_Unchanged[s,s'] or
+	all s,sPrime:State| s->sPrime in nextState iff (
+		N_Go_[s,sPrime] or
+		N_Not_Go[s,sPrime] or
+		N_Go_Unchanged[s,sPrime] or 
+		S_Go_[s,sPrime] or
+		S_Not_Go[s,sPrime] or
+		S_Go_Unchanged[s,sPrime] or
+		E_Go_[s,sPrime] or
+		E_Not_Go[s,sPrime] or
+		E_Go_Unchanged[s,sPrime] or
 
-		N_Req_[s,s'] or
-		N_Not_Req[s,s'] or
-		N_Req_Unchanged[s,s'] or
-		S_Req_[s,s'] or
-		S_Not_Req[s,s'] or
-		S_Req_Unchanged[s,s'] or
-		E_Req_[s,s'] or
-		E_Not_Req[s,s'] or
-		E_Req_Unchanged[s,s'] or
+		N_Req_[s,sPrime] or
+		N_Not_Req[s,sPrime] or
+		N_Req_Unchanged[s,sPrime] or
+		S_Req_[s,sPrime] or
+		S_Not_Req[s,sPrime] or
+		S_Req_Unchanged[s,sPrime] or
+		E_Req_[s,sPrime] or
+		E_Not_Req[s,sPrime] or
+		E_Req_Unchanged[s,sPrime] or
 
-		NS_Lock_[s,s'] or
-		NS_Not_Lock[s,s'] or
-		NS_Lock_Unchanged[s,s']
+		NS_Lock_[s,sPrime] or
+		NS_Not_Lock[s,sPrime] or
+		NS_Lock_Unchanged[s,sPrime]
 	)
 	// fairness constraints
 	all s:State | s in fc iff fair[s]
 	// equality predicate: states are records
-	all s,s':State| (s.sensors = s'.sensors and s.goes = s'.goes and s.req = s'.req and s.NS_Lock = s'.NS_Lock) implies s = s'
+	all s,sPrime:State| (s.sensors = sPrime.sensors and s.goes = sPrime.goes and s.req = sPrime.req and s.NS_Lock = sPrime.NS_Lock) implies s = sPrime
 }
 
 
@@ -342,7 +342,7 @@ pred initialStateAxiom {
 	some s: State | s in initialState
 }
 pred totalityAxiom {
-	all s: State | some s':State | s->s' in nextState
+	all s: State | some sPrime:State | s->sPrime in nextState
 }
 pred operationsAxiom {
 	// at least one state must satisfy precons of each op
@@ -371,29 +371,29 @@ pred operationsAxiom {
 	some s:State | pre_NS_Lock_Unchanged[s]
 
 	// all possible ops from state exist
-	all s:State | pre_N_Go[s] implies some s':State | N_Go_[s,s']
-	all s:State | pre_N_Not_Go[s] implies some s':State | N_Not_Go[s,s']
-	all s:State | pre_N_Go_Unchanged[s] implies some s':State | N_Go_Unchanged[s,s'] 
-	all s:State | pre_S_Go[s] implies some s':State | S_Go_[s,s']
-	all s:State | pre_S_Not_Go[s] implies some s':State | S_Not_Go[s,s']
-	all s:State | pre_S_Go_Unchanged[s] implies some s':State | S_Go_Unchanged[s,s'] 
-	all s:State | pre_E_Go[s] implies some s':State | E_Go_[s,s']
-	all s:State | pre_E_Not_Go[s] implies some s':State | E_Not_Go[s,s']
-	all s:State | pre_E_Go_Unchanged[s] implies some s':State | E_Go_Unchanged[s,s'] 
+	all s:State | pre_N_Go[s] implies some sPrime:State | N_Go_[s,sPrime]
+	all s:State | pre_N_Not_Go[s] implies some sPrime:State | N_Not_Go[s,sPrime]
+	all s:State | pre_N_Go_Unchanged[s] implies some sPrime:State | N_Go_Unchanged[s,sPrime] 
+	all s:State | pre_S_Go[s] implies some sPrime:State | S_Go_[s,sPrime]
+	all s:State | pre_S_Not_Go[s] implies some sPrime:State | S_Not_Go[s,sPrime]
+	all s:State | pre_S_Go_Unchanged[s] implies some sPrime:State | S_Go_Unchanged[s,sPrime] 
+	all s:State | pre_E_Go[s] implies some sPrime:State | E_Go_[s,sPrime]
+	all s:State | pre_E_Not_Go[s] implies some sPrime:State | E_Not_Go[s,sPrime]
+	all s:State | pre_E_Go_Unchanged[s] implies some sPrime:State | E_Go_Unchanged[s,sPrime] 
 
- 	all s:State | pre_N_Req[s] implies some s':State | N_Req_[s,s']
-	all s:State | pre_N_Not_Req[s] implies some s':State | N_Not_Req[s,s']
-	all s:State | pre_N_Req_Unchanged[s] implies some s':State | N_Req_Unchanged[s,s'] 
-	all s:State | pre_S_Req[s] implies some s':State | S_Req_[s,s']
-	all s:State | pre_S_Not_Req[s] implies some s':State | S_Not_Req[s,s']
-	all s:State | pre_S_Req_Unchanged[s] implies some s':State | S_Req_Unchanged[s,s'] 
-	all s:State | pre_E_Req[s] implies some s':State | E_Req_[s,s']
-	all s:State | pre_E_Not_Req[s] implies some s':State | E_Not_Req[s,s']
-	all s:State | pre_E_Req_Unchanged[s] implies some s':State | E_Req_Unchanged[s,s'] 
+ 	all s:State | pre_N_Req[s] implies some sPrime:State | N_Req_[s,sPrime]
+	all s:State | pre_N_Not_Req[s] implies some sPrime:State | N_Not_Req[s,sPrime]
+	all s:State | pre_N_Req_Unchanged[s] implies some sPrime:State | N_Req_Unchanged[s,sPrime] 
+	all s:State | pre_S_Req[s] implies some sPrime:State | S_Req_[s,sPrime]
+	all s:State | pre_S_Not_Req[s] implies some sPrime:State | S_Not_Req[s,sPrime]
+	all s:State | pre_S_Req_Unchanged[s] implies some sPrime:State | S_Req_Unchanged[s,sPrime] 
+	all s:State | pre_E_Req[s] implies some sPrime:State | E_Req_[s,sPrime]
+	all s:State | pre_E_Not_Req[s] implies some sPrime:State | E_Not_Req[s,sPrime]
+	all s:State | pre_E_Req_Unchanged[s] implies some sPrime:State | E_Req_Unchanged[s,sPrime] 
 
-	all s:State | pre_NS_Lock[s] implies some s':State | NS_Lock_[s,s']
-	all s:State | pre_NS_Not_Lock[s] implies some s':State | NS_Not_Lock[s,s']
-	all s:State | pre_NS_Lock_Unchanged[s] implies some s':State | NS_Lock_Unchanged[s,s'] 
+	all s:State | pre_NS_Lock[s] implies some sPrime:State | NS_Lock_[s,sPrime]
+	all s:State | pre_NS_Not_Lock[s] implies some sPrime:State | NS_Not_Lock[s,sPrime]
+	all s:State | pre_NS_Lock_Unchanged[s] implies some sPrime:State | NS_Lock_Unchanged[s,sPrime] 
 }
 pred significanceAxioms {
 	initialStateAxiom

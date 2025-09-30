@@ -47,12 +47,12 @@ pred pre_add [s: State, n: Name, t: Target] {
 	t in Addr or some lookup [s, Name&t]
 	n->t not in s.addr
 }
-pred post_add [s, s': State, n: Name, t: Target] {
-	s'.addr = s.addr + n->t
+pred post_add [s, sPrime: State, n: Name, t: Target] {
+	sPrime.addr = s.addr + n->t
 }
-pred add [s, s': State, n: Name, t: Target] {
+pred add [s, sPrime: State, n: Name, t: Target] {
 	pre_add[s,n,t]
-	post_add[s,s',n,t]
+	post_add[s,sPrime,n,t]
 }
 
 // del an addr mapping
@@ -60,12 +60,12 @@ pred pre_del [s: State, n: Name, t: Target] {
 	no s.addr.n or some n.(s.addr) - t
 	n->t in s.addr
 }
-pred post_del [s, s': State, n: Name, t: Target] {
-	s'.addr = s.addr - n->t
+pred post_del [s, sPrime: State, n: Name, t: Target] {
+	sPrime.addr = s.addr - n->t
 }
-pred del [s, s': State, n: Name, t: Target] {
+pred del [s, sPrime: State, n: Name, t: Target] {
 	pre_del[s,n,t]
-	post_del[s,s',n,t]
+	post_del[s,sPrime,n,t]
 }
 
 
@@ -77,10 +77,10 @@ fact modelDefinition {
   // init state constraints
   all s:State | s in initialState iff init[s]
   // only defined transitions are valid 
-  all s,s':State| s->s' in nextState iff 
-		(some n: Name, t: Target | add [s, s', n, t] or del [s, s', n, t])
+  all s,sPrime:State| s->sPrime in nextState iff 
+		(some n: Name, t: Target | add [s, sPrime, n, t] or del [s, sPrime, n, t])
   // equality predicate: two states with the same features are equivalent
-  all s,s':State|((s.addr=s'.addr) implies s=s')
+  all s,sPrime:State|((s.addr=sPrime.addr) implies s=sPrime)
 }
 
 
@@ -89,7 +89,7 @@ pred initialStateAxiom {
 	some s: State | s in initialState
 }
 pred totalityAxiom {
-	all s: State | some s':State | s->s' in nextState
+	all s: State | some sPrime:State | s->sPrime in nextState
 }
 pred operationsAxiom {
 	// at least one state must satisfy precons of each op
@@ -97,8 +97,8 @@ pred operationsAxiom {
 	some s:State | some n: Name, t: Target | pre_del[s,n,t]
 
 	// all possible ops from state must exist
-	all s:State | some n: Name, t: Target | pre_add[s,n,t] implies some s':State | post_add[s,s',n,t]	
-	all s:State | some n: Name, t: Target | pre_del[s,n,t] implies some s':State | post_del[s,s',n,t]
+	all s:State | some n: Name, t: Target | pre_add[s,n,t] implies some sPrime:State | post_add[s,sPrime,n,t]	
+	all s:State | some n: Name, t: Target | pre_del[s,n,t] implies some sPrime:State | post_del[s,sPrime,n,t]
 }
 pred significanceAxioms {
 	initialStateAxiom
