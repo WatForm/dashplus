@@ -55,6 +55,8 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
+				| 'seq' expr																					# seqValue
+
 				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
                 | expr comparison expr 																			# comparisonFormula
                 | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) expr  	# unaryFormula

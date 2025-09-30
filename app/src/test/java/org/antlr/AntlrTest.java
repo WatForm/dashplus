@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.antlr.v4.runtime.*;
@@ -17,17 +20,27 @@ import org.antlr.BailLexer; // ignore the lsp error
 import org.antlr.BailParser; // ignore the lsp error
 
 public class AntlrTest {
-	private void tryParse(CharStream input) throws ParseCancellationException {
+	private void tryParse(CharStream input, Path filename) throws ParseCancellationException {
 		BailLexer bailLexer = new BailLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(bailLexer);
 		BailParser parser = new BailParser(tokens);
-		parser.alloyFile();
+		try{
+			parser.alloyFile();
+		} catch (ParseCancellationException pce) {
+			IO.println("ParseCancellationException thrown while parsing " + filename);
+			throw pce;
+		}
 	}
 
 	@Test
 	public void parseAll() throws Exception {
-		CharStream input = CharStreams.fromPath(Paths.get("src/test/resources/antlr/catalyst/model-sets/2021-05-06-10-28-11-watform/AddressBook_nancy.als"));
-		assertDoesNotThrow(()->this.tryParse(input), "Parse failed");
+		Path set1 = Paths.get("src/test/resources/antlr/catalyst/model-sets/2021-05-06-10-28-11-watform");
+		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(set1, "*.als")) {
+			for(Path filePath : dirStream) {
+				CharStream input = CharStreams.fromPath(filePath);
+				assertDoesNotThrow(()->this.tryParse(input, filePath), "Parse failed");
+			}
+		}
 	}
 }
 

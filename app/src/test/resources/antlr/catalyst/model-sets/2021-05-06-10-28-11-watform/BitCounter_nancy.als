@@ -40,33 +40,33 @@ open util/boolean
         }
     }
 
-    pred pos_Counter_Bit1_T1[s, s':Snapshot] {
-        s'.conf = s.conf - Counter_Bit1_Bit11 + {
+    pred pos_Counter_Bit1_T1[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Counter_Bit1_Bit11 + {
             Counter_Bit1_Bit12
         }
     
-        testIfNextStable[s, s', {none}, Counter_Bit1_T1] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Counter_Bit1_T1] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred Counter_Bit1_T1[s, s': Snapshot] {
+    pred Counter_Bit1_T1[s, sPrime: Snapshot] {
         pre_Counter_Bit1_T1[s]
-        pos_Counter_Bit1_T1[s, s']
-        semantics_Counter_Bit1_T1[s, s']
+        pos_Counter_Bit1_T1[s, sPrime]
+        semantics_Counter_Bit1_T1[s, sPrime]
     }
 
     pred enabledAfterStep_Counter_Bit1_T1[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -86,13 +86,13 @@ open util/boolean
             Counter_Tk0 in {_s.events  + genEvents}
         }
     }
-    pred semantics_Counter_Bit1_T1[s, s': Snapshot] {
+    pred semantics_Counter_Bit1_T1[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Counter_Bit1_T1
+            sPrime.taken = Counter_Bit1_T1
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Counter_Bit1_T1
+            sPrime.taken = s.taken + Counter_Bit1_T1
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Counter_Bit1_T2 + 
@@ -110,34 +110,34 @@ open util/boolean
         }
     }
 
-    pred pos_Counter_Bit1_T2[s, s':Snapshot] {
-        s'.conf = s.conf - Counter_Bit1_Bit12 + {
+    pred pos_Counter_Bit1_T2[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Counter_Bit1_Bit12 + {
             Counter_Bit1_Bit11
         }
     
-        testIfNextStable[s, s', {Counter_Bit1_Tk1}, Counter_Bit1_T2] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {Counter_Bit1_Tk1}, Counter_Bit1_T2] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {Counter_Bit1_Tk1})
+                no ((sPrime.events & InternalEvent) - {Counter_Bit1_Tk1})
             } else {
-                no ((s'.events & InternalEvent) - {{Counter_Bit1_Tk1} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{Counter_Bit1_Tk1} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {Counter_Bit1_Tk1}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {Counter_Bit1_Tk1}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {Counter_Bit1_Tk1}
+                sPrime.events = s.events + {Counter_Bit1_Tk1}
             }
         }
-        {Counter_Bit1_Tk1} in s'.events
+        {Counter_Bit1_Tk1} in sPrime.events
     }
 
-    pred Counter_Bit1_T2[s, s': Snapshot] {
+    pred Counter_Bit1_T2[s, sPrime: Snapshot] {
         pre_Counter_Bit1_T2[s]
-        pos_Counter_Bit1_T2[s, s']
-        semantics_Counter_Bit1_T2[s, s']
+        pos_Counter_Bit1_T2[s, sPrime]
+        semantics_Counter_Bit1_T2[s, sPrime]
     }
 
     pred enabledAfterStep_Counter_Bit1_T2[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -157,13 +157,13 @@ open util/boolean
             Counter_Tk0 in {_s.events  + genEvents}
         }
     }
-    pred semantics_Counter_Bit1_T2[s, s': Snapshot] {
+    pred semantics_Counter_Bit1_T2[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Counter_Bit1_T2
+            sPrime.taken = Counter_Bit1_T2
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Counter_Bit1_T2
+            sPrime.taken = s.taken + Counter_Bit1_T2
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Counter_Bit1_T2 + 
@@ -181,33 +181,33 @@ open util/boolean
         }
     }
 
-    pred pos_Counter_Bit2_T3[s, s':Snapshot] {
-        s'.conf = s.conf - Counter_Bit2_Bit21 + {
+    pred pos_Counter_Bit2_T3[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Counter_Bit2_Bit21 + {
             Counter_Bit2_Bit22
         }
     
-        testIfNextStable[s, s', {none}, Counter_Bit2_T3] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {none}, Counter_Bit2_T3] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) )
+                no ((sPrime.events & InternalEvent) )
             } else {
-                no ((s'.events & InternalEvent) - { (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - { (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {none}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {none}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {none}
+                sPrime.events = s.events + {none}
             }
         }
     }
 
-    pred Counter_Bit2_T3[s, s': Snapshot] {
+    pred Counter_Bit2_T3[s, sPrime: Snapshot] {
         pre_Counter_Bit2_T3[s]
-        pos_Counter_Bit2_T3[s, s']
-        semantics_Counter_Bit2_T3[s, s']
+        pos_Counter_Bit2_T3[s, sPrime]
+        semantics_Counter_Bit2_T3[s, sPrime]
     }
 
     pred enabledAfterStep_Counter_Bit2_T3[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -227,13 +227,13 @@ open util/boolean
             Counter_Bit1_Tk1 in {_s.events  + genEvents}
         }
     }
-    pred semantics_Counter_Bit2_T3[s, s': Snapshot] {
+    pred semantics_Counter_Bit2_T3[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Counter_Bit2_T3
+            sPrime.taken = Counter_Bit2_T3
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Counter_Bit2_T3
+            sPrime.taken = s.taken + Counter_Bit2_T3
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Counter_Bit2_T3 + 
@@ -251,34 +251,34 @@ open util/boolean
         }
     }
 
-    pred pos_Counter_Bit2_T4[s, s':Snapshot] {
-        s'.conf = s.conf - Counter_Bit2_Bit22 + {
+    pred pos_Counter_Bit2_T4[s, sPrime:Snapshot] {
+        sPrime.conf = s.conf - Counter_Bit2_Bit22 + {
             Counter_Bit2_Bit21
         }
     
-        testIfNextStable[s, s', {Counter_Bit2_Done}, Counter_Bit2_T4] => {
-            s'.stable = True
+        testIfNextStable[s, sPrime, {Counter_Bit2_Done}, Counter_Bit2_T4] => {
+            sPrime.stable = True
             s.stable = True => {
-                no ((s'.events & InternalEvent) - {Counter_Bit2_Done})
+                no ((sPrime.events & InternalEvent) - {Counter_Bit2_Done})
             } else {
-                no ((s'.events & InternalEvent) - {{Counter_Bit2_Done} + (InternalEvent & s.events)})
+                no ((sPrime.events & InternalEvent) - {{Counter_Bit2_Done} + (InternalEvent & s.events)})
             }
         } else {
-            s'.stable = False
+            sPrime.stable = False
             s.stable = True => {
-                s'.events & InternalEvent = {Counter_Bit2_Done}
-                s'.events & EnvironmentEvent = s.events & EnvironmentEvent
+                sPrime.events & InternalEvent = {Counter_Bit2_Done}
+                sPrime.events & EnvironmentEvent = s.events & EnvironmentEvent
             } else {
-                s'.events = s.events + {Counter_Bit2_Done}
+                sPrime.events = s.events + {Counter_Bit2_Done}
             }
         }
-        {Counter_Bit2_Done} in s'.events
+        {Counter_Bit2_Done} in sPrime.events
     }
 
-    pred Counter_Bit2_T4[s, s': Snapshot] {
+    pred Counter_Bit2_T4[s, sPrime: Snapshot] {
         pre_Counter_Bit2_T4[s]
-        pos_Counter_Bit2_T4[s, s']
-        semantics_Counter_Bit2_T4[s, s']
+        pos_Counter_Bit2_T4[s, sPrime]
+        semantics_Counter_Bit2_T4[s, sPrime]
     }
 
     pred enabledAfterStep_Counter_Bit2_T4[_s, s: Snapshot, t: TransitionLabel, genEvents: set InternalEvent] {
@@ -298,13 +298,13 @@ open util/boolean
             Counter_Bit1_Tk1 in {_s.events  + genEvents}
         }
     }
-    pred semantics_Counter_Bit2_T4[s, s': Snapshot] {
+    pred semantics_Counter_Bit2_T4[s, sPrime: Snapshot] {
         (s.stable = True) => {
             // SINGLE semantics
-            s'.taken = Counter_Bit2_T4
+            sPrime.taken = Counter_Bit2_T4
         } else {
             // SINGLE semantics
-            s'.taken = s.taken + Counter_Bit2_T4
+            sPrime.taken = s.taken + Counter_Bit2_T4
             // Bigstep "TAKE_ONE" semantics
             no s.taken & {
                 Counter_Bit2_T3 + 
@@ -325,22 +325,22 @@ open util/boolean
 
 
 /***************************** MODEL DEFINITION *******************************/
-    pred operation[s, s': Snapshot] {
-        Counter_Bit1_T1[s, s'] or
-        Counter_Bit1_T2[s, s'] or
-        Counter_Bit2_T3[s, s'] or
-        Counter_Bit2_T4[s, s']
+    pred operation[s, sPrime: Snapshot] {
+        Counter_Bit1_T1[s, sPrime] or
+        Counter_Bit1_T2[s, sPrime] or
+        Counter_Bit2_T3[s, sPrime] or
+        Counter_Bit2_T4[s, sPrime]
     }
 
-    pred small_step[s, s': Snapshot] {
-        operation[s, s']
+    pred small_step[s, sPrime: Snapshot] {
+        operation[s, sPrime]
     }
 
-    pred testIfNextStable[s, s': Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
-        !enabledAfterStep_Counter_Bit1_T1[s, s', t, genEvents]
-        !enabledAfterStep_Counter_Bit1_T2[s, s', t, genEvents]
-        !enabledAfterStep_Counter_Bit2_T3[s, s', t, genEvents]
-        !enabledAfterStep_Counter_Bit2_T4[s, s', t, genEvents]
+    pred testIfNextStable[s, sPrime: Snapshot, genEvents: set InternalEvent, t:TransitionLabel] {
+        !enabledAfterStep_Counter_Bit1_T1[s, sPrime, t, genEvents]
+        !enabledAfterStep_Counter_Bit1_T2[s, sPrime, t, genEvents]
+        !enabledAfterStep_Counter_Bit2_T3[s, sPrime, t, genEvents]
+        !enabledAfterStep_Counter_Bit2_T4[s, sPrime, t, genEvents]
     }
 
     pred isEnabled[s:Snapshot] {
@@ -350,23 +350,23 @@ open util/boolean
         pre_Counter_Bit2_T4[s]
     }
 
-    pred equals[s, s': Snapshot] {
-        s'.conf = s.conf
-        s'.events = s.events
-        s'.taken = s.taken
+    pred equals[s, sPrime: Snapshot] {
+        sPrime.conf = s.conf
+        sPrime.events = s.events
+        sPrime.taken = s.taken
     }
 
     fact {
         all s: Snapshot | s in initial iff init[s]
-        all s, s': Snapshot | s->s' in nextStep iff small_step[s, s']
-        all s, s': Snapshot | equals[s, s'] => s = s'
-        all s: Snapshot | (isEnabled[s] && no s': Snapshot | small_step[s, s']) => s.stable = False
+        all s, sPrime: Snapshot | s->sPrime in nextStep iff small_step[s, sPrime]
+        all s, sPrime: Snapshot | equals[s, sPrime] => s = sPrime
+        all s: Snapshot | (isEnabled[s] && no sPrime: Snapshot | small_step[s, sPrime]) => s.stable = False
         all s: Snapshot | s.stable = False => some s.nextStep
         path
     }
 
     pred path {
-        all s:Snapshot, s': s.next | operation[s, s']
+        all s:Snapshot, sPrime: s.next | operation[s, sPrime]
         init[first]
     }
     run path for 5 Snapshot, 3 EventLabel
@@ -421,11 +421,11 @@ open util/boolean
     
     assert model_responsive {
         all s: Snapshot | Counter_Tk0 in s.events and some nextStep =>
-            some s': s.*nextStep | s'.stable = True and
-                        (Counter_Bit1_T1 in s'.taken or
-                        Counter_Bit1_T2 in s'.taken or
-                        Counter_Bit2_T3 in s'.taken or
-                        Counter_Bit2_T4 in s'.taken)
+            some sPrime: s.*nextStep | sPrime.stable = True and
+                        (Counter_Bit1_T1 in sPrime.taken or
+                        Counter_Bit1_T2 in sPrime.taken or
+                        Counter_Bit2_T3 in sPrime.taken or
+                        Counter_Bit2_T4 in sPrime.taken)
     }
     check model_responsive for 7 Snapshot, exactly 2 EventLabel expect 0
     

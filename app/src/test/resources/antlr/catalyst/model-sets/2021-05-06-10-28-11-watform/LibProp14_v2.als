@@ -38,16 +38,16 @@ state of the library.
 */
 
 
-pred BuggyLeave[L,L':Lib]{L=L'}//Just For Test
+pred BuggyLeave[L,LPrime:Lib]{L=LPrime}//Just For Test
 
-pred LCR[m:Member,L,L' : Lib]
+pred LCR[m:Member,L,LPrime : Lib]
 {
  some b:Book |
-   Cancel[m,b,L,L']
-   or Return[m,b,L,L']
+   Cancel[m,b,L,LPrime]
+   or Return[m,b,L,LPrime]
  //For test switch Leave and BuggyLeave
-   or Leave[m,L,L']
- //or BuggyLeave[L,L']
+   or Leave[m,L,LPrime]
+ //or BuggyLeave[L,LPrime]
 }
 
 pred TransLCR[m:Member]
