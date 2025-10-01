@@ -28,7 +28,7 @@ public class AntlrTest {
 		try{
 			bailParser.alloyFile();
 		} catch (ParseCancellationException pce) {
-			IO.println("ParseCancellationException thrown while parsing " + filename);
+			System.out.println("ParseCancellationException thrown while parsing " + filename);
 			throw pce;
 		}
 	}

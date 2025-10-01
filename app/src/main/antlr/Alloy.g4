@@ -41,7 +41,7 @@ macroDecl       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
 block           : '{' expr* '}' ;
 
 expr	        : ('~'|'^'|'*') expr                                               								# unaryOpValue
-				| expr '\''                                                        								# primeValue
+				| expr '\''                                                        								# primeValue // exprVar
 				| expr '.' expr                                                   								# join 
                 | expr '[' (expr (',' expr)*)? ']'                                  							# box
 				| expr ('<:'|':>') expr                                           								# restrictionValue
@@ -52,7 +52,7 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | '#' expr                                                         								# cardinalityValue
 				| expr ('+' | '-' | 'fun/add' | 'fun/sub') expr                                             	# unionDiffAddSubValue
 				| expr ('<<' | '>>' | '>>>') expr 																# bitShiftValue
-                | 'sum' decl ( ',' decl )* '|' expr                                								# sumValue		// pg 289
+                | 'sum' decl ( ',' decl )* (block | ('|' expr))                                					# sumValue		// pg 289
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
 				| 'seq' expr																					# seqValue
