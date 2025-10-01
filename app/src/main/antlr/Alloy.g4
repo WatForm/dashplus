@@ -56,6 +56,7 @@ expr	        : ('~'|'^'|'*') expr                                               
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
 				| 'seq' expr																					# seqValue
+				| 'int' expr																					# castToSigIntValue
 
 				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
                 | expr comparison expr 																			# comparisonFormula
@@ -76,15 +77,11 @@ expr	        : ('~'|'^'|'*') expr                                               
 
                 | '@' name                                                         	# atnameValue
                 | qname '$'                                                        	# metaValue 
-                | number                                                           	# numberValue
 				| qname                                                            	# qnameValue
-				| 'this'															# thisValue
-				| 'int'																# castToIntValue
-				| 'Int'																# sigIntValue
-				| 'steps'															# timeValue
-				| ('none' | 'univ' | 'iden' | 'fun/min' | 'fun/max' 
-						| 'fun/next' | STRING_LITERAL)								# constValue	 // exprConstant
-				| ('pred/totalOrder' | 'disj')										# listFormula      // exprList
+				| ('none' | 'univ' | 'iden' |
+						'pred/totalOrder' | 'disj' | 
+						'this' | 'int' | 'Int' | 'steps' | 'seq/Int' )					# varValue	 // exprVar
+				| ( 'fun/min' | 'fun/max' | 'fun/next' | number | STRING_LITERAL )		# constValue	 // exprConstant
                 ;
 
 arrow			: multiplicity? '->' multiplicity? ;
@@ -137,7 +134,7 @@ exactly         : 'exactly' ;
 // LEXER 
 
 ID              : [\p{L}\p{Lo}_%][\p{L}\p{Lo}_"0-9%]*;
-PRIMITIVE       : ('fun'|'ord'|'seq') '/' ID ;
+// PRIMITIVE       : ('fun'|'ord'|'seq') '/' ID ;
 QNAME           : ID ( '/' ID )* ;
 NUMBER          : [0-9]+ | '0x' [0-9A-Fa-f]+ | '0b' [10]+ ;
 STRING_LITERAL  : '"' ( ~["\\] | '\\' . )* '"' ;

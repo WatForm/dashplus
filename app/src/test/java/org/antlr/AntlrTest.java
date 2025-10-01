@@ -55,5 +55,16 @@ public class AntlrTest {
 		}
 	}
 
+	@Test
+	public void parseUtil() throws Exception {
+		Path p = Paths.get("src/test/resources/antlr/util");
+		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(p, "*.als")) {
+			for(Path filePath : dirStream) {
+				CharStream input = CharStreams.fromPath(filePath);
+				assertDoesNotThrow(()->this.tryParse(input, filePath), "Parse failed");
+			}
+		}
+	}
+
 }
 
