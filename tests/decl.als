@@ -1,1 +1,0 @@
-stable: one Bool
