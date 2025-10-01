@@ -8,7 +8,7 @@ module util/natural
  * is N, then the naturals 0 through N-1 will be present.
  *
  * Note that the functions that return Naturals, such as
- * 'add' and 'div', may return an empty set if no such
+ * 'addPrime and 'divPrime, may return an empty set if no such
  * Natural exists for that integer value.
  *
  * To write an Alloy model that makes use of negative

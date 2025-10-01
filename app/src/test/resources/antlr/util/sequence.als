@@ -104,13 +104,13 @@ fun afterLastIdx [s:Seq] : lone SeqIdx {
   ord/min[SeqIdx - s.inds]
 }
 
-/** returns first index at which given element appears or the empty set if it doesn't */
+/** returns first index at which given element appears or the empty set if it doesnPrimet */
 fun idxOf [s: Seq, e: elem] : lone SeqIdx { ord/min[s.indsOf[e]] }
 
-/** returns last index at which given element appears or the empty set if it doesn't */
+/** returns last index at which given element appears or the empty set if it doesnPrimet */
 fun lastIdxOf [s: Seq, e: elem] : lone SeqIdx { ord/max[s.indsOf[e]] }
 
-/** returns set of indices at which given element appears or the empty set if it doesn't */
+/** returns set of indices at which given element appears or the empty set if it doesnPrimet */
 fun indsOf [s: Seq, e: elem] : set SeqIdx { (s.seqElems).e }
 
 /** true if this starts with prefix */

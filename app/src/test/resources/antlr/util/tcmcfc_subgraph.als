@@ -34,8 +34,8 @@ fact {
     // The subgraph respects transitions.
     subSigma in TS.sigma
     // There are no duplicate Transition elements.
-    all t, t': Transition |
-        t.transFrom = t'.transFrom && t.transTo = t'.transTo => t = t'
+    all t, tPrime: Transition |
+        t.transFrom = tPrime.transFrom && t.transTo = tPrime.transTo => t = tPrime
     // The subgraph is connected.
     some s: S | s.~transFrom.(*(transTo.~transFrom)) = Transition
 }

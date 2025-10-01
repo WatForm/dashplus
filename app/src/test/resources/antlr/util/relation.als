@@ -2,7 +2,7 @@ module util/relation
 
 /*
  * Utilities for some common operations and constraints
- * on binary relations. The keyword 'univ' represents the
+ * on binary relations. The keyword 'univPrime represents the
  * top-level type, which all other types implicitly extend.
  * Therefore, all the functions and predicates in this model
  * may be applied to binary relations of any type.

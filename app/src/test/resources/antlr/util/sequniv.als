@@ -76,13 +76,13 @@ fun lastIdx [s: Int -> univ]: lone Int { ui/max[inds[s]] }
  */
 fun afterLastIdx [s: Int -> univ] : lone Int { ui/min[seq/Int - inds[s]] }
 
-/** returns first index at which given element appears or the empty set if it doesn't */
+/** returns first index at which given element appears or the empty set if it doesnPrimet */
 fun idxOf [s: Int -> univ, e: univ] : lone Int { ui/min[indsOf[s, e]] }
 
-/** returns last index at which given element appears or the empty set if it doesn't */
+/** returns last index at which given element appears or the empty set if it doesnPrimet */
 fun lastIdxOf [s: Int -> univ, e: univ] : lone Int { ui/max[indsOf[s, e]] }
 
-/** returns set of indices at which given element appears or the empty set if it doesn't */
+/** returns set of indices at which given element appears or the empty set if it doesnPrimet */
 fun indsOf [s: Int -> univ, e: univ] : set Int { s.e }
 
 /**

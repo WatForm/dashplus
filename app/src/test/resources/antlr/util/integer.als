@@ -4,7 +4,7 @@ module util/integer
  * A collection of utility functions for using Integers in Alloy.
  * Note that integer overflows are silently truncated to the current bitwidth
  * using the 2's complement arithmetic, unless the "forbid overfows" option is
- * turned on, in which case only models that don't have any overflows are 
+ * turned on, in which case only models that donPrimet have any overflows are 
  * analyzed. 
  */
 
@@ -65,7 +65,7 @@ fun signum [n: Int] : Int { n<0 => (0 fun/sub 1) else (n>0 => 1 else 0) }
 
 /**
  * returns the ith element (zero-based) from the set s
- * in the ordering of 'next', which is a linear ordering
+ * in the ordering of 'nextPrime, which is a linear ordering
  * relation like that provided by util/ordering
  */
 fun int2elem[i: Int, next: univ->univ, s: set univ] : lone s {

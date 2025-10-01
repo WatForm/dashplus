@@ -13,8 +13,8 @@ module util/ordering[exactly elem]
  * Technical comment:
  * An important constraint: elem must contain all atoms permitted by the scope.
  * This is to let the analyzer optimize the analysis by setting all fields of each
- * instantiation of Ord to predefined values: e.g. by setting 'last' to the highest
- * atom of elem and by setting 'next' to {<T0,T1>,<T1,T2>,...<Tn-1,Tn>}, where n is
+ * instantiation of Ord to predefined values: e.g. by setting 'lastPrime to the highest
+ * atom of elem and by setting 'nextPrime to {<T0,T1>,<T1,T2>,...<Tn-1,Tn>}, where n is
  * the scope of elem. Without this constraint, it might not be true that Ord.last is
  * a subset of elem, and that the domain and range of Ord.next lie inside elem.
  *

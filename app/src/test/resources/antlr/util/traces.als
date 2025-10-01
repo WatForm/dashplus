@@ -1,6 +1,6 @@
 /*
 	Src: Bounded Model Checking of Temporal Formulas with Alloy by Alcino Cunha
-	Modified to change s' to s_next for Alloy 6
+	Modified to change sPrime to s_next for Alloy 6
 */
 module util/traces[exactly elem]
 
