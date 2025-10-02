@@ -2,10 +2,19 @@ package org.dashToAlloy.ast.paragraph;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
+import org.dashToAlloy.ast.expr.*;
 
 public class ParagraphParserVisitor extends AlloyBaseVisitor<Paragraph> {
+	private final BlockParserVisitor bpv;
+
+	public ParagraphParserVisitor() {
+		super();
+		this.bpv = new BlockParserVisitor();
+	}
+
 	@Override
 	public Paragraph visitParagraph(AlloyParser.ParagraphContext ctx) {
+		System.out.println("Visiting Paragraph");
 		return this.visit(ctx.getChild(0));
 	}
 
@@ -23,7 +32,8 @@ public class ParagraphParserVisitor extends AlloyBaseVisitor<Paragraph> {
 
 	@Override
 	public Paragraph visitFactPara(AlloyParser.FactParaContext ctx) {
-		System.out.println("Visiting Fact. ");
+		System.out.println("Visiting Fact");
+		Block b = this.bpv.visit(ctx.block());
 		return new FactPara();
 	}
 

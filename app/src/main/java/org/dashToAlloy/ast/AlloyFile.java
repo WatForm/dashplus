@@ -1,4 +1,4 @@
 package org.dashToAlloy.ast;
 
-public class AlloyFile {}
+public class AlloyFile extends AlloyASTNode {}
 

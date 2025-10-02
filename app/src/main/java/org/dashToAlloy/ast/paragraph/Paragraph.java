@@ -1,4 +1,6 @@
 package org.dashToAlloy.ast.paragraph;
 
-public abstract class Paragraph{}
+import org.dashToAlloy.ast.AlloyASTNode;
+
+public abstract class Paragraph extends AlloyASTNode {}
 
