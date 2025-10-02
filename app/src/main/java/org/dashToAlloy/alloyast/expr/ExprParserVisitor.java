@@ -5,6 +5,7 @@ import antlr.generated.AlloyParser;
 import org.dashToAlloy.alloyast.expr.*;
 import org.dashToAlloy.alloyast.expr.binary.*;
 import org.dashToAlloy.alloyast.expr.join.*;
+import org.dashToAlloy.alloyast.expr.unary.*;
 
 public final class ExprParserVisitor extends AlloyBaseVisitor<Expr> {
 	@Override
@@ -21,5 +22,12 @@ public final class ExprParserVisitor extends AlloyBaseVisitor<Expr> {
 		this.visit(ctx.expr(0));
 		this.visit(ctx.expr(1));
 		return new DotJoinExpr();
+	}
+
+	@Override 
+	public Expr visitCardinalityValue(AlloyParser.CardinalityValueContext ctx) {
+		System.out.println("Visiting CardinalityValue");
+		this.visit(ctx.expr());
+		return new CardinalityExpr();
 	}
 }

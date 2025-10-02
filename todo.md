@@ -50,9 +50,7 @@ sig sExtended extends s {
 	value:Bool
 }
 `
-
-
-
+more ...; grep for "new ErrorType"
 
 # changes (some WIP)
 - optional ( qname '.' ) in 'funDecl' and 'predDecl'
