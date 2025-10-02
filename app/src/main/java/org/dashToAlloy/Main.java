@@ -10,15 +10,19 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.*;
+import org.dashToAlloy.ast.AlloyFile;
+import org.dashToAlloy.ast.AlloyFileParserVisitor;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
-		if (args.length != 1) {
-			System.err.println("Usage: ./gradle run --args \"filename\"");
-			System.exit(1);
-		}
-
-		String filePath = args[0];
+		// if (args.length != 1) {
+		// 	System.err.println("Usage: ./gradle run --args \"filename\"");
+		// 	System.exit(1);
+		// }
+		//
+		// String filePath = args[0];
+		
+		String filePath = args.length == 1 ? args[0] : "src/test/resources/antlr/simpleFact.als";
 
 		try {
 			String inputContent = new String(Files.readAllBytes(Paths.get(filePath)));
@@ -26,9 +30,10 @@ public class Main {
 			AlloyLexer lexer = new AlloyLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			AlloyParser parser = new AlloyParser(tokens);
-			ParseTree tree = parser.alloyFile();
+			ParseTree antlrAST = parser.alloyFile();
 
-			System.out.println(tree.toStringTree(parser));
+			AlloyFileParserVisitor afpv = new AlloyFileParserVisitor();
+			AlloyFile af = afpv.visit(antlrAST);
 		} catch (IOException e) {
 			System.err.println("Error reading file: " + e.getMessage());
 		} catch (RecognitionException e) {
@@ -36,4 +41,3 @@ public class Main {
 		}
 	}
 }
-

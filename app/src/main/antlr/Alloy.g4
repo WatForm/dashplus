@@ -16,27 +16,27 @@ alloyFile
     : paragraph*
     ;
 
-paragraph       : moduleDecl
-                | importDecl
-                | macroDecl
-                | sigDecl
-				| enumDecl
-                | factDecl 
-				| funDecl
-                | predDecl 
-                | assertDecl
-                | labelCommandDecl
+paragraph       : modulePara
+                | importPara
+                | macroPara
+                | sigPara
+				| enumPara
+                | factPara 
+				| funPara
+                | predPara 
+                | assertPara
+                | labelCommandPara
                 ;
 
-moduleDecl      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
-importDecl      : p='private'? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
-sigDecl         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
-enumDecl        : p='private'? 'enum' name '{' names '}';
-factDecl        : 'fact' name? block ;
-predDecl        : p='private'? 'pred' ( qname '.')? name arguments? block ;
-funDecl         : p='private'? 'fun' ( qname '.')?  name arguments? ':' multiplicity? expr expr;
-assertDecl      : 'assert' name? block ;
-macroDecl       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
+modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
+importPara      : p='private'? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
+sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
+enumPara        : p='private'? 'enum' name '{' names '}';
+factPara        : 'fact' name? block ;
+predPara        : p='private'? 'pred' ( qname '.')? name arguments? block ;
+funPara         : p='private'? 'fun' ( qname '.')?  name arguments? ':' multiplicity? expr expr;
+assertPara      : 'assert' name? block ;
+macroPara       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
 
 block           : '{' expr* '}' ;
 
@@ -122,7 +122,7 @@ names          	: name ( ',' name )* ;
 
 // COMMANDS 
             
-labelCommandDecl: label? commandDecl ;
+labelCommandPara: label? commandDecl ;
 commandDecl     : (check | run) name? ( qname | block ) scope? ('expect' number)? ( '=>' commandDecl )?;
 label           : name ':' ;
 scope           : 'for' number ( 'but' typescope ( ',' typescope )* )* 
