@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,10 +14,6 @@ import java.nio.file.Paths;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.antlr.v4.runtime.tree.*;
-
-import ca.uwaterloo.watform.antlr.BailLexer; // ignore the lsp error
-import ca.uwaterloo.watform.antlr.BailParser; // ignore the lsp error
 
 public class AntlrTest {
 	private void tryParse(CharStream input, Path filename) throws ParseCancellationException {

@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.dashtoalloy;
 
-import antlr.generated.AlloyLexer; // ignore the lsp error
-import antlr.generated.AlloyParser; // ignore the lsp error
+import antlr.generated.AlloyLexer;
+import antlr.generated.AlloyParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
