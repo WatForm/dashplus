@@ -1,4 +1,4 @@
-package org.antlr;
+package ca.uwaterloo.watform.antlr;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.RecognitionException;

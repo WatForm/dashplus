@@ -1,8 +1,8 @@
-package org.dashToAlloy.alloyast.expr;
+package ca.uwaterloo.watform.alloyast.expr;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
-import org.dashToAlloy.alloyast.expr.*;
+import ca.uwaterloo.watform.alloyast.expr.*;
 
 public final class BlockParserVisitor extends AlloyBaseVisitor<Block> {
 	@Override

@@ -1,4 +1,4 @@
-package org.dashToAlloy;
+package ca.uwaterloo.watform.dashtoalloy;
 
 import antlr.generated.AlloyLexer; // ignore the lsp error
 import antlr.generated.AlloyParser; // ignore the lsp error
@@ -10,8 +10,8 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.*;
-import org.dashToAlloy.alloyast.AlloyFile;
-import org.dashToAlloy.alloyast.AlloyFileParserVisitor;
+import ca.uwaterloo.watform.alloyast.AlloyFile;
+import ca.uwaterloo.watform.alloyast.AlloyFileParserVisitor;
 
 public class Main {
 	public static void main(String[] args) throws Exception {

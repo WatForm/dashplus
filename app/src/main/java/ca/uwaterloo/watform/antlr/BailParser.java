@@ -1,4 +1,4 @@
-package org.antlr;
+package ca.uwaterloo.watform.antlr;
 
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;

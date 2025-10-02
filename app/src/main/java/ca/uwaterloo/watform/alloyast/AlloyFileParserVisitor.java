@@ -1,8 +1,8 @@
-package org.dashToAlloy.alloyast;
+package ca.uwaterloo.watform.alloyast;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
-import org.dashToAlloy.alloyast.paragraph.ParagraphParserVisitor;
+import ca.uwaterloo.watform.alloyast.paragraph.ParagraphParserVisitor;
 
 public final class AlloyFileParserVisitor extends AlloyBaseVisitor<AlloyFile> {
 	@Override

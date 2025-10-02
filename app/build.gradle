@@ -46,7 +46,7 @@ test {
 
 application {
     // Define the main class for the application.
-    mainClass = 'org.dashToAlloy.Main'
+    mainClass = 'ca.uwaterloo.watform.dashtoalloy.Main'
 }
 
 tasks.named('test') {

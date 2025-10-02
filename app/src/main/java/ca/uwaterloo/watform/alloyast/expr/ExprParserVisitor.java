@@ -1,11 +1,11 @@
-package org.dashToAlloy.alloyast.expr;
+package ca.uwaterloo.watform.alloyast.expr;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
-import org.dashToAlloy.alloyast.expr.*;
-import org.dashToAlloy.alloyast.expr.binary.*;
-import org.dashToAlloy.alloyast.expr.join.*;
-import org.dashToAlloy.alloyast.expr.unary.*;
+import ca.uwaterloo.watform.alloyast.expr.*;
+import ca.uwaterloo.watform.alloyast.expr.binary.*;
+import ca.uwaterloo.watform.alloyast.expr.join.*;
+import ca.uwaterloo.watform.alloyast.expr.unary.*;
 
 public final class ExprParserVisitor extends AlloyBaseVisitor<Expr> {
 	@Override
