@@ -4,7 +4,7 @@ import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
 import org.dashToAlloy.alloyast.paragraph.ParagraphParserVisitor;
 
-public class AlloyFileParserVisitor extends AlloyBaseVisitor<AlloyFile> {
+public final class AlloyFileParserVisitor extends AlloyBaseVisitor<AlloyFile> {
 	@Override
 	public AlloyFile visitAlloyFile(AlloyParser.AlloyFileContext ctx) {
 		System.out.println("Visiting AlloyFile");

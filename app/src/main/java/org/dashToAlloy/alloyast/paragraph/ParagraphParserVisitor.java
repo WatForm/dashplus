@@ -4,7 +4,7 @@ import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
 import org.dashToAlloy.alloyast.expr.*;
 
-public class ParagraphParserVisitor extends AlloyBaseVisitor<Paragraph> {
+public final class ParagraphParserVisitor extends AlloyBaseVisitor<Paragraph> {
 	private final BlockParserVisitor bpv;
 
 	public ParagraphParserVisitor() {

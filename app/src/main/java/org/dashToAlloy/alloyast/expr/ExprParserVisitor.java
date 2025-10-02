@@ -5,7 +5,7 @@ import antlr.generated.AlloyParser;
 import org.dashToAlloy.alloyast.expr.*;
 import org.dashToAlloy.alloyast.expr.binary.*;
 
-public class ExprParserVisitor extends AlloyBaseVisitor<Expr> {
+public final class ExprParserVisitor extends AlloyBaseVisitor<Expr> {
 	@Override
 	public Expr visitAndFormula(AlloyParser.AndFormulaContext ctx) {
 		System.out.println("Visiting And");

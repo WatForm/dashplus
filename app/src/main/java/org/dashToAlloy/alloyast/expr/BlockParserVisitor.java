@@ -4,7 +4,7 @@ import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
 import org.dashToAlloy.alloyast.expr.*;
 
-public class BlockParserVisitor extends AlloyBaseVisitor<Block> {
+public final class BlockParserVisitor extends AlloyBaseVisitor<Block> {
 	@Override
 	public Block visitBlock(AlloyParser.BlockContext ctx) {
 		System.out.println("Visiting Block");
