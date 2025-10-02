@@ -42,8 +42,8 @@ block           : '{' expr* '}' ;
 
 expr	        : ('~'|'^'|'*') expr                                               								# unaryOpValue
 				| expr '\''                                                        								# primeValue // exprVar
-				| expr '.' expr                                                   								# join 
-                | expr '[' (expr (',' expr)*)? ']'                                  							# box
+				| expr '.' expr                                                   								# dotJoin 
+                | expr '[' (expr (',' expr)*)? ']'                                  							# boxJoin
 				| expr ('<:'|':>') expr                                           								# restrictionValue
 				| expr arrow expr                      															# arrowValue
 				| expr '&' expr                                                   								# intersectionValue
@@ -64,16 +64,16 @@ expr	        : ('~'|'^'|'*') expr                                               
                 | expr ( 'until' | 'releases' | 'since' | 'triggered' ) expr            						# binaryFormula
                 | expr ('&&' | 'and') expr                                   									# andFormula
 				| <assoc=right> expr {inImpliesRHS()}? 'else' expr                                     			# elseFormula
-				| <assoc=right> expr ( 'implies' | '=>' ) {pushImpliesRHS(true);} expr {popImpliesRHS();}      		# impliesFormula
+				| <assoc=right> expr ( 'implies' | '=>' ) {pushImpliesRHS(true);} expr {popImpliesRHS();}      	# impliesFormula
                 | expr ('<=>' | 'iff') expr                                   									# iffFormula
                 | expr ('||'|'or') expr                                       									# orFormula
-				| 'let' name '=' expr ( ',' name '=' expr )* ( ('|' expr) | block )  							# letFormula
+				| 'let' name '=' expr ( ',' name '=' expr )* ( ('|' expr) | block )  							# let
 				| bindingQuantifier decl ( ',' decl )* ( block | ('|' expr) ) 									# bindingQuantifierFormula
                 | expr ';' expr                                               									# sequenceFormula
 
-                | '(' expr ')'                                                     	# parenthesisValue                
-                | '{' expr '}'                                                     	# parenthesisValue                
-                | block                                                            	# blockFormula
+                | '(' expr ')'                                                     	# parenthesis                
+                | '{' expr '}'                                                     	# parenthesis                
+                | block                                                            	# block
 
                 | '@' name                                                         	# atnameValue
                 | qname '$'                                                        	# metaValue 
