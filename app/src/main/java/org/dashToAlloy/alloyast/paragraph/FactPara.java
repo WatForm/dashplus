@@ -1,4 +1,4 @@
-package org.dashToAlloy.ast.paragraph;
+package org.dashToAlloy.alloyast.paragraph;
 
 public class FactPara extends Paragraph {}
 

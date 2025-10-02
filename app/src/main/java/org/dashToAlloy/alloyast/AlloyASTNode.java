@@ -1,4 +1,4 @@
-package org.dashToAlloy.ast;
+package org.dashToAlloy.alloyast;
 
 public abstract class AlloyASTNode {}
 

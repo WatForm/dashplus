@@ -10,8 +10,8 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.*;
-import org.dashToAlloy.ast.AlloyFile;
-import org.dashToAlloy.ast.AlloyFileParserVisitor;
+import org.dashToAlloy.alloyast.AlloyFile;
+import org.dashToAlloy.alloyast.AlloyFileParserVisitor;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
