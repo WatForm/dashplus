@@ -73,7 +73,7 @@ expr	        : ('~'|'^'|'*') expr                                               
 
                 | '(' expr ')'                                                     	# parenthesis                
                 | '{' expr '}'                                                     	# parenthesis                
-                | block                                                            	# block
+                | block                                                            	# exprBlock
 
                 | '@' name                                                         	# atnameValue
                 | qname '$'                                                        	# metaValue 
