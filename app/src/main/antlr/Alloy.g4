@@ -12,9 +12,14 @@ grammar Alloy;
   private void popImpliesRHS() { _inImpliesRHSStack.pop(); }
 }
 
+
+
 alloyFile
     : paragraph*
     ;
+
+
+
 
 paragraph       : modulePara
                 | importPara
@@ -28,90 +33,95 @@ paragraph       : modulePara
                 | labelCommandPara
                 ;
 
+
+
 modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
-importPara      : p='private'? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
-sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( '+' qname )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
-enumPara        : p='private'? 'enum' name '{' names '}';
+importPara      : PRIVATE? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
+sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( PLUS qname )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
+enumPara        : PRIVATE? 'enum' name '{' names '}';
 factPara        : 'fact' name? block ;
-predPara        : p='private'? 'pred' ( qname '.')? name arguments? block ;
-funPara         : p='private'? 'fun' ( qname '.')?  name arguments? ':' multiplicity? expr expr;
+predPara        : PRIVATE? 'pred' ( qname '.')? name arguments? block ;
+funPara         : PRIVATE? 'fun' ( qname '.')?  name arguments? ':' multiplicity? expr expr;
 assertPara      : 'assert' name? block ;
-macroPara       : p='private'? 'let' name ( '[' names ']' )? '='? expr ;
+macroPara       : PRIVATE? 'let' name ( '[' names ']' )? EQUAL? expr ;
+labelCommandPara: (name ':')? commandDecl ;
+commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? ('expect' number)? ( RFATARROW commandDecl )?;
+scope           : 'for' number ( 'but' typescope ( ',' typescope )* )* 
+                | 'for' typescope ( ',' typescope )*
+                ;
+typescope       : EXACTLY? number ('..' (number (':' number)?)?)? qname ;
+
 
 block           : '{' expr* '}' ;
 
-expr	        : ('~'|'^'|'*') expr                                               								# unaryOpValue
-				| expr '\''                                                        								# primeValue // exprVar
-				| expr '.' expr                                                   								# dotJoin 
+
+expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                                               								# unaryOpValue
+				| expr PRIME                                                        								# primeValue // exprVar
+				| expr DOT expr                                                   								# dotJoin 
                 | expr '[' (expr (',' expr)*)? ']'                                  							# boxJoin
-				| expr ('<:'|':>') expr                                           								# restrictionValue
+				| expr (DOMRESTR | RNGRESTR) expr                                           								# restrictionValue
 				| expr arrow expr                      															# arrowValue
-				| expr '&' expr                                                   								# intersectionValue
-				| expr '++' expr                                                  								# relationOverrideValue
-				| expr ('fun/mul' | 'fun/div' | 'fun/rem') expr													# mulDivRemValue
-                | '#' expr                                                         								# cardinalityValue
-				| expr ('+' | '-' | 'fun/add' | 'fun/sub') expr                                             	# unionDiffAddSubValue
-				| expr ('<<' | '>>' | '>>>') expr 																# bitShiftValue
-                | 'sum' decl ( ',' decl )* (block | ('|' expr))                                					# sumValue		// pg 289
+				| expr INTERSECTION expr                                                   								# intersectionValue
+				| expr REL_OVERRIDE expr                                                  								# relationOverrideValue
+				| expr (FUNMUL | FUNDIV | FUNREM) expr													# mulDivRemValue
+                | CARDINALITY expr                                                         								# cardinalityValue
+				| expr (PLUS | MINUS | FUNADD | FUNSUB) expr                                             	# unionDiffAddSubValue
+				| expr (SHL | SHR | SHA) expr 																# bitShiftValue
+                | SUM decl ( ',' decl )* (block | ('|' expr))                                					# sumValue		// pg 289
 				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
 
-				| 'seq' expr																					# seqValue
-				| 'int' expr																					# castToSigIntValue
+				| SEQ expr																					# seqValue
+				| INT expr																					# castToSigIntValue
 
 				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
                 | expr comparison expr 																			# comparisonFormula
-                | ('!' | 'not' | 'always' | 'eventually' | 'after' | 'before'| 'historically' | 'once' ) expr  	# unaryFormula
-                | expr ( 'until' | 'releases' | 'since' | 'triggered' ) expr            						# binaryFormula
-                | expr ('&&' | 'and') expr                                   									# andFormula
-				| <assoc=right> expr {inImpliesRHS()}? 'else' expr                                     			# elseFormula
-				| <assoc=right> expr ( 'implies' | '=>' ) {pushImpliesRHS(true);} expr {popImpliesRHS();}      	# impliesFormula
-                | expr ('<=>' | 'iff') expr                                   									# iffFormula
-                | expr ('||'|'or') expr                                       									# orFormula
-				| 'let' name '=' expr ( ',' name '=' expr )* ( ('|' expr) | block )  							# let
+                | (NOT_EXCL | NOT | ALWAYS | EVENTUALLY | AFTER | BEFORE | HISTORICALLY | ONCE) expr  	# unaryFormula
+                | expr (UNTIL | RELEASES | SINCE | TRIGGERED) expr            						# binaryFormula
+                | expr (AND_AMP | AND) expr                                   									# andFormula
+				| <assoc=right> expr {inImpliesRHS()}? ELSE expr                                     			# elseFormula
+				| <assoc=right> expr (RFATARROW | IMPLIES) {pushImpliesRHS(true);} expr {popImpliesRHS();}      	# impliesFormula
+                | expr (IFF_ARR | IFF) expr                                   									# iffFormula
+                | expr (OR_BAR | OR) expr                                       									# orFormula
+				| 'let' name EQUAL expr ( ',' name EQUAL expr )* ( ('|' expr) | block )  							# let
 				| bindingQuantifier decl ( ',' decl )* ( block | ('|' expr) ) 									# bindingQuantifierFormula
-                | expr ';' expr                                               									# sequenceFormula
+                | expr SEQUENCE_OP expr                                               									# sequenceFormula
 
                 | '(' expr ')'                                                     	# parenthesis                
                 | '{' expr '}'                                                     	# parenthesis                
                 | block                                                            	# exprBlock
 
-                | '@' name                                                         	# atnameValue
-                | qname '$'                                                        	# metaValue 
+                | AT name                                                         	# atnameValue
+                | qname META                                                        	# metaValue 
 				| qname                                                            	# qnameValue
-				| ('none' | 'univ' | 'iden' |
-						'pred/totalOrder' | 'disj' | 
-						'this' | 'int' | 'Int' | 'steps' | 'seq/Int' )					# varValue	 // exprVar
-				| ( 'fun/min' | 'fun/max' | 'fun/next' | number | STRING_LITERAL )		# constValue	 // exprConstant
+				| (NONE | UNIV | IDEN | PRED_TOTALORDER | DISJ
+						THIS | INT | SIGINT | STEPS | SEQ_INT)					# varValue	 // exprVar
+				| ( FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL )		# constValue	 // exprConstant
                 ;
 
-arrow			: multiplicity? '->' multiplicity? ;
-comparison 		: ('!' | 'not')? ('in' | '=' | '<' | '>' | '<=' | '=<' | '>=') ;	
+arrow			: multiplicity? RARROW multiplicity? ;
+comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;	
 
 // x: lone S in declarations
-cardinality     : 'lone' | 'one' | 'some' | 'set' ; // LONEOF, ONEOF, SOMEOF, SETOF
-decl            : disj? names ':' disj? cardinality? expr  ;
-varDecl         : var? decl ;
+cardinality     : LONE | ONE | SOME | SET ; // LONEOF, ONEOF, SOMEOF, SETOF
+decl            : DISJ? names ':' DISJ? cardinality? expr  ;
+varDecl         : VAR? decl ;
 arguments       : '(' ( decl ( ',' decl )* ','? )? ')'
                 | '[' ( decl ( ',' decl )* ','? )? ']'
                 ;
 
 // no S means is the relation S empty
-cardinalityConstraint		: 'lone' | 'one' | 'some' | 'no' ; 
+cardinalityConstraint		: LONE |  ONE | SOME | NO ; 
 
 // some x: e | F means is F true for some binding of the variable x
-bindingQuantifier		: 'lone' | 'one' | 'some' | 'no' | 'all' ; 
+bindingQuantifier		: LONE | ONE | SOME | NO | ALL ; 
 
-multiplicity    : 'lone' | 'one' | 'some' |  'set' ;
+multiplicity    : LONE | ONE | SOME |  SET ;
 
-qualifier       : 'var' | 'abstract' | 'private'| 'lone' | 'one' | 'some' ;
+qualifier       : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
 
-number          : ('-'|'+')? NUMBER ;
+number          : (MINUS | PLUS)? NUMBER ;
 
-disj            : 'disj';
-var             : 'var';
-check           : 'check' ;
-run             : 'run' ;
-moduleArg       : ('exactly'? name ) ;
+moduleArg       : (EXACTLY? name ) ;
 
 qname           : ID | QNAME;
 qnames          : qname ( ',' qname )* ;
@@ -120,18 +130,125 @@ names          	: name ( ',' name )* ;
 
 
 
-// COMMANDS 
-            
-labelCommandPara: label? commandDecl ;
-commandDecl     : (check | run) name? ( qname | block ) scope? ('expect' number)? ( '=>' commandDecl )?;
-label           : name ':' ;
-scope           : 'for' number ( 'but' typescope ( ',' typescope )* )* 
-                | 'for' typescope ( ',' typescope )*
-                ;
-typescope       : exactly? number ('..' (number (':' number)?)?)? qname ;
-exactly         : 'exactly' ;
+
+
+
 
 // LEXER 
+CHECK           : 'check' ;
+RUN             : 'run' ;
+EXACTLY 		: 'exactly' ;
+
+
+VAR : 'var' ;
+ABSTRACT : 'abstract';
+PRIVATE : 'private';
+
+
+
+
+DOMRESTR : '<:'  ;
+RNGRESTR : ':>'  ;
+
+TRANS : '~'  ;
+TRANS_CLOS : '^' ;
+REFL_TRANS_CLOS : '*' ;
+
+PRIME : '\'' ;
+
+DOT : '.' ;
+
+INTERSECTION : '&' ; 
+
+REL_OVERRIDE : '++' ;
+
+FUNMUL : 'fun/mul' ;
+FUNDIV : 'fun/div' ;
+FUNREM : 'fun/rem' ;
+
+CARDINALITY : '#' ;
+
+PLUS : '+' ; // used as union for expr and positive for number
+MINUS  : '-' ; // used as diff for expr and negative for number
+FUNADD : 'fun/add' ;
+FUNSUB : 'fun/sub' ; 
+
+SHL : '<<' ;
+SHR : '>>>' ; 
+SHA : '>>' ;
+
+SUM : 'sum' ; 
+
+SEQ : 'seq' ;
+
+INT : 'int' ; 
+
+IN      : 'in' ;
+EQUAL      : '=' ;
+LT      : '<' ;
+GT      : '>' ;
+LE      : '<=' ;
+EL      : '=<';
+GE      : '>=' ;
+
+LONE : 'lone' ; 
+ONE : 'one' ; 
+SOME : 'some' ; 
+SET : 'set' ; 
+NO : 'no' ;
+ALL : 'all';
+
+
+NOT_EXCL : '!' ; 
+NOT : 'not' ;
+ALWAYS : 'always' ;
+EVENTUALLY : 'eventually' ;
+AFTER : 'after' ;
+BEFORE : 'before' ;
+HISTORICALLY : 'historically' ;
+ONCE : 'once' ;
+
+UNTIL : 'until' ; 
+RELEASES : 'releases' ;
+SINCE : 'since' ; 
+TRIGGERED : 'triggered' ;
+
+AND_AMP : '&&' ;
+AND : 'and' ;
+
+ELSE : 'else' ;
+
+RFATARROW : '=>' ; // used as implies or ITE or in commandDecl
+IMPLIES : 'implies';
+
+IFF_ARR : '<=>' ;
+IFF : 'iff' ;
+
+OR_BAR : '||' ;
+OR : 'or' ;
+
+SEQUENCE_OP : ';' ;
+
+AT : '@' ;
+META : '$' ;
+
+NONE       : 'none' ;
+UNIV       : 'univ' ;
+IDEN       : 'iden' ;
+PRED_TOTALORDER : 'pred/totalOrder' ;
+DISJ       : 'disj' ;
+THIS       : 'this' ;
+SIGINT    : 'Int' ;
+STEPS      : 'steps' ;
+SEQ_INT    : 'seq/Int' ;
+
+FUNMIN : 'fun/min' ;
+FUNMAX : 'fun/max' ;
+FUNNEXT : 'fun/next' ;
+
+RARROW : '->' ; 
+
+
 
 ID              : [\p{L}\p{Lo}_%][\p{L}\p{Lo}_"0-9%]*;
 // PRIMITIVE       : ('fun'|'ord'|'seq') '/' ID ;
