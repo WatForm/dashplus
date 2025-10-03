@@ -3,49 +3,55 @@
  */
 package ca.uwaterloo.watform.antlr;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.stream.Stream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.junit.jupiter.api.Test;
 
 public class AntlrTest {
-	private void tryParse(CharStream input, Path filename) throws ParseCancellationException {
+	private void tryParse(CharStream input, Path filename)
+			throws ParseCancellationException {
 		BailLexer bailLexer = new BailLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(bailLexer);
 		BailParser bailParser = new BailParser(tokens);
-		try{
+		try {
 			bailParser.alloyFile();
 		} catch (ParseCancellationException pce) {
-			System.out.println("ParseCancellationException thrown while parsing " + filename);
+			System.out.println(
+					"ParseCancellationException thrown while parsing " + filename);
 			throw pce;
 		}
 	}
 
 	@Test
 	public void parseCatalyst2021_05_06_10_28_11_watform() throws Exception {
-		Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/2021-05-06-10-28-11-watform");
+		Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/"
+				+ "2021-05-06-10-28-11-watform");
 		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(p, "*.als")) {
-			for(Path filePath : dirStream) {
+			for (Path filePath : dirStream) {
 				CharStream input = CharStreams.fromPath(filePath);
-				assertDoesNotThrow(()->this.tryParse(input, filePath), "Parse failed");
+				assertDoesNotThrow(
+						() -> this.tryParse(input, filePath), "Parse failed");
 			}
 		}
 	}
 
 	@Test
 	public void parseCatalyst2021_05_25_13_24_28_jackson() throws Exception {
-		Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/2021-05-25-13-24-28-jackson");
+		Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/"
+				+ "2021-05-25-13-24-28-jackson");
 		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(p, "*.als")) {
-			for(Path filePath : dirStream) {
+			for (Path filePath : dirStream) {
 				CharStream input = CharStreams.fromPath(filePath);
-				assertDoesNotThrow(()->this.tryParse(input, filePath), "Parse failed");
+				assertDoesNotThrow(
+						() -> this.tryParse(input, filePath), "Parse failed");
 			}
 		}
 	}
@@ -54,12 +60,34 @@ public class AntlrTest {
 	public void parseUtil() throws Exception {
 		Path p = Paths.get("src/test/resources/antlr/util");
 		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(p, "*.als")) {
-			for(Path filePath : dirStream) {
+			for (Path filePath : dirStream) {
 				CharStream input = CharStreams.fromPath(filePath);
-				assertDoesNotThrow(()->this.tryParse(input, filePath), "Parse failed");
+				assertDoesNotThrow(
+						() -> this.tryParse(input, filePath), "Parse failed");
 			}
 		}
 	}
 
+	@Test
+	public void parseCatalystNewest() throws Exception {
+		Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/"
+				+ "2025-10-02-22-02-08");
+		try (Stream<Path> stream = Files.walk(p)) {
+			stream
+					.filter(Files::isRegularFile)
+					.filter(
+							path -> path.toString().endsWith(".als")) // filter .als files
+					.forEach(filePath -> {
+						try {
+							CharStream input = CharStreams.fromPath(filePath);
+							assertDoesNotThrow(
+									() -> this.tryParse(input, filePath),
+									"Parse failed");
+						} catch (IOException e) {
+							throw new RuntimeException(
+									"Failed to read file: " + filePath, e);
+						}
+					});
+		}
+	}
 }
-

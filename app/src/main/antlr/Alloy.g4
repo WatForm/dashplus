@@ -49,7 +49,8 @@ commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? ('expect' number)
 scope           : 'for' number ( 'but' typescope ( ',' typescope )* )* 
                 | 'for' typescope ( ',' typescope )*
                 ;
-typescope       : EXACTLY? number ('..' (number (':' number)?)?)? qname ;
+typescope       : EXACTLY? number ('..' (number (':' number)?)?)? 
+					(qname | SIGINT | INT | SEQ | UNIV | STEPS | NONE) ;
 
 
 block           : '{' expr* '}' ;

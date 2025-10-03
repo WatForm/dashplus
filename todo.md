@@ -83,6 +83,7 @@ more ...; grep for "new ErrorType"
 - replaced ('expr' 'qname' 'expr') 
     - changed to (expr ('fun/mul' | 'fun/div' | 'fun/rem') expr) and (expr ('+' | '-' | 'fun/add' | 'fun/sub') expr)
     - placed them in the correct order of precedence
+- refactored string literals in grammar rules to tokens; this improves reusability and makes for ANTLR generated Contexts classes easier to work with
 
 
 # todo
