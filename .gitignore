@@ -12,5 +12,10 @@ bin/
 .classpath
 .settings/
 
+# Macos
 .DS_Store
+
+# test resources
+./app/src/test/resources/antlr/catalyst/catalyst-corpus.zip
+./app/src/test/resources/antlr/catalyst/catalyst-corpus
 

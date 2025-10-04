@@ -55,6 +55,18 @@ sourceSets {
     }
 }
 
+task unzipCatalystCorpus(type: Copy) {
+    def zipFile = file("src/test/resources/antlr/catalyst/catalyst-corpus.zip")
+    def outputDir = file("src/test/resources/antlr/catalyst/")
+
+    from zipTree(zipFile)
+    into outputDir
+
+    outputs.upToDateWhen {
+        outputDir.exists() && outputDir.listFiles()?.length > 0
+    }
+}
+
 tasks.named('generateGrammarSource') {
     outputDirectory = file("$buildDir/generated-src/antlr/main/antlr/generated")
     arguments += ["-visitor", "-no-listener"]
@@ -64,8 +76,14 @@ tasks.named('compileJava') {
     dependsOn tasks.named('generateGrammarSource')
 }
 
+tasks.named("processTestResources") {
+    dependsOn tasks.named('generateGrammarSource')
+    dependsOn unzipCatalystCorpus
+}
+
 tasks.named('test') {
     dependsOn tasks.named('generateGrammarSource')
+    dependsOn tasks.named('unzipCatalystCorpus')
     
     useJUnitPlatform()
     
