@@ -39,10 +39,10 @@ modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 importPara      : PRIVATE? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
 sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( PLUS qname )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
 enumPara        : PRIVATE? 'enum' name '{' names '}';
-factPara        : 'fact' name? block ;
+factPara        : 'fact' (name | STRING_LITERAL)? block ;
 predPara        : PRIVATE? 'pred' ( qname '.')? name arguments? block ;
 funPara         : PRIVATE? 'fun' ( qname '.')?  name arguments? ':' multiplicity? expr expr;
-assertPara      : 'assert' name? block ;
+assertPara      : 'assert' (name | STRING_LITERAL)? block ;
 macroPara       : PRIVATE? 'let' name ( '[' names ']' )? EQUAL? expr ;
 labelCommandPara: (name ':')? commandDecl ;
 commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? ('expect' number)? ( RFATARROW commandDecl )?;
@@ -94,7 +94,7 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
                 | AT name                                                         	# atnameValue
                 | qname META                                                        	# metaValue 
 				| qname                                                            	# qnameValue
-				| (NONE | UNIV | IDEN | PRED_TOTALORDER | DISJ
+				| (NONE | UNIV | IDEN | PRED_TOTALORDER | DISJ | 
 						THIS | INT | SIGINT | STEPS | SEQ_INT)					# varValue	 // exprVar
 				| ( FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL )		# constValue	 // exprConstant
                 ;
