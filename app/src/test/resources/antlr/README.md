@@ -6,3 +6,4 @@ find . -type f -name "*.als" -exec sed -i '' -E "s/([a-z])'/\1Prime/g" {} +
 
 - 'steps' is a keyword in Alloy and cannot be used as a module name
 
+

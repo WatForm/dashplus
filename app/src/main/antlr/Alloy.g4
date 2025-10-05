@@ -37,18 +37,21 @@ paragraph       : modulePara
 
 modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 
-importPara      : PRIVATE? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
+importPara      : PRIVATE? 'open' qname ( '[' sigRefs? ']' )? ( 'as' name )? ;
 
-sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' sigQnameExt ( PLUS sigQnameExt )*)? '{' ','? (varDecl ( ','* varDecl )*)? ','? '}' block? ;
-sigQnameExt		: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
+sigPara         : qualifier* 'sig' names sigIn? '{' ','? (varDecl ( ','* varDecl )*)? ','? '}' block? ;
+sigIn			: 'extends' sigRef 			# extendSigIn
+				| IN sigRef (PLUS sigRef)* 	# inSigIn
+				| EQUAL sigRef (PLUS sigRef)* #equalSigIn
+				;
 
 enumPara        : PRIVATE? 'enum' name '{' names '}';
 
 factPara        : 'fact' (name | STRING_LITERAL)? block ;
 
-predPara        : PRIVATE? 'pred' ( qname '.')? name arguments? block ;
+predPara        : PRIVATE? 'pred' ( sigRef '.')? name arguments? block ;
 
-funPara         : PRIVATE? 'fun' ( qname '.')?  name arguments? ':' multiplicity? expr expr;
+funPara         : PRIVATE? 'fun' ( sigRef '.')?  name arguments? ':' multiplicity? expr expr;
 
 assertPara      : 'assert' (name | STRING_LITERAL)? block ;
 
@@ -141,6 +144,8 @@ name            : ID;
 names          	: name ( ',' name )* ;
 
 
+sigRef			: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
+sigRefs			: sigRef (',' sigRef)* ;
 
 
 
