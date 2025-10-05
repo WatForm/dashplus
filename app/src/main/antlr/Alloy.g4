@@ -111,7 +111,7 @@ arguments       : '(' ( decl ( ',' decl )* ','? )? ')'
                 ;
 
 // no S means is the relation S empty
-cardinalityConstraint		: LONE |  ONE | SOME | NO ; 
+cardinalityConstraint		: LONE |  ONE | SOME | NO | SET ; 
 
 // some x: e | F means is F true for some binding of the variable x
 bindingQuantifier		: LONE | ONE | SOME | NO | ALL ; 

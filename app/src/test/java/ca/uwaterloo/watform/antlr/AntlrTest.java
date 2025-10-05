@@ -9,6 +9,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -23,11 +29,13 @@ class UnexpectedParsePassException extends RuntimeException {
 
 public class AntlrTest {
 	private static boolean stopOnFirstFail;
+	private static long timeoutMs = 10 * 1000;
 
 	private List<Path> jarPassedAntlrPassed = new ArrayList<>();
 	private List<Path> jarPassedAntlrFailed = new ArrayList<>();
 	private List<Path> jarFailedAntlrPassed = new ArrayList<>();
 	private List<Path> jarFailedAntlrFailed = new ArrayList<>();
+	private List<Path> timeout = new ArrayList<>();
 
 	@BeforeAll
 	public static void setup() {
@@ -51,7 +59,7 @@ public class AntlrTest {
 				System.out.println("  " + p.toString());
 				count++;
 				if (count >= max) {
-					System.out.println("  ...and " + (list.size()-max) +" more" + "...");
+					System.out.println("  ...and " + (list.size() - max) + " more" + "...");
 					break;
 				}
 			}
@@ -65,6 +73,7 @@ public class AntlrTest {
 		printList("Jar Passed, ANTLR Failed", jarPassedAntlrFailed);
 		printList("Jar Failed, ANTLR Passed (ignored for now)", jarFailedAntlrPassed);
 		printList("Jar Failed, ANTLR Failed (can be removed)", jarFailedAntlrFailed);
+		printList("Timeout Files", timeout);
 		System.out.println("=======================");
 	}
 
@@ -79,60 +88,61 @@ public class AntlrTest {
 			bailParser.alloyFile();
 			if (jarPassed) {
 				jarPassedAntlrPassed.add(filePath);
+				System.out.println("Successfully parsed " + jarPassedAntlrPassed.size() + " files. ");
 			} else {
 				jarFailedAntlrPassed.add(filePath);
 				// if (stopOnFirstFail) {
 				// throw new UnexpectedParsePassException();
 				// }
 			}
-		} catch (ParseCancellationException e) {
+		} catch (ParseCancellationException pe) {
 			if (jarPassed) {
 				jarPassedAntlrFailed.add(filePath);
 				if (stopOnFirstFail) {
-					throw e;
+					throw pe;
 				}
 			} else {
+				try {
+					System.out.println("Both Jar and Antlr failed. ");
+					boolean deleted = Files.deleteIfExists(filePath);
+					if (deleted) {
+						System.out.println("File deleted successfully.");
+					} else {
+						System.out.println("File did not exist.");
+					}
+				} catch (IOException e) {
+					System.err.println("Failed to delete the file: " + e.getMessage());
+				}
 				jarFailedAntlrFailed.add(filePath);
 			}
 		}
 	}
 
-	// // @Test
-	// public void parseCatalyst2021_05_06_10_28_11_watform() throws Exception {
-	// Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/" +
-	// "2021-05-06-10-28-11-watform"); try (DirectoryStream<Path> dirStream =
-	// Files.newDirectoryStream(p, "*.als")) { for (Path filePath : dirStream) {
-	// CharStream input = CharStreams.fromPath(filePath);
-	// assertDoesNotThrow(() -> this.tryParse(input, filePath), "Parse
-	// failed");
-	// }
-	// }
-	//
-	// printResults();
-	// }
-	//
-	// // @Test
-	// public void parseCatalyst2021_05_25_13_24_28_jackson() throws Exception {
-	// Path p = Paths.get("src/test/resources/antlr/catalyst/model-sets/" +
-	// "2021-05-25-13-24-28-jackson"); try (DirectoryStream<Path> dirStream =
-	// Files.newDirectoryStream(p, "*.als")) { for (Path filePath : dirStream) {
-	// CharStream input = CharStreams.fromPath(filePath);
-	// assertDoesNotThrow(() -> this.tryParse(input, filePath), "Parse
-	// failed");
-	// }
-	// }
-	// }
-	//
-	// // @Test
-	// public void parseUtil() throws Exception {
-	// Path p = Paths.get("src/test/resources/antlr/util");
-	// try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(p,
-	// "*.als")) { for (Path filePath : dirStream) { CharStream input =
-	// CharStreams.fromPath(filePath); assertDoesNotThrow(() ->
-	// this.tryParse(input, filePath), "Parse failed");
-	// }
-	// }
-	// }
+	private void tryParseWithTimeout(CharStream input, Path filePath) throws ParseCancellationException {
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		Future<?> future = executor.submit(() -> {
+			tryParse(input, filePath);
+		});
+
+		try {
+			future.get(timeoutMs, TimeUnit.MILLISECONDS);
+		} catch (TimeoutException te) {
+			System.out.println("Parsing took longer than " + timeoutMs / 1000 + " seconds, deleting file: " + filePath);
+			timeout.add(filePath);
+			future.cancel(true); // interrupt the parsing thread
+		} catch (ExecutionException ee) {
+			Throwable cause = ee.getCause();
+			if (cause instanceof ParseCancellationException) {
+				throw (ParseCancellationException) cause;
+			} else {
+				throw new RuntimeException(cause);
+		}
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
+		} finally {
+			executor.shutdownNow();
+		}
+	}
 
 	@Test
 	public void parseCatalystNewest() throws Exception {
@@ -140,12 +150,12 @@ public class AntlrTest {
 		try (Stream<Path> stream = Files.walk(p)) {
 			stream
 					.filter(Files::isRegularFile)
-					.filter(path -> path.toString().endsWith(".als")) // filter .als files
+					.filter(path -> path.toString().endsWith(".als"))
 					.forEach(
 							filePath -> {
 								try {
 									CharStream input = CharStreams.fromPath(filePath);
-									assertDoesNotThrow(() -> this.tryParse(input, filePath), "Parse failed");
+									assertDoesNotThrow(() -> this.tryParseWithTimeout(input, filePath), "Parse failed");
 								} catch (IOException e) {
 									throw new RuntimeException("Failed to read file: " + filePath, e);
 								}
