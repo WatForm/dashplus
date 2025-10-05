@@ -36,21 +36,31 @@ paragraph       : modulePara
 
 
 modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
+
 importPara      : PRIVATE? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
-sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' (qname | builtins) ( PLUS (qname | builtins) )*)? '{' ','? (varDecl ( ',' varDecl )*)? ','? '}' block? ;
+
+sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' sigQnameExt ( PLUS sigQnameExt )*)? '{' ','? (varDecl ( ',' varDecl )*)? ','? '}' block? ;
+sigQnameExt		: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
+
 enumPara        : PRIVATE? 'enum' name '{' names '}';
+
 factPara        : 'fact' (name | STRING_LITERAL)? block ;
+
 predPara        : PRIVATE? 'pred' ( qname '.')? name arguments? block ;
+
 funPara         : PRIVATE? 'fun' ( qname '.')?  name arguments? ':' multiplicity? expr expr;
+
 assertPara      : 'assert' (name | STRING_LITERAL)? block ;
+
 macroPara       : PRIVATE? 'let' name ( '[' names ']' )? EQUAL? expr ;
+
 labelCommandPara: (name ':')? commandDecl ;
 commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? ('expect' number)? ( RFATARROW commandDecl )?;
 scope           : 'for' number ( 'but' typescope ( ',' typescope )* )* 
                 | 'for' typescope ( ',' typescope )*
                 ;
 typescope       : EXACTLY? number ('..' (number (':' number)?)?)? 
-					(qname | SIGINT | INT | SEQ | UNIV | STEPS | NONE) ;
+					(qname | SIGINT | INT | SEQ | STRING | STEPS | NONE) ;
 
 
 block           : '{' expr* '}' ;
@@ -99,7 +109,6 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
 				| ( FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL )		# constValue	 // exprConstant
                 ;
 
-builtins		: (UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
 
 arrow			: multiplicity? RARROW multiplicity? ;
 comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;	
