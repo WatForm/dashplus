@@ -55,7 +55,10 @@ funPara         : PRIVATE? 'fun' ( sigRef '.')?  name arguments? ':' multiplicit
 
 assertPara      : 'assert' (name | STRING_LITERAL)? block ;
 
-macroPara       : PRIVATE? 'let' name ( '[' names ']' )? EQUAL? expr ;
+macroPara       : PRIVATE? 'let' name ( '[' names? ']' )? (block | (EQUAL expr))
+				| PRIVATE? 'let' name ( '(' names? ')' )? (block | (EQUAL expr))
+				;
+
 
 labelCommandPara: (name ':')? commandDecl ;
 commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? ('expect' number)? ( RFATARROW commandDecl )?;
@@ -82,7 +85,7 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
 				| expr (PLUS | MINUS | FUNADD | FUNSUB) expr                                             	# unionDiffAddSubValue
 				| expr (SHL | SHR | SHA) expr 																# bitShiftValue
                 | SUM decl ( ',' decl )* (block | ('|' expr))                                					# sumValue		// pg 289
-				| '{' decl ( ',' decl )* ( block | ('|' expr) ) '}'              								# comprehensionValue
+				| '{' decl ( ',' decl )* ( block | ('|' expr) )? '}'              								# comprehensionValue
 
 				| SEQ expr																					# seqValue
 				| INT expr																					# castToSigIntValue
@@ -107,7 +110,7 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
                 | AT name                                                         	# atnameValue
                 | qname META                                                        	# metaValue 
 				| qname                                                            	# qnameValue
-				| (NONE | UNIV | IDEN | PRED_TOTALORDER | DISJ | 
+				| (NONE | UNIV | IDEN | PRED_TOTALORDER | DISJ | SUM |
 						THIS | INT | SIGINT | STEPS | SEQ_INT | STRING)					# varValue	 // exprVar
 				| ( FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL )		# constValue	 // exprConstant
                 ;
