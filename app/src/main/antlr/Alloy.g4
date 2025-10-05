@@ -37,7 +37,7 @@ paragraph       : modulePara
 
 modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 importPara      : PRIVATE? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
-sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' (qname | builtins) ( PLUS (qname | builtins) )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
+sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' (qname | builtins) ( PLUS (qname | builtins) )*)? '{' ','? (varDecl ( ',' varDecl )*)? ','? '}' block? ;
 enumPara        : PRIVATE? 'enum' name '{' names '}';
 factPara        : 'fact' (name | STRING_LITERAL)? block ;
 predPara        : PRIVATE? 'pred' ( qname '.')? name arguments? block ;
