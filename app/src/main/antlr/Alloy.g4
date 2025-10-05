@@ -37,7 +37,7 @@ paragraph       : modulePara
 
 modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 importPara      : PRIVATE? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
-sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' qname ( PLUS qname )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
+sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' (qname | builtins) ( PLUS (qname | builtins) )*)? '{' (varDecl ( ',' varDecl )*)? ','? '}' block? ;
 enumPara        : PRIVATE? 'enum' name '{' names '}';
 factPara        : 'fact' (name | STRING_LITERAL)? block ;
 predPara        : PRIVATE? 'pred' ( qname '.')? name arguments? block ;
@@ -95,9 +95,11 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
                 | qname META                                                        	# metaValue 
 				| qname                                                            	# qnameValue
 				| (NONE | UNIV | IDEN | PRED_TOTALORDER | DISJ | 
-						THIS | INT | SIGINT | STEPS | SEQ_INT)					# varValue	 // exprVar
+						THIS | INT | SIGINT | STEPS | SEQ_INT | STRING)					# varValue	 // exprVar
 				| ( FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL )		# constValue	 // exprConstant
                 ;
+
+builtins		: (UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
 
 arrow			: multiplicity? RARROW multiplicity? ;
 comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;	
@@ -242,6 +244,7 @@ THIS       : 'this' ;
 SIGINT    : 'Int' ;
 STEPS      : 'steps' ;
 SEQ_INT    : 'seq/Int' ;
+STRING		: 'String' ;
 
 FUNMIN : 'fun/min' ;
 FUNMAX : 'fun/max' ;
