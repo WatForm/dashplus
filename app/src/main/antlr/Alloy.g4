@@ -39,7 +39,7 @@ modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 
 importPara      : PRIVATE? 'open' qname ( '[' qnames? ']' )? ( 'as' name )? ;
 
-sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' sigQnameExt ( PLUS sigQnameExt )*)? '{' ','? (varDecl ( ',' varDecl )*)? ','? '}' block? ;
+sigPara         : qualifier* 'sig' names ('extends' extend=qname | 'in' sigQnameExt ( PLUS sigQnameExt )*)? '{' ','? (varDecl ( ','* varDecl )*)? ','? '}' block? ;
 sigQnameExt		: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
 
 enumPara        : PRIVATE? 'enum' name '{' names '}';
