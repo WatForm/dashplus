@@ -174,7 +174,8 @@ TRANS : '~'  ;
 TRANS_CLOS : '^' ;
 REFL_TRANS_CLOS : '*' ;
 
-PRIME : '\'' ;
+PRIME : '\'' | '‘' | '’';
+
 
 DOT : '.' ;
 

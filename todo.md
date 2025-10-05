@@ -53,11 +53,16 @@ sig sExtended extends s {
 more ...; grep for "new ErrorType"
 
 # changes (some WIP)
-- optional ( qname '.' ) in 'funDecl' and 'predDecl'
-- optional qnames inside [] in importDecl
+- optional ( qname '.' ) in 'funPara' and 'predPara'
+- optional qnames inside [] in importPara
 - optional params in box rule of 'expr'
+- optional block/bar in comprehension
+
 - accept '<=' for less or equal to; not documented in book, but CUP accepts it
-- accept trailing commas in 'sigDecl' and 'arguments'
+- accept trailing commas in 'sigPara' and 'arguments'
+- accept round brackets for macroPara
+- accept more symbols for the Prime token
+
 - added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
 - added the 'until' keyword to the temporal operators
 - added bit shift operators
@@ -65,6 +70,7 @@ more ...; grep for "new ErrorType"
                     'int', 'Int', 'steps'
 - added tokens for 'pred/totalOrder' and 'disj' as a predCall list, not just qname
 - added 'seq' expr as a rule (https://alloytools.org/quickguide/seq.html)
+
 - removed the two 'boxValue' rules in 'value'
 
 - separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
