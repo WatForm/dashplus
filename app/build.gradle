@@ -55,15 +55,42 @@ sourceSets {
     }
 }
 
-task unzipCatalystCorpus(type: Copy) {
-    def zipFile = file("src/test/resources/antlr/catalyst/catalyst-corpus.zip")
-    def outputDir = file("src/test/resources/antlr/catalyst/")
 
-    from zipTree(zipFile)
-    into outputDir
+def corpusUrl = "https://github.com/QiyueChen04/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip"
+def corpusZip = file("src/test/resources/antlr/catalyst/catalyst-corpus.zip")
+def corpusParentDir = file("src/test/resources/antlr/catalyst/")
+def corpusDir = file("src/test/resources/antlr/catalyst/catalyst-corpus")
 
-    outputs.upToDateWhen {
-        outputDir.exists() && outputDir.listFiles()?.length > 0
+task downloadCatalystCorpus {
+    doLast {
+        if (!corpusZip.exists()) {
+            println "Downloading catalyst corpus from GitHub..."
+            corpusZip.parentFile.mkdirs()
+            new URL(corpusUrl).withInputStream { i ->
+                corpusZip.withOutputStream { it << i }
+            }
+            println "Download complete: ${corpusZip}"
+        } else {
+            println "Skipping download. Catalyst corpus ZIP already exists at ${corpusZip}. "
+        }
+    }
+}
+
+task unzipCatalystCorpus {
+    dependsOn downloadCatalystCorpus
+
+    doLast {
+        if (corpusDir.exists() && corpusDir.listFiles()?.length > 0) {
+            println "Skipping unzip. Catalyst corpus already unzipped at: ${corpusDir}. "
+            return
+        }
+
+        println "Unzipping ${corpusZip} to ${corpusParentDir}..."
+        copy {
+            from zipTree(corpusZip)
+            into corpusParentDir
+        }
+        println "Unzip complete. "
     }
 }
 
@@ -79,6 +106,10 @@ tasks.named('compileJava') {
 tasks.named("processTestResources") {
     dependsOn tasks.named('generateGrammarSource')
     dependsOn unzipCatalystCorpus
+
+    doFirst {
+        println "processTestResources: This may take a while the first time catalyst-corpus is being processed."
+    }
 }
 
 tasks.named('test') {
@@ -94,5 +125,11 @@ tasks.named('test') {
     if (project.hasProperty('stopOnFirstFail')) {
         systemProperty 'stopOnFirstFail', project.property('stopOnFirstFail').toString()
     }
+}
+
+
+// so build doesn't depend on test
+tasks.named("check") {
+    dependsOn.removeIf { it.name == "test" }
 }
 
