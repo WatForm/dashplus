@@ -124,7 +124,7 @@ number          : (MINUS | PLUS)? NUMBER ;
 
 moduleArg       : (EXACTLY? name ) ;
 
-qname           : ID | (ID '/' ID);
+qname           : ID | ((ID | THIS) '/' ID);
 qnames          : qname ( ',' qname )* ;
 name            : ID;
 names          	: name ( ',' name )* ;
