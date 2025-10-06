@@ -39,7 +39,8 @@ modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 
 importPara      : PRIVATE? 'open' qname ( '[' sigRefs? ']' )? ( 'as' name )? ;
 
-sigPara         : qualifier* 'sig' names sigIn? '{' ','? (varDecl ( ','* varDecl )*)? ','? '}' block? ;
+sigPara         : sigQualifier* 'sig' names sigIn? '{' ','? (varDecl ( ','* varDecl )*)? ','? '}' block? ;
+sigQualifier       : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
 sigIn			: 'extends' sigRef 			# extendSigIn
 				| IN sigRef (PLUS sigRef)* 	# inSigIn
 				| EQUAL sigRef (PLUS sigRef)* #equalSigIn
@@ -122,7 +123,7 @@ comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;
 // x: lone S in declarations
 cardinality     : LONE | ONE | SOME | SET ; // LONEOF, ONEOF, SOMEOF, SETOF
 decl            : DISJ? names ':' DISJ? cardinality? expr  ;
-varDecl         : VAR? decl ;
+varDecl         : VAR? PRIVATE? decl ;
 arguments       : '(' ( decl ( ',' decl )* ','? )? ')'
                 | '[' ( decl ( ',' decl )* ','? )? ']'
                 ;
@@ -135,7 +136,6 @@ bindingQuantifier		: LONE | ONE | SOME | NO | ALL ;
 
 multiplicity    : LONE | ONE | SOME |  SET ;
 
-qualifier       : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
 
 number          : (MINUS | PLUS)? NUMBER ;
 
