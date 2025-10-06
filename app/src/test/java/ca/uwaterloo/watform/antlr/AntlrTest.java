@@ -18,6 +18,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,7 @@ class UnexpectedParsePassException extends RuntimeException {
 	}
 }
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AntlrTest {
 	private static boolean stopOnFirstFail;
 	private static long timeoutMs = 10 * 1000;
@@ -118,16 +120,19 @@ public class AntlrTest {
 		}
 	}
 
-	private void tryParseWithTimeout(CharStream input, Path filePath) throws ParseCancellationException {
+	private void tryParseWithTimeout(CharStream input, Path filePath)
+			throws ParseCancellationException {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
-		Future<?> future = executor.submit(() -> {
-			tryParse(input, filePath);
-		});
+		Future<?> future = executor.submit(
+				() -> {
+					tryParse(input, filePath);
+				});
 
 		try {
 			future.get(timeoutMs, TimeUnit.MILLISECONDS);
 		} catch (TimeoutException te) {
-			System.out.println("Parsing took longer than " + timeoutMs / 1000 + " seconds, deleting file: " + filePath);
+			System.out.println(
+					"Parsing took longer than " + timeoutMs / 1000 + " seconds, deleting file: " + filePath);
 			timeout.add(filePath);
 			future.cancel(true); // interrupt the parsing thread
 		} catch (ExecutionException ee) {
@@ -136,7 +141,7 @@ public class AntlrTest {
 				throw (ParseCancellationException) cause;
 			} else {
 				throw new RuntimeException(cause);
-		}
+			}
 		} catch (InterruptedException ie) {
 			Thread.currentThread().interrupt();
 		} finally {
@@ -145,8 +150,9 @@ public class AntlrTest {
 	}
 
 	@Test
-	public void parseCatalystNewest() throws Exception {
-		Path p = Paths.get("src/test/resources/antlr/catalyst/");
+	@Order(1)
+	public void parseCatalystQuickTests() throws Exception {
+		Path p = Paths.get("src/test/resources/antlr/catalyst/quick-tests");
 		try (Stream<Path> stream = Files.walk(p)) {
 			stream
 					.filter(Files::isRegularFile)
@@ -155,7 +161,31 @@ public class AntlrTest {
 							filePath -> {
 								try {
 									CharStream input = CharStreams.fromPath(filePath);
-									assertDoesNotThrow(() -> this.tryParseWithTimeout(input, filePath), "Parse failed");
+									assertDoesNotThrow(
+											() -> this.tryParseWithTimeout(input, filePath), "Parse failed");
+								} catch (IOException e) {
+									throw new RuntimeException("Failed to read file: " + filePath, e);
+								}
+							});
+		} finally {
+			printResults();
+		}
+	}
+
+	@Test
+	@Order(2)
+	public void parseCatalystCorpus() throws Exception {
+		Path p = Paths.get("src/test/resources/antlr/catalyst/catalyst-corpus");
+		try (Stream<Path> stream = Files.walk(p)) {
+			stream
+					.filter(Files::isRegularFile)
+					.filter(path -> path.toString().endsWith(".als"))
+					.forEach(
+							filePath -> {
+								try {
+									CharStream input = CharStreams.fromPath(filePath);
+									assertDoesNotThrow(
+											() -> this.tryParseWithTimeout(input, filePath), "Parse failed");
 								} catch (IOException e) {
 									throw new RuntimeException("Failed to read file: " + filePath, e);
 								}

@@ -61,7 +61,10 @@ more ...; grep for "new ErrorType"
 - accept '<=' for less or equal to; not documented in book, but CUP accepts it
 - accept trailing commas in 'sigPara' and 'arguments'
 - accept round brackets for macroPara
-- accept more symbols for the Prime token
+- accept more symbols for the PRIME token
+- accept more symbols for the PRIME token
+- accept PRIVATE at beginning of varDecl
+- accept one more rule (using EQUAL) in varDecl
 
 - added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
 - added the 'until' keyword to the temporal operators
@@ -90,6 +93,12 @@ more ...; grep for "new ErrorType"
     - changed to (expr ('fun/mul' | 'fun/div' | 'fun/rem') expr) and (expr ('+' | '-' | 'fun/add' | 'fun/sub') expr)
     - placed them in the correct order of precedence
 - refactored string literals in grammar rules to tokens; this improves reusability and makes for ANTLR generated Contexts classes easier to work with
+- reordered WS and COMMENT tokens
+    - changed OPTION_COMMENT to properly handle 
+        `
+            --
+            sig S {}
+        `
 
 
 # todo
