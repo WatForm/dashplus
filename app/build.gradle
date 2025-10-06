@@ -56,7 +56,7 @@ sourceSets {
 }
 
 
-def corpusUrl = "https://github.com/QiyueChen04/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip"
+def corpusUrl = "https://github.com/QiyueChen04/dashplus/releases/download/catalyst-corpus-v2/catalyst-corpus.zip"
 def corpusZip = file("src/test/resources/antlr/catalyst/catalyst-corpus.zip")
 def corpusParentDir = file("src/test/resources/antlr/catalyst/")
 def corpusDir = file("src/test/resources/antlr/catalyst/catalyst-corpus")
@@ -76,21 +76,22 @@ task downloadCatalystCorpus {
     }
 }
 
-task unzipCatalystCorpus {
-    dependsOn downloadCatalystCorpus
+
+tasks.register("unzipCatalystCorpus", Copy) {
+    dependsOn("downloadCatalystCorpus")
+
+    from(zipTree(corpusZip))
+    into(corpusParentDir)
+
+    // Declare outputs so Gradle can skip if already done
+    outputs.dir(corpusDir)
+
+    doFirst {
+        println("Unzipping ${corpusZip} to ${corpusParentDir}...")
+    }
 
     doLast {
-        if (corpusDir.exists() && corpusDir.listFiles()?.length > 0) {
-            println "Skipping unzip. Catalyst corpus already unzipped at: ${corpusDir}. "
-            return
-        }
-
-        println "Unzipping ${corpusZip} to ${corpusParentDir}..."
-        copy {
-            from zipTree(corpusZip)
-            into corpusParentDir
-        }
-        println "Unzip complete. "
+        println("Unzip complete.")
     }
 }
 
