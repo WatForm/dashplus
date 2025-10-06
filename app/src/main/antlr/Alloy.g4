@@ -270,6 +270,17 @@ FUNNEXT : 'fun/next' ;
 
 RARROW : '->' ; 
 
+LINE_COMMENT    : '//' ~[\r\n]* -> skip ;
+OPTION_COMMENT 	: '--'
+				  ( ~[0-9\r\n] ~[\r\n]*           // case: -- followed by text
+				  | [\r\n]                         // case: -- alone followed by newline
+				  | EOF                             // case: -- at end of file
+				  )
+				  -> skip
+				;
+
+BLOCK_COMMENT   : '/*' .*? '*/' -> skip ;
+WS              : [ \t\r\n]+ -> skip ;
 
 
 ID              : [\p{L}\p{Lo}_%][\p{L}\p{Lo}_"0-9%]*;
@@ -277,8 +288,4 @@ ID              : [\p{L}\p{Lo}_%][\p{L}\p{Lo}_"0-9%]*;
 // QNAME           : ID ( '/' ID )* ;
 NUMBER          : [0-9]+ | '0x' [0-9A-Fa-f]+ | '0b' [10]+ ;
 STRING_LITERAL  : '"' ( ~["\\] | '\\' . )* '"' ;
-WS              : [ \t\r\n]+ -> skip ;
-LINE_COMMENT    : '//' ~[\r\n]* -> skip ;
-OPTION_COMMENT  : '--'~[0-9] ~[\r\n]* -> skip ; // 1--1 is not a comment
-BLOCK_COMMENT   : '/*' .*? '*/' -> skip ;
 
