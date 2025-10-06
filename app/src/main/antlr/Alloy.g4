@@ -40,6 +40,9 @@ modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
 importPara      : PRIVATE? 'open' qname ( '[' sigRefs? ']' )? ( 'as' name )? ;
 
 sigPara         : sigQualifier* 'sig' names sigIn? '{' ','? (varDecl ( ','* varDecl )*)? ','? '}' block? ;
+varDecl         : VAR? PRIVATE? decl 
+				| PRIVATE? DISJ? names EQUAL DISJ? expr
+				;
 sigQualifier       : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
 sigIn			: 'extends' sigRef 			# extendSigIn
 				| IN sigRef (PLUS sigRef)* 	# inSigIn
@@ -53,6 +56,9 @@ factPara        : 'fact' (name | STRING_LITERAL)? block ;
 predPara        : PRIVATE? 'pred' ( sigRef '.')? name arguments? block ;
 
 funPara         : PRIVATE? 'fun' ( sigRef '.')?  name arguments? ':' multiplicity? expr expr;
+arguments       : '(' ( decl ( ',' decl )* ','? )? ')'
+                | '[' ( decl ( ',' decl )* ','? )? ']'
+                ;
 
 assertPara      : 'assert' (name | STRING_LITERAL)? block ;
 
@@ -123,10 +129,6 @@ comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;
 // x: lone S in declarations
 cardinality     : LONE | ONE | SOME | SET ; // LONEOF, ONEOF, SOMEOF, SETOF
 decl            : DISJ? names ':' DISJ? cardinality? expr  ;
-varDecl         : VAR? PRIVATE? decl ;
-arguments       : '(' ( decl ( ',' decl )* ','? )? ')'
-                | '[' ( decl ( ',' decl )* ','? )? ']'
-                ;
 
 // no S means is the relation S empty
 cardinalityConstraint		: LONE |  ONE | SOME | NO | SET ; 
