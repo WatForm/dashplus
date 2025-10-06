@@ -56,44 +56,10 @@ sourceSets {
 }
 
 
-def corpusUrl = "https://github.com/QiyueChen04/dashplus/releases/download/catalyst-corpus-v2/catalyst-corpus.zip"
+def corpusUrl = "https://github.com/QiyueChen04/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip"
 def corpusZip = file("src/test/resources/antlr/catalyst/catalyst-corpus.zip")
 def corpusParentDir = file("src/test/resources/antlr/catalyst/")
 def corpusDir = file("src/test/resources/antlr/catalyst/catalyst-corpus")
-
-task downloadCatalystCorpus {
-    doLast {
-        if (!corpusZip.exists()) {
-            println "Downloading catalyst corpus from GitHub..."
-            corpusZip.parentFile.mkdirs()
-            new URL(corpusUrl).withInputStream { i ->
-                corpusZip.withOutputStream { it << i }
-            }
-            println "Download complete: ${corpusZip}"
-        } else {
-            println "Skipping download. Catalyst corpus ZIP already exists at ${corpusZip}. "
-        }
-    }
-}
-
-
-tasks.register("unzipCatalystCorpus", Copy) {
-    dependsOn("downloadCatalystCorpus")
-
-    from(zipTree(corpusZip))
-    into(corpusParentDir)
-
-    // Declare outputs so Gradle can skip if already done
-    outputs.dir(corpusDir)
-
-    doFirst {
-        println("Unzipping ${corpusZip} to ${corpusParentDir}...")
-    }
-
-    doLast {
-        println("Unzip complete.")
-    }
-}
 
 tasks.named('generateGrammarSource') {
     outputDirectory = file("$buildDir/generated-src/antlr/main/antlr/generated")
@@ -106,7 +72,6 @@ tasks.named('compileJava') {
 
 tasks.named("processTestResources") {
     dependsOn tasks.named('generateGrammarSource')
-    dependsOn unzipCatalystCorpus
 
     doFirst {
         println "processTestResources: This may take a while the first time catalyst-corpus is being processed."
@@ -115,7 +80,6 @@ tasks.named("processTestResources") {
 
 tasks.named('test') {
     dependsOn tasks.named('generateGrammarSource')
-    dependsOn tasks.named('unzipCatalystCorpus')
     
     useJUnitPlatform()
     

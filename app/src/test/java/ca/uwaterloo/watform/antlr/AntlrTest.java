@@ -32,6 +32,7 @@ class UnexpectedParsePassException extends RuntimeException {
 public class AntlrTest {
 	private static boolean stopOnFirstFail;
 	private static long timeoutMs = 10 * 1000;
+	private static int filenamesToPrint = 20;
 
 	private List<Path> jarPassedAntlrPassed = new ArrayList<>();
 	private List<Path> jarPassedAntlrFailed = new ArrayList<>();
@@ -51,7 +52,6 @@ public class AntlrTest {
 	}
 
 	private void printList(String title, List<Path> list) {
-		int max = 10;
 		System.out.println(title + " (" + list.size() + "):");
 		if (list.isEmpty()) {
 			System.out.println("  [none]");
@@ -60,8 +60,8 @@ public class AntlrTest {
 			for (Path p : list) {
 				System.out.println("  " + p.toString());
 				count++;
-				if (count >= max) {
-					System.out.println("  ...and " + (list.size() - max) + " more" + "...");
+				if (count >= filenamesToPrint) {
+					System.out.println("  ...and " + (list.size() - filenamesToPrint) + " more" + "...");
 					break;
 				}
 			}
@@ -132,7 +132,7 @@ public class AntlrTest {
 			future.get(timeoutMs, TimeUnit.MILLISECONDS);
 		} catch (TimeoutException te) {
 			System.out.println(
-					"Parsing took longer than " + timeoutMs / 1000 + " seconds, deleting file: " + filePath);
+					"Parsing took longer than " + timeoutMs / 1000 + " seconds, file: " + filePath);
 			timeout.add(filePath);
 			future.cancel(true); // interrupt the parsing thread
 		} catch (ExecutionException ee) {

@@ -5,14 +5,27 @@ grammar Alloy;
 }
 
 @parser::members {
-  private final java.util.Deque<Boolean> _inImpliesRHSStack = new java.util.ArrayDeque<>();
-  {_inImpliesRHSStack.push(Boolean.FALSE);}
-  private boolean inImpliesRHS() { return _inImpliesRHSStack.peek(); }
-  private void pushImpliesRHS(boolean v) { _inImpliesRHSStack.push(v); }
-  private void popImpliesRHS() { _inImpliesRHSStack.pop(); }
+	// for ITE
+	private final java.util.Deque<Boolean> _inImpliesRHSStack = new java.util.ArrayDeque<>();
+	{_inImpliesRHSStack.push(Boolean.FALSE);}
+	private boolean inImpliesRHS() { return _inImpliesRHSStack.peek(); }
+	private void pushImpliesRHS(boolean v) { _inImpliesRHSStack.push(v); }
+	private void popImpliesRHS() { _inImpliesRHSStack.pop(); }
+
+
+	// for accepting MINUS before NUMBER
+	boolean prevTokenIsAllowed() {
+		// see bottom of CompFilter
+		int[] blacklistTokens = {
+			RPAREN, RBRACK, RBRACE, DISJ, PRED_TOTALORDER,
+			INT, SUM, ID, NUMBER, STRING, IDEN, THIS,
+			FUNMIN, FUNMAX, FUNNEXT, UNIV, SIGINT, NONE
+		};
+		Token prev = _input.LT(-1);
+		int prevType = prev.getType();
+		return java.util.Arrays.stream(blacklistTokens).anyMatch(t -> t != prevType);
+	}
 }
-
-
 
 alloyFile
     : paragraph*
@@ -35,100 +48,104 @@ paragraph       : modulePara
 
 
 
-modulePara      : 'module' qname ( '[' moduleArg (',' moduleArg)* ']' )? ;
+modulePara      : MODULE qname ( LBRACK moduleArg (COMMA moduleArg)* RBRACK )? ;
 
-importPara      : PRIVATE? 'open' qname ( '[' sigRefs? ']' )? ( 'as' name )? ;
+importPara      : PRIVATE? OPEN qname ( LBRACK sigRefs? RBRACK )? ( AS name )? ;
 
-sigPara         : sigQualifier* 'sig' names sigIn? '{' ','? (varDecl ( ','* varDecl )*)? ','? '}' block? ;
+sigPara         : sigQualifier* SIG names sigIn? LBRACE COMMA? (varDecl ( COMMA* varDecl )*)? COMMA? RBRACE block? ;
 varDecl         : VAR? PRIVATE? decl 
 				| PRIVATE? DISJ? names EQUAL DISJ? expr
 				;
-sigQualifier       : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
-sigIn			: 'extends' sigRef 			# extendSigIn
-				| IN sigRef (PLUS sigRef)* 	# inSigIn
-				| EQUAL sigRef (PLUS sigRef)* #equalSigIn
+sigQualifier    : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
+sigIn			: EXTENDS sigRef 					# extendSigIn
+				| IN sigRef (PLUS sigRef)* 			# inSigIn
+				| EQUAL sigRef (PLUS sigRef)* 		# equalSigIn
 				;
+sigRef			: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
+sigRefs			: sigRef (COMMA sigRef)* ;
 
-enumPara        : PRIVATE? 'enum' name '{' names '}';
 
-factPara        : 'fact' (name | STRING_LITERAL)? block ;
 
-predPara        : PRIVATE? 'pred' ( sigRef '.')? name arguments? block ;
+enumPara        : PRIVATE? ENUM name LBRACE names RBRACE;
 
-funPara         : PRIVATE? 'fun' ( sigRef '.')?  name arguments? ':' multiplicity? expr expr;
-arguments       : '(' ( decl ( ',' decl )* ','? )? ')'
-                | '[' ( decl ( ',' decl )* ','? )? ']'
+factPara        : FACT (name | STRING_LITERAL)? block ;
+
+predPara        : PRIVATE? PRED ( sigRef DOT)? name arguments? block ;
+
+funPara         : PRIVATE? FUN ( sigRef DOT)?  name arguments? COLON multiplicity? expr expr;
+arguments       : LPAREN ( decl ( COMMA decl )* COMMA? )? RPAREN
+                | LBRACK ( decl ( COMMA decl )* COMMA? )? RBRACK
                 ;
 
-assertPara      : 'assert' (name | STRING_LITERAL)? block ;
+assertPara      : ASSERT (name | STRING_LITERAL)? block ;
 
-macroPara       : PRIVATE? 'let' name ( '[' names? ']' )? (block | (EQUAL expr))
-				| PRIVATE? 'let' name ( '(' names? ')' )? (block | (EQUAL expr))
+macroPara       : PRIVATE? LET name ( LBRACK names? RBRACK )? (block | (EQUAL expr))
+				| PRIVATE? LET name ( LPAREN names? RPAREN )? (block | (EQUAL expr))
 				;
 
 
-labelCommandPara: (name ':')? commandDecl ;
-commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? ('expect' number)? ( RFATARROW commandDecl )?;
-scope           : 'for' number ( 'but' typescope ( ',' typescope )* )* 
-                | 'for' typescope ( ',' typescope )*
+labelCommandPara: (name COLON)? commandDecl ;
+commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? (EXPECT number)? ( RFATARROW commandDecl )?;
+scope           : FOR number ( BUT typescope ( COMMA typescope )* )* 
+                | FOR typescope ( COMMA typescope )*
                 ;
-typescope       : EXACTLY? number ('..' (number (':' number)?)?)? 
+typescope       : EXACTLY? number (DOT DOT (number (COLON number)?)?)? 
 					(qname | SIGINT | INT | SEQ | STRING | STEPS | NONE) ;
 
 
-block           : '{' expr* '}' ;
 
 
-expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                                               								# unaryOpValue
+expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                                               		# unaryOpValue
 				| expr PRIME                                                        								# primeValue // exprVar
-				| expr DOT expr                                                   								# dotJoin 
-                | expr '[' (expr (',' expr)*)? ']'                                  							# boxJoin
-				| expr (DOMRESTR | RNGRESTR) expr                                           								# restrictionValue
-				| expr arrow expr                      															# arrowValue
-				| expr INTERSECTION expr                                                   								# intersectionValue
-				| expr REL_OVERRIDE expr                                                  								# relationOverrideValue
-				| expr (FUNMUL | FUNDIV | FUNREM) expr													# mulDivRemValue
-                | CARDINALITY expr                                                         								# cardinalityValue
-				| expr (PLUS | MINUS | FUNADD | FUNSUB) expr                                             	# unionDiffAddSubValue
-				| expr (SHL | SHR | SHA) expr 																# bitShiftValue
-                | SUM decl ( ',' decl )* (block | ('|' expr))                                					# sumValue		// pg 289
-				| '{' decl ( ',' decl )* ( block | ('|' expr) )? '}'              								# comprehensionValue
+				| expr DOT expr                                                   									# dotJoin 
+                | expr LBRACK (expr (COMMA expr)*)? RBRACK                                  						# boxJoin
+				| expr (DOMRESTR | RNGRESTR) expr                                           						# restrictionValue
+				| expr arrow expr                      																# arrowValue
+				| expr INTERSECTION expr                                                   							# intersectionValue
+				| expr REL_OVERRIDE expr                                                  							# relationOverrideValue
+				| expr (FUNMUL | FUNDIV | FUNREM) expr																# mulDivRemValue
+                | CARDINALITY expr                                                         							# cardinalityValue
+				| expr (PLUS | MINUS | FUNADD | FUNSUB) expr                                             			# unionDiffAddSubValue
+				| expr (SHL | SHR | SHA) expr 																		# bitShiftValue
+                | SUM decl ( COMMA decl )* (block | (BAR expr))                                						# sumValue		// pg 289
+				| LBRACE decl ( COMMA decl )* ( block | (BAR expr) )? RBRACE              							# comprehensionValue
 
-				| SEQ expr																					# seqValue
-				| INT expr																					# castToSigIntValue
+				| SEQ expr																							# seqValue
+				| INT expr																							# castToSigIntValue
 
-				| cardinalityConstraint expr                    												# cardinalityConstraintFormula
-                | expr comparison expr 																			# comparisonFormula
-                | (NOT_EXCL | NOT | ALWAYS | EVENTUALLY | AFTER | BEFORE | HISTORICALLY | ONCE) expr  	# unaryFormula
-                | expr (UNTIL | RELEASES | SINCE | TRIGGERED) expr            						# binaryFormula
-                | expr (AND_AMP | AND) expr                                   									# andFormula
-				| <assoc=right> expr {inImpliesRHS()}? ELSE expr                                     			# elseFormula
+				| cardinalityConstraint expr                    													# cardinalityConstraintFormula
+                | expr comparison expr 																				# comparisonFormula
+                | (NOT_EXCL | NOT | ALWAYS | EVENTUALLY | AFTER | BEFORE | HISTORICALLY | ONCE) expr  				# unaryFormula
+                | expr (UNTIL | RELEASES | SINCE | TRIGGERED) expr            										# binaryFormula
+                | expr (AND_AMP | AND) expr                                   										# andFormula
+				| <assoc=right> expr {inImpliesRHS()}? ELSE expr                                     				# elseFormula
 				| <assoc=right> expr (RFATARROW | IMPLIES) {pushImpliesRHS(true);} expr {popImpliesRHS();}      	# impliesFormula
-                | expr (IFF_ARR | IFF) expr                                   									# iffFormula
+                | expr (IFF_ARR | IFF) expr                                   										# iffFormula
                 | expr (OR_BAR | OR) expr                                       									# orFormula
-				| 'let' name EQUAL expr ( ',' name EQUAL expr )* ( ('|' expr) | block )  							# let
-				| bindingQuantifier decl ( ',' decl )* ( block | ('|' expr) ) 									# bindingQuantifierFormula
-                | expr SEQUENCE_OP expr                                               									# sequenceFormula
+				| LET name EQUAL expr ( COMMA name EQUAL expr )* ( (BAR expr) | block )  							# let
+				| bindingQuantifier decl ( COMMA decl )* ( block | (BAR expr) ) 									# bindingQuantifierFormula
+                | expr SEQUENCE_OP expr                                               								# sequenceFormula
 
-                | '(' expr ')'                                                     	# parenthesis                
-                | '{' expr '}'                                                     	# parenthesis                
-                | block                                                            	# exprBlock
+                | LPAREN expr RPAREN                                                     							# parenthesis                
+                | LBRACE expr RBRACE                                                     							# parenthesis                
+                | block                                                            									# exprBlock
 
-                | AT name                                                         	# atnameValue
-                | qname META                                                        	# metaValue 
-				| qname                                                            	# qnameValue
+                | AT name                                                         									# atnameValue
+                | qname META                                                        								# metaValue 
+				| qname                                                            									# qnameValue
 				| (NONE | UNIV | IDEN | PRED_TOTALORDER | DISJ | SUM |
-						THIS | INT | SIGINT | STEPS | SEQ_INT | STRING)					# varValue	 // exprVar
-				| ( FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL )		# constValue	 // exprConstant
+						THIS | INT | SIGINT | STEPS | SEQ_INT | STRING |												
+						FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL) 										# builtinValue	 // exprConstant and exprVar
                 ;
 
+block           : LBRACE expr* RBRACE ;
 
 arrow			: multiplicity? RARROW multiplicity? ;
 comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;	
 
 // x: lone S in declarations
 cardinality     : LONE | ONE | SOME | SET ; // LONEOF, ONEOF, SOMEOF, SETOF
-decl            : DISJ? names ':' DISJ? cardinality? expr  ;
+decl            : DISJ? names COLON DISJ? cardinality? expr  ;
 
 // no S means is the relation S empty
 cardinalityConstraint		: LONE |  ONE | SOME | NO | SET ; 
@@ -139,33 +156,55 @@ bindingQuantifier		: LONE | ONE | SOME | NO | ALL ;
 multiplicity    : LONE | ONE | SOME |  SET ;
 
 
-number          : (MINUS | PLUS)? NUMBER ;
+number          : ({prevTokenIsAllowed()}? MINUS)? NUMBER ;
 
 moduleArg       : (EXACTLY? name ) ;
 
-qname           : ID | ((ID | THIS) '/' ID);
-qnames          : qname ( ',' qname )* ;
+qname           : ID | ((ID | THIS) SLASH ID);
+qnames          : qname ( COMMA qname )* ;
 name            : ID;
-names          	: name ( ',' name )* ;
-
-
-sigRef			: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
-sigRefs			: sigRef (',' sigRef)* ;
+names          	: name ( COMMA name )* ;
 
 
 
 
 
 // LEXER 
-CHECK           : 'check' ;
-RUN             : 'run' ;
-EXACTLY 		: 'exactly' ;
-
-
+MODULE : 'module' ;
+OPEN : 'open' ;
+AS : 'as' ;
+SIG : 'sig' ;
+EXTENDS : 'extends' ; 
+ENUM : 'enum' ; 
+FACT : 'fact' ;
+PRED : 'pred' ;
+FUN  : 'fun' ;
+COLON : ':' ;
+CHECK : 'check' ;
+RUN   : 'run' ;
+EXACTLY : 'exactly' ;
 VAR : 'var' ;
 ABSTRACT : 'abstract';
 PRIVATE : 'private';
+ASSERT : 'assert' ;
+LET : 'let' ;
+FOR : 'for' ;
+BUT : 'but' ;
+EXPECT : 'expect' ;
+BAR: '|' ;
+SLASH : '/';
 
+
+COMMA : ',' ;
+
+LPAREN : '(' ;
+RPAREN : ')' ;
+
+LBRACK : '[' ;
+RBRACK : ']' ;
+
+LBRACE : '{' ;
+RBRACE : '}' ;
 
 
 
@@ -191,7 +230,7 @@ FUNREM : 'fun/rem' ;
 
 CARDINALITY : '#' ;
 
-PLUS : '+' ; // used as union for expr and positive for number
+PLUS : '+' ; // used as union for expr or PLUS in sigIN
 MINUS  : '-' ; // used as diff for expr and negative for number
 FUNADD : 'fun/add' ;
 FUNSUB : 'fun/sub' ; 
@@ -286,8 +325,6 @@ WS              : [ \t\r\n]+ -> skip ;
 
 
 ID              : [\p{L}\p{Lo}_%][\p{L}\p{Lo}_"0-9%]*;
-// PRIMITIVE       : ('fun'|'ord'|'seq') '/' ID ;
-// QNAME           : ID ( '/' ID )* ;
 NUMBER          : [0-9]+ | '0x' [0-9A-Fa-f]+ | '0b' [10]+ ;
 STRING_LITERAL  : '"' ( ~["\\] | '\\' . )* '"' ;
 

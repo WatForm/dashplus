@@ -52,7 +52,7 @@ sig sExtended extends s {
 `
 more ...; grep for "new ErrorType"
 
-# changes (some WIP)
+# changes 
 - optional ( qname '.' ) in 'funPara' and 'predPara'
 - optional qnames inside [] in importPara
 - optional params in box rule of 'expr'
@@ -66,7 +66,7 @@ more ...; grep for "new ErrorType"
 - accept PRIVATE at beginning of varDecl
 - accept one more rule (using EQUAL) in varDecl
 
-- added tokens for arithmatic operations, ExprConstant (Alloy AST), WIP, so they are not just 'qname'
+- added tokens for arithmatic operations, ExprConstant (Alloy AST), so they are not just 'qname'
 - added the 'until' keyword to the temporal operators
 - added bit shift operators
 - added tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', 'fun/next', STRING_LITERAL,
@@ -88,7 +88,8 @@ more ...; grep for "new ErrorType"
     - made two binop rules: 'implies' and 'else'
     - a 'ite's (ternary op) precedence is not handled correctly in the midst of other binop rules
     - used ANTLR's semantic predicates to reject 'else' if not in rhs 'expr' of 'implies'
-    - parser-visitors need to check and restructure the ast, because some tricky cases cannot be handled by semantic predicates alone
+    - parser-visitors need to check and restructure the ast, because some cases cannot be handled by semantic predicates alone
+        - such as (t => t else t => t), and (f=>t else f => f else t)
 - replaced ('expr' 'qname' 'expr') 
     - changed to (expr ('fun/mul' | 'fun/div' | 'fun/rem') expr) and (expr ('+' | '-' | 'fun/add' | 'fun/sub') expr)
     - placed them in the correct order of precedence
@@ -99,6 +100,9 @@ more ...; grep for "new ErrorType"
             --
             sig S {}
         `
+- removed accepting PLUS in front of NUMBER to use as positive number (Alloy Analyzer doens't accept that)
+    - use semantic predicate to reduce local ambiguities for acceping MINUS before NUMBER (see bottom of CompModule in Alloy code)
+
 
 
 # todo
