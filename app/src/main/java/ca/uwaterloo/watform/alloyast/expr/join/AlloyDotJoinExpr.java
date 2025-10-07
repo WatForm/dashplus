@@ -1,5 +1,5 @@
 package ca.uwaterloo.watform.alloyast.expr.join;
 import ca.uwaterloo.watform.alloyast.expr.*;
 
-public final class DotJoinExpr extends Expr {}
+public final class AlloyDotJoinExpr extends AlloyExpr {}
 
