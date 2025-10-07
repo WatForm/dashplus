@@ -14,7 +14,7 @@ public final class AlloyParagraphParserVisitor extends AlloyBaseVisitor<AlloyPar
 
 	@Override
 	public AlloyParagraph visitParagraph(AlloyParser.ParagraphContext ctx) {
-		System.out.println("Visiting Paragraph");
+		System.out.println("Visiting AlloyParagraph");
 		return this.visit(ctx.getChild(0));
 	}
 
@@ -32,7 +32,7 @@ public final class AlloyParagraphParserVisitor extends AlloyBaseVisitor<AlloyPar
 
 	@Override
 	public AlloyParagraph visitFactPara(AlloyParser.FactParaContext ctx) {
-		System.out.println("Visiting Fact");
+		System.out.println("Visiting AlloyFactPara");
 		AlloyBlock b = this.bpv.visit(ctx.block());
 		return new AlloyFactPara();
 	}

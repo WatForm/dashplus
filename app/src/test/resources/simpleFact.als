@@ -1,3 +1,3 @@
 fact nameOfFact {
-	A.B and #D
+	A.B' and #D
 }

@@ -22,7 +22,7 @@ public class Main {
 		//
 		// String filePath = args[0];
 		
-		String filePath = args.length == 1 ? args[0] : "src/test/resources/antlr/simpleFact.als";
+		String filePath = args.length == 1 ? args[0] : "src/test/resources/simpleFact.als";
 
 		try {
 			String inputContent = new String(Files.readAllBytes(Paths.get(filePath)));

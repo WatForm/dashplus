@@ -49,6 +49,7 @@ paragraph       : modulePara
 
 
 modulePara      : MODULE qname ( LBRACK moduleArg (COMMA moduleArg)* RBRACK )? ;
+moduleArg       : (EXACTLY? name ) ;
 
 importPara      : PRIVATE? OPEN qname ( LBRACK sigRefs? RBRACK )? ( AS name )? ;
 
@@ -63,8 +64,6 @@ sigIn			: EXTENDS sigRef 					# extendSigIn
 				;
 sigRef			: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
 sigRefs			: sigRef (COMMA sigRef)* ;
-
-
 
 enumPara        : PRIVATE? ENUM name LBRACE names RBRACE;
 
@@ -82,7 +81,6 @@ assertPara      : ASSERT (name | STRING_LITERAL)? block ;
 macroPara       : PRIVATE? LET name ( LBRACK names? RBRACK )? (block | (EQUAL expr))
 				| PRIVATE? LET name ( LPAREN names? RPAREN )? (block | (EQUAL expr))
 				;
-
 
 labelCommandPara: (name COLON)? commandDecl ;
 commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? (EXPECT number)? ( RFATARROW commandDecl )?;
@@ -158,7 +156,6 @@ multiplicity    : LONE | ONE | SOME |  SET ;
 
 number          : ({prevTokenIsAllowed()}? MINUS)? NUMBER ;
 
-moduleArg       : (EXACTLY? name ) ;
 
 qname           : ID | ((ID | THIS) SLASH ID);
 qnames          : qname ( COMMA qname )* ;
