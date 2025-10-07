@@ -105,8 +105,8 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
                 | CARDINALITY expr                                                         							# cardinalityValue
 				| expr (PLUS | MINUS | FUNADD | FUNSUB) expr                                             			# unionDiffAddSubValue
 				| expr (SHL | SHR | SHA) expr 																		# bitShiftValue
-                | SUM decl ( COMMA decl )* (block | (BAR expr))                                						# sumValue		// pg 289
-				| LBRACE decl ( COMMA decl )* ( block | (BAR expr) )? RBRACE              							# comprehensionValue
+                | SUM decl ( COMMA decl )* body                                										# sumValue		// pg 289
+				| LBRACE decl ( COMMA decl )* body? RBRACE              											# comprehensionValue
 
 				| SEQ expr																							# seqValue
 				| INT expr																							# castToSigIntValue
@@ -120,8 +120,8 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
 				| <assoc=right> expr (RFATARROW | IMPLIES) {pushImpliesRHS(true);} expr {popImpliesRHS();}      	# impliesFormula
                 | expr (IFF_ARR | IFF) expr                                   										# iffFormula
                 | expr (OR_BAR | OR) expr                                       									# orFormula
-				| LET name EQUAL expr ( COMMA name EQUAL expr )* ( (BAR expr) | block )  							# let
-				| bindingQuantifier decl ( COMMA decl )* ( block | (BAR expr) ) 									# bindingQuantifierFormula
+				| LET assignment ( COMMA assignment )* body 														# let
+				| bindingQuantifier decl ( COMMA decl )* body 														# bindingQuantifierFormula
                 | expr SEQUENCE_OP expr                                               								# sequenceFormula
 
                 | LPAREN expr RPAREN                                                     							# parenthesis                
@@ -136,14 +136,30 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
 						FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL) 										# builtinValue	 // exprConstant and exprVar
                 ;
 
+
 block           : LBRACE expr* RBRACE ;
+decl            : DISJ? names COLON DISJ? cardinality? expr  ;
+names          	: name ( COMMA name )* ;
+
+number          : ({prevTokenIsAllowed()}? MINUS)? NUMBER ;
+qname           : name 					# simpleQname
+				| (ID | THIS) SLASH ID  # qualifiedQname
+				;
+name            : ID;
+
+
+
+
+assignment		: name EQUAL expr ;
+body			: block  		# blockBody
+				| BAR expr 		# barBody
+				;
 
 arrow			: multiplicity? RARROW multiplicity? ;
 comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;	
 
 // x: lone S in declarations
 cardinality     : LONE | ONE | SOME | SET ; // LONEOF, ONEOF, SOMEOF, SETOF
-decl            : DISJ? names COLON DISJ? cardinality? expr  ;
 
 // no S means is the relation S empty
 cardinalityConstraint		: LONE |  ONE | SOME | NO | SET ; 
@@ -154,13 +170,6 @@ bindingQuantifier		: LONE | ONE | SOME | NO | ALL ;
 multiplicity    : LONE | ONE | SOME |  SET ;
 
 
-number          : ({prevTokenIsAllowed()}? MINUS)? NUMBER ;
-
-
-qname           : ID | ((ID | THIS) SLASH ID);
-qnames          : qname ( COMMA qname )* ;
-name            : ID;
-names          	: name ( COMMA name )* ;
 
 
 

@@ -2,19 +2,21 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
-import ca.uwaterloo.watform.alloyast.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprParsVis;
+import ca.uwaterloo.watform.alloyast.expr.misc.*;
 
-public final class AlloyParagraphParserVisitor extends AlloyBaseVisitor<AlloyParagraph> {
-	private final AlloyBlockParserVisitor bpv;
+public final class AlloyParagraphParsVis extends AlloyBaseVisitor<AlloyParagraph> {
+	private final AlloyExprParsVis exprParsVis;
 
-	public AlloyParagraphParserVisitor() {
+	public AlloyParagraphParsVis() {
 		super();
-		this.bpv = new AlloyBlockParserVisitor();
+		this.exprParsVis = new AlloyExprParsVis();
 	}
 
 	@Override
 	public AlloyParagraph visitParagraph(AlloyParser.ParagraphContext ctx) {
-		System.out.println("Visiting AlloyParagraph");
+		System.out.println("Visiting ParagraphContext");
 		return this.visit(ctx.getChild(0));
 	}
 
@@ -32,8 +34,8 @@ public final class AlloyParagraphParserVisitor extends AlloyBaseVisitor<AlloyPar
 
 	@Override
 	public AlloyParagraph visitFactPara(AlloyParser.FactParaContext ctx) {
-		System.out.println("Visiting AlloyFactPara");
-		AlloyBlock b = this.bpv.visit(ctx.block());
+		System.out.println("Visiting FactParaContext");
+		AlloyExpr b = this.exprParsVis.visit(ctx.block());
 		return new AlloyFactPara();
 	}
 

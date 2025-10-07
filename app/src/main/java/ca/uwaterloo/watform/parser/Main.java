@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.*;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyast.AlloyFileParserVisitor;
+import ca.uwaterloo.watform.alloyast.AlloyFileParsVis;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
@@ -32,7 +32,7 @@ public class Main {
 			AlloyParser parser = new AlloyParser(tokens);
 			ParseTree antlrAST = parser.alloyFile();
 
-			AlloyFileParserVisitor afpv = new AlloyFileParserVisitor();
+			AlloyFileParsVis afpv = new AlloyFileParsVis();
 			AlloyFile af = afpv.visit(antlrAST);
 		} catch (IOException e) {
 			System.err.println("Error reading file: " + e.getMessage());
