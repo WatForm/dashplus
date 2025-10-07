@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.dashtoalloy;
+package ca.uwaterloo.watform.parser;
 
 import antlr.generated.AlloyLexer;
 import antlr.generated.AlloyParser;
