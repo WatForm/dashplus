@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.alloyast.expr;
+package ca.uwaterloo.watform.alloyast.misc;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;

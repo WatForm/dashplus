@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.alloyast.expr;
+package ca.uwaterloo.watform.alloyast.misc;
 
 import ca.uwaterloo.watform.alloyast.AlloyASTNode;
 

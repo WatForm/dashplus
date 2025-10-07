@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
-import ca.uwaterloo.watform.alloyast.expr.*;
+import ca.uwaterloo.watform.alloyast.misc.*;
 
 public final class AlloyParagraphParserVisitor extends AlloyBaseVisitor<AlloyParagraph> {
 	private final AlloyBlockParserVisitor bpv;
