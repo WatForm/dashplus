@@ -80,6 +80,7 @@ public class AntlrTest {
 	}
 
 	private void tryParse(CharStream input, Path filePath) throws ParseCancellationException {
+		System.out.println(filePath);
 		boolean jarPassed = AlloyUtils.canParse(input.toString());
 
 		BailLexer bailLexer = new BailLexer(input);
