@@ -4,10 +4,10 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
 ## Small changes
 - optional ( qname '.' ) in 'funPara' and 'predPara'
 - optional qnames inside [] in importPara
-- optional params in box rule of 'expr'
+- optional params in 'bracketExpr'
 - optional block/bar in comprehension
 
-- accept '<=' for less or equal to; this is consistent with CUP
+- accept '<=' for less or equal to
 - accept leading, trailing, and sequence of commas in 'sigPara' 
 - accept trailing comma in 'arguments'
 - accept round brackets for macroPara
@@ -15,15 +15,12 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
 - accept PRIVATE in more places
 - accept one more rule (uses EQUAL) in varDecl
 
-- added tokens for arithmatic operations, ExprConstant (Alloy AST), so they are not just 'qname'
-    - added tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', 'fun/next', STRING_LITERAL,
-                    'int', 'Int', 'steps'
-    - see builtinValue in 'expr'
+- added tokens for arithmatic operations, ExprConstant (Alloy AST), etc so they are not just 'qname'
+    - see bottom of 'expr2'
     - grammar is updated to still accept builtins in places like 'sigRef'
-- added tokens for 'pred/totalOrder' and 'disj'
+    - added tokens for 'pred/totalOrder' and 'disj'
 - added the 'until' keyword to the temporal operators
 - added bit shift operators
-- added 'seq' expr as a rule (https://alloytools.org/quickguide/seq.html)
 
 - removed the two 'boxValue' rules in 'value'
 
@@ -35,9 +32,9 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
 - merged 'formula' and 'value', because 'ite' causes indirect left recursion between formula and value (starts with 'formula' in a 'value ite')
     - merged them to expr and ANTLR handles direct left recursion
     - need to check for usage of grammar rules (formula or value) in parser-visitors
-    - most rules can be distinguished by the operator tokens alone, with exceptions like 'ite', 'let', 'join' and 'box', and 'parenthesis'
+    - most rules can be distinguished by the operator tokens alone, with exceptions like 'ite', 'let', 'join' and 'bracket', and 'paren'
 - break expr into three parts (expr1, implies, expr2)
-    - because a 'ite's (ternary op) precedence is not handled correctly in the midst of other binop rules
+    - because 'ite's (ternary op) precedence is not handled correctly in the midst of other binop rules
     - other options tried:
         - 1) copying CUP; have a distinct expr type for every rule
             - relationExpr is right recursive and ANTLR is very inefficient when parsing relationExpr with other left recursive rules; frequent timeouts
@@ -50,7 +47,7 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
         - we can always parse ITE correctly and quickly
         - maintain correct precedence
         - ANTLR handles direct left recursion quickly
-        - we don't get indirect left recursion because rules with lower precedence (expr2) do not parse higher precedence rules (expr1 & implies) as subexpressions
+        - we don't get indirect left recursion because rules with higher precedence (expr2) do not parse lower precedence rules (expr1 & implies) as subexpressions
 - replaced ('expr' 'qname' 'expr') 
     - changed to (expr ('fun/mul' | 'fun/div' | 'fun/rem') expr) and (expr ('+' | '-' | 'fun/add' | 'fun/sub') expr)
     - placed them in the correct order of precedence
@@ -62,7 +59,7 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
             sig S {}
         ```
 - reject PLUS in front of NUMBER to be used as positive number
-    - use semantic predicate to reduce local ambiguities for acceping MINUS before NUMBER (see bottom of CompModule in Alloy code)
+    - use semantic predicate to reduce local ambiguities for acceping MINUS before NUMBER (see bottom of CompFilter in Alloy code)
 
 
 
