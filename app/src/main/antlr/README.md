@@ -1,3 +1,4 @@
+# Gradle and Antlr
 - The ANTLR plugin is applied in app/build.gradle
 - The ANTLR plugin adds 3 tasks to the project, as shown below.
     1) generateGrammarSource 
@@ -9,27 +10,27 @@
         - Generates the source files for all test ANTLR grammars.
         - Default path: src/test/antlr
         - compileTestJava's dependency
-        - Note: see app/src/test/java/org/antlr for JUnit tests for ANTLR; not using generateTestGrammarSource
+        - Note: see app/src/test/java/org/antlr for JUnit tests for testing ANTLR; not using generateTestGrammarSource
 
     3) generateSourceSetGrammarSource
         - Generates the source files for all ANTLR grammars for the given source set.
         - Default path: src/sourceSet/antlr
         - compileSourceSetJava's dependency
-- So if you run ./gradlew build (or ./gradlew compileJava), Gradle will first execute the generateGrammarSource task
+- So if you run ./gradlew build (or ./gradlew compileJava) or ./gradlew test (see app/build.gradlew), Gradle will first execute the generateGrammarSource task
 - You can find ANTLR generated files in app/build/generated-src/antlr/main/
 - This header in Alloy.g4 specifies the package where you can import antlr generated classes like AlloyLexer
-    `
+    ```
     @header {
         package antlr.generated;
     }
-    `
+    ```
 - Then compileJava compiles those generated .java files together with src/main/java sources
 - Don't put the antlr generated files in src/
     - https://stackoverflow.com/questions/36469546/what-is-minimal-sample-gradle-project-for-antlr4-with-antlr-plugin
 
-- Source: https://docs.gradle.org/current/userguide/antlr_plugin.html
+- Reference: https://docs.gradle.org/current/userguide/antlr_plugin.html
 
-# Changes made 
+# Changes made to Peter's grammar 
 Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/org.alloytools.alloy.parser/src/main/antlr/Alloy.g4
 
 ## Small changes
@@ -70,12 +71,13 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
 - break expr into three parts (expr1, implies, expr2)
     - because a 'ite's (ternary op) precedence is not handled correctly in the midst of other binop rules
     - other options tried:
-        - 1) break ITE into 2 binop: implies and else. 
+        - 1) copying CUP; have a distinct expr type for every rule
+            - relationExpr is right recursive and ANTLR is very inefficient when parsing relationExpr with other left recursive rules; frequent timeouts
+        - 2) break ITE into 2 binop: implies and else. 
             - Use semantic predicate to reject some cases (using else outside of an ite)
             - parser-visitors need to check and restructure the ast, because some cases cannot be handled by semantic predicates alone
                 such as (t => t else t => t), and (f=>t else f => f else t)
-        - 2) copying CUP; have a distinct expr type for every rule
-            - relationExpr is right recursive and ANTLR is very inefficient when parsing relationExpr with other left recursive rules; frequent timeouts
+        - see previous attempts at 'expr' below
     - by breaking it into three parts 
         - we can always parse ITE correctly and quickly
         - maintain correct precedence
@@ -87,22 +89,38 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
 - refactored string literals in grammar rules to tokens; this improves reusability and makes ANTLR generated Context classes easier to work with
 - reordered WS and COMMENT tokens
     - changed OPTION_COMMENT to properly handle 
-        `
+        ```
             --
             sig S {}
-        `
+        ```
 - reject PLUS in front of NUMBER to be used as positive number
     - use semantic predicate to reduce local ambiguities for acceping MINUS before NUMBER (see bottom of CompModule in Alloy code)
 
 
 
+## A small exception
+Cup doesn't call nod() when parsing the Command rule, causing Command to accept names with the '$' symbol. 
+So it accepts:
+```
+sig A  {} 
+run $s { some A } for 1
+```
+Running it in the Alloy Analyzer throws error 
+```
+Executing "run $s for 1"
+
+Fatal Error: the solver ran out of stack space!
+Try simplifying your model or reducing the scope,
+or increase stack under the Options menu.
+
+An error has occurred!
+```
+This is probably a bug in CUP, and the Antlr Grammar will not accept this. 
 
 
 
-
-
-# Previous attempts at Expr
-`
+## Previous attempts at Expr
+```
 expr 			: exprNoSeq 
 				| exprNoSeq SEQUENCE_OP expr
 				;
@@ -236,6 +254,14 @@ baseExpr		: number
 
 // ____________________________________
 
+@parser::members {
+	// for handling ITE as two binop exprs
+	private final java.util.Deque<Boolean> _inImpliesRHSStack = new java.util.ArrayDeque<>();
+	{_inImpliesRHSStack.push(Boolean.FALSE);}
+	private boolean inImpliesRHS() { return _inImpliesRHSStack.peek(); }
+	private void pushImpliesRHS(boolean v) { _inImpliesRHSStack.push(v); }
+	private void popImpliesRHS() { _inImpliesRHSStack.pop(); }
+}
 expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                                               		# unaryOpValue
 				| expr PRIME                                                        								# primeValue // exprVar
 				| expr DOT expr                                                   									# dotJoin 
@@ -279,5 +305,5 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
 						FUNMIN | FUNMAX | FUNNEXT | number | STRING_LITERAL) 										# builtinValue	 // exprConstant and exprVar
                 ;
 
-`
+```
 
