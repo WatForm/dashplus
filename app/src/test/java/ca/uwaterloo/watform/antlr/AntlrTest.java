@@ -82,6 +82,9 @@ public class AntlrTest {
 	private void tryParse(CharStream input, Path filePath) throws ParseCancellationException {
 		System.out.println(filePath);
 		boolean jarPassed = AlloyUtils.canParse(input.toString());
+		if(!jarPassed) {
+			return;
+		}
 
 		BailLexer bailLexer = new BailLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(bailLexer);

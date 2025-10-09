@@ -29,3 +29,68 @@
 
 - Source: https://docs.gradle.org/current/userguide/antlr_plugin.html
 
+# Changes made 
+Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/org.alloytools.alloy.parser/src/main/antlr/Alloy.g4
+
+## Small changes
+- optional ( qname '.' ) in 'funPara' and 'predPara'
+- optional qnames inside [] in importPara
+- optional params in box rule of 'expr'
+- optional block/bar in comprehension
+
+- accept '<=' for less or equal to; this is consistent with CUP
+- accept leading, trailing, and sequence of commas in 'sigPara' 
+- accept trailing comma in 'arguments'
+- accept round brackets for macroPara
+- accept more symbols for the PRIME token
+- accept PRIVATE in more places
+- accept one more rule (uses EQUAL) in varDecl
+
+- added tokens for arithmatic operations, ExprConstant (Alloy AST), so they are not just 'qname'
+    - added tokens for 'none', 'univ', 'iden', 'fun/min', 'fun/max', 'fun/next', STRING_LITERAL,
+                    'int', 'Int', 'steps'
+    - see builtinValue in 'expr'
+    - grammar is updated to still accept builtins in places like 'sigRef'
+- added tokens for 'pred/totalOrder' and 'disj'
+- added the 'until' keyword to the temporal operators
+- added bit shift operators
+- added 'seq' expr as a rule (https://alloytools.org/quickguide/seq.html)
+
+- removed the two 'boxValue' rules in 'value'
+
+## Large changes
+- separated the different uses of the 'multiplicity' keywords, so it's clear what they are being used for from context
+- 'formula' concatenation in 'block': 
+    - Before: optional AND operators, but this causes precedence issues with other binop rules
+    - After: mandatory AND operators, but accept sequence of 'formula's in 'block'; this is consistent with CUP
+- merged 'formula' and 'value', because 'ite' causes indirect left recursion between formula and value (starts with 'formula' in a 'value ite')
+    - merged them to expr and ANTLR handles direct left recursion
+    - need to check for usage of grammar rules (formula or value) in parser-visitors
+    - most rules can be distinguished by the operator tokens alone, with exceptions like 'ite', 'let', 'join' and 'box', and 'parenthesis'
+- break expr into three parts (expr1, implies, expr2)
+    - because a 'ite's (ternary op) precedence is not handled correctly in the midst of other binop rules
+    - other options tried:
+        - 1) break ITE into 2 binop: implies and else. 
+            - Use semantic predicate to reject some cases (using else outside of an ite)
+            - parser-visitors need to check and restructure the ast, because some cases cannot be handled by semantic predicates alone
+                such as (t => t else t => t), and (f=>t else f => f else t)
+        - 2) copying CUP; have a distinct expr type for every rule
+            - relationExpr is right recursive and ANTLR is very inefficient when parsing relationExpr with other left recursive rules; frequent timeouts
+    - by breaking it into three parts 
+        - we can always parse ITE correctly and quickly
+        - maintain correct precedence
+        - ANTLR handles direct left recursion quickly
+        - we don't get indirect left recursion because rules with lower precedence (expr2) do not parse higher precedence rules (expr1 & implies) as subexpressions
+- replaced ('expr' 'qname' 'expr') 
+    - changed to (expr ('fun/mul' | 'fun/div' | 'fun/rem') expr) and (expr ('+' | '-' | 'fun/add' | 'fun/sub') expr)
+    - placed them in the correct order of precedence
+- refactored string literals in grammar rules to tokens; this improves reusability and makes ANTLR generated Context classes easier to work with
+- reordered WS and COMMENT tokens
+    - changed OPTION_COMMENT to properly handle 
+        `
+            --
+            sig S {}
+        `
+- reject PLUS in front of NUMBER to be used as positive number
+    - use semantic predicate to reduce local ambiguities for acceping MINUS before NUMBER (see bottom of CompModule in Alloy code)
+

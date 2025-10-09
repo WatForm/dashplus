@@ -5,12 +5,12 @@ grammar Alloy;
 }
 
 @parser::members {
-	// for ITE
-	private final java.util.Deque<Boolean> _inImpliesRHSStack = new java.util.ArrayDeque<>();
-	{_inImpliesRHSStack.push(Boolean.FALSE);}
-	private boolean inImpliesRHS() { return _inImpliesRHSStack.peek(); }
-	private void pushImpliesRHS(boolean v) { _inImpliesRHSStack.push(v); }
-	private void popImpliesRHS() { _inImpliesRHSStack.pop(); }
+	// for handling ITE as two binop exprs
+	// private final java.util.Deque<Boolean> _inImpliesRHSStack = new java.util.ArrayDeque<>();
+	// {_inImpliesRHSStack.push(Boolean.FALSE);}
+	// private boolean inImpliesRHS() { return _inImpliesRHSStack.peek(); }
+	// private void pushImpliesRHS(boolean v) { _inImpliesRHSStack.push(v); }
+	// private void popImpliesRHS() { _inImpliesRHSStack.pop(); }
 
 
 	// for accepting MINUS before NUMBER
