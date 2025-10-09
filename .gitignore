@@ -18,4 +18,5 @@ bin/
 # test resources
 app/src/test/resources/antlr/catalyst/catalyst-corpus.zip
 app/src/test/resources/antlr/catalyst/catalyst-corpus
+app/src/test/resources/antlr/catalyst/timeout
 
