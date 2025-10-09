@@ -5,14 +5,6 @@ grammar Alloy;
 }
 
 @parser::members {
-	// for handling ITE as two binop exprs
-	// private final java.util.Deque<Boolean> _inImpliesRHSStack = new java.util.ArrayDeque<>();
-	// {_inImpliesRHSStack.push(Boolean.FALSE);}
-	// private boolean inImpliesRHS() { return _inImpliesRHSStack.peek(); }
-	// private void pushImpliesRHS(boolean v) { _inImpliesRHSStack.push(v); }
-	// private void popImpliesRHS() { _inImpliesRHSStack.pop(); }
-
-
 	// for accepting MINUS before NUMBER
 	boolean prevTokenIsAllowed() {
 		// see bottom of CompFilter
@@ -27,12 +19,11 @@ grammar Alloy;
 	}
 }
 
+// ____________________________________
+
 alloyFile
     : paragraph*
     ;
-
-
-
 
 paragraph       : modulePara
                 | importPara
@@ -47,6 +38,7 @@ paragraph       : modulePara
                 ;
 
 
+// ____________________________________
 
 modulePara      : MODULE qname ( LBRACK moduleArg (COMMA moduleArg)* RBRACK )? ;
 moduleArg       : (EXACTLY? name ) ;
@@ -101,7 +93,7 @@ expr1			: bind																				# bindExpr
 				| expr1 (IFF_ARR | IFF)  bind														# iffBindExpr
 				| expr1 (OR_BAR | OR) expr1															# orExpr
 				| expr1 (OR_BAR | OR) bind															# orBindExpr
-				| expr1 SEQUENCE_OP expr1															# stateSeqExpr
+				| <assoc=right> expr1 SEQUENCE_OP expr1												# stateSeqExpr
 				| expr1 SEQUENCE_OP bind															# stateSeqBindExpr
 				| impliesExpr																		# impExprOpenOrClose
 				;
@@ -133,7 +125,7 @@ expr2			: expr2 PRIME																				# primeExpr
 				| expr2 RNGRESTR bind																		# rangBindExpr
 				| expr2 DOMRESTR expr2																		# domExpr
 				| expr2 DOMRESTR bind																		# domBindExpr
-				| expr2 arrow expr2																			# arrowExpr
+				| <assoc=right> expr2 arrow expr2															# arrowExpr
 				| expr2 arrow bind																			# arrowBindExpr
 				| expr2 INTERSECTION expr2 																	# intersectExpr
 				| expr2 INTERSECTION bind																	# intersectBindExpr
@@ -185,6 +177,7 @@ name            : ID;
 
 
 
+// ____________________________________
 
 assignment		: name EQUAL expr1 ;
 body			: block  		# blockBody
@@ -207,6 +200,7 @@ multiplicity    : LONE | ONE | SOME |  SET ;
 
 
 
+// ____________________________________
 
 
 
@@ -353,6 +347,8 @@ FUNNEXT : 'fun/next' ;
 
 RARROW : '->' ; 
 
+// ____________________________________
+
 LINE_COMMENT    : '//' ~[\r\n]* -> skip ;
 OPTION_COMMENT 	: '--'
 				  ( ~[0-9\r\n] ~[\r\n]*           // case: -- followed by text
@@ -365,6 +361,7 @@ OPTION_COMMENT 	: '--'
 BLOCK_COMMENT   : '/*' .*? '*/' -> skip ;
 WS              : [ \t\r\n]+ -> skip ;
 
+// ____________________________________
 
 ID              : [\p{L}\p{Lo}_%][\p{L}\p{Lo}_"0-9%]*;
 NUMBER          : [0-9]+ | '0x' [0-9A-Fa-f]+ | '0b' [10]+ ;
