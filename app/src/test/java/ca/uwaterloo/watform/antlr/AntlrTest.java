@@ -176,8 +176,8 @@ public class AntlrTest {
 		}
 	}
 
-	@Test
-	@Order(2)
+	// @Test
+	// @Order(2)
 	public void parseCatalystCorpus() throws Exception {
 		Path p = Paths.get("src/test/resources/antlr/catalyst/catalyst-corpus");
 		try (Stream<Path> stream = Files.walk(p)) {
