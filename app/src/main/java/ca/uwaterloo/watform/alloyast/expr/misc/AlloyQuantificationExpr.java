@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr.misc;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.misc.*;
+import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,17 +16,17 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
 
 	public enum Op {
 		/** all a,b:x | formula */
-		ALL("all"),
+		ALL(AlloyStrings.ALL),
 		/** no a,b:x | formula */
-		NO("no"),
+		NO(AlloyStrings.NO),
 		/** lone a,b:x | formula */
-		LONE("lone"),
+		LONE(AlloyStrings.LONE),
 		/** one a,b:x | formula */
-		ONE("one"),
+		ONE(AlloyStrings.ONE),
 		/** some a,b:x | formula */
-		SOME("some"),
+		SOME(AlloyStrings.SOME),
 		/** sum a,b:x | intExpression */
-		SUM("sum");
+		SUM(AlloyStrings.SUM);
 		// Alloy has Comprehension here too, but that's made into a separate
 		// class here
 
