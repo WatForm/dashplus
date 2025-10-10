@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.test;
 
 import ca.uwaterloo.watform.alloyinterface.AlloyUtils;
 import ca.uwaterloo.watform.antlr.*;
+import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,7 +14,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Stream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
@@ -148,22 +148,19 @@ public class AntlrTestUtil {
 		}
 	}
 
-	public void recurParseDir(Path p, long timeoutMs) throws Exception {
+	public void recurParseDir(Path dir, long timeoutMs) throws Exception {
 		this.clearAllLists();
 		this.timeoutMs = timeoutMs;
-		try (Stream<Path> stream = Files.walk(p)) {
-			stream
-					.filter(Files::isRegularFile)
-					.filter(path -> path.toString().endsWith(".als"))
-					.forEach(
-							filePath -> {
-								try {
-									CharStream input = CharStreams.fromPath(filePath);
-									this.tryParseWithTimeout(input, filePath);
-								} catch (IOException e) {
-									throw new RuntimeException("Failed to read file: " + filePath, e);
-								}
-							});
+		try {
+			List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
+			for (Path filePath : paths) {
+				try {
+					CharStream input = CharStreams.fromPath(filePath);
+					this.tryParseWithTimeout(input, filePath);
+				} catch (IOException e) {
+					throw new RuntimeException("Failed to read file: " + filePath, e);
+				}
+			}
 		} finally {
 			this.printResults();
 		}

@@ -38,4 +38,9 @@ public final class Pos {
 		this.rowEnd = this.rowStart; // single token usually on one line
 		this.colEnd = this.colStart + token.getText().length();
 	}
+
+	@Override
+	public String toString() {
+		return "Pos: \n  rowStart: " + this.rowStart + "\n  colStart: " + this.colStart + "\n  rowEnd: " + this.rowEnd + "\n  colEnd: " + this.colEnd + "\n";
+	}
 }

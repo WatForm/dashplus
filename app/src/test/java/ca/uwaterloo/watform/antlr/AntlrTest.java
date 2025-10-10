@@ -19,7 +19,7 @@ public class AntlrTest {
 
 	@Test
 	@Order(2)
-	public void parse() throws Exception {
+	public void parseUtil() throws Exception {
 		Path p = Paths.get("src/test/resources/antlr/util");
 		new AntlrTestUtil().recurParseDir(p, 5*1000);
 	}
