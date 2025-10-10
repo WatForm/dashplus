@@ -5,6 +5,7 @@ import antlr.generated.AlloyParser;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParsVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.*;
 
 public final class AlloyParagraphParsVis extends AlloyBaseVisitor<AlloyParagraph> {
 	private final AlloyExprParsVis exprParsVis;
@@ -36,7 +37,7 @@ public final class AlloyParagraphParsVis extends AlloyBaseVisitor<AlloyParagraph
 	public AlloyParagraph visitFactPara(AlloyParser.FactParaContext ctx) {
 		System.out.println("Visiting FactParaContext");
 		AlloyExpr b = this.exprParsVis.visit(ctx.block());
-		return new AlloyFactPara();
+		return new AlloyFactPara(new Pos(ctx));
 	}
 
 	@Override
