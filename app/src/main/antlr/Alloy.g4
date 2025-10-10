@@ -25,6 +25,10 @@ alloyFile
     : paragraph*
     ;
 
+
+// ____________________________________
+// Paragraph
+
 paragraph       : modulePara
                 | importPara
                 | macroPara
@@ -36,9 +40,6 @@ paragraph       : modulePara
                 | assertPara
                 | labelCommandPara
                 ;
-
-
-// ____________________________________
 
 modulePara      : MODULE qname ( LBRACK moduleArg (COMMA moduleArg)* RBRACK )? ;
 moduleArg       : (EXACTLY? name ) ;
@@ -83,9 +84,10 @@ typescope       : EXACTLY? number (DOT DOT (number (COLON number)?)?)?
 					(qname | SIGINT | INT | SEQ | STRING | STEPS | NONE) ;
 
 // ____________________________________
+// Expr
 
 bind			: LET assignment ( COMMA assignment )* body 														# let
-				| (ALL | NO | SOME | LONE | ONE | SUM) decl ( COMMA decl )* body 									# bindingQuantifierExpr
+				| (ALL | NO | SOME | LONE | ONE | SUM) decl ( COMMA decl )* body 									# quantificationExpr
 				;
 
 expr1			: bind																				# bindExpr
@@ -163,7 +165,7 @@ expr2			: expr2 PRIME																				# primeExpr
 				;
 
 // ____________________________________
-
+// Misc
 
 block           : LBRACE expr1* RBRACE ;
 decl            : DISJ? names COLON DISJ? cardinality? expr1 ;
@@ -178,6 +180,7 @@ name            : ID;
 
 
 // ____________________________________
+// Expr Helpers
 
 assignment		: name EQUAL expr1 ;
 body			: block  		# blockBody
@@ -201,11 +204,10 @@ multiplicity    : LONE | ONE | SOME |  SET ;
 
 
 // ____________________________________
-
-
-
-
 // LEXER 
+
+
+
 MODULE : 'module' ;
 OPEN : 'open' ;
 AS : 'as' ;

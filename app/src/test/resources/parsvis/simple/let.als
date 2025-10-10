@@ -1,4 +1,3 @@
-fact nameOfFact {
-	A.B' and #D
+fact letEx {
 	let A = A, B = B { A and B }
 }

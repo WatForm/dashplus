@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr;
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
 import antlr.generated.AlloyParser.AssignmentContext;
+import antlr.generated.AlloyParser.DeclContext;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.helper.*;
 import ca.uwaterloo.watform.alloyast.expr.join.*;
@@ -28,6 +29,60 @@ final class UnexpectedTokenException extends IllegalStateException {
 }
 
 public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
+
+	// ============================
+	// Bind
+	// ============================
+	@Override 
+	public AlloyExpr visitBindExpr(AlloyParser.BindExprContext ctx) {
+		return this.visit(ctx.bind());
+	}
+
+	@Override 
+	public AlloyExpr visitLet(AlloyParser.LetContext ctx) {
+		System.out.println("Visiting LetContext");
+
+		AlloyAsnExprHelperParsVis asnExprHelperParsVis = new AlloyAsnExprHelperParsVis();
+
+		for (AssignmentContext asn : ctx.assignment()) {
+			asnExprHelperParsVis.visit(asn);
+		}
+
+		this.visit(ctx.body());
+
+		return new AlloyLetExpr(new Pos(ctx));
+	}
+
+	@Override 
+	public AlloyExpr visitQuantificationExpr(AlloyParser.QuantificationExprContext ctx) {
+		System.out.println("Visiting QuantificationExprContext");
+		for(DeclContext declCtx : ctx.decl()) {
+			this.visit(declCtx);
+		}
+
+		this.visit(ctx.body());
+
+		if(null != ctx.ALL()) {
+			return new AlloyQuantificationExpr(new Pos(ctx), AlloyQuantificationExpr.Op.ALL);
+		} else if (null != ctx.NO()) {
+			return new AlloyQuantificationExpr(new Pos(ctx), AlloyQuantificationExpr.Op.NO);
+		} else if (null != ctx.SOME()) {
+			return new AlloyQuantificationExpr(new Pos(ctx), AlloyQuantificationExpr.Op.SOME);
+		} else if (null != ctx.LONE()) {
+			return new AlloyQuantificationExpr(new Pos(ctx), AlloyQuantificationExpr.Op.LONE);
+		} else if (null != ctx.ONE()) {
+			return new AlloyQuantificationExpr(new Pos(ctx), AlloyQuantificationExpr.Op.ONE);
+		} else if (null != ctx.SUM()) {
+			return new AlloyQuantificationExpr(new Pos(ctx), AlloyQuantificationExpr.Op.SUM);
+		} else {
+			throw new UnexpectedTokenException(ctx);
+		}
+	}
+
+
+
+
+
 	@Override
 	public AlloyExpr visitAndExpr(AlloyParser.AndExprContext ctx) {
 		System.out.println("Visiting AndExprContext");
@@ -100,21 +155,6 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 		System.out.println("Visiting PrimeExprContext");
 		this.visit(ctx.expr2());
 		return new AlloyPrimeExpr(new Pos(ctx));
-	}
-
-	@Override 
-	public AlloyExpr visitLet(AlloyParser.LetContext ctx) {
-		System.out.println("Visiting LetContext");
-
-		AlloyAsnExprHelperParsVis asnExprHelperParsVis = new AlloyAsnExprHelperParsVis();
-
-		for (AssignmentContext asn : ctx.assignment()) {
-			asnExprHelperParsVis.visit(asn);
-		}
-
-		this.visit(ctx.body());
-
-		return new AlloyLetExpr(new Pos(ctx));
 	}
 
 	// ============================
