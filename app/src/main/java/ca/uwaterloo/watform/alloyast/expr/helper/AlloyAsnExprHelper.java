@@ -4,6 +4,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyASTNode;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
+import ca.uwaterloo.watform.utils.AlloyStrings;
 
 public final class AlloyAsnExprHelper extends AlloyASTNode {
 	public final AlloyNameExpr name;
@@ -21,5 +22,10 @@ public final class AlloyAsnExprHelper extends AlloyASTNode {
 
 	public AlloyExpr getExpr() {
 		return expr;
+	}
+
+	@Override 
+	public String toString() {
+		return name.toString() + AlloyStrings.EQUAL + expr.toString();
 	}
 }

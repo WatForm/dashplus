@@ -4,14 +4,21 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.misc.*;
 import ca.uwaterloo.watform.utils.*;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class AlloyQuantificationExpr extends AlloyExpr {
-	public List<AlloyDecl> declList = new ArrayList<>();
+	public final Op op;
+	public final List<AlloyDecl> decls;
+	public final AlloyExpr body;
 
-	public AlloyQuantificationExpr(Pos pos, AlloyQuantificationExpr.Op op) {
+	public AlloyQuantificationExpr(
+			Pos pos, AlloyQuantificationExpr.Op op, List<AlloyDecl> decls, AlloyExpr body) {
 		super(pos);
+		this.op = op;
+		this.decls = Collections.unmodifiableList(decls);
+		this.body = body;
 	}
 
 	public enum Op {
@@ -45,5 +52,17 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
 		public final String toString() {
 			return label;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return op.toString()
+				+ " "
+				+ decls.stream().map(AlloyDecl::toString).collect(Collectors.joining(", "))
+				+ " "
+				+ AlloyStrings.BAR
+				+ " "
+				+ body.toString()
+				+ " ";
 	}
 }

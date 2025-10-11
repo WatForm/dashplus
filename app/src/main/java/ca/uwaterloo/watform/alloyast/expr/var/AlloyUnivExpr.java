@@ -2,9 +2,10 @@ package ca.uwaterloo.watform.alloyast.expr.var;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.utils.AlloyStrings;
 
-public final class AlloyUnivExpr extends AlloyExpr {
+public final class AlloyUnivExpr extends AlloyVarExpr {
 	public AlloyUnivExpr(Pos pos) {
-		super(pos);
+		super(pos, AlloyStrings.UNIV);
 	}
 }
