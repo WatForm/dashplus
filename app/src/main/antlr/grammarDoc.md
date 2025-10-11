@@ -14,6 +14,7 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
 - accept more symbols for the PRIME token
 - accept PRIVATE in more places
 - accept one more rule (uses EQUAL) in varDecl
+- accept '::' as DOT token
 
 - added tokens for arithmatic operations, ExprConstant (Alloy AST), etc so they are not just 'qname'
     - see bottom of 'expr2'

@@ -177,8 +177,8 @@ names          	: name ( COMMA name )* ;
 // Expr Helpers
 
 number          : ({prevTokenIsAllowed()}? MINUS)? NUMBER ;
-qname           : name 					# simpleQname
-				| (ID | THIS) SLASH ID  # qualifiedQname
+qname           : name 										# simpleQname
+				| (SEQ | THIS | name) SLASH name (SLASH name)* 	# qualifiedQname
 				;
 name            : ID;
 
@@ -257,7 +257,7 @@ REFL_TRANS_CLOS : '*' ;
 PRIME : '\'' | '‘' | '’';
 
 
-DOT : '.' ;
+DOT : '.' | '::' ; // see Alloy.lex
 
 INTERSECTION : '&' ; 
 
