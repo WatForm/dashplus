@@ -10,4 +10,7 @@ public abstract class AlloyASTNode {
 	public final Pos getPos() {
 		return this.pos;
 	}
+
+	// @Override
+	// public abstract String toString();
 }

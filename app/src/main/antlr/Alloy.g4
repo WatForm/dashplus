@@ -171,16 +171,17 @@ block           : LBRACE expr1* RBRACE ;
 decl            : DISJ? names COLON DISJ? cardinality? expr1 ;
 names          	: name ( COMMA name )* ;
 
+
+
+// ____________________________________
+// Expr Helpers
+
 number          : ({prevTokenIsAllowed()}? MINUS)? NUMBER ;
 qname           : name 					# simpleQname
 				| (ID | THIS) SLASH ID  # qualifiedQname
 				;
 name            : ID;
 
-
-
-// ____________________________________
-// Expr Helpers
 
 assignment		: name EQUAL expr1 ;
 body			: block  		# blockBody
