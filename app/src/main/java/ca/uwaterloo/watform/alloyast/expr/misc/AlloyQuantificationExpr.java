@@ -9,19 +9,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class AlloyQuantificationExpr extends AlloyExpr {
-	public final Op op;
+	public final Quant quant;
 	public final List<AlloyDecl> decls;
 	public final AlloyExpr body;
 
 	public AlloyQuantificationExpr(
-			Pos pos, AlloyQuantificationExpr.Op op, List<AlloyDecl> decls, AlloyExpr body) {
+			Pos pos, AlloyQuantificationExpr.Quant quant, List<AlloyDecl> decls, AlloyExpr body) {
 		super(pos);
-		this.op = op;
+		this.quant = quant;
 		this.decls = Collections.unmodifiableList(decls);
 		this.body = body;
 	}
 
-	public enum Op {
+	public enum Quant {
 		/** all a,b:x | formula */
 		ALL(AlloyStrings.ALL),
 		/** no a,b:x | formula */
@@ -39,7 +39,7 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
 
 		public final String label;
 
-		private Op(String label) {
+		private Quant(String label) {
 			this.label = label;
 		}
 
@@ -56,7 +56,7 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
 
 	@Override
 	public String toString() {
-		return op.toString()
+		return quant.toString()
 				+ " "
 				+ decls.stream().map(AlloyDecl::toString).collect(Collectors.joining(", "))
 				+ " "

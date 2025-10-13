@@ -12,29 +12,14 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParsVis;
 import java.util.ArrayList;
 import java.util.List;
-import org.antlr.v4.runtime.ParserRuleContext;
-
-final class UnexpectedTokenException extends IllegalStateException {
-	public UnexpectedTokenException(ParserRuleContext ctx) {
-		super(buildMessage(ctx));
-	}
-
-	private static String buildMessage(ParserRuleContext ctx) {
-		return "Unexpected token at line"
-				+ ctx.getStart().getLine()
-				+ ", position "
-				+ ctx.getStart().getCharPositionInLine()
-				+ ": "
-				+ ctx.getText();
-	}
-}
 
 public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 
 	// ============================
-	// Bind (incomplete: AlloyDecl needs ptrs, toString and its own parsVis
+	// Bind
 	// ============================
 	@Override
 	public AlloyExpr visitBindExpr(AlloyParser.BindExprContext ctx) {
@@ -58,30 +43,31 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	public AlloyExpr visitQuantificationExpr(AlloyParser.QuantificationExprContext ctx) {
 		System.out.println("Visiting QuantificationExprContext");
 		List<AlloyDecl> decls = new ArrayList<>();
+		AlloyDeclParsVis declParsVis = new AlloyDeclParsVis();
 		for (DeclContext declCtx : ctx.decl()) {
-			decls.add((AlloyDecl) this.visit(declCtx));
+			decls.add((AlloyDecl) declParsVis.visit(declCtx));
 		}
 
 		if (null != ctx.ALL()) {
 			return new AlloyQuantificationExpr(
-					new Pos(ctx), AlloyQuantificationExpr.Op.ALL, decls, this.visit(ctx.body()));
+					new Pos(ctx), AlloyQuantificationExpr.Quant.ALL, decls, this.visit(ctx.body()));
 		} else if (null != ctx.NO()) {
 			return new AlloyQuantificationExpr(
-					new Pos(ctx), AlloyQuantificationExpr.Op.NO, decls, this.visit(ctx.body()));
+					new Pos(ctx), AlloyQuantificationExpr.Quant.NO, decls, this.visit(ctx.body()));
 		} else if (null != ctx.SOME()) {
 			return new AlloyQuantificationExpr(
-					new Pos(ctx), AlloyQuantificationExpr.Op.SOME, decls, this.visit(ctx.body()));
+					new Pos(ctx), AlloyQuantificationExpr.Quant.SOME, decls, this.visit(ctx.body()));
 		} else if (null != ctx.LONE()) {
 			return new AlloyQuantificationExpr(
-					new Pos(ctx), AlloyQuantificationExpr.Op.LONE, decls, this.visit(ctx.body()));
+					new Pos(ctx), AlloyQuantificationExpr.Quant.LONE, decls, this.visit(ctx.body()));
 		} else if (null != ctx.ONE()) {
 			return new AlloyQuantificationExpr(
-					new Pos(ctx), AlloyQuantificationExpr.Op.ONE, decls, this.visit(ctx.body()));
+					new Pos(ctx), AlloyQuantificationExpr.Quant.ONE, decls, this.visit(ctx.body()));
 		} else if (null != ctx.SUM()) {
 			return new AlloyQuantificationExpr(
-					new Pos(ctx), AlloyQuantificationExpr.Op.SUM, decls, this.visit(ctx.body()));
+					new Pos(ctx), AlloyQuantificationExpr.Quant.SUM, decls, this.visit(ctx.body()));
 		} else {
-			throw new UnexpectedTokenException(ctx);
+			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
 
@@ -107,24 +93,26 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	}
 
 	// ============================
-	// Dot (incomplete: needs DISJ, PRED_TOTALORDER, etc)
+	// Dot
 	// ============================
 	@Override
 	public AlloyExpr visitDotBuiltinExpr(AlloyParser.DotBuiltinExprContext ctx) {
 		System.out.println("Visiting DotBuiltinExprContext");
-		this.visit(ctx.expr2());
 		if (null != ctx.DISJ()) {
-			this.visit(ctx.DISJ());
+			return new AlloyDotJoinExpr(
+					new Pos(ctx), this.visit(ctx.expr2()), new AlloySumExpr(new Pos(ctx.DISJ())));
 		} else if (null != ctx.PRED_TOTALORDER()) {
-			this.visit(ctx.PRED_TOTALORDER());
+			return new AlloyDotJoinExpr(
+					new Pos(ctx), this.visit(ctx.expr2()), new AlloySumExpr(new Pos(ctx.PRED_TOTALORDER())));
 		} else if (null != ctx.INT()) {
-			this.visit(ctx.INT());
+			return new AlloyDotJoinExpr(
+					new Pos(ctx), this.visit(ctx.expr2()), new AlloySumExpr(new Pos(ctx.INT())));
 		} else if (null != ctx.SUM()) {
-			this.visit(ctx.SUM());
+			return new AlloyDotJoinExpr(
+					new Pos(ctx), this.visit(ctx.expr2()), new AlloySumExpr(new Pos(ctx.SUM())));
 		} else {
-			throw new UnexpectedTokenException(ctx);
+			throw new AlloyUnexpTokenEx(ctx);
 		}
-		return new AlloyDotJoinExpr(new Pos(ctx));
 	}
 
 	@Override
@@ -146,13 +134,13 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	public AlloyExpr visitNumericExpr(AlloyParser.NumericExprContext ctx) {
 		System.out.println("Visiting NumericExprContext");
 		if (null != ctx.CARDINALITY()) {
-			return new AlloyCardinalityExpr(new Pos(ctx), this.visit(ctx.expr2()));
+			return new AlloyNumCardinalityExpr(new Pos(ctx), this.visit(ctx.expr2()));
 		} else if (null != ctx.SUM()) {
-			return new AlloyCardinalityExpr(new Pos(ctx));
+			return new AlloyNumSumExpr(new Pos(ctx), this.visit(ctx.expr2()));
 		} else if (null != ctx.INT()) {
-			return new AlloyCardinalityExpr(new Pos(ctx));
+			return new AlloyNumIntExpr(new Pos(ctx), this.visit(ctx.expr2()));
 		} else {
-			throw new UnexpectedTokenException(ctx);
+			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
 
@@ -192,7 +180,7 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 		} else if (null != ctx.NONE()) {
 			return new AlloyNoneExpr(new Pos(ctx));
 		} else {
-			throw new UnexpectedTokenException(ctx);
+			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
 
@@ -211,6 +199,11 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	public AlloyExpr visitQualifiedQname(AlloyParser.QualifiedQnameContext ctx) {
 		System.out.println("Visiting QualifiedQnameContext");
 		List<AlloyNameExpr> nameExprList = new ArrayList<>();
+		if (null != ctx.SEQ()) {
+			nameExprList.add(new AlloyThisExpr(new Pos(ctx.SEQ())));
+		} else if (null != ctx.THIS()) {
+			nameExprList.add(new AlloyThisExpr(new Pos(ctx.THIS())));
+		}
 		for (NameContext nameCtx : ctx.name()) {
 			nameExprList.add((AlloyNameExpr) this.visit(nameCtx));
 		}

@@ -168,7 +168,7 @@ expr2			: expr2 PRIME																				# primeExpr
 // Misc
 
 block           : LBRACE expr1* RBRACE ;
-decl            : DISJ? names COLON DISJ? cardinality? expr1 ;
+decl            : DISJ? names COLON DISJ? (LONE | ONE | SOME | SET)? expr1 ;// LONEOF, ONEOF, SOMEOF, SETOF
 names          	: name ( COMMA name )* ;
 
 
@@ -192,13 +192,13 @@ arrow			: multiplicity? RARROW multiplicity? ;
 comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;	
 
 // x: lone S in declarations
-cardinality     : LONE | ONE | SOME | SET ; // LONEOF, ONEOF, SOMEOF, SETOF
+// cardinality     : LONE | ONE | SOME | SET ; // LONEOF, ONEOF, SOMEOF, SETOF
 
 // no S means is the relation S empty
-cardinalityConstraint		: LONE |  ONE | SOME | NO | SET ; 
+// cardinalityConstraint		: LONE |  ONE | SOME | NO | SET ; 
 
 // some x: e | F means is F true for some binding of the variable x
-bindingQuantifier		: LONE | ONE | SOME | NO | ALL ; 
+// bindingQuantifier		: LONE | ONE | SOME | NO | ALL ; 
 
 multiplicity    : LONE | ONE | SOME |  SET ;
 
