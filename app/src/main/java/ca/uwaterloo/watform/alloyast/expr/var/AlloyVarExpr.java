@@ -14,4 +14,9 @@ public abstract class AlloyVarExpr extends AlloyExpr {
 	public String getLabel() {
 		return label;
 	}
+
+	@Override
+	public String toString() {
+		return this.label;
+	}
 }

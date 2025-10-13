@@ -1,22 +1,20 @@
 package ca.uwaterloo.watform.alloyast.misc;
 
+import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyASTNode;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.utils.AlloyStrings;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import ca.uwaterloo.watform.alloyast.*;
 
 public final class AlloyDecl extends AlloyASTNode {
 	public final Boolean disj1;
 	public final List<AlloyNameExpr> names;
 	public final Boolean disj2;
-	public final Quant quant;
+	public final Optional<Quant> quant;
 	public final AlloyExpr expr;
 
 	public enum Quant {
@@ -48,7 +46,13 @@ public final class AlloyDecl extends AlloyASTNode {
 		}
 	}
 
-	public AlloyDecl(Pos pos, Boolean disj1, List<AlloyNameExpr> names, Boolean disj2, AlloyDecl.Quant quant, AlloyExpr expr) {
+	public AlloyDecl(
+			Pos pos,
+			Boolean disj1,
+			List<AlloyNameExpr> names,
+			Boolean disj2,
+			Optional<AlloyDecl.Quant> quant,
+			AlloyExpr expr) {
 		super(pos);
 		this.disj1 = disj1;
 		this.names = Collections.unmodifiableList(names);
@@ -59,19 +63,13 @@ public final class AlloyDecl extends AlloyASTNode {
 
 	@Override
 	public String toString() {
-		return " "  
-				+ (this.disj1 ? "disj" : "")
+		return (this.disj1 ? "disj" : "")
 				+ names.stream().map(AlloyNameExpr::toString).collect(Collectors.joining(", "))
 				+ " "
 				+ AlloyStrings.COLON
 				+ " "
-				+ (this.disj2 ? "disj" : "")
-				+ " "
-				+ this.quant.toString()
-				+ " "
-				+ this.expr.toString()
-				+ " "
-			;
+				+ (this.disj2 ? "disj " : "")
+				+ this.quant.map(q -> q.toString() + " ").orElse("")
+				+ this.expr.toString();
 	}
 }
-

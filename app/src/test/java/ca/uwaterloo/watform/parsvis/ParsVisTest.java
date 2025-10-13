@@ -23,8 +23,10 @@ public class ParsVisTest {
 		List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
 		for (Path filePath : paths) {
 			try {
+
+				System.out.println(filePath);
 				AlloyFile af = ParserUtil.parse(filePath);
-				System.out.println(af.getPos());
+				System.out.println(af.toString());
 
 			} catch (IOException e) {
 				System.err.println("Error reading file: " + e.getMessage());

@@ -62,7 +62,6 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
 				+ " "
 				+ AlloyStrings.BAR
 				+ " "
-				+ body.toString()
-				+ " ";
+				+ body.toString();
 	}
 }

@@ -24,9 +24,20 @@ public final class AlloyBlock extends AlloyExpr {
 	public String toString() {
 		return AlloyStrings.LBRACE
 				+ "\n"
-				+ exprs.stream().map(AlloyExpr::toString).collect(Collectors.joining("\n"))
+				+ AlloyStrings.TAB
+				+ exprs.stream()
+						.map(AlloyExpr::toString)
+						.collect(Collectors.joining("\n" + AlloyStrings.TAB))
 				+ "\n"
 				+ AlloyStrings.RBRACE
 				+ "\n";
+	}
+
+	public String toStringInline() {
+		return AlloyStrings.LBRACE
+				+ exprs.stream()
+						.map(AlloyExpr::toString)
+						.collect(Collectors.joining("\n" + AlloyStrings.TAB))
+				+ AlloyStrings.RBRACE;
 	}
 }

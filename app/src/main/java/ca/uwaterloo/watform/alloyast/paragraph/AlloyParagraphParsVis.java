@@ -2,10 +2,9 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParsVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.*;
 
 public final class AlloyParagraphParsVis extends AlloyBaseVisitor<AlloyParagraph> {
 	private final AlloyExprParsVis exprParsVis;
@@ -22,34 +21,55 @@ public final class AlloyParagraphParsVis extends AlloyBaseVisitor<AlloyParagraph
 	}
 
 	@Override
-	public AlloyParagraph visitModulePara(AlloyParser.ModuleParaContext ctx) { return visitChildren(ctx); }
-
-	@Override 
-	public AlloyParagraph visitImportPara(AlloyParser.ImportParaContext ctx) { return visitChildren(ctx); }
-
-	@Override
-	public AlloyParagraph visitSigPara(AlloyParser.SigParaContext ctx) { return visitChildren(ctx); }
+	public AlloyParagraph visitModulePara(AlloyParser.ModuleParaContext ctx) {
+		return visitChildren(ctx);
+	}
 
 	@Override
-	public AlloyParagraph visitEnumPara(AlloyParser.EnumParaContext ctx) { return visitChildren(ctx); }
+	public AlloyParagraph visitImportPara(AlloyParser.ImportParaContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	@Override
+	public AlloyParagraph visitSigPara(AlloyParser.SigParaContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	@Override
+	public AlloyParagraph visitEnumPara(AlloyParser.EnumParaContext ctx) {
+		return visitChildren(ctx);
+	}
 
 	@Override
 	public AlloyParagraph visitFactPara(AlloyParser.FactParaContext ctx) {
 		System.out.println("Visiting FactParaContext");
-		AlloyExpr b = this.exprParsVis.visit(ctx.block());
-		return new AlloyFactPara(new Pos(ctx));
+		String factName = "";
+		if (null != ctx.name()) {
+			factName = ctx.name().ID().getText();
+		} else if (null != ctx.STRING_LITERAL()) {
+			factName = ctx.STRING_LITERAL().getText();
+		}
+		return new AlloyFactPara(
+				new Pos(ctx), factName, (AlloyBlock) this.exprParsVis.visit(ctx.block()));
 	}
 
 	@Override
-	public AlloyParagraph visitPredPara(AlloyParser.PredParaContext ctx) { return visitChildren(ctx); }
+	public AlloyParagraph visitPredPara(AlloyParser.PredParaContext ctx) {
+		return visitChildren(ctx);
+	}
 
 	@Override
-	public AlloyParagraph visitFunPara(AlloyParser.FunParaContext ctx) { return visitChildren(ctx); }
+	public AlloyParagraph visitFunPara(AlloyParser.FunParaContext ctx) {
+		return visitChildren(ctx);
+	}
 
 	@Override
-	public AlloyParagraph visitAssertPara(AlloyParser.AssertParaContext ctx) { return visitChildren(ctx); }
+	public AlloyParagraph visitAssertPara(AlloyParser.AssertParaContext ctx) {
+		return visitChildren(ctx);
+	}
 
 	@Override
-	public AlloyParagraph visitMacroPara(AlloyParser.MacroParaContext ctx) { return visitChildren(ctx); }
+	public AlloyParagraph visitMacroPara(AlloyParser.MacroParaContext ctx) {
+		return visitChildren(ctx);
+	}
 }
-

@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class AlloyDeclParsVis extends AlloyBaseVisitor<AlloyDecl> {
 	@Override
@@ -20,17 +21,17 @@ public final class AlloyDeclParsVis extends AlloyBaseVisitor<AlloyDecl> {
 			names.add((AlloyNameExpr) exprParsVis.visit(nameCtx));
 		}
 		final Boolean disj2 = null != ctx.DISJ(1) ? true : false;
-		AlloyDecl.Quant quant;
+		Optional<AlloyDecl.Quant> quant;
 		if(null != ctx.LONE()) {
-			quant = AlloyDecl.Quant.LONE;
+			quant = Optional.of(AlloyDecl.Quant.LONE);
 		} else if(null != ctx.ONE()) {
-			quant = AlloyDecl.Quant.ONE;
+			quant = Optional.of(AlloyDecl.Quant.ONE);
 		} else if(null != ctx.SOME()) {
-			quant = AlloyDecl.Quant.SOME;
+			quant = Optional.of(AlloyDecl.Quant.SOME);
 		} else if (null != ctx.SET()) {
-			quant = AlloyDecl.Quant.SET;
+			quant = Optional.of(AlloyDecl.Quant.SET);
 		} else {
-			throw new AlloyUnexpTokenEx(ctx);
+			quant = Optional.empty();
 		}
 		return new AlloyDecl(new Pos(ctx), disj1, names, disj2, quant, exprParsVis.visit(ctx.expr1()));
 	}

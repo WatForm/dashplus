@@ -8,7 +8,7 @@ public final class AlloyUnexpTokenEx extends IllegalStateException {
 	}
 
 	private static String buildMessage(ParserRuleContext ctx) {
-		return "Unexpected token at line"
+		return "Unexpected token at line "
 				+ ctx.getStart().getLine()
 				+ ", position "
 				+ ctx.getStart().getCharPositionInLine()

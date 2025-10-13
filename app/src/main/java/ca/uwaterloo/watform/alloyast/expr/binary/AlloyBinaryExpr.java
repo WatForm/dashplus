@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 
 public abstract class AlloyBinaryExpr extends AlloyExpr {
@@ -29,6 +30,9 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
 
 	@Override
 	public String toString() {
-		return left.toString() + op + right.toString();
+		if(AlloyStrings.DOT == this.op) {
+			return left.toString() + op + right.toString();
+		}
+		return left.toString() + " " + op + " " + right.toString();
 	}
 }

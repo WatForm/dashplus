@@ -4,6 +4,7 @@ public final class AlloyStrings {
 	private AlloyStrings() {
 	}
 
+	public static final String TAB = "    ";
 	public static final String MODULE = "module";
 	public static final String OPEN = "open";
 	public static final String AS = "as";
