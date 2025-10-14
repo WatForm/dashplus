@@ -115,12 +115,30 @@ impliesExprOpen 	: expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE impliesExpr
     				| expr2 (RFATARROW | IMPLIES) bind                                  			# impBindExpr
     				;
 
-expr2			: expr2 PRIME																				# primeExpr
-				| (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr2 												# transExpr
-				| (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) bind												# transBind
-				| expr2 DOT (DISJ | PRED_TOTALORDER | INT | SUM) 											# dotBuiltinExpr
-		 		| expr2 DOT expr2																			# dotExpr 
-		 		| expr2 DOT bind																			# dotBindExpr
+baseExpr		: number																					# numberExpr
+				| STRING_LITERAL																			# strLiteralExpr
+				| IDEN																						# idenExpr
+				| THIS																						# thisExpr
+				| FUNMIN																					# funMinExpr
+				| FUNMAX																					# funMaxExpr
+				| FUNNEXT																					# funNextExpr
+				| LPAREN expr1 RPAREN																		# parenExpr
+				| sigRef																					# sigRefExpr
+				| AT name																					# atNameExpr
+				| block																						# blockExpr
+				| LBRACE decl ( COMMA decl )* body? RBRACE              									# comprehensionExpr
+				;
+
+transExpr		: (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) (transExpr | baseExpr | bind) ;											
+
+primeExpr		: primeExpr PRIME																			
+				| (baseExpr | transExpr | bind) PRIME													
+				;
+
+expr2			: baseExpr																					# baseExprFromExpr2
+				| transExpr																					# transExprFromExpr2
+				| primeExpr																					# primeExprFromExpr2
+				| expr2 DOT (DISJ | PRED_TOTALORDER | INT | SUM | baseExpr | transExpr | primeExpr | bind) 	# dotExpr
 				| expr2 LBRACK (expr1 (COMMA expr1)*)? RBRACK 												# bracketExpr
 				| (DISJ | PRED_TOTALORDER | INT | SUM) LBRACK (expr1 (COMMA expr1)*)? RBRACK				# bracketBuiltinExpr
 				| expr2 RNGRESTR expr2																		# rangExpr
@@ -149,19 +167,6 @@ expr2			: expr2 PRIME																				# primeExpr
 				| expr2 (UNTIL | SINCE | TRIGGERED | RELEASES)  bind										# binTempBindExpr
 				| expr2 (AND_AMP | AND)  expr2																# andExpr
 				| expr2 (AND_AMP | AND)  bind																# andBindExpr
-
-				| number																					# numberExpr
-				| STRING_LITERAL																			# strLiteralExpr
-				| IDEN																						# idenExpr
-				| THIS																						# thisExpr
-				| FUNMIN																					# funMinExpr
-				| FUNMAX																					# funMaxExpr
-				| FUNNEXT																					# funNextExpr
-				| LPAREN expr1 RPAREN																		# parenExpr
-				| sigRef																					# sigRefExpr
-				| AT name																					# atNameExpr
-				| block																						# blockExpr
-				| LBRACE decl ( COMMA decl )* body? RBRACE              									# comprehensionExpr
 				;
 
 // ____________________________________

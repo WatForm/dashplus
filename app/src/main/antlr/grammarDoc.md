@@ -34,7 +34,7 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
     - merged them to expr and ANTLR handles direct left recursion
     - need to check for usage of grammar rules (formula or value) in parser-visitors
     - most rules can be distinguished by the operator tokens alone, with exceptions like 'ite', 'let', 'join' and 'bracket', and 'paren'
-- break expr into three parts (expr1, implies, expr2)
+- break expr into three parts (expr1, implies, expr2); baseExpr, transExpr, primeExpr explained next
     - because 'ite's (ternary op) precedence is not handled correctly in the midst of other binop rules
     - other options tried:
         - 1) copying CUP; have a distinct expr type for every rule
@@ -49,6 +49,9 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
         - maintain correct precedence
         - ANTLR handles direct left recursion quickly
         - we don't get indirect left recursion because rules with higher precedence (expr2) do not parse lower precedence rules (expr1 & implies) as subexpressions
+- baseExpr, transExpr, primeExpr are not in expr2:
+    - If they were all in expr2, Antlr always tries (expr2 DOT expr2) before (expr DOT (DIS | ...))
+    - so `a.Int \n b.Sum` is always parsed as `a.(Int b.SUM)`; we have rule (CARDINALITY | SUM | INT) expr2
 - replaced ('expr' 'qname' 'expr') 
     - changed to (expr ('fun/mul' | 'fun/div' | 'fun/rem') expr) and (expr ('+' | '-' | 'fun/add' | 'fun/sub') expr)
     - placed them in the correct order of precedence
