@@ -16,7 +16,6 @@ public final class AlloyParagraphParsVis extends AlloyBaseVisitor<AlloyParagraph
 
 	@Override
 	public AlloyParagraph visitParagraph(AlloyParser.ParagraphContext ctx) {
-		System.out.println("Visiting ParagraphContext");
 		return this.visit(ctx.getChild(0));
 	}
 
@@ -42,7 +41,6 @@ public final class AlloyParagraphParsVis extends AlloyBaseVisitor<AlloyParagraph
 
 	@Override
 	public AlloyParagraph visitFactPara(AlloyParser.FactParaContext ctx) {
-		System.out.println("Visiting FactParaContext");
 		String factName = "";
 		if (null != ctx.name()) {
 			factName = ctx.name().ID().getText();

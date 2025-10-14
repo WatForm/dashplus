@@ -12,7 +12,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 public final class AlloyAsnExprHelperParsVis extends AlloyBaseVisitor<AlloyAsnExprHelper> {
 	@Override
 	public AlloyAsnExprHelper visitAssignment(AlloyParser.AssignmentContext ctx) {
-		System.out.println("Visiting AssignmentContext");
 		AlloyExprParsVis exprParsVis = new AlloyExprParsVis();
 
 		return new AlloyAsnExprHelper(new Pos(ctx), 

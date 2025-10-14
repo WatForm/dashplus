@@ -2,7 +2,11 @@ package ca.uwaterloo.watform.parsvis;
 
 import ca.uwaterloo.watform.parser.*;
 import ca.uwaterloo.watform.utils.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -25,8 +29,18 @@ public class ParsVisTest {
 			try {
 
 				System.out.println(filePath);
+				System.out.println("--- File Content ---");
+
+				String originalStr = Files.readString(filePath);
+
+				System.out.println(originalStr);
+
 				AlloyFile af = ParserUtil.parse(filePath);
+				String parsedStr = af.toString();
+
+				System.out.println("--- Parse & toString ---");
 				System.out.println(af.toString());
+				System.out.println("--------------------");
 
 			} catch (IOException e) {
 				System.err.println("Error reading file: " + e.getMessage());

@@ -1,3 +1,7 @@
 fact andEx {
-	A.B' and #D
+	a and b
+}
+
+fact andEx {
+	a and b and c
 }

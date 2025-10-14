@@ -14,7 +14,6 @@ public final class AlloyFileParsVis extends AlloyBaseVisitor<AlloyFile> {
 
 	@Override
 	public AlloyFile visitAlloyFile(AlloyParser.AlloyFileContext ctx) {
-		System.out.println("Visiting AlloyFileContext");
 		AlloyParagraphParsVis ppv = new AlloyParagraphParsVis();
 		List<AlloyParagraph> paragraphs = new ArrayList<>();
 		for (AlloyParser.ParagraphContext parCtx : ctx.paragraph()) {
