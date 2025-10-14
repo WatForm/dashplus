@@ -18,9 +18,9 @@ import java.util.List;
 
 public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 
-	// ============================
+	// ====================================================================================
 	// Bind
-	// ============================
+	// ====================================================================================
 	@Override
 	public AlloyExpr visitBindExpr(AlloyParser.BindExprContext ctx) {
 		return this.visit(ctx.bind());
@@ -69,17 +69,30 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 		}
 	}
 
-	// ============================
+	// ====================================================================================
 	// expr1
+	// ====================================================================================
+	
 	// ============================
+	// Iff
+	// ============================
+	@Override
+	public AlloyIffExpr visitIffExpr(AlloyParser.IffExprContext ctx) {
+		return new AlloyIffExpr(new Pos(ctx), this.visit(ctx.expr1(0)), this.visit(ctx.expr1(1)));
+	}
 
-	// ============================
+	@Override
+	public AlloyIffExpr visitIffBindExpr(AlloyParser.IffBindExprContext ctx) {
+		return new AlloyIffExpr(new Pos(ctx), this.visit(ctx.expr1()), this.visit(ctx.bind()));
+	}
+
+	// ====================================================================================
 	// impliesExpr
-	// ============================
+	// ====================================================================================
 
-	// ============================
+	// ====================================================================================
 	// expr2
-	// ============================
+	// ====================================================================================
 
 	// ============================
 	// PrimeExpr
