@@ -24,8 +24,10 @@ public final class AlloyAsnExprHelper extends AlloyASTNode {
 		return expr;
 	}
 
-	@Override 
-	public String toString() {
-		return name.toString() + AlloyStrings.EQUAL + expr.toString();
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+		sb.append(name.toString());
+		sb.append(AlloyStrings.EQUAL);
+		expr.toString(sb, indent);
 	}
 }

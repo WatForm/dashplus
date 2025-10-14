@@ -16,7 +16,7 @@ public abstract class AlloyVarExpr extends AlloyExpr {
 	}
 
 	@Override
-	public String toString() {
-		return this.label;
+	public void toString(StringBuilder sb, int indent) {
+		sb.append(this.getLabel());
 	}
 }

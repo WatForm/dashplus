@@ -55,13 +55,20 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
 	}
 
 	@Override
-	public String toString() {
-		return quant.toString()
-				+ " "
-				+ decls.stream().map(AlloyDecl::toString).collect(Collectors.joining(", "))
-				+ " "
-				+ AlloyStrings.BAR
-				+ " "
-				+ body.toString();
+	public void toString(StringBuilder sb, int indent) {
+		sb.append(this.quant.toString());
+		sb.append(AlloyStrings.SPACE);
+		boolean first = true;
+		for(AlloyDecl decl : this.decls) {
+			if(! first) {
+				sb.append(", ");
+			}
+			decl.toString(sb, indent);
+			first = false;
+		}
+		sb.append(AlloyStrings.SPACE);
+		sb.append(AlloyStrings.BAR);
+		sb.append(AlloyStrings.SPACE);
+		this.body.toString(sb, indent);
 	}
 }

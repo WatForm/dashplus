@@ -5,7 +5,6 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.utils.AlloyStrings;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class AlloyBlock extends AlloyExpr {
 	public final List<AlloyExpr> exprs;
@@ -21,23 +20,21 @@ public final class AlloyBlock extends AlloyExpr {
 	}
 
 	@Override
-	public String toString() {
-		return AlloyStrings.LBRACE
-				+ "\n"
-				+ AlloyStrings.TAB
-				+ exprs.stream()
-						.map(AlloyExpr::toString)
-						.collect(Collectors.joining("\n" + AlloyStrings.TAB))
-				+ "\n"
-				+ AlloyStrings.RBRACE
-				+ "\n";
-	}
+	public void toString(StringBuilder sb, int indent) {
+		String tabs = "";
+		for (int i = 0; i < indent; i++) {
+			tabs += AlloyStrings.TAB;
+		}
 
-	public String toStringInline() {
-		return AlloyStrings.LBRACE
-				+ exprs.stream()
-						.map(AlloyExpr::toString)
-						.collect(Collectors.joining("\n" + AlloyStrings.TAB))
-				+ AlloyStrings.RBRACE;
+		sb.append(AlloyStrings.LBRACE);
+
+		for (AlloyExpr expr : this.exprs) {
+			sb.append(AlloyStrings.NEWLINE + tabs+AlloyStrings.TAB);
+			expr.toString(sb, indent + 1);
+		}
+		sb.append(AlloyStrings.NEWLINE);
+
+		sb.append(tabs);
+		sb.append(AlloyStrings.RBRACE);
 	}
 }

@@ -8,12 +8,11 @@ import ca.uwaterloo.watform.utils.AlloyStrings;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public final class AlloyDecl extends AlloyASTNode {
-	public final Boolean disj1;
+	public final boolean disj1;
 	public final List<AlloyNameExpr> names;
-	public final Boolean disj2;
+	public final boolean disj2;
 	public final Optional<Quant> quant;
 	public final AlloyExpr expr;
 
@@ -62,14 +61,21 @@ public final class AlloyDecl extends AlloyASTNode {
 	}
 
 	@Override
-	public String toString() {
-		return (this.disj1 ? "disj" : "")
-				+ names.stream().map(AlloyNameExpr::toString).collect(Collectors.joining(", "))
-				+ " "
-				+ AlloyStrings.COLON
-				+ " "
-				+ (this.disj2 ? "disj " : "")
-				+ this.quant.map(q -> q.toString() + " ").orElse("")
-				+ this.expr.toString();
+	public void toString(StringBuilder sb, int indent) {
+		sb.append((this.disj1 ? "disj " : ""));
+		boolean first = true;
+		for (AlloyNameExpr name : this.names) {
+			if (!first) {
+				sb.append(", ");
+			}
+			name.toString(sb, indent);
+			first = false;
+		}
+		sb.append(AlloyStrings.SPACE);
+		sb.append(AlloyStrings.COLON);
+		sb.append(AlloyStrings.SPACE);
+		sb.append((this.disj2 ? "disj " : ""));
+		sb.append(this.quant.map(q -> q.toString() + " ").orElse(""));
+		this.expr.toString(sb, indent);
 	}
 }

@@ -23,7 +23,8 @@ public abstract class AlloyUnaryExpr extends AlloyExpr  {
 	}
 
 	@Override
-	public String toString() {
-		return op + sub.toString();
+	public void toString(StringBuilder sb, int indent) {
+		sb.append(op);
+		this.sub.toString(sb, indent);
 	}
 }

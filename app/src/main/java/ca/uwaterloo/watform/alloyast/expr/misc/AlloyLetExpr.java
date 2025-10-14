@@ -6,7 +6,6 @@ import ca.uwaterloo.watform.alloyast.expr.helper.*;
 import ca.uwaterloo.watform.utils.AlloyStrings;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class AlloyLetExpr extends AlloyExpr {
 	public final List<AlloyAsnExprHelper> asns;
@@ -25,14 +24,20 @@ public final class AlloyLetExpr extends AlloyExpr {
 	}
 
 	@Override
-	public String toString() {
-		return AlloyStrings.LET
-				+ " "
-				+ asns.stream().map(AlloyAsnExprHelper::toString).collect(Collectors.joining(", "))
-				+ " "
-				+ AlloyStrings.BAR
-				+ " "
-				+ body.toString()
-				+ " ";
+	public void toString(StringBuilder sb, int indent) {
+		sb.append(AlloyStrings.LET);
+		sb.append(AlloyStrings.SPACE);
+		boolean first = true;
+		for (AlloyAsnExprHelper asn : asns) {
+			if (!first) {
+				sb.append(", ");
+			}
+			asn.toString(sb, indent);
+			first = false;
+		}
+		sb.append(AlloyStrings.SPACE);
+		sb.append(AlloyStrings.BAR);
+		sb.append(AlloyStrings.SPACE);
+		this.body.toString(sb, indent);
 	}
 }

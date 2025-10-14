@@ -12,5 +12,11 @@ public abstract class AlloyASTNode {
 	}
 
 	@Override
-	public abstract String toString();
+	public final String toString() {
+		StringBuilder sb = new StringBuilder();
+		toString(sb, 0);
+		return sb.toString();
+	}
+
+	public abstract void toString(StringBuilder sb, int indent);
 }

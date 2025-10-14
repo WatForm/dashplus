@@ -5,6 +5,9 @@ public final class AlloyStrings {
 	}
 
 	public static final String TAB = "    ";
+	public static final String SPACE = " ";
+	public static final String NEWLINE = "\n";
+
 	public static final String MODULE = "module";
 	public static final String OPEN = "open";
 	public static final String AS = "as";

@@ -1,10 +1,10 @@
 package ca.uwaterloo.watform.alloyast;
 
+import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.utils.AlloyStrings;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import ca.uwaterloo.watform.alloyast.paragraph.*;
 
 public final class AlloyFile extends AlloyASTNode {
 	public String filename = "";
@@ -16,8 +16,10 @@ public final class AlloyFile extends AlloyASTNode {
 	}
 
 	@Override
-	public String toString() {
-		return paragraphs.stream().map(AlloyParagraph::toString).collect(Collectors.joining("\n"));
+	public void toString(StringBuilder sb, int indent) {
+		for (AlloyParagraph p : paragraphs) {
+			p.toString(sb, indent);
+			sb.append(AlloyStrings.NEWLINE);
+		}
 	}
 }
-

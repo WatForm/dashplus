@@ -2,8 +2,8 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyFactPara extends AlloyParagraph {
 	public final String factName;
@@ -16,7 +16,8 @@ public final class AlloyFactPara extends AlloyParagraph {
 	}
 
 	@Override
-	public String toString() {
-		return "fact " + factName + " " + this.block.toString();
+	public void toString(StringBuilder sb, int indent) {
+		sb.append("fact " + factName + " ");
+		this.block.toString(sb, indent);
 	}
 }
