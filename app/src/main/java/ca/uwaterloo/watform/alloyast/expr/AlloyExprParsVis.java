@@ -115,6 +115,63 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	// ====================================================================================
 	// impliesExpr
 	// ====================================================================================
+	@Override
+	public AlloyExpr visitImpExprOpenOrClose(AlloyParser.ImpExprOpenOrCloseContext ctx) {
+		return this.visit(ctx.impliesExpr());
+	}
+
+	@Override
+	public AlloyExpr visitImpExprCloseFromImplies(AlloyParser.ImpExprCloseFromImpliesContext ctx) {
+		return this.visit(ctx.impliesExprClose());
+	}
+
+	@Override
+	public AlloyExpr visitImpExprOpenFromImplies(AlloyParser.ImpExprOpenFromImpliesContext ctx) {
+		return this.visit(ctx.impliesExprOpen());
+	}
+
+	@Override
+	public AlloyIteExpr visitIteCloseExpr(AlloyParser.IteCloseExprContext ctx) {
+		return new AlloyIteExpr(
+				new Pos(ctx),
+				this.visit(ctx.expr2()),
+				this.visit(ctx.impliesExprClose(0)),
+				this.visit(ctx.impliesExprClose(1)));
+	}
+
+	@Override
+	public AlloyIteExpr visitIteBindCloseExpr(AlloyParser.IteBindCloseExprContext ctx) {
+		return new AlloyIteExpr(
+				new Pos(ctx),
+				this.visit(ctx.expr2()),
+				this.visit(ctx.impliesExprClose()),
+				this.visit(ctx.bind()));
+	}
+
+	@Override
+	public AlloyExpr visitExpr2FromImpClose(AlloyParser.Expr2FromImpCloseContext ctx) {
+		return this.visit(ctx.expr2());
+	}
+
+	@Override
+	public AlloyIteExpr visitIteOpenExpr(AlloyParser.IteOpenExprContext ctx) {
+		return new AlloyIteExpr(
+				new Pos(ctx),
+				this.visit(ctx.expr2()),
+				this.visit(ctx.impliesExprClose()),
+				this.visit(ctx.impliesExprOpen()));
+	}
+
+	@Override
+	public AlloyImpliesExpr visitImpExpr(AlloyParser.ImpExprContext ctx) {
+		return new AlloyImpliesExpr(
+				new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.impliesExpr()));
+	}
+
+	@Override
+	public AlloyImpliesExpr visitImpBindExpr(AlloyParser.ImpBindExprContext ctx) {
+		return new AlloyImpliesExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+	}
 
 	// ====================================================================================
 	// baseExpr

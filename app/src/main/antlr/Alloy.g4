@@ -105,7 +105,7 @@ impliesExpr 	: impliesExprClose																	# impExprCloseFromImplies
     			| impliesExprOpen																	# impExprOpenFromImplies
     			;
 
-impliesExprClose 	: expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE impliesExprClose  			# iterCloseExpr
+impliesExprClose 	: expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE impliesExprClose  			# iteCloseExpr
 					| expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE bind             			# iteBindCloseExpr
 					| expr2																			# expr2FromImpClose
 					;
