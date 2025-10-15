@@ -47,7 +47,6 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
 			return label;
 		}
 
-		/** Returns the human readable label for this operator */
 		@Override
 		public final String toString() {
 			return label;

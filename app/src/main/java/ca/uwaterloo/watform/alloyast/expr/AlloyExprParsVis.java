@@ -379,6 +379,62 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	}
 
 	// ============================
+	// ArrowExpr
+	// ============================
+	private AlloyArrowExpr.Mul parseMultiplicity(AlloyParser.MultiplicityContext multCtx) {
+		if (multCtx == null) {
+			return AlloyArrowExpr.Mul.DEFAULTSET;
+		}
+		if (multCtx.LONE() != null)
+			return AlloyArrowExpr.Mul.LONE;
+		if (multCtx.SOME() != null)
+			return AlloyArrowExpr.Mul.SOME;
+		if (multCtx.ONE() != null)
+			return AlloyArrowExpr.Mul.ONE;
+		if (multCtx.SET() != null)
+			return AlloyArrowExpr.Mul.SET;
+		return AlloyArrowExpr.Mul.DEFAULTSET;
+	}
+
+	@Override
+	public AlloyArrowExpr visitArrowExpr(AlloyParser.ArrowExprContext ctx) {
+		AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.DEFAULTSET;
+		AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.DEFAULTSET;
+
+		int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
+
+		for (AlloyParser.MultiplicityContext multCtx : ctx.arrow().multiplicity()) {
+			if (multCtx.getStart().getStartIndex() < arrowPosition) {
+				mul1 = parseMultiplicity(multCtx);
+			} else {
+				mul2 = parseMultiplicity(multCtx);
+			}
+		}
+
+		return new AlloyArrowExpr(
+				new Pos(ctx), this.visit(ctx.expr2(0)), mul1, mul2, this.visit(ctx.expr2(1)));
+	}
+
+	@Override
+	public AlloyArrowExpr visitArrowBindExpr(AlloyParser.ArrowBindExprContext ctx) {
+		AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.DEFAULTSET;
+		AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.DEFAULTSET;
+
+		int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
+
+		for (AlloyParser.MultiplicityContext multCtx : ctx.arrow().multiplicity()) {
+			if (multCtx.getStart().getStartIndex() < arrowPosition) {
+				mul1 = parseMultiplicity(multCtx);
+			} else {
+				mul2 = parseMultiplicity(multCtx);
+			}
+		}
+
+		return new AlloyArrowExpr(
+				new Pos(ctx), this.visit(ctx.expr2()), mul1, mul2, this.visit(ctx.bind()));
+	}
+
+	// ============================
 	// NumericExpr
 	// ============================
 	@Override
