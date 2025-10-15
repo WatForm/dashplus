@@ -435,6 +435,22 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 	}
 
 	// ============================
+	// IntersExpr
+	// ============================
+	@Override
+	public AlloyIntersExpr visitIntersectExpr(AlloyParser.IntersectExprContext ctx) {
+		return new AlloyIntersExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+	}
+
+	@Override
+	public AlloyIntersExpr visitIntersectBindExpr(AlloyParser.IntersectBindExprContext ctx) {
+		return new AlloyIntersExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+	}
+
+
+
+
+	// ============================
 	// NumericExpr
 	// ============================
 	@Override
