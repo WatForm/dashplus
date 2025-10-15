@@ -352,6 +352,33 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	}
 
 	// ============================
+	// RngRestr
+	// ============================
+
+	@Override
+	public AlloyRngRestrExpr visitRangExpr(AlloyParser.RangExprContext ctx) {
+		return new AlloyRngRestrExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+	}
+
+	@Override
+	public AlloyRngRestrExpr visitRangBindExpr(AlloyParser.RangBindExprContext ctx) {
+		return new AlloyRngRestrExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+	}
+
+	// ============================
+	// DomRestr
+	// ============================
+	@Override
+	public AlloyDomRestrExpr visitDomExpr(AlloyParser.DomExprContext ctx) {
+		return new AlloyDomRestrExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+	}
+
+	@Override
+	public AlloyDomRestrExpr visitDomBindExpr(AlloyParser.DomBindExprContext ctx) {
+		return new AlloyDomRestrExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+	}
+
+	// ============================
 	// NumericExpr
 	// ============================
 	@Override
@@ -399,7 +426,8 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	// ============================
 
 	// Nothing to Override
-	// save the trouble of switch statements in other visits; just call this.visit(getChild(int))
+	// save the trouble of switch statements in other visits; just call
+	// this.visit(getChild(int))
 	public AlloyExpr visitTerminal(TerminalNode tn) {
 		int tokenType = tn.getSymbol().getType();
 
