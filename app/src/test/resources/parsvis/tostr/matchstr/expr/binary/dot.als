@@ -14,6 +14,19 @@ fact {
 }
 
 fact {
+	a.@a
+}
+
+fact {
+	a.~a
+}
+
+fact {
+	a.a'
+}
+
+fact {
 	a.all x : X | x
 	a.let b=c | b
 }
+
