@@ -13,8 +13,10 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParsVis;
+import ca.uwaterloo.watform.utils.ParserUtil;
 import java.util.ArrayList;
 import java.util.List;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 
@@ -234,12 +236,10 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 
 	@Override
 	public AlloyComprExpr visitComprehensionExpr(AlloyParser.ComprehensionExprContext ctx) {
-		List<AlloyDecl> decls = new ArrayList<>();
-		AlloyDeclParsVis declParsVis = new AlloyDeclParsVis();
-		for (DeclContext declCtx : ctx.decl()) {
-			decls.add((AlloyDecl) declParsVis.visit(declCtx));
-		}
-		return new AlloyComprExpr(new Pos(ctx), decls, this.visit(ctx.body()));
+		return new AlloyComprExpr(
+				new Pos(ctx),
+				ParserUtil.visitAll(ctx.decl(), new AlloyDeclParsVis()),
+				this.visit(ctx.body()));
 	}
 
 	// ============================
@@ -247,11 +247,7 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	// ============================
 	@Override
 	public AlloyBlock visitBlock(AlloyParser.BlockContext ctx) {
-		List<AlloyExpr> exprs = new ArrayList<>();
-		for (AlloyParser.Expr1Context exprCtx : ctx.expr1()) {
-			exprs.add(this.visit(exprCtx));
-		}
-		return new AlloyBlock(new Pos(ctx), exprs);
+		return new AlloyBlock(new Pos(ctx), ParserUtil.visitAll(ctx.expr1(), this));
 	}
 
 	// ============================
@@ -336,23 +332,23 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	// ============================
 	@Override
 	public AlloyDotExpr visitDotExpr(AlloyParser.DotExprContext ctx) {
-		if (null != ctx.DISJ()) {
-			return new AlloyDotExpr(
-					new Pos(ctx), this.visit(ctx.expr2()), new AlloyDisjExpr(new Pos(ctx.DISJ())));
-		} else if (null != ctx.PRED_TOTALORDER()) {
-			return new AlloyDotExpr(
-					new Pos(ctx),
-					this.visit(ctx.expr2()),
-					new AlloyPredTotOrdExpr(new Pos(ctx.PRED_TOTALORDER())));
-		} else if (null != ctx.INT()) {
-			return new AlloyDotExpr(
-					new Pos(ctx), this.visit(ctx.expr2()), new AlloyIntExpr(new Pos(ctx.INT())));
-		} else if (null != ctx.SUM()) {
-			return new AlloyDotExpr(
-					new Pos(ctx), this.visit(ctx.expr2()), new AlloySumExpr(new Pos(ctx.SUM())));
-		} else {
-			return new AlloyDotExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.getChild(2)));
-		}
+		return new AlloyDotExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.getChild(2)));
+	}
+
+	// ============================
+	// BracketExpr
+	// ============================
+
+	@Override
+	public AlloyBracketExpr visitBracketExpr(AlloyParser.BracketExprContext ctx) {
+		return new AlloyBracketExpr(
+				new Pos(ctx), this.visit(ctx.expr2()), ParserUtil.visitAll(ctx.expr1(), this));
+	}
+
+	@Override
+	public AlloyBracketExpr visitBracketBuiltinExpr(AlloyParser.BracketBuiltinExprContext ctx) {
+		return new AlloyBracketExpr(
+				new Pos(ctx), this.visit(ctx.getChild(0)), ParserUtil.visitAll(ctx.expr1(), this));
 	}
 
 	// ============================
@@ -396,5 +392,38 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	@Override
 	public AlloyExpr visitBarBody(AlloyParser.BarBodyContext ctx) {
 		return this.visit(ctx.expr1());
+	}
+
+	// ============================
+	// Terminal Nodes
+	// ============================
+
+	// Nothing to Override
+	// save the trouble of switch statements in other visits; just call this.visit(getChild(int))
+	public AlloyExpr visitTerminal(TerminalNode tn) {
+		int tokenType = tn.getSymbol().getType();
+
+		switch (tokenType) {
+			case AlloyParser.DISJ:
+				return new AlloyDisjExpr(new Pos(tn));
+
+			case AlloyParser.PRED_TOTALORDER:
+				return new AlloyPredTotOrdExpr(new Pos(tn));
+
+			case AlloyParser.INT:
+				return new AlloyIntExpr(new Pos(tn));
+
+			case AlloyParser.SUM:
+				return new AlloySumExpr(new Pos(tn));
+
+			case AlloyParser.SEQ:
+				return new AlloySeqExpr(new Pos(tn));
+
+			case AlloyParser.THIS:
+				return new AlloyThisExpr(new Pos(tn));
+
+			default:
+				throw new AlloyUnexpTokenEx(tn);
+		}
 	}
 }

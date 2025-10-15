@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.utils;
 
+import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyLexer;
 import antlr.generated.AlloyParser;
 import ca.uwaterloo.watform.alloyast.*;
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
@@ -34,9 +36,9 @@ public final class ParserUtil {
 
 	public static AlloyFile parse(Path filePath) throws Exception {
 		CharStream input = CharStreams.fromPath(filePath);
-		AlloyLexer lexer = new AlloyLexer(input);
+		BailLexer lexer = new BailLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		AlloyParser parser = new AlloyParser(tokens);
+		BailParser parser = new BailParser(tokens);
 		ParseTree antlrAST = parser.alloyFile();
 
 		AlloyFileParsVis afpv = new AlloyFileParsVis();
@@ -44,4 +46,14 @@ public final class ParserUtil {
 		af.filename = filePath.toString();
 		return af;
 	}
+
+    public static <Context extends ParseTree, AstNode extends AlloyASTNode> List<AstNode> visitAll(
+            List<Context> contexts,
+            AlloyBaseVisitor<? extends AstNode> visitor
+    ) {
+        return contexts.stream()
+                       .map(visitor::visit)
+                       .map(result -> (AstNode) result) 
+                       .collect(Collectors.toList());
+    }
 }

@@ -3,5 +3,5 @@ fact {
 }
 
 fact {
-	all x: X {some x}
+	all x: X {x}
 }
