@@ -4,17 +4,17 @@ import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
 import antlr.generated.AlloyParser.NameContext;
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExprParsVis;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public final class AlloyDeclParsVis extends AlloyBaseVisitor<AlloyDecl> {
+public final class AlloyDeclParseVis extends AlloyBaseVisitor<AlloyDecl> {
 	@Override
 	public AlloyDecl visitDecl(AlloyParser.DeclContext ctx) {
-		AlloyExprParsVis exprParsVis = new AlloyExprParsVis();
+		AlloyExprParseVis exprParsVis = new AlloyExprParseVis();
 		final Boolean disj1 = null != ctx.DISJ(0) ? true : false;
 		List<AlloyNameExpr> names = new ArrayList<>();
 		for (NameContext nameCtx : ctx.names().name()) {

@@ -5,7 +5,7 @@ import antlr.generated.AlloyLexer;
 import antlr.generated.AlloyParser;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyast.AlloyFileParsVis;
+import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.antlr.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,7 +41,7 @@ public final class ParserUtil {
 		BailParser parser = new BailParser(tokens);
 		ParseTree antlrAST = parser.alloyFile();
 
-		AlloyFileParsVis afpv = new AlloyFileParsVis();
+		AlloyFileParseVis afpv = new AlloyFileParseVis();
 		AlloyFile af = afpv.visit(antlrAST);
 		af.filename = filePath.toString();
 		return af;

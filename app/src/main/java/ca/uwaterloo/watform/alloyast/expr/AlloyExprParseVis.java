@@ -12,13 +12,13 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParsVis;
+import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParseVis;
 import ca.uwaterloo.watform.utils.ParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
+public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
 	// ====================================================================================
 	// Bind
@@ -30,7 +30,7 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 
 	@Override
 	public AlloyLetExpr visitLet(AlloyParser.LetContext ctx) {
-		AlloyAsnExprHelperParsVis asnExprHelperParsVis = new AlloyAsnExprHelperParsVis();
+		AlloyAsnExprHelperParseVis asnExprHelperParsVis = new AlloyAsnExprHelperParseVis();
 		List<AlloyAsnExprHelper> asns = new ArrayList<>();
 		for (AssignmentContext asn : ctx.assignment()) {
 			asns.add(asnExprHelperParsVis.visit(asn));
@@ -42,7 +42,7 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	public AlloyQuantificationExpr visitQuantificationExpr(
 			AlloyParser.QuantificationExprContext ctx) {
 		List<AlloyDecl> decls = new ArrayList<>();
-		AlloyDeclParsVis declParsVis = new AlloyDeclParsVis();
+		AlloyDeclParseVis declParsVis = new AlloyDeclParseVis();
 		for (DeclContext declCtx : ctx.decl()) {
 			decls.add((AlloyDecl) declParsVis.visit(declCtx));
 		}
@@ -238,7 +238,7 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	public AlloyComprExpr visitComprehensionExpr(AlloyParser.ComprehensionExprContext ctx) {
 		return new AlloyComprExpr(
 				new Pos(ctx),
-				ParserUtil.visitAll(ctx.decl(), new AlloyDeclParsVis()),
+				ParserUtil.visitAll(ctx.decl(), new AlloyDeclParseVis()),
 				this.visit(ctx.body()));
 	}
 

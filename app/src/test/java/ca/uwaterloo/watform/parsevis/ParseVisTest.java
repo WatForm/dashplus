@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.parsvis;
+package ca.uwaterloo.watform.parsevis;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,12 +22,12 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ParsVisTest {
+public class ParseVisTest {
 
 	@Test
 	@Order(1)
 	public void parseToStr() throws Exception {
-		Path dir = Paths.get("src/test/resources/parsvis/tostr");
+		Path dir = Paths.get("src/test/resources/parsevis/tostr");
 		List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
 		for (Path filePath : paths) {
 			try {
@@ -60,7 +60,7 @@ public class ParsVisTest {
 	@Test
 	@Order(2)
 	public void parseMatchStr() throws Exception {
-		Path dir = Paths.get("src/test/resources/parsvis/tostr/matchstr");
+		Path dir = Paths.get("src/test/resources/parsevis/tostr/matchstr");
 		List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
 		for (Path filePath : paths) {
 			try {
@@ -86,7 +86,7 @@ public class ParsVisTest {
 	@Test
 	@Order(3)
 	public void parsePos() throws Exception {
-		Path dir = Paths.get("src/test/resources/parsvis/pos");
+		Path dir = Paths.get("src/test/resources/parsevis/pos");
 		List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
 		for (Path filePath : paths) {
 			try {

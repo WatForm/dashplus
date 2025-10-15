@@ -9,10 +9,10 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public final class AlloyAsnExprHelperParsVis extends AlloyBaseVisitor<AlloyAsnExprHelper> {
+public final class AlloyAsnExprHelperParseVis extends AlloyBaseVisitor<AlloyAsnExprHelper> {
 	@Override
 	public AlloyAsnExprHelper visitAssignment(AlloyParser.AssignmentContext ctx) {
-		AlloyExprParsVis exprParsVis = new AlloyExprParsVis();
+		AlloyExprParseVis exprParsVis = new AlloyExprParseVis();
 
 		return new AlloyAsnExprHelper(new Pos(ctx), 
 			(AlloyNameExpr) exprParsVis.visit(ctx.name()),

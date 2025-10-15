@@ -3,15 +3,15 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExprParsVis;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 
-public final class AlloyParagraphParsVis extends AlloyBaseVisitor<AlloyParagraph> {
-	private final AlloyExprParsVis exprParsVis;
+public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagraph> {
+	private final AlloyExprParseVis exprParsVis;
 
-	public AlloyParagraphParsVis() {
+	public AlloyParagraphParseVis() {
 		super();
-		this.exprParsVis = new AlloyExprParsVis();
+		this.exprParsVis = new AlloyExprParseVis();
 	}
 
 	@Override
