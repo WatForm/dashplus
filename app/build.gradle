@@ -29,7 +29,7 @@ dependencies {
     implementation libs.guava
 
 	// Alloy Jar
-	implementation name: 'org.alloytools.alloy.dist'
+	implementation fileTree(dir: 'libs', include: ['*.jar'])//name: 'org.alloytools.alloy.dist'
 
 	// Antlr
 	antlr "org.antlr:antlr4:4.13.2"
@@ -52,6 +52,13 @@ jar {
                 'Main-Class': application.mainClass
         )
     }
+
+    // uber-jar
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 // for jdtls, gradle doesn't need this to compile
