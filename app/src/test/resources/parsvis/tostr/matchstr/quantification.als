@@ -1,5 +1,3 @@
-// | (ALL | NO | SOME | LONE | ONE | SUM) decl ( COMMA decl )* body 									# quantificationExpr
-
 fact quantificationEx {
 	all x : X | x
 }
