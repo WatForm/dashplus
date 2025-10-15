@@ -43,7 +43,15 @@ java {
 }
 
 application {
-    mainClass = 'ca.uwaterloo.watform.parser.Main'
+    mainClass = 'ca.uwaterloo.watform.Main'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass
+        )
+    }
 }
 
 // for jdtls, gradle doesn't need this to compile
