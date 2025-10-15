@@ -8,4 +8,11 @@ public final class AlloyNumIntExpr extends AlloyUnaryExpr {
 	public AlloyNumIntExpr(Pos pos, AlloyExpr sub) {
 		super(pos, sub, AlloyStrings.INT);
 	}
+
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+		sb.append(op);
+		sb.append(AlloyStrings.SPACE);
+		this.sub.toString(sb, indent);
+	}
 }

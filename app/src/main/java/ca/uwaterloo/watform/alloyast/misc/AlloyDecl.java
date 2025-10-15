@@ -71,9 +71,7 @@ public final class AlloyDecl extends AlloyASTNode {
 			name.toString(sb, indent);
 			first = false;
 		}
-		sb.append(AlloyStrings.SPACE);
 		sb.append(AlloyStrings.COLON);
-		sb.append(AlloyStrings.SPACE);
 		sb.append((this.disj2 ? "disj " : ""));
 		sb.append(this.quant.map(q -> q.toString() + " ").orElse(""));
 		this.expr.toString(sb, indent);

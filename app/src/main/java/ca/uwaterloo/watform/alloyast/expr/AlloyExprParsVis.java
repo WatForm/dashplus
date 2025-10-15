@@ -83,11 +83,11 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	public AlloyIffExpr visitIffBindExpr(AlloyParser.IffBindExprContext ctx) {
 		return new AlloyIffExpr(new Pos(ctx), this.visit(ctx.expr1()), this.visit(ctx.bind()));
 	}
-	
+
 	// ============================
 	// Or
 	// ============================
-	
+
 	@Override
 	public AlloyOrExpr visitOrExpr(AlloyParser.OrExprContext ctx) {
 		return new AlloyOrExpr(new Pos(ctx), this.visit(ctx.expr1(0)), this.visit(ctx.expr1(1)));
@@ -96,6 +96,20 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	@Override
 	public AlloyOrExpr visitOrBindExpr(AlloyParser.OrBindExprContext ctx) {
 		return new AlloyOrExpr(new Pos(ctx), this.visit(ctx.expr1()), this.visit(ctx.bind()));
+	}
+
+	// ============================
+	// StateSeq
+	// ============================
+
+	@Override
+	public AlloyStateSeqExpr visitStateSeqExpr(AlloyParser.StateSeqExprContext ctx) {
+		return new AlloyStateSeqExpr(new Pos(ctx), this.visit(ctx.expr1(0)), this.visit(ctx.expr1(1)));
+	}
+
+	@Override
+	public AlloyStateSeqExpr visitStateSeqBindExpr(AlloyParser.StateSeqBindExprContext ctx) {
+		return new AlloyStateSeqExpr(new Pos(ctx), this.visit(ctx.expr1()), this.visit(ctx.bind()));
 	}
 
 	// ====================================================================================
