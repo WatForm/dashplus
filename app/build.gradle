@@ -46,6 +46,14 @@ application {
     mainClass = 'ca.uwaterloo.watform.parser.Main'
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass
+        )
+    }
+}
+
 // for jdtls, gradle doesn't need this to compile
 sourceSets {
     main {
