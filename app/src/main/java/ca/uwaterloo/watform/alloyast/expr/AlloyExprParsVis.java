@@ -160,7 +160,7 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	// Block
 	// ============================
 	@Override
-	public AlloyExpr visitBlock(AlloyParser.BlockContext ctx) {
+	public AlloyBlock visitBlock(AlloyParser.BlockContext ctx) {
 		List<AlloyExpr> exprs = new ArrayList<>();
 		for (AlloyParser.Expr1Context exprCtx : ctx.expr1()) {
 			exprs.add(this.visit(exprCtx));
@@ -172,9 +172,9 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	// SigRef
 	// ============================
 	@Override
-	public AlloyExpr visitSigRef(AlloyParser.SigRefContext ctx) {
+	public AlloyVarExpr visitSigRef(AlloyParser.SigRefContext ctx) {
 		if (null != ctx.qname()) {
-			return this.visit(ctx.qname());
+			return (AlloyVarExpr) this.visit(ctx.qname());
 		} else if (null != ctx.UNIV()) {
 			return new AlloyUnivExpr(new Pos(ctx));
 		} else if (null != ctx.STRING()) {
@@ -252,7 +252,7 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	// Dot
 	// ============================
 	@Override
-	public AlloyExpr visitDotExpr(AlloyParser.DotExprContext ctx) {
+	public AlloyDotExpr visitDotExpr(AlloyParser.DotExprContext ctx) {
 		if (null != ctx.DISJ()) {
 			return new AlloyDotExpr(
 					new Pos(ctx), this.visit(ctx.expr2()), new AlloyDisjExpr(new Pos(ctx.DISJ())));
@@ -284,7 +284,7 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	}
 
 	// ============================
-	// NumericExpr (incomplete: needs SUM and INT)
+	// NumericExpr
 	// ============================
 	@Override
 	public AlloyExpr visitNumericExpr(AlloyParser.NumericExprContext ctx) {
@@ -303,12 +303,12 @@ public final class AlloyExprParsVis extends AlloyBaseVisitor<AlloyExpr> {
 	// And
 	// ============================
 	@Override
-	public AlloyExpr visitAndExpr(AlloyParser.AndExprContext ctx) {
+	public AlloyAndExpr visitAndExpr(AlloyParser.AndExprContext ctx) {
 		return new AlloyAndExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
 	}
 
 	@Override
-	public AlloyExpr visitAndBindExpr(AlloyParser.AndBindExprContext ctx) {
+	public AlloyAndExpr visitAndBindExpr(AlloyParser.AndBindExprContext ctx) {
 		return new AlloyAndExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
 	}
 

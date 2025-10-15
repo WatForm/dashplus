@@ -1,0 +1,3 @@
+fact {
+	int a
+}
