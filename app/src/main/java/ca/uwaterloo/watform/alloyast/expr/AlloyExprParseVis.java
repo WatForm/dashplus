@@ -476,6 +476,35 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
+	
+	// ============================
+	// FunMul, FunDiv, FunRem
+	// ============================
+	@Override 
+	public AlloyBinaryExpr visitMulDivRemExpr(AlloyParser.MulDivRemExprContext ctx) {
+		if(null != ctx.FUNMUL()) {
+			return new AlloyFunMulExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if(null != ctx.FUNDIV()) {
+			return new AlloyFunDivExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if(null != ctx.FUNREM()) {
+			return new AlloyFunRemExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	@Override
+	public AlloyBinaryExpr visitMulDivRemBindExpr(AlloyParser.MulDivRemBindExprContext ctx) {
+		if(null != ctx.FUNMUL()) {
+			return new AlloyFunMulExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if(null != ctx.FUNDIV()) {
+			return new AlloyFunDivExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if(null != ctx.FUNREM()) {
+			return new AlloyFunRemExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
 
 	// ============================
 	// And
