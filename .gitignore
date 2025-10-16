@@ -16,7 +16,7 @@ bin/
 .DS_Store
 
 # test resources
-app/src/test/resources/antlr/catalyst/catalyst-corpus.zip
-app/src/test/resources/antlr/catalyst/catalyst-corpus
-app/src/test/resources/antlr/catalyst/timeout
+app/src/main/java/ca/uwaterloo/watform/test/catalyst/catalyst-corpus.zip
+app/src/main/java/ca/uwaterloo/watform/test/catalyst/catalyst-corpus
+app/src/main/java/ca/uwaterloo/watform/test/catalyst/timeout
 

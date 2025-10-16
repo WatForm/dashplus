@@ -8,12 +8,13 @@ public class Main {
 		final String dashToTLAPlus = "--tla";
 		final String dashToAlloy = "--alloy";
 		final String predicateAbstraction = "--pred";
+		final String test = "--test";
 
 		final String defaultMessage = """
 		Possible arguments:
 		%s
 		%s
-		%s""".formatted(dashToAlloy, dashToTLAPlus, predicateAbstraction);
+		%s""".formatted(dashToAlloy, dashToTLAPlus, predicateAbstraction, test);
 
 		if(args.length == 0)
 		{
@@ -34,6 +35,9 @@ public class Main {
 			else if(args[0].equals(predicateAbstraction))
 			{
 				ca.uwaterloo.watform.predabstraction.Main.main(passedArgs);
+			}
+			else if(args[0].equals(test)) {
+				ca.uwaterloo.watform.test.Main.main(passedArgs);
 			}
 			else System.out.println(defaultMessage);
 		}

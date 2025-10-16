@@ -17,14 +17,8 @@ rm -rf ./catalyst-corpus/bnwxqtiettobmisgmtydwqdhmp63kwbf-MFIS/*
 rm -rf ./timeout
 mkdir -p ./timeout
 
-# mv ./catalyst-corpus/xaocutatoyw7clukzttoo3cparj2obze-pewa-tool/bin/Integerm32.als \
-#    ./timeout
-
 mv ./catalyst-corpus/2ptebqk5wi27fer6grt3zredhxavfy6c-Alloy-Magic-Card/alloy-models/database_generated.als \
    ./timeout
-
-# mv ./catalyst-corpus/375n6r5ozcw6jh644kyoartwzyd5kapg-Alloy4PA/generated/Benchmarks/B2/EscrowVault+EPA/EscrowVault+EPA_part6.als \
-#    ./timeout
 
 mv ./catalyst-corpus/375n6r5ozcw6jh644kyoartwzyd5kapg-Alloy4PA/generated/Benchmarks/B2/EscrowVault+EPA/EscrowVault+EPA.als \
    ./timeout
@@ -36,6 +30,12 @@ mv  ./catalyst-corpus/bptxoa6g7visqsbv6qkpbdmvfwqsq2or-predicate-abstraction-for
 	./timeout
 
 mv  ./catalyst-corpus/bptxoa6g7visqsbv6qkpbdmvfwqsq2or-predicate-abstraction-for-smart-contract-validation/Benchmark#2/EscrowVault/Alloy/EscrowVault_EPA.als \
+	./timeout
+
+mv  ./catalyst-corpus/bptxoa6g7visqsbv6qkpbdmvfwqsq2or-predicate-abstraction-for-smart-contract-validation/Benchmark#2/EPXCrowdsale/Alloy/EPXCrowdsale_EPA_isCrowdSaleClosed_2.als \
+	./timeout
+
+mv  ./catalyst-corpus/bptxoa6g7visqsbv6qkpbdmvfwqsq2or-predicate-abstraction-for-smart-contract-validation/Benchmark#2/EPXCrowdsale/Alloy/EPXCrowdsale_EPA_isCrowdSaleClosed.als \
 	./timeout
 
 echo "Catalyst corpus setup completed."

@@ -1,9 +1,10 @@
 # Catalyst Corpus Test
-1) cd to dashplus/app/src/test/resources/antlr/catalyst
-2) run download-corpus.sh, which will download the zip (github release), unzip it, and move problematic files
-3) change the application.mainClass in app/build.gradle to 'ca.uwaterloo.watform.test.Main'
-4) ./gradlew run
+1) cd app/src/main/java/ca/uwaterloo/watform/test/catalyst
+2) ./download-corpus.sh, which will download the zip (github release), unzip it, and move problematic files
+3) cd back to dashplus/
+4) ./gradlew build
+5) java -jar app/build/libs/app.jar --test 
 
-- Should be able to parse everything within 10 mins with no timeouts
-- Note: It may run out of memory
+- Should be able to parse everything within 10 mins with no timeouts (excpet the onces we moved)
+- Note: Testing may run out of memory
 

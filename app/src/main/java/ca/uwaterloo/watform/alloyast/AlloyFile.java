@@ -19,6 +19,7 @@ public final class AlloyFile extends AlloyASTNode {
 	@Override
 	public void toString(StringBuilder sb, int indent) {
 		for (AlloyParagraph p : paragraphs) {
+			sb.append(AlloyStrings.TAB.repeat(indent));
 			p.toString(sb, indent);
 			sb.append(AlloyStrings.NEWLINE + AlloyStrings.NEWLINE);
 		}
