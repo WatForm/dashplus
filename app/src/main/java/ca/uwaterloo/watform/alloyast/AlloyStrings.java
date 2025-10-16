@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.utils;
+package ca.uwaterloo.watform.alloyast;
 
 public final class AlloyStrings {
 	private AlloyStrings() {

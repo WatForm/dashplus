@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import ca.uwaterloo.watform.alloyast.Pos;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.utils.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 
 public final class AlloyParenExpr extends AlloyExpr {
 	public final AlloyExpr sub;
