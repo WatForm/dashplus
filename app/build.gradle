@@ -71,7 +71,9 @@ sourceSets {
 }
 
 
-def corpusUrl = "https://github.com/QiyueChen04/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip"
+// These paths are not used in build.gradle. If you want to create a gradle task to set up catalyst-corpus, use these.
+// See app/src/test/resources/antlr/catalyst/download-corpus.sh. 
+def corpusUrl = "https://github.com/WatForm/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip"
 def corpusZip = file("src/test/resources/antlr/catalyst/catalyst-corpus.zip")
 def corpusParentDir = file("src/test/resources/antlr/catalyst/")
 def corpusDir = file("src/test/resources/antlr/catalyst/catalyst-corpus")

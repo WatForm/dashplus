@@ -2,7 +2,7 @@
 set -e  
 
 echo "Downloading zip"
-curl -L -o catalyst-corpus.zip https://github.com/QiyueChen04/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip
+curl -L -o catalyst-corpus.zip https://github.com/WatForm/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip
 
 echo "Unzipping"
 unzip catalyst-corpus.zip &> /dev/null
