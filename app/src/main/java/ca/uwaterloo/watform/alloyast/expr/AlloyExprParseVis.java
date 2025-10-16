@@ -569,6 +569,32 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 	}
 
 	// ============================
+	// Qt
+	// ============================
+	@Override
+	public AlloyQtExpr visitQuantifiedExpr(AlloyParser.QuantifiedExprContext ctx) {
+		AlloyQtExpr.Quant qt = AlloyQtExpr.Quant.ALL;
+		if (null != ctx.ALL()) {
+			qt = AlloyQtExpr.Quant.ALL;
+		} else if (null != ctx.NO()) {
+			qt = AlloyQtExpr.Quant.NO;
+		} else if (null != ctx.SOME()) {
+			qt = AlloyQtExpr.Quant.SOME;
+		} else if (null != ctx.LONE()) {
+			qt = AlloyQtExpr.Quant.LONE;
+		} else if (null != ctx.ONE()) {
+			qt = AlloyQtExpr.Quant.ONE;
+		} else if (null != ctx.SET()) {
+			qt = AlloyQtExpr.Quant.SET;
+		} else if (null != ctx.SEQ()) {
+			qt = AlloyQtExpr.Quant.SEQ;
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+		return new AlloyQtExpr(new Pos(ctx), qt, this.visit(ctx.expr2()));
+	}
+
+	// ============================
 	// And
 	// ============================
 	@Override
