@@ -2,7 +2,7 @@
 
 ## Building from source:
 
-Building from source requires the java version to be >= 25. The java version can be verified by running `java --version`. Java 25 can be installed from [https://jdk.java.net/25/](https://jdk.java.net/25/)
+Building from source requires the java version to be >= 17. The java version can be verified by running `java --version`. 
 
 To build the .jar file, run the following:
 
@@ -16,7 +16,7 @@ The generated .jar file is located at `dashplus/app/build/libs/app.jar`
 
 The build process uses gradle version 9.1.0. However, installing this globally is unnecessary, since it is downloaded as part of the build process.
 
-The build process is the same for Linux, MacOS and Windows (powershell). On cmd, `./gradlew build` is replaced by `gradlew.bat`
+The build process is the same for Linux, MacOS and Windows powershell. On Windows cmd, `./gradlew build` is replaced by `gradlew.bat`
 
 
 ## Instructions for Contributors:
