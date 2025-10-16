@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import ca.uwaterloo.watform.alloyast.Pos;
+import ca.uwaterloo.watform.util.Pos;
 
 public class DashTrans extends Dash {
 	String name;

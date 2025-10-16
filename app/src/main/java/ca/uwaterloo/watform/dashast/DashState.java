@@ -8,10 +8,11 @@ import java.util.StringJoiner;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import ca.uwaterloo.watform.alloyast.Pos;
+import ca.uwaterloo.watform.util.Pos;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
 
-public class DashState extends Dash {
+public class DashState extends AlloyParagraph {
 
 	// stuff from parsing
 	public String name;

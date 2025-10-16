@@ -4,14 +4,11 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.Collections;
 
-import ca.uwaterloo.watform.alloyast.Pos;
+import ca.uwaterloo.watform.util.Pos;
+import ca.uwaterloo.watform.util.ASTNode;
 import ca.uwaterloo.watform.dashast.DashStrings;
 
-public class DashBufferDecls extends Dash {
-    /**
-     * The filename, line, and column position in the original Alloy model file
-     * (cannot be null).
-     */
+public class DashBufferDecls extends ASTNode {
  
 	private List<String> names;
 	private String element;

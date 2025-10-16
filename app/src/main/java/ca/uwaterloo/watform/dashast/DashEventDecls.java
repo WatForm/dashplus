@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.Collections;
 
-import ca.uwaterloo.watform.alloyast.Pos;
+import ca.uwaterloo.watform.util.Pos;
+import ca.uwaterloo.watform.util.ASTNode;
 import ca.uwaterloo.watform.dashast.DashStrings;
 
-public class DashEventDecls extends Dash {
+public class DashEventDecls extends ASTNode {
 
 	private List<String> names;
 	private DashStrings.IntEnvKind kind; 

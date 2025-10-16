@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.dashast;
 
 import ca.uwaterloo.watform.dashast.DashStrings;
-import ca.uwaterloo.watform.alloyast.Pos;
+import ca.uwaterloo.watform.util.Pos;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 
 public class DashInit extends DashExpr {	
