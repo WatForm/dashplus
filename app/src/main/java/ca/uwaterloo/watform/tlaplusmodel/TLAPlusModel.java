@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.tlaplusmodel;
 
-public class TlaPlusModel
+public class TLAPlusModel
 {
 	// top-level class to handle modules and associated configs
 }
