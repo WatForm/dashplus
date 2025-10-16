@@ -13,8 +13,8 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParseVis;
-import java.util.ArrayList;
 import ca.uwaterloo.watform.utils.*;
+import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -476,17 +476,17 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
-	
+
 	// ============================
 	// FunMul, FunDiv, FunRem
 	// ============================
-	@Override 
+	@Override
 	public AlloyBinaryExpr visitMulDivRemExpr(AlloyParser.MulDivRemExprContext ctx) {
-		if(null != ctx.FUNMUL()) {
+		if (null != ctx.FUNMUL()) {
 			return new AlloyFunMulExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
-		} else if(null != ctx.FUNDIV()) {
+		} else if (null != ctx.FUNDIV()) {
 			return new AlloyFunDivExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
-		} else if(null != ctx.FUNREM()) {
+		} else if (null != ctx.FUNREM()) {
 			return new AlloyFunRemExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
 		} else {
 			throw new AlloyUnexpTokenEx(ctx);
@@ -495,30 +495,29 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
 	@Override
 	public AlloyBinaryExpr visitMulDivRemBindExpr(AlloyParser.MulDivRemBindExprContext ctx) {
-		if(null != ctx.FUNMUL()) {
+		if (null != ctx.FUNMUL()) {
 			return new AlloyFunMulExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
-		} else if(null != ctx.FUNDIV()) {
+		} else if (null != ctx.FUNDIV()) {
 			return new AlloyFunDivExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
-		} else if(null != ctx.FUNREM()) {
+		} else if (null != ctx.FUNREM()) {
 			return new AlloyFunRemExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
 		} else {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
 
-
 	// ============================
 	// Union, Diff, FunAdd, FunSub
 	// ============================
-	@Override 
+	@Override
 	public AlloyBinaryExpr visitPlusMinusExpr(AlloyParser.PlusMinusExprContext ctx) {
-		if(null != ctx.PLUS()) {
+		if (null != ctx.PLUS()) {
 			return new AlloyUnionExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
-		} else if(null != ctx.MINUS()) {
+		} else if (null != ctx.MINUS()) {
 			return new AlloyDiffExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
-		} else if(null != ctx.FUNADD()) {
+		} else if (null != ctx.FUNADD()) {
 			return new AlloyFunAddExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
-		} else if(null != ctx.FUNSUB()) {
+		} else if (null != ctx.FUNSUB()) {
 			return new AlloyFunSubExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
 		} else {
 			throw new AlloyUnexpTokenEx(ctx);
@@ -527,14 +526,43 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
 	@Override
 	public AlloyBinaryExpr visitPlusMinusBindExpr(AlloyParser.PlusMinusBindExprContext ctx) {
-		if(null != ctx.PLUS()) {
+		if (null != ctx.PLUS()) {
 			return new AlloyUnionExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
-		} else if(null != ctx.MINUS()) {
+		} else if (null != ctx.MINUS()) {
 			return new AlloyDiffExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
-		} else if(null != ctx.FUNADD()) {
+		} else if (null != ctx.FUNADD()) {
 			return new AlloyFunAddExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
-		} else if(null != ctx.FUNSUB()) {
+		} else if (null != ctx.FUNSUB()) {
 			return new AlloyFunSubExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	// ============================
+	// SHL, SHR, SHA
+	// ============================
+	@Override
+	public AlloyBinaryExpr visitShiftExpr(AlloyParser.ShiftExprContext ctx) {
+		if (null != ctx.SHL()) {
+			return new AlloyShLExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.SHR()) {
+			return new AlloyShRExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.SHA()) {
+			return new AlloyShAExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	@Override
+	public AlloyBinaryExpr visitShiftBindExpr(AlloyParser.ShiftBindExprContext ctx) {
+		if (null != ctx.SHL()) {
+			return new AlloyShLExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.SHR()) {
+			return new AlloyShRExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.SHA()) {
+			return new AlloyShAExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
 		} else {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
