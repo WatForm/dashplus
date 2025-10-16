@@ -506,6 +506,40 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 		}
 	}
 
+
+	// ============================
+	// Union, Diff, FunAdd, FunSub
+	// ============================
+	@Override 
+	public AlloyBinaryExpr visitPlusMinusExpr(AlloyParser.PlusMinusExprContext ctx) {
+		if(null != ctx.PLUS()) {
+			return new AlloyUnionExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if(null != ctx.MINUS()) {
+			return new AlloyDiffExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if(null != ctx.FUNADD()) {
+			return new AlloyFunAddExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if(null != ctx.FUNSUB()) {
+			return new AlloyFunSubExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	@Override
+	public AlloyBinaryExpr visitPlusMinusBindExpr(AlloyParser.PlusMinusBindExprContext ctx) {
+		if(null != ctx.PLUS()) {
+			return new AlloyUnionExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if(null != ctx.MINUS()) {
+			return new AlloyDiffExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if(null != ctx.FUNADD()) {
+			return new AlloyFunAddExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if(null != ctx.FUNSUB()) {
+			return new AlloyFunSubExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
 	// ============================
 	// And
 	// ============================
