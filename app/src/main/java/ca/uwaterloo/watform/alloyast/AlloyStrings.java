@@ -1,12 +1,8 @@
 package ca.uwaterloo.watform.alloyast;
+import ca.uwaterloo.watform.utils.*;
 
-public final class AlloyStrings {
-	private AlloyStrings() {
-	}
-
-	public static final String TAB = "    ";
-	public static final String SPACE = " ";
-	public static final String NEWLINE = "\n";
+public final class AlloyStrings extends CommonStrings {
+	private AlloyStrings() {}
 
 	public static final String MODULE = "module";
 	public static final String OPEN = "open";
