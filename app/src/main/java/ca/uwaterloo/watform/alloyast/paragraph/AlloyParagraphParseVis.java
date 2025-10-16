@@ -5,6 +5,7 @@ import antlr.generated.AlloyParser;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagraph> {
 	private final AlloyExprParseVis exprParsVis;

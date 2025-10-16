@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyast.misc;
 
+import ca.uwaterloo.watform.utils.*;
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
 import antlr.generated.AlloyParser.NameContext;

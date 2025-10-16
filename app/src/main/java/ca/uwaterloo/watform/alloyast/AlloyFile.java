@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast;
 
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.utils.*;
 
 import java.util.Collections;
 import java.util.List;

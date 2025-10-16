@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import java.util.Collections;

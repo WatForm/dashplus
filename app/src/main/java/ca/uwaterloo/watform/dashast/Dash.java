@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.dashast;
 
-import ca.uwaterloo.watform.alloyast.Pos;
+import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.utils.*;
 
 public abstract class Dash  {
 	// methods that all of Dash AST should have

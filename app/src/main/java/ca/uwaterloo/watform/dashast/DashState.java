@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import ca.uwaterloo.watform.alloyast.Pos;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 
 public class DashState extends Dash {

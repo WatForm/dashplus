@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.unary;
 
 import ca.uwaterloo.watform.alloyast.AlloyASTNode;
-import ca.uwaterloo.watform.alloyast.Pos;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 
 public abstract class AlloyUnaryExpr extends AlloyExpr  {

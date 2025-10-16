@@ -13,8 +13,8 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParseVis;
-import ca.uwaterloo.watform.utils.ParserUtil;
 import java.util.ArrayList;
+import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 

@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.alloyast;
+package ca.uwaterloo.watform.utils;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
