@@ -7,6 +7,7 @@ import antlr.generated.AlloyParser.NameContext;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyLetExpr.AlloyLetAsn;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
@@ -30,14 +31,14 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 	public AlloyLetExpr visitLet(AlloyParser.LetContext ctx) {
 		return new AlloyLetExpr(
 				new Pos(ctx),
-				ParserUtil.visitAll(ctx.assignment(), new AlloyLetAsnParseVis()),
+				ParserUtil.visitAll(ctx.assignment(), new AlloyLetAsnParseVis(), AlloyLetAsn.class),
 				this.visit(ctx.body()));
 	}
 
 	@Override
 	public AlloyQuantificationExpr visitQuantificationExpr(
 			AlloyParser.QuantificationExprContext ctx) {
-		List<AlloyDecl> decls = ParserUtil.visitAll(ctx.decl(), new AlloyDeclParseVis());
+		List<AlloyDecl> decls = ParserUtil.visitAll(ctx.decl(), new AlloyDeclParseVis(), AlloyDecl.class);
 		if (null != ctx.ALL()) {
 			return new AlloyQuantificationExpr(
 					new Pos(ctx), AlloyQuantificationExpr.Quant.ALL, decls, this.visit(ctx.body()));
@@ -230,7 +231,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 	public AlloyComprExpr visitComprehensionExpr(AlloyParser.ComprehensionExprContext ctx) {
 		return new AlloyComprExpr(
 				new Pos(ctx),
-				ParserUtil.visitAll(ctx.decl(), new AlloyDeclParseVis()),
+				ParserUtil.visitAll(ctx.decl(), new AlloyDeclParseVis(), AlloyDecl.class),
 				this.visit(ctx.body()));
 	}
 
@@ -239,7 +240,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 	// ============================
 	@Override
 	public AlloyBlock visitBlock(AlloyParser.BlockContext ctx) {
-		return new AlloyBlock(new Pos(ctx), ParserUtil.visitAll(ctx.expr1(), this));
+		return new AlloyBlock(new Pos(ctx), ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
 	}
 
 	// ============================
@@ -334,13 +335,13 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 	@Override
 	public AlloyBracketExpr visitBracketExpr(AlloyParser.BracketExprContext ctx) {
 		return new AlloyBracketExpr(
-				new Pos(ctx), this.visit(ctx.expr2()), ParserUtil.visitAll(ctx.expr1(), this));
+				new Pos(ctx), this.visit(ctx.expr2()), ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
 	}
 
 	@Override
 	public AlloyBracketExpr visitBracketBuiltinExpr(AlloyParser.BracketBuiltinExprContext ctx) {
 		return new AlloyBracketExpr(
-				new Pos(ctx), this.visit(ctx.getChild(0)), ParserUtil.visitAll(ctx.expr1(), this));
+				new Pos(ctx), this.visit(ctx.getChild(0)), ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
 	}
 
 	// ============================

@@ -1,9 +1,8 @@
-package ca.uwaterloo.watform.alloyast.paragraph.fact;
+package ca.uwaterloo.watform.alloyast.paragraph;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyFactPara extends AlloyParagraph {

@@ -7,4 +7,8 @@ public class CodingError {
 		throw new ErrorFatal("missing case " + x);
 	}
 
+	// failed dynamic cast; incorrect assumption about object's runtime type
+	public static ErrorFatal failedCast(String s) {
+		return new ErrorFatal("Failed Dynamic Cast: " + s);
+	}
 }

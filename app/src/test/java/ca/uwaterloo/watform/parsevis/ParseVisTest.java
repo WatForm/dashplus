@@ -7,7 +7,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyNumCardinalityExpr;
-import ca.uwaterloo.watform.alloyast.paragraph.fact.AlloyFactPara;
+import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.parser.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;

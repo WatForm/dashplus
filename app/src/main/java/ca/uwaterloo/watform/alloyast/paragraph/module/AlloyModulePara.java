@@ -30,12 +30,12 @@ public final class AlloyModulePara extends AlloyParagraph {
 		}
 	}
 
-	public final AlloyQnameExpr moduleName;
+	public final AlloyQnameExpr qname;
 	public final List<AlloyModuleArg> moduleArgs;
 
 	public AlloyModulePara(Pos pos, AlloyQnameExpr moduleName, List<AlloyModuleArg> moduleArgs) {
 		super(pos);
-		this.moduleName = moduleName;
+		this.qname = moduleName;
 		this.moduleArgs = Collections.unmodifiableList(moduleArgs);
 	}
 
@@ -43,7 +43,7 @@ public final class AlloyModulePara extends AlloyParagraph {
 	public void toString(StringBuilder sb, int indent) {
 		sb.append(AlloyStrings.MODULE);
 		sb.append(AlloyStrings.SPACE);
-		this.moduleName.toString(sb, indent);
+		this.qname.toString(sb, indent);
 		sb.append(AlloyStrings.SPACE);
 		if (this.moduleArgs.size() != 0) {
 			sb.append(AlloyStrings.LBRACK);

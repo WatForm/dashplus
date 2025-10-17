@@ -1,8 +1,6 @@
 package ca.uwaterloo.watform.utils;
 
 import antlr.generated.AlloyBaseVisitor;
-import antlr.generated.AlloyLexer;
-import antlr.generated.AlloyParser;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
@@ -11,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,13 +46,19 @@ public final class ParserUtil {
 		return af;
 	}
 
-    public static <Context extends ParseTree, AstNode extends AlloyASTNode> List<AstNode> visitAll(
-            List<Context> contexts,
-            AlloyBaseVisitor<? extends AstNode> visitor
-    ) {
-        return contexts.stream()
-                       .map(visitor::visit)
-                       .map(result -> (AstNode) result) 
-                       .collect(Collectors.toList());
-    }
+	public static <C extends ParseTree, T> List<T> visitAll(
+			List<C> contexts, AlloyBaseVisitor<?> visitor, Class<T> targetType) {
+		if (contexts == null || contexts.isEmpty()) {
+			return Collections.emptyList();
+		}
+		try {
+			return contexts.stream()
+					.map(visitor::visit)
+					.map(targetType::cast)
+					.collect(Collectors.toList());
+		} catch (ClassCastException e) {
+			throw CodingError.failedCast(
+					"Failed to cast an item to " + targetType.getSimpleName() + " in visitAll.");
+		}
+	}
 }

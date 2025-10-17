@@ -5,15 +5,15 @@ import antlr.generated.AlloyParser;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara.AlloyModuleArg;
-import ca.uwaterloo.watform.alloyast.paragraph.fact.*;
 import ca.uwaterloo.watform.utils.*;
-import java.util.List;
+import java.util.Collections;
 
 public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagraph> {
-	private final AlloyExprParseVis exprParsVis = new AlloyExprParseVis();
+	private final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
+	private final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
 
 	@Override
 	public AlloyParagraph visitParagraph(AlloyParser.ParagraphContext ctx) {
@@ -27,14 +27,21 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
 	public AlloyModulePara visitModulePara(AlloyParser.ModuleParaContext ctx) {
 		return new AlloyModulePara(
 				new Pos(ctx),
-				(AlloyQnameExpr)exprParsVis.visit(ctx.qname()),
-				(List<AlloyModuleArg>) ParserUtil.visitAll(ctx.moduleArg(),
-						new AlloyModuleArgParseVis()));
+				(AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
+				ParserUtil.visitAll(ctx.moduleArg(), new AlloyModuleArgParseVis(), AlloyModuleArg.class));
 	}
 
 	@Override
 	public AlloyParagraph visitImportPara(AlloyParser.ImportParaContext ctx) {
-		return visitChildren(ctx);
+		return new AlloyImportPara(
+				new Pos(ctx),
+				null != ctx.PRIVATE(),
+				(AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
+				null != ctx.LBRACK(),
+				((null == ctx.sigRefs())
+						? Collections.emptyList()
+						: this.sigRefsParseVis.visit(ctx.sigRefs())),
+				((null == ctx.name()) ? null : (AlloyNameExpr) exprParseVis.visit(ctx.name())));
 	}
 
 	@Override
@@ -56,7 +63,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
 			factName = ctx.STRING_LITERAL().getText();
 		}
 		return new AlloyFactPara(
-				new Pos(ctx), factName, (AlloyBlock) this.exprParsVis.visit(ctx.block()));
+				new Pos(ctx), factName, (AlloyBlock) this.exprParseVis.visit(ctx.block()));
 	}
 
 	@Override

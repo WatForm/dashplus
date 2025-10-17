@@ -15,11 +15,11 @@ import java.util.Optional;
 public final class AlloyDeclParseVis extends AlloyBaseVisitor<AlloyDecl> {
 	@Override
 	public AlloyDecl visitDecl(AlloyParser.DeclContext ctx) {
-		AlloyExprParseVis exprParsVis = new AlloyExprParseVis();
+		AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
 		final Boolean disj1 = null != ctx.DISJ(0) ? true : false;
 		List<AlloyNameExpr> names = new ArrayList<>();
 		for (NameContext nameCtx : ctx.names().name()) {
-			names.add((AlloyNameExpr) exprParsVis.visit(nameCtx));
+			names.add((AlloyNameExpr) exprParseVis.visit(nameCtx));
 		}
 		final Boolean disj2 = null != ctx.DISJ(1) ? true : false;
 		Optional<AlloyDecl.Quant> quant;
@@ -34,7 +34,7 @@ public final class AlloyDeclParseVis extends AlloyBaseVisitor<AlloyDecl> {
 		} else {
 			quant = Optional.empty();
 		}
-		return new AlloyDecl(new Pos(ctx), disj1, names, disj2, quant, exprParsVis.visit(ctx.expr1()));
+		return new AlloyDecl(new Pos(ctx), disj1, names, disj2, quant, exprParseVis.visit(ctx.expr1()));
 	}
 }
 

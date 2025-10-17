@@ -7,7 +7,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class AlloyQnameExpr extends AlloyVarExpr {
+public final class AlloyQnameExpr extends AlloyVarExpr implements AlloySigRefExpr {
 	public final List<AlloyNameExpr> nameExprList;
 
 	public AlloyQnameExpr(Pos pos, List<AlloyNameExpr> nameExprList) {
