@@ -595,6 +595,42 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 	}
 
 	// ============================
+	// Comparison
+	// ============================
+	@Override
+	public AlloyComparisonExpr visitCompExpr(AlloyParser.CompExprContext ctx) {
+		AlloyComparisonExpr.Negation neg;
+		if (null != ctx.comparison().NOT_EXCL()) {
+			neg = AlloyComparisonExpr.Negation.NOT_EXCL;
+		} else if (null != ctx.comparison().NOT()) {
+			neg = AlloyComparisonExpr.Negation.NOT;
+		} else {
+			neg = AlloyComparisonExpr.Negation.NONE;
+		}
+
+		AlloyComparisonExpr.Comp comp;
+		if (null != ctx.comparison().IN()) {
+			comp = AlloyComparisonExpr.Comp.IN;
+		} else if (null != ctx.comparison().EQUAL()) {
+			comp = AlloyComparisonExpr.Comp.EQUAL;
+		} else if (null != ctx.comparison().LT()) {
+			comp = AlloyComparisonExpr.Comp.LESS_THAN;
+		} else if (null != ctx.comparison().GT()) {
+			comp = AlloyComparisonExpr.Comp.GREATER_THAN;
+		} else if (null != ctx.comparison().LE()) {
+			comp = AlloyComparisonExpr.Comp.LESS_EQUAL;
+		} else if (null != ctx.comparison().EL()) {
+			comp = AlloyComparisonExpr.Comp.EQUAL_LESS;
+		} else if (null != ctx.comparison().GE()) {
+			comp = AlloyComparisonExpr.Comp.GREATER_EQUAL;
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+
+		return new AlloyComparisonExpr(new Pos(ctx), this.visit(ctx.expr2(0)), neg, comp, this.visit(ctx.expr2(1)));
+	}
+
+	// ============================
 	// And
 	// ============================
 	@Override
