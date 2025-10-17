@@ -1,0 +1,21 @@
+    // p_stateName_paramSig
+
+    public ExprVar paramVar() {
+        return ExprHelper.createVar(
+        	     DashStrings.pName
+        	     + DashStrings.alloySep
+        	     + this.stateName);
+    }
+
+    // p_stateName:paramSig
+    public Decl paramDecl() {
+        return (Decl) 
+        	new DeclExt(
+        			// name
+        			paramVar(),
+        			// type 
+        			ExprHelper.createVar(this.paramSig),
+        			// isVar
+        			true 
+        		);
+    }
