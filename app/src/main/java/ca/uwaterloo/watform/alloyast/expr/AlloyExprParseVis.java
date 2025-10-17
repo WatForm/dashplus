@@ -632,7 +632,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 	}
 
 	// ============================
-	// Neg and Temp
+	// Neg and UnTemp
 	// ============================
 	@Override
 	public AlloyUnaryExpr visitUnTempExpr(AlloyParser.UnTempExprContext ctx) {
@@ -680,7 +680,39 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
+	
+	// ============================
+	// BinTemp
+	// ============================
+	@Override
+	public AlloyBinaryExpr visitBinTempExpr(AlloyParser.BinTempExprContext ctx) {
+		if(null != ctx.UNTIL()) {
+			return new AlloyUntilExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if(null != ctx.SINCE()) {
+			return new AlloySinceExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if(null != ctx.TRIGGERED()){
+			return new AlloyTriggeredExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if(null != ctx.RELEASES()) {
+			return new AlloyReleasesExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
 
+	@Override
+	public AlloyBinaryExpr visitBinTempBindExpr(AlloyParser.BinTempBindExprContext ctx) {
+		if(null != ctx.UNTIL()) {
+			return new AlloyUntilExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if(null != ctx.SINCE()) {
+			return new AlloySinceExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if(null != ctx.TRIGGERED()){
+			return new AlloyTriggeredExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if(null != ctx.RELEASES()) {
+			return new AlloyReleasesExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
 	// ============================
 	// And
 	// ============================
