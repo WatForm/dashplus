@@ -8,7 +8,9 @@ import java.util.StringJoiner;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.utils.Pos;
+import ca.uwaterloo.watform.utils.ASTNode;
+import ca.uwaterloo.watform.utils.CodingError;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 
 public class DashState extends DashParagraph {
@@ -23,15 +25,15 @@ public class DashState extends DashParagraph {
 	private int tabsize = 2;
 
 	public DashState(
-			Pos p, 
+			Pos pos, 
 			String n, 
 			String prm, 
 			DashStrings.StateKind k, 
 			DashStrings.DefKind d, 
 			List<Object> i) {
+		super(pos);
 		assert(n != null);
 		assert(i != null);
-		this.pos = p;
 		this.name = n;
 		this.param = prm;
 		this.kind = k;
@@ -52,14 +54,14 @@ public class DashState extends DashParagraph {
 		else if (DashTrans.class.isInstance(i)) return 6;
 		else if (DashState.class.isInstance(i)) return 7;	
 		else {
-			//DashErrors.missingCase("itemToInt");
-			//NADTODO
+			CodingError.missingCase("itemToInt");
 			return 0;
 		}
 	}
 
-	public String toString(Integer i) {
-		String ind = DashStrings.indent(i); 
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+		String ind = DashStrings.indent(indent); 
 		String s = new String(ind);
 		if (def == DashStrings.DefKind.DEFAULT) {
 			s += DashStrings.defaultName + " ";
@@ -79,11 +81,11 @@ public class DashState extends DashParagraph {
 			Collections.sort(items, 
 				(i1, i2) -> Integer.compare(itemToInt(i1),itemToInt(i2)
 )				);
- 			items.forEach(k -> j.add(((ASTNode) k).toString(i+1)));
+ 			items.forEach(k -> j.add(((ASTNode) k).toString(indent+1)));
 			s += j.toString() + ind + "}\n";
 
 		}
-		return s;
+		sb.append(s);
 	}
 
 	public static String noParam() {

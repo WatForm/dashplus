@@ -11,7 +11,9 @@ public class DashOn extends DashExpr {
 	public DashOn(Pos pos, AlloyExpr e) {
 		super(pos,e);
 	}
-	public String toString(Integer i) {
-		return super.toString(DashStrings.onName, i);
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.onName, sb, indent);
 	}
+
 }

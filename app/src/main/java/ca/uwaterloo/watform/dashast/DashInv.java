@@ -17,7 +17,9 @@ public class DashInv extends DashExpr {
         assert(n != null);
         this.name = n;
     }
-    public String toString(Integer i) {
-        return super.toString(DashStrings.invName + " " + name, i);
+    @Override
+    public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.invName, sb, indent);
     }
+
 }

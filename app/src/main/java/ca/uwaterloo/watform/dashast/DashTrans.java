@@ -11,26 +11,26 @@ public class DashTrans extends ASTNode {
 	String name;
 	List<Object> items;
 
-	public DashTrans(Pos p, String n, List<Object> i) {
+	public DashTrans(Pos pos, String n, List<Object> i) {
+		super(pos);
 		assert(n != null);
 		assert(i != null);
-		this.pos = p;
 		this.name = n;
 		this.items = i;
 	}
-
-	public String toString(Integer i) {
+	@Override
+	public void toString(StringBuilder sb, int indent) {
 		String s = new String("");
-		String ind = DashStrings.indent(i); 
+		String ind = DashStrings.indent(indent); 
 		if (items.isEmpty()) {
 			s += ind + DashStrings.transName + " " + name + " { }\n";
 		} else { 
 		    s += ind + DashStrings.transName + " " + name + " {\n";
 			StringJoiner j = new StringJoiner("");
- 			items.forEach(k -> j.add(((ASTNode) k).toString(i+1)));
+ 			items.forEach(k -> j.add(((ASTNode) k).toString(indent+1)));
 			s += j.toString();
 			s += ind + "}\n";
 		}
-		return s;
+		sb.append(s);
 	}
 }

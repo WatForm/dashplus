@@ -9,7 +9,8 @@ public class DashInit extends DashExpr {
     public DashInit(Pos p, AlloyExpr e) {
         super(p,e);
     }
-    public String toString(Integer i) {
-        return super.toString(DashStrings.initName, i);
+    @Override
+    public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.initName, sb, indent);
     }
 }

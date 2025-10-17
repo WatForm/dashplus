@@ -9,8 +9,9 @@ public class DashWhen  extends DashExpr {
 	public DashWhen(Pos pos,AlloyExpr w) {
 		super(pos, w);
 	}
-	public String toString(Integer i) {
-		return super.toString(DashStrings.whenName, i);
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.whenName, sb, indent);
 	}
 	public AlloyExpr getWhen() {
 		return super.getExp();

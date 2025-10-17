@@ -18,14 +18,15 @@ public abstract class DashExpr extends ASTNode {
 
     public AlloyExpr exp;
 
-    public DashExpr(Pos p, AlloyExpr e) {
+    public DashExpr(Pos pos, AlloyExpr e) {
+        super(pos);
         assert(e != null);
-        this.pos = p;
         this.exp = e; 
     }
-    public String toString(String name, Integer i) {
+
+    public void toString(String name, StringBuilder sb, int indent) {
         String s = new String();
-        s += DashStrings.indent(i) + name + " {\n";
+        s += DashStrings.indent(indent) + name + " {\n";
 
         // Alloy seems to put a NOOP on the front of the expression
         //Expr e = exp;
@@ -50,8 +51,8 @@ public abstract class DashExpr extends ASTNode {
         //NADTODO pass toString an Int parameter for indentation
         s += exp.toString() + "\n";
         //}
-        s += DashStrings.indent(i) + "}\n";
-        return s; 
+        s += DashStrings.indent(indent) + "}\n";
+        sb.append(s); 
     }
     public AlloyExpr getExp() {
         return exp;

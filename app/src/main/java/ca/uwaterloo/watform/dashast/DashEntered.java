@@ -11,7 +11,8 @@ public class DashEntered extends DashExpr {
     public DashEntered(Pos p, AlloyExpr e) {
         super(p,e);
     }
-    public String toString(Integer indent) {
-        return super.toString(DashStrings.enterName, indent);
+    @Override
+    public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.enterName, sb, indent);
     }
 }

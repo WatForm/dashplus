@@ -12,9 +12,11 @@ public class DashFrom extends DashExpr {
 	public DashFrom(Pos pos, AlloyExpr d) {
 		super(pos,d);
 	}
-	public String toString(Integer i) {
-		return super.toString(DashStrings.fromName, i);
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.fromName, sb, indent);
 	}
+
 	public AlloyExpr getSrc() {
 		return super.getExp();
 	}

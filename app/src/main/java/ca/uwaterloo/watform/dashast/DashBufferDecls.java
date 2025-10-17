@@ -17,8 +17,8 @@ public class DashBufferDecls extends ASTNode {
 	private Integer endIndex;
 
 	public DashBufferDecls(Pos pos, List<String> n, String element, DashStrings.IntEnvKind k, int startIndex, int endIndex) {
+		super(pos);
 		assert (n != null && element != null);
-		this.pos = pos;
 		this.names = n;
 		this.element = element;
 		this.kind = k;
@@ -26,8 +26,8 @@ public class DashBufferDecls extends ASTNode {
 		this.endIndex = endIndex;
 	}
 
-
-	public String toString(Integer i) {
+	@Override
+	public void toString(StringBuilder sb, int indent) {
 		// indices are hidden
 		String s = new String("");
 		if (kind == DashStrings.IntEnvKind.ENV) {
@@ -36,7 +36,7 @@ public class DashBufferDecls extends ASTNode {
 		StringJoiner sj = new StringJoiner(",\n");
         names.forEach(n -> sj.add(n));
 		s += sj.toString() + ":" + DashStrings.bufName + "[" + element + "]\n";
-		return DashStrings.indent(i)+s;
+		sb.append(DashStrings.indent(indent)+s);
 	}
 	public List<String> getNames() {
 		return names;

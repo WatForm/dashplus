@@ -14,21 +14,21 @@ public class DashVarDecls extends ASTNode {
 	private DashStrings.IntEnvKind kind;
 
 	public DashVarDecls (Pos pos, List<String> n, AlloyExpr e, DashStrings.IntEnvKind k) {
+		super(pos);
 		assert(n != null && e != null);
-		this.pos = pos;
 		this.names = n;
 		this.typ = e;
 		this.kind = k;
 	}
-
-	public String toString(Integer i) {
-		String s = DashStrings.indent(i);
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+		String s = DashStrings.indent(indent);
 		if (kind == DashStrings.IntEnvKind.ENV) {
 			s += DashStrings.envName + " ";
 		}
 		StringJoiner sj = new StringJoiner(",\n");
         names.forEach(n -> sj.add(n));
-		return s + sj.toString() + ":" + typ.toString() + "\n";
+		sb.append(s + sj.toString() + ":" + typ.toString() + "\n");
 	}
 	public List<String> getNames() {
 		return names;

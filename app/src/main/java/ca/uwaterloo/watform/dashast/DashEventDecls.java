@@ -13,13 +13,13 @@ public class DashEventDecls extends ASTNode {
 	private DashStrings.IntEnvKind kind; 
 
 	public DashEventDecls(Pos pos, List<String> n, DashStrings.IntEnvKind kind) {
+		super(pos);
 		assert(n != null);
-		this.pos = pos;
 		this.names = n;
 		this.kind = kind;
 	}
-
-	public String toString(Integer i) {
+	@Override
+	public void toString(StringBuilder sb, int indent) {
 		String s = new String("");
 		if (kind == DashStrings.IntEnvKind.ENV) {
 			s += DashStrings.envName + " ";
@@ -27,7 +27,7 @@ public class DashEventDecls extends ASTNode {
 		StringJoiner sj = new StringJoiner(",\n");
         names.forEach(n -> sj.add(n));
 		s += DashStrings.eventName + " " + sj.toString() +" {}\n";
-		return DashStrings.indent(i) + s;
+		sb.append(DashStrings.indent(indent) + s);
 	}
 	public List<String> getNames() {
 		return names;

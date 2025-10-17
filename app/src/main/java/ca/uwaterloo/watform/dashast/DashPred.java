@@ -9,21 +9,22 @@ public class DashPred extends ASTNode {
     public AlloyExpr exp;
     public String name; // has no meaning
  
-    public DashPred(Pos p, String n, AlloyExpr i) {
+    public DashPred(Pos pos, String n, AlloyExpr i) {
+        super(pos);
         assert(n != null);
         assert(i != null);
-        this.pos = pos;
         this.name = n;
         this.exp = i;
     }
-    public String toString(Integer i) {
+    @Override
+    public void toString(StringBuilder sb, int indent) {
         String s = new String();
-        s += DashStrings.indent(i) + AlloyStrings.PRED +" "; 
+        s += DashStrings.indent(indent) + AlloyStrings.PRED +" "; 
         if (name != null) s += name;
         s += " {\n";
-        s += DashStrings.indent(i) + exp.toString() + "\n";
-        s += DashStrings.indent(i) + "}\n";
-        return s;
+        s += DashStrings.indent(indent) + exp.toString() + "\n";
+        s += DashStrings.indent(indent) + "}\n";
+        sb.append(s);
     }
     public AlloyExpr getExp() {
         return exp;

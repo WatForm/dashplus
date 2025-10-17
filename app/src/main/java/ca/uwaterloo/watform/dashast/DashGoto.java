@@ -12,8 +12,9 @@ public class DashGoto extends DashExpr {
 	public DashGoto(Pos pos, AlloyExpr d) {
 		super(pos,d);
 	}
-	public String toString(Integer i) {
-		return super.toString(DashStrings.gotoName, i);
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.gotoName, sb, indent);
 	}
 	public AlloyExpr getDest() {
 		return super.getExp();

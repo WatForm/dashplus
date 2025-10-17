@@ -10,8 +10,9 @@ public class DashExited extends DashExpr {
     public DashExited(Pos p, AlloyExpr e) {
         super(p,e);
     }
- 
-    public String toString(Integer indent) {
-        return super.toString(DashStrings.exitName, indent);
+
+    @Override
+    public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.exitName, sb, indent);
     }
 }

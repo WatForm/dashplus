@@ -16,8 +16,10 @@ public class DashSend  extends DashExpr {
 	public DashSend(Pos pos,AlloyExpr e) {
 		super(pos,e);
 	}
-	public String toString(Integer i) {
-		return super.toString(DashStrings.sendName, i);
+	@Override
+	public void toString(StringBuilder sb, int indent) {
+        super.toString(DashStrings.sendName, sb, indent);
 	}
+
 }
 
