@@ -2,12 +2,10 @@ package ca.uwaterloo.watform.alloyast.expr;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
-import antlr.generated.AlloyParser.AssignmentContext;
 import antlr.generated.AlloyParser.DeclContext;
 import antlr.generated.AlloyParser.NameContext;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
-import ca.uwaterloo.watform.alloyast.expr.helper.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -30,22 +28,16 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
 	@Override
 	public AlloyLetExpr visitLet(AlloyParser.LetContext ctx) {
-		AlloyAsnExprHelperParseVis asnExprHelperParsVis = new AlloyAsnExprHelperParseVis();
-		List<AlloyAsnExprHelper> asns = new ArrayList<>();
-		for (AssignmentContext asn : ctx.assignment()) {
-			asns.add(asnExprHelperParsVis.visit(asn));
-		}
-		return new AlloyLetExpr(new Pos(ctx), asns, this.visit(ctx.body()));
+		return new AlloyLetExpr(
+				new Pos(ctx),
+				ParserUtil.visitAll(ctx.assignment(), new AlloyLetAsnParseVis()),
+				this.visit(ctx.body()));
 	}
 
 	@Override
 	public AlloyQuantificationExpr visitQuantificationExpr(
 			AlloyParser.QuantificationExprContext ctx) {
-		List<AlloyDecl> decls = new ArrayList<>();
-		AlloyDeclParseVis declParsVis = new AlloyDeclParseVis();
-		for (DeclContext declCtx : ctx.decl()) {
-			decls.add((AlloyDecl) declParsVis.visit(declCtx));
-		}
+		List<AlloyDecl> decls = ParserUtil.visitAll(ctx.decl(), new AlloyDeclParseVis());
 		if (null != ctx.ALL()) {
 			return new AlloyQuantificationExpr(
 					new Pos(ctx), AlloyQuantificationExpr.Quant.ALL, decls, this.visit(ctx.body()));
@@ -680,20 +672,22 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
-	
+
 	// ============================
 	// BinTemp
 	// ============================
 	@Override
 	public AlloyBinaryExpr visitBinTempExpr(AlloyParser.BinTempExprContext ctx) {
-		if(null != ctx.UNTIL()) {
+		if (null != ctx.UNTIL()) {
 			return new AlloyUntilExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
-		} else if(null != ctx.SINCE()) {
+		} else if (null != ctx.SINCE()) {
 			return new AlloySinceExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
-		} else if(null != ctx.TRIGGERED()){
-			return new AlloyTriggeredExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
-		} else if(null != ctx.RELEASES()) {
-			return new AlloyReleasesExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.TRIGGERED()) {
+			return new AlloyTriggeredExpr(
+					new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.RELEASES()) {
+			return new AlloyReleasesExpr(
+					new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
 		} else {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
@@ -701,18 +695,19 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
 	@Override
 	public AlloyBinaryExpr visitBinTempBindExpr(AlloyParser.BinTempBindExprContext ctx) {
-		if(null != ctx.UNTIL()) {
+		if (null != ctx.UNTIL()) {
 			return new AlloyUntilExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
-		} else if(null != ctx.SINCE()) {
+		} else if (null != ctx.SINCE()) {
 			return new AlloySinceExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
-		} else if(null != ctx.TRIGGERED()){
+		} else if (null != ctx.TRIGGERED()) {
 			return new AlloyTriggeredExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
-		} else if(null != ctx.RELEASES()) {
+		} else if (null != ctx.RELEASES()) {
 			return new AlloyReleasesExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
 		} else {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
 	}
+
 	// ============================
 	// And
 	// ============================

@@ -22,14 +22,7 @@ public final class AlloyBracketExpr extends AlloyExpr {
 	public void toString(StringBuilder sb, int indent) {
 		this.expr.toString(sb, indent);
 		sb.append(AlloyStrings.LBRACK);
-		boolean first = true;
-		for (AlloyExpr expr : exprs) {
-			if (!first) {
-				sb.append(", ");
-			}
-			expr.toString(sb, indent);
-			first = false;
-		}
+		ASTNode.join(sb, indent, exprs, AlloyStrings.COMMA + AlloyStrings.SPACE);
 		sb.append(AlloyStrings.RBRACK);
 	}
 }

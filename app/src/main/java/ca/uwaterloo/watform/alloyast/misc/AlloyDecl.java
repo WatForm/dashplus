@@ -64,14 +64,7 @@ public final class AlloyDecl extends AlloyASTNode {
 	@Override
 	public void toString(StringBuilder sb, int indent) {
 		sb.append((this.disj1 ? "disj " : ""));
-		boolean first = true;
-		for (AlloyNameExpr name : this.names) {
-			if (!first) {
-				sb.append(", ");
-			}
-			name.toString(sb, indent);
-			first = false;
-		}
+		ASTNode.join(sb, indent, this.names, AlloyStrings.COMMA + AlloyStrings.SPACE);
 		sb.append(AlloyStrings.COLON);
 		sb.append((this.disj2 ? "disj " : ""));
 		sb.append(this.quant.map(q -> q.toString() + " ").orElse(""));

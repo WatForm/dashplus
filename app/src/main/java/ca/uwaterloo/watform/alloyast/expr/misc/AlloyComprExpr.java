@@ -22,14 +22,7 @@ public final class AlloyComprExpr extends AlloyExpr {
 	@Override
 	public void toString(StringBuilder sb, int indent) {
 		sb.append(AlloyStrings.LBRACE);
-		boolean first = true;
-		for(AlloyDecl decl : this.decls) {
-			if(! first) {
-				sb.append(", ");
-			}
-			decl.toString(sb, indent);
-			first = false;
-		}
+		ASTNode.join(sb, indent, this.decls, AlloyStrings.COMMA + AlloyStrings.SPACE);
 		sb.append(AlloyStrings.SPACE);
 		sb.append(AlloyStrings.BAR);
 		sb.append(AlloyStrings.SPACE);
