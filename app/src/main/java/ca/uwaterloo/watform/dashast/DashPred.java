@@ -1,10 +1,10 @@
 package ca.uwaterloo.watform.dashast;
 
-import ca.uwaterloo.watform.util.Pos;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 
-public class DashPred extends Dash {
+public class DashPred extends ASTNode {
 
     public AlloyExpr exp;
     public String name; // has no meaning
@@ -18,7 +18,7 @@ public class DashPred extends Dash {
     }
     public String toString(Integer i) {
         String s = new String();
-        s += DashStrings.indent(i) + DashStrings.predName +" "; 
+        s += DashStrings.indent(i) + AlloyStrings.PRED +" "; 
         if (name != null) s += name;
         s += " {\n";
         s += DashStrings.indent(i) + exp.toString() + "\n";

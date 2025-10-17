@@ -71,11 +71,6 @@ sourceSets {
 }
 
 
-def corpusUrl = "https://github.com/QiyueChen04/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip"
-def corpusZip = file("src/test/resources/antlr/catalyst/catalyst-corpus.zip")
-def corpusParentDir = file("src/test/resources/antlr/catalyst/")
-def corpusDir = file("src/test/resources/antlr/catalyst/catalyst-corpus")
-
 tasks.named('generateGrammarSource') {
     outputDirectory = file("$buildDir/generated-src/antlr/main/antlr/generated")
     arguments += ["-visitor", "-no-listener"]
@@ -87,10 +82,6 @@ tasks.named('compileJava') {
 
 tasks.named("processTestResources") {
     dependsOn tasks.named('generateGrammarSource')
-
-    doFirst {
-        println "processTestResources: This may take a while the first time catalyst-corpus is being processed."
-    }
 }
 
 tasks.named('test') {

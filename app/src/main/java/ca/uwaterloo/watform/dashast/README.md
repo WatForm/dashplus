@@ -2,7 +2,7 @@
 
 These classes are simply to store the parsed elements of a Dash model.
 
-DashFile is the top class to use and is a subclass of AlloyFile
+DashFile is the top class to use.
 
 DashState is a subclass of AlloyParagraph.
 

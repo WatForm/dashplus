@@ -7,19 +7,16 @@ package ca.uwaterloo.watform.dashast;
 
 import java.util.Collections;
 
-import ca.uwaterloo.watform.util.Pos;
+
+import ca.uwaterloo.watform.utils.*;
+
+import ca.uwaterloo.watform.utils.ASTNode;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashStrings;
-//import ca.uwaterloo.watform.alloyasthelper.ExprHelper;
-// use this one, rather than regular Alloy Expr .toString
-// so we can control the printing of the parameters in DashRefs
-//import ca.uwaterloo.watform.alloyasthelper.ExprToString;
 
-
-public abstract class DashExpr extends Dash {	
+public abstract class DashExpr extends ASTNode {	
 
     public AlloyExpr exp;
-    public Pos pos;
 
     public DashExpr(Pos p, AlloyExpr e) {
         assert(e != null);

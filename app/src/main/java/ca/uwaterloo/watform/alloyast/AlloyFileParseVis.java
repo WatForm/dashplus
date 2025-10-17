@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.Token;
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyFileParseVis extends AlloyBaseVisitor<AlloyFile> {
 

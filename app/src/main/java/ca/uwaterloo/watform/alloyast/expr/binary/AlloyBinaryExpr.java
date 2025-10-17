@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr.binary;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.utils.*;
 
 public abstract class AlloyBinaryExpr extends AlloyExpr {
 	public final AlloyExpr left;

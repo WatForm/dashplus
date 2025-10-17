@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-public final class TLAPlusStrings 
+import ca.uwaterloo.watform.utils.*;
+
+public final class TLAPlusStrings extends CommonStrings
 {
 	// top-level keywords
 	public static final String MODULE = "MODULE";

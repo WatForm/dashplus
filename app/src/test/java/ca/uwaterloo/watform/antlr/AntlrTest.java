@@ -24,5 +24,5 @@ public class AntlrTest {
 		new AntlrTestUtil().recurParseDir(p, 5*1000);
 	}
 
-	// test catalyst corpus with main/java/ca/uwaterloo/watform/test/Main.java
+	// test catalyst corpus with app/src/main/java/ca/uwaterloo/watform/test/Main.java
 }

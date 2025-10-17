@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast.expr.helper;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
+import ca.uwaterloo.watform.utils.*;
 import antlr.generated.AlloyParser.NameContext;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;

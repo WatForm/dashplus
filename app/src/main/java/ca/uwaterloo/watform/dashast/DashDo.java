@@ -2,7 +2,8 @@ package ca.uwaterloo.watform.dashast;
 
 import java.util.Collections;
 
-import ca.uwaterloo.watform.util.Pos;
+
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashStrings;
 

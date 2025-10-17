@@ -8,11 +8,10 @@ import java.util.StringJoiner;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import ca.uwaterloo.watform.util.Pos;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
 
-public class DashState extends AlloyParagraph {
+public class DashState extends DashParagraph {
 
 	// stuff from parsing
 	public String name;
@@ -80,7 +79,7 @@ public class DashState extends AlloyParagraph {
 			Collections.sort(items, 
 				(i1, i2) -> Integer.compare(itemToInt(i1),itemToInt(i2)
 )				);
- 			items.forEach(k -> j.add(((Dash) k).toString(i+1)));
+ 			items.forEach(k -> j.add(((ASTNode) k).toString(i+1)));
 			s += j.toString() + ind + "}\n";
 
 		}

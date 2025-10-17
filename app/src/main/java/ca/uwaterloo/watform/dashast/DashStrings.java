@@ -6,6 +6,7 @@
 package ca.uwaterloo.watform.dashast;
 
 import java.util.Collections;
+import ca.uwaterloo.watform.utils.CommonStrings;
 
 public final class DashStrings  {
 
@@ -14,9 +15,9 @@ public final class DashStrings  {
 
 	// used for translation to Alloy
 	//NAD TODO this should match the qualChar used in parsing for vars and state names
-	private static String inputQualChar = "/";
-	private static String internalQualChar = inputQualChar;
-	private static String outputQualChar = "_";
+	public static String inputQualChar = "/";
+	public static String internalQualChar = inputQualChar;
+	public static String outputQualChar = "_";
 	
 	// separator used in Alloy names
 	public static final String alloySep = "_";
@@ -166,7 +167,7 @@ public final class DashStrings  {
 	}
 
 	public static final String indent(Integer i) {
-		return final String.join("", Collections.nCopies(i,Dashfinal Strings.tab));
+		return String.join("", Collections.nCopies(i,CommonStrings.TAB));
 	}
 	
 }

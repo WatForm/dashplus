@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.Collections;
 
-import ca.uwaterloo.watform.util.Pos;
-import ca.uwaterloo.watform.util.ASTNode;
+
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
 
 public class DashBufferDecls extends ASTNode {

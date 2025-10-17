@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import ca.uwaterloo.watform.dashast.DashStrings;
-import ca.uwaterloo.watform.util.Pos;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 
-public class DashVarDecls extends Dash {
+public class DashVarDecls extends ASTNode {
  
 	private List<String> names;
 	private AlloyExpr typ;

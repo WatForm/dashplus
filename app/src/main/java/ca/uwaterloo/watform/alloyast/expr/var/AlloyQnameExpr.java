@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr.var;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import java.util.Collections;
+import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.stream.Collectors;
 

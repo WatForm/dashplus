@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast.misc;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.AlloyASTNode;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;

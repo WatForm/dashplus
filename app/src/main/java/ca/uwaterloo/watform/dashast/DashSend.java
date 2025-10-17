@@ -3,9 +3,9 @@ package ca.uwaterloo.watform.dashast;
 import java.util.ArrayList;
 import java.util.StringJoiner;
 
-import ca.uwaterloo.watform.util.Pos;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 
 // send P[x]/ev1
 // send ev1

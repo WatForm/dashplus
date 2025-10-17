@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import ca.uwaterloo.watform.util.Pos;
+import ca.uwaterloo.watform.utils.*;
 
-public class DashTrans extends Dash {
+public class DashTrans extends ASTNode {
 	String name;
 	List<Object> items;
 
@@ -27,7 +27,7 @@ public class DashTrans extends Dash {
 		} else { 
 		    s += ind + DashStrings.transName + " " + name + " {\n";
 			StringJoiner j = new StringJoiner("");
- 			items.forEach(k -> j.add(((Dash) k).toString(i+1)));
+ 			items.forEach(k -> j.add(((ASTNode) k).toString(i+1)));
 			s += j.toString();
 			s += ind + "}\n";
 		}
