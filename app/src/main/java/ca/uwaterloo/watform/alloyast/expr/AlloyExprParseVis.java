@@ -14,6 +14,8 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParseVis;
 import ca.uwaterloo.watform.utils.*;
+
+import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -627,7 +629,57 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
 
-		return new AlloyComparisonExpr(new Pos(ctx), this.visit(ctx.expr2(0)), neg, comp, this.visit(ctx.expr2(1)));
+		return new AlloyComparisonExpr(
+				new Pos(ctx), this.visit(ctx.expr2(0)), neg, comp, this.visit(ctx.expr2(1)));
+	}
+
+	// ============================
+	// Neg and Temp
+	// ============================
+	@Override
+	public AlloyUnaryExpr visitUnTempExpr(AlloyParser.UnTempExprContext ctx) {
+		if (null != ctx.NOT_EXCL()) {
+			return new AlloyNegExpr(new Pos(ctx), AlloyNegExpr.Negation.NOT_EXCL, this.visit(ctx.expr2()));
+		} else if (null != ctx.NOT()) {
+			return new AlloyNegExpr(new Pos(ctx), AlloyNegExpr.Negation.NOT, this.visit(ctx.expr2()));
+		} else if (null != ctx.ALWAYS()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.ALWAYS, this.visit(ctx.expr2()));
+		} else if (null != ctx.EVENTUALLY()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.EVENTUALLY, this.visit(ctx.expr2()));
+		} else if (null != ctx.AFTER()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.AFTER, this.visit(ctx.expr2()));
+		} else if (null != ctx.HISTORICALLY()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.HISTORICALLY, this.visit(ctx.expr2()));
+		} else if (null != ctx.ONCE()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.ONCE, this.visit(ctx.expr2()));
+		} else if (null != ctx.BEFORE()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.BEFORE, this.visit(ctx.expr2()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	@Override
+	public AlloyUnaryExpr visitUnTempBindExpr(AlloyParser.UnTempBindExprContext ctx) {
+		if (null != ctx.NOT_EXCL()) {
+			return new AlloyNegExpr(new Pos(ctx), AlloyNegExpr.Negation.NOT_EXCL, this.visit(ctx.bind()));
+		} else if (null != ctx.NOT()) {
+			return new AlloyNegExpr(new Pos(ctx), AlloyNegExpr.Negation.NOT, this.visit(ctx.bind()));
+		} else if (null != ctx.ALWAYS()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.ALWAYS, this.visit(ctx.bind()));
+		} else if (null != ctx.EVENTUALLY()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.EVENTUALLY, this.visit(ctx.bind()));
+		} else if (null != ctx.AFTER()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.AFTER, this.visit(ctx.bind()));
+		} else if (null != ctx.HISTORICALLY()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.HISTORICALLY, this.visit(ctx.bind()));
+		} else if (null != ctx.ONCE()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.ONCE, this.visit(ctx.bind()));
+		} else if (null != ctx.BEFORE()) {
+			return new AlloyTempExpr(new Pos(ctx), AlloyTempExpr.Temporal.BEFORE, this.visit(ctx.bind()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
 	}
 
 	// ============================
