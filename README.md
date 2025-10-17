@@ -20,9 +20,23 @@ The build process is the same for Linux, MacOS and Windows powershell. On Window
 
 
 ## Instructions for Contributors:
+- Directory names: All lowercase and avoid underscores
+
+- Class and .java file names: UpperCamelCase
+
+- Method and variable names: lowerCamelCase 
+
+- If a code formatter is used, please use [google-java-format](https://github.com/google/google-java-format)
 
 - If an IDE is used, please ensure that IDE-generated files are not present in any of the commits. This can be done by including such files in the .gitignore
 
-- If a code formatter is used, please use [google-java-format](https://github.com/google/google-java-format)
+## Testing:
+
+- `./gradlew test` for unit testing
+
+- For testing using a JAR, the main entry point is: [`app/src/main/java/ca/uwaterloo/watform/test/Main.java`](app/src/main/java/ca/uwaterloo/watform/test/Main.java)
+    > **Note:** If the `Alloy.g4` grammar is changed, you must test it with the catalyst-corpus. 
+    See the instructions in [`app/src/main/java/ca/uwaterloo/watform/test/README.md`](app/src/main/java/ca/uwaterloo/watform/test/README.md).
+
 
 

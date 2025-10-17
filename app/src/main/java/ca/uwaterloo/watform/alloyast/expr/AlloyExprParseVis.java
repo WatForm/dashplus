@@ -13,8 +13,8 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParseVis;
-import java.util.ArrayList;
 import ca.uwaterloo.watform.utils.*;
+import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -475,6 +475,159 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 		} else {
 			throw new AlloyUnexpTokenEx(ctx);
 		}
+	}
+
+	// ============================
+	// FunMul, FunDiv, FunRem
+	// ============================
+	@Override
+	public AlloyBinaryExpr visitMulDivRemExpr(AlloyParser.MulDivRemExprContext ctx) {
+		if (null != ctx.FUNMUL()) {
+			return new AlloyFunMulExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.FUNDIV()) {
+			return new AlloyFunDivExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.FUNREM()) {
+			return new AlloyFunRemExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	@Override
+	public AlloyBinaryExpr visitMulDivRemBindExpr(AlloyParser.MulDivRemBindExprContext ctx) {
+		if (null != ctx.FUNMUL()) {
+			return new AlloyFunMulExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.FUNDIV()) {
+			return new AlloyFunDivExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.FUNREM()) {
+			return new AlloyFunRemExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	// ============================
+	// Union, Diff, FunAdd, FunSub
+	// ============================
+	@Override
+	public AlloyBinaryExpr visitPlusMinusExpr(AlloyParser.PlusMinusExprContext ctx) {
+		if (null != ctx.PLUS()) {
+			return new AlloyUnionExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.MINUS()) {
+			return new AlloyDiffExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.FUNADD()) {
+			return new AlloyFunAddExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.FUNSUB()) {
+			return new AlloyFunSubExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	@Override
+	public AlloyBinaryExpr visitPlusMinusBindExpr(AlloyParser.PlusMinusBindExprContext ctx) {
+		if (null != ctx.PLUS()) {
+			return new AlloyUnionExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.MINUS()) {
+			return new AlloyDiffExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.FUNADD()) {
+			return new AlloyFunAddExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.FUNSUB()) {
+			return new AlloyFunSubExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	// ============================
+	// SHL, SHR, SHA
+	// ============================
+	@Override
+	public AlloyBinaryExpr visitShiftExpr(AlloyParser.ShiftExprContext ctx) {
+		if (null != ctx.SHL()) {
+			return new AlloyShLExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.SHR()) {
+			return new AlloyShRExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else if (null != ctx.SHA()) {
+			return new AlloyShAExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	@Override
+	public AlloyBinaryExpr visitShiftBindExpr(AlloyParser.ShiftBindExprContext ctx) {
+		if (null != ctx.SHL()) {
+			return new AlloyShLExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.SHR()) {
+			return new AlloyShRExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else if (null != ctx.SHA()) {
+			return new AlloyShAExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+	}
+
+	// ============================
+	// Qt
+	// ============================
+	@Override
+	public AlloyQtExpr visitQuantifiedExpr(AlloyParser.QuantifiedExprContext ctx) {
+		AlloyQtExpr.Quant qt = AlloyQtExpr.Quant.ALL;
+		if (null != ctx.ALL()) {
+			qt = AlloyQtExpr.Quant.ALL;
+		} else if (null != ctx.NO()) {
+			qt = AlloyQtExpr.Quant.NO;
+		} else if (null != ctx.SOME()) {
+			qt = AlloyQtExpr.Quant.SOME;
+		} else if (null != ctx.LONE()) {
+			qt = AlloyQtExpr.Quant.LONE;
+		} else if (null != ctx.ONE()) {
+			qt = AlloyQtExpr.Quant.ONE;
+		} else if (null != ctx.SET()) {
+			qt = AlloyQtExpr.Quant.SET;
+		} else if (null != ctx.SEQ()) {
+			qt = AlloyQtExpr.Quant.SEQ;
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+		return new AlloyQtExpr(new Pos(ctx), qt, this.visit(ctx.expr2()));
+	}
+
+	// ============================
+	// Comparison
+	// ============================
+	@Override
+	public AlloyComparisonExpr visitCompExpr(AlloyParser.CompExprContext ctx) {
+		AlloyComparisonExpr.Negation neg;
+		if (null != ctx.comparison().NOT_EXCL()) {
+			neg = AlloyComparisonExpr.Negation.NOT_EXCL;
+		} else if (null != ctx.comparison().NOT()) {
+			neg = AlloyComparisonExpr.Negation.NOT;
+		} else {
+			neg = AlloyComparisonExpr.Negation.NONE;
+		}
+
+		AlloyComparisonExpr.Comp comp;
+		if (null != ctx.comparison().IN()) {
+			comp = AlloyComparisonExpr.Comp.IN;
+		} else if (null != ctx.comparison().EQUAL()) {
+			comp = AlloyComparisonExpr.Comp.EQUAL;
+		} else if (null != ctx.comparison().LT()) {
+			comp = AlloyComparisonExpr.Comp.LESS_THAN;
+		} else if (null != ctx.comparison().GT()) {
+			comp = AlloyComparisonExpr.Comp.GREATER_THAN;
+		} else if (null != ctx.comparison().LE()) {
+			comp = AlloyComparisonExpr.Comp.LESS_EQUAL;
+		} else if (null != ctx.comparison().EL()) {
+			comp = AlloyComparisonExpr.Comp.EQUAL_LESS;
+		} else if (null != ctx.comparison().GE()) {
+			comp = AlloyComparisonExpr.Comp.GREATER_EQUAL;
+		} else {
+			throw new AlloyUnexpTokenEx(ctx);
+		}
+
+		return new AlloyComparisonExpr(new Pos(ctx), this.visit(ctx.expr2(0)), neg, comp, this.visit(ctx.expr2(1)));
 	}
 
 	// ============================
