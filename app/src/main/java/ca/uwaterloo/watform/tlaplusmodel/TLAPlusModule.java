@@ -15,6 +15,20 @@ public class TLAPlusModule
 	}
 	public String code()
 	{
-		return this.name;
+		String head = 
+		TLAPlusStrings.HEAD_DELIMITER 
+		+ TLAPlusStrings.SPACE 
+		+ this.name
+		+ TLAPlusStrings.SPACE
+		+ TLAPlusStrings.HEAD_DELIMITER;
+
+		String body = 
+		TLAPlusStrings.BODY_DELIMITER
+		+ "\n"
+		+ TLAPlusStrings.BODY_DELIMITER;
+
+		String answer = head + "\n" + body;
+
+		return answer;
 	}
 }

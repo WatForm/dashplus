@@ -13,6 +13,7 @@ public final class TLAPlusStrings extends CommonStrings
 	// top-level structure
 	public static final String HEAD_DELIMITER = "----";
 	public static final String BODY_DELIMITER = "====";
+	public static final String SPACE = " ";
 
 	// comments
 	public static final String MULTI_COMMENT_START = "(*";
