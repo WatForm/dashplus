@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
-
+import ca.uwaterloo.watform.dashast.DashParam;
 public class EventTable {
 
 	private HashMap<String,EventElement> et;
@@ -40,7 +40,6 @@ public class EventTable {
 
 	public EventTable() {
 		this.et = new HashMap<String,EventElement>();
-
 	}
 	public String toString() {
 		String s = new String("EVENT TABLE\n");
@@ -139,7 +138,4 @@ public class EventTable {
 			.filter(i -> DashFQN.prefix(sfqn,i))
 			.collect(Collectors.toList());	
 	}
-
-
-
 }

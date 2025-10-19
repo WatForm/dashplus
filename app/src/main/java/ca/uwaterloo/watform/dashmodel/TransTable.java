@@ -15,8 +15,10 @@ import java.util.stream.Collectors;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.dashast.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.dashmodel.dashref.DashRef;
+import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.dashast.DashParam;
 
 public class TransTable  {
 
@@ -80,10 +82,10 @@ public class TransTable  {
 	public DashRef getSend(String tfqn) {
 		return tt.get(tfqn).send;
 	}
-	public DashExpr getDo(String tfqn) {
+	public AlloyExpr getDo(String tfqn) {
 		return tt.get(tfqn).act;
 	}
-	public DashExpr getWhen(String tfqn) {
+	public AlloyExpr getWhen(String tfqn) {
 		return tt.get(tfqn).when;
 	}
 

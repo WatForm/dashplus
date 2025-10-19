@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
+import ca.uwaterloo.watform.dashast.DashParam;
 
 public class BufferTable {
 
@@ -23,7 +24,6 @@ public class BufferTable {
 	public class BufferElement {
 		private IntEnvKind kind;
 		private List<DashParam> params;
-		//private List<Integer> paramsIdx;
 		private String element;
 		private Integer index;
 

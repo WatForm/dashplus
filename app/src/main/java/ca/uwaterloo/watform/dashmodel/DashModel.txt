@@ -5,7 +5,7 @@
 			String sfqn = DashFQN.chopPrefixFromFQN(vfqn);
 			setVarType(
 				vfqn,
-					new ResolveAlloyExpr("var", false, false, true, sfqn).
+					new ResolveDashExpr("var", false, false, true, sfqn).
 						visitThis(getVarType(vfqn))
 			);
 		}
@@ -171,5 +171,22 @@
 			.collect(Collectors.toList());
 		if (!statesNotEntered.isEmpty())
 			DashErrors.statesNotEntered(statesNotEntered);
+		isResolved = true;
+	}
+
+	public void resolveState(String root, EventTable et, VarTable vt, PredTable pt) {
+		// resolve inits and invariants
+		for (String sfqn: st.keySet()) {
+			inits.addAll( 
+				st.get(sfqn).origInits.stream()
+					.map(i -> new ResolveDashExpr(this, et, vt, pt, "var", false, false, true, sfqn).visitThis(i.getExp()))
+					.collect(Collectors.toList()));
+			invs.addAll(
+				st.get(sfqn).origInvariants.stream()
+					.map(i -> new ResolveDashExpr(this, et, vt, pt, "var", false, false, true, sfqn).visitThis(i.getExp()))
+					.collect(Collectors.toList()));
+			// nothing to do for entered and exited
+			// because they are resolved in context
+		}
 		isResolved = true;
 	}

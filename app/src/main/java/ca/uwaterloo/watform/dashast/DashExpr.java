@@ -1,6 +1,8 @@
 /* 
 	These classes are used only during parsing because
 	we do not know what order items within a state will be parsed in.
+
+    The expression can be given a name in printing.
 */
 
 package ca.uwaterloo.watform.dashast;
@@ -14,47 +16,18 @@ import ca.uwaterloo.watform.utils.ASTNode;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashStrings;
 
-public abstract class DashExpr extends ASTNode {	
+public abstract class DashExpr extends AlloyExpr {	
 
-    public AlloyExpr exp;
-
-    public DashExpr(Pos pos, AlloyExpr e) {
+    public DashExpr(Pos pos, AlloyExpr exp) {
         super(pos);
-        assert(e != null);
-        this.exp = e; 
     }
-
+    public DashExpr() {
+        super();
+    }
+    // Special toString for when expression has a name
     public void toString(String name, StringBuilder sb, int indent) {
-        String s = new String();
-        s += DashStrings.indent(indent) + name + " {\n";
-
-        // Alloy seems to put a NOOP on the front of the expression
-        //Expr e = exp;
-        //while (ExprHelper.isExprNoop(e)) {
-        //    e = ExprHelper.getSub(e);
-        //}
-
-        // we don't want to translateExpr here b/c that includes s and s' in the output expression
-        
-        /*
-        if (ExprHelper.isExprAndList(e)) {
-
-            // Drop the "AND[p1,p2 ]" and print p1 and p2 on separate lines
-            for (Expr a: ExprHelper.getExprListArgs(e)) {
-                // have to call a new ExprToString each time b/c on exprToString call closes it 
-                ep = new ExprToString(true); // true b/c withinDash printing expression
-                s += DashStrings.indent(i+1) + ep.exprToString(a) + "\n";
-            }
-        } else {
-            ep = new ExprToString(true); // true -> b/c withinDash printing expression
-        */
-        //NADTODO pass toString an Int parameter for indentation
-        s += exp.toString() + "\n";
-        //}
-        s += DashStrings.indent(indent) + "}\n";
-        sb.append(s); 
-    }
-    public AlloyExpr getExp() {
-        return exp;
+        sb.append(DashStrings.indent(indent) + name + " {\n");
+        this.toString(sb,indent);
+        sb.append("\n" + DashStrings.indent(indent) + "}\n");
     }
 }

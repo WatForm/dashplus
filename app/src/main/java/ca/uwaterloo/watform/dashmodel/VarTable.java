@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.dashast.DashExpr;
+import ca.uwaterloo.watform.dashast.DashParam;
 
 public class VarTable {
 
@@ -29,13 +30,13 @@ public class VarTable {
 		private IntEnvKind kind;
 		private List<DashParam> params;
 		//private List<Integer> paramsIdx;
-		private AlloyExpr typ;
+		private DashExpr typ;
 
 		public VarElement(
 			IntEnvKind k,
 			List<DashParam> prms,
 			//List<Integer> prmsIdx,
-			AlloyExpr t) {
+			DashExpr t) {
 			assert(prms != null);
 			this.kind = k;
 			this.params = prms;
@@ -50,7 +51,7 @@ public class VarTable {
 			s += "typ: "+typ.toString() + "\n";
 			return s;
 		}
-		public void setType(AlloyExpr typ) {
+		public void setType(DashExpr typ) {
 			this.typ = typ;
 		}
 	}
@@ -59,7 +60,7 @@ public class VarTable {
 			String vfqn, 
 			IntEnvKind k, 
 			List<DashParam> prms, 
-			AlloyExpr t) {
+			DashExpr t) {
 		assert(prms!=null);
 		if (vt.containsKey(vfqn)) 
 			return false;
@@ -82,7 +83,7 @@ public class VarTable {
 	}	
 
 	// setters
-	public void setVarType(String vfqn, AlloyExpr typ) {
+	public void setVarType(String vfqn, DashExpr typ) {
 		vt.get(vfqn).setType(typ);
 	}
 
@@ -90,7 +91,7 @@ public class VarTable {
 	public boolean contains(String vfqn) {
 		return (vt.containsKey(vfqn));
 	}
-	public AlloyExpr getVarType(String vfqn) {
+	public DashExpr getVarType(String vfqn) {
 		return vt.get(vfqn).typ;
 	}
 

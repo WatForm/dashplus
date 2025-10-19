@@ -1,22 +1,22 @@
-package ca.uwaterloo.watform.dashmodel.dashref;
+package ca.uwaterloo.watform.dashast.dashref;
 
 import java.util.List;
 
 import ca.uwaterloo.watform.utils.Pos;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 
-public class TransDashRef extends DashRef {
+public class StateDashRef extends DashRef {
 
-	public TransDashRef(
+	public StateDashRef(
 		Pos p, 
 		String n, 
 		List<AlloyExpr> prmValues) {
-		super(p, DashRefKind.TRANS,n, prmValues);
+		super(p, DashRefKind.STATE,n, prmValues);
 	}
 
-	public TransDashRef( 
+	public StateDashRef( 
 		String n, 
 		List<AlloyExpr> prmValues) {
-		super(DashRefKind.TRANS,n, prmValues);
+		super(DashRefKind.STATE,n, prmValues);
 	}
 }

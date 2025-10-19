@@ -2,7 +2,9 @@ package ca.uwaterloo.watform.dashmodel;
 
 import java.util.List;
 
-import ca.uwaterloo.watform.dashmodel.dashref.DashRef;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashast.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -21,9 +23,9 @@ public class TransElement {
 	// calculated when resolved
 	public DashRef src = null; 
 	public DashRef dest = null;
-	public DashExpr when = null; // expr
+	public AlloyExpr when = null; // expr
 	public DashRef on = null; // event
-	public DashExpr act = null;
+	public AlloyExpr act = null;
 	public DashRef send = null; // event
 
 	public TransElement(

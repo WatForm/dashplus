@@ -3,63 +3,63 @@
 	// can we make this a visitor?
 	// must be done after resolve
 	// might be primed or unprimed
-	public List<DashRef> collectDashRefs(AlloyExpr exp) {
+	public List<DashRef> collectDashRefs(DashExpr exp) {
 		assert(exp != null);
 		List<DashRef> x = new ArrayList<DashRef>();
 		if (DashRef.isDashRef(exp)) {
 			x.add((DashRef) exp);
 			return x;
-		} else if (isAlloyExprVar(exp)) {
+		} else if (isDashExprVar(exp)) {
 			return x;
-		} else if (isAlloyExprBinary(exp)) {
+		} else if (isDashExprBinary(exp)) {
 			x.addAll(collectDashRefs(getLeft(exp)));
 			x.addAll(collectDashRefs(getRight(exp)));
 			return x;
-		} else if (isAlloyExprBadJoin(exp)) {
+		} else if (isDashExprBadJoin(exp)) {
 			x.addAll(collectDashRefs(getLeft(exp)));
 			x.addAll(collectDashRefs(getRight(exp)));
 			return x;
-		} else if (exp instanceof AlloyExprCall) {
-			for (AlloyExpr e: ((AlloyExprCall) exp).args) x.addAll(collectDashRefs(e));
+		} else if (exp instanceof DashExprCall) {
+			for (DashExpr e: ((DashExprCall) exp).args) x.addAll(collectDashRefs(e));
 			return x;
-		} else if (exp instanceof AlloyExprChoice){
-			for (AlloyExpr e: ((AlloyExprChoice) exp).choices) x.addAll(collectDashRefs(e));
+		} else if (exp instanceof DashExprChoice){
+			for (DashExpr e: ((DashExprChoice) exp).choices) x.addAll(collectDashRefs(e));
 			return x;
-		} else if (exp instanceof AlloyExprITE){
+		} else if (exp instanceof DashExprITE){
 			x.addAll(collectDashRefs(getCond(exp)));
 			x.addAll(collectDashRefs(getLeft(exp)));
 			x.addAll(collectDashRefs(getRight(exp)));
 			return x;
-		} else if (exp instanceof AlloyExprList){
-			for (AlloyExpr e: ((AlloyExprList) exp).args) x.addAll(collectDashRefs(e));
+		} else if (exp instanceof DashExprList){
+			for (DashExpr e: ((DashExprList) exp).args) x.addAll(collectDashRefs(e));
 			return x;
-		} else if (exp instanceof AlloyExprUnary){
-			return collectDashRefs(((AlloyExprUnary) exp).sub);
-		} else if (exp instanceof AlloyExprLet){
-			x.addAll(collectDashRefs(((AlloyExprLet) exp).expr));
-			x.addAll(collectDashRefs(((AlloyExprLet) exp).sub));
+		} else if (exp instanceof DashExprUnary){
+			return collectDashRefs(((DashExprUnary) exp).sub);
+		} else if (exp instanceof DashExprLet){
+			x.addAll(collectDashRefs(((DashExprLet) exp).expr));
+			x.addAll(collectDashRefs(((DashExprLet) exp).sub));
 			return x;
-		} else if (exp instanceof AlloyExprQt){
-			List<AlloyExpr> ll = ((AlloyExprQt) exp).decls.stream()
+		} else if (exp instanceof DashExprQt){
+			List<DashExpr> ll = ((DashExprQt) exp).decls.stream()
 				.map(i -> i.expr)
 				.collect(Collectors.toList());
-			for (AlloyExpr e: ll) x.addAll(collectDashRefs(e));
-			x.addAll(collectDashRefs(((AlloyExprQt) exp).sub));
+			for (DashExpr e: ll) x.addAll(collectDashRefs(e));
+			x.addAll(collectDashRefs(((DashExprQt) exp).sub));
 			return x;
-		} else if (exp instanceof AlloyExprConstant){
+		} else if (exp instanceof DashExprConstant){
 			return new ArrayList<DashRef>();
 		} else {
-			DashErrors.UnsupportedAlloyExpr("collectDashRefs", exp.toString());
+			DashErrors.UnsupportedDashExpr("collectDashRefs", exp.toString());
 			return null;
 		}
 	}
 
 	// returns the primed variables in an exp (but w/o the primes)
-	public List<DashRef> primedDashRefs(AlloyExpr exp) {
+	public List<DashRef> primedDashRefs(DashExpr exp) {
 		List<DashRef> drs = collectDashRefs(exp);
 		List<DashRef> o = new ArrayList<DashRef>();
 		String v;
-		List<AlloyExpr> paramValues;
+		List<DashExpr> paramValues;
 		for (DashRef e: drs) {
 			v = e.getName();
 			paramValues = e.getParamValues();

@@ -1,5 +1,5 @@
 /*
-	These static methods let us treat an AlloyExpr as a reference to a Dash object
+	These static methods let us treat an DashExpr as a reference to a Dash object
 	that has a name and a list of parameter values.
 
 	From Root/A/B[exp1,exp2]/v1 in parsing
@@ -7,10 +7,10 @@
 
 	After resolving, a DashRef with no params is $$PROCESSREF$$. var1
 
-	These references can be within AlloyExpr so we can't do a class extension.
+	These references can be within DashExpr so we can't do a class extension.
 
 	Even though we could do something different for states/events 
-	(where they aren't referenced within AlloyExpr)
+	(where they aren't referenced within DashExpr)
 	its best to use the same functions for all
 
 	Note: we cannot allow any of
@@ -23,7 +23,7 @@
 	occupied after it has all of its parameter values.
 */
 
-package ca.uwaterloo.watform.dashmodel.dashref;
+package ca.uwaterloo.watform.dashast.dashref;
 
 //import java.util.Collection;
 //import java.util.Collections;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 
-
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.utils.Pos;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import static ca.uwaterloo.watform.dashmodel.DashFQN.*;

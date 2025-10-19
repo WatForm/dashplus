@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.dashmodel.dashref;
+package ca.uwaterloo.watform.dashast.dashref;
 
 import java.util.List;
 

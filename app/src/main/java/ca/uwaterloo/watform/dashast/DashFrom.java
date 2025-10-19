@@ -9,16 +9,9 @@ import ca.uwaterloo.watform.dashast.DashStrings;
 
 public class DashFrom extends DashExpr {
 
-	public DashFrom(Pos pos, AlloyExpr d) {
-		super(pos,d);
-	}
 	@Override
 	public void toString(StringBuilder sb, int indent) {
         super.toString(DashStrings.fromName, sb, indent);
-	}
-
-	public AlloyExpr getSrc() {
-		return super.getExp();
 	}
 
 }

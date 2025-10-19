@@ -13,7 +13,4 @@ public class DashWhen  extends DashExpr {
 	public void toString(StringBuilder sb, int indent) {
         super.toString(DashStrings.whenName, sb, indent);
 	}
-	public AlloyExpr getWhen() {
-		return super.getExp();
-	}
 }

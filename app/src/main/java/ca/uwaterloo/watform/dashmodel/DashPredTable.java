@@ -12,7 +12,7 @@ import java.util.HashMap;
 //import java.util.Collections;
 import java.util.stream.Collectors;
 
-import ca.uwaterloo.watform.dashast.DashExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 
 public class DashPredTable {
 
@@ -22,17 +22,16 @@ public class DashPredTable {
 	public DashPredTable() {
 		this.pt = new HashMap<String,PredElement>();
 	}
-
 	public class PredElement  {
 
 		// this expression must be resolved in the context of the guard/action
 		// it is used in
 		// because otherwise we might have orphan parameter values
 		// from the context where it is declared
-		private DashExpr exp;
+		private AlloyExpr exp;
 
 		public PredElement(
-			DashExpr e) {
+			AlloyExpr e) {
 			this.exp = e;
 		}
 		public String toString() {
@@ -41,7 +40,6 @@ public class DashPredTable {
 			return s;
 		}
 	}
-
 	public String toString() {
 		String s = new String("PRED TABLE\n");
 		for (String k:pt.keySet()) {
@@ -51,7 +49,7 @@ public class DashPredTable {
 		}
 		return s;
 	}	
-	public Boolean addPred(String n, DashExpr e) {
+	public Boolean addPred(String n, AlloyExpr e) {
 		if (pt.containsKey(n)) 
 			return false;
 		else { 
@@ -59,12 +57,13 @@ public class DashPredTable {
 			return true; 
 		}
 	}
-	public DashExpr getExp(String pfqn) {
-		return pt.get(pfqn).exp;
-	}
 	public boolean contains(String pfqn) {
 		return pt.containsKey(pfqn);
 	}
+	public AlloyExpr getExp(String pfqn) {
+		return pt.get(pfqn).exp;
+	}
+
 	public List<String> getAllNames() {
 		return new ArrayList<String>(pt.keySet());
 	}
