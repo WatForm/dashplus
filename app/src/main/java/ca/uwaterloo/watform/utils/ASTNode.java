@@ -9,6 +9,8 @@ public abstract class ASTNode {
 	public ASTNode(Pos pos) {
 		this.pos = pos;
 	}
+	public ASTNode() {
+	}
 
 	public final Pos getPos() {
 		return this.pos;

@@ -8,5 +8,8 @@ public abstract class AlloyExpr extends AlloyASTNode {
 	public AlloyExpr(Pos pos) {
 		super(pos);
 	}
+	public AlloyExpr() {
+		super();
+	}
 }
 

@@ -5,4 +5,7 @@ public abstract class AlloyASTNode extends ASTNode {
 	public AlloyASTNode(Pos pos) {
 		super(pos);
 	}
+	public AlloyASTNode() {
+		super();
+	}
 }

@@ -4,12 +4,12 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
-import java.util.Set;
+//import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Collections;
+//import java.util.LinkedHashMap;
+//import java.util.Collections;
 import java.util.stream.Collectors;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
@@ -19,7 +19,7 @@ public class DashPredTable {
 	private HashMap<String,PredElement> pt;
 
 	public DashPredTable() {
-		this.pt = new LinkedHashMap<String,PredElement>();
+		this.pt = new HashMap<String,PredElement>();
 	}
 
 	public class PredElement  {
@@ -51,12 +51,20 @@ public class DashPredTable {
 		return s;
 	}	
 	public Boolean addPred(String n, AlloyExpr e) {
-		if (pt.containsKey(n)) return false;
-		else { pt.put(n, new PredElement(e)); return true; }
+		if (pt.containsKey(n)) 
+			return false;
+		else { 
+			pt.put(n, new PredElement(e)); 
+			return true; 
+		}
 	}
 	public AlloyExpr getExp(String pfqn) {
-		if (pt.containsKey(pfqn)) return pt.get(pfqn).exp;
-		else { DashModelErrors.predDoesNotExist("getExp", pfqn); return null; }	
+		if (pt.containsKey(pfqn)) 
+			return pt.get(pfqn).exp;
+		else { 
+			DashModelErrors.notInTable("DashPred","getExp", pfqn); 
+			return null; 
+		}	
 	}
 	public boolean contains(String pfqn) {
 		return pt.containsKey(pfqn);

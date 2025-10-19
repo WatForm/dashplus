@@ -1,0 +1,71 @@
+
+
+	// can we make this a visitor?
+	// must be done after resolve
+	// might be primed or unprimed
+	public List<DashRef> collectDashRefs(AlloyExpr exp) {
+		assert(exp != null);
+		List<DashRef> x = new ArrayList<DashRef>();
+		if (DashRef.isDashRef(exp)) {
+			x.add((DashRef) exp);
+			return x;
+		} else if (isAlloyExprVar(exp)) {
+			return x;
+		} else if (isAlloyExprBinary(exp)) {
+			x.addAll(collectDashRefs(getLeft(exp)));
+			x.addAll(collectDashRefs(getRight(exp)));
+			return x;
+		} else if (isAlloyExprBadJoin(exp)) {
+			x.addAll(collectDashRefs(getLeft(exp)));
+			x.addAll(collectDashRefs(getRight(exp)));
+			return x;
+		} else if (exp instanceof AlloyExprCall) {
+			for (AlloyExpr e: ((AlloyExprCall) exp).args) x.addAll(collectDashRefs(e));
+			return x;
+		} else if (exp instanceof AlloyExprChoice){
+			for (AlloyExpr e: ((AlloyExprChoice) exp).choices) x.addAll(collectDashRefs(e));
+			return x;
+		} else if (exp instanceof AlloyExprITE){
+			x.addAll(collectDashRefs(getCond(exp)));
+			x.addAll(collectDashRefs(getLeft(exp)));
+			x.addAll(collectDashRefs(getRight(exp)));
+			return x;
+		} else if (exp instanceof AlloyExprList){
+			for (AlloyExpr e: ((AlloyExprList) exp).args) x.addAll(collectDashRefs(e));
+			return x;
+		} else if (exp instanceof AlloyExprUnary){
+			return collectDashRefs(((AlloyExprUnary) exp).sub);
+		} else if (exp instanceof AlloyExprLet){
+			x.addAll(collectDashRefs(((AlloyExprLet) exp).expr));
+			x.addAll(collectDashRefs(((AlloyExprLet) exp).sub));
+			return x;
+		} else if (exp instanceof AlloyExprQt){
+			List<AlloyExpr> ll = ((AlloyExprQt) exp).decls.stream()
+				.map(i -> i.expr)
+				.collect(Collectors.toList());
+			for (AlloyExpr e: ll) x.addAll(collectDashRefs(e));
+			x.addAll(collectDashRefs(((AlloyExprQt) exp).sub));
+			return x;
+		} else if (exp instanceof AlloyExprConstant){
+			return new ArrayList<DashRef>();
+		} else {
+			DashErrors.UnsupportedAlloyExpr("collectDashRefs", exp.toString());
+			return null;
+		}
+	}
+
+	// returns the primed variables in an exp (but w/o the primes)
+	public List<DashRef> primedDashRefs(AlloyExpr exp) {
+		List<DashRef> drs = collectDashRefs(exp);
+		List<DashRef> o = new ArrayList<DashRef>();
+		String v;
+		List<AlloyExpr> paramValues;
+		for (DashRef e: drs) {
+			v = e.getName();
+			paramValues = e.getParamValues();
+			if (hasPrime(v)) {
+				o.add(DashRef.createVarDashRef(removePrime(v), paramValues));
+			}
+		}
+		return o;
+	}

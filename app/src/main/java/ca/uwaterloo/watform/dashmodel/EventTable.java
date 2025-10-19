@@ -3,8 +3,8 @@ package ca.uwaterloo.watform.dashmodel;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Collections;
+//import java.util.LinkedHashMap;
+//import java.util.Collections;
 import java.util.stream.Collectors;
 
 import ca.uwaterloo.watform.dashast.DashStrings;
@@ -16,7 +16,7 @@ public class EventTable {
 
 	// stores Event Decls in a HashMap based on the event FQN
 
-	private LinkedHashMap<String,EventElement> table;
+	private HashMap<String,EventElement> table;
 
 	public class EventElement {
 		private IntEnvKind kind = IntEnvKind.INT;
@@ -42,7 +42,7 @@ public class EventTable {
 	}
 
 	public EventTable() {
-		this.table = new LinkedHashMap<String,EventElement>();
+		this.table = new HashMap<String,EventElement>();
 
 	}
 	public String toString() {
@@ -133,16 +133,16 @@ public class EventTable {
 
 	// Accessors of individual event -----------------------
 
-	private boolean eventPresent(String efqn, String fcnCall) {
+	private boolean inTable(String efqn, String fcnCall) {
 		if (table.containsKey(efqn)) 
 			return true;
 		else { 
-			DashModelErrors.eventTableEventNotFound(fcnCall, efqn); 
+			DashModelErrors.notInTable("event",fcnCall, efqn); 
 			return false; 
 		}
 	}
 	public List<DashParam> getParams(String efqn) {
-		if (eventPresent(efqn, "getParams"))
+		if (inTable(efqn, "getParams"))
 			return table.get(efqn).params;
 		else 
 			return null;
@@ -154,19 +154,19 @@ public class EventTable {
 	}
 	*/
 	public boolean isEnvironmentalEvent(String efqn) {
-		if (eventPresent(efqn, "isEnvironmentalEvent"))
+		if (inTable(efqn, "isEnvironmentalEvent"))
 			return (table.get(efqn).kind == IntEnvKind.ENV);
 		else 
 			return false;
 	}
 	public boolean isInternalEvent(String efqn) {
-		if (eventPresent(efqn, "isInternalEvent"))
+		if (inTable(efqn, "isInternalEvent"))
 			return (table.get(efqn).kind == IntEnvKind.INT);
 		else 
 			return false;
 	}
 	public IntEnvKind getIntEnvKind(String efqn) {
-		if (eventPresent(efqn, "isInternalEvent"))
+		if (inTable(efqn, "isInternalEvent"))
 			return (table.get(efqn).kind);
 		else 
 			return null;
