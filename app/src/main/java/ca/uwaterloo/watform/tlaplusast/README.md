@@ -67,3 +67,14 @@
 - An ANDExp class is one where the operator is fixed as "/\" and has exactly two subexpressions, and so on.
 
 - change of plan - string used instead of StringBuilder, performance doesn't matter at this stage
+
+## Formulae:
+
+- Formulae are of the form A == B
+- Complicated by parameterized formulae, where A can have variables bound to it
+- The expression B can make use of these bound variables, but these cannot be used elsewhere
+- Enforcing this can be done by a check of the AST - every variable used at any point must be defined in the global list, or in the formula itself
+- Formula constructors need to have a list of variables
+- Formulae can be part of an expression, and when it's used in an expression, the parameters are themselves replaced with actual expressions
+- In general, the formula itself can be described as an expression with a children array the length of the number of parameters
+- The enforcement of abstract variables in the LHS of the definition and the use of concrete expressions in the RHS is left to the Module class, not done at the AST level.
