@@ -1,6 +1,9 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-public class TLAPlusSTL extends TLAPlusExp {
+import java.util.ArrayList;
+import java.util.List;
+
+public class TLAPlusSTL extends TLAPlusASTNode { // not an expression, cannot be embedded inside an expression
 
 	public static enum LIBRARIES
 	{
@@ -16,14 +19,17 @@ public class TLAPlusSTL extends TLAPlusExp {
 	}
 
 	@Override
-	public String toString()
+	public List<String> toStringList()
 	{
 		String s = "Unknown";
 		if(this.library == LIBRARIES.STL_FiniteSets)s = TLAPlusStrings.FINITE_SETS;
 		else if(this.library == LIBRARIES.STL_Naturals)s = TLAPlusStrings.NATURALS;
 		else if(this.library == LIBRARIES.STL_Integers)s = TLAPlusStrings.INTEGERS;
 		else if(this.library == LIBRARIES.STL_Sequences)s = TLAPlusStrings.SEQUENCES;
-		return s;
+		
+		List<String> t = new ArrayList<String>();
+		t.add(s);
+		return t;
 	}
 	
 }

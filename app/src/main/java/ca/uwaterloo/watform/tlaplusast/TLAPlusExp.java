@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-public abstract class TLAPlusExp
+import java.util.List;
+
+public abstract class TLAPlusExp extends TLAPlusASTNode
 {
-	public abstract String toString();
+	public List<TLAPlusExp> children;
 }
