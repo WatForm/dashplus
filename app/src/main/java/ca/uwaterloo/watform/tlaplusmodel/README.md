@@ -43,3 +43,11 @@ INVARIANT
 
 - INVARIANT - a specific type of property, namely a safety property that must hold true in every state
 
+## Model:
+
+- The purpose of the model class is to ensure consistency between the module and its config.
+
+- In addition, it needs to ensure the filename of the output matches the filename of the model, so it cannot expose the string contents of the model itself.
+
+
+
