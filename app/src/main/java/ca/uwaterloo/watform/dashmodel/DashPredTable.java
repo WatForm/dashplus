@@ -12,11 +12,12 @@ import java.util.HashMap;
 //import java.util.Collections;
 import java.util.stream.Collectors;
 
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.dashast.DashExpr;
 
 public class DashPredTable {
 
 	private HashMap<String,PredElement> pt;
+	public String name = "DashPred";
 
 	public DashPredTable() {
 		this.pt = new HashMap<String,PredElement>();
@@ -28,10 +29,10 @@ public class DashPredTable {
 		// it is used in
 		// because otherwise we might have orphan parameter values
 		// from the context where it is declared
-		private AlloyExpr exp;
+		private DashExpr exp;
 
 		public PredElement(
-			AlloyExpr e) {
+			DashExpr e) {
 			this.exp = e;
 		}
 		public String toString() {
@@ -50,7 +51,7 @@ public class DashPredTable {
 		}
 		return s;
 	}	
-	public Boolean addPred(String n, AlloyExpr e) {
+	public Boolean addPred(String n, DashExpr e) {
 		if (pt.containsKey(n)) 
 			return false;
 		else { 
@@ -58,13 +59,8 @@ public class DashPredTable {
 			return true; 
 		}
 	}
-	public AlloyExpr getExp(String pfqn) {
-		if (pt.containsKey(pfqn)) 
-			return pt.get(pfqn).exp;
-		else { 
-			DashModelErrors.notInTable("DashPred","getExp", pfqn); 
-			return null; 
-		}	
+	public DashExpr getExp(String pfqn) {
+		return pt.get(pfqn).exp;
 	}
 	public boolean contains(String pfqn) {
 		return pt.containsKey(pfqn);

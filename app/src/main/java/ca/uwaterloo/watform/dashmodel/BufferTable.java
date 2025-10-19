@@ -15,7 +15,8 @@ public class BufferTable {
 
 	// stores Buffer Decls in a HashMap based on the FQN
 	private HashMap<String,BufferElement> bt;
-
+	public String name = "Buffer";
+	
 	public BufferTable() {
 		this.bt = new HashMap<String,BufferElement>();
 	}
@@ -76,44 +77,26 @@ public class BufferTable {
 		}
 		return s;
 	}
-	private boolean inTable(String bfqn) {
-		if (bt.containsKey(bfqn)) return true;
-		else { 
-			DashModelErrors.notInTable("buffer","getIndex", bfqn); 
-			return false;
-		}		
+	private boolean contains(String bfqn) {
+		return (bt.containsKey(bfqn));	
 	}
 	// individual getters
-	public int getBufferIndex(String bfqn) {
-		if (inTable(bfqn)) 
-			return bt.get(bfqn).index;
-		else 
-			return -1; 
+	public int getIndex(String bfqn) {
+		return bt.get(bfqn).index;
 	}
-	public String getBufferElement(String bfqn) {
-		if (inTable(bfqn)) 
-			return bt.get(bfqn).element;
-		else
-			return null; 
+	public String getElement(String bfqn) {
+		return bt.get(bfqn).element;
 	}
 	public List<DashParam> getParams(String bfqn) {
-		if (inTable(bfqn)) 
-			return bt.get(bfqn).params;
-		else 
-			return null; 
+		return bt.get(bfqn).params; 
+	}
+	public IntEnvKind getKind(String bfqn) {
+		return (bt.get(bfqn).kind);
 	}
 	public boolean isInternal(String bfqn) {
-		if (inTable(bfqn)) 
-			return (bt.get(bfqn).kind == IntEnvKind.INT);
-		else 
-			return false; 
+		return (bt.get(bfqn).kind == IntEnvKind.INT);
 	}
-	public IntEnvKind getIntEnvKind(String bfqn) {
-		if (inTable(bfqn)) 
-			return (bt.get(bfqn).kind);
-		else 
-			return IntEnvKind.INT; 	
-	}
+
 	// group getters
 	public List<String> getAllBufferNames() {
 		return new ArrayList<String>(bt.keySet());
