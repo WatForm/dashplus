@@ -78,3 +78,12 @@
 - Formulae can be part of an expression, and when it's used in an expression, the parameters are themselves replaced with actual expressions
 - In general, the formula itself can be described as an expression with a children array the length of the number of parameters
 - The enforcement of abstract variables in the LHS of the definition and the use of concrete expressions in the RHS is left to the Module class, not done at the AST level.
+
+## Class hierarchy:
+
+- TLAPlusASTNode is the root of all classes.
+
+- TLAPlusAtom is the class for things that have a name and nothing else, when turned into a string. This includes constants, variables, literals (strings and ints)
+
+- TLAPlusExp is for things that get expanded out - these have children, which are either atoms or expressions. These don't have a name field, the name info is supposed to be captured by the class type.
+

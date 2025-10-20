@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusSTL extends TLAPlusASTNode { // not an expression, cannot be embedded inside an expression
+public class TLAPlusSTL extends TLAPlusASTNode { // not used anywhere else, enums used for extensibility
 
 	public static enum LIBRARIES
 	{

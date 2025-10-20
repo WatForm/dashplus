@@ -74,6 +74,8 @@ public final class TLAPlusStrings extends CommonStrings
 	public static final String COLON = ":";
 	public static final String SQUARE_BRACKET_OPEN = "[";
 	public static final String SQUARE_BRACKET_CLOSE = "]";
+	public static final String BRACKET_OPEN = "(";
+	public static final String BRACKET_CLOSE = ")";
 
 	public static final String PRIME = "'";
 	public static final String UNCHANGED = "UNCHANGED";

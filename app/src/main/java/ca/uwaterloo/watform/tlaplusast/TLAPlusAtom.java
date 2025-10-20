@@ -3,14 +3,13 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-class TLAPlusAtomicExp extends TLAPlusExp
+abstract class TLAPlusAtom extends TLAPlusASTNode
 {
 	private final String value;
 
-	protected TLAPlusAtomicExp(String value)
+	protected TLAPlusAtom(String value)
 	{
 		this.value = value;
-		this.children = new ArrayList<>();
 	}
 
 	@Override

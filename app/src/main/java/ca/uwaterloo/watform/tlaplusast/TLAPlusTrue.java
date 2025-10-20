@@ -1,8 +1,8 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-public class TLAPlusTrueExp extends TLAPlusAtomicExp
+public class TLAPlusTrue extends TLAPlusAtom
 {
-	public TLAPlusTrueExp()
+	public TLAPlusTrue()
 	{
 		super(TLAPlusStrings.TRUE);
 	}
