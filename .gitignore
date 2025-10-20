@@ -15,6 +15,9 @@ bin/
 # Macos
 .DS_Store
 
+# Code
+.vscode/
+
 # test resources
 app/src/main/java/ca/uwaterloo/watform/test/catalyst/catalyst-corpus.zip
 app/src/main/java/ca/uwaterloo/watform/test/catalyst/catalyst-corpus
