@@ -102,4 +102,12 @@ public class GeneralUtil {
 	public static <T> List<T> filterBy(List<T> items, Predicate<T> mapFn) {
     	return items.stream().filter(mapFn).collect(Collectors.toList());
 	}
+	
+	public static List<Object> extractItemsOfClass(List<Object> items, java.lang.Class c) {
+    	return 	items.stream() 
+        	.filter(c::isInstance)
+        	.map(c::cast)
+        	.collect(Collectors.toList());
+	}
+	
 }

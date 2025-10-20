@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import ca.uwaterloo.watform.utils.*;
 
 public class DashTrans extends ASTNode {
-	String name;
-	List<Object> items;
+	public String name;
+	public List<Object> items;
 
 	public DashTrans(Pos pos, String n, List<Object> i) {
 		super(pos);
