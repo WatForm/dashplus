@@ -87,3 +87,5 @@
 
 - TLAPlusExp is for things that get expanded out - these have children, which are either atoms or expressions. These don't have a name field, the name info is supposed to be captured by the class type.
 
+- BinOP is an abstraction for binary operators, BinOPMid is an abstraction for binary operators which are printed in the middle of the operators.
+
