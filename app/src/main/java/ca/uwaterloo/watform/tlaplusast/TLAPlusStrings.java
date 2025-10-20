@@ -37,7 +37,7 @@ public final class TLAPlusStrings extends CommonStrings
 
 	// functions
 	public static final String EXISTS = "\\E";
-	public static final String FORALL = "\\A";
+	public static final String FOR_ALL = "\\A";
 	public static final String MAP = "|->";
 	
 	// booleans
