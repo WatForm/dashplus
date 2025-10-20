@@ -1,14 +1,48 @@
 package ca.uwaterloo.watform.dashmodel;
 
-public class DashModelInitialize {
+import java.util.List;
+import java.util.ArrayList;
+
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
+import ca.uwaterloo.watform.alloyast.AlloyFile;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
+
+import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.dashast.DashParagraph;
+import ca.uwaterloo.watform.dashast.DashState;
+import ca.uwaterloo.watform.dashast.DashDo;
+import ca.uwaterloo.watform.dashast.DashFrom;
+import ca.uwaterloo.watform.dashast.DashGoto;
+import ca.uwaterloo.watform.dashast.DashSend;
+import ca.uwaterloo.watform.dashast.DashWhen;
+import ca.uwaterloo.watform.dashast.DashOn;
+import ca.uwaterloo.watform.dashast.DashTrans;
+import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.dashast.DashFile;
+
+import ca.uwaterloo.watform.dashmodel.DashFQN.*;
+import ca.uwaterloo.watform.dashmodel.DashPredTable;
+import ca.uwaterloo.watform.dashmodel.VarTable;
+import ca.uwaterloo.watform.dashmodel.BufferTable;
+import ca.uwaterloo.watform.dashmodel.EventTable;
+import ca.uwaterloo.watform.dashmodel.StateTable;
+import ca.uwaterloo.watform.dashmodel.TransTable;
+
+public class DashModelInitialize { // extends AlloyModel {
+
+	// we don't store the DashFile here 
+	// because these tables are mutable
+	// and might get out of sync with the DashFile
 
 	public StateTable st = new StateTable();
 	public TransTable tt = new TransTable();
 	public EventTable et = new EventTable();
 	public VarTable vt = new VarTable();
-	public PredTable pt = new PredTable();
+	public DashPredTable pt = new DashPredTable();
 
-	public DashModelInitialize(DashFile d) extends AlloyModel {
+	public DashModelInitialize(DashFile d)  {
 
 		/*
 	 	 * check for errors in the state hierarchy
@@ -17,23 +51,30 @@ public class DashModelInitialize {
 	 	// we have to go through the paragraphs in
 	 	// the entire model and do this for the one
 	 	// root state
-	 	for (p in this.paragraphs) {
-	 		if (isinstance(p,DashState)) {
-				stateRecurse(st.root);
-				st.root = s.name;
+	 	//super((AlloyFile) d);
+
+	 	Boolean foundOneState = false;
+	 	for (DashParagraph p:d.paragraphs) {
+	 		if (p instanceof DashState) {
+	 			if (!foundOneState) {
+					st.root = (((DashState)p).name);
+					//stateRecurse(p,emptyList());
+					foundOneState = true;
+				} else {
+					DashModelErrors.onlyOneState(p.pos);
+				}
 			}
 		}
-
 	}
-
+	/*
 	private void stateRecurse(
 		DashState s,
 	 	List<String> ances)  {
 		// this state is not yet in the st
 		// but its parent is in the st
 
-		name = s.name
-		if (DashFQN.isFQN(name)) DashErrors.stateNameCantBeFQN(pos, name);
+		String name = s.name;
+		if (DashFQN.isFQN(name)) DashModelErrors.stateNameCantBeFQN(s.pos, name);
 		String sfqn = DashFQN.fqn(ances,name);
 		String parentfqn = DashFQN.fqn(ances);
 
@@ -123,7 +164,8 @@ public class DashModelInitialize {
 				invList, initList, enteredList, exitedList)) DashErrors.addStateToStateTableDup(sfqn);;
 
 			// add all substates to the table
-			for (DashState s: substatesList) s.load(st, tt, et, vt, pt, newAnces);
+			for (DashState sub: substatesList) 
+				stateRecurse(sub, newAnces);
 
 			// make sure defaults are correct
 			// if there's only one child it is automatically the default
@@ -263,11 +305,12 @@ public class DashModelInitialize {
 
 		if (!xItems.isEmpty()) DashErrors.nonEmptyStateItems(xItems);
 	}
-	public void addTrans(List<DashParam> params, List<String> ances) {
+	*/
+	public void addTrans(DashTrans t, List<DashParam> params, List<String> ances) {
 
-		name = t.name;
-		if (DashFQN.isFQN(name)) DashErrors.transNameCantBeFQN(pos, name);
-		String tfqn = DashFQN.fqn(ances,name);
+		if (DashFQN.isFQN(t.name)) 
+			DashModelErrors.nameCantBeFQN(t.pos, t.name);
+		String tfqn = DashFQN.fqn(ances,t.name);
         List<DashFrom> fromList = 
         	extractItemsOfClass(t.items, DashFrom.class);
 		List<DashOn> onList =
@@ -275,11 +318,12 @@ public class DashModelInitialize {
 		List<DashWhen> whenList =
 			extractItemsOfClass(t.items, DashWhen.class);
 		List<DashGoto> gotoList = 
-			extractItemsOfClass(t.items, DashGoTo.class);
+			extractItemsOfClass(t.items, DashGoto.class);
 		List<DashSend> sendList =
 			extractItemsOfClass(t.items, DashSend.class);
 		List<DashDo> doList =
 			extractItemsOfClass(t.items, DashDo.class);
-		if (!tt.add(tfqn,params, fromList, onList, whenList, gotoList, sendList, doList)) DashErrors.dupTransNames(pos,name);
+		if (!tt.add(tfqn,params, fromList, onList, whenList, gotoList, sendList, doList)) 
+			DashModelErrors.dupNames(t.pos,t.name);
 	}	
 }

@@ -7,7 +7,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 
-public final class AlloyFile extends AlloyASTNode {
+public class AlloyFile extends AlloyASTNode {
 	public String filename = "";
 	public final List<AlloyParagraph> paragraphs;
 
