@@ -51,15 +51,14 @@ public final class TLAPlusStrings extends CommonStrings
 	public static final String EQUIVALENCE = "<=>";
 
 	// integers
-	public static final String INT_SET = "";
-	public static final String RANGE = "";
-	public static final String PLUS = "";
-	public static final String MINUS = "";
-	public static final String TIMES = "";
-	public static final String LESSER_THAN = "";
-	public static final String LESSER_THAN_EQUALS = "";
-	public static final String GREATER_THAN = "";
-	public static final String GREATER_THAN_EQUALS = "";
+	public static final String RANGE = "..";
+	public static final String PLUS = "+";
+	public static final String MINUS = "-";
+	public static final String TIMES = "*";
+	public static final String LESSER_THAN = "<";
+	public static final String LESSER_THAN_EQUALS = "<=";
+	public static final String GREATER_THAN = ">";
+	public static final String GREATER_THAN_EQUALS = ">=";
 	public static final String EQUALS = "=";
 	public static final String NOT_EQUALS = "/=";
 
@@ -101,6 +100,10 @@ public final class TLAPlusStrings extends CommonStrings
 	public static final String INTEGERS = "Integers";
 	public static final String SEQUENCES = "Sequences";
 	public static final String NATURALS = "Naturals";
+
+	// infinite sets
+	public static final String STRING_SET = "STRING";
+	public static final String INT_SET = "Int";
 
 
 	// public static final String = "";
