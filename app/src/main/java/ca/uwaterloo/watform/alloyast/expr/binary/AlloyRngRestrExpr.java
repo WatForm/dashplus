@@ -9,4 +9,8 @@ public final class AlloyRngRestrExpr extends AlloyBinaryExpr {
     public AlloyRngRestrExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.RNGRESTR);
     }
+
+    public AlloyRngRestrExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.RNGRESTR);
+    }
 }

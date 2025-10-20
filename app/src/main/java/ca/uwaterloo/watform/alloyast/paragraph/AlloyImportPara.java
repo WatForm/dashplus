@@ -34,6 +34,20 @@ public final class AlloyImportPara extends AlloyParagraph {
         this.asName = Optional.ofNullable(asName);
     }
 
+    public AlloyImportPara(
+            boolean isPrivate,
+            AlloyQnameExpr qname,
+            boolean hasBrackets,
+            List<AlloySigRefExpr> sigRefs,
+            AlloyNameExpr asName) {
+        super();
+        this.isPrivate = isPrivate;
+        this.qname = qname;
+        this.hasBrackets = hasBrackets;
+        this.sigRefs = Collections.unmodifiableList(sigRefs);
+        this.asName = Optional.ofNullable(asName);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         if (isPrivate) {

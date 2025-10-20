@@ -7,4 +7,8 @@ public final class AlloyIdenExpr extends AlloyVarExpr {
     public AlloyIdenExpr(Pos pos) {
         super(pos, AlloyStrings.IDEN);
     }
+
+    public AlloyIdenExpr() {
+        super(AlloyStrings.IDEN);
+    }
 }

@@ -29,6 +29,11 @@ public final class AlloyNegExpr extends AlloyUnaryExpr {
         this.neg = neg;
     }
 
+    public AlloyNegExpr(Negation neg, AlloyExpr sub) {
+        super(sub, neg.toString());
+        this.neg = neg;
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(op);

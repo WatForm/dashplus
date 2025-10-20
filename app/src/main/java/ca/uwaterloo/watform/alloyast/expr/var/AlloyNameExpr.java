@@ -7,4 +7,8 @@ public class AlloyNameExpr extends AlloyVarExpr {
     public AlloyNameExpr(Pos pos, String label) {
         super(pos, label);
     }
+
+    public AlloyNameExpr(String label) {
+        super(label);
+    }
 }

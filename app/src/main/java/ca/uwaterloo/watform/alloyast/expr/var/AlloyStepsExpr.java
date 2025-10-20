@@ -8,4 +8,8 @@ public final class AlloyStepsExpr extends AlloyVarExpr implements AlloySigRefExp
     public AlloyStepsExpr(Pos pos) {
         super(pos, AlloyStrings.STEPS);
     }
+
+    public AlloyStepsExpr() {
+        super(AlloyStrings.STEPS);
+    }
 }

@@ -10,4 +10,9 @@ public final class AlloyAtNameExpr extends AlloyVarExpr {
         super(pos, AlloyStrings.AT + name.toString());
         this.name = name;
     }
+
+    public AlloyAtNameExpr(AlloyNameExpr name) {
+        super(AlloyStrings.AT + name.toString());
+        this.name = name;
+    }
 }

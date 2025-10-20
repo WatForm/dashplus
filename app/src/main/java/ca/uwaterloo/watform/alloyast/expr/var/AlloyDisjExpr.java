@@ -7,4 +7,8 @@ public final class AlloyDisjExpr extends AlloyVarExpr {
     public AlloyDisjExpr(Pos pos) {
         super(pos, AlloyStrings.DISJ);
     }
+
+    public AlloyDisjExpr() {
+        super(AlloyStrings.DISJ);
+    }
 }

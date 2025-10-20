@@ -9,4 +9,8 @@ public final class AlloyIffExpr extends AlloyBinaryExpr {
     public AlloyIffExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.IFF_ARR);
     }
+
+    public AlloyIffExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.IFF_ARR);
+    }
 }

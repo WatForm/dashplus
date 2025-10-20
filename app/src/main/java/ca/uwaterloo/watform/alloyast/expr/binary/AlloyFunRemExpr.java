@@ -9,4 +9,8 @@ public final class AlloyFunRemExpr extends AlloyBinaryExpr {
     public AlloyFunRemExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.FUNREM);
     }
+
+    public AlloyFunRemExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.FUNREM);
+    }
 }

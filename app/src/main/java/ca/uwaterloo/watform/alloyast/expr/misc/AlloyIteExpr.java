@@ -16,6 +16,13 @@ public final class AlloyIteExpr extends AlloyExpr {
         this.alt = alt;
     }
 
+    public AlloyIteExpr(AlloyExpr cond, AlloyExpr conseq, AlloyExpr alt) {
+        super();
+        this.cond = cond;
+        this.conseq = conseq;
+        this.alt = alt;
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         this.cond.toString(sb, indent);

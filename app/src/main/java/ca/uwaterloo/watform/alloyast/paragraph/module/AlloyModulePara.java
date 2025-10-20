@@ -39,6 +39,12 @@ public final class AlloyModulePara extends AlloyParagraph {
         this.moduleArgs = Collections.unmodifiableList(moduleArgs);
     }
 
+    public AlloyModulePara(AlloyQnameExpr moduleName, List<AlloyModuleArg> moduleArgs) {
+        super();
+        this.qname = moduleName;
+        this.moduleArgs = Collections.unmodifiableList(moduleArgs);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(AlloyStrings.MODULE);

@@ -12,6 +12,11 @@ public final class AlloyParenExpr extends AlloyExpr {
         this.sub = sub;
     }
 
+    public AlloyParenExpr(AlloyExpr sub) {
+        super();
+        this.sub = sub;
+    }
+
     public AlloyExpr getSub() {
         return sub;
     }

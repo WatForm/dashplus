@@ -10,6 +10,10 @@ public final class AlloyNumSumExpr extends AlloyUnaryExpr {
         super(pos, sub, AlloyStrings.SUM);
     }
 
+    public AlloyNumSumExpr(AlloyExpr sub) {
+        super(sub, AlloyStrings.SUM);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(op);

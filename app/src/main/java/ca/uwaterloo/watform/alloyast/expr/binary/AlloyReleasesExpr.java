@@ -9,4 +9,8 @@ public final class AlloyReleasesExpr extends AlloyBinaryExpr {
     public AlloyReleasesExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.RELEASES);
     }
+
+    public AlloyReleasesExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.RELEASES);
+    }
 }

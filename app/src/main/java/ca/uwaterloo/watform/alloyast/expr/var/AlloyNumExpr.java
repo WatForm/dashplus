@@ -12,4 +12,10 @@ public final class AlloyNumExpr extends AlloyVarExpr {
         this.value = Integer.parseInt(numLabel);
         this.isPositive = isNegative;
     }
+
+    public AlloyNumExpr(boolean isNegative, String numLabel) {
+        super(numLabel);
+        this.value = Integer.parseInt(numLabel);
+        this.isPositive = isNegative;
+    }
 }

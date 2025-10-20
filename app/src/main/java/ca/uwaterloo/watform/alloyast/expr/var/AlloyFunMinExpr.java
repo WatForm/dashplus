@@ -7,4 +7,8 @@ public final class AlloyFunMinExpr extends AlloyVarExpr {
     public AlloyFunMinExpr(Pos pos) {
         super(pos, AlloyStrings.FUNMIN);
     }
+
+    public AlloyFunMinExpr() {
+        super(AlloyStrings.FUNMIN);
+    }
 }

@@ -15,8 +15,18 @@ public final class AlloyBlock extends AlloyExpr {
         this.exprs = Collections.unmodifiableList(exprs);
     }
 
+    public AlloyBlock(List<AlloyExpr> exprs) {
+        super();
+        this.exprs = Collections.unmodifiableList(exprs);
+    }
+
     public AlloyBlock(Pos pos, AlloyExpr expr) {
         super(pos);
+        this.exprs = Collections.unmodifiableList(Collections.singletonList(expr));
+    }
+
+    public AlloyBlock(AlloyExpr expr) {
+        super();
         this.exprs = Collections.unmodifiableList(Collections.singletonList(expr));
     }
 

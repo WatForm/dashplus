@@ -17,6 +17,12 @@ public final class AlloyComprExpr extends AlloyExpr {
         this.body = body;
     }
 
+    public AlloyComprExpr(List<AlloyDecl> decls, AlloyExpr body) {
+        super();
+        this.decls = Collections.unmodifiableList(decls);
+        this.body = body;
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(AlloyStrings.LBRACE);

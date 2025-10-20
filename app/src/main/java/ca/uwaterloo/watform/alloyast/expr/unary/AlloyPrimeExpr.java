@@ -10,6 +10,10 @@ public final class AlloyPrimeExpr extends AlloyUnaryExpr {
         super(pos, sub, AlloyStrings.PRIME);
     }
 
+    public AlloyPrimeExpr(AlloyExpr sub) {
+        super(sub, AlloyStrings.PRIME);
+    }
+
     @Override
     public final void toString(StringBuilder sb, int indent) {
         this.sub.toString(sb, indent);

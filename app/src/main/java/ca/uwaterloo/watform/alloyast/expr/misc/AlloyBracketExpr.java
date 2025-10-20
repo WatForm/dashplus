@@ -18,6 +18,12 @@ public final class AlloyBracketExpr extends AlloyExpr {
         this.exprs = Collections.unmodifiableList(exprs);
     }
 
+    public AlloyBracketExpr(AlloyExpr expr, List<AlloyExpr> exprs) {
+        super();
+        this.expr = expr;
+        this.exprs = Collections.unmodifiableList(exprs);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         this.expr.toString(sb, indent);

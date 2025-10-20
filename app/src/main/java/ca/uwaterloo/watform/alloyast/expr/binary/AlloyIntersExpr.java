@@ -9,4 +9,8 @@ public final class AlloyIntersExpr extends AlloyBinaryExpr {
     public AlloyIntersExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.INTERSECTION);
     }
+
+    public AlloyIntersExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.INTERSECTION);
+    }
 }

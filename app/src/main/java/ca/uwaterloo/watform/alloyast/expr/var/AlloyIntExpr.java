@@ -7,4 +7,8 @@ public final class AlloyIntExpr extends AlloyVarExpr {
     public AlloyIntExpr(Pos pos) {
         super(pos, AlloyStrings.INT);
     }
+
+    public AlloyIntExpr() {
+        super(AlloyStrings.INT);
+    }
 }

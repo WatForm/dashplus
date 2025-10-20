@@ -14,6 +14,11 @@ public class AlloyFile extends AlloyASTNode {
         this.paragraphs = Collections.unmodifiableList(paragraphs);
     }
 
+    public AlloyFile(List<AlloyParagraph> paragraphs) {
+        super();
+        this.paragraphs = Collections.unmodifiableList(paragraphs);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         for (AlloyParagraph p : paragraphs) {

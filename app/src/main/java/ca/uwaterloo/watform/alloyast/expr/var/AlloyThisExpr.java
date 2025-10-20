@@ -7,4 +7,8 @@ public final class AlloyThisExpr extends AlloyNameExpr {
     public AlloyThisExpr(Pos pos) {
         super(pos, AlloyStrings.THIS);
     }
+
+    public AlloyThisExpr() {
+        super(AlloyStrings.THIS);
+    }
 }

@@ -46,8 +46,20 @@ public final class AlloyLetExpr extends AlloyExpr {
         this.body = body;
     }
 
+    public AlloyLetExpr(List<AlloyLetAsn> asns, AlloyExpr body) {
+        super();
+        this.asns = Collections.unmodifiableList(asns);
+        this.body = body;
+    }
+
     public AlloyLetExpr(Pos pos, AlloyLetAsn asn, AlloyExpr body) {
         super(pos);
+        this.asns = Collections.unmodifiableList(Collections.singletonList(asn));
+        this.body = body;
+    }
+
+    public AlloyLetExpr(AlloyLetAsn asn, AlloyExpr body) {
+        super();
         this.asns = Collections.unmodifiableList(Collections.singletonList(asn));
         this.body = body;
     }

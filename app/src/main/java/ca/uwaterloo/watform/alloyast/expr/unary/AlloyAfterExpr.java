@@ -10,6 +10,10 @@ public final class AlloyAfterExpr extends AlloyUnaryExpr {
         super(pos, sub, AlloyStrings.AFTER);
     }
 
+    public AlloyAfterExpr(AlloyExpr sub) {
+        super(sub, AlloyStrings.AFTER);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(op);

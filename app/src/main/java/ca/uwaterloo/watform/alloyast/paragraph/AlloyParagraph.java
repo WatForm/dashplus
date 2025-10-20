@@ -8,4 +8,8 @@ public abstract class AlloyParagraph extends AlloyASTNode {
     public AlloyParagraph(Pos pos) {
         super(pos);
     }
+
+    public AlloyParagraph() {
+        super();
+    }
 }

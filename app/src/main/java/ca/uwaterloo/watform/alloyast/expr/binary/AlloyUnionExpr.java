@@ -9,4 +9,8 @@ public final class AlloyUnionExpr extends AlloyBinaryExpr {
     public AlloyUnionExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.PLUS);
     }
+
+    public AlloyUnionExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.PLUS);
+    }
 }

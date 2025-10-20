@@ -7,4 +7,8 @@ public final class AlloySumExpr extends AlloyVarExpr {
     public AlloySumExpr(Pos pos) {
         super(pos, AlloyStrings.SUM);
     }
+
+    public AlloySumExpr() {
+        super(AlloyStrings.SUM);
+    }
 }

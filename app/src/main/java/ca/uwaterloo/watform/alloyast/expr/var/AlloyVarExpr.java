@@ -12,6 +12,11 @@ public abstract class AlloyVarExpr extends AlloyExpr {
         this.label = label;
     }
 
+    public AlloyVarExpr(String label) {
+        super();
+        this.label = label;
+    }
+
     public String getLabel() {
         return label;
     }

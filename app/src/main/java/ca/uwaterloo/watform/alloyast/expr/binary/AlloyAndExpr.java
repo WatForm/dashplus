@@ -9,4 +9,8 @@ public final class AlloyAndExpr extends AlloyBinaryExpr {
     public AlloyAndExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.AND);
     }
+
+    public AlloyAndExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.AND);
+    }
 }

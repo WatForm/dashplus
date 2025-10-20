@@ -9,4 +9,8 @@ public final class AlloySinceExpr extends AlloyBinaryExpr {
     public AlloySinceExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.SINCE);
     }
+
+    public AlloySinceExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.SINCE);
+    }
 }

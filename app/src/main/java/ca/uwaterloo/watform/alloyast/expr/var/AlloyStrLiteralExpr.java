@@ -7,4 +7,8 @@ public final class AlloyStrLiteralExpr extends AlloyVarExpr {
     public AlloyStrLiteralExpr(Pos pos, String strLiteral) {
         super(pos, strLiteral);
     }
+
+    public AlloyStrLiteralExpr(String strLiteral) {
+        super(strLiteral);
+    }
 }

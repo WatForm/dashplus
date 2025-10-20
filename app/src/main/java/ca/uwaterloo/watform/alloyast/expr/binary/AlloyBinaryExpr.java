@@ -16,6 +16,13 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
         this.op = op;
     }
 
+    public AlloyBinaryExpr(AlloyExpr left, AlloyExpr right, String op) {
+        super();
+        this.left = left;
+        this.right = right;
+        this.op = op;
+    }
+
     public AlloyExpr getLeft() {
         return left;
     }

@@ -9,4 +9,8 @@ public final class AlloyTransExpr extends AlloyUnaryExpr {
     public AlloyTransExpr(Pos pos, AlloyExpr sub) {
         super(pos, sub, AlloyStrings.TRANS);
     }
+
+    public AlloyTransExpr(AlloyExpr sub) {
+        super(sub, AlloyStrings.TRANS);
+    }
 }

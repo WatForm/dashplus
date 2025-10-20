@@ -57,4 +57,15 @@ public final class AlloyComparisonExpr extends AlloyBinaryExpr {
         this.neg = neg;
         this.comp = comp;
     }
+
+    public AlloyComparisonExpr(AlloyExpr left, Negation neg, Comp comp, AlloyExpr right) {
+        super(
+                left,
+                right,
+                (neg == Negation.NONE)
+                        ? comp.toString()
+                        : neg.toString() + AlloyStrings.SPACE + comp.toString());
+        this.neg = neg;
+        this.comp = comp;
+    }
 }

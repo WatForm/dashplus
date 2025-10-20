@@ -8,4 +8,8 @@ public final class AlloySeqIntExpr extends AlloyVarExpr implements AlloySigRefEx
     public AlloySeqIntExpr(Pos pos) {
         super(pos, AlloyStrings.SEQ_INT);
     }
+
+    public AlloySeqIntExpr() {
+        super(AlloyStrings.SEQ_INT);
+    }
 }

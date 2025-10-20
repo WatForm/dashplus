@@ -61,6 +61,20 @@ public final class AlloyDecl extends AlloyASTNode {
         this.expr = expr;
     }
 
+    public AlloyDecl(
+            Boolean disj1,
+            List<AlloyNameExpr> names,
+            Boolean disj2,
+            Optional<AlloyDecl.Quant> quant,
+            AlloyExpr expr) {
+        super();
+        this.disj1 = disj1;
+        this.names = Collections.unmodifiableList(names);
+        this.disj2 = disj2;
+        this.quant = quant;
+        this.expr = expr;
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append((this.disj1 ? "disj " : ""));

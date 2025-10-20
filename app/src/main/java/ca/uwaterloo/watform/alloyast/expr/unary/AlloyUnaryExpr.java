@@ -13,6 +13,12 @@ public abstract class AlloyUnaryExpr extends AlloyExpr {
         this.op = op;
     }
 
+    public AlloyUnaryExpr(AlloyExpr sub, String op) {
+        super();
+        this.sub = sub;
+        this.op = op;
+    }
+
     public AlloyExpr getSub() {
         return sub;
     }

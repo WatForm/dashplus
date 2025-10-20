@@ -37,4 +37,10 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
         this.mul1 = mul1;
         this.mul2 = mul2;
     }
+
+    public AlloyArrowExpr(AlloyExpr left, Mul mul1, Mul mul2, AlloyExpr right) {
+        super(left, right, mul1.toString() + AlloyStrings.RARROW + mul2.toString());
+        this.mul1 = mul1;
+        this.mul2 = mul2;
+    }
 }

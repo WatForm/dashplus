@@ -8,4 +8,8 @@ public final class AlloySigIntExpr extends AlloyVarExpr implements AlloySigRefEx
     public AlloySigIntExpr(Pos pos) {
         super(pos, AlloyStrings.SIGINT);
     }
+
+    public AlloySigIntExpr() {
+        super(AlloyStrings.SIGINT);
+    }
 }

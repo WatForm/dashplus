@@ -20,6 +20,14 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
         this.body = body;
     }
 
+    public AlloyQuantificationExpr(
+            AlloyQuantificationExpr.Quant quant, List<AlloyDecl> decls, AlloyExpr body) {
+        super();
+        this.quant = quant;
+        this.decls = Collections.unmodifiableList(decls);
+        this.body = body;
+    }
+
     public enum Quant {
         /** all a,b:x | formula */
         ALL(AlloyStrings.ALL),

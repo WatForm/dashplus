@@ -19,8 +19,21 @@ public final class AlloyQnameExpr extends AlloyVarExpr implements AlloySigRefExp
         this.nameExprList = Collections.unmodifiableList(nameExprList);
     }
 
+    public AlloyQnameExpr(List<AlloyNameExpr> nameExprList) {
+        super(
+                nameExprList.stream()
+                        .map(AlloyNameExpr::getLabel)
+                        .collect(Collectors.joining(AlloyStrings.SLASH)));
+        this.nameExprList = Collections.unmodifiableList(nameExprList);
+    }
+
     public AlloyQnameExpr(Pos pos, AlloyNameExpr nameExpr) {
         super(pos, nameExpr.getLabel());
+        this.nameExprList = Collections.unmodifiableList(Collections.singletonList(nameExpr));
+    }
+
+    public AlloyQnameExpr(AlloyNameExpr nameExpr) {
+        super(nameExpr.getLabel());
         this.nameExprList = Collections.unmodifiableList(Collections.singletonList(nameExpr));
     }
 }

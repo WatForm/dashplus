@@ -9,4 +9,8 @@ public final class AlloyImpliesExpr extends AlloyBinaryExpr {
     public AlloyImpliesExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.RFATARROW);
     }
+
+    public AlloyImpliesExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.RFATARROW);
+    }
 }

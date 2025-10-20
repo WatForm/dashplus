@@ -9,4 +9,8 @@ public final class AlloyShLExpr extends AlloyBinaryExpr {
     public AlloyShLExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.SHL);
     }
+
+    public AlloyShLExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.SHL);
+    }
 }

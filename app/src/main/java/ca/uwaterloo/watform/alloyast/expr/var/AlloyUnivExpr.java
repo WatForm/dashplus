@@ -8,4 +8,8 @@ public final class AlloyUnivExpr extends AlloyVarExpr implements AlloySigRefExpr
     public AlloyUnivExpr(Pos pos) {
         super(pos, AlloyStrings.UNIV);
     }
+
+    public AlloyUnivExpr() {
+        super(AlloyStrings.UNIV);
+    }
 }

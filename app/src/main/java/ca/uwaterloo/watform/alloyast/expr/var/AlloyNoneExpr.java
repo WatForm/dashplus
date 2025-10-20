@@ -7,4 +7,8 @@ public final class AlloyNoneExpr extends AlloyVarExpr implements AlloySigRefExpr
     public AlloyNoneExpr(Pos pos) {
         super(pos, AlloyStrings.NONE);
     }
+
+    public AlloyNoneExpr() {
+        super(AlloyStrings.NONE);
+    }
 }

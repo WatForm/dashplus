@@ -15,6 +15,12 @@ public final class AlloyFactPara extends AlloyParagraph {
         this.block = block;
     }
 
+    public AlloyFactPara(String factName, AlloyBlock block) {
+        super();
+        this.factName = factName;
+        this.block = block;
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append("fact " + factName + ("" != factName ? (" ") : ""));

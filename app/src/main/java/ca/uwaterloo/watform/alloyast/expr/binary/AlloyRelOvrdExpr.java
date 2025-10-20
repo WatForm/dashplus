@@ -9,4 +9,8 @@ public final class AlloyRelOvrdExpr extends AlloyBinaryExpr {
     public AlloyRelOvrdExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.REL_OVERRIDE);
     }
+
+    public AlloyRelOvrdExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.REL_OVERRIDE);
+    }
 }

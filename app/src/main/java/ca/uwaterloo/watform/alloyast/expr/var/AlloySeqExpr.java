@@ -7,4 +7,8 @@ public final class AlloySeqExpr extends AlloyNameExpr {
     public AlloySeqExpr(Pos pos) {
         super(pos, AlloyStrings.SEQ);
     }
+
+    public AlloySeqExpr() {
+        super(AlloyStrings.SEQ);
+    }
 }

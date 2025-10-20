@@ -9,4 +9,8 @@ public final class AlloyNumCardinalityExpr extends AlloyUnaryExpr {
     public AlloyNumCardinalityExpr(Pos pos, AlloyExpr sub) {
         super(pos, sub, AlloyStrings.CARDINALITY);
     }
+
+    public AlloyNumCardinalityExpr(AlloyExpr sub) {
+        super(sub, AlloyStrings.CARDINALITY);
+    }
 }

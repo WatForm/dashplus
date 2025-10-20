@@ -9,4 +9,8 @@ public final class AlloyDotExpr extends AlloyBinaryExpr {
     public AlloyDotExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.DOT);
     }
+
+    public AlloyDotExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.DOT);
+    }
 }

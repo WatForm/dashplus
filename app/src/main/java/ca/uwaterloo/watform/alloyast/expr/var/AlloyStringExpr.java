@@ -8,4 +8,8 @@ public final class AlloyStringExpr extends AlloyVarExpr implements AlloySigRefEx
     public AlloyStringExpr(Pos pos) {
         super(pos, AlloyStrings.STRING);
     }
+
+    public AlloyStringExpr() {
+        super(AlloyStrings.STRING);
+    }
 }

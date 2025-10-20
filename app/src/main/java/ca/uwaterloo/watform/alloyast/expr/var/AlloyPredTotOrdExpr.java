@@ -7,4 +7,8 @@ public final class AlloyPredTotOrdExpr extends AlloyVarExpr {
     public AlloyPredTotOrdExpr(Pos pos) {
         super(pos, AlloyStrings.PRED_TOTALORDER);
     }
+
+    public AlloyPredTotOrdExpr() {
+        super(AlloyStrings.PRED_TOTALORDER);
+    }
 }

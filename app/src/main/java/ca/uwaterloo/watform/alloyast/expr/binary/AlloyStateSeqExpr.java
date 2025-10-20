@@ -9,4 +9,8 @@ public final class AlloyStateSeqExpr extends AlloyBinaryExpr {
     public AlloyStateSeqExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.SEQUENCE_OP);
     }
+
+    public AlloyStateSeqExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.SEQUENCE_OP);
+    }
 }

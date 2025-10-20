@@ -7,4 +7,8 @@ public final class AlloyFunNextExpr extends AlloyVarExpr {
     public AlloyFunNextExpr(Pos pos) {
         super(pos, AlloyStrings.FUNNEXT);
     }
+
+    public AlloyFunNextExpr() {
+        super(AlloyStrings.FUNNEXT);
+    }
 }

@@ -9,4 +9,8 @@ public final class AlloyFunSubExpr extends AlloyBinaryExpr {
     public AlloyFunSubExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
         super(pos, left, right, AlloyStrings.FUNSUB);
     }
+
+    public AlloyFunSubExpr(AlloyExpr left, AlloyExpr right) {
+        super(left, right, AlloyStrings.FUNSUB);
+    }
 }

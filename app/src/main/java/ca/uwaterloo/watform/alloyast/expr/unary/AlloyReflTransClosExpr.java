@@ -9,4 +9,8 @@ public final class AlloyReflTransClosExpr extends AlloyUnaryExpr {
     public AlloyReflTransClosExpr(Pos pos, AlloyExpr sub) {
         super(pos, sub, AlloyStrings.REFL_TRANS_CLOS);
     }
+
+    public AlloyReflTransClosExpr(AlloyExpr sub) {
+        super(sub, AlloyStrings.REFL_TRANS_CLOS);
+    }
 }

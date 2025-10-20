@@ -38,6 +38,11 @@ public final class AlloyQtExpr extends AlloyUnaryExpr {
         this.qt = qt;
     }
 
+    public AlloyQtExpr(Quant qt, AlloyExpr sub) {
+        super(sub, qt.toString());
+        this.qt = qt;
+    }
+
     @Override
     public final void toString(StringBuilder sb, int indent) {
         sb.append(this.qt);
