@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusSTL extends TLAPlusASTNode { // not used anywhere else, enums used for extensibility
+public class TLAPlusSTL extends TLAPlusASTNode { // enums used for extensibility
 
 	public static enum LIBRARIES
 	{
@@ -32,4 +32,35 @@ public class TLAPlusSTL extends TLAPlusASTNode { // not used anywhere else, enum
 		return t;
 	}
 	
+	public static TLAPlusFormula Cardinality(TLAPlusASTNode arg)
+	{
+		List<TLAPlusASTNode> children = new ArrayList<>();
+		children.add(arg);
+		return new TLAPlusFormula(TLAPlusStrings.CARDINALITY,children);
+	}
+	public static TLAPlusFormula Len(TLAPlusASTNode arg)
+	{
+		List<TLAPlusASTNode> children = new ArrayList<>();
+		children.add(arg);
+		return new TLAPlusFormula(TLAPlusStrings.LEN,children);
+	}
+	public static TLAPlusFormula Head(TLAPlusASTNode arg)
+	{
+		List<TLAPlusASTNode> children = new ArrayList<>();
+		children.add(arg);
+		return new TLAPlusFormula(TLAPlusStrings.HEAD,children);
+	}
+	public static TLAPlusFormula Tail(TLAPlusASTNode arg)
+	{
+		List<TLAPlusASTNode> children = new ArrayList<>();
+		children.add(arg);
+		return new TLAPlusFormula(TLAPlusStrings.TAIL,children);
+	}
+	public static TLAPlusFormula Append(TLAPlusASTNode sequence, TLAPlusASTNode element)
+	{
+		List<TLAPlusASTNode> children = new ArrayList<>();
+		children.add(sequence);
+		children.add(element);
+		return new TLAPlusFormula(TLAPlusStrings.APPEND,children);
+	}
 }
