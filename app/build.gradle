@@ -9,6 +9,7 @@ plugins {
 	id 'java'
     id 'application'
 	id 'antlr'
+    id 'com.diffplug.spotless' version '8.0.0'
 }
 
 repositories {
@@ -69,6 +70,14 @@ sourceSets {
         }
     }
 }
+
+spotless {
+	java {
+		googleJavaFormat('1.30.0').aosp()
+        targetExclude("build/generated-src/**/*.java")
+	}
+}
+
 
 
 tasks.named('generateGrammarSource') {

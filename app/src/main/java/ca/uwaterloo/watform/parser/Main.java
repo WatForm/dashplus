@@ -11,24 +11,25 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.*;
 
 public class Main {
-	public static void main(String[] args) throws Exception {
-		if (args.length != 1) {
-			System.err.println("Usage: ./gradle run --args \"filename\"");
-			System.exit(1);
-		}
+    public static void main(String[] args) throws Exception {
+        if (args.length != 1) {
+            System.err.println("Usage: ./gradle run --args \"filename\"");
+            System.exit(1);
+        }
 
-		String filePath = args[0];
+        String filePath = args[0];
 
-		try {
-			AlloyFile af = ParserUtil.parse(Paths.get(filePath));
-			System.out.println(af.toString());
+        try {
+            AlloyFile af = ParserUtil.parse(Paths.get(filePath));
+            System.out.println(af.toString());
 
-		} catch (IOException e) {
-			System.err.println("Error reading file: " + e.getMessage());
-		} catch (RecognitionException | ParseCancellationException e) {
-			System.err.println("Error occurred during parsing: " + e.getMessage());
-		} catch (Exception e) {
-			System.err.println("Error occurred during parsing or in parser visitors: " + e.getMessage());
-		}
-	}
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        } catch (RecognitionException | ParseCancellationException e) {
+            System.err.println("Error occurred during parsing: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println(
+                    "Error occurred during parsing or in parser visitors: " + e.getMessage());
+        }
+    }
 }

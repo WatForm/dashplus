@@ -1,16 +1,11 @@
 package ca.uwaterloo.watform.dashast;
 
-import java.util.Collections;
-
-
 import ca.uwaterloo.watform.utils.*;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.dashast.DashStrings;
 
-public class DashDo  extends DashExpr {
+public class DashDo extends DashExpr {
 
-	@Override
-	public void toString(StringBuilder sb, int indent) {
+    @Override
+    public void toString(StringBuilder sb, int indent) {
         super.toString(DashStrings.doName, sb, indent);
-	}
+    }
 }

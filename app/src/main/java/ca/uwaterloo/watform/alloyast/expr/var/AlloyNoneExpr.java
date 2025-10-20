@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyNoneExpr extends AlloyVarExpr implements AlloySigRefExpr {
-	public AlloyNoneExpr(Pos pos) {
-		super(pos, AlloyStrings.NONE);
-	}
+    public AlloyNoneExpr(Pos pos) {
+        super(pos, AlloyStrings.NONE);
+    }
 }

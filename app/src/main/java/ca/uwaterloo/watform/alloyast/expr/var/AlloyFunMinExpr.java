@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyFunMinExpr extends AlloyVarExpr {
-	public AlloyFunMinExpr(Pos pos) {
-		super(pos, AlloyStrings.FUNMIN);
-	}
+    public AlloyFunMinExpr(Pos pos) {
+        super(pos, AlloyStrings.FUNMIN);
+    }
 }

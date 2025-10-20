@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloySeqExpr extends AlloyNameExpr {
-	public AlloySeqExpr(Pos pos) {
-		super(pos, AlloyStrings.SEQ);
-	}
+    public AlloySeqExpr(Pos pos) {
+        super(pos, AlloyStrings.SEQ);
+    }
 }

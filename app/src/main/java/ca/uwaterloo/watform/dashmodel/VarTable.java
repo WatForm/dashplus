@@ -1,127 +1,125 @@
 package ca.uwaterloo.watform.dashmodel;
 
+// NADTODO: what if var and buffer have the same name!!!
 
-//NADTODO: what if var and buffer have the same name!!!
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
-
-import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.dashast.DashExpr;
 import ca.uwaterloo.watform.dashast.DashParam;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class VarTable {
 
-	// stores Var, Buffer Decls in a HashMap based on the FQN
+    // stores Var, Buffer Decls in a HashMap based on the FQN
 
-	// LinkedHashMap so order of keySet is consistent
-	// Alloy requires declaration before use for variables
-	private LinkedHashMap<String,VarElement> vt;
-	public String name = "Var";
+    // LinkedHashMap so order of keySet is consistent
+    // Alloy requires declaration before use for variables
+    private LinkedHashMap<String, VarElement> vt;
+    public String name = "Var";
 
-	public VarTable() {
-		this.vt = new LinkedHashMap<String,VarElement>();
-	}
+    public VarTable() {
+        this.vt = new LinkedHashMap<String, VarElement>();
+    }
 
-	public class VarElement  {
-		private IntEnvKind kind;
-		private List<DashParam> params;
-		//private List<Integer> paramsIdx;
-		private DashExpr typ;
+    public class VarElement {
+        private IntEnvKind kind;
+        private List<DashParam> params;
+        // private List<Integer> paramsIdx;
+        private DashExpr typ;
 
-		public VarElement(
-			IntEnvKind k,
-			List<DashParam> prms,
-			//List<Integer> prmsIdx,
-			DashExpr t) {
-			assert(prms != null);
-			this.kind = k;
-			this.params = prms;
-			//this.paramsIdx = prmsIdx;
-			this.typ = t;
-		}
-		public String toString() {
-			String s = new String();
-			s += "kind: "+kind+"\n";
-			s += "params: "+ NoneStringIfNeeded(params) +"\n";
-			//s += "paramsIdx: "+ NoneStringIfNeeded(paramsIdx) +"\n";
-			s += "typ: "+typ.toString() + "\n";
-			return s;
-		}
-		public void setType(DashExpr typ) {
-			this.typ = typ;
-		}
-	}
+        public VarElement(
+                IntEnvKind k,
+                List<DashParam> prms,
+                // List<Integer> prmsIdx,
+                DashExpr t) {
+            assert (prms != null);
+            this.kind = k;
+            this.params = prms;
+            // this.paramsIdx = prmsIdx;
+            this.typ = t;
+        }
 
-	public Boolean addVar(
-			String vfqn, 
-			IntEnvKind k, 
-			List<DashParam> prms, 
-			DashExpr t) {
-		assert(prms!=null);
-		if (vt.containsKey(vfqn)) 
-			return false;
-		else if (hasPrime(vfqn)) { 
-			DashModelErrors.nameShouldNotBePrimed(vfqn); 
-			return false; 
-		} else { 
-			vt.put(vfqn, new VarElement(k,prms, t)); 
-			return true; 
-		}
-	}
-	public String toString() {
-		String s = new String("VAR TABLE\n");
-		for (String k:vt.keySet()) {
-			s += " ----- \n";
-			s += k + "\n";
-			s += vt.get(k).toString();
-		}
-		return s;
-	}	
+        public String toString() {
+            String s = new String();
+            s += "kind: " + kind + "\n";
+            s += "params: " + NoneStringIfNeeded(params) + "\n";
+            // s += "paramsIdx: "+ NoneStringIfNeeded(paramsIdx) +"\n";
+            s += "typ: " + typ.toString() + "\n";
+            return s;
+        }
 
-	// setters
-	public void setVarType(String vfqn, DashExpr typ) {
-		vt.get(vfqn).setType(typ);
-	}
+        public void setType(DashExpr typ) {
+            this.typ = typ;
+        }
+    }
 
-	// getters
-	public boolean contains(String vfqn) {
-		return (vt.containsKey(vfqn));
-	}
-	public DashExpr getVarType(String vfqn) {
-		return vt.get(vfqn).typ;
-	}
+    public Boolean addVar(String vfqn, IntEnvKind k, List<DashParam> prms, DashExpr t) {
+        assert (prms != null);
+        if (vt.containsKey(vfqn)) return false;
+        else if (hasPrime(vfqn)) {
+            DashModelErrors.nameShouldNotBePrimed(vfqn);
+            return false;
+        } else {
+            vt.put(vfqn, new VarElement(k, prms, t));
+            return true;
+        }
+    }
 
-	public List<DashParam> getParams(String vfqn) {
-		return vt.get(vfqn).params;
-	}
-	public boolean isInternal(String vfqn) {
-		return (vt.get(vfqn).kind == IntEnvKind.INT); 
-	}
-	public IntEnvKind getIntEnvKind(String vfqn) {
-		return (vt.get(vfqn).kind);
-	}
+    public String toString() {
+        String s = new String("VAR TABLE\n");
+        for (String k : vt.keySet()) {
+            s += " ----- \n";
+            s += k + "\n";
+            s += vt.get(k).toString();
+        }
+        return s;
+    }
 
-	// group getters
-	public List<String> getAllVarNames() {
-		return new ArrayList<String>(vt.keySet());
-	}
+    // setters
+    public void setVarType(String vfqn, DashExpr typ) {
+        vt.get(vfqn).setType(typ);
+    }
 
-	private List<String> getVarsOfState(String sfqn) {
-		// return all events declared in this state
-		// will have the sfqn as a prefix
-		return vt.keySet().stream()
-			// prefix of vfqn are state names
-			.filter(i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn))
-			.collect(Collectors.toList());	
-	}
+    // getters
+    public boolean contains(String vfqn) {
+        return (vt.containsKey(vfqn));
+    }
 
-	public List<String> getAllInternalVarNames() {
-    	return getAllVarNames().stream()
-    			.filter(i -> isInternal(i))
-    			.collect(Collectors.toList());
+    public DashExpr getVarType(String vfqn) {
+        return vt.get(vfqn).typ;
+    }
+
+    public List<DashParam> getParams(String vfqn) {
+        return vt.get(vfqn).params;
+    }
+
+    public boolean isInternal(String vfqn) {
+        return (vt.get(vfqn).kind == IntEnvKind.INT);
+    }
+
+    public IntEnvKind getIntEnvKind(String vfqn) {
+        return (vt.get(vfqn).kind);
+    }
+
+    // group getters
+    public List<String> getAllVarNames() {
+        return new ArrayList<String>(vt.keySet());
+    }
+
+    private List<String> getVarsOfState(String sfqn) {
+        // return all events declared in this state
+        // will have the sfqn as a prefix
+        return vt.keySet().stream()
+                // prefix of vfqn are state names
+                .filter(i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn))
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getAllInternalVarNames() {
+        return getAllVarNames().stream().filter(i -> isInternal(i)).collect(Collectors.toList());
     }
 }

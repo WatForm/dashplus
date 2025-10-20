@@ -1,25 +1,20 @@
 package ca.uwaterloo.watform.dashast;
 
-import java.util.ArrayList;
-import java.util.StringJoiner;
-
-import ca.uwaterloo.watform.dashast.DashStrings;
-import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.utils.*;
 
 // send P[x]/ev1
 // send ev1
 // send y.x.ev1
 
-public class DashSend  extends DashExpr {
+public class DashSend extends DashExpr {
 
-	public DashSend(Pos pos,AlloyExpr e) {
-		super(pos,e);
-	}
-	@Override
-	public void toString(StringBuilder sb, int indent) {
+    public DashSend(Pos pos, AlloyExpr e) {
+        super(pos, e);
+    }
+
+    @Override
+    public void toString(StringBuilder sb, int indent) {
         super.toString(DashStrings.sendName, sb, indent);
-	}
-
+    }
 }
-

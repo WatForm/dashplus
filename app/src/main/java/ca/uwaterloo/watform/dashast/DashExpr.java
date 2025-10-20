@@ -1,4 +1,4 @@
-/* 
+/*
 	These classes are used only during parsing because
 	we do not know what order items within a state will be parsed in.
 
@@ -7,27 +7,23 @@
 
 package ca.uwaterloo.watform.dashast;
 
-import java.util.Collections;
-
-
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.utils.*;
 
-import ca.uwaterloo.watform.utils.ASTNode;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.dashast.DashStrings;
-
-public abstract class DashExpr extends AlloyExpr {	
+public abstract class DashExpr extends AlloyExpr {
 
     public DashExpr(Pos pos, AlloyExpr exp) {
         super(pos);
     }
+
     public DashExpr() {
         super();
     }
+
     // Special toString for when expression has a name
     public void toString(String name, StringBuilder sb, int indent) {
         sb.append(DashStrings.indent(indent) + name + " {\n");
-        this.toString(sb,indent);
+        this.toString(sb, indent);
         sb.append("\n" + DashStrings.indent(indent) + "}\n");
     }
 }

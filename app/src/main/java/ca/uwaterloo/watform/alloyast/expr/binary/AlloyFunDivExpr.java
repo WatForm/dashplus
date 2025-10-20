@@ -6,7 +6,7 @@ import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyFunDivExpr extends AlloyBinaryExpr {
-	public AlloyFunDivExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
-		super(pos, left, right, AlloyStrings.FUNDIV);
-	}
+    public AlloyFunDivExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
+        super(pos, left, right, AlloyStrings.FUNDIV);
+    }
 }
