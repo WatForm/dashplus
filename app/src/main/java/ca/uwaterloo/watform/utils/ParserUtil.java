@@ -17,48 +17,47 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 public final class ParserUtil {
-	public static List<Path> recurGetFiles(Path dir, String filter) {
-		List<Path> filePaths = new ArrayList<>();
-		try (Stream<Path> stream = Files.walk(dir)) {
-			stream
-					.filter(Files::isRegularFile)
-					.filter(path -> path.toString().endsWith(filter))
-					.forEach(
-							filePath -> {
-								filePaths.add(filePath);
-							});
-		} catch (IOException e) {
-			System.err.println("Dir not found");
-		}
-		return filePaths;
-	}
+    public static List<Path> recurGetFiles(Path dir, String filter) {
+        List<Path> filePaths = new ArrayList<>();
+        try (Stream<Path> stream = Files.walk(dir)) {
+            stream.filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(filter))
+                    .forEach(
+                            filePath -> {
+                                filePaths.add(filePath);
+                            });
+        } catch (IOException e) {
+            System.err.println("Dir not found");
+        }
+        return filePaths;
+    }
 
-	public static AlloyFile parse(Path filePath) throws Exception {
-		CharStream input = CharStreams.fromPath(filePath);
-		BailLexer lexer = new BailLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		BailParser parser = new BailParser(tokens);
-		ParseTree antlrAST = parser.alloyFile();
+    public static AlloyFile parse(Path filePath) throws Exception {
+        CharStream input = CharStreams.fromPath(filePath);
+        BailLexer lexer = new BailLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        BailParser parser = new BailParser(tokens);
+        ParseTree antlrAST = parser.alloyFile();
 
-		AlloyFileParseVis afpv = new AlloyFileParseVis();
-		AlloyFile af = afpv.visit(antlrAST);
-		af.filename = filePath.toString();
-		return af;
-	}
+        AlloyFileParseVis afpv = new AlloyFileParseVis();
+        AlloyFile af = afpv.visit(antlrAST);
+        af.filename = filePath.toString();
+        return af;
+    }
 
-	public static <C extends ParseTree, T> List<T> visitAll(
-			List<C> contexts, AlloyBaseVisitor<?> visitor, Class<T> targetType) {
-		if (contexts == null || contexts.isEmpty()) {
-			return Collections.emptyList();
-		}
-		try {
-			return contexts.stream()
-					.map(visitor::visit)
-					.map(targetType::cast)
-					.collect(Collectors.toList());
-		} catch (ClassCastException e) {
-			throw CodingError.failedCast(
-					"Failed to cast an item to " + targetType.getSimpleName() + " in visitAll.");
-		}
-	}
+    public static <C extends ParseTree, T> List<T> visitAll(
+            List<C> contexts, AlloyBaseVisitor<?> visitor, Class<T> targetType) {
+        if (contexts == null || contexts.isEmpty()) {
+            return Collections.emptyList();
+        }
+        try {
+            return contexts.stream()
+                    .map(visitor::visit)
+                    .map(targetType::cast)
+                    .collect(Collectors.toList());
+        } catch (ClassCastException e) {
+            throw CodingError.failedCast(
+                    "Failed to cast an item to " + targetType.getSimpleName() + " in visitAll.");
+        }
+    }
 }

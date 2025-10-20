@@ -9,13 +9,13 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyLetAsnParseVis extends AlloyBaseVisitor<AlloyLetAsn> {
-	@Override
-	public AlloyLetAsn visitAssignment(AlloyParser.AssignmentContext ctx) {
-		AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
+    @Override
+    public AlloyLetAsn visitAssignment(AlloyParser.AssignmentContext ctx) {
+        AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
 
-		return new AlloyLetAsn(
-				new Pos(ctx),
-				(AlloyNameExpr) exprParseVis.visit(ctx.name()),
-				exprParseVis.visit(ctx.expr1()));
-	}
+        return new AlloyLetAsn(
+                new Pos(ctx),
+                (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                exprParseVis.visit(ctx.expr1()));
+    }
 }

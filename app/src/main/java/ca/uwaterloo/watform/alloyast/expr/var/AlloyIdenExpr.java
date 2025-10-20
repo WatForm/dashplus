@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyIdenExpr extends AlloyVarExpr {
-	public AlloyIdenExpr(Pos pos) {
-		super(pos, AlloyStrings.IDEN);
-	}
+    public AlloyIdenExpr(Pos pos) {
+        super(pos, AlloyStrings.IDEN);
+    }
 }

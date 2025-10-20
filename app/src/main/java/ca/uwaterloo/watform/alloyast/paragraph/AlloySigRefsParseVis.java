@@ -8,8 +8,8 @@ import ca.uwaterloo.watform.utils.ParserUtil;
 import java.util.List;
 
 public final class AlloySigRefsParseVis extends AlloyBaseVisitor<List<AlloySigRefExpr>> {
-	@Override
-	public List<AlloySigRefExpr> visitSigRefs(AlloyParser.SigRefsContext ctx) {
-		return ParserUtil.visitAll(ctx.sigRef(), new AlloyExprParseVis(), AlloySigRefExpr.class);
-	}
+    @Override
+    public List<AlloySigRefExpr> visitSigRefs(AlloyParser.SigRefsContext ctx) {
+        return ParserUtil.visitAll(ctx.sigRef(), new AlloyExprParseVis(), AlloySigRefExpr.class);
+    }
 }

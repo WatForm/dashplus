@@ -1,8 +1,8 @@
 package ca.uwaterloo.watform.utils;
 
 // borrowed from Alloy
-//NADTODO fix up pos and error messages
-//NADTODO this is temporary
+// NADTODO fix up pos and error messages
+// NADTODO this is temporary
 
 public class ErrorUser extends RuntimeException {
 
@@ -16,5 +16,4 @@ public class ErrorUser extends RuntimeException {
         super(msg, null);
         this.pos = pos;
     }
-
 }

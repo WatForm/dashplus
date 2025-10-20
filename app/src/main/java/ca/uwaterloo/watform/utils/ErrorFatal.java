@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.utils;
 
 // borrowed from Alloy
-//NADTODO fix up pos and error messages
+// NADTODO fix up pos and error messages
 
 public class ErrorFatal extends RuntimeException {
 
@@ -15,5 +15,4 @@ public class ErrorFatal extends RuntimeException {
         super(msg, null);
         this.pos = pos;
     }
-
 }

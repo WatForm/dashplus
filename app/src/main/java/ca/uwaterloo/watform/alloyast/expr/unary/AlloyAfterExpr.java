@@ -6,14 +6,14 @@ import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyAfterExpr extends AlloyUnaryExpr {
-	public AlloyAfterExpr(Pos pos, AlloyExpr sub) {
-		super(pos, sub, AlloyStrings.AFTER);
-	}
+    public AlloyAfterExpr(Pos pos, AlloyExpr sub) {
+        super(pos, sub, AlloyStrings.AFTER);
+    }
 
-	@Override
-	public void toString(StringBuilder sb, int indent) {
-		sb.append(op);
-		sb.append(AlloyStrings.SPACE);
-		this.sub.toString(sb, indent);
-	}
+    @Override
+    public void toString(StringBuilder sb, int indent) {
+        sb.append(op);
+        sb.append(AlloyStrings.SPACE);
+        this.sub.toString(sb, indent);
+    }
 }
