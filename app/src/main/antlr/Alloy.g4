@@ -58,7 +58,7 @@ sigIn			: EXTENDS sigRef 					# extendSigIn
 sigRef			: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
 sigRefs			: sigRef (COMMA sigRef)* ;
 
-enumPara        : PRIVATE? ENUM name LBRACE names RBRACE;
+enumPara        : PRIVATE? ENUM name LBRACE names? RBRACE;
 
 factPara        : FACT (name | STRING_LITERAL)? block ;
 

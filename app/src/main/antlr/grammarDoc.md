@@ -6,6 +6,7 @@ Started with: https://github.com/pkriens/org.alloytools.alloy/blob/pkriens/api/o
 - optional qnames inside [] in importPara
 - optional params in 'bracketExpr'
 - optional block/bar in comprehension
+- optional names in enumPara
 
 - accept '<=' for less or equal to
 - accept leading, trailing, and sequence of commas in 'sigPara' 

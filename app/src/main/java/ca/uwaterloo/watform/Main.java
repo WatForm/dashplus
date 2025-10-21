@@ -13,6 +13,7 @@ public class Main {
 		Possible arguments:
 		%s
 		%s
+		%s
 		%s"""
                         .formatted(dashToAlloy, dashToTLAPlus, predicateAbstraction, test);
 

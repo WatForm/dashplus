@@ -58,7 +58,9 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
         return new AlloyEnumPara(
                 null != ctx.PRIVATE(),
                 (AlloyNameExpr) exprParseVis.visit(ctx.name()),
-                ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class));
+                null != ctx.names()
+                        ? ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class)
+                        : Collections.emptyList());
     }
 
     // ====================================================================================
