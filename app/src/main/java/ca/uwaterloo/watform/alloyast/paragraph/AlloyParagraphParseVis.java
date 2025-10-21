@@ -50,9 +50,15 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
         return visitChildren(ctx);
     }
 
+    // ====================================================================================
+    // Enum
+    // ====================================================================================
     @Override
     public AlloyParagraph visitEnumPara(AlloyParser.EnumParaContext ctx) {
-        return visitChildren(ctx);
+        return new AlloyEnumPara(
+                null != ctx.PRIVATE(),
+                (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class));
     }
 
     // ====================================================================================
