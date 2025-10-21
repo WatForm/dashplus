@@ -41,7 +41,8 @@ public abstract class ASTNode {
             try {
                 ((ASTNode) iterator.next()).toString(sb, indent);
             } catch (ClassCastException e) {
-                CodingError.failedCast("Cannot cast to ASTNode in ASTNode.join. \n e");
+                throw CodingError.failedCast(
+                        "Cannot cast to ASTNode in ASTNode.join. \n" + e.toString());
             }
             if (iterator.hasNext()) {
                 sb.append(separator);

@@ -16,8 +16,7 @@ public final class AlloyImportPara extends AlloyParagraph {
     public final AlloyQnameExpr qname;
     public final boolean hasBrackets;
     public final List<AlloySigRefExpr> sigRefs;
-    public final Optional<AlloyNameExpr>
-            asName; // asName = "" means the importPara didn't have (AS name)
+    public final Optional<AlloyNameExpr> asName;
 
     public AlloyImportPara(
             Pos pos,
@@ -40,12 +39,7 @@ public final class AlloyImportPara extends AlloyParagraph {
             boolean hasBrackets,
             List<AlloySigRefExpr> sigRefs,
             AlloyNameExpr asName) {
-        super();
-        this.isPrivate = isPrivate;
-        this.qname = qname;
-        this.hasBrackets = hasBrackets;
-        this.sigRefs = Collections.unmodifiableList(sigRefs);
-        this.asName = Optional.ofNullable(asName);
+        this(Pos.UNKNOWN, isPrivate, qname, hasBrackets, sigRefs, asName);
     }
 
     @Override
@@ -65,7 +59,7 @@ public final class AlloyImportPara extends AlloyParagraph {
             }
             sb.append(AlloyStrings.RBRACK);
         }
-        if (this.asName.isPresent()) {
+        if (!this.asName.isEmpty()) {
             sb.append(AlloyStrings.SPACE);
             sb.append(AlloyStrings.AS);
             sb.append(AlloyStrings.SPACE);

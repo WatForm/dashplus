@@ -18,16 +18,10 @@ public final class AlloyDecl extends AlloyASTNode {
     public final AlloyExpr expr;
 
     public enum Quant {
-        /** lone a,b:x | formula */
         LONE(AlloyStrings.LONE),
-        /** one a,b:x | formula */
         ONE(AlloyStrings.ONE),
-        /** some a,b:x | formula */
         SOME(AlloyStrings.SOME),
-        /** set a,b:x | formula */
         SET(AlloyStrings.SET);
-        // Alloy has Comprehension here too, but that's made into a separate
-        // class here
 
         public final String label;
 
@@ -39,7 +33,6 @@ public final class AlloyDecl extends AlloyASTNode {
             return label;
         }
 
-        /** Returns the human readable label for this operator */
         @Override
         public final String toString() {
             return label;
@@ -51,13 +44,13 @@ public final class AlloyDecl extends AlloyASTNode {
             Boolean disj1,
             List<AlloyNameExpr> names,
             Boolean disj2,
-            Optional<AlloyDecl.Quant> quant,
+            AlloyDecl.Quant quant,
             AlloyExpr expr) {
         super(pos);
         this.disj1 = disj1;
         this.names = Collections.unmodifiableList(names);
         this.disj2 = disj2;
-        this.quant = quant;
+        this.quant = Optional.ofNullable(quant);
         this.expr = expr;
     }
 
@@ -65,13 +58,13 @@ public final class AlloyDecl extends AlloyASTNode {
             Boolean disj1,
             List<AlloyNameExpr> names,
             Boolean disj2,
-            Optional<AlloyDecl.Quant> quant,
+            AlloyDecl.Quant quant,
             AlloyExpr expr) {
         super();
         this.disj1 = disj1;
         this.names = Collections.unmodifiableList(names);
         this.disj2 = disj2;
-        this.quant = quant;
+        this.quant = Optional.ofNullable(quant);
         this.expr = expr;
     }
 

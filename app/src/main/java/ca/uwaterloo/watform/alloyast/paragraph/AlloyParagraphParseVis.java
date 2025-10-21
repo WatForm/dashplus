@@ -21,7 +21,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     }
 
     // ====================================================================================
-    // ModulePara
+    // Module
     // ====================================================================================
     @Override
     public AlloyModulePara visitModulePara(AlloyParser.ModuleParaContext ctx) {
@@ -39,10 +39,10 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                 null != ctx.PRIVATE(),
                 (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
                 null != ctx.LBRACK(),
-                ((null == ctx.sigRefs())
-                        ? Collections.emptyList()
-                        : this.sigRefsParseVis.visit(ctx.sigRefs())),
-                ((null == ctx.name()) ? null : (AlloyNameExpr) exprParseVis.visit(ctx.name())));
+                ((null != ctx.sigRefs())
+                        ? this.sigRefsParseVis.visit(ctx.sigRefs())
+                        : Collections.emptyList()),
+                ((null != ctx.name()) ? (AlloyNameExpr) exprParseVis.visit(ctx.name()) : null));
     }
 
     @Override
@@ -55,16 +55,25 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
         return visitChildren(ctx);
     }
 
+    // ====================================================================================
+    // Fact
+    // ====================================================================================
     @Override
     public AlloyFactPara visitFactPara(AlloyParser.FactParaContext ctx) {
-        String factName = "";
         if (null != ctx.name()) {
-            factName = ctx.name().ID().getText();
+            return new AlloyFactPara(
+                    new Pos(ctx),
+                    (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                    (AlloyBlock) this.exprParseVis.visit(ctx.block()));
         } else if (null != ctx.STRING_LITERAL()) {
-            factName = ctx.STRING_LITERAL().getText();
+            return new AlloyFactPara(
+                    new Pos(ctx),
+                    new AlloyStrLiteralExpr(new Pos(ctx), ctx.STRING_LITERAL().getText()),
+                    (AlloyBlock) this.exprParseVis.visit(ctx.block()));
+        } else {
+            return new AlloyFactPara(
+                    new Pos(ctx), (AlloyBlock) this.exprParseVis.visit(ctx.block()));
         }
-        return new AlloyFactPara(
-                new Pos(ctx), factName, (AlloyBlock) this.exprParseVis.visit(ctx.block()));
     }
 
     @Override
@@ -77,9 +86,25 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
         return visitChildren(ctx);
     }
 
+    // ====================================================================================
+    // Assert
+    // ====================================================================================
     @Override
     public AlloyParagraph visitAssertPara(AlloyParser.AssertParaContext ctx) {
-        return visitChildren(ctx);
+        if (null != ctx.name()) {
+            return new AlloyAssertPara(
+                    new Pos(ctx),
+                    (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                    (AlloyBlock) this.exprParseVis.visit(ctx.block()));
+        } else if (null != ctx.STRING_LITERAL()) {
+            return new AlloyAssertPara(
+                    new Pos(ctx),
+                    new AlloyStrLiteralExpr(new Pos(ctx), ctx.STRING_LITERAL().getText()),
+                    (AlloyBlock) this.exprParseVis.visit(ctx.block()));
+        } else {
+            return new AlloyAssertPara(
+                    new Pos(ctx), (AlloyBlock) this.exprParseVis.visit(ctx.block()));
+        }
     }
 
     @Override

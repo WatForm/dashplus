@@ -8,13 +8,13 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyStrLiteralExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Optional;
 
-public final class AlloyFactPara extends AlloyParagraph {
+public final class AlloyAssertPara extends AlloyParagraph {
     public final AlloyBlock block;
     // mutually exclusive fields
     public final Optional<AlloyNameExpr> name;
     public final Optional<AlloyStrLiteralExpr> strLit;
 
-    private AlloyFactPara(
+    private AlloyAssertPara(
             Pos pos, AlloyNameExpr name, AlloyStrLiteralExpr strLit, AlloyBlock block) {
         super(pos);
         this.name = Optional.ofNullable(name);
@@ -22,39 +22,39 @@ public final class AlloyFactPara extends AlloyParagraph {
         this.block = block;
     }
 
-    public AlloyFactPara(Pos pos, AlloyNameExpr name, AlloyBlock block) {
+    public AlloyAssertPara(Pos pos, AlloyNameExpr name, AlloyBlock block) {
         this(pos, name, null, block);
     }
 
-    public AlloyFactPara(AlloyNameExpr name, AlloyBlock block) {
+    public AlloyAssertPara(AlloyNameExpr name, AlloyBlock block) {
         this(Pos.UNKNOWN, name, null, block);
     }
 
-    public AlloyFactPara(Pos pos, AlloyStrLiteralExpr strLit, AlloyBlock block) {
+    public AlloyAssertPara(Pos pos, AlloyStrLiteralExpr strLit, AlloyBlock block) {
         this(pos, null, strLit, block);
     }
 
-    public AlloyFactPara(AlloyStrLiteralExpr strLit, AlloyBlock block) {
+    public AlloyAssertPara(AlloyStrLiteralExpr strLit, AlloyBlock block) {
         this(Pos.UNKNOWN, null, strLit, block);
     }
 
-    public AlloyFactPara(Pos pos, AlloyBlock block) {
+    public AlloyAssertPara(Pos pos, AlloyBlock block) {
         this(pos, null, null, block);
     }
 
-    public AlloyFactPara(AlloyBlock block) {
+    public AlloyAssertPara(AlloyBlock block) {
         this(Pos.UNKNOWN, null, null, block);
     }
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        String factName = "";
+        String assertionName = "";
         if (!this.name.isEmpty()) {
-            factName = this.name.get().toString() + " ";
+            assertionName = this.name.get().toString() + " ";
         } else if (!this.strLit.isEmpty()) {
-            factName = this.strLit.get().toString() + " ";
+            assertionName = this.strLit.get().toString() + " ";
         }
-        sb.append(AlloyStrings.FACT + AlloyStrings.SPACE + factName);
+        sb.append(AlloyStrings.ASSERT + AlloyStrings.SPACE + assertionName);
         this.block.toString(sb, indent);
     }
 }
