@@ -64,7 +64,7 @@ factPara        : FACT (name | STRING_LITERAL)? block ;
 
 predPara        : PRIVATE? PRED ( sigRef DOT)? name arguments? block ;
 
-funPara         : PRIVATE? FUN ( sigRef DOT)?  name arguments? COLON multiplicity? expr1 expr1;
+funPara         : PRIVATE? FUN ( sigRef DOT)?  name arguments? COLON multiplicity? expr1 block;
 arguments       : LPAREN ( decl ( COMMA decl )* COMMA? )? RPAREN
                 | LBRACK ( decl ( COMMA decl )* COMMA? )? RBRACK
                 ;

@@ -112,9 +112,47 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                 (AlloyBlock) exprParseVis.visit(ctx.block()));
     }
 
+    // ====================================================================================
+    // Fun
+    // ====================================================================================
     @Override
-    public AlloyParagraph visitFunPara(AlloyParser.FunParaContext ctx) {
-        return visitChildren(ctx);
+    public AlloyFunPara visitFunPara(AlloyParser.FunParaContext ctx) {
+        boolean hasBrack = false;
+        boolean hasParen = false;
+        if (null != ctx.arguments()) {
+            hasBrack = null != ctx.arguments().LBRACK();
+            hasParen = null != ctx.arguments().LPAREN();
+        }
+
+        AlloyFunPara.Mul mul = AlloyFunPara.Mul.DEFAULTSET;
+        if (null != ctx.multiplicity()) {
+            if (null != ctx.multiplicity().LONE()) {
+                mul = AlloyFunPara.Mul.LONE;
+            } else if (null != ctx.multiplicity().SOME()) {
+                mul = AlloyFunPara.Mul.SOME;
+            } else if (null != ctx.multiplicity().ONE()) {
+                mul = AlloyFunPara.Mul.ONE;
+            } else if (null != ctx.multiplicity().SET()) {
+                mul = AlloyFunPara.Mul.SET;
+            } else {
+                throw new AlloyUnexpTokenEx(ctx);
+            }
+        }
+
+        return new AlloyFunPara(
+                new Pos(ctx),
+                null != ctx.PRIVATE(),
+                (null != ctx.sigRef()) ? (AlloySigRefExpr) exprParseVis.visit(ctx.sigRef()) : null,
+                (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                hasBrack,
+                hasParen,
+                null != ctx.arguments()
+                        ? ParserUtil.visitAll(
+                                ctx.arguments().decl(), new AlloyDeclParseVis(), AlloyDecl.class)
+                        : Collections.emptyList(),
+                mul,
+                exprParseVis.visit(ctx.expr1()),
+                (AlloyBlock) exprParseVis.visit(ctx.block()));
     }
 
     // ====================================================================================

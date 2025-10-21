@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         final String dashToTLAPlus = "--tla";
-        final String dashToAlloy = "--alloy";
+        final String dashToAlloy = "--dash";
         final String predicateAbstraction = "--pred";
         final String test = "--test";
 

@@ -18,6 +18,8 @@ The build process uses gradle version 9.1.0. However, installing this globally i
 
 The build process is the same for Linux, MacOS and Windows powershell. On Windows cmd, `./gradlew build` is replaced by `gradlew.bat`
 
+Run with the desired entry point (see list of args taken in app/src/main/java/ca/uwaterloo/watform/Main.java): 
+`java -cp app/build/libs/app.jar ca.uwaterloo.watform.Main --test`
 
 ## Instructions for Contributors:
 - Directory names: All lowercase and avoid underscores
