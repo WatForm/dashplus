@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusIndexing extends TLAPlusBinOp {
+public class TLAPlusIndexing extends TLAPlusBinaryOperator {
 
     public TLAPlusIndexing(TLAPlusASTNode operandOne, TLAPlusASTNode operandTwo) {
         super(operandOne, operandTwo);

@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.tlaplusast;
 
 import java.util.List;
 
-public class TLAPlusSequence extends TLAPlusNaryOp {
+public class TLAPlusSequence extends TLAPlusNaryOperator {
 
     public TLAPlusSequence(List<TLAPlusASTNode> children) {
         super(

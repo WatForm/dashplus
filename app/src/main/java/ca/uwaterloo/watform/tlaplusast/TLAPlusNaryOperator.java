@@ -3,12 +3,12 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TLAPlusNaryOp extends TLAPlusExp {
+public abstract class TLAPlusNaryOperator extends TLAPlusExpression {
     private String start;
     private String end;
     private String separator;
 
-    public TLAPlusNaryOp(
+    public TLAPlusNaryOperator(
             String start, String end, String separator, List<TLAPlusASTNode> children) {
         this.start = start;
         this.end = end;

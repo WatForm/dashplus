@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusUnchanged extends TLAPlusUnaryOp {
+public class TLAPlusUnchanged extends TLAPlusUnaryOperator {
     public TLAPlusUnchanged(TLAPlusASTNode operand) {
         super(operand);
     }

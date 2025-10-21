@@ -2,8 +2,8 @@ package ca.uwaterloo.watform.tlaplusast;
 
 import java.util.ArrayList;
 
-public abstract class TLAPlusBinOp extends TLAPlusExp {
-    public TLAPlusBinOp(TLAPlusASTNode operandOne, TLAPlusASTNode operandTwo) {
+public abstract class TLAPlusBinaryOperator extends TLAPlusExpression {
+    public TLAPlusBinaryOperator(TLAPlusASTNode operandOne, TLAPlusASTNode operandTwo) {
         this.children = new ArrayList<>();
         this.children.add(operandOne);
         this.children.add(operandTwo);

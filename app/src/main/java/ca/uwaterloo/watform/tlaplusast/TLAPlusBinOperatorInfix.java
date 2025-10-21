@@ -3,10 +3,11 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TLAPlusBinOpMid extends TLAPlusBinOp {
+public abstract class TLAPlusBinOperatorInfix extends TLAPlusBinaryOperator {
     private String middle;
 
-    public TLAPlusBinOpMid(String middle, TLAPlusASTNode operandOne, TLAPlusASTNode operandTwo) {
+    public TLAPlusBinOperatorInfix(
+            String middle, TLAPlusASTNode operandOne, TLAPlusASTNode operandTwo) {
         this.middle = middle;
         super(operandOne, operandTwo);
     }

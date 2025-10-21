@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusSetFilter extends TLAPlusExp {
+public class TLAPlusSetFilter extends TLAPlusExpression {
     public TLAPlusSetFilter(TLAPlusVariable v, TLAPlusASTNode set, TLAPlusASTNode exp) {
         this.children = new ArrayList<>();
         this.children.add(v);

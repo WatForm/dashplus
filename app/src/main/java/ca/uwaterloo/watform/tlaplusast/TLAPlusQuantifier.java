@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TLAPlusQuantifier extends TLAPlusExp {
+public abstract class TLAPlusQuantifier extends TLAPlusExpression {
 
     private String symbol;
 
