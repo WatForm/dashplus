@@ -33,7 +33,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     }
 
     @Override
-    public AlloyParagraph visitImportPara(AlloyParser.ImportParaContext ctx) {
+    public AlloyImportPara visitImportPara(AlloyParser.ImportParaContext ctx) {
         return new AlloyImportPara(
                 new Pos(ctx),
                 null != ctx.PRIVATE(),
@@ -54,7 +54,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Enum
     // ====================================================================================
     @Override
-    public AlloyParagraph visitEnumPara(AlloyParser.EnumParaContext ctx) {
+    public AlloyEnumPara visitEnumPara(AlloyParser.EnumParaContext ctx) {
         return new AlloyEnumPara(
                 null != ctx.PRIVATE(),
                 (AlloyNameExpr) exprParseVis.visit(ctx.name()),
@@ -98,7 +98,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Assert
     // ====================================================================================
     @Override
-    public AlloyParagraph visitAssertPara(AlloyParser.AssertParaContext ctx) {
+    public AlloyAssertPara visitAssertPara(AlloyParser.AssertParaContext ctx) {
         if (null != ctx.name()) {
             return new AlloyAssertPara(
                     new Pos(ctx),
@@ -115,8 +115,37 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
         }
     }
 
+    // ====================================================================================
+    // Macro
+    // ====================================================================================
     @Override
-    public AlloyParagraph visitMacroPara(AlloyParser.MacroParaContext ctx) {
-        return visitChildren(ctx);
+    public AlloyMacroPara visitMacroPara(AlloyParser.MacroParaContext ctx) {
+        if (null != ctx.block()) {
+            return new AlloyMacroPara(
+                    new Pos(ctx),
+                    null != ctx.PRIVATE(),
+                    (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                    null != ctx.names()
+                            ? ParserUtil.visitAll(
+                                    ctx.names().name(), exprParseVis, AlloyNameExpr.class)
+                            : Collections.emptyList(),
+                    null != ctx.LBRACK(),
+                    null != ctx.LPAREN(),
+                    (AlloyBlock) exprParseVis.visit(ctx.block()));
+        } else if (null != ctx.expr1()) {
+            return new AlloyMacroPara(
+                    new Pos(ctx),
+                    null != ctx.PRIVATE(),
+                    (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                    null != ctx.names()
+                            ? ParserUtil.visitAll(
+                                    ctx.names().name(), exprParseVis, AlloyNameExpr.class)
+                            : Collections.emptyList(),
+                    null != ctx.LBRACK(),
+                    null != ctx.LPAREN(),
+                    exprParseVis.visit(ctx.expr1()));
+        } else {
+            throw new AlloyUnexpTokenEx(ctx);
+        }
     }
 }
