@@ -50,7 +50,6 @@ public final class AlloyModulePara extends AlloyParagraph {
         sb.append(AlloyStrings.MODULE);
         sb.append(AlloyStrings.SPACE);
         this.qname.toString(sb, indent);
-        sb.append(AlloyStrings.SPACE);
         if (this.moduleArgs.size() != 0) {
             sb.append(AlloyStrings.LBRACK);
             ASTNode.join(sb, indent, this.moduleArgs, AlloyStrings.COMMA + AlloyStrings.SPACE);

@@ -52,7 +52,6 @@ public final class AlloyImportPara extends AlloyParagraph {
         sb.append(AlloyStrings.SPACE);
         this.qname.toString(sb, indent);
         if (this.hasBrackets) {
-            sb.append(AlloyStrings.SPACE);
             sb.append(AlloyStrings.LBRACK);
             if (!sigRefs.isEmpty()) {
                 ASTNode.join(sb, indent, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);

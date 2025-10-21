@@ -6,6 +6,8 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyast.misc.*;
+import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara.AlloyModuleArg;
 import ca.uwaterloo.watform.utils.*;
@@ -84,9 +86,30 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
         }
     }
 
+    // ====================================================================================
+    // Pred
+    // ====================================================================================
     @Override
     public AlloyParagraph visitPredPara(AlloyParser.PredParaContext ctx) {
-        return visitChildren(ctx);
+        boolean hasBrack = false;
+        boolean hasParen = false;
+        if (null != ctx.arguments()) {
+            hasBrack = null != ctx.arguments().LBRACK();
+            hasParen = null != ctx.arguments().LPAREN();
+        }
+
+        return new AlloyPredPara(
+                new Pos(ctx),
+                null != ctx.PRIVATE(),
+                (null != ctx.sigRef()) ? (AlloySigRefExpr) exprParseVis.visit(ctx.sigRef()) : null,
+                (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                hasBrack,
+                hasParen,
+                null != ctx.arguments()
+                        ? ParserUtil.visitAll(
+                                ctx.arguments().decl(), new AlloyDeclParseVis(), AlloyDecl.class)
+                        : Collections.emptyList(),
+                (AlloyBlock) exprParseVis.visit(ctx.block()));
     }
 
     @Override
