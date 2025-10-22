@@ -13,6 +13,7 @@ import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.misc.AlloyDeclParseVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -38,7 +39,10 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     public AlloyQuantificationExpr visitQuantificationExpr(
             AlloyParser.QuantificationExprContext ctx) {
         List<AlloyDecl> decls =
-                ParserUtil.visitAll(ctx.decl(), new AlloyDeclParseVis(), AlloyDecl.class);
+                null != ctx.decls()
+                        ? ParserUtil.visitAll(
+                                ctx.decls().decl(), new AlloyDeclParseVis(), AlloyDecl.class)
+                        : Collections.emptyList();
         if (null != ctx.ALL()) {
             return new AlloyQuantificationExpr(
                     new Pos(ctx), AlloyQuantificationExpr.Quant.ALL, decls, this.visit(ctx.body()));
@@ -235,11 +239,11 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyComprExpr visitComprehensionExpr(AlloyParser.ComprehensionExprContext ctx) {
-        return new AlloyComprExpr(
+    public AlloyComprehensionExpr visitComprehensionExpr(AlloyParser.ComprehensionExprContext ctx) {
+        return new AlloyComprehensionExpr(
                 new Pos(ctx),
-                ParserUtil.visitAll(ctx.decl(), new AlloyDeclParseVis(), AlloyDecl.class),
-                this.visit(ctx.body()));
+                ParserUtil.visitAll(ctx.declMul(), new AlloyDeclParseVis(), AlloyDecl.class),
+                (null != ctx.body()) ? this.visit(ctx.body()) : null);
     }
 
     // ============================

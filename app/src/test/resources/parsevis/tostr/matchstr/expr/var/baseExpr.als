@@ -10,6 +10,7 @@ fact {
 	univ
 	@someName
 	{a}
+	{a: A}
 	{a: A, b: B | a}
 }
 

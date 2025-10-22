@@ -7,11 +7,11 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.*;
-import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara.AlloyModuleArg;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
+import java.util.List;
 
 public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagraph> {
     private final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
@@ -93,9 +93,17 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     public AlloyParagraph visitPredPara(AlloyParser.PredParaContext ctx) {
         boolean hasBrack = false;
         boolean hasParen = false;
+        List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
             hasBrack = null != ctx.arguments().LBRACK();
             hasParen = null != ctx.arguments().LPAREN();
+            if (null != ctx.arguments().decls()) {
+                decls =
+                        ParserUtil.visitAll(
+                                ctx.arguments().decls().decl(),
+                                new AlloyDeclParseVis(),
+                                AlloyDecl.class);
+            }
         }
 
         return new AlloyPredPara(
@@ -105,10 +113,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                 (AlloyNameExpr) exprParseVis.visit(ctx.name()),
                 hasBrack,
                 hasParen,
-                null != ctx.arguments()
-                        ? ParserUtil.visitAll(
-                                ctx.arguments().decl(), new AlloyDeclParseVis(), AlloyDecl.class)
-                        : Collections.emptyList(),
+                decls,
                 (AlloyBlock) exprParseVis.visit(ctx.block()));
     }
 
@@ -119,9 +124,17 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     public AlloyFunPara visitFunPara(AlloyParser.FunParaContext ctx) {
         boolean hasBrack = false;
         boolean hasParen = false;
+        List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
             hasBrack = null != ctx.arguments().LBRACK();
             hasParen = null != ctx.arguments().LPAREN();
+            if (null != ctx.arguments().decls()) {
+                decls =
+                        ParserUtil.visitAll(
+                                ctx.arguments().decls().decl(),
+                                new AlloyDeclParseVis(),
+                                AlloyDecl.class);
+            }
         }
 
         AlloyFunPara.Mul mul = AlloyFunPara.Mul.DEFAULTSET;
@@ -146,10 +159,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                 (AlloyNameExpr) exprParseVis.visit(ctx.name()),
                 hasBrack,
                 hasParen,
-                null != ctx.arguments()
-                        ? ParserUtil.visitAll(
-                                ctx.arguments().decl(), new AlloyDeclParseVis(), AlloyDecl.class)
-                        : Collections.emptyList(),
+                decls,
                 mul,
                 exprParseVis.visit(ctx.expr1()),
                 (AlloyBlock) exprParseVis.visit(ctx.block()));

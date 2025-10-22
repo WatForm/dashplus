@@ -2,9 +2,7 @@ package ca.uwaterloo.watform.alloyast.misc;
 
 import antlr.generated.AlloyBaseVisitor;
 import antlr.generated.AlloyParser;
-import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
-import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
@@ -12,12 +10,25 @@ import java.util.List;
 public final class AlloyDeclParseVis extends AlloyBaseVisitor<AlloyDecl> {
     @Override
     public AlloyDecl visitDecl(AlloyParser.DeclContext ctx) {
+        return this.visit(ctx.getChild(0));
+    }
+
+    @Override
+    public AlloyDecl visitDeclMul(AlloyParser.DeclMulContext ctx) {
         AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
-        final Boolean disj1 = null != ctx.DISJ(0) ? true : false;
+
+        final Boolean isVar = null != ctx.VAR() ? true : false;
+
+        final Boolean isPrivate = null != ctx.PRIVATE() ? true : false;
+
+        final Boolean isDisj1 = null != ctx.DISJ(0) ? true : false;
+
         List<AlloyNameExpr> names =
                 ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class);
-        final Boolean disj2 = null != ctx.DISJ(1) ? true : false;
-        AlloyDecl.Quant quant;
+
+        final Boolean isDisj2 = null != ctx.DISJ(1) ? true : false;
+
+        AlloyDecl.Quant quant = null;
         if (null != ctx.LONE()) {
             quant = AlloyDecl.Quant.LONE;
         } else if (null != ctx.ONE()) {
@@ -26,10 +37,35 @@ public final class AlloyDeclParseVis extends AlloyBaseVisitor<AlloyDecl> {
             quant = AlloyDecl.Quant.SOME;
         } else if (null != ctx.SET()) {
             quant = AlloyDecl.Quant.SET;
-        } else {
-            quant = null;
         }
         return new AlloyDecl(
-                new Pos(ctx), disj1, names, disj2, quant, exprParseVis.visit(ctx.expr1()));
+                new Pos(ctx),
+                isVar,
+                isPrivate,
+                isDisj1,
+                names,
+                isDisj2,
+                quant,
+                exprParseVis.visit(ctx.expr1()));
+    }
+
+    @Override
+    public AlloyDecl visitDeclExact(AlloyParser.DeclExactContext ctx) {
+        AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
+
+        final Boolean isPrivate = null != ctx.PRIVATE() ? true : false;
+
+        List<AlloyNameExpr> names =
+                ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class);
+
+        return new AlloyDecl(
+                new Pos(ctx),
+                false,
+                isPrivate,
+                false,
+                names,
+                false,
+                AlloyDecl.Quant.EXACTLY,
+                exprParseVis.visit(ctx.expr1()));
     }
 }

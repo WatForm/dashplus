@@ -1,4 +1,4 @@
-grammar Alloy;
+grammar Alloy	;
 
 @header {
 	package antlr.generated;
@@ -46,12 +46,9 @@ moduleArg       : (EXACTLY? name ) ;
 
 importPara      : PRIVATE? OPEN qname ( LBRACK sigRefs? RBRACK )? ( AS name )? ;
 
-sigPara         : sigQualifier* SIG names sigIn? LBRACE COMMA? (varDecl ( COMMA* varDecl )*)? COMMA? RBRACE block? ;
-varDecl         : VAR? PRIVATE? decl 
-				| PRIVATE? DISJ? names EQUAL DISJ? expr1
-				;
+sigPara         : sigQualifier* SIG names sigRel? LBRACE COMMA? (decl ( COMMA* decl )*)? COMMA? RBRACE block? ;
 sigQualifier    : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
-sigIn			: EXTENDS sigRef 					# extendSigIn
+sigRel			: EXTENDS sigRef 					# extendSigIn
 				| IN sigRef (PLUS sigRef)* 			# inSigIn
 				| EQUAL sigRef (PLUS sigRef)* 		# equalSigIn
 				;
@@ -65,8 +62,8 @@ factPara        : FACT (name | STRING_LITERAL)? block ;
 predPara        : PRIVATE? PRED ( sigRef DOT)? name arguments? block ;
 
 funPara         : PRIVATE? FUN ( sigRef DOT)?  name arguments? COLON multiplicity? expr1 block;
-arguments       : LPAREN ( decl ( COMMA decl )* COMMA? )? RPAREN
-                | LBRACK ( decl ( COMMA decl )* COMMA? )? RBRACK
+arguments       : LPAREN ( decls COMMA? )? RPAREN
+                | LBRACK ( decls COMMA? )? RBRACK
                 ;
 
 assertPara      : ASSERT (name | STRING_LITERAL)? block ;
@@ -86,8 +83,8 @@ typescope       : EXACTLY? number (DOT DOT (number (COLON number)?)?)?
 // ____________________________________
 // Expr
 
-bind			: LET assignment ( COMMA assignment )* body 														# let
-				| (ALL | NO | SOME | LONE | ONE | SUM) decl ( COMMA decl )* body 									# quantificationExpr
+bind			: LET assignment ( COMMA assignment )* body 										# let
+				| (ALL | NO | SOME | LONE | ONE | SUM) decls body 									# quantificationExpr
 				;
 
 expr1			: bind																				# bindExpr
@@ -126,7 +123,7 @@ baseExpr		: number																					# numberExpr
 				| sigRef																					# sigRefExpr
 				| AT name																					# atNameExpr
 				| block																						# blockExpr
-				| LBRACE decl ( COMMA decl )* body? RBRACE              									# comprehensionExpr
+				| LBRACE declMul (COMMA declMul)* body? RBRACE              													# comprehensionExpr
 				;
 
 transExpr		: (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) (transExpr | baseExpr | bind) ;											
@@ -173,7 +170,12 @@ expr2			: baseExpr																					# baseExprFromExpr2
 // Misc
 
 block           : LBRACE expr1* RBRACE ;
-decl            : DISJ? names COLON DISJ? (LONE | ONE | SOME | SET)? expr1 ;// LONEOF, ONEOF, SOMEOF, SETOF
+decl            : declMul
+				| declExact
+				;
+declMul			: VAR? PRIVATE? DISJ? names COLON DISJ? (LONE | ONE | SOME | SET)? expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
+declExact		: PRIVATE? names EQUAL expr1 ; // EXACTLYOF
+decls			: decl (COMMA decl)* ;
 names          	: name ( COMMA name )* ;
 
 
@@ -182,7 +184,7 @@ names          	: name ( COMMA name )* ;
 // Expr Helpers
 
 number          : ({prevTokenIsAllowed()}? MINUS)? NUMBER ;
-qname           : name 										# simpleQname
+qname           : name 											# simpleQname
 				| (SEQ | THIS | name) SLASH name (SLASH name)* 	# qualifiedQname
 				;
 name            : ID;
