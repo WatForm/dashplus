@@ -9,6 +9,9 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara.AlloyModuleArg;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigQualParseVis;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigRelParseVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.List;
 public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagraph> {
     private final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
     private final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
+    private final AlloyDeclParseVis declParseVis = new AlloyDeclParseVis();
 
     @Override
     public AlloyParagraph visitParagraph(AlloyParser.ParagraphContext ctx) {
@@ -34,6 +38,9 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                         ctx.moduleArg(), new AlloyModuleArgParseVis(), AlloyModuleArg.class));
     }
 
+    // ====================================================================================
+    // Import
+    // ====================================================================================
     @Override
     public AlloyImportPara visitImportPara(AlloyParser.ImportParaContext ctx) {
         return new AlloyImportPara(
@@ -47,9 +54,21 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                 ((null != ctx.name()) ? (AlloyNameExpr) exprParseVis.visit(ctx.name()) : null));
     }
 
+    // ====================================================================================
+    // Sig
+    // ====================================================================================
     @Override
-    public AlloyParagraph visitSigPara(AlloyParser.SigParaContext ctx) {
-        return visitChildren(ctx);
+    public AlloySigPara visitSigPara(AlloyParser.SigParaContext ctx) {
+        return new AlloySigPara(
+                new Pos(ctx),
+                ParserUtil.visitAll(
+                        ctx.sigQualifier(), new AlloySigQualParseVis(), AlloySigPara.Qual.class),
+                null != ctx.names()
+                        ? ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class)
+                        : Collections.emptyList(),
+                null != ctx.sigRel() ? new AlloySigRelParseVis().visit(ctx.sigRel()) : null,
+                ParserUtil.visitAll(ctx.decl(), declParseVis, AlloyDecl.class),
+                null != ctx.block() ? (AlloyBlock) exprParseVis.visit(ctx.block()) : null);
     }
 
     // ====================================================================================
@@ -100,9 +119,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
             if (null != ctx.arguments().decls()) {
                 decls =
                         ParserUtil.visitAll(
-                                ctx.arguments().decls().decl(),
-                                new AlloyDeclParseVis(),
-                                AlloyDecl.class);
+                                ctx.arguments().decls().decl(), declParseVis, AlloyDecl.class);
             }
         }
 
@@ -131,9 +148,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
             if (null != ctx.arguments().decls()) {
                 decls =
                         ParserUtil.visitAll(
-                                ctx.arguments().decls().decl(),
-                                new AlloyDeclParseVis(),
-                                AlloyDecl.class);
+                                ctx.arguments().decls().decl(), declParseVis, AlloyDecl.class);
             }
         }
 

@@ -32,10 +32,7 @@ public final class AlloyBlock extends AlloyExpr {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        String tabs = "";
-        for (int i = 0; i < indent; i++) {
-            tabs += AlloyStrings.TAB;
-        }
+        String tabs = AlloyStrings.TAB.repeat(indent);
 
         sb.append(AlloyStrings.LBRACE);
 
