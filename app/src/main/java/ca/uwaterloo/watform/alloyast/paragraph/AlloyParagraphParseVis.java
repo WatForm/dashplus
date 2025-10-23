@@ -7,6 +7,8 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.misc.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdDeclParseVis;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara.AlloyModuleArg;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
@@ -233,5 +235,18 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
         } else {
             throw new AlloyUnexpTokenEx(ctx);
         }
+    }
+
+    // ====================================================================================
+    // Command
+    // ====================================================================================
+    @Override
+    public AlloyCmdPara visitCommandPara(AlloyParser.CommandParaContext ctx) {
+        return new AlloyCmdPara(
+                new Pos(ctx),
+                ParserUtil.visitAll(
+                        ctx.commandDecl(),
+                        new AlloyCmdDeclParseVis(),
+                        AlloyCmdPara.CommandDecl.class));
     }
 }

@@ -38,7 +38,7 @@ paragraph       : modulePara
 				| funPara
                 | predPara 
                 | assertPara
-                | labelCommandPara
+                | commandPara
                 ;
 
 modulePara      : MODULE qname ( LBRACK moduleArg (COMMA moduleArg)* RBRACK )? ;
@@ -72,13 +72,13 @@ macroPara       : PRIVATE? LET name ( LBRACK names? RBRACK )? (block | (EQUAL ex
 				| PRIVATE? LET name ( LPAREN names? RPAREN )? (block | (EQUAL expr1))
 				;
 
-labelCommandPara: (name COLON)? commandDecl ;
-commandDecl     : (CHECK | RUN) name? ( qname | block ) scope? (EXPECT number)? ( RFATARROW commandDecl )?;
+commandPara		: commandDecl (RFATARROW commandDecl)* ;
+commandDecl     : (CHECK | RUN) qname? ( qname | block ) scope? (EXPECT number)? ;
 scope           : FOR number ( BUT typescope ( COMMA typescope )* )* 
                 | FOR typescope ( COMMA typescope )*
                 ;
 typescope       : EXACTLY? number (DOT DOT (number (COLON number)?)?)? 
-					(qname | SIGINT | INT | SEQ | STRING | STEPS | NONE) ;
+					(qname | SIGINT | INT | SEQ | STRING | STEPS) ;
 
 // ____________________________________
 // Expr

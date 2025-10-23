@@ -7,15 +7,15 @@ public final class AlloyNumExpr extends AlloyVarExpr {
     public final boolean isPositive;
     public final int value;
 
-    public AlloyNumExpr(Pos pos, boolean isNegative, String numLabel) {
+    public AlloyNumExpr(Pos pos, boolean isPositve, String numLabel) {
         super(pos, numLabel);
         this.value = Integer.parseInt(numLabel);
-        this.isPositive = isNegative;
+        this.isPositive = isPositve;
     }
 
-    public AlloyNumExpr(boolean isNegative, String numLabel) {
+    public AlloyNumExpr(boolean isPositve, String numLabel) {
         super(numLabel);
         this.value = Integer.parseInt(numLabel);
-        this.isPositive = isNegative;
+        this.isPositive = isPositve;
     }
 }

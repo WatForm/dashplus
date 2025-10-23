@@ -7,7 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class AlloyQnameExpr extends AlloyVarExpr implements AlloySigRefExpr {
+public final class AlloyQnameExpr extends AlloyVarExpr
+        implements AlloySigRefExpr, AlloyScopableExpr {
     public final List<AlloyNameExpr> nameExprList;
 
     public AlloyQnameExpr(Pos pos, List<AlloyNameExpr> nameExprList) {

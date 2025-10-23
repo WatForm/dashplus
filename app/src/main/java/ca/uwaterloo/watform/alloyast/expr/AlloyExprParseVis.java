@@ -262,21 +262,8 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     public AlloyVarExpr visitSigRef(AlloyParser.SigRefContext ctx) {
         if (null != ctx.qname()) {
             return (AlloyVarExpr) this.visit(ctx.qname());
-        } else if (null != ctx.UNIV()) {
-            return new AlloyUnivExpr(new Pos(ctx));
-        } else if (null != ctx.STRING()) {
-            return new AlloyStringExpr(new Pos(ctx));
-        } else if (null != ctx.STEPS()) {
-            return new AlloyStepsExpr(new Pos(ctx));
-        } else if (null != ctx.SIGINT()) {
-            return new AlloySigIntExpr(new Pos(ctx));
-        } else if (null != ctx.SEQ_INT()) {
-            return new AlloySeqIntExpr(new Pos(ctx));
-        } else if (null != ctx.NONE()) {
-            return new AlloyNoneExpr(new Pos(ctx));
-        } else {
-            throw new AlloyUnexpTokenEx(ctx);
         }
+        return (AlloyVarExpr) this.visit(ctx.getChild(0));
     }
 
     @Override
@@ -805,6 +792,24 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
             case AlloyParser.THIS:
                 return new AlloyThisExpr(new Pos(tn));
+
+            case AlloyParser.UNIV:
+                return new AlloyUnivExpr(new Pos(tn));
+
+            case AlloyParser.STRING:
+                return new AlloyStringExpr(new Pos(tn));
+
+            case AlloyParser.STEPS:
+                return new AlloyStepsExpr(new Pos(tn));
+
+            case AlloyParser.SIGINT:
+                return new AlloySigIntExpr(new Pos(tn));
+
+            case AlloyParser.SEQ_INT:
+                return new AlloySeqIntExpr(new Pos(tn));
+
+            case AlloyParser.NONE:
+                return new AlloyNoneExpr(new Pos(tn));
 
             default:
                 throw new AlloyUnexpTokenEx(tn);
