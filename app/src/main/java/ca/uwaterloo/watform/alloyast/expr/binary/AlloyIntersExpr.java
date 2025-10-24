@@ -13,4 +13,9 @@ public final class AlloyIntersExpr extends AlloyBinaryExpr {
     public AlloyIntersExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.INTERSECTION);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

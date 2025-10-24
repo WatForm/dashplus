@@ -14,6 +14,8 @@
 
 package ca.uwaterloo.watform.dashast;
 
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
+
 public class DashParam extends DashExpr {
 
     public final String stateName;
@@ -32,5 +34,10 @@ public class DashParam extends DashExpr {
     public void toString(StringBuilder sb, int indent) {
         // seems like a reasonable thing to return for the toString of this Expr
         sb.append(stateName.toString());
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -1,15 +1,15 @@
 package ca.uwaterloo.watform.alloyast.misc;
 
-import ca.uwaterloo.watform.alloyast.AlloyASTNode;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public final class AlloyDecl extends AlloyASTNode {
+public final class AlloyDecl extends AlloyExpr {
     public final boolean isVar;
     public final boolean isPrivate;
     public final boolean isDisj1;
@@ -92,5 +92,10 @@ public final class AlloyDecl extends AlloyASTNode {
         public final String toString() {
             return label;
         }
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

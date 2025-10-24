@@ -13,4 +13,9 @@ public final class AlloyShLExpr extends AlloyBinaryExpr {
     public AlloyShLExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.SHL);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

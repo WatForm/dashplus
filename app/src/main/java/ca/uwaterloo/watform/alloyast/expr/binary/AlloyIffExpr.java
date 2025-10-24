@@ -13,4 +13,9 @@ public final class AlloyIffExpr extends AlloyBinaryExpr {
     public AlloyIffExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.IFF_ARR);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

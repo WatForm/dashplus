@@ -30,6 +30,8 @@ package ca.uwaterloo.watform.dashast.dashref;
 import static ca.uwaterloo.watform.dashmodel.DashFQN.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
+import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
@@ -117,5 +119,10 @@ public class DashRef extends AlloyExpr {
                         .filter(x -> x.getParamValues().size() == i)
                         .collect(Collectors.toList());
         return o;
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

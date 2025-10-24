@@ -20,4 +20,9 @@ public final class AlloyHistoricallyExpr extends AlloyUnaryExpr {
         sb.append(AlloyStrings.SPACE);
         this.sub.toString(sb, indent);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

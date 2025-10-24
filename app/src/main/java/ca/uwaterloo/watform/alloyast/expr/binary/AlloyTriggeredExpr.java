@@ -13,4 +13,9 @@ public final class AlloyTriggeredExpr extends AlloyBinaryExpr {
     public AlloyTriggeredExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.TRIGGERED);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

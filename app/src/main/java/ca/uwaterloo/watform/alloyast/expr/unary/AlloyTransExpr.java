@@ -13,4 +13,9 @@ public final class AlloyTransExpr extends AlloyUnaryExpr {
     public AlloyTransExpr(AlloyExpr sub) {
         super(sub, AlloyStrings.TRANS);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

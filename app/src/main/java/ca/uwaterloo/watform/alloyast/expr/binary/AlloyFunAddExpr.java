@@ -13,4 +13,9 @@ public final class AlloyFunAddExpr extends AlloyBinaryExpr {
     public AlloyFunAddExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.FUNADD);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

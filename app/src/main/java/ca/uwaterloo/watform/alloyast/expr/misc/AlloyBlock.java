@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr.misc;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -44,5 +45,10 @@ public final class AlloyBlock extends AlloyExpr {
 
         sb.append(tabs);
         sb.append(AlloyStrings.RBRACE);
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

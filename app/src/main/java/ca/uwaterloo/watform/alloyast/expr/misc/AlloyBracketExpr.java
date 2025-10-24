@@ -31,4 +31,9 @@ public final class AlloyBracketExpr extends AlloyExpr {
         ASTNode.join(sb, indent, exprs, AlloyStrings.COMMA + AlloyStrings.SPACE);
         sb.append(AlloyStrings.RBRACK);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

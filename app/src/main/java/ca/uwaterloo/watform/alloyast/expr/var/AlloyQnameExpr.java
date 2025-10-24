@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast.expr.var;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -36,5 +37,10 @@ public final class AlloyQnameExpr extends AlloyVarExpr
     public AlloyQnameExpr(AlloyNameExpr nameExpr) {
         super(nameExpr.getLabel());
         this.nameExprList = Collections.unmodifiableList(Collections.singletonList(nameExpr));
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -19,4 +19,9 @@ public final class AlloyPrimeExpr extends AlloyUnaryExpr {
         this.sub.toString(sb, indent);
         sb.append(this.op);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

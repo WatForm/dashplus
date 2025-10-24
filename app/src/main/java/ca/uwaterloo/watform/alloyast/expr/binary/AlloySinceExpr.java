@@ -13,4 +13,9 @@ public final class AlloySinceExpr extends AlloyBinaryExpr {
     public AlloySinceExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.SINCE);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

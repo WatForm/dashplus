@@ -68,4 +68,9 @@ public final class AlloyComparisonExpr extends AlloyBinaryExpr {
         this.neg = neg;
         this.comp = comp;
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

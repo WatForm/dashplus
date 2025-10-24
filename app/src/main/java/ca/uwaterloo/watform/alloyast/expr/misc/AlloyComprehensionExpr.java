@@ -36,4 +36,9 @@ public final class AlloyComprehensionExpr extends AlloyExpr {
         }
         sb.append(AlloyStrings.RBRACE);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

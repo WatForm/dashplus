@@ -13,4 +13,9 @@ public final class AlloyNumCardinalityExpr extends AlloyUnaryExpr {
     public AlloyNumCardinalityExpr(AlloyExpr sub) {
         super(sub, AlloyStrings.CARDINALITY);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

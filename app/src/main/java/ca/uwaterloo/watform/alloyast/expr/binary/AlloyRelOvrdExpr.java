@@ -13,4 +13,9 @@ public final class AlloyRelOvrdExpr extends AlloyBinaryExpr {
     public AlloyRelOvrdExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.REL_OVERRIDE);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

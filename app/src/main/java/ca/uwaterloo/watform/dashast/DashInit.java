@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.dashast;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 public class DashInit extends DashExpr {
@@ -12,5 +13,10 @@ public class DashInit extends DashExpr {
     @Override
     public void toString(StringBuilder sb, int indent) {
         super.toString(DashStrings.initName, sb, indent);
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

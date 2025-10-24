@@ -13,4 +13,9 @@ public final class AlloyImpliesExpr extends AlloyBinaryExpr {
     public AlloyImpliesExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.RFATARROW);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

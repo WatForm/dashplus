@@ -13,4 +13,9 @@ public final class AlloyUnionExpr extends AlloyBinaryExpr {
     public AlloyUnionExpr(AlloyExpr left, AlloyExpr right) {
         super(left, right, AlloyStrings.PLUS);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

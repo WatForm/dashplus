@@ -74,4 +74,9 @@ public final class AlloyLetExpr extends AlloyExpr {
         sb.append(AlloyStrings.SPACE);
         this.body.toString(sb, indent);
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

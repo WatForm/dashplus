@@ -12,4 +12,6 @@ public abstract class AlloyExpr extends AlloyASTNode {
     public AlloyExpr() {
         super();
     }
+
+    public abstract <T> T accept(AlloyExprVis<T> visitor);
 }

@@ -43,4 +43,9 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
         this.mul1 = mul1;
         this.mul2 = mul2;
     }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
+    }
 }

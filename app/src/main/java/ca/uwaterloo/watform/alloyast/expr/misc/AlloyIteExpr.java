@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyIteExpr extends AlloyExpr {
@@ -34,5 +35,10 @@ public final class AlloyIteExpr extends AlloyExpr {
         sb.append(AlloyStrings.ELSE);
         sb.append(AlloyStrings.SPACE);
         this.alt.toString(sb, indent);
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }
