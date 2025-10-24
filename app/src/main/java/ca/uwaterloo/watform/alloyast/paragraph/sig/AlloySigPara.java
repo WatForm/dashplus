@@ -2,10 +2,10 @@ package ca.uwaterloo.watform.alloyast.paragraph.sig;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
-import ca.uwaterloo.watform.alloyast.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
 import ca.uwaterloo.watform.utils.ASTNode;
 import ca.uwaterloo.watform.utils.Pos;

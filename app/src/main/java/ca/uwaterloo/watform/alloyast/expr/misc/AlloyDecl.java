@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.alloyast.misc;
+package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;

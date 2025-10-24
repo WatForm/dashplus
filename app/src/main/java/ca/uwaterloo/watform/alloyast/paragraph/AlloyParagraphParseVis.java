@@ -6,7 +6,6 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyast.misc.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdDeclParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
@@ -21,7 +20,6 @@ import java.util.List;
 public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagraph> {
     private final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
     private final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
-    private final AlloyDeclParseVis declParseVis = new AlloyDeclParseVis();
 
     @Override
     public AlloyParagraph visitParagraph(AlloyParser.ParagraphContext ctx) {
@@ -69,7 +67,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                         ? ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class)
                         : Collections.emptyList(),
                 null != ctx.sigRel() ? new AlloySigRelParseVis().visit(ctx.sigRel()) : null,
-                ParserUtil.visitAll(ctx.decl(), declParseVis, AlloyDecl.class),
+                ParserUtil.visitAll(ctx.decl(), exprParseVis, AlloyDecl.class),
                 null != ctx.block() ? (AlloyBlock) exprParseVis.visit(ctx.block()) : null);
     }
 
@@ -121,7 +119,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
             if (null != ctx.arguments().decls()) {
                 decls =
                         ParserUtil.visitAll(
-                                ctx.arguments().decls().decl(), declParseVis, AlloyDecl.class);
+                                ctx.arguments().decls().decl(), exprParseVis, AlloyDecl.class);
             }
         }
 
@@ -150,7 +148,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
             if (null != ctx.arguments().decls()) {
                 decls =
                         ParserUtil.visitAll(
-                                ctx.arguments().decls().decl(), declParseVis, AlloyDecl.class);
+                                ctx.arguments().decls().decl(), exprParseVis, AlloyDecl.class);
             }
         }
 
