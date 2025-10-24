@@ -8,3 +8,6 @@
 - Should be able to parse everything within 10 mins with no timeouts (excpet the onces we moved)
 - Note: Testing may run out of memory
 
+- It also tests for the generation of our Alloy AST objects and their toString methods does not throw exceptions. 
+- But it DOES NOT check if AlloyFile.toString() produces the same string.
+

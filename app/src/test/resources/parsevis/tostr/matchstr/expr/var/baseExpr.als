@@ -1,6 +1,6 @@
 fact {
 	12
-	-12
+	12 fun/add -12
 	"this is a string literal"
 	iden
 	this

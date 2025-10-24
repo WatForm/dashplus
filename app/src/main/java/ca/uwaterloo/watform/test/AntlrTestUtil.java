@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.test;
 
+import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyinterface.AlloyUtils;
 import ca.uwaterloo.watform.antlr.*;
 import ca.uwaterloo.watform.utils.*;
@@ -75,19 +76,17 @@ public class AntlrTestUtil {
         System.out.println("=======================");
     }
 
-    private void tryParse(CharStream input, Path filePath) throws ParseCancellationException {
-        System.out.println(filePath);
+    private void tryParse(CharStream input, Path filePath) {
         boolean jarPassed = AlloyUtils.canParse(input.toString());
         if (!jarPassed) {
             return;
         }
-
-        BailLexer bailLexer = new BailLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(bailLexer);
-        BailParser bailParser = new BailParser(tokens);
+        System.out.println(filePath);
 
         try {
-            bailParser.alloyFile();
+            AlloyFile af = ParserUtil.parse(filePath);
+            String s = af.toString();
+            System.out.println(s);
             if (jarPassed) {
                 jarPassedAntlrPassed.add(filePath);
                 System.out.println(
@@ -118,11 +117,14 @@ public class AntlrTestUtil {
                 }
                 jarFailedAntlrFailed.add(filePath);
             }
+        } catch (Exception e) {
+            System.err.println(e);
+            this.printResults();
+            System.exit(1);
         }
     }
 
-    private void tryParseWithTimeout(CharStream input, Path filePath)
-            throws ParseCancellationException {
+    private void tryParseWithTimeout(CharStream input, Path filePath) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<?> future =
                 executor.submit(
