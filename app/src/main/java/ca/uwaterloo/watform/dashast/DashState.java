@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.dashast;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.utils.ASTNode;
 import ca.uwaterloo.watform.utils.CodingError;
 import ca.uwaterloo.watform.utils.Pos;
@@ -14,11 +16,10 @@ public class DashState extends DashParagraph {
     // stuff from parsing
     public String name;
     // private String sfqn; // set during resolveAllState
-    private String param;
-    private DashStrings.StateKind kind; // basic state = OR with no subStates
-    private DashStrings.DefKind def;
+    public String param;
+    public DashStrings.StateKind kind; // basic state = OR with no subStates
+    public DashStrings.DefKind def;
     private List<Object> items;
-    private int tabsize = 2;
 
     public DashState(
             Pos pos,
@@ -87,5 +88,38 @@ public class DashState extends DashParagraph {
 
     public static List<Object> noSubstates() {
         return new ArrayList<Object>();
+    }
+
+    // getters from items
+    public List<DashState> substates() {
+        return extractItemsOfClass(items, DashState.class);
+    }
+
+    public List<DashEventDecls> eventDecls() {
+        return extractItemsOfClass(items, DashEventDecls.class);
+    }
+
+    public List<DashVarDecls> varDecls() {
+        return extractItemsOfClass(items, DashVarDecls.class);
+    }
+
+    public List<DashPred> preds() {
+        return extractItemsOfClass(items, DashPred.class);
+    }
+
+    public List<DashBufferDecls> bufferDecls() {
+        return extractItemsOfClass(items, DashBufferDecls.class);
+    }
+
+    public List<DashTrans> trans() {
+        return extractItemsOfClass(items, DashTrans.class);
+    }
+
+    public List<DashInv> invs() {
+        return extractItemsOfClass(items, DashInv.class);
+    }
+
+    public List<DashInit> inits() {
+        return extractItemsOfClass(items, DashInit.class);
     }
 }

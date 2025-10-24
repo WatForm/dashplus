@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
 // import java.util.LinkedHashMap;
@@ -17,6 +18,7 @@ public class BufferTable {
     // stores Buffer Decls in a HashMap based on the FQN
     private HashMap<String, BufferElement> bt;
     public String name = "Buffer";
+    public int numBuffers = 0;
 
     public BufferTable() {
         this.bt = new HashMap<String, BufferElement>();
@@ -32,14 +34,14 @@ public class BufferTable {
                 IntEnvKind k,
                 List<DashParam> prms,
                 // List<Integer> prmsIdx,
-                String e,
-                Integer idx) {
+                String e) {
             assert (prms != null);
             this.kind = k;
             this.params = prms;
             // this.paramsIdx = prmsIdx;
             this.element = e;
-            this.index = idx;
+            this.index = numBuffers;
+            numBuffers++;
         }
 
         public String toString() {
@@ -53,16 +55,13 @@ public class BufferTable {
         }
     }
 
-    public Boolean addBuffer(
-            String bfqn, IntEnvKind k, List<DashParam> prms, String el, Integer idx) {
+    public void add(Pos pos, String bfqn, IntEnvKind k, List<DashParam> prms, String el) {
         assert (prms != null);
-        if (bt.containsKey(bfqn)) return false;
+        if (bt.containsKey(bfqn)) DashModelErrors.duplicateName(pos, "buffer", bfqn);
         else if (hasPrime(bfqn)) {
-            DashModelErrors.nameShouldNotBePrimed(bfqn);
-            return false;
+            DashModelErrors.nameShouldNotBePrimed(pos, bfqn);
         } else {
-            bt.put(bfqn, new BufferElement(k, prms, el, idx));
-            return true;
+            bt.put(bfqn, new BufferElement(k, prms, el));
         }
     }
 
@@ -107,9 +106,8 @@ public class BufferTable {
     }
 
     public List<Integer> getBufferIndices() {
-        List<Integer> k = new ArrayList();
-        for (int i = 0; i < getAllBufferNames().size(); i++) k.add(i);
-        return k;
+        // 0 .. numBuffers-1
+        return range(0, numBuffers);
     }
 
     public List<String> getBuffersOfState(String sfqn) {

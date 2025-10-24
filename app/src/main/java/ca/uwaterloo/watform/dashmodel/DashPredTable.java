@@ -6,6 +6,7 @@ package ca.uwaterloo.watform.dashmodel;
 
 // import java.util.Set;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
 // import java.util.LinkedHashMap;
@@ -50,11 +51,11 @@ public class DashPredTable {
         return s;
     }
 
-    public Boolean addPred(String n, AlloyExpr e) {
-        if (pt.containsKey(n)) return false;
-        else {
+    public void add(Pos pos, String n, AlloyExpr e) {
+        if (pt.containsKey(n)) {
+            DashModelErrors.duplicateName(pos, "pred", n);
+        } else {
             pt.put(n, new PredElement(e));
-            return true;
         }
     }
 

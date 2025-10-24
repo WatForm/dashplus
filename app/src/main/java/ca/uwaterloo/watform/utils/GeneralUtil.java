@@ -14,6 +14,7 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class GeneralUtil {
 
@@ -102,11 +103,23 @@ public class GeneralUtil {
         return items.stream().map(mapFn).collect(Collectors.toList());
     }
 
-    public static <T> List<T> filterBy(List<T> items, Predicate<T> mapFn) {
-        return items.stream().filter(mapFn).collect(Collectors.toList());
+    public static <T> List<T> filterBy(List<T> items, Predicate<T> filterFn) {
+        return items.stream().filter(filterFn).collect(Collectors.toList());
     }
 
-    public static <T> List<T> extractItemsOfClass(List<Object> items, Class<T> c) {
+    public static <T> boolean containsMatch(List<T> items, Predicate<T> matchFn) {
+        return items.stream().anyMatch(matchFn);
+    }
+
+    // this does not change the input list
+    public static <T, S> List<T> extractItemsOfClass(List<S> items, Class<T> c) {
         return items.stream().filter(c::isInstance).map(c::cast).collect(Collectors.toList());
+    }
+
+    // like python range; inclusive at start and exclusive on stop
+    public static List<Integer> range(int start, int stop) {
+        return IntStream.range(start, stop)
+                .boxed() // convert int → Integer
+                .collect(Collectors.toList());
     }
 }

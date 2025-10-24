@@ -9,23 +9,13 @@ public class DashBufferDecls extends ASTNode {
     private List<String> names;
     private String element;
     private DashStrings.IntEnvKind kind;
-    private Integer startIndex;
-    private Integer endIndex;
 
-    public DashBufferDecls(
-            Pos pos,
-            List<String> n,
-            String element,
-            DashStrings.IntEnvKind k,
-            int startIndex,
-            int endIndex) {
+    public DashBufferDecls(Pos pos, List<String> n, String element, DashStrings.IntEnvKind k) {
         super(pos);
         assert (n != null && element != null);
         this.names = n;
         this.element = element;
         this.kind = k;
-        this.startIndex = startIndex;
-        this.endIndex = endIndex;
     }
 
     @Override
@@ -51,13 +41,5 @@ public class DashBufferDecls extends ASTNode {
 
     public DashStrings.IntEnvKind getKind() {
         return kind;
-    }
-
-    public int getStartIndex() {
-        return startIndex;
-    }
-
-    public int getEndIndex() {
-        return endIndex;
     }
 }

@@ -8,6 +8,7 @@ import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,15 +51,14 @@ public class EventTable {
         return s;
     }
 
-    public Boolean add(String efqn, IntEnvKind k, List<DashParam> prms) {
+    public void add(Pos pos, String efqn, IntEnvKind k, List<DashParam> prms) {
         assert (prms != null);
-        if (et.containsKey(efqn)) return false;
-        else if (hasPrime(efqn)) {
-            DashModelErrors.nameShouldNotBePrimed(efqn);
-            return false;
+        if (et.containsKey(efqn)) {
+            DashModelErrors.duplicateName(pos, "event", efqn);
+        } else if (hasPrime(efqn)) {
+            DashModelErrors.nameShouldNotBePrimed(pos, efqn);
         } else {
             et.put(efqn, new EventElement(k, prms));
-            return true;
         }
     }
 

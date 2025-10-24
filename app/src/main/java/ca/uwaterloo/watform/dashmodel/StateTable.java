@@ -15,6 +15,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashast.dashref.*;
+import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,12 +46,19 @@ public class StateTable {
         return s;
     }
 
-    public void add(String fqn) {
+    public void add(Pos pos, String fqn) {
         assert (!fqn.isEmpty());
-        if (!st.containsKey(fqn)) st.put(fqn, null);
+        if (st.containsKey(fqn)) {
+            DashModelErrors.duplicateName(pos, "state", fqn);
+        } else if (hasPrime(fqn)) {
+            DashModelErrors.nameShouldNotBePrimed(pos, fqn);
+        } else {
+            st.put(fqn, null);
+        }
     }
 
-    public boolean add(
+    public void add(
+            Pos pos,
             String fqn,
             DashStrings.StateKind k,
             List<DashParam> prms,
@@ -59,13 +67,13 @@ public class StateTable {
             List<String> iChildren,
             List<DashInv> invL,
             List<DashInit> initL) {
-        if (st.containsKey(fqn)) return false;
-        else if (hasPrime(fqn)) {
-            DashModelErrors.nameShouldNotBePrimed(fqn);
-            return false;
+        assert (!fqn.isEmpty());
+        if (st.containsKey(fqn)) {
+            DashModelErrors.duplicateName(pos, "state", fqn);
+        } else if (hasPrime(fqn)) {
+            DashModelErrors.nameShouldNotBePrimed(pos, fqn);
         } else {
             st.put(fqn, new StateElement(k, prms, def, parent, iChildren, invL, initL));
-            return true;
         }
     }
 

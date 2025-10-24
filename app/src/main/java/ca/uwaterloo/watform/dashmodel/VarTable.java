@@ -5,8 +5,9 @@ package ca.uwaterloo.watform.dashmodel;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.dashast.DashExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,13 +30,13 @@ public class VarTable {
         private IntEnvKind kind;
         private List<DashParam> params;
         // private List<Integer> paramsIdx;
-        private DashExpr typ;
+        private AlloyExpr typ;
 
         public VarElement(
                 IntEnvKind k,
                 List<DashParam> prms,
                 // List<Integer> prmsIdx,
-                DashExpr t) {
+                AlloyExpr t) {
             assert (prms != null);
             this.kind = k;
             this.params = prms;
@@ -52,20 +53,19 @@ public class VarTable {
             return s;
         }
 
-        public void setType(DashExpr typ) {
+        public void setType(AlloyExpr typ) {
             this.typ = typ;
         }
     }
 
-    public Boolean addVar(String vfqn, IntEnvKind k, List<DashParam> prms, DashExpr t) {
+    public void addVar(Pos pos, String vfqn, IntEnvKind k, List<DashParam> prms, AlloyExpr t) {
         assert (prms != null);
-        if (vt.containsKey(vfqn)) return false;
-        else if (hasPrime(vfqn)) {
-            DashModelErrors.nameShouldNotBePrimed(vfqn);
-            return false;
+        if (vt.containsKey(vfqn)) {
+            DashModelErrors.duplicateName(pos, "var", vfqn);
+        } else if (hasPrime(vfqn)) {
+            DashModelErrors.nameShouldNotBePrimed(pos, vfqn);
         } else {
             vt.put(vfqn, new VarElement(k, prms, t));
-            return true;
         }
     }
 
@@ -80,7 +80,7 @@ public class VarTable {
     }
 
     // setters
-    public void setVarType(String vfqn, DashExpr typ) {
+    public void setVarType(String vfqn, AlloyExpr typ) {
         vt.get(vfqn).setType(typ);
     }
 
@@ -89,7 +89,7 @@ public class VarTable {
         return (vt.containsKey(vfqn));
     }
 
-    public DashExpr getVarType(String vfqn) {
+    public AlloyExpr getVarType(String vfqn) {
         return vt.get(vfqn).typ;
     }
 

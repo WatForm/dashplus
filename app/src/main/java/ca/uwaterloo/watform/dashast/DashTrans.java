@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.dashast;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.StringJoiner;
@@ -30,5 +32,29 @@ public class DashTrans extends ASTNode {
             s += ind + "}\n";
         }
         sb.append(s);
+    }
+
+    public List<DashFrom> froms() {
+        return extractItemsOfClass(items, DashFrom.class);
+    }
+
+    public List<DashOn> ons() {
+        return extractItemsOfClass(items, DashOn.class);
+    }
+
+    public List<DashWhen> whens() {
+        return extractItemsOfClass(items, DashWhen.class);
+    }
+
+    public List<DashGoto> gotos() {
+        return extractItemsOfClass(items, DashGoto.class);
+    }
+
+    public List<DashSend> sends() {
+        return extractItemsOfClass(items, DashSend.class);
+    }
+
+    public List<DashDo> dos() {
+        return extractItemsOfClass(items, DashDo.class);
     }
 }

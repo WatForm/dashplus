@@ -13,6 +13,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,8 @@ public class TransTable {
         isResolved = false;
     }
 
-    public boolean add(
+    public void add(
+            Pos pos,
             String tfqn,
             List<DashParam> params,
             // List<Integer> paramsIdx,
@@ -48,16 +50,15 @@ public class TransTable {
         assert (gotoList != null);
         assert (sendList != null);
         assert (doList != null);
-        if (tt.containsKey(tfqn)) return false;
-        else if (hasPrime(tfqn)) {
-            DashModelErrors.nameShouldNotBePrimed(tfqn);
-            return false;
+        if (tt.containsKey(tfqn)) {
+            DashModelErrors.duplicateName(pos, "trans", tfqn);
+        } else if (hasPrime(tfqn)) {
+            DashModelErrors.nameShouldNotBePrimed(pos, tfqn);
         } else {
             tt.put(
                     tfqn,
                     new TransElement(
                             params, fromList, onList, whenList, gotoList, sendList, doList));
-            return true;
         }
     }
 

@@ -7,12 +7,48 @@ import ca.uwaterloo.watform.utils.Pos;
 public class DashModelErrors {
 
     // errors discovered in initializing DashModel phase
+    public static void notDashModel() throws ErrorFatal {
+        throw new ErrorUser("No Dash state in this model.");
+    }
+
+    public static String tooManyMsg = "Multiple ";
+
+    public static void tooMany(Pos p, String xType, String fqn) throws ErrorFatal {
+        throw new ErrorUser(p, tooManyMsg + xType + " in " + fqn);
+    }
+
+    public static void duplicateName(Pos p, String type, String fqn) throws ErrorFatal {
+        throw new ErrorUser(p, fqn + "is a duplicate " + type + " name");
+    }
+
+    public static String allConcDefaultStatesMsg =
+            "All conc children of state must be defaults if one is for state: ";
+
+    public static void allAndDefaults(Pos p, String sfqn) throws ErrorFatal {
+        throw new ErrorUser(p, allConcDefaultStatesMsg + sfqn);
+    }
+
+    public static String noDefaultStateMsg = "State does not have default state: ";
+
+    public static void noDefaultState(Pos p, String fqn) throws ErrorFatal {
+        throw new ErrorUser(p, noDefaultStateMsg + fqn);
+    }
+
+    public static String tooManyDefaultStatesMsg = "Too many default states in state: ";
+
+    public static void tooManyDefaults(Pos p, String fqn) throws ErrorFatal {
+        throw new ErrorUser(p, tooManyDefaultStatesMsg + fqn);
+    }
+
+    public static void duplicateStateName(Pos p, String fqn) throws ErrorFatal {
+        throw new ErrorUser(p, fqn + "is a duplicate state name");
+    }
 
     public static String nameShouldNotBePrimedMsg =
             "Declared state/trans/event/var cannot have a primed name: ";
 
-    public static void nameShouldNotBePrimed(String n) throws ErrorFatal {
-        throw new ErrorUser(nameShouldNotBePrimedMsg + n);
+    public static void nameShouldNotBePrimed(Pos p, String n) throws ErrorFatal {
+        throw new ErrorUser(p, nameShouldNotBePrimedMsg + n);
     }
 
     public static String onlyOneStateMsg = "Dash model can only have one 'state' section";
