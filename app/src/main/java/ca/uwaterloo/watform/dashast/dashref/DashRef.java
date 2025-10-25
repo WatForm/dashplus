@@ -31,7 +31,8 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.*;
-import ca.uwaterloo.watform.utils.GeneralUtil;
+import ca.uwaterloo.watform.dashast.DashExprVis;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +109,11 @@ public class DashRef extends AlloyExpr {
 
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
+        CodingError.methodShouldNotBeCalled();
+        return null;
+    }
+
+    public <T> T accept(DashExprVis<T> visitor) {
         return visitor.visit(this);
     }
 }

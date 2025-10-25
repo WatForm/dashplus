@@ -11,4 +11,8 @@ public class CodingError {
     public static ErrorFatal failedCast(String s) {
         return new ErrorFatal("Failed Dynamic Cast: " + s);
     }
+
+    public static ErrorFatal methodShouldNotBeCalled() {
+        return new ErrorFatal("This method should not be called");
+    }
 }
