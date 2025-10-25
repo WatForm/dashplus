@@ -14,9 +14,10 @@
 
 package ca.uwaterloo.watform.dashast;
 
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 
-public class DashParam extends DashExpr {
+public class DashParam extends AlloyExpr {
 
     public final String stateName;
     public final String paramSig;

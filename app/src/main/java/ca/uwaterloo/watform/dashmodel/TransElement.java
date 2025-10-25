@@ -12,51 +12,52 @@ public class TransElement {
     public List<DashParam> params; // empty if no params // only DashParam's
     // public List<Integer> paramsIdx;
 
-    // from parsing
-    public List<DashFrom> fromList;
-    public List<DashOn> onList;
-    public List<DashWhen> whenList;
-    public List<DashGoto> gotoList;
-    public List<DashSend> sendList;
-    public List<DashDo> doList;
+    // after initialization (from parsing)
+    public DashFrom fromP;
+    public DashGoto gotoP;
+    public DashOn onP;
+    public DashSend sendP;
+    public DashWhen whenP;
+    public DashDo doP;
 
-    // calculated when resolved
-    public DashRef src = null;
-    public DashRef dest = null;
-    public AlloyExpr when = null; // expr
-    public DashRef on = null; // event
-    public AlloyExpr act = null;
-    public DashRef send = null; // event
+    // after resolved
+    // some of these will be or contain DashRefs
+    public DashRef fromR = null;
+    public DashRef gotoR = null;
+    public DashRef onR = null; // event
+    public DashRef sendR = null; // event
+    public AlloyExpr whenR = null; // expr
+    public AlloyExpr doR = null;
 
     public TransElement(
             List<DashParam> prms,
             // List<Integer> prmsIdx,
-            List<DashFrom> fl,
-            List<DashOn> ol,
-            List<DashWhen> wl,
-            List<DashGoto> gl,
-            List<DashSend> sl,
-            List<DashDo> dl) {
+            DashFrom f,
+            DashOn o,
+            DashWhen w,
+            DashGoto g,
+            DashSend s,
+            DashDo d) {
         this.params = prms;
         // this.paramsIdx = prmsIdx;
-        this.fromList = fl;
-        this.onList = ol;
-        this.whenList = wl;
-        this.gotoList = gl;
-        this.sendList = sl;
-        this.doList = dl;
+        this.fromP = f;
+        this.onP = o;
+        this.whenP = w;
+        this.gotoP = g;
+        this.sendP = s;
+        this.doP = d;
     }
 
     public String toString() {
         String s = new String();
         s += "params: " + NoneStringIfNeeded(params) + "\n";
         // s += "paramsIdx: " + NoneStringIfNeeded(paramsIdx) +"\n";
-        s += "src: " + NoneStringIfNeeded(src) + "\n";
-        s += "dest: " + NoneStringIfNeeded(dest) + "\n";
-        s += "on: " + NoneStringIfNeeded(on) + "\n";
-        s += "send: " + NoneStringIfNeeded(send) + "\n";
-        s += "when: " + NoneStringIfNeeded(when) + "\n";
-        s += "do: " + NoneStringIfNeeded(act) + "\n";
+        s += "from: " + NoneStringIfNeeded(fromP) + "\n";
+        s += "goto: " + NoneStringIfNeeded(gotoP) + "\n";
+        s += "on: " + NoneStringIfNeeded(onP) + "\n";
+        s += "send: " + NoneStringIfNeeded(sendP) + "\n";
+        s += "when: " + NoneStringIfNeeded(whenP) + "\n";
+        s += "do: " + NoneStringIfNeeded(doP) + "\n";
         // add more
         return s;
     }

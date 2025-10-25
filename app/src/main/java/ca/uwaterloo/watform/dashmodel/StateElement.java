@@ -19,12 +19,12 @@ public class StateElement {
     // or states in this StateTable
     public String parent; // null if none
     public List<String> immChildren; // empty if none
-    public List<DashInv> origInvs;
-    public List<DashInit> origInits;
+    public List<DashInv> invsP;
+    public List<DashInit> initsP;
 
     // calculated when resolved
-    public List<AlloyExpr> invs;
-    public List<AlloyExpr> inits;
+    public List<AlloyExpr> invsR;
+    public List<AlloyExpr> initsR;
 
     public StateElement(
             DashStrings.StateKind k,
@@ -32,22 +32,22 @@ public class StateElement {
             DashStrings.DefKind def,
             String parent,
             List<String> iChildren,
-            List<DashInv> invL,
-            List<DashInit> initL) {
+            List<DashInv> invP,
+            List<DashInit> initP) {
         assert (k != null);
         assert (prms != null);
         assert (parent == null || !parent.isEmpty());
         assert (iChildren != null); // could be empty
-        assert (invL != null);
-        assert (initL != null);
+        assert (invP != null);
+        assert (initP != null);
 
         this.kind = k;
         this.params = prms;
         this.def = def;
         this.parent = parent;
         this.immChildren = iChildren;
-        this.origInvs = invL;
-        this.origInits = initL;
+        this.invsP = invP;
+        this.initsP = initP;
     }
 
     public String toString() {

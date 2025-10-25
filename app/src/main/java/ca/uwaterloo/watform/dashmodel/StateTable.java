@@ -25,12 +25,13 @@ import java.util.stream.Collectors;
 public class StateTable {
 
     private HashMap<String, StateElement> st;
+    private String tableName = "State";
     public String root;
 
     // these get added to
-    private List<AlloyExpr> inits = new ArrayList<AlloyExpr>();
-    private List<AlloyExpr> invs = new ArrayList<AlloyExpr>();
-    private List<DashParam> allParamsInOrder = new ArrayList<DashParam>();
+    public List<AlloyExpr> initsR = new ArrayList<AlloyExpr>();
+    public List<AlloyExpr> invsR = new ArrayList<AlloyExpr>();
+    public List<DashParam> allParamsInOrder = new ArrayList<DashParam>();
 
     public StateTable() {
         this.st = new HashMap<String, StateElement>();
@@ -65,15 +66,15 @@ public class StateTable {
             DashStrings.DefKind def,
             String parent,
             List<String> iChildren,
-            List<DashInv> invL,
-            List<DashInit> initL) {
+            List<DashInv> invP,
+            List<DashInit> initP) {
         assert (!fqn.isEmpty());
         if (st.containsKey(fqn)) {
             DashModelErrors.duplicateName(pos, "state", fqn);
         } else if (hasPrime(fqn)) {
             DashModelErrors.nameShouldNotBePrimed(pos, fqn);
         } else {
-            st.put(fqn, new StateElement(k, prms, def, parent, iChildren, invL, initL));
+            st.put(fqn, new StateElement(k, prms, def, parent, iChildren, invP, initP));
         }
     }
 
@@ -81,16 +82,30 @@ public class StateTable {
         allParamsInOrder.add(p);
     }
 
-    public void addInit(AlloyExpr exp) {
-        inits.add(exp);
+    public void addInitR(AlloyExpr exp) {
+        initsR.add(exp);
     }
 
-    public void addInv(AlloyExpr exp) {
-        invs.add(exp);
+    public void addInvR(AlloyExpr exp) {
+        invsR.add(exp);
     }
 
     public void setDefault(String s) {
         st.get(s).def = DashStrings.DefKind.DEFAULT;
+    }
+
+    // so we can treat this as a table
+    // to the outside world
+    public StateElement get(String sfqn) {
+        return st.get(sfqn);
+    }
+
+    public List<String> keySet() {
+        return setToList(st.keySet());
+    }
+
+    public boolean isEmpty() {
+        return st.isEmpty();
     }
 
     // testers
@@ -137,35 +152,6 @@ public class StateTable {
 
     public Boolean hasOnlyOneState() {
         return (st.keySet().size() == 1);
-    }
-
-    // individual getters
-    public DashStrings.StateKind getKind(String s) {
-        return st.get(s).kind;
-    }
-
-    public DefKind getDef(String s) {
-        return st.get(s).def;
-    }
-
-    public List<DashParam> getParams(String s) {
-        return st.get(s).params;
-    }
-
-    public String getParent(String child) {
-        return st.get(child).parent; // could be null if root
-    }
-
-    public List<String> getImmChildren(String parent) {
-        return st.get(parent).immChildren;
-    }
-
-    public List<DashInit> getOrigInits(String sfqn) {
-        return st.get(sfqn).origInits;
-    }
-
-    public List<DashInv> getOrigInvs(String sfqn) {
-        return st.get(sfqn).origInvs;
     }
 
     // complex individual getters
@@ -234,30 +220,31 @@ public class StateTable {
     public int getMaxDepthParams(String s) {
         // TODO: check this - seems to be not getting to full depth
         int max = 0;
-        for (String c : getImmChildren(s)) {
-            if (getParams(c) != null) if (max < getParams(c).size()) max = getParams(c).size();
+        for (String c : get(s).immChildren) {
+            List<DashParam> params = get(c).params;
+            if (params != null) if (max < params.size()) max = params.size();
             if (max < getMaxDepthParams(c)) max = getMaxDepthParams(c);
         }
         return max;
     }
 
     public List<String> getDefaults(String s) {
-        assert (!isLeaf(s) || getImmChildren(s).isEmpty());
-        return getImmChildren(s).stream().filter(c -> isDefault(c)).collect(Collectors.toList());
+        assert (!isLeaf(s) || get(s).immChildren.isEmpty());
+        return filterBy(get(s).immChildren, c -> isDefault(c));
     }
 
-    public List<DashRef> getLeafStatesExited(DashRef s) {
-        List<DashRef> r = new ArrayList<DashRef>();
+    public List<AlloyExpr> getLeafStatesExited(DashRef s) {
+        List<AlloyExpr> r = new ArrayList<AlloyExpr>();
         // System.out.println("exiting" + s.toString());
-        if (isLeaf(s.getName())) {
+        if (isLeaf(s.name)) {
             r.add(s);
             return r;
         } else {
             // exit everything below even if not currently in it
-            for (String ch : getImmChildren(s.getName())) {
+            for (String ch : get(s.name).immChildren) {
                 // exit all copies of the params
-                List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.getParamValues());
-                if (hasParam(ch)) newParamValues.add(new AlloyNameExpr(s.pos, getParam(ch)));
+                List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.paramValues);
+                if (hasParam(ch)) newParamValues.add(new StateDashRef(ch, get(ch).params));
                 r.addAll(getLeafStatesExited(new StateDashRef(ch, newParamValues)));
             }
             return r;
@@ -266,17 +253,17 @@ public class StateTable {
 
     public List<DashRef> getLeafStatesEntered(DashRef s) {
         List<DashRef> r = new ArrayList<DashRef>();
-        if (isLeaf(s.getName())) r.add(s);
+        if (isLeaf(s.name)) r.add(s);
         else {
             // enter every default below
             // if enter one c/p state enter all
             // might be one (if o) or many (if c/p)
-            List<String> defaults = getDefaults(s.getName());
+            List<String> defaults = getDefaults(s.name);
             assert (defaults != null);
             for (String ch : defaults) {
                 // System.out.println(ch);
                 // enter all copies of the param if a parameterized state
-                List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.getParamValues());
+                List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.paramValues);
                 if (hasParam(ch)) newParamValues.add(new AlloyNameExpr(s.pos, getParam(ch)));
                 r.addAll(getLeafStatesEntered(new StateDashRef(ch, newParamValues)));
             }
@@ -287,16 +274,16 @@ public class StateTable {
     public List<DashRef> allPrefixDashRefs(DashRef s) {
         // resulting order is ancestors to descendants
         // includes this DashRef itself at the end
-        List<String> allPrefixFQNs = DashFQN.allPrefixes(s.getName());
+        List<String> allPrefixFQNs = DashFQN.allPrefixes(s.name);
         List<DashRef> r = new ArrayList<DashRef>();
         int i = 0;
         for (String x : allPrefixFQNs) {
             if (isAnd(x) && hasParam(x)) {
-                r.add(new StateDashRef(x, s.getParamValues().subList(0, i + 1)));
+                r.add(new StateDashRef(x, s.paramValues.subList(0, i + 1)));
                 i++;
-            } else r.add(new StateDashRef(x, s.getParamValues().subList(0, i)));
+            } else r.add(new StateDashRef(x, s.paramValues.subList(0, i)));
         }
-        assert (i == s.getParamValues().size());
+        assert (i == s.paramValues.size());
         return r;
     }
 
@@ -323,13 +310,13 @@ public class StateTable {
         AlloyExpr e2;
         for (int i = 0; i < cR.size(); i++) {
             DashRef c = cR.get(i);
-            if (isAnd(c.getName()) && hasParam(c.getName())) {
+            if (isAnd(c.name) && hasParam(c.name)) {
                 nP = new ArrayList<AlloyExpr>(xP);
-                e1 = lastElement(c.getParamValues());
-                e2 = dest.getParamValues().get(p);
+                e1 = lastElement(c.paramValues);
+                e2 = dest.paramValues.get(p);
                 if (!e1.equals(e2)) {
                     nP.add(new AlloyDiffExpr(dest.pos, e1, e2));
-                    r.addAll(getLeafStatesEntered(new StateDashRef(c.getName(), nP)));
+                    r.addAll(getLeafStatesEntered(new StateDashRef(c.name, nP)));
                 } // if equal this is empty so don't include it
                 xP.add(e2); // just e2 for next one
                 p++;
@@ -342,27 +329,27 @@ public class StateTable {
             DashRef d = dR.get(i); // first one will be match the last of cR
             DashRef chOfDest = dR.get(i + 1);
             // System.out.println("d: "+d);
-            if (isAnd(chOfDest.getName())) {
+            if (isAnd(chOfDest.name)) {
                 // has sisters
-                if (hasParam(chOfDest.getName())) {
+                if (hasParam(chOfDest.name)) {
                     // ones not on path to dest
-                    nP = new ArrayList<AlloyExpr>(allButLast(chOfDest.getParamValues()));
+                    nP = new ArrayList<AlloyExpr>(allButLast(chOfDest.paramValues));
                     // all param values
-                    e1 = new AlloyNameExpr(dest.pos, getParam(chOfDest.getName()));
-                    e2 = lastElement(chOfDest.getParamValues());
+                    e1 = new AlloyNameExpr(dest.pos, getParam(chOfDest.name));
+                    e2 = lastElement(chOfDest.paramValues);
                     if (!e1.equals(e2)) {
                         nP.add(new AlloyDiffExpr(dest.pos, e1, e2));
-                        r.addAll(getLeafStatesEntered(new StateDashRef(chOfDest.getName(), nP)));
+                        r.addAll(getLeafStatesEntered(new StateDashRef(chOfDest.name, nP)));
                     } // if equal this is empty so don't include it
                 }
                 // siblings
-                List<String> children = getImmChildren(d.getName());
+                List<String> children = get(d.name).immChildren;
                 List<String> andChildren =
                         children.stream().filter(c -> isAnd(c)).collect(Collectors.toList());
-                andChildren.remove(chOfDest.getName());
+                andChildren.remove(chOfDest.name);
                 // siblings
                 for (String ch : andChildren) {
-                    nP = new ArrayList<AlloyExpr>(d.getParamValues());
+                    nP = new ArrayList<AlloyExpr>(d.paramValues);
                     if (hasParam(ch))
                         // add the entire param set
                         nP.add(new AlloyNameExpr(dest.pos, getParam(ch)));

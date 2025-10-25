@@ -1,0 +1,42 @@
+Dash Grammar Additions
+
+
+Additions to expressions:
+
+DashRef ::= (NAME SLASH)* NAME '[' (Expr ',')* Expr ']' SLASH NAME PRIME?
+
+
+Additions to Top-level:
+
+// no parameters or concurrency allowed at the top-level
+| 'state' NAME '{' <StateItem>List? '}'
+
+   
+StateItem := 
+	| 'env'? 'event' NAMES '{' '}'
+	| 'env'? NAMES ':' expr 
+	| NAMES ':' 'buffer' [' NAME ']'
+	| 'trans' NAME '{' <TransItem>List? '}'
+	| 'init' <list of expr>
+	| 'inv' <list of expr>
+	| 'pred' NAME '{' Expr '}'
+	| 'def'? 'state' NAME '{' <StateItem>List? '}'
+	| 'def'? 'conc' 'state' NAME ('[' NAME ']')? {' StateItemList? '}'
+
+
+TransItem := 
+              'on' NAME
+			| 'on' DashRef
+			| 'send' NAME
+			| 'send' DashRef
+			| 'when' Expr
+			| 'do' Expr
+			| 'from' NAME
+			| 'from' DashRef
+			| 'goto' NAME
+			| 'goto' DashRef
+
+NAMES := (NAME ',')* NAME
+
+
+

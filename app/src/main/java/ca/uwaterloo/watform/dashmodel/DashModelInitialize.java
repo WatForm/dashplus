@@ -21,6 +21,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashmodel.DashFQN.*;
+import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,10 @@ public class DashModelInitialize { // extends AlloyModel {
     public BufferTable bt = new BufferTable();
     public DashPredTable pt = new DashPredTable();
 
+    public DashModelInitialize() {
+        // creates an empty DashModel
+    }
+
     public DashModelInitialize(DashFile d) {
 
         // super((AlloyFile) d);
@@ -47,9 +52,9 @@ public class DashModelInitialize { // extends AlloyModel {
 
         List<DashState> dashStates = extractItemsOfClass(d.paragraphs, DashState.class);
         if (dashStates.isEmpty()) {
-            DashModelErrors.notDashModel();
+            Error.notDashModel();
         } else if (dashStates.size() > 1) {
-            DashModelErrors.onlyOneState(dashStates.get(1).pos);
+            Error.onlyOneState(dashStates.get(1).pos);
         } else {
             DashState root = dashStates.get(0);
             st.root = (root.name);
@@ -62,7 +67,7 @@ public class DashModelInitialize { // extends AlloyModel {
         // but its parent is in the st
 
         // figure out its sfqn and its parent's fqn
-        if (DashFQN.isFQN(s.name)) DashModelErrors.nameCantBeFQN(s.pos, s.name);
+        if (DashFQN.isFQN(s.name)) Error.nameCantBeFQN(s.pos, s.name);
         String sfqn = DashFQN.fqn(ances, s.name);
         String parentfqn = DashFQN.fqn(ances);
 
@@ -75,7 +80,7 @@ public class DashModelInitialize { // extends AlloyModel {
 
         List<DashParam> newParams = new ArrayList<DashParam>();
         if (parentfqn != null) {
-            newParams.addAll(st.getParams(parentfqn));
+            newParams.addAll(st.get(parentfqn).params);
         }
         if (s.param != null) {
             DashParam p = new DashParam(sfqn, s.param);
@@ -135,19 +140,19 @@ public class DashModelInitialize { // extends AlloyModel {
                     for (String ch : childFQNs) st.setDefault(ch);
 
                 } else if (defaultsList.size() == 0) {
-                    DashModelErrors.noDefaultState(s.pos, sfqn);
+                    Error.noDefaultState(s.pos, sfqn);
 
                 } else if (containsMatch(substatesList, o -> o.kind == StateKind.OR)) {
                     // if defaults list contains an OR state, it should be size 1
                     if (defaultsList.size() != 1) {
-                        DashModelErrors.tooManyDefaults(defaultsList.get(1).pos, sfqn);
+                        Error.tooManyDefaults(defaultsList.get(1).pos, sfqn);
                     }
                     // o/w one OR state is default
 
                 } else {
                     // if defaults list is all AND, then all children should be included
                     if (!(defaultsList.equals(andList))) {
-                        DashModelErrors.allAndDefaults(andList.get(0).pos, sfqn);
+                        Error.allAndDefaults(andList.get(0).pos, sfqn);
                     }
                 }
             }
@@ -162,7 +167,7 @@ public class DashModelInitialize { // extends AlloyModel {
             IntEnvKind k = e.getKind();
             for (String x : e.getNames()) {
                 if (DashFQN.isFQN(x)) {
-                    DashModelErrors.nameCantBeFQN(e.pos, x);
+                    Error.nameCantBeFQN(e.pos, x);
                 } else {
                     String xfqn = DashFQN.fqn(sfqn, x);
                     et.add(e.pos, xfqn, k, newParams);
@@ -180,7 +185,7 @@ public class DashModelInitialize { // extends AlloyModel {
             AlloyExpr t = v.getTyp();
             for (String x : v.getNames()) {
                 if (DashFQN.isFQN(x)) {
-                    DashModelErrors.nameCantBeFQN(v.pos, x);
+                    Error.nameCantBeFQN(v.pos, x);
                 } else {
                     String xfqn = DashFQN.fqn(sfqn, x);
                     vt.addVar(v.pos, xfqn, k, newParams, t);
@@ -196,7 +201,7 @@ public class DashModelInitialize { // extends AlloyModel {
             String name = p.getName();
             AlloyExpr e = p.getExp();
             if (DashFQN.isFQN(name)) {
-                DashModelErrors.nameCantBeFQN(p.pos, name);
+                Error.nameCantBeFQN(p.pos, name);
             } else {
                 String nfqn = DashFQN.fqn(sfqn, name);
                 pt.add(p.pos, nfqn, e);
@@ -212,7 +217,7 @@ public class DashModelInitialize { // extends AlloyModel {
             String el = b.getElement();
             for (String x : b.getNames()) {
                 if (DashFQN.isFQN(x)) {
-                    DashModelErrors.nameCantBeFQN(b.pos, x);
+                    Error.nameCantBeFQN(b.pos, x);
                 } else {
                     String bfqn = DashFQN.fqn(sfqn, x);
                     bt.add(b.pos, bfqn, k, newParams, el);
@@ -231,27 +236,56 @@ public class DashModelInitialize { // extends AlloyModel {
 
     public void addTrans(DashTrans t, List<DashParam> params, List<String> ances) {
 
-        if (DashFQN.isFQN(t.name)) DashModelErrors.nameCantBeFQN(t.pos, t.name);
+        if (DashFQN.isFQN(t.name)) Error.nameCantBeFQN(t.pos, t.name);
         String tfqn = DashFQN.fqn(ances, t.name);
 
-        List<DashFrom> fromList = t.froms();
-        if (fromList.size() > 1) DashModelErrors.tooMany(fromList.get(1).pos, "from", tfqn);
+        ;
+        tt.add(
+                t.pos,
+                tfqn,
+                params,
+                (DashFrom) extractOneFromList(extractItemsOfClass(t.items, DashFrom.class), "from"),
+                (DashOn) extractOneFromList(extractItemsOfClass(t.items, DashOn.class), "on"),
+                (DashWhen) extractOneFromList(extractItemsOfClass(t.items, DashWhen.class), "when"),
+                (DashGoto) extractOneFromList(extractItemsOfClass(t.items, DashGoto.class), "goto"),
+                (DashSend) extractOneFromList(extractItemsOfClass(t.items, DashSend.class), "send"),
+                (DashDo) extractOneFromList(extractItemsOfClass(t.items, DashDo.class), "do"));
+    }
 
-        List<DashGoto> gotoList = t.gotos();
-        if (gotoList.size() > 1) DashModelErrors.tooMany(gotoList.get(1).pos, "goto", tfqn);
+    private class Error {
 
-        List<DashOn> onList = t.ons();
-        if (onList.size() > 1) DashModelErrors.tooMany(onList.get(1).pos, "on", tfqn);
+        private static void notDashModel() throws ErrorFatal {
+            throw new ErrorUser("No Dash state in this model.");
+        }
 
-        List<DashWhen> whenList = t.whens();
-        if (whenList.size() > 1) DashModelErrors.tooMany(whenList.get(1).pos, "when", tfqn);
+        public static void allAndDefaults(Pos pos, String sfqn) throws ErrorFatal {
+            throw new ErrorUser(
+                    pos,
+                    "All conc children of state must be defaults if one is a default: " + sfqn);
+        }
 
-        List<DashSend> sendList = t.sends();
-        if (sendList.size() > 1) DashModelErrors.tooMany(sendList.get(1).pos, "send", tfqn);
+        public static void noDefaultState(Pos pos, String fqn) throws ErrorFatal {
+            throw new ErrorUser(pos, "State does not have default state: " + fqn);
+        }
 
-        List<DashDo> doList = t.dos();
-        if (doList.size() > 1) DashModelErrors.tooMany(doList.get(1).pos, "do", tfqn);
+        public static void tooManyDefaults(Pos pos, String fqn) throws ErrorFatal {
+            throw new ErrorUser(pos, "Too many default states in state: " + fqn);
+        }
 
-        tt.add(t.pos, tfqn, params, fromList, onList, whenList, gotoList, sendList, doList);
+        public static void duplicateStateName(Pos pos, String fqn) throws ErrorFatal {
+            throw new ErrorUser(pos, fqn + "is a duplicate state name");
+        }
+
+        public static void onlyOneState(Pos pos) throws ErrorFatal {
+            throw new ErrorUser(pos, "Dash model can only have one 'state' section");
+        }
+
+        public static void nameCantBeFQN(Pos pos, String name) throws ErrorFatal {
+            throw new ErrorUser(pos, "When declared, name cannot have slash: " + name);
+        }
+
+        public static void dupNames(Pos pos, String dups) throws ErrorFatal {
+            throw new ErrorUser(pos, "Duplicate names: " + dups);
+        }
     }
 }

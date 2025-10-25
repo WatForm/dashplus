@@ -122,4 +122,18 @@ public class GeneralUtil {
                 .boxed() // convert int → Integer
                 .collect(Collectors.toList());
     }
+
+    public static <T> ASTNode extractOneFromList(List<? extends ASTNode> xlist, String errorName) {
+        if (xlist.size() == 0) return null;
+        else if (xlist.size() > 1) {
+            Error.tooMany(xlist.get(1).pos, errorName);
+            return null;
+        } else return xlist.get(0);
+    }
+
+    private class Error {
+        public static void tooMany(Pos pos, String errorName) throws ErrorFatal {
+            throw new ErrorUser(pos, "Multiple " + errorName + "s");
+        }
+    }
 }

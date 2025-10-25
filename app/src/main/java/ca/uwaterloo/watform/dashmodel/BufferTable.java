@@ -17,7 +17,7 @@ public class BufferTable {
 
     // stores Buffer Decls in a HashMap based on the FQN
     private HashMap<String, BufferElement> bt;
-    public String name = "Buffer";
+    private String tableName = "Buffer";
     public int numBuffers = 0;
 
     public BufferTable() {
@@ -79,21 +79,18 @@ public class BufferTable {
         return (bt.containsKey(bfqn));
     }
 
-    // individual getters
-    public int getIndex(String bfqn) {
-        return bt.get(bfqn).index;
+    // so we can treat this as a table
+    // to the outside world
+    public BufferElement get(String bfqn) {
+        return bt.get(bfqn);
     }
 
-    public String getElement(String bfqn) {
-        return bt.get(bfqn).element;
+    public List<String> keySet() {
+        return setToList(bt.keySet());
     }
 
-    public List<DashParam> getParams(String bfqn) {
-        return bt.get(bfqn).params;
-    }
-
-    public IntEnvKind getKind(String bfqn) {
-        return (bt.get(bfqn).kind);
+    public boolean isEmpty() {
+        return bt.isEmpty();
     }
 
     public boolean isInternal(String bfqn) {

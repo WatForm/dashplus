@@ -6,11 +6,11 @@ import java.util.List;
 
 public class VarDashRef extends DashRef {
 
-    public VarDashRef(Pos p, String n, List<AlloyExpr> prmValues) {
+    public VarDashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
         super(p, DashRefKind.VAR, n, prmValues);
     }
 
-    public VarDashRef(String n, List<AlloyExpr> prmValues) {
+    public VarDashRef(String n, List<? extends AlloyExpr> prmValues) {
         super(DashRefKind.VAR, n, prmValues);
     }
 }

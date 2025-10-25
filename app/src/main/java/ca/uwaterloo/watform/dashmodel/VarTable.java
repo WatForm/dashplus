@@ -20,17 +20,17 @@ public class VarTable {
     // LinkedHashMap so order of keySet is consistent
     // Alloy requires declaration before use for variables
     private LinkedHashMap<String, VarElement> vt;
-    public String name = "Var";
+    private String tableName = "Var";
 
     public VarTable() {
         this.vt = new LinkedHashMap<String, VarElement>();
     }
 
     public class VarElement {
-        private IntEnvKind kind;
-        private List<DashParam> params;
+        public IntEnvKind kind;
+        public List<DashParam> params;
         // private List<Integer> paramsIdx;
-        private AlloyExpr typ;
+        public AlloyExpr typ;
 
         public VarElement(
                 IntEnvKind k,
@@ -79,9 +79,18 @@ public class VarTable {
         return s;
     }
 
-    // setters
-    public void setVarType(String vfqn, AlloyExpr typ) {
-        vt.get(vfqn).setType(typ);
+    // so we can treat this as a table
+    // to the outside world
+    public VarElement get(String vfqn) {
+        return vt.get(vfqn);
+    }
+
+    public List<String> keySet() {
+        return setToList(vt.keySet());
+    }
+
+    public boolean isEmpty() {
+        return vt.isEmpty();
     }
 
     // getters
@@ -89,20 +98,8 @@ public class VarTable {
         return (vt.containsKey(vfqn));
     }
 
-    public AlloyExpr getVarType(String vfqn) {
-        return vt.get(vfqn).typ;
-    }
-
-    public List<DashParam> getParams(String vfqn) {
-        return vt.get(vfqn).params;
-    }
-
     public boolean isInternal(String vfqn) {
         return (vt.get(vfqn).kind == IntEnvKind.INT);
-    }
-
-    public IntEnvKind getIntEnvKind(String vfqn) {
-        return (vt.get(vfqn).kind);
     }
 
     // group getters
@@ -110,7 +107,7 @@ public class VarTable {
         return new ArrayList<String>(vt.keySet());
     }
 
-    private List<String> getVarsOfState(String sfqn) {
+    public List<String> getVarsOfState(String sfqn) {
         // return all events declared in this state
         // will have the sfqn as a prefix
         return vt.keySet().stream()
@@ -119,7 +116,7 @@ public class VarTable {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getAllInternalVarNames() {
+    public List<String> getAllInternalBufferNames() {
         return getAllVarNames().stream().filter(i -> isInternal(i)).collect(Collectors.toList());
     }
 }

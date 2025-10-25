@@ -12,16 +12,15 @@ import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EventTable {
 
     private HashMap<String, EventElement> et;
-    public String name = "Event";
+    private String tableName = "Event";
 
     public class EventElement {
-        private IntEnvKind kind = IntEnvKind.INT;
-        private List<DashParam> params = null;
+        public IntEnvKind kind = IntEnvKind.INT;
+        public List<DashParam> params = null;
 
         public EventElement(IntEnvKind k, List<DashParam> prms) {
             assert (prms != null);
@@ -62,9 +61,18 @@ public class EventTable {
         }
     }
 
-    // individual getters
-    public List<DashParam> getParams(String efqn) {
-        return et.get(efqn).params;
+    // so we can treat this as a table
+    // to the outside world
+    public EventElement get(String efqn) {
+        return et.get(efqn);
+    }
+
+    public List<String> keySet() {
+        return setToList(et.keySet());
+    }
+
+    public boolean isEmpty() {
+        return et.isEmpty();
     }
 
     public boolean isEnvironmentalEvent(String efqn) {
@@ -124,15 +132,11 @@ public class EventTable {
     }
 
     public List<String> getAllInternalEvents() {
-        return et.keySet().stream()
-                .filter(i -> et.get(i).kind == IntEnvKind.INT)
-                .collect(Collectors.toList());
+        return filterBy(keySet(), i -> et.get(i).kind == IntEnvKind.INT);
     }
 
     public List<String> getAllEnvironmentalEvents() {
-        return et.keySet().stream()
-                .filter(i -> et.get(i).kind == IntEnvKind.ENV)
-                .collect(Collectors.toList());
+        return filterBy(keySet(), i -> et.get(i).kind == IntEnvKind.ENV);
     }
 
     public List<String> getAllNames() {
@@ -143,17 +147,13 @@ public class EventTable {
         // return all events _declared_ at the level of this state
         // will have the sfqn as a prefix
         // purely based on names
-        return et.keySet().stream()
-                .filter(i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn))
-                .collect(Collectors.toList());
+        return filterBy(keySet(), i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn));
     }
 
     public List<String> getEventsWithinState(String sfqn) {
         // return all events _declared_ somewhere within this state
         // will have the sfqn as a prefix
         // purely based on names
-        return et.keySet().stream()
-                .filter(i -> DashFQN.prefix(sfqn, i))
-                .collect(Collectors.toList());
+        return filterBy(keySet(), i -> DashFQN.prefix(sfqn, i));
     }
 }

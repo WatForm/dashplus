@@ -4,19 +4,18 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
-// import java.util.Set;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
-// import java.util.LinkedHashMap;
-// import java.util.Collections;
 import java.util.List;
 
 public class DashPredTable {
 
     private HashMap<String, PredElement> pt;
-    public String name = "DashPred";
+    private String tableName = "DashPred";
 
     public DashPredTable() {
         this.pt = new HashMap<String, PredElement>();
@@ -28,7 +27,7 @@ public class DashPredTable {
         // it is used in
         // because otherwise we might have orphan parameter values
         // from the context where it is declared
-        private AlloyExpr exp;
+        public AlloyExpr exp;
 
         public PredElement(AlloyExpr e) {
             this.exp = e;
@@ -57,6 +56,20 @@ public class DashPredTable {
         } else {
             pt.put(n, new PredElement(e));
         }
+    }
+
+    // so we can treat this as a table
+    // to the outside world
+    public PredElement get(String pfqn) {
+        return pt.get(pfqn);
+    }
+
+    public List<String> keySet() {
+        return setToList(pt.keySet());
+    }
+
+    public boolean isEmpty() {
+        return pt.isEmpty();
     }
 
     public boolean contains(String pfqn) {

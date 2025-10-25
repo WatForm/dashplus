@@ -1,8 +1,7 @@
 /*
-	These classes are used only during parsing because
-	we do not know what order items within a state will be parsed in.
-
     The expression can be given a name in printing.
+    This class and those below is are not needed in expression visitors
+    because they are only used for parsing and printing.
 */
 
 package ca.uwaterloo.watform.dashast;
@@ -10,13 +9,16 @@ package ca.uwaterloo.watform.dashast;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.utils.*;
 
-public abstract class DashExpr extends AlloyExpr {
+public abstract class DashNamedExpr extends ASTNode {
 
-    public DashExpr(Pos pos, AlloyExpr exp) {
+    public AlloyExpr exp;
+
+    public DashNamedExpr(Pos pos, AlloyExpr exp) {
         super(pos);
+        exp = exp;
     }
 
-    public DashExpr() {
+    public DashNamedExpr() {
         super();
     }
 

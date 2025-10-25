@@ -6,11 +6,11 @@ import java.util.List;
 
 public class StateDashRef extends DashRef {
 
-    public StateDashRef(Pos p, String n, List<AlloyExpr> prmValues) {
+    public StateDashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
         super(p, DashRefKind.STATE, n, prmValues);
     }
 
-    public StateDashRef(String n, List<AlloyExpr> prmValues) {
+    public StateDashRef(String n, List<? extends AlloyExpr> prmValues) {
         super(DashRefKind.STATE, n, prmValues);
     }
 }

@@ -25,9 +25,8 @@
 
 package ca.uwaterloo.watform.dashast.dashref;
 
-// import java.util.Collection;
-// import java.util.Collections;
 import static ca.uwaterloo.watform.dashmodel.DashFQN.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
@@ -36,13 +35,12 @@ import ca.uwaterloo.watform.utils.GeneralUtil;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DashRef extends AlloyExpr {
 
-    private DashRefKind kind;
-    private String name;
-    private List<AlloyExpr> paramValues;
+    public DashRefKind kind;
+    public String name;
+    public List<? extends AlloyExpr> paramValues;
 
     // generally in the code we know the kind by context but
     // for printing we need the kind here
@@ -56,14 +54,14 @@ public class DashRef extends AlloyExpr {
     }
 
     // for internal uses during translation
-    public DashRef(DashRefKind k, String n, List<AlloyExpr> prmValues) {
+    public DashRef(DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
         this.kind = k;
         this.name = n;
         this.paramValues = prmValues;
     }
 
     // for uses when parsed
-    public DashRef(Pos p, DashRefKind k, String n, List<AlloyExpr> prmValues) {
+    public DashRef(Pos p, DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
         super(p);
         this.kind = k;
         this.name = n;
@@ -80,44 +78,31 @@ public class DashRef extends AlloyExpr {
         // other: Root/A/B[a1,b1]/var1
         String s = "";
         if (kind == DashRefKind.STATE) {
-            s += getName();
+            s += name;
         } else {
-            s += chopPrefixFromFQN(getName());
+            s += chopPrefixFromFQN(name);
         }
 
         if (!paramValues.isEmpty()) {
             s += "[";
-            List<String> paramValues =
-                    getParamValues().stream().map(i -> i.toString()).collect(Collectors.toList());
+            List<String> pValues = mapBy(paramValues, i -> i.toString());
             // Collections.reverse(paramValues);
             s += GeneralUtil.strCommaList(paramValues);
             s += "]";
         }
         if (kind != DashRefKind.STATE) {
             s += "/";
-            s += chopNameFromFQN(getName());
+            s += chopNameFromFQN(name);
         }
         // System.out.println(s + "\n");
         sb.append(s);
-    }
-
-    // getters
-    public String getName() {
-        return name;
-    }
-
-    public List<AlloyExpr> getParamValues() {
-        return paramValues;
     }
 
     // referencing a for loop variable in a filter does not work
     // so do this as a loop
     public static List<DashRef> hasNumParams(List<DashRef> dr, int i) {
         // filter to ones that have this number of params
-        List<DashRef> o =
-                dr.stream()
-                        .filter(x -> x.getParamValues().size() == i)
-                        .collect(Collectors.toList());
+        List<DashRef> o = filterBy(dr, x -> x.paramValues.size() == i);
         return o;
     }
 

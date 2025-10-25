@@ -8,7 +8,7 @@ DashState is a subclass of AlloyParagraph.
 
 All others are subclasses of either ASTNode or DashExpr (which is a subclass of ASTNote).
 
-DashExpr is a subclass of AlloyExpr.  It provides a wrapper for printing method expressions of DashFrom, DashDo, etc.  Class contains no additional state over AlloyExpr.
+DashExpr provides a wrapper for printing method expressions of DashFrom, DashDo, etc.  
 
 DashRef is a subclass of AlloyExpr that represents expressions such as:
 Root/A/B[exp1,exp2]/v1
