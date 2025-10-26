@@ -445,6 +445,4 @@ public class ExprRefResolver {
             throw new ErrorUser(pos + " Internal var/buffer cannot be primed: " + expString);
         }
     }
-    // below this are just recursive calls -----------------------------------
-
 }
