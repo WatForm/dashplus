@@ -91,7 +91,7 @@ public class ExprRefResolver {
         sfqn = sfqn;
         primeOk = true;
         primeOkInPrmExprs = true;
-        AlloyExpr x = null;
+        AlloyExpr x = resolve(expr);
         primeOk = false;
         primeOkInPrmExprs = false;
         return x;
@@ -100,7 +100,7 @@ public class ExprRefResolver {
     public DashRef resolveState(AlloyExpr expr, String sfqn) {
         sfqn = sfqn;
         kind = kind.STATE;
-        DashRef x = null;
+        DashRef x = (DashRef) resolve(expr);
         kind = defaultKind;
         return x;
     }
@@ -108,7 +108,7 @@ public class ExprRefResolver {
     public DashRef resolveEvent(AlloyExpr expr, String sfqn) {
         sfqn = sfqn;
         kind = kind.EVENT;
-        DashRef x = null;
+        DashRef x = (DashRef) resolve(expr);
         kind = defaultKind;
         return x;
     }
@@ -117,7 +117,7 @@ public class ExprRefResolver {
         sfqn = sfqn;
         kind = kind.EVENT;
         primeOkInPrmExprs = true;
-        DashRef x = null;
+        DashRef x = (DashRef) resolve(expr);
         kind = defaultKind;
         primeOkInPrmExprs = false;
         return x;
