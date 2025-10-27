@@ -26,6 +26,7 @@ public class ParseVisTest {
 
     @Test
     @Order(1)
+    @DisplayName("Parse, create our Alloy AST with parser visitors, and call toString")
     public void parseToStr() throws Exception {
         Path dir = Paths.get("src/test/resources/parsevis/tostr");
         List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
@@ -59,6 +60,9 @@ public class ParseVisTest {
 
     @Test
     @Order(2)
+    @DisplayName(
+            "Parse, create our Alloy AST with parser visitors, and call toString "
+                    + "to match exactly the input string (cannot include comments)")
     public void parseMatchStr() throws Exception {
         Path dir = Paths.get("src/test/resources/parsevis/tostr/matchstr");
         List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
@@ -85,6 +89,7 @@ public class ParseVisTest {
 
     @Test
     @Order(3)
+    @DisplayName("Parse, create our Alloy AST with parser visitors, and checking pos")
     public void parsePos() throws Exception {
         Path dir = Paths.get("src/test/resources/parsevis/pos");
         List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");

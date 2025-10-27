@@ -4,12 +4,12 @@ package ca.uwaterloo.watform.utils;
 // NADTODO fix up pos and error messages
 // NADTODO this is temporary
 
-public class ErrorUser extends DiagnosticException {
-    public ErrorUser(Pos pos, String msg) {
+public class CommentUser extends DiagnosticException {
+    public CommentUser(Pos pos, String msg) {
         super(pos, msg);
     }
 
-    public ErrorUser(String msg) {
+    public CommentUser(String msg) {
         super(msg);
     }
 }
