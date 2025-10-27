@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.test;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyinterface.AlloyUtils;
+import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.antlr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class AntlrTestUtil {
     }
 
     private void tryParse(CharStream input, Path filePath) {
-        boolean jarPassed = AlloyUtils.canParse(input.toString());
+        boolean jarPassed = AlloyInterface.canParse(input.toString());
         if (!jarPassed) {
             return;
         }
