@@ -10,33 +10,43 @@ import java.util.stream.Collectors;
 
 public final class AlloyQnameExpr extends AlloyVarExpr
         implements AlloySigRefExpr, AlloyScopableExpr {
-    public final List<AlloyNameExpr> nameExprList;
+    public final List<AlloyVarExpr> vars;
 
-    public AlloyQnameExpr(Pos pos, List<AlloyNameExpr> nameExprList) {
+    public AlloyQnameExpr(Pos pos, List<AlloyVarExpr> vars) {
         super(
                 pos,
-                nameExprList.stream()
-                        .map(AlloyNameExpr::getLabel)
+                vars.stream()
+                        .map(AlloyVarExpr::getLabel)
                         .collect(Collectors.joining(AlloyStrings.SLASH)));
-        this.nameExprList = Collections.unmodifiableList(nameExprList);
+        this.vars = Collections.unmodifiableList(vars);
+        if (!vars.isEmpty()) {
+            if (!(vars.getFirst() instanceof AlloyNameExpr)
+                    && !(vars.getFirst() instanceof AlloySeqExpr)
+                    && !(vars.getFirst() instanceof AlloyThisExpr)) {
+                throw new ErrorFatal(
+                        pos,
+                        "First var of AlloyQnameExpr must be either AlloyNameExpr, AlloySeqExpr or AlloyThisExpr. ");
+            }
+            for (int i = 1; i < vars.size(); i++) {
+                if (!(vars.get(i) instanceof AlloyNameExpr)) {
+                    throw new ErrorFatal(
+                            pos,
+                            "Everything after the head of AlloyQnameExpr must be AlloyNameExpr. ");
+                }
+            }
+        }
     }
 
-    public AlloyQnameExpr(List<AlloyNameExpr> nameExprList) {
-        super(
-                nameExprList.stream()
-                        .map(AlloyNameExpr::getLabel)
-                        .collect(Collectors.joining(AlloyStrings.SLASH)));
-        this.nameExprList = Collections.unmodifiableList(nameExprList);
+    public AlloyQnameExpr(List<AlloyVarExpr> vars) {
+        this(Pos.UNKNOWN, vars);
     }
 
-    public AlloyQnameExpr(Pos pos, AlloyNameExpr nameExpr) {
-        super(pos, nameExpr.getLabel());
-        this.nameExprList = Collections.unmodifiableList(Collections.singletonList(nameExpr));
+    public AlloyQnameExpr(Pos pos, AlloyVarExpr var) {
+        this(pos, Collections.unmodifiableList(Collections.singletonList(var)));
     }
 
-    public AlloyQnameExpr(AlloyNameExpr nameExpr) {
-        super(nameExpr.getLabel());
-        this.nameExprList = Collections.unmodifiableList(Collections.singletonList(nameExpr));
+    public AlloyQnameExpr(AlloyVarExpr var) {
+        this(Pos.UNKNOWN, Collections.unmodifiableList(Collections.singletonList(var)));
     }
 
     @Override

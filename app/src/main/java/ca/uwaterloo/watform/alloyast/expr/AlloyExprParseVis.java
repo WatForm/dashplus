@@ -275,7 +275,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
     @Override
     public AlloyQnameExpr visitQualifiedQname(AlloyParser.QualifiedQnameContext ctx) {
-        List<AlloyNameExpr> nameExprList = new ArrayList<>();
+        List<AlloyVarExpr> nameExprList = new ArrayList<>();
         if (null != ctx.SEQ()) {
             nameExprList.add(new AlloySeqExpr(new Pos(ctx.SEQ())));
         } else if (null != ctx.THIS()) {
