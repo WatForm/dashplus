@@ -94,7 +94,11 @@ public final class AlloyCmdDeclParseVis extends AlloyBaseVisitor<AlloyCmdPara.Co
                 if (null != ctx.number(1)) {
                     end = (AlloyNumExpr) exprParseVis.visit(ctx.number(1));
                 } else {
-                    end = new AlloyNumExpr(start.isPositive, start.label);
+                    if (!ctx.DOT().isEmpty()) {
+                        end = new AlloyNumExpr(true, Integer.MAX_VALUE);
+                    } else {
+                        end = new AlloyNumExpr(start.isPositive, start.label);
+                    }
                 }
                 AlloyNumExpr increment;
                 if (null != ctx.number(2)) {
@@ -119,7 +123,12 @@ public final class AlloyCmdDeclParseVis extends AlloyBaseVisitor<AlloyCmdPara.Co
                     throw new AlloyUnexpTokenEx(ctx);
                 }
                 return new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                        new Pos(ctx), null != ctx.EXACTLY(), start, end, increment, scopableExpr);
+                        new Pos(ctx),
+                        null != ctx.EXACTLY() || start == end,
+                        start,
+                        end,
+                        increment,
+                        scopableExpr);
             }
         }
     }

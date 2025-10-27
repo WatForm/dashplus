@@ -19,7 +19,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class AntlrTestUtil {
-    private static boolean stopOnFirstFail;
+    private static boolean stopOnFirstFail = true;
     private long timeoutMs = 20 * 1000;
     private static int filenamesToPrint = 20;
 
@@ -28,16 +28,6 @@ public class AntlrTestUtil {
     private List<Path> jarFailedAntlrPassed = new ArrayList<>();
     private List<Path> jarFailedAntlrFailed = new ArrayList<>();
     private List<Path> timeout = new ArrayList<>();
-
-    public AntlrTestUtil() {
-        String prop = System.getProperty("stopOnFirstFail", "True");
-        stopOnFirstFail = Boolean.parseBoolean(prop);
-        if (stopOnFirstFail) {
-            System.out.println("stopOnFirstFail: true");
-        } else {
-            System.out.println("stopOnFirstFail: false");
-        }
-    }
 
     private void clearAllLists() {
         jarPassedAntlrPassed.clear();
@@ -88,9 +78,18 @@ public class AntlrTestUtil {
             String s = af.toString();
             System.out.println(s);
             if (jarPassed) {
-                jarPassedAntlrPassed.add(filePath);
-                System.out.println(
-                        "Successfully parsed " + jarPassedAntlrPassed.size() + " files. ");
+                boolean toStringCanPass = AlloyInterface.canParse(s);
+                if (toStringCanPass) {
+                    jarPassedAntlrPassed.add(filePath);
+                    System.out.println(
+                            "Successfully parsed " + jarPassedAntlrPassed.size() + " files. ");
+                } else {
+                    System.out.println("toString did not parse again. ");
+                    jarPassedAntlrFailed.add(filePath);
+                    if (stopOnFirstFail) {
+                        throw new ParseCancellationException("toString did not parse again. ");
+                    }
+                }
             } else {
                 jarFailedAntlrPassed.add(filePath);
                 // if (stopOnFirstFail) {

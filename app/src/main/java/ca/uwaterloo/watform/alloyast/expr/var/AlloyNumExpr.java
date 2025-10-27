@@ -20,6 +20,32 @@ public final class AlloyNumExpr extends AlloyVarExpr {
         this.isPositive = isPositve;
     }
 
+    public AlloyNumExpr(boolean isPositve, int num) {
+        super(isPositve ? String.valueOf(num) : AlloyStrings.MINUS + String.valueOf(num));
+        this.value = Integer.parseInt(String.valueOf(num));
+        this.isPositive = isPositve;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (isPositive ? 1231 : 1237);
+        result = prime * result + value;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyNumExpr other = (AlloyNumExpr) obj;
+        if (isPositive != other.isPositive) return false;
+        if (value != other.value) return false;
+        return true;
+    }
+
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
