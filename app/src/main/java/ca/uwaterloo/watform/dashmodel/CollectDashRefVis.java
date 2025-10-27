@@ -24,13 +24,9 @@ import ca.uwaterloo.watform.dashast.dashref.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectDashRefVis implements DashExprVis {
+public class CollectDashRefVis implements DashExprVis<List<DashRef>> {
 
     List<DashRef> x = new ArrayList<DashRef>();
-
-    public List<DashRef> visit(AlloyExpr expr) {
-        return (List<DashRef>) expr.accept(this);
-    }
 
     @Override
     public List<DashRef> visit(AlloyBinaryExpr binExpr) {

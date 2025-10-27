@@ -6,6 +6,10 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 
 public interface AlloyExprVis<T> {
+    public default T visit(AlloyExpr expr) {
+        return expr.accept(this);
+    }
+
     // Abstract ones that need implementation in extensions
     T visit(AlloyBinaryExpr binExpr);
 
