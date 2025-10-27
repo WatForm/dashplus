@@ -254,38 +254,38 @@ public class DashModelInitialize { // extends AlloyModel {
 
     private class Error {
 
-        private static void notDashModel() throws ErrorFatal {
-            throw new ErrorUser("No Dash state in this model.");
+        private static void notDashModel() throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser("No Dash state in this model.");
         }
 
-        public static void allAndDefaults(Pos pos, String sfqn) throws ErrorFatal {
-            throw new ErrorUser(
+        public static void allAndDefaults(Pos pos, String sfqn) throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(
                     pos,
                     "All conc children of state must be defaults if one is a default: " + sfqn);
         }
 
-        public static void noDefaultState(Pos pos, String fqn) throws ErrorFatal {
-            throw new ErrorUser(pos, "State does not have default state: " + fqn);
+        public static void noDefaultState(Pos pos, String fqn) throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(pos, "State does not have default state: " + fqn);
         }
 
-        public static void tooManyDefaults(Pos pos, String fqn) throws ErrorFatal {
-            throw new ErrorUser(pos, "Too many default states in state: " + fqn);
+        public static void tooManyDefaults(Pos pos, String fqn) throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(pos, "Too many default states in state: " + fqn);
         }
 
-        public static void duplicateStateName(Pos pos, String fqn) throws ErrorFatal {
-            throw new ErrorUser(pos, fqn + "is a duplicate state name");
+        public static void duplicateStateName(Pos pos, String fqn) throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(pos, fqn + "is a duplicate state name");
         }
 
-        public static void onlyOneState(Pos pos) throws ErrorFatal {
-            throw new ErrorUser(pos, "Dash model can only have one 'state' section");
+        public static void onlyOneState(Pos pos) throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(pos, "Dash model can only have one 'state' section");
         }
 
-        public static void nameCantBeFQN(Pos pos, String name) throws ErrorFatal {
-            throw new ErrorUser(pos, "When declared, name cannot have slash: " + name);
+        public static void nameCantBeFQN(Pos pos, String name) throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(pos, "When declared, name cannot have slash: " + name);
         }
 
-        public static void dupNames(Pos pos, String dups) throws ErrorFatal {
-            throw new ErrorUser(pos, "Duplicate names: " + dups);
+        public static void dupNames(Pos pos, String dups) throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(pos, "Duplicate names: " + dups);
         }
     }
 }

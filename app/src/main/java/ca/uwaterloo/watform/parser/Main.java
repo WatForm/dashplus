@@ -21,6 +21,8 @@ public class Main {
 
         try {
             AlloyFile af = ParserUtil.parse(Paths.get(filePath));
+            if (Reporter.INSTANCE.hasErrors()) {}
+
             System.out.println(af.toString());
 
         } catch (IOException e) {

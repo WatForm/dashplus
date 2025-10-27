@@ -409,28 +409,30 @@ public class ExprRefResolver {
     private class Error {
 
         public static void wrongNumberParams(Pos pos, String expString) {
-            throw new ErrorUser(pos + "Incorrect number of parameters: " + expString);
+            throw new Reporter.ErrorUser(pos + "Incorrect number of parameters: " + expString);
         }
 
         public static void ambiguousRef(Pos pos, String expString) {
-            throw new ErrorUser(pos + " Name not unique: " + expString);
+            throw new Reporter.ErrorUser(pos + " Name not unique: " + expString);
         }
 
         public static void unknownElementWithParams(Pos pos, String expString) {
-            throw new ErrorUser(pos + " " + "Unknown Dash element with params: " + expString);
+            throw new Reporter.ErrorUser(
+                    pos + " " + "Unknown Dash element with params: " + expString);
         }
 
         public static String cantPrimeNonVar(Pos pos, String expString) {
-            throw new ErrorUser(pos + " " + " Non-var/buffer cannot be primed: " + expString);
+            throw new Reporter.ErrorUser(
+                    pos + " " + " Non-var/buffer cannot be primed: " + expString);
         }
 
         public static void unknownSrcDest(String x, String t, String tfqn) {
-            throw new ErrorUser(
+            throw new Reporter.ErrorUser(
                     "Src/Dest of trans is unknown: " + "trans " + tfqn + " " + t + " " + x);
         }
 
         private static void unknown(Pos pos, String expString, String thing) {
-            throw new ErrorUser(pos + thing + " does not exist: " + expString);
+            throw new Reporter.ErrorUser(pos + thing + " does not exist: " + expString);
         }
 
         public static void unknownState(Pos pos, String expString) {
@@ -442,7 +444,8 @@ public class ExprRefResolver {
         }
 
         public static String cantPrimeExternalVar(Pos pos, String expString) {
-            throw new ErrorUser(pos + " Internal var/buffer cannot be primed: " + expString);
+            throw new Reporter.ErrorUser(
+                    pos + " Internal var/buffer cannot be primed: " + expString);
         }
     }
 }

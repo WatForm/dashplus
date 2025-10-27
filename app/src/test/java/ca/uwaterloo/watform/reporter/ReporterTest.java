@@ -3,6 +3,8 @@ package ca.uwaterloo.watform.reporter;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.utils.*;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import org.junit.jupiter.api.*;
 
@@ -15,6 +17,11 @@ public class ReporterTest {
     @BeforeEach
     void setUp() {
         reporter = Reporter.INSTANCE;
+        reporter.reset();
+    }
+
+    @AfterEach
+    void cleanUp() {
         reporter.reset();
     }
 
@@ -39,10 +46,10 @@ public class ReporterTest {
     @Order(3)
     @DisplayName("Should add an error correctly using object")
     public void addErrorObject() {
-        ErrorUser error = new ErrorUser(Pos.UNKNOWN, "Test error message");
+        Reporter.ErrorUser error = new Reporter.ErrorUser(Pos.UNKNOWN, "Test error message");
         reporter.addError(error);
 
-        List<ErrorUser> errors = reporter.getErrors();
+        List<Reporter.ErrorUser> errors = reporter.getErrors();
         assertEquals(1, errors.size(), "Errors list should contain one error.");
         assertSame(error, errors.get(0), "The added error should be in the list.");
         assertTrue(reporter.getComments().isEmpty(), "Comments list should still be empty.");
@@ -52,10 +59,11 @@ public class ReporterTest {
     @Order(4)
     @DisplayName("Should add a comment correctly using object")
     public void addCommentObject() {
-        CommentUser comment = new CommentUser(Pos.UNKNOWN, "Test comment message");
+        Reporter.CommentUser comment =
+                new Reporter.CommentUser(Pos.UNKNOWN, "Test comment message");
         reporter.addComment(comment);
 
-        List<CommentUser> comments = reporter.getComments();
+        List<Reporter.CommentUser> comments = reporter.getComments();
         assertEquals(1, comments.size(), "Comments list should contain one comment.");
         assertSame(comment, comments.get(0), "The added comment should be in the list.");
         assertTrue(reporter.getErrors().isEmpty(), "Errors list should still be empty.");
@@ -67,7 +75,7 @@ public class ReporterTest {
     public void addErrorPosMsg() {
         reporter.addError(Pos.UNKNOWN, "Error from Pos/Msg");
 
-        List<ErrorUser> errors = reporter.getErrors();
+        List<Reporter.ErrorUser> errors = reporter.getErrors();
         assertEquals(1, errors.size());
         assertEquals("Error from Pos/Msg", errors.get(0).getMessage());
         assertEquals(Pos.UNKNOWN, errors.get(0).pos);
@@ -79,7 +87,7 @@ public class ReporterTest {
     public void addCommentPosMsg() {
         reporter.addComment(Pos.UNKNOWN, "Comment from Pos/Msg");
 
-        List<CommentUser> comments = reporter.getComments();
+        List<Reporter.CommentUser> comments = reporter.getComments();
         assertEquals(1, comments.size());
         assertEquals("Comment from Pos/Msg", comments.get(0).getMessage());
         assertEquals(Pos.UNKNOWN, comments.get(0).pos);
@@ -90,7 +98,7 @@ public class ReporterTest {
     @DisplayName("Should add an error correctly using only msg")
     public void addErrorMsg() {
         reporter.addError("Error from Msg");
-        List<ErrorUser> errors = reporter.getErrors();
+        List<Reporter.ErrorUser> errors = reporter.getErrors();
         assertEquals(1, errors.size());
         assertEquals("Error from Msg", errors.get(0).getMessage());
         assertEquals(Pos.UNKNOWN, errors.get(0).pos);
@@ -101,7 +109,7 @@ public class ReporterTest {
     @DisplayName("Should add a comment correctly using only msg")
     public void addCommentMsg() {
         reporter.addComment("Comment from Msg");
-        List<CommentUser> comments = reporter.getComments();
+        List<Reporter.CommentUser> comments = reporter.getComments();
         assertEquals(1, comments.size());
         assertEquals("Comment from Msg", comments.get(0).getMessage());
     }
@@ -110,16 +118,16 @@ public class ReporterTest {
     @Order(9)
     @DisplayName("Should add multiple errors and comments")
     public void addMultiple() {
-        ErrorUser error1 = new ErrorUser(Pos.UNKNOWN, "Error 1");
-        ErrorUser error2 = new ErrorUser(Pos.UNKNOWN, "Error 2");
-        CommentUser comment1 = new CommentUser(Pos.UNKNOWN, "Comment 1");
+        Reporter.ErrorUser error1 = new Reporter.ErrorUser(Pos.UNKNOWN, "Error 1");
+        Reporter.ErrorUser error2 = new Reporter.ErrorUser(Pos.UNKNOWN, "Error 2");
+        Reporter.CommentUser comment1 = new Reporter.CommentUser(Pos.UNKNOWN, "Comment 1");
 
         reporter.addError(error1);
         reporter.addComment(comment1);
         reporter.addError(error2);
 
-        List<ErrorUser> errors = reporter.getErrors();
-        List<CommentUser> comments = reporter.getComments();
+        List<Reporter.ErrorUser> errors = reporter.getErrors();
+        List<Reporter.CommentUser> comments = reporter.getComments();
 
         assertEquals(2, errors.size(), "Should have 2 errors.");
         assertEquals(1, comments.size(), "Should have 1 comment.");
@@ -132,8 +140,8 @@ public class ReporterTest {
     @Order(10)
     @DisplayName("Returned error list should be unmodifiable")
     public void errorsUnmodifiable() {
-        ErrorUser error = new ErrorUser(Pos.UNKNOWN, "Temporary error");
-        List<ErrorUser> errors = reporter.getErrors();
+        Reporter.ErrorUser error = new Reporter.ErrorUser(Pos.UNKNOWN, "Temporary error");
+        List<Reporter.ErrorUser> errors = reporter.getErrors();
 
         assertThrows(
                 UnsupportedOperationException.class,
@@ -148,8 +156,8 @@ public class ReporterTest {
     @Order(11)
     @DisplayName("Returned comment list should be unmodifiable")
     public void commentsUnmodifiable() {
-        CommentUser comment = new CommentUser(Pos.UNKNOWN, "Temporary comment");
-        List<CommentUser> comments = reporter.getComments();
+        Reporter.CommentUser comment = new Reporter.CommentUser(Pos.UNKNOWN, "Temporary comment");
+        List<Reporter.CommentUser> comments = reporter.getComments();
 
         assertThrows(
                 UnsupportedOperationException.class,
@@ -192,5 +200,28 @@ public class ReporterTest {
         assertFalse(reporter.hasComments());
         reporter.addError(Pos.UNKNOWN, "Just an error");
         assertFalse(reporter.hasComments());
+    }
+
+    @Test
+    @Order(16)
+    @DisplayName("exitIfHasError exits if has error")
+    public void exitOnError() {
+        final int[] exitCode = {-1};
+        reporter.addError("An Error");
+        reporter.exitFunction = (code -> exitCode[0] = code);
+        reporter.exitIfHasErrors();
+        assertEquals(1, exitCode[0], "Exit code should have been set to 1");
+        assertTrue(reporter.hasErrors(), "Reporter should still have errors recorded");
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("handle Alloy Cmd Syntax Error")
+    public void throwCatchErrorForAlloyCmd() throws IOException {
+        final int[] exitCode = {-1};
+        reporter.exitFunction = (code -> exitCode[0] = code);
+        ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als"));
+        assertEquals(1, exitCode[0], "Exit code should have been set to 1");
+        assertTrue(reporter.hasErrors(), "Reporter should still have errors recorded");
     }
 }

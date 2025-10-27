@@ -59,12 +59,12 @@ public final class AlloyCmdPara extends AlloyParagraph {
             this.scope = Optional.ofNullable(scope);
             this.number = Optional.ofNullable(number);
             if (!this.invoQname.isEmpty() && !this.constrBlock.isEmpty()) {
-                throw new ErrorFatal(
+                throw new ImplementationError(
                         "invoQname and constrBlock cannot both be non-null in "
                                 + "AlloyCmdPara.CommandDecl. ");
             }
             if (this.invoQname.isEmpty() && this.constrBlock.isEmpty()) {
-                throw new ErrorFatal(
+                throw new ImplementationError(
                         "invoQname and constrBlock cannot both be null in "
                                 + "AlloyCmdPara.CommandDecl. ");
             }
@@ -95,7 +95,7 @@ public final class AlloyCmdPara extends AlloyParagraph {
             } else if (!this.constrBlock.isEmpty()) {
                 this.constrBlock.get().toString(sb, indent);
             } else {
-                throw new ErrorFatal(
+                throw new ImplementationError(
                         "invoQname and constrBlock cannot both be null in "
                                 + "AlloyCmdPara.CommandDecl. ");
             }
@@ -139,7 +139,7 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 this.num = Optional.ofNullable(num);
                 this.typescopes = Collections.unmodifiableList(typescopes);
                 if (this.num.isEmpty() && this.typescopes.isEmpty()) {
-                    throw new ErrorFatal(
+                    throw new ImplementationError(
                             pos,
                             "num and typescopes cannot both by empty in "
                                     + "AlloyCmdPara.CommandDecl.Scope. ");
@@ -167,7 +167,7 @@ public final class AlloyCmdPara extends AlloyParagraph {
                     ASTNode.join(
                             sb, indent, this.typescopes, AlloyStrings.COMMA + AlloyStrings.SPACE);
                 } else {
-                    throw new ErrorFatal(
+                    throw new ImplementationError(
                             pos,
                             "num and typescopes cannot both by empty in "
                                     + "AlloyCmdPara.CommandDecl.Scope. ");
@@ -198,13 +198,14 @@ public final class AlloyCmdPara extends AlloyParagraph {
                             || this.scopableExpr instanceof AlloyIntExpr
                             || this.scopableExpr instanceof AlloySeqExpr) {
                         if (this.end.value > this.start.value) {
-                            throw new ErrorUser(
+                            throw new Reporter.ErrorUser(
                                     pos,
                                     "Cannot specify a growing scope for "
                                             + scopableExpr.toString());
                         }
                         if (isExactly) {
-                            throw new ErrorUser(pos, "The exactly keyword is redundant here");
+                            throw new Reporter.ErrorUser(
+                                    pos, "The exactly keyword is redundant here");
                         }
                     }
                 }

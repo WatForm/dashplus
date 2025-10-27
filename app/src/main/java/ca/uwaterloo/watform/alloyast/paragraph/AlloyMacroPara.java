@@ -4,8 +4,7 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
-import ca.uwaterloo.watform.utils.ASTNode;
-import ca.uwaterloo.watform.utils.ErrorFatal;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.Collections;
 import java.util.List;
@@ -43,19 +42,20 @@ public final class AlloyMacroPara extends AlloyParagraph {
         this.block = Optional.ofNullable(block);
         this.sub = Optional.ofNullable(sub);
         if (hasBrack && hasParen) {
-            throw new ErrorFatal(
+            throw new ImplementationError(
                     "hasBrack and hasParen cannot both be true " + "in AlloyMacroPara. ");
         }
         if (!hasBrack && !hasParen && !names.isEmpty()) {
-            throw new ErrorFatal(
+            throw new ImplementationError(
                     "Need to have either hasBrack or hasParen "
                             + "if names is not empty in AlloyMacroPara. ");
         }
         if (!this.block.isEmpty() && !this.sub.isEmpty()) {
-            throw new ErrorFatal("block and sub cannot both be null in AlloyMacroPara. ");
+            throw new ImplementationError("block and sub cannot both be null in AlloyMacroPara. ");
         }
         if (this.block.isEmpty() && this.sub.isEmpty()) {
-            throw new ErrorFatal("block and sub cannot both be non-null in AlloyMacroPara. ");
+            throw new ImplementationError(
+                    "block and sub cannot both be non-null in AlloyMacroPara. ");
         }
     }
 
@@ -126,7 +126,7 @@ public final class AlloyMacroPara extends AlloyParagraph {
             sb.append(AlloyStrings.SPACE);
             this.sub.get().toString(sb, indent);
         } else {
-            throw new ErrorFatal("block and sub cannot both be null in AlloyMacroPara. ");
+            throw new ImplementationError("block and sub cannot both be null in AlloyMacroPara. ");
         }
     }
 }

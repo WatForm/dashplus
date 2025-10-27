@@ -116,30 +116,32 @@ public class DashModelResolve extends DashModelInitialize {
 
     private class Error {
 
-        public static void noTrans() throws ErrorFatal {
-            throw new ErrorUser("Dash Model does not contain any transitions");
+        public static void noTrans() throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser("Dash Model does not contain any transitions");
         }
 
         public static void intEventsNotGenerated(List<String> intEventsNotGenerated)
-                throws ErrorFatal {
-            throw new ErrorUser(
+                throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(
                     "The following internal events are never generated: "
                             + strCommaList(intEventsNotGenerated));
         }
 
-        public static void envEventsNotUsed(List<String> envEventsNotUsed) throws ErrorFatal {
-            throw new ErrorUser(
+        public static void envEventsNotUsed(List<String> envEventsNotUsed)
+                throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(
                     "The following environmental events are never used: "
                             + strCommaList(envEventsNotUsed));
         }
 
-        public static void statesNotEntered(List<String> statesNotEntered) throws ErrorFatal {
-            throw new ErrorUser(
+        public static void statesNotEntered(List<String> statesNotEntered)
+                throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(
                     "The following states are not entered: " + strCommaList(statesNotEntered));
         }
 
         public static void cantSendAnEnvEvent(Pos pos, String expString) {
-            throw new ErrorUser(pos + " can't send an environmental event: " + expString);
+            throw new Reporter.ErrorUser(pos + " can't send an environmental event: " + expString);
         }
     }
 }

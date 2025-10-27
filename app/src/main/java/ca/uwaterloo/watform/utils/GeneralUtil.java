@@ -132,8 +132,8 @@ public class GeneralUtil {
     }
 
     private class Error {
-        public static void tooMany(Pos pos, String errorName) throws ErrorFatal {
-            throw new ErrorUser(pos, "Multiple " + errorName + "s");
+        public static void tooMany(Pos pos, String errorName) throws Reporter.ErrorUser {
+            throw new Reporter.ErrorUser(pos, "Multiple " + errorName + "s");
         }
     }
 }

@@ -3,12 +3,16 @@ package ca.uwaterloo.watform.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntConsumer;
 
+// todo for Jack: better formatting
 public final class Reporter {
     public static final Reporter INSTANCE = new Reporter();
 
     public final List<ErrorUser> errors = new ArrayList<>();
     public final List<CommentUser> comments = new ArrayList<>();
+
+    public IntConsumer exitFunction = System::exit; // change this for testing purposes
 
     private Reporter() {}
 
@@ -55,5 +59,60 @@ public final class Reporter {
 
     public boolean hasComments() {
         return !this.comments.isEmpty();
+    }
+
+    public void print() {
+        if (!this.comments.isEmpty()) {
+            System.err.println("\nComments:");
+            for (CommentUser comment : this.comments) {
+                System.err.printf("[%s] %s%n", comment.pos.toString(), comment.getMessage());
+            }
+        }
+
+        System.err.println("\nErrors:");
+        for (ErrorUser error : this.errors) {
+            System.err.printf("[%s] %s%n", error.pos.toString(), error.getMessage());
+        }
+    }
+
+    public void exitIfHasErrors() {
+        if (!this.hasErrors()) {
+            return;
+        }
+        this.print();
+        this.exitFunction.accept(1);
+    }
+
+    public abstract static class DiagnosticException extends RuntimeException {
+        public final Pos pos;
+
+        public DiagnosticException(Pos pos, String message) {
+            super(message);
+            this.pos = pos;
+        }
+
+        public DiagnosticException(String message) {
+            this(Pos.UNKNOWN, message);
+        }
+    }
+
+    public static class CommentUser extends DiagnosticException {
+        public CommentUser(Pos pos, String msg) {
+            super(pos, msg);
+        }
+
+        public CommentUser(String msg) {
+            super(msg);
+        }
+    }
+
+    public static class ErrorUser extends DiagnosticException {
+        public ErrorUser(Pos pos, String msg) {
+            super(pos, msg);
+        }
+
+        public ErrorUser(String msg) {
+            super(msg);
+        }
     }
 }
