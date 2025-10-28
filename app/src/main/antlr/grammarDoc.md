@@ -276,3 +276,6 @@ expr	        : (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) expr                      
 
 ```
 
+# Dash Grammar
+- how to deal with dash tokens? still need to parse them as qname etc for regular alloy: use semantic predicate
+
