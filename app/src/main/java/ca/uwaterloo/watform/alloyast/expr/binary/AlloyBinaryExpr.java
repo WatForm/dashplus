@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 
-public class AlloyBinaryExpr extends AlloyExpr {
+public abstract class AlloyBinaryExpr extends AlloyExpr {
     public final AlloyExpr left;
     public final AlloyExpr right;
     public final String op;
@@ -54,4 +54,6 @@ public class AlloyBinaryExpr extends AlloyExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    public abstract AlloyBinaryExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right);
 }

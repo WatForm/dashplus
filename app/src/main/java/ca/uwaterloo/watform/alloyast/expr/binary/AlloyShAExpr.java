@@ -18,4 +18,9 @@ public final class AlloyShAExpr extends AlloyBinaryExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyShAExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
+        return new AlloyShAExpr(pos, left, right);
+    }
 }

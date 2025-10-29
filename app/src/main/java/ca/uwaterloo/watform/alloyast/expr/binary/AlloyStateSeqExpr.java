@@ -18,4 +18,9 @@ public final class AlloyStateSeqExpr extends AlloyBinaryExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyStateSeqExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
+        return new AlloyStateSeqExpr(pos, left, right);
+    }
 }
