@@ -154,6 +154,17 @@ public final class DashStrings {
         NOTDEFAULT
     }
 
+    // generally in the code we know the kind by context but
+    // for printing we need the kind here
+    // and this simplified some code for the DashRef to know its kind
+    public static enum DashRefKind {
+        STATE,
+        EVENT,
+        VAR,
+        TRANS
+        // BUFFER ????
+    }
+
     public static boolean hasPrime(final String s) {
         return (s.substring(s.length() - 1, s.length()).equals(PRIME));
     }

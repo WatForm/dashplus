@@ -32,6 +32,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashExprVis;
+import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
@@ -39,30 +40,20 @@ import java.util.List;
 
 public class DashRef extends AlloyExpr {
 
-    public final DashRefKind kind;
+    public final DashStrings.DashRefKind kind;
     public final String name;
     public final List<? extends AlloyExpr> paramValues;
 
-    // generally in the code we know the kind by context but
-    // for printing we need the kind here
-    // and this simplified some code for the DashRef to know its kind
-    static enum DashRefKind {
-        STATE,
-        EVENT,
-        VAR,
-        TRANS
-        // BUFFER ????
-    }
-
     // for internal uses during translation
-    public DashRef(DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
+    public DashRef(DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
         this.kind = k;
         this.name = n;
         this.paramValues = prmValues;
     }
 
     // for uses when parsed
-    public DashRef(Pos p, DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
+    public DashRef(
+            Pos p, DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
         super(p);
         this.kind = k;
         this.name = n;
@@ -78,7 +69,7 @@ public class DashRef extends AlloyExpr {
         // STATE: Root/A/B[a1,b1]
         // other: Root/A/B[a1,b1]/var1
         String s = "";
-        if (kind == DashRefKind.STATE) {
+        if (kind == DashStrings.DashRefKind.STATE) {
             s += name;
         } else {
             s += chopPrefixFromFQN(name);
@@ -91,7 +82,7 @@ public class DashRef extends AlloyExpr {
             s += GeneralUtil.strCommaList(paramValues);
             s += "]";
         }
-        if (kind != DashRefKind.STATE) {
+        if (kind != DashStrings.DashRefKind.STATE) {
             s += "/";
             s += chopNameFromFQN(name);
         }
