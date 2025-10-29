@@ -439,21 +439,21 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
     private class Error {
 
         public static void wrongNumberParams(Pos pos, String expString) {
-            throw new Reporter.ErrorUser(pos + "Incorrect number of parameters: " + expString);
+            throw new Reporter.ErrorUser(pos, "Incorrect number of parameters: " + expString);
         }
 
         public static void ambiguousRef(Pos pos, String expString) {
-            throw new Reporter.ErrorUser(pos + " Name not unique: " + expString);
+            throw new Reporter.ErrorUser(pos, " Name not unique: " + expString);
         }
 
         public static void unknownElementWithParams(Pos pos, String expString) {
             throw new Reporter.ErrorUser(
-                    pos + " " + "Unknown Dash element with params: " + expString);
+                    pos, " " + "Unknown Dash element with params: " + expString);
         }
 
         public static String cantPrimeNonVar(Pos pos, String expString) {
             throw new Reporter.ErrorUser(
-                    pos + " " + " Non-var/buffer cannot be primed: " + expString);
+                    pos, " " + " Non-var/buffer cannot be primed: " + expString);
         }
 
         public static void unknownSrcDest(String x, String t, String tfqn) {
@@ -462,7 +462,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         }
 
         private static void unknown(Pos pos, String expString, String thing) {
-            throw new Reporter.ErrorUser(pos + thing + " does not exist: " + expString);
+            throw new Reporter.ErrorUser(pos, thing + " does not exist: " + expString);
         }
 
         public static void unknownState(Pos pos, String expString) {
@@ -475,11 +475,11 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
         public static String cantPrimeExternalVar(Pos pos, String expString) {
             throw new Reporter.ErrorUser(
-                    pos + " Internal var/buffer cannot be primed: " + expString);
+                    pos, " Internal var/buffer cannot be primed: " + expString);
         }
 
         public static void noPrimedVars(Pos pos, String expString) {
-            throw new ErrorUser(pos + "Primed variables are not allowed in: " + expString);
+            throw new Reporter.ErrorUser(pos, "Primed variables are not allowed in: " + expString);
         }
     }
 }

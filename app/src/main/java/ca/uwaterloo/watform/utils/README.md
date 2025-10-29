@@ -1,4 +1,8 @@
 # Error Handling
+
+* Try to group dir specific exceptions together (could be in private class)
+* Use Pos whenever possible
+
 ## Implementation Errors 
 - Throw ImplementationError directly
 
@@ -9,7 +13,6 @@
 - Add the Reporter.ErrorUser into Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyFileParseVis.java)
 - Call exitIfHasErrors() if needed [(example)](/app/src/main/java/ca/uwaterloo/watform/utils/ParserUtil.java)
 
-> Note:
-> - Try to group dir specific exceptions together (could be in private class)
-> - Use Pos whenever possible
+
+
 
