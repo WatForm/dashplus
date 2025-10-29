@@ -13,7 +13,11 @@ public final class AlloyFileParseVis extends AlloyBaseVisitor<AlloyFile> {
         AlloyParagraphParseVis ppv = new AlloyParagraphParseVis();
         List<AlloyParagraph> paragraphs = new ArrayList<>();
         for (AlloyParser.ParagraphContext parCtx : ctx.paragraph()) {
-            paragraphs.add(ppv.visit(parCtx));
+            try {
+                paragraphs.add(ppv.visit(parCtx));
+            } catch (Reporter.ErrorUser eu) {
+                Reporter.INSTANCE.addError(eu);
+            }
         }
         if (paragraphs.isEmpty()) {
             return new AlloyFile(paragraphs);

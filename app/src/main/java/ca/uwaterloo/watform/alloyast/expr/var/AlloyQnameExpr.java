@@ -23,13 +23,13 @@ public final class AlloyQnameExpr extends AlloyVarExpr
             if (!(vars.getFirst() instanceof AlloyNameExpr)
                     && !(vars.getFirst() instanceof AlloySeqExpr)
                     && !(vars.getFirst() instanceof AlloyThisExpr)) {
-                throw new ErrorFatal(
+                throw new ImplementationError(
                         pos,
                         "First var of AlloyQnameExpr must be either AlloyNameExpr, AlloySeqExpr or AlloyThisExpr. ");
             }
             for (int i = 1; i < vars.size(); i++) {
                 if (!(vars.get(i) instanceof AlloyNameExpr)) {
-                    throw new ErrorFatal(
+                    throw new ImplementationError(
                             pos,
                             "Everything after the head of AlloyQnameExpr must be AlloyNameExpr. ");
                 }

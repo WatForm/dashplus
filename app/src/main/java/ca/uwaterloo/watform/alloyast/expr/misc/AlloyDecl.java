@@ -37,7 +37,7 @@ public final class AlloyDecl extends AlloyExpr {
         this.expr = expr;
         if (!this.quant.isEmpty() && this.quant.get() == Quant.EXACTLY) {
             if (isVar || isDisj1 || isDisj2) {
-                throw new ErrorFatal(
+                throw new ImplementationError(
                         "Decl with quant EXACTLY cannot be disjoint on either "
                                 + "side and cannot be var.");
             }

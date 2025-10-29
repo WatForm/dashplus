@@ -2,9 +2,7 @@ package ca.uwaterloo.watform.dashast;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.utils.ASTNode;
-import ca.uwaterloo.watform.utils.CodingError;
-import ca.uwaterloo.watform.utils.Pos;
+import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,8 +49,7 @@ public class DashState extends DashParagraph {
         else if (DashTrans.class.isInstance(i)) return 6;
         else if (DashState.class.isInstance(i)) return 7;
         else {
-            CodingError.missingCase("itemToInt");
-            return 0;
+            throw ImplementationError.missingCase("itemToInt");
         }
     }
 

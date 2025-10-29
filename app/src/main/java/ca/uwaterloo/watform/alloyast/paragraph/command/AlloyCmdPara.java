@@ -1,15 +1,10 @@
 package ca.uwaterloo.watform.alloyast.paragraph.command;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNumExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyScopableExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
-import ca.uwaterloo.watform.utils.ASTNode;
-import ca.uwaterloo.watform.utils.ErrorFatal;
-import ca.uwaterloo.watform.utils.Pos;
+import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -64,12 +59,12 @@ public final class AlloyCmdPara extends AlloyParagraph {
             this.scope = Optional.ofNullable(scope);
             this.number = Optional.ofNullable(number);
             if (!this.invoQname.isEmpty() && !this.constrBlock.isEmpty()) {
-                throw new ErrorFatal(
+                throw new ImplementationError(
                         "invoQname and constrBlock cannot both be non-null in "
                                 + "AlloyCmdPara.CommandDecl. ");
             }
             if (this.invoQname.isEmpty() && this.constrBlock.isEmpty()) {
-                throw new ErrorFatal(
+                throw new ImplementationError(
                         "invoQname and constrBlock cannot both be null in "
                                 + "AlloyCmdPara.CommandDecl. ");
             }
@@ -100,7 +95,7 @@ public final class AlloyCmdPara extends AlloyParagraph {
             } else if (!this.constrBlock.isEmpty()) {
                 this.constrBlock.get().toString(sb, indent);
             } else {
-                throw new ErrorFatal(
+                throw new ImplementationError(
                         "invoQname and constrBlock cannot both be null in "
                                 + "AlloyCmdPara.CommandDecl. ");
             }
@@ -110,7 +105,7 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 sb.append(AlloyStrings.SPACE);
             }
             if (!this.number.isEmpty()) {
-                sb.append(AlloyStrings.EXPECT);
+                sb.append(AlloyStrings.EXPECT + AlloyStrings.SPACE);
                 this.number.get().toString(sb, indent);
             }
         }
@@ -144,7 +139,7 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 this.num = Optional.ofNullable(num);
                 this.typescopes = Collections.unmodifiableList(typescopes);
                 if (this.num.isEmpty() && this.typescopes.isEmpty()) {
-                    throw new ErrorFatal(
+                    throw new ImplementationError(
                             pos,
                             "num and typescopes cannot both by empty in "
                                     + "AlloyCmdPara.CommandDecl.Scope. ");
@@ -172,7 +167,7 @@ public final class AlloyCmdPara extends AlloyParagraph {
                     ASTNode.join(
                             sb, indent, this.typescopes, AlloyStrings.COMMA + AlloyStrings.SPACE);
                 } else {
-                    throw new ErrorFatal(
+                    throw new ImplementationError(
                             pos,
                             "num and typescopes cannot both by empty in "
                                     + "AlloyCmdPara.CommandDecl.Scope. ");
@@ -199,6 +194,20 @@ public final class AlloyCmdPara extends AlloyParagraph {
                     this.end = end;
                     this.increment = increment;
                     this.scopableExpr = scopableExpr;
+                    if (this.scopableExpr instanceof AlloySigIntExpr
+                            || this.scopableExpr instanceof AlloyIntExpr
+                            || this.scopableExpr instanceof AlloySeqExpr) {
+                        if (this.end.value > this.start.value) {
+                            throw new Reporter.ErrorUser(
+                                    pos,
+                                    "Cannot specify a growing scope for "
+                                            + scopableExpr.toString());
+                        }
+                        if (isExactly) {
+                            throw new Reporter.ErrorUser(
+                                    pos, "The exactly keyword is redundant here");
+                        }
+                    }
                 }
 
                 public Typescope(
@@ -218,10 +227,14 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 public void toString(StringBuilder sb, int indent) {
                     sb.append(isExactly ? AlloyStrings.EXACTLY + AlloyStrings.SPACE : "");
                     this.start.toString(sb, indent);
-                    sb.append(AlloyStrings.DOT + AlloyStrings.DOT);
-                    this.end.toString(sb, indent);
-                    sb.append(AlloyStrings.SPACE + AlloyStrings.COLON + AlloyStrings.SPACE);
-                    this.increment.toString(sb, indent);
+                    if (!(this.scopableExpr instanceof AlloySigIntExpr)
+                            && !(this.scopableExpr instanceof AlloyIntExpr)
+                            && !(this.scopableExpr instanceof AlloySeqExpr)) {
+                        sb.append(AlloyStrings.DOT + AlloyStrings.DOT);
+                        this.end.toString(sb, indent);
+                        sb.append(AlloyStrings.SPACE + AlloyStrings.COLON + AlloyStrings.SPACE);
+                        this.increment.toString(sb, indent);
+                    }
                     sb.append(AlloyStrings.SPACE);
                     ((AlloyVarExpr) this.scopableExpr).toString(sb, indent);
                 }

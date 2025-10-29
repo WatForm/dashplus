@@ -32,7 +32,7 @@ public final class ParserUtil {
         return filePaths;
     }
 
-    public static AlloyFile parse(Path filePath) throws Exception {
+    public static AlloyFile parse(Path filePath) throws IOException {
         CharStream input = CharStreams.fromPath(filePath);
         BailLexer lexer = new BailLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -41,6 +41,7 @@ public final class ParserUtil {
 
         AlloyFileParseVis afpv = new AlloyFileParseVis();
         AlloyFile af = afpv.visit(antlrAST);
+        Reporter.INSTANCE.exitIfHasErrors();
         af.filename = filePath.toString();
         return af;
     }
@@ -56,7 +57,7 @@ public final class ParserUtil {
                     .map(targetType::cast)
                     .collect(Collectors.toList());
         } catch (ClassCastException e) {
-            throw CodingError.failedCast(
+            throw ImplementationError.failedCast(
                     "Failed to cast an item to " + targetType.getSimpleName() + " in visitAll.");
         }
     }

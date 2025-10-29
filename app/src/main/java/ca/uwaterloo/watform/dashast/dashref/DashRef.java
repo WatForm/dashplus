@@ -109,8 +109,7 @@ public class DashRef extends AlloyExpr {
 
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
-        CodingError.methodShouldNotBeCalled();
-        return null;
+        throw ImplementationError.methodShouldNotBeCalled();
     }
 
     public <T> T accept(DashExprVis<T> visitor) {
