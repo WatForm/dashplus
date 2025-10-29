@@ -73,4 +73,9 @@ public final class AlloyComparisonExpr extends AlloyBinaryExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyComparisonExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
+        return new AlloyComparisonExpr(pos, left, this.neg, this.comp, right);
+    }
 }
