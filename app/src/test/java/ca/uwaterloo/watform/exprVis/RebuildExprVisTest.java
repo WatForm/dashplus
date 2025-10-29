@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyAndExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
-import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyDotExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.test.*;
@@ -20,7 +19,7 @@ public class RebuildExprVisTest {
     @DisplayName("Rebuilding AlloyDotExpr should call visit(AlloyBinaryExpr)")
     public void dotShouldUseVisitBinary() throws Exception {
         AlloyExpr dot = new AlloyDotExpr(new AlloyNameExpr("left"), new AlloyNameExpr("right"));
-        AlloyBinaryExpr rebuiltDot = (AlloyBinaryExpr) dot.accept(new RebuildExprVis());
+        AlloyDotExpr rebuiltDot = (AlloyDotExpr) dot.accept(new RebuildExprVis());
         assertEquals("binLeft", rebuiltDot.left.toString());
         assertEquals("binRight", rebuiltDot.right.toString());
     }
@@ -30,7 +29,7 @@ public class RebuildExprVisTest {
     @DisplayName("Rebuilding AlloyAndExpr should call visit(AlloyAndExpr)")
     public void andShouldUseVisitAnd() throws Exception {
         AlloyExpr and = new AlloyAndExpr(new AlloyNameExpr("left"), new AlloyNameExpr("right"));
-        AlloyBinaryExpr rebuiltAnd = (AlloyBinaryExpr) and.accept(new RebuildExprVis());
+        AlloyAndExpr rebuiltAnd = (AlloyAndExpr) and.accept(new RebuildExprVis());
         assertEquals("andLeft", rebuiltAnd.left.toString());
         assertEquals("andRight", rebuiltAnd.right.toString());
     }
