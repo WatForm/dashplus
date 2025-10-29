@@ -317,9 +317,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
     public AlloyExpr visit(AlloyBinaryExpr binExpr) {
         // can't use a withLeft, withRight here
         // because this is a parent class
-        // return new AlloyBinaryExpr(
-        //         binExpr.pos, visit(binExpr.left), visit(binExpr.right), binExpr.op);
-        return null;
+        return binExpr.rebuild(binExpr.pos, visit(binExpr.left), visit(binExpr.right));
     }
     ;
 
