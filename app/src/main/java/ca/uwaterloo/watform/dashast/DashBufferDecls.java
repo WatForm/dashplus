@@ -6,9 +6,9 @@ import java.util.StringJoiner;
 
 public class DashBufferDecls extends ASTNode {
 
-    private List<String> names;
-    private String element;
-    private DashStrings.IntEnvKind kind;
+    public final List<String> names;
+    public final String element;
+    public final DashStrings.IntEnvKind kind;
 
     public DashBufferDecls(Pos pos, List<String> n, String element, DashStrings.IntEnvKind k) {
         super(pos);

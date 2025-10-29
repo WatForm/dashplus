@@ -6,8 +6,8 @@ import java.util.StringJoiner;
 
 public class DashEventDecls extends ASTNode {
 
-    private List<String> names;
-    private DashStrings.IntEnvKind kind;
+    public final List<String> names;
+    public final DashStrings.IntEnvKind kind;
 
     public DashEventDecls(Pos pos, List<String> n, DashStrings.IntEnvKind kind) {
         super(pos);

@@ -9,6 +9,7 @@ import java.util.StringJoiner;
 public class DashTrans extends ASTNode {
     public String name;
     public List<Object> items;
+    public DashFrom from;
 
     public DashTrans(Pos pos, String n, List<Object> i) {
         super(pos);
@@ -16,6 +17,8 @@ public class DashTrans extends ASTNode {
         assert (i != null);
         this.name = n;
         this.items = i;
+        this.from =
+                (DashFrom) extractOneFromList(extractItemsOfClass(items, DashFrom.class), "from");
     }
 
     @Override

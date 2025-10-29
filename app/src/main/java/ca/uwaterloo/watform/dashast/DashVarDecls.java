@@ -7,9 +7,9 @@ import java.util.StringJoiner;
 
 public class DashVarDecls extends ASTNode {
 
-    private List<String> names;
-    private AlloyExpr typ;
-    private DashStrings.IntEnvKind kind;
+    public final List<String> names;
+    public final AlloyExpr typ;
+    public final DashStrings.IntEnvKind kind;
 
     public DashVarDecls(Pos pos, List<String> n, AlloyExpr e, DashStrings.IntEnvKind k) {
         super(pos);

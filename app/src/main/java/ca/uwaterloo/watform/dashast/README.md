@@ -1,8 +1,8 @@
 # dashast
 
-These classes are simply to store the parsed elements of a Dash model.
+These classes are to store the parsed elements of a Dash model.
 
-DashFile is the top class to use.
+DashFile is the top class to use, which consists of a number of DashParagraphs.
 
 DashState is a subclass of AlloyParagraph.
 

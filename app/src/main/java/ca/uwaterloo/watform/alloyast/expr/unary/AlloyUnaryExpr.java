@@ -1,9 +1,9 @@
 package ca.uwaterloo.watform.alloyast.expr.unary;
 
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 
-public abstract class AlloyUnaryExpr extends AlloyExpr {
+public class AlloyUnaryExpr extends AlloyExpr {
     public final AlloyExpr sub;
     public final String op;
 
@@ -31,5 +31,10 @@ public abstract class AlloyUnaryExpr extends AlloyExpr {
     public void toString(StringBuilder sb, int indent) {
         sb.append(op);
         this.sub.toString(sb, indent);
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

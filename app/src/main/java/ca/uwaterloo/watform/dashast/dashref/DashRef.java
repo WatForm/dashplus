@@ -39,9 +39,9 @@ import java.util.List;
 
 public class DashRef extends AlloyExpr {
 
-    public DashRefKind kind;
-    public String name;
-    public List<? extends AlloyExpr> paramValues;
+    public final DashRefKind kind;
+    public final String name;
+    public final List<? extends AlloyExpr> paramValues;
 
     // generally in the code we know the kind by context but
     // for printing we need the kind here

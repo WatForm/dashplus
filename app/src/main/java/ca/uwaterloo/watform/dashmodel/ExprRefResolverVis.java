@@ -1,22 +1,21 @@
 /*
-	This visitor over Alloy expressions takes an Expr and sorts out any Dash names used in it to:
-	1) replace the names with their fully qualified
-		- a "name" used is allowed to be an unambiguous suffix of a fqn
-	2) add in all the parameter values
-	3) replace "thisState" with a DashParam
-	4) turn PRIME(v) into v'
-	and returns an Expr.
+    This visitor over Alloy expressions takes an Expr and sorts out any Alloy variable names that are Dash names used in it to:
+    1) replace the names with their fully qualified name; a "name" used on input is allowed to be an unambiguous suffix of a fqn
+    2) add in all the parameter values
+    3) replace "thisState" with a DashParam
+    4) turn PRIME(v) into v'
+    and returns an Expr.
 
-	It is called from the stateTable resolving for inits and invariants
-	It is called from varTable for resolving type of dynamic variables (where it resolves only the name, not the parameters )
-	It is called from transTable to resolve all parts of transitions.
+    It is called from the stateTable resolving for inits and invariants
+    It is called from varTable for resolving type of dynamic variables (where it resolves only the name, not the parameters )
+    It is called from transTable to resolve all parts of transitions.
 
-	Variation points for these uses is in where to search for
-	a name (st, EventTable, vt)
+    Variation points for these uses is in where to search for
+    a name (st, EventTable, vt)
 
-	Incoming Expr may also be a DashRef (from parsing for src/dest/on/send).
+    Incoming Expr may also be a DashRef (from parsing for src/dest/on/send).
 
-	Errors are given using "pos" of the incoming expression.
+    Errors are given using "pos" of the incoming expression.
 */
 
 package ca.uwaterloo.watform.dashmodel;
@@ -24,14 +23,19 @@ package ca.uwaterloo.watform.dashmodel;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
+import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
+import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExprRefResolver {
+public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
     private Kind defaultKind = Kind.VAR;
 
@@ -53,7 +57,7 @@ public class ExprRefResolver {
         EVENT
     }
 
-    public ExprRefResolver(
+    public ExprRefResolverVis(
             StateTable st,
             TransTable tt,
             EventTable et,
@@ -75,160 +79,74 @@ public class ExprRefResolver {
         // by calling functions in between calls to revolveExpr
     }
 
-    // for internal calls to resolve
-    private AlloyExpr resolve(AlloyExpr expr) {
-        return null;
-    }
+    // top-level calls
 
     public AlloyExpr resolveVar(AlloyExpr expr, String sfqn) {
+        // resolving something that is a reference in an expression
+        // means we are looking for variables
         sfqn = sfqn;
         assert (kind == Kind.VAR);
-        return null;
+        return visit(expr);
     }
 
     public AlloyExpr resolveVarPrimesOkAnywhere(AlloyExpr expr, String sfqn) {
+        // resolving something that is a reference in an expression
+        // means we are looking for variables
         assert (kind == Kind.VAR);
         sfqn = sfqn;
         primeOk = true;
         primeOkInPrmExprs = true;
-        AlloyExpr x = resolve(expr);
+        AlloyExpr x = visit(expr);
         primeOk = false;
         primeOkInPrmExprs = false;
         return x;
     }
 
     public DashRef resolveState(AlloyExpr expr, String sfqn) {
+        // resolving something that is a reference to a State
+        // we know this returns a DashRef rather than a more general AlloyExpr
         sfqn = sfqn;
         kind = kind.STATE;
-        DashRef x = (DashRef) resolve(expr);
+        DashRef x = (DashRef) visit(expr);
         kind = defaultKind;
         return x;
     }
 
     public DashRef resolveEvent(AlloyExpr expr, String sfqn) {
+        // resolving something that is a reference to an event
+        // we know this returns a DashRef rather than a more general AlloyExpr
         sfqn = sfqn;
         kind = kind.EVENT;
-        DashRef x = (DashRef) resolve(expr);
+        DashRef x = (DashRef) visit(expr);
         kind = defaultKind;
         return x;
     }
 
     public DashRef resolveEventPrimesOkInPrmExprs(AlloyExpr expr, String sfqn) {
+        // resolving something that is a reference to an event
+        // we know this returns a DashRef rather than a more general AlloyExpr
         sfqn = sfqn;
         kind = kind.EVENT;
         primeOkInPrmExprs = true;
-        DashRef x = (DashRef) resolve(expr);
+        DashRef x = (DashRef) visit(expr);
         kind = defaultKind;
         primeOkInPrmExprs = false;
         return x;
     }
 
-    /*
-      public Expr visit(AlloyExprVar exp) {
-    // came with no param values
-    String v = getVarName((ExprVar) exp);
-    // these should only be DashParams in this function
+    // private functions
 
-
-    if (thisOk && v.startsWith(thisName)) {
-    	// thisSname gets replaced with DashParam (sfqn, param)
-    	String thisstate = v.substring(thisName.length(),v.length());
-
-    	// have to change kind to search for to STATE
-    	String kindTemp = kind;
-    	kind = STATE;
-    	List<String> matches = findMatchesInRegion(thisstate);
-    	kind = kindTemp;
-
-    	String firstMatch = matches.get(0);
-    	if (matches.size() == 1 && st.hasParam(firstMatch)) {
-    		// parameters of a state are DashParams
-    		// parameters used within an expression are Expr
-    		List<Expr> ps = mapBy(st.getParams(firstMatch), i -> ((Expr) i));
-    		if (ps.size() == 1)
-    			// any "thisState" use must be for a state with only one param
-    			// this is already an Expr
-    			return ps.get(0);
-    		else
-    			DashErrors.ambiguousUseOfThis(exp.pos,exp.toString());
-    	} else if (matches.size() == 1 && !st.hasParam(firstMatch))
-    		DashErrors.nonParamUseOfThis(exp.pos,exp.toString());
-    	else if (matches.size() > 1)
-    		DashErrors.ambiguousUseOfThis(exp.pos,exp.toString());
-    }
-    // Types are not expressions
-    // so not sure how to resolve this
-    // hopefully types only get set in the resolveAlloy phase
-    // perhaps we could just copy the type?
-    // not clear what to do with type
-    if (exp.type() != Type.EMPTY) {
-    	DashErrors.resolvingVarWithType(exp.pos,exp.toString());
-    }
-    // else we carry on with it as a regular var name with no params yet
-    // v_params is empty
-    List<Expr> v_params = new ArrayList<Expr>();
-    return resolve(v,v_params,false, exp.pos);
-      }
-
-      public Expr visit(DashRef exp) {
-      	// can exist in parsing from x[a,b] or x[a,b]/v
-    // name might not be fully resolved
-    // might have a prime on name
-    // ASSUMPTION: due to the way DashRefs are parsed,
-    // they are not turned into PrimeOp(name)
-
-      	boolean isPrimed = false;
-    String v = ((DashRef) exp).getName();
-    if (hasPrime(v)) {
-    	isPrimed = true;
-    	v = removePrime(v);
-    	if (!primeOk) {
-    		DashErrors.noPrimedVars(exp.pos, exp.toString());
-    		return null;
-    	}
-    }
-    // have to recurse through param expressions
-    List<Expr> v_params = mapBy( ((DashRef) exp).getParamValues(), i -> visitThis(i));
-    return resolve(v,v_params,isPrimed, exp.pos);
-      }
-
-      public Expr visit(DashParam x) throws Err {
-      	// should not exist before resolution
-      	DashErrors.missingCase("Trying to resolve a DashParam");
-      }
-      */
-
-    /*
-       public Expr visit(ExprUnary exp) throws Err {
-       	if (isPrimedVar(exp)) {
-       		// exp is PrimeOp(name)
-    		if (!primeOk) {
-    			DashErrors.noPrimedVars(exp.pos, exp.toString()); return null;
-    		}
-       		List<Expr> v_params = new ArrayList<Expr>();
-    		String v = getVarName((ExprVar) getSub(exp));
-    		return resolve(v,v_params,true, exp.pos);
-    	} else {
-    		return ((ExprUnary) exp).op.make(
-    			exp.pos,
-    			visitThis(((ExprUnary) exp).sub));
-    	}
-       }
-    */
-    // private functions -----------------------------------------------
-
-    /*
-    	This purpose of this function is to take what we know about
-    	a variable references (primed or not, and included parsed DashRefs)
-    	and flesh out the reference to a fqn with all parameters values.
-
-    	Parameter values have to be determined from context, which is why sfqn is an argument to resolving.
-
-    	References to the parameter values of the current context (whether from a thisState or from lack of parameters) become DashParam(statename, parameter sig) within the expression.
-    */
     private AlloyExpr resolve(
             String v, List<? extends AlloyExpr> v_params, boolean isPrimed, Pos pos, Kind kind) {
+        /*
+            This purpose of this function is to take what we know about
+            a variable references (primed or not, and included parsed DashRefs)
+            and flesh out the reference to a fqn with all parameters values.
 
+            Parameter values have to be determined from context, which is why sfqn is an argument to resolving.
+
+            References to the parameter values of the current context (whether from a thisState or from lack of parameters) become DashParam(statename, parameter sig) within the expression.
+        */
         // v is the name, v_params as the possibly empty set
         // of resolved param expr (which could include DashParams)
         // but it could still need to be added to
@@ -289,7 +207,7 @@ public class ExprRefResolver {
                 // resolve the predicate value in place and add it in place
                 Kind kindTemp = kind;
                 kind = kind.VAR;
-                AlloyExpr ret = resolve(pt.get(m).exp);
+                AlloyExpr ret = visit(pt.get(m).exp);
                 kind = kindTemp;
                 return ret;
             }
@@ -336,10 +254,10 @@ public class ExprRefResolver {
         else return new VarDashRef(pos, m, full_v_params);
     }
 
-    // set up names that we are searching for
-    // from appropiate 'type' of element
-    // for this function, match could be anywhere in Dash model
     private List<String> findMatches(String name) {
+        // set up names that we are searching for
+        // from appropiate 'type' of element
+        // for this function, match could be anywhere in Dash model
         List<String> region = new ArrayList<String>();
         if (kind == Kind.STATE) region.addAll(st.getAllNames());
         else if (kind == Kind.EVENT) region.addAll(et.getAllNames());
@@ -351,11 +269,10 @@ public class ExprRefResolver {
         return compareNames(name, region);
     }
 
-    // set up names that we are searching for
-    // from appropiate 'type' of element
-    // for this function, match can only be within enclosing sfqn
     private List<String> findMatchesInRegion(String name) {
-
+        // set up names that we are searching for
+        // from appropiate 'type' of element
+        // for this function, match can only be within enclosing sfqn
         List<String> region = new ArrayList<String>();
 
         if (kind == Kind.STATE) region = st.getRegion(sfqn);
@@ -372,11 +289,11 @@ public class ExprRefResolver {
         return compareNames(name, region);
     }
 
-    // region is a list of possible matches
-    // 'name' is the name of the element to search for
-    // it could be a suffix of the fqn in the region list
-    // may return more than one possible match
     private List<String> compareNames(String name, List<String> region) {
+        // region is a list of possible matches
+        // 'name' is the name of the element to search for
+        // it could be a suffix of the fqn in the region list
+        // may return more than one possible match
         List<String> matches = new ArrayList<String>();
         for (String x : region)
             // FQN suffix e.g., A/B/C matches B/C
@@ -404,6 +321,119 @@ public class ExprRefResolver {
         } else {
             return null;
         }
+    }
+
+    // visitor instance
+
+    @Override
+    public AlloyExpr visit(AlloyBinaryExpr binExpr) {
+        // can't use a withLeft, withRight here
+        // because this is a parent class
+        return new AlloyBinaryExpr(
+                binExpr.pos, visit(binExpr.left), visit(binExpr.right), binExpr.op);
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(AlloyUnaryExpr unaryExpr) {
+        // This could be a PRIME unary op
+        if (unaryExpr.op == AlloyStrings.PRIME) {
+            // can only apply a prime to a var
+            // this should be not allowed in parsing
+            assert (unaryExpr.sub instanceof AlloyVarExpr);
+            if (!primeOk) {
+                Error.noPrimedVars(unaryExpr.pos, unaryExpr.toString());
+                return null;
+            }
+        }
+        // can't use a withSub here
+        // because this is a parent class
+        return new AlloyUnaryExpr(unaryExpr.pos, visit(unaryExpr.sub), unaryExpr.op);
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(AlloyVarExpr varExpr) {
+        // NADTODO
+        return null;
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(AlloyBlock block) {
+        return new AlloyBlock(block.pos, mapBy(block.exprs, i -> visit(i)));
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(AlloyBracketExpr bracketExpr) {
+        AlloyExpr y = visit(bracketExpr.expr);
+        List<AlloyExpr> x = mapBy(bracketExpr.exprs, i -> visit(i));
+        return new AlloyBracketExpr(bracketExpr.pos, y, x);
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(AlloyComprehensionExpr comprehensionExpr) {
+        List<AlloyDecl> decls = mapBy(comprehensionExpr.decls, i -> (AlloyDecl) visit(i));
+        AlloyExpr body = comprehensionExpr.body.map(value -> visit(value)).orElse(null);
+
+        return new AlloyComprehensionExpr(comprehensionExpr.pos, decls, body);
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(AlloyIteExpr iteExpr) {
+        return new AlloyIteExpr(
+                iteExpr.pos, visit(iteExpr.cond), visit(iteExpr.conseq), visit(iteExpr.alt));
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(AlloyLetExpr letExpr) {
+        // NADTODO: rule out var names that are bound
+        List<AlloyLetExpr.AlloyLetAsn> asns = letExpr.asns;
+        List<AlloyLetExpr.AlloyLetAsn> newAsns =
+                mapBy(asns, i -> new AlloyLetExpr.AlloyLetAsn(i.pos, i.name, visit(i.expr)));
+        return new AlloyLetExpr(letExpr.pos, newAsns, visit(letExpr.body));
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(AlloyQuantificationExpr quantificationExpr) {
+        // NADTODO: rule out var names that are bound
+        return new AlloyQuantificationExpr(
+                quantificationExpr.pos,
+                quantificationExpr.quant,
+                mapBy(quantificationExpr.decls, i -> (AlloyDecl) visit(i)),
+                visit(quantificationExpr.body));
+    }
+
+    @Override
+    public AlloyExpr visit(AlloyDecl decl) {
+        return decl.withExpr(visit(decl.expr));
+    }
+
+    public AlloyExpr visit(AlloyParenExpr parenExpr) {
+        return new AlloyParenExpr(parenExpr.pos, visit(parenExpr.sub));
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(DashRef dashRef) {
+        // can exist in parsing from x[a,b] or x[a,b]/v
+        // name might not be fully resolved
+        // might have a prime on name
+        // ASSUMPTION: due to the way DashRefs are parsed,
+        // they are not turned into PrimeOp(name)
+        return new DashRef(
+                dashRef.pos, dashRef.kind, dashRef.name, mapBy(dashRef.paramValues, i -> visit(i)));
+    }
+    ;
+
+    @Override
+    public AlloyExpr visit(DashParam dashParam) {
+        return dashParam;
     }
 
     private class Error {
@@ -443,6 +473,10 @@ public class ExprRefResolver {
 
         public static String cantPrimeExternalVar(Pos pos, String expString) {
             throw new ErrorUser(pos + " Internal var/buffer cannot be primed: " + expString);
+        }
+
+        public static void noPrimedVars(Pos pos, String expString) {
+            throw new ErrorUser(pos + "Primed variables are not allowed in: " + expString);
         }
     }
 }

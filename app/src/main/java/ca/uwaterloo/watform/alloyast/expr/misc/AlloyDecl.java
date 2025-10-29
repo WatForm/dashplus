@@ -71,6 +71,11 @@ public final class AlloyDecl extends AlloyExpr {
         this.expr.toString(sb, indent);
     }
 
+    public AlloyDecl withExpr(AlloyExpr newExpr) {
+        return new AlloyDecl(
+                pos, isVar, isPrivate, isDisj1, names, isDisj2, quant.orElse(null), newExpr);
+    }
+
     public enum Quant {
         LONE(AlloyStrings.LONE),
         ONE(AlloyStrings.ONE),

@@ -6,8 +6,8 @@ import ca.uwaterloo.watform.utils.*;
 
 public class DashPred extends ASTNode {
 
-    public AlloyExpr exp;
-    public String name; // has no meaning
+    public final AlloyExpr exp;
+    public final String name; // has no meaning
 
     public DashPred(Pos pos, String n, AlloyExpr i) {
         super(pos);

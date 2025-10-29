@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class DashFile { // extends AlloyFile {
-    public String filename = "";
+    public final String filename = "";
     public final List<DashParagraph> paragraphs;
 
     public DashFile(List<DashParagraph> paragraphs) {

@@ -16,7 +16,7 @@ import java.util.List;
 
 public class DashModelResolve extends DashModelInitialize {
 
-    private ExprRefResolver er = new ExprRefResolver(st, tt, et, vt, bt, pt);
+    private ExprRefResolverVis er = new ExprRefResolverVis(st, tt, et, vt, bt, pt);
 
     public void resolve() {
         resolveStateTable();

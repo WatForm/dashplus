@@ -14,12 +14,12 @@ import java.util.StringJoiner;
 public class DashState extends DashParagraph {
 
     // stuff from parsing
-    public String name;
+    public final String name;
     // private String sfqn; // set during resolveAllState
-    public String param;
-    public DashStrings.StateKind kind; // basic state = OR with no subStates
-    public DashStrings.DefKind def;
-    private List<Object> items;
+    public final String param;
+    public final DashStrings.StateKind kind; // basic state = OR with no subStates
+    public final DashStrings.DefKind def;
+    private final List<Object> items;
 
     public DashState(
             Pos pos,

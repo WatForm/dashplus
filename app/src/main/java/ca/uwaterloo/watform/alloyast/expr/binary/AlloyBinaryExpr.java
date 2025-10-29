@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 
-public abstract class AlloyBinaryExpr extends AlloyExpr {
+public class AlloyBinaryExpr extends AlloyExpr {
     public final AlloyExpr left;
     public final AlloyExpr right;
     public final String op;
@@ -48,5 +48,10 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
         sb.append(op);
         sb.append(AlloyStrings.SPACE);
         this.right.toString(sb, indent);
+    }
+
+    @Override
+    public <T> T accept(AlloyExprVis<T> visitor) {
+        return visitor.visit(this);
     }
 }
