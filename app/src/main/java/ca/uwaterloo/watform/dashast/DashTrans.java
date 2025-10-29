@@ -1,63 +1,66 @@
 package ca.uwaterloo.watform.dashast;
 
-import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.passIfNull;
 
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
-import java.util.StringJoiner;
 
 public class DashTrans extends ASTNode {
     public String name;
     public List<Object> items;
-    public DashFrom from;
+    public DashFrom fromP;
+    public DashGoto gotoP;
+    public DashOn onP;
+    public DashSend sendP;
+    public DashWhen whenP;
+    public DashDo doP;
 
-    public DashTrans(Pos pos, String n, List<Object> i) {
+    public DashTrans(
+            Pos pos,
+            String n,
+            DashFrom fromP,
+            DashGoto gotoP,
+            DashOn onP,
+            DashSend sendP,
+            DashWhen whenP,
+            DashDo goP) {
         super(pos);
         assert (n != null);
-        assert (i != null);
+        assert (pos != null);
         this.name = n;
-        this.items = i;
-        this.from =
-                (DashFrom) extractOneFromList(extractItemsOfClass(items, DashFrom.class), "from");
+        this.fromP = fromP;
+        this.gotoP = gotoP;
+        this.onP = onP;
+        this.sendP = sendP;
+        this.whenP = whenP;
+        this.doP = doP;
+    }
+
+    private boolean emptyTrans() {
+        return fromP == null
+                && gotoP == null
+                && onP == null
+                && sendP == null
+                && whenP == null
+                && doP == null;
     }
 
     @Override
     public void toString(StringBuilder sb, int indent) {
         String s = new String("");
         String ind = DashStrings.indent(indent);
-        if (items.isEmpty()) {
-            s += ind + DashStrings.transName + " " + name + " { }\n";
+        if (emptyTrans()) {
+            sb.append(ind + DashStrings.transName + " " + name + " { }\n");
         } else {
-            s += ind + DashStrings.transName + " " + name + " {\n";
-            StringJoiner j = new StringJoiner("");
-            items.forEach(k -> j.add(((ASTNode) k).toString(indent + 1)));
-            s += j.toString();
-            s += ind + "}\n";
+            sb.append(ind + DashStrings.transName + " " + name + " {\n");
+            passIfNull(sb, indent + 1, this.fromP);
+            passIfNull(sb, indent + 1, this.gotoP);
+            passIfNull(sb, indent + 1, this.onP);
+            passIfNull(sb, indent + 1, this.sendP);
+            passIfNull(sb, indent + 1, this.whenP);
+            passIfNull(sb, indent + 1, this.doP);
+            sb.append(ind + "}\n");
         }
         sb.append(s);
-    }
-
-    public List<DashFrom> froms() {
-        return extractItemsOfClass(items, DashFrom.class);
-    }
-
-    public List<DashOn> ons() {
-        return extractItemsOfClass(items, DashOn.class);
-    }
-
-    public List<DashWhen> whens() {
-        return extractItemsOfClass(items, DashWhen.class);
-    }
-
-    public List<DashGoto> gotos() {
-        return extractItemsOfClass(items, DashGoto.class);
-    }
-
-    public List<DashSend> sends() {
-        return extractItemsOfClass(items, DashSend.class);
-    }
-
-    public List<DashDo> dos() {
-        return extractItemsOfClass(items, DashDo.class);
     }
 }

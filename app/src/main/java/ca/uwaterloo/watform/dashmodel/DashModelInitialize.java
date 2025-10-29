@@ -240,16 +240,7 @@ public class DashModelInitialize { // extends AlloyModel {
         String tfqn = DashFQN.fqn(ances, t.name);
 
         ;
-        tt.add(
-                t.pos,
-                tfqn,
-                params,
-                (DashFrom) extractOneFromList(extractItemsOfClass(t.items, DashFrom.class), "from"),
-                (DashOn) extractOneFromList(extractItemsOfClass(t.items, DashOn.class), "on"),
-                (DashWhen) extractOneFromList(extractItemsOfClass(t.items, DashWhen.class), "when"),
-                (DashGoto) extractOneFromList(extractItemsOfClass(t.items, DashGoto.class), "goto"),
-                (DashSend) extractOneFromList(extractItemsOfClass(t.items, DashSend.class), "send"),
-                (DashDo) extractOneFromList(extractItemsOfClass(t.items, DashDo.class), "do"));
+        tt.add(t.pos, tfqn, params, t.fromP, t.onP, t.whenP, t.gotoP, t.sendP, t.doP);
     }
 
     private class Error {

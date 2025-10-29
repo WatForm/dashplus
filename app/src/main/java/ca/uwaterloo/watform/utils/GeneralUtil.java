@@ -61,6 +61,11 @@ public class GeneralUtil {
         return ((x == null) ? "none" : x.toString());
     }
 
+    public static <T extends ASTNode> void passIfNull(StringBuilder sb, int indent, T x) {
+        if (x == null) {
+        } else x.toString(sb, indent);
+    }
+
     public static void handleException(Exception e) {
         e.printStackTrace(System.err);
         System.exit(1);
