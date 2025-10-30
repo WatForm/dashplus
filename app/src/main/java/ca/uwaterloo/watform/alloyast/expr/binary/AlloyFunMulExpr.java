@@ -20,7 +20,7 @@ public final class AlloyFunMulExpr extends AlloyBinaryExpr {
     }
 
     @Override
-    public AlloyFunMulExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
-        return new AlloyFunMulExpr(pos, left, right);
+    public AlloyFunMulExpr rebuild(AlloyExpr left, AlloyExpr right) {
+        return new AlloyFunMulExpr(this.pos, left, right);
     }
 }

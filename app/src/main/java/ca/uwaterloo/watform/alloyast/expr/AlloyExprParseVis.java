@@ -652,12 +652,8 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // ============================
     @Override
     public AlloyUnaryExpr visitUnTempExpr(AlloyParser.UnTempExprContext ctx) {
-        if (null != ctx.NOT_EXCL()) {
-            return new AlloyNegExpr(
-                    new Pos(ctx), AlloyNegExpr.Negation.NOT_EXCL, this.visit(ctx.expr2()));
-        } else if (null != ctx.NOT()) {
-            return new AlloyNegExpr(
-                    new Pos(ctx), AlloyNegExpr.Negation.NOT, this.visit(ctx.expr2()));
+        if (null != ctx.NOT_EXCL() || null != ctx.NOT()) {
+            return new AlloyNegExpr(new Pos(ctx), this.visit(ctx.expr2()));
         } else if (null != ctx.ALWAYS()) {
             return new AlloyAlwaysExpr(new Pos(ctx), this.visit(ctx.expr2()));
         } else if (null != ctx.EVENTUALLY()) {
@@ -677,12 +673,8 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
     @Override
     public AlloyUnaryExpr visitUnTempBindExpr(AlloyParser.UnTempBindExprContext ctx) {
-        if (null != ctx.NOT_EXCL()) {
-            return new AlloyNegExpr(
-                    new Pos(ctx), AlloyNegExpr.Negation.NOT_EXCL, this.visit(ctx.bind()));
-        } else if (null != ctx.NOT()) {
-            return new AlloyNegExpr(
-                    new Pos(ctx), AlloyNegExpr.Negation.NOT, this.visit(ctx.bind()));
+        if (null != ctx.NOT_EXCL() || null != ctx.NOT()) {
+            return new AlloyNegExpr(new Pos(ctx), this.visit(ctx.bind()));
         } else if (null != ctx.ALWAYS()) {
             return new AlloyAlwaysExpr(new Pos(ctx), this.visit(ctx.bind()));
         } else if (null != ctx.EVENTUALLY()) {

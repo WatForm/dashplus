@@ -49,6 +49,12 @@ public final class AlloyQnameExpr extends AlloyVarExpr
         this(Pos.UNKNOWN, Collections.unmodifiableList(Collections.singletonList(var)));
     }
 
+    public AlloyQnameExpr(String label) {
+        this(
+                Pos.UNKNOWN,
+                Collections.unmodifiableList(Collections.singletonList(new AlloyNameExpr(label))));
+    }
+
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);

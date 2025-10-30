@@ -55,5 +55,5 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
         return visitor.visit(this);
     }
 
-    public abstract AlloyBinaryExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right);
+    public abstract AlloyBinaryExpr rebuild(AlloyExpr left, AlloyExpr right);
 }

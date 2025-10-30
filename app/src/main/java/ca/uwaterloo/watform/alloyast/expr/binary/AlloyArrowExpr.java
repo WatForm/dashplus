@@ -50,7 +50,7 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
     }
 
     @Override
-    public AlloyArrowExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
-        return new AlloyArrowExpr(pos, left, this.mul1, this.mul2, right);
+    public AlloyArrowExpr rebuild(AlloyExpr left, AlloyExpr right) {
+        return new AlloyArrowExpr(this.pos, left, this.mul1, this.mul2, right);
     }
 }

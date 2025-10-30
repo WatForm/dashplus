@@ -25,4 +25,9 @@ public final class AlloyAlwaysExpr extends AlloyUnaryExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyAlwaysExpr rebuild(AlloyExpr sub) {
+        return new AlloyAlwaysExpr(this.pos, sub);
+    }
 }

@@ -73,7 +73,7 @@ public final class AlloyComparisonExpr extends AlloyBinaryExpr {
     }
 
     @Override
-    public AlloyComparisonExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
-        return new AlloyComparisonExpr(pos, left, this.neg, this.comp, right);
+    public AlloyComparisonExpr rebuild(AlloyExpr left, AlloyExpr right) {
+        return new AlloyComparisonExpr(this.pos, left, this.neg, this.comp, right);
     }
 }

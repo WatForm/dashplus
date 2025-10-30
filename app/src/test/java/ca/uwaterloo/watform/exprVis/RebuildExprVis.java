@@ -11,14 +11,14 @@ public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
     public AlloyExpr visit(AlloyBinaryExpr binExpr) {
         AlloyExpr l = new AlloyNameExpr("binLeft");
         AlloyExpr r = new AlloyNameExpr("binRight");
-        return binExpr.rebuild(binExpr.pos, l, r);
+        return binExpr.rebuild(l, r);
     }
 
     @Override
     public AlloyExpr visit(AlloyAndExpr andExpr) {
         AlloyExpr l = new AlloyNameExpr("andLeft");
         AlloyExpr r = new AlloyNameExpr("andRight");
-        return andExpr.rebuild(andExpr.pos, l, r);
+        return andExpr.rebuild(l, r);
     }
 
     @Override

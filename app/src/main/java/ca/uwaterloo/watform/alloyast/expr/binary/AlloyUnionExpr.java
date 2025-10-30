@@ -20,7 +20,7 @@ public final class AlloyUnionExpr extends AlloyBinaryExpr {
     }
 
     @Override
-    public AlloyUnionExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
-        return new AlloyUnionExpr(pos, left, right);
+    public AlloyUnionExpr rebuild(AlloyExpr left, AlloyExpr right) {
+        return new AlloyUnionExpr(this.pos, left, right);
     }
 }

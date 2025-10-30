@@ -25,4 +25,9 @@ public final class AlloyNumIntExpr extends AlloyUnaryExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyNumIntExpr rebuild(AlloyExpr sub) {
+        return new AlloyNumIntExpr(this.pos, sub);
+    }
 }

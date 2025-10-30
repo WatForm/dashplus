@@ -18,4 +18,9 @@ public final class AlloyReflTransClosExpr extends AlloyUnaryExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyReflTransClosExpr rebuild(AlloyExpr sub) {
+        return new AlloyReflTransClosExpr(this.pos, sub);
+    }
 }

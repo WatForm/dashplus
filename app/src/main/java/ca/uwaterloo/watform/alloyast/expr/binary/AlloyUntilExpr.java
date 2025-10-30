@@ -20,7 +20,7 @@ public final class AlloyUntilExpr extends AlloyBinaryExpr {
     }
 
     @Override
-    public AlloyUntilExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
-        return new AlloyUntilExpr(pos, left, right);
+    public AlloyUntilExpr rebuild(AlloyExpr left, AlloyExpr right) {
+        return new AlloyUntilExpr(this.pos, left, right);
     }
 }

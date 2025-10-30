@@ -20,7 +20,7 @@ public final class AlloyStateSeqExpr extends AlloyBinaryExpr {
     }
 
     @Override
-    public AlloyStateSeqExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
-        return new AlloyStateSeqExpr(pos, left, right);
+    public AlloyStateSeqExpr rebuild(AlloyExpr left, AlloyExpr right) {
+        return new AlloyStateSeqExpr(this.pos, left, right);
     }
 }

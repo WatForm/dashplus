@@ -25,4 +25,9 @@ public final class AlloyNumSumExpr extends AlloyUnaryExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyNumSumExpr rebuild(AlloyExpr sub) {
+        return new AlloyNumSumExpr(this.pos, sub);
+    }
 }

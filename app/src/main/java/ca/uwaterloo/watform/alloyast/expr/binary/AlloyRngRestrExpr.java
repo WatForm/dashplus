@@ -20,7 +20,7 @@ public final class AlloyRngRestrExpr extends AlloyBinaryExpr {
     }
 
     @Override
-    public AlloyRngRestrExpr rebuild(Pos pos, AlloyExpr left, AlloyExpr right) {
-        return new AlloyRngRestrExpr(pos, left, right);
+    public AlloyRngRestrExpr rebuild(AlloyExpr left, AlloyExpr right) {
+        return new AlloyRngRestrExpr(this.pos, left, right);
     }
 }
