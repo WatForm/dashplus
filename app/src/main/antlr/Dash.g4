@@ -1,7 +1,11 @@
-grammar Dash	;
+grammar Dash ;
 
 @header {
 	package antlr.generated;
+}
+
+@lexer::members {
+	public boolean dashMode = false; 
 }
 
 @parser::members {
@@ -22,41 +26,44 @@ grammar Dash	;
 // ____________________________________
 
 dashFile
-	: (dashState | paragraph)*
-	;
+    : (dashState | paragraph)* 
+    ;
 
 alloyFile
-    : paragraph*
+    : paragraph* 
     ;
 
 
 // ____________________________________
 // dashState
 
-dashState	: 'state' name '{' stateItem* '}' ;
+dashState	: STATE qname LBRACE stateItem* RBRACE ;
 
-stateItem 	: 'env'? 'event' names '{' '}'
-			| 'env'? names ':' expr1 
-			| names ':' 'buffer' '[' name ']'
-			| 'trans' name '{' transItem* '}'
-			| 'init' block
-			| 'inv' block
-			| 'pred' name '{' expr1 '}'
-			| 'def'? 'state' name '{' stateItem* '}'
-			| 'def'? 'conc' 'state' name ('[' name ']')? '{' stateItem* '}'
+stateItem 	: ENV? EVENT qname LBRACE RBRACE
+			| ENV? qnames COLON expr1 
+			| qnames COLON BUF LBRACK (qname | SIGINT) RBRACK
+			| TRANS qname LBRACE transItem* RBRACE
+			| INIT block
+			| INVARIANT qname? block
+			| ENTER block
+			| EXIT block
+			| PRED qname LBRACE expr1 RBRACE
+			| DEF? STATE qname LBRACE stateItem* RBRACE
+			| DEF? CONC qname (LBRACK qname RBRACK)? LBRACE stateItem* RBRACE
 			;
 
-transItem 	: 'on' name
-			| 'on' dashRef
-			| 'send' name
-			| 'send' dashRef
-			| 'when' expr1
-			| 'do' expr1
-			| 'from' name
-			| 'from' dashRef 
-			| 'goto' name 
-			| 'goto' dashRef 
+transItem 	: ON qname
+			| ON dashRef
+			| SEND qname
+			| SEND dashRef
+			| WHEN expr1
+			| DO expr1
+			| FROM qname
+			| FROM dashRef 
+			| GOTO qname 
+			| GOTO dashRef 
 			;
+
 
 // ____________________________________
 // Paragraph
@@ -74,11 +81,11 @@ paragraph       : modulePara
                 ;
 
 modulePara      : MODULE qname ( LBRACK moduleArg (COMMA moduleArg)* RBRACK )? ;
-moduleArg       : (EXACTLY? name ) ;
+moduleArg       : (EXACTLY? qname ) ;
 
-importPara      : PRIVATE? OPEN qname ( LBRACK sigRefs? RBRACK )? ( AS name )? ;
+importPara      : PRIVATE? OPEN qname ( LBRACK sigRefs? RBRACK )? ( AS qname )? ;
 
-sigPara         : sigQualifier* SIG names sigRel? LBRACE COMMA? (decl ( COMMA* decl )*)? COMMA? RBRACE block? ;
+sigPara         : sigQualifier* SIG qnames sigRel? LBRACE COMMA? (decl ( COMMA* decl )*)? COMMA? RBRACE block? ;
 sigQualifier    : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
 sigRel			: EXTENDS sigRef 					# extendSigIn
 				| IN sigRef (PLUS sigRef)* 			# inSigIn
@@ -87,21 +94,21 @@ sigRel			: EXTENDS sigRef 					# extendSigIn
 sigRef			: (qname | UNIV | STRING | STEPS | SIGINT | SEQ_INT | NONE) ;
 sigRefs			: sigRef (COMMA sigRef)* ;
 
-enumPara        : PRIVATE? ENUM name LBRACE names? RBRACE;
+enumPara        : PRIVATE? ENUM qname LBRACE qnames? RBRACE;
 
-factPara        : FACT (name | STRING_LITERAL)? block ;
+factPara        : FACT (qname | STRING_LITERAL)? block ;
 
-predPara        : PRIVATE? PRED ( sigRef DOT)? name arguments? block ;
+predPara        : PRIVATE? PRED ( sigRef DOT)? qname arguments? block ;
 
-funPara         : PRIVATE? FUN ( sigRef DOT)?  name arguments? COLON multiplicity? expr1 block;
+funPara         : PRIVATE? FUN ( sigRef DOT)?  qname arguments? COLON multiplicity? expr1 block;
 arguments       : LPAREN ( decls COMMA? )? RPAREN
                 | LBRACK ( decls COMMA? )? RBRACK
                 ;
 
-assertPara      : ASSERT (name | STRING_LITERAL)? block ;
+assertPara      : ASSERT (qname | STRING_LITERAL)? block ;
 
-macroPara       : PRIVATE? LET name ( LBRACK names? RBRACK )? (block | (EQUAL expr1))
-				| PRIVATE? LET name ( LPAREN names? RPAREN )? (block | (EQUAL expr1))
+macroPara       : PRIVATE? LET qname ( LBRACK qnames? RBRACK )? (block | (EQUAL expr1))
+				| PRIVATE? LET qname ( LPAREN qnames? RPAREN )? (block | (EQUAL expr1))
 				;
 
 commandPara		: commandDecl (RFATARROW commandDecl)* ;
@@ -144,7 +151,7 @@ impliesExprOpen 	: expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE impliesExpr
     				| expr2 (RFATARROW | IMPLIES) bind                                  			# impBindExpr
     				;
 
-dashRef			: (name SLASH)* name LBRACK (expr1 COMMA)* expr1 RBRACK SLASH name ;
+dashRef			: (qname SLASH)* qname LBRACK (expr1 COMMA)* expr1 RBRACK SLASH qname ;
 
 baseExpr		: number																					# numberExpr
 				| STRING_LITERAL																			# strLiteralExpr
@@ -155,13 +162,13 @@ baseExpr		: number																					# numberExpr
 				| FUNNEXT																					# funNextExpr
 				| LPAREN expr1 RPAREN																		# parenExpr
 				| sigRef																					# sigRefExpr
-				| AT name																					# atNameExpr
+				| AT qname																					# atNameExpr
 				| block																						# blockExpr
 				| LBRACE declMul (COMMA declMul)* body? RBRACE              								# comprehensionExpr
 				| dashRef																					# dashRefExpr
 				;
 
-transExpr		: (TRANS | TRANS_CLOS | REFL_TRANS_CLOS) (transExpr | baseExpr | bind) ;											
+transExpr		: (TRANSPOSE | TRANS_CLOS | REFL_TRANS_CLOS) (transExpr | baseExpr | bind) ;											
 
 primeExpr		: primeExpr PRIME																			
 				| (baseExpr | transExpr | bind) PRIME													
@@ -208,10 +215,9 @@ block           : LBRACE expr1* RBRACE ;
 decl            : declMul
 				| declExact
 				;
-declMul			: VAR? PRIVATE? DISJ? names COLON DISJ? (LONE | ONE | SOME | SET)? expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
-declExact		: PRIVATE? names EQUAL expr1 ; // EXACTLYOF
+declMul			: VAR? PRIVATE? DISJ? qnames COLON DISJ? (LONE | ONE | SOME | SET)? expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
+declExact		: PRIVATE? qnames EQUAL expr1 ; // EXACTLYOF
 decls			: decl (COMMA decl)* ;
-names          	: name ( COMMA name )* ;
 
 
 
@@ -222,10 +228,11 @@ number          : ({prevTokenIsAllowed()}? MINUS)? NUMBER ;
 qname           : name 											# simpleQname
 				| (SEQ | THIS | name) SLASH name (SLASH name)* 	# qualifiedQname
 				;
+qnames          : qname ( COMMA qname )* ;
 name            : ID;
 
 
-assignment		: name EQUAL expr1 ;
+assignment		: qname EQUAL expr1 ;
 body			: block  		# blockBody
 				| BAR expr1 # barBody
 				;
@@ -249,7 +256,30 @@ multiplicity    : LONE | ONE | SOME |  SET ;
 // ____________________________________
 // LEXER 
 
+// ____________________________________
+// Dash
 
+STATE           : { this.dashMode }? 'state'      ;
+ENV             : { this.dashMode }? 'env'        ;
+EVENT           : { this.dashMode }? 'event'      ;
+BUF          	: { this.dashMode }? 'buf'     	  ;
+TRANS           : { this.dashMode }? 'trans'      ;
+ENTER           : { this.dashMode }? 'enter'      ;
+EXIT           	: { this.dashMode }? 'exit'       ;
+INIT            : { this.dashMode }? 'init'       ;
+INVARIANT       : { this.dashMode }? 'invariant'  ;
+DEF             : { this.dashMode }? 'default'    ;
+CONC            : { this.dashMode }? 'conc'       ;
+ON              : { this.dashMode }? 'on'         ;
+SEND            : { this.dashMode }? 'send'       ;
+WHEN            : { this.dashMode }? 'when'       ;
+DO              : { this.dashMode }? 'do'         ;
+FROM            : { this.dashMode }? 'from'       ;
+GOTO            : { this.dashMode }? 'goto'       ;
+
+
+// ____________________________________
+// Alloy
 
 MODULE : 'module' ;
 OPEN : 'open' ;
@@ -292,7 +322,7 @@ RBRACE : '}' ;
 DOMRESTR : '<:'  ;
 RNGRESTR : ':>'  ;
 
-TRANS : '~'  ;
+TRANSPOSE : '~'  ;
 TRANS_CLOS : '^' ;
 REFL_TRANS_CLOS : '*' ;
 
