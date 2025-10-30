@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.alloyast.paragraph.sig;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public final class AlloySigPara extends AlloyParagraph {
     public final List<Qual> quals;
-    public final List<AlloyNameExpr> names;
+    public final List<AlloyQnameExpr> qnames;
     public final Optional<Rel> rel;
     public final List<AlloyDecl> decls;
     public final Optional<AlloyBlock> block;
@@ -23,13 +23,13 @@ public final class AlloySigPara extends AlloyParagraph {
     public AlloySigPara(
             Pos pos,
             List<Qual> quals,
-            List<AlloyNameExpr> names,
+            List<AlloyQnameExpr> qnames,
             Rel rel,
             List<AlloyDecl> decls,
             AlloyBlock block) {
         super(pos);
         this.quals = Collections.unmodifiableList(quals);
-        this.names = Collections.unmodifiableList(names);
+        this.qnames = Collections.unmodifiableList(qnames);
         this.rel = Optional.ofNullable(rel);
         this.decls = decls;
         this.block = Optional.ofNullable(block);
@@ -37,20 +37,20 @@ public final class AlloySigPara extends AlloyParagraph {
 
     public AlloySigPara(
             List<Qual> quals,
-            List<AlloyNameExpr> names,
+            List<AlloyQnameExpr> qnames,
             Rel rel,
             List<AlloyDecl> decls,
             AlloyBlock block) {
-        this(Pos.UNKNOWN, quals, names, rel, decls, block);
+        this(Pos.UNKNOWN, quals, qnames, rel, decls, block);
     }
 
     public AlloySigPara(
-            List<AlloyNameExpr> names, Rel rel, List<AlloyDecl> decls, AlloyBlock block) {
-        this(Pos.UNKNOWN, Collections.emptyList(), names, rel, decls, block);
+            List<AlloyQnameExpr> qnames, Rel rel, List<AlloyDecl> decls, AlloyBlock block) {
+        this(Pos.UNKNOWN, Collections.emptyList(), qnames, rel, decls, block);
     }
 
-    public AlloySigPara(List<AlloyNameExpr> names, List<AlloyDecl> decls, AlloyBlock block) {
-        this(Pos.UNKNOWN, Collections.emptyList(), names, null, decls, block);
+    public AlloySigPara(List<AlloyQnameExpr> qnames, List<AlloyDecl> decls, AlloyBlock block) {
+        this(Pos.UNKNOWN, Collections.emptyList(), qnames, null, decls, block);
     }
 
     @Override
@@ -62,7 +62,7 @@ public final class AlloySigPara extends AlloyParagraph {
         }
         sb.append(AlloyStrings.SIG);
         sb.append(AlloyStrings.SPACE);
-        ASTNode.join(sb, indent, this.names, AlloyStrings.COMMA + AlloyStrings.SPACE);
+        ASTNode.join(sb, indent, this.qnames, AlloyStrings.COMMA + AlloyStrings.SPACE);
         sb.append(AlloyStrings.SPACE);
         if (!this.rel.isEmpty()) {
             ((ASTNode) this.rel.get()).toString(sb, indent);

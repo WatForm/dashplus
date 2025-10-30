@@ -1,9 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
+import ca.uwaterloo.watform.alloyast.expr.*;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +12,7 @@ public final class AlloyDecl extends AlloyExpr {
     public final boolean isVar;
     public final boolean isPrivate;
     public final boolean isDisj1;
-    public final List<AlloyNameExpr> names;
+    public final List<AlloyQnameExpr> qnames;
     public final boolean isDisj2;
     public final Optional<Quant> quant;
     public final AlloyExpr expr;
@@ -23,7 +22,7 @@ public final class AlloyDecl extends AlloyExpr {
             boolean isVar,
             boolean isPrivate,
             boolean isDisj1,
-            List<AlloyNameExpr> names,
+            List<AlloyQnameExpr> qnames,
             boolean isDisj2,
             AlloyDecl.Quant quant,
             AlloyExpr expr) {
@@ -31,7 +30,7 @@ public final class AlloyDecl extends AlloyExpr {
         this.isVar = isVar;
         this.isPrivate = isPrivate;
         this.isDisj1 = isDisj1;
-        this.names = Collections.unmodifiableList(names);
+        this.qnames = Collections.unmodifiableList(qnames);
         this.isDisj2 = isDisj2;
         this.quant = Optional.ofNullable(quant);
         this.expr = expr;
@@ -48,20 +47,20 @@ public final class AlloyDecl extends AlloyExpr {
             boolean isVar,
             boolean isPrivate,
             boolean isDisj1,
-            List<AlloyNameExpr> names,
+            List<AlloyQnameExpr> qnames,
             boolean isDisj2,
             AlloyDecl.Quant quant,
             AlloyExpr expr) {
-        this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, names, isDisj2, quant, expr);
+        this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, qnames, isDisj2, quant, expr);
     }
 
-    public AlloyDecl(AlloyNameExpr name, AlloyExpr expr) {
+    public AlloyDecl(AlloyQnameExpr qname, AlloyExpr expr) {
         this(
                 Pos.UNKNOWN,
                 false,
                 false,
                 false,
-                Collections.singletonList(name),
+                Collections.singletonList(qname),
                 false,
                 Quant.SET,
                 expr);
@@ -72,7 +71,7 @@ public final class AlloyDecl extends AlloyExpr {
         sb.append(this.isVar ? AlloyStrings.VAR + AlloyStrings.SPACE : "");
         sb.append(this.isPrivate ? AlloyStrings.PRIVATE + AlloyStrings.SPACE : "");
         sb.append((this.isDisj1 ? AlloyStrings.DISJ + AlloyStrings.SPACE : ""));
-        ASTNode.join(sb, indent, this.names, AlloyStrings.COMMA + AlloyStrings.SPACE);
+        ASTNode.join(sb, indent, this.qnames, AlloyStrings.COMMA + AlloyStrings.SPACE);
         if (!this.quant.isEmpty() && this.quant.get() == Quant.EXACTLY) {
             sb.append(AlloyStrings.EQUAL);
         } else {
@@ -85,7 +84,7 @@ public final class AlloyDecl extends AlloyExpr {
 
     public AlloyDecl withExpr(AlloyExpr newExpr) {
         return new AlloyDecl(
-                pos, isVar, isPrivate, isDisj1, names, isDisj2, quant.orElse(null), newExpr);
+                pos, isVar, isPrivate, isDisj1, qnames, isDisj2, quant.orElse(null), newExpr);
     }
 
     public enum Quant {

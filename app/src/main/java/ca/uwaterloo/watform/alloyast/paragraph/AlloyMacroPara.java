@@ -3,20 +3,20 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-// macroPara       : PRIVATE? LET name ( LBRACK names? RBRACK )? (block | (EQUAL
-// expr1)) 				| PRIVATE? LET name ( LPAREN names? RPAREN )? (block |
+// macroPara       : PRIVATE? LET qname ( LBRACK qnames? RBRACK )? (block | (EQUAL
+// expr1)) 				| PRIVATE? LET qname ( LPAREN qnames? RPAREN )? (block |
 // (EQUAL expr1))
 public final class AlloyMacroPara extends AlloyParagraph {
     public final boolean isPrivate;
-    public final AlloyNameExpr name;
-    public final List<AlloyNameExpr> names;
+    public final AlloyQnameExpr qname;
+    public final List<AlloyQnameExpr> qnames;
     // mutually exclusive fields
     public final boolean hasBrack;
     public final boolean hasParen;
@@ -27,16 +27,16 @@ public final class AlloyMacroPara extends AlloyParagraph {
     private AlloyMacroPara(
             Pos pos,
             boolean isPrivate,
-            AlloyNameExpr name,
-            List<AlloyNameExpr> names,
+            AlloyQnameExpr qname,
+            List<AlloyQnameExpr> qnames,
             boolean hasBrack,
             boolean hasParen,
             AlloyBlock block,
             AlloyExpr sub) {
         super(pos);
         this.isPrivate = isPrivate;
-        this.name = name;
-        this.names = Collections.unmodifiableList(names);
+        this.qname = qname;
+        this.qnames = Collections.unmodifiableList(qnames);
         this.hasBrack = hasBrack;
         this.hasParen = hasParen;
         this.block = Optional.ofNullable(block);
@@ -45,10 +45,10 @@ public final class AlloyMacroPara extends AlloyParagraph {
             throw new ImplementationError(
                     "hasBrack and hasParen cannot both be true " + "in AlloyMacroPara. ");
         }
-        if (!hasBrack && !hasParen && !names.isEmpty()) {
+        if (!hasBrack && !hasParen && !qnames.isEmpty()) {
             throw new ImplementationError(
                     "Need to have either hasBrack or hasParen "
-                            + "if names is not empty in AlloyMacroPara. ");
+                            + "if qnames is not empty in AlloyMacroPara. ");
         }
         if (!this.block.isEmpty() && !this.sub.isEmpty()) {
             throw new ImplementationError("block and sub cannot both be null in AlloyMacroPara. ");
@@ -62,58 +62,58 @@ public final class AlloyMacroPara extends AlloyParagraph {
     public AlloyMacroPara(
             Pos pos,
             boolean isPrivate,
-            AlloyNameExpr name,
-            List<AlloyNameExpr> names,
+            AlloyQnameExpr qname,
+            List<AlloyQnameExpr> qnames,
             boolean hasBrack,
             boolean hasParen,
             AlloyBlock block) {
-        this(pos, isPrivate, name, names, hasBrack, hasParen, block, null);
+        this(pos, isPrivate, qname, qnames, hasBrack, hasParen, block, null);
     }
 
     public AlloyMacroPara(
             boolean isPrivate,
-            AlloyNameExpr name,
-            List<AlloyNameExpr> names,
+            AlloyQnameExpr qname,
+            List<AlloyQnameExpr> qnames,
             boolean hasBrack,
             boolean hasParen,
             AlloyBlock block) {
-        this(Pos.UNKNOWN, isPrivate, name, names, hasBrack, hasParen, block, null);
+        this(Pos.UNKNOWN, isPrivate, qname, qnames, hasBrack, hasParen, block, null);
     }
 
     public AlloyMacroPara(
             Pos pos,
             boolean isPrivate,
-            AlloyNameExpr name,
-            List<AlloyNameExpr> names,
+            AlloyQnameExpr qname,
+            List<AlloyQnameExpr> qnames,
             boolean hasBrack,
             boolean hasParen,
             AlloyExpr sub) {
-        this(pos, isPrivate, name, names, hasBrack, hasParen, null, sub);
+        this(pos, isPrivate, qname, qnames, hasBrack, hasParen, null, sub);
     }
 
     public AlloyMacroPara(
             boolean isPrivate,
-            AlloyNameExpr name,
-            List<AlloyNameExpr> names,
+            AlloyQnameExpr qname,
+            List<AlloyQnameExpr> qnames,
             boolean hasBrack,
             boolean hasParen,
             AlloyExpr sub) {
-        this(Pos.UNKNOWN, isPrivate, name, names, hasBrack, hasParen, null, sub);
+        this(Pos.UNKNOWN, isPrivate, qname, qnames, hasBrack, hasParen, null, sub);
     }
 
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(this.isPrivate ? AlloyStrings.PRIVATE + AlloyStrings.SPACE : "");
         sb.append(AlloyStrings.LET + AlloyStrings.SPACE);
-        this.name.toString(sb, indent);
+        this.qname.toString(sb, indent);
 
         if (this.hasBrack) {
             sb.append(AlloyStrings.LBRACK);
-            ASTNode.join(sb, indent, this.names, AlloyStrings.COMMA + AlloyStrings.SPACE);
+            ASTNode.join(sb, indent, this.qnames, AlloyStrings.COMMA + AlloyStrings.SPACE);
             sb.append(AlloyStrings.RBRACK);
         } else if (this.hasParen) {
             sb.append(AlloyStrings.LPAREN);
-            ASTNode.join(sb, indent, this.names, AlloyStrings.COMMA + AlloyStrings.SPACE);
+            ASTNode.join(sb, indent, this.qnames, AlloyStrings.COMMA + AlloyStrings.SPACE);
             sb.append(AlloyStrings.RPAREN);
         }
 

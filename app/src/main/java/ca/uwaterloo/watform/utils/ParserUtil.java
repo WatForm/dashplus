@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.utils;
 
-import antlr.generated.AlloyBaseVisitor;
-import ca.uwaterloo.watform.alloyast.*;
+import antlr.generated.DashBaseVisitor;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.antlr.*;
@@ -33,21 +32,32 @@ public final class ParserUtil {
     }
 
     public static AlloyFile parse(Path filePath) throws IOException {
+        if (!filePath.getFileName().toString().endsWith(".als")
+                && !filePath.getFileName().toString().endsWith(".dsh")) {
+            throw new Reporter.ErrorUser("File extension must be .dsh or .als");
+        }
         CharStream input = CharStreams.fromPath(filePath);
         BailLexer lexer = new BailLexer(input);
+        if (filePath.getFileName().toString().endsWith(".dsh")) {
+            lexer.dashMode = true;
+        }
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BailParser parser = new BailParser(tokens);
-        ParseTree antlrAST = parser.alloyFile();
-
-        AlloyFileParseVis afpv = new AlloyFileParseVis();
-        AlloyFile af = afpv.visit(antlrAST);
-        Reporter.INSTANCE.exitIfHasErrors();
-        af.filename = filePath.toString();
-        return af;
+        if (filePath.getFileName().toString().endsWith(".als")) {
+            ParseTree antlrAST = parser.alloyFile();
+            AlloyFileParseVis afpv = new AlloyFileParseVis();
+            AlloyFile af = afpv.visit(antlrAST);
+            Reporter.INSTANCE.exitIfHasErrors();
+            af.filename = filePath.toString();
+            return af;
+        } else {
+            ParseTree antlrAST = parser.dashFile();
+            return new AlloyFile(null);
+        }
     }
 
     public static <C extends ParseTree, T> List<T> visitAll(
-            List<C> contexts, AlloyBaseVisitor<?> visitor, Class<T> targetType) {
+            List<C> contexts, DashBaseVisitor<?> visitor, Class<T> targetType) {
         if (contexts == null || contexts.isEmpty()) {
             return Collections.emptyList();
         }

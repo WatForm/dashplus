@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph.command;
 
-import antlr.generated.AlloyBaseVisitor;
-import antlr.generated.AlloyParser;
+import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
@@ -11,12 +10,12 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyScopableExpr;
 import ca.uwaterloo.watform.utils.ParserUtil;
 import ca.uwaterloo.watform.utils.Pos;
 
-public final class AlloyCmdDeclParseVis extends AlloyBaseVisitor<AlloyCmdPara.CommandDecl> {
+public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.CommandDecl> {
     AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
     AlloyCmdDeclScopeParseVis typescopeParseVis = new AlloyCmdDeclScopeParseVis();
 
     @Override
-    public AlloyCmdPara.CommandDecl visitCommandDecl(AlloyParser.CommandDeclContext ctx) {
+    public AlloyCmdPara.CommandDecl visitCommandDecl(DashParser.CommandDeclContext ctx) {
         AlloyCmdPara.CommandDecl.CmdType cmdType = null;
         if (null != ctx.RUN()) {
             cmdType = AlloyCmdPara.CommandDecl.CmdType.RUN;
@@ -66,13 +65,13 @@ public final class AlloyCmdDeclParseVis extends AlloyBaseVisitor<AlloyCmdPara.Co
     }
 
     public static final class AlloyCmdDeclScopeParseVis
-            extends AlloyBaseVisitor<AlloyCmdPara.CommandDecl.Scope> {
+            extends DashBaseVisitor<AlloyCmdPara.CommandDecl.Scope> {
         AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
         AlloyCmdDeclScopeTypescopeParseVis typescopeParseVis =
                 new AlloyCmdDeclScopeTypescopeParseVis();
 
         @Override
-        public AlloyCmdPara.CommandDecl.Scope visitScope(AlloyParser.ScopeContext ctx) {
+        public AlloyCmdPara.CommandDecl.Scope visitScope(DashParser.ScopeContext ctx) {
             return new AlloyCmdPara.CommandDecl.Scope(
                     new Pos(ctx),
                     (null != ctx.number()) ? (AlloyNumExpr) exprParseVis.visit(ctx.number()) : null,
@@ -83,12 +82,12 @@ public final class AlloyCmdDeclParseVis extends AlloyBaseVisitor<AlloyCmdPara.Co
         }
 
         public static final class AlloyCmdDeclScopeTypescopeParseVis
-                extends AlloyBaseVisitor<AlloyCmdPara.CommandDecl.Scope.Typescope> {
+                extends DashBaseVisitor<AlloyCmdPara.CommandDecl.Scope.Typescope> {
             AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
 
             @Override
             public AlloyCmdPara.CommandDecl.Scope.Typescope visitTypescope(
-                    AlloyParser.TypescopeContext ctx) {
+                    DashParser.TypescopeContext ctx) {
                 AlloyNumExpr start = (AlloyNumExpr) exprParseVis.visit(ctx.number(0));
                 AlloyNumExpr end;
                 if (null != ctx.number(1)) {

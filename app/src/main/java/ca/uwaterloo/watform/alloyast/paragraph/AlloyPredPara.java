@@ -11,7 +11,7 @@ import java.util.Optional;
 public final class AlloyPredPara extends AlloyParagraph {
     public final boolean isPrivate;
     public final Optional<AlloySigRefExpr> sigRef;
-    public final AlloyNameExpr name;
+    public final AlloyQnameExpr qname;
     public final boolean hasBrack;
     public final boolean hasParen;
     public final List<AlloyDecl> arguments;
@@ -21,7 +21,7 @@ public final class AlloyPredPara extends AlloyParagraph {
             Pos pos,
             boolean isPrivate,
             AlloySigRefExpr sigRef,
-            AlloyNameExpr name,
+            AlloyQnameExpr qname,
             boolean hasBrack,
             boolean hasParen,
             List<AlloyDecl> arguments,
@@ -29,7 +29,7 @@ public final class AlloyPredPara extends AlloyParagraph {
         super(pos);
         this.isPrivate = isPrivate;
         this.sigRef = Optional.ofNullable(sigRef);
-        this.name = name;
+        this.qname = qname;
         this.hasBrack = hasBrack;
         this.hasParen = hasParen;
         this.arguments = Collections.unmodifiableList(arguments);
@@ -39,26 +39,26 @@ public final class AlloyPredPara extends AlloyParagraph {
     public AlloyPredPara(
             boolean isPrivate,
             AlloySigRefExpr sigRef,
-            AlloyNameExpr name,
+            AlloyQnameExpr qname,
             boolean hasBrack,
             boolean hasParen,
             List<AlloyDecl> arguments,
             AlloyBlock block) {
-        this(Pos.UNKNOWN, isPrivate, sigRef, name, hasBrack, hasParen, arguments, block);
+        this(Pos.UNKNOWN, isPrivate, sigRef, qname, hasBrack, hasParen, arguments, block);
     }
 
     public AlloyPredPara(
             boolean isPrivate,
-            AlloyNameExpr name,
+            AlloyQnameExpr qname,
             boolean hasBrack,
             boolean hasParen,
             List<AlloyDecl> arguments,
             AlloyBlock block) {
-        this(Pos.UNKNOWN, isPrivate, null, name, hasBrack, hasParen, arguments, block);
+        this(Pos.UNKNOWN, isPrivate, null, qname, hasBrack, hasParen, arguments, block);
     }
 
-    public AlloyPredPara(boolean isPrivate, AlloyNameExpr name, AlloyBlock block) {
-        this(Pos.UNKNOWN, isPrivate, null, name, false, false, Collections.emptyList(), block);
+    public AlloyPredPara(boolean isPrivate, AlloyQnameExpr qname, AlloyBlock block) {
+        this(Pos.UNKNOWN, isPrivate, null, qname, false, false, Collections.emptyList(), block);
     }
 
     @Override
@@ -69,7 +69,7 @@ public final class AlloyPredPara extends AlloyParagraph {
             ((AlloyVarExpr) this.sigRef.get()).toString(sb, indent);
             sb.append(AlloyStrings.DOT);
         }
-        this.name.toString(sb, indent);
+        this.qname.toString(sb, indent);
         if (this.hasBrack) {
             sb.append(AlloyStrings.LBRACK);
             ASTNode.join(sb, indent, this.arguments, AlloyStrings.COMMA + AlloyStrings.SPACE);

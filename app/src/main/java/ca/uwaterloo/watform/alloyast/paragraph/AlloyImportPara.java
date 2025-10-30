@@ -1,9 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.utils.*;
@@ -16,7 +13,7 @@ public final class AlloyImportPara extends AlloyParagraph {
     public final AlloyQnameExpr qname;
     public final boolean hasBrackets;
     public final List<AlloySigRefExpr> sigRefs;
-    public final Optional<AlloyNameExpr> asName;
+    public final Optional<AlloyQnameExpr> asQname;
 
     public AlloyImportPara(
             Pos pos,
@@ -24,13 +21,13 @@ public final class AlloyImportPara extends AlloyParagraph {
             AlloyQnameExpr qname,
             boolean hasBrackets,
             List<AlloySigRefExpr> sigRefs,
-            AlloyNameExpr asName) {
+            AlloyQnameExpr asQname) {
         super(pos);
         this.isPrivate = isPrivate;
         this.qname = qname;
         this.hasBrackets = hasBrackets;
         this.sigRefs = Collections.unmodifiableList(sigRefs);
-        this.asName = Optional.ofNullable(asName);
+        this.asQname = Optional.ofNullable(asQname);
     }
 
     public AlloyImportPara(
@@ -38,8 +35,8 @@ public final class AlloyImportPara extends AlloyParagraph {
             AlloyQnameExpr qname,
             boolean hasBrackets,
             List<AlloySigRefExpr> sigRefs,
-            AlloyNameExpr asName) {
-        this(Pos.UNKNOWN, isPrivate, qname, hasBrackets, sigRefs, asName);
+            AlloyQnameExpr asQname) {
+        this(Pos.UNKNOWN, isPrivate, qname, hasBrackets, sigRefs, asQname);
     }
 
     @Override
@@ -58,11 +55,11 @@ public final class AlloyImportPara extends AlloyParagraph {
             }
             sb.append(AlloyStrings.RBRACK);
         }
-        if (!this.asName.isEmpty()) {
+        if (!this.asQname.isEmpty()) {
             sb.append(AlloyStrings.SPACE);
             sb.append(AlloyStrings.AS);
             sb.append(AlloyStrings.SPACE);
-            this.asName.get().toString(sb, indent);
+            this.asQname.get().toString(sb, indent);
         }
     }
 }

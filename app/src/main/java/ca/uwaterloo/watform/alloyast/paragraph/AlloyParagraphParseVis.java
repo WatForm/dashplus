@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
-import antlr.generated.AlloyBaseVisitor;
-import antlr.generated.AlloyParser;
+import antlr.generated.*;
+import antlr.generated.DashBaseVisitor;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -17,12 +17,12 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 
-public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagraph> {
+public final class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
     private final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
     private final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
 
     @Override
-    public AlloyParagraph visitParagraph(AlloyParser.ParagraphContext ctx) {
+    public AlloyParagraph visitParagraph(DashParser.ParagraphContext ctx) {
         return this.visit(ctx.getChild(0));
     }
 
@@ -30,7 +30,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Module
     // ====================================================================================
     @Override
-    public AlloyModulePara visitModulePara(AlloyParser.ModuleParaContext ctx) {
+    public AlloyModulePara visitModulePara(DashParser.ModuleParaContext ctx) {
         return new AlloyModulePara(
                 new Pos(ctx),
                 (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
@@ -42,29 +42,32 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Import
     // ====================================================================================
     @Override
-    public AlloyImportPara visitImportPara(AlloyParser.ImportParaContext ctx) {
+    public AlloyImportPara visitImportPara(DashParser.ImportParaContext ctx) {
         return new AlloyImportPara(
                 new Pos(ctx),
                 null != ctx.PRIVATE(),
-                (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
+                (AlloyQnameExpr) exprParseVis.visit(ctx.qname(0)),
                 null != ctx.LBRACK(),
                 ((null != ctx.sigRefs())
                         ? this.sigRefsParseVis.visit(ctx.sigRefs())
                         : Collections.emptyList()),
-                ((null != ctx.name()) ? (AlloyNameExpr) exprParseVis.visit(ctx.name()) : null));
+                ((null != ctx.qname(1))
+                        ? (AlloyQnameExpr) exprParseVis.visit(ctx.qname(1))
+                        : null));
     }
 
     // ====================================================================================
     // Sig
     // ====================================================================================
     @Override
-    public AlloySigPara visitSigPara(AlloyParser.SigParaContext ctx) {
+    public AlloySigPara visitSigPara(DashParser.SigParaContext ctx) {
         return new AlloySigPara(
                 new Pos(ctx),
                 ParserUtil.visitAll(
                         ctx.sigQualifier(), new AlloySigQualParseVis(), AlloySigPara.Qual.class),
-                null != ctx.names()
-                        ? ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class)
+                null != ctx.qnames()
+                        ? ParserUtil.visitAll(
+                                ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                         : Collections.emptyList(),
                 null != ctx.sigRel() ? new AlloySigRelParseVis().visit(ctx.sigRel()) : null,
                 ParserUtil.visitAll(ctx.decl(), exprParseVis, AlloyDecl.class),
@@ -75,12 +78,13 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Enum
     // ====================================================================================
     @Override
-    public AlloyEnumPara visitEnumPara(AlloyParser.EnumParaContext ctx) {
+    public AlloyEnumPara visitEnumPara(DashParser.EnumParaContext ctx) {
         return new AlloyEnumPara(
                 null != ctx.PRIVATE(),
-                (AlloyNameExpr) exprParseVis.visit(ctx.name()),
-                null != ctx.names()
-                        ? ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class)
+                (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
+                null != ctx.qnames()
+                        ? ParserUtil.visitAll(
+                                ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                         : Collections.emptyList());
     }
 
@@ -88,11 +92,11 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Fact
     // ====================================================================================
     @Override
-    public AlloyFactPara visitFactPara(AlloyParser.FactParaContext ctx) {
-        if (null != ctx.name()) {
+    public AlloyFactPara visitFactPara(DashParser.FactParaContext ctx) {
+        if (null != ctx.qname()) {
             return new AlloyFactPara(
                     new Pos(ctx),
-                    (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                    (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
                     (AlloyBlock) this.exprParseVis.visit(ctx.block()));
         } else if (null != ctx.STRING_LITERAL()) {
             return new AlloyFactPara(
@@ -109,7 +113,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Pred
     // ====================================================================================
     @Override
-    public AlloyParagraph visitPredPara(AlloyParser.PredParaContext ctx) {
+    public AlloyParagraph visitPredPara(DashParser.PredParaContext ctx) {
         boolean hasBrack = false;
         boolean hasParen = false;
         List<AlloyDecl> decls = Collections.emptyList();
@@ -127,7 +131,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                 new Pos(ctx),
                 null != ctx.PRIVATE(),
                 (null != ctx.sigRef()) ? (AlloySigRefExpr) exprParseVis.visit(ctx.sigRef()) : null,
-                (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
                 hasBrack,
                 hasParen,
                 decls,
@@ -138,7 +142,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Fun
     // ====================================================================================
     @Override
-    public AlloyFunPara visitFunPara(AlloyParser.FunParaContext ctx) {
+    public AlloyFunPara visitFunPara(DashParser.FunParaContext ctx) {
         boolean hasBrack = false;
         boolean hasParen = false;
         List<AlloyDecl> decls = Collections.emptyList();
@@ -171,7 +175,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
                 new Pos(ctx),
                 null != ctx.PRIVATE(),
                 (null != ctx.sigRef()) ? (AlloySigRefExpr) exprParseVis.visit(ctx.sigRef()) : null,
-                (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
                 hasBrack,
                 hasParen,
                 decls,
@@ -184,11 +188,11 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Assert
     // ====================================================================================
     @Override
-    public AlloyAssertPara visitAssertPara(AlloyParser.AssertParaContext ctx) {
-        if (null != ctx.name()) {
+    public AlloyAssertPara visitAssertPara(DashParser.AssertParaContext ctx) {
+        if (null != ctx.qname()) {
             return new AlloyAssertPara(
                     new Pos(ctx),
-                    (AlloyNameExpr) exprParseVis.visit(ctx.name()),
+                    (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
                     (AlloyBlock) this.exprParseVis.visit(ctx.block()));
         } else if (null != ctx.STRING_LITERAL()) {
             return new AlloyAssertPara(
@@ -205,15 +209,15 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Macro
     // ====================================================================================
     @Override
-    public AlloyMacroPara visitMacroPara(AlloyParser.MacroParaContext ctx) {
+    public AlloyMacroPara visitMacroPara(DashParser.MacroParaContext ctx) {
         if (null != ctx.block()) {
             return new AlloyMacroPara(
                     new Pos(ctx),
                     null != ctx.PRIVATE(),
-                    (AlloyNameExpr) exprParseVis.visit(ctx.name()),
-                    null != ctx.names()
+                    (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
+                    null != ctx.qnames()
                             ? ParserUtil.visitAll(
-                                    ctx.names().name(), exprParseVis, AlloyNameExpr.class)
+                                    ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                             : Collections.emptyList(),
                     null != ctx.LBRACK(),
                     null != ctx.LPAREN(),
@@ -222,10 +226,10 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
             return new AlloyMacroPara(
                     new Pos(ctx),
                     null != ctx.PRIVATE(),
-                    (AlloyNameExpr) exprParseVis.visit(ctx.name()),
-                    null != ctx.names()
+                    (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
+                    null != ctx.qnames()
                             ? ParserUtil.visitAll(
-                                    ctx.names().name(), exprParseVis, AlloyNameExpr.class)
+                                    ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                             : Collections.emptyList(),
                     null != ctx.LBRACK(),
                     null != ctx.LPAREN(),
@@ -239,7 +243,7 @@ public final class AlloyParagraphParseVis extends AlloyBaseVisitor<AlloyParagrap
     // Command
     // ====================================================================================
     @Override
-    public AlloyCmdPara visitCommandPara(AlloyParser.CommandParaContext ctx) {
+    public AlloyCmdPara visitCommandPara(DashParser.CommandParaContext ctx) {
         return new AlloyCmdPara(
                 new Pos(ctx),
                 ParserUtil.visitAll(

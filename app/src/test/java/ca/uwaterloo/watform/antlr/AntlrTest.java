@@ -15,7 +15,7 @@ public class AntlrTest {
     @DisplayName("Jackson's examples from Software Abstraction book and some WatForm alloy files")
     public void parseCatalystQuickTests() throws Exception {
         Path p = Paths.get("src/test/resources/antlr/catalyst/quick-tests");
-        new AntlrTestUtil().recurParseDir(p, 5 * 1000);
+        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".als");
     }
 
     @Test
@@ -23,7 +23,7 @@ public class AntlrTest {
     @DisplayName("Alloy builtin util files")
     public void parseUtil() throws Exception {
         Path p = Paths.get("src/test/resources/antlr/util");
-        new AntlrTestUtil().recurParseDir(p, 5 * 1000);
+        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".als");
     }
 
     // test catalyst corpus with app/src/main/java/ca/uwaterloo/watform/test/Main.java

@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyStrLiteralExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Optional;
@@ -11,23 +11,23 @@ import java.util.Optional;
 public final class AlloyFactPara extends AlloyParagraph {
     public final AlloyBlock block;
     // mutually exclusive fields
-    public final Optional<AlloyNameExpr> name;
+    public final Optional<AlloyQnameExpr> qname;
     public final Optional<AlloyStrLiteralExpr> strLit;
 
     private AlloyFactPara(
-            Pos pos, AlloyNameExpr name, AlloyStrLiteralExpr strLit, AlloyBlock block) {
+            Pos pos, AlloyQnameExpr qname, AlloyStrLiteralExpr strLit, AlloyBlock block) {
         super(pos);
-        this.name = Optional.ofNullable(name);
+        this.qname = Optional.ofNullable(qname);
         this.strLit = Optional.ofNullable(strLit);
         this.block = block;
     }
 
-    public AlloyFactPara(Pos pos, AlloyNameExpr name, AlloyBlock block) {
-        this(pos, name, null, block);
+    public AlloyFactPara(Pos pos, AlloyQnameExpr qname, AlloyBlock block) {
+        this(pos, qname, null, block);
     }
 
-    public AlloyFactPara(AlloyNameExpr name, AlloyBlock block) {
-        this(Pos.UNKNOWN, name, null, block);
+    public AlloyFactPara(AlloyQnameExpr qname, AlloyBlock block) {
+        this(Pos.UNKNOWN, qname, null, block);
     }
 
     public AlloyFactPara(Pos pos, AlloyStrLiteralExpr strLit, AlloyBlock block) {
@@ -49,8 +49,8 @@ public final class AlloyFactPara extends AlloyParagraph {
     @Override
     public void toString(StringBuilder sb, int indent) {
         String factName = "";
-        if (!this.name.isEmpty()) {
-            factName = this.name.get().toString() + " ";
+        if (!this.qname.isEmpty()) {
+            factName = this.qname.get().toString() + " ";
         } else if (!this.strLit.isEmpty()) {
             factName = this.strLit.get().toString() + " ";
         }

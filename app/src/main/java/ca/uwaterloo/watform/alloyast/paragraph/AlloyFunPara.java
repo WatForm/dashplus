@@ -9,14 +9,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-// funPara         : PRIVATE? FUN ( sigRef DOT)?  name arguments? COLON multiplicity? expr1 block;
+// funPara         : PRIVATE? FUN ( sigRef DOT)?  qname arguments? COLON multiplicity? expr1 block;
 // arguments       : LPAREN ( decl ( COMMA decl )* COMMA? )? RPAREN
 //                 | LBRACK ( decl ( COMMA decl )* COMMA? )? RBRACK
 
 public final class AlloyFunPara extends AlloyParagraph {
     public final boolean isPrivate;
     public final Optional<AlloySigRefExpr> sigRef;
-    public final AlloyNameExpr name;
+    public final AlloyQnameExpr qname;
     public final boolean hasBrack;
     public final boolean hasParen;
     public final List<AlloyDecl> arguments;
@@ -28,7 +28,7 @@ public final class AlloyFunPara extends AlloyParagraph {
             Pos pos,
             boolean isPrivate,
             AlloySigRefExpr sigRef,
-            AlloyNameExpr name,
+            AlloyQnameExpr qname,
             boolean hasBrack,
             boolean hasParen,
             List<AlloyDecl> arguments,
@@ -38,7 +38,7 @@ public final class AlloyFunPara extends AlloyParagraph {
         super(pos);
         this.isPrivate = isPrivate;
         this.sigRef = Optional.ofNullable(sigRef);
-        this.name = name;
+        this.qname = qname;
         this.hasBrack = hasBrack;
         this.hasParen = hasParen;
         this.arguments = Collections.unmodifiableList(arguments);
@@ -50,19 +50,19 @@ public final class AlloyFunPara extends AlloyParagraph {
     public AlloyFunPara(
             boolean isPrivate,
             AlloySigRefExpr sigRef,
-            AlloyNameExpr name,
+            AlloyQnameExpr qname,
             boolean hasBrack,
             boolean hasParen,
             List<AlloyDecl> arguments,
             Mul mul,
             AlloyExpr sub,
             AlloyBlock block) {
-        this(Pos.UNKNOWN, isPrivate, sigRef, name, hasBrack, hasParen, arguments, mul, sub, block);
+        this(Pos.UNKNOWN, isPrivate, sigRef, qname, hasBrack, hasParen, arguments, mul, sub, block);
     }
 
     public AlloyFunPara(
             boolean isPrivate,
-            AlloyNameExpr name,
+            AlloyQnameExpr qname,
             boolean hasBrack,
             boolean hasParen,
             List<AlloyDecl> arguments,
@@ -72,7 +72,7 @@ public final class AlloyFunPara extends AlloyParagraph {
                 Pos.UNKNOWN,
                 isPrivate,
                 null,
-                name,
+                qname,
                 hasBrack,
                 hasParen,
                 arguments,
@@ -81,12 +81,12 @@ public final class AlloyFunPara extends AlloyParagraph {
                 block);
     }
 
-    public AlloyFunPara(boolean isPrivate, AlloyNameExpr name, AlloyExpr sub, AlloyBlock block) {
+    public AlloyFunPara(boolean isPrivate, AlloyQnameExpr qname, AlloyExpr sub, AlloyBlock block) {
         this(
                 Pos.UNKNOWN,
                 isPrivate,
                 null,
-                name,
+                qname,
                 false,
                 false,
                 Collections.emptyList(),
@@ -97,7 +97,7 @@ public final class AlloyFunPara extends AlloyParagraph {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        // funPara         : PRIVATE? FUN ( sigRef DOT)?  name arguments? COLON multiplicity? expr1
+        // funPara         : PRIVATE? FUN ( sigRef DOT)?  qname arguments? COLON multiplicity? expr1
         // block;
         // arguments       : LPAREN ( decl ( COMMA decl )* COMMA? )? RPAREN
         //                 | LBRACK ( decl ( COMMA decl )* COMMA? )? RBRACK
@@ -107,7 +107,7 @@ public final class AlloyFunPara extends AlloyParagraph {
             ((AlloyVarExpr) this.sigRef.get()).toString(sb, indent);
             sb.append(AlloyStrings.DOT);
         }
-        this.name.toString(sb, indent);
+        this.qname.toString(sb, indent);
         if (this.hasBrack) {
             sb.append(AlloyStrings.LBRACK);
             ASTNode.join(sb, indent, this.arguments, AlloyStrings.COMMA + AlloyStrings.SPACE);

@@ -420,7 +420,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // NADTODO: rule out var names that are bound
         List<AlloyLetExpr.AlloyLetAsn> asns = letExpr.asns;
         List<AlloyLetExpr.AlloyLetAsn> newAsns =
-                mapBy(asns, i -> new AlloyLetExpr.AlloyLetAsn(i.pos, i.name, visit(i.expr)));
+                mapBy(asns, i -> new AlloyLetExpr.AlloyLetAsn(i.pos, i.qname, visit(i.expr)));
         return new AlloyLetExpr(letExpr.pos, newAsns, visit(letExpr.body));
     }
     ;
