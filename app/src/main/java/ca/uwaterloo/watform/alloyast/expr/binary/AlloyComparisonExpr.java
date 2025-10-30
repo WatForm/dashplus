@@ -7,7 +7,6 @@ import ca.uwaterloo.watform.utils.*;
 public final class AlloyComparisonExpr extends AlloyBinaryExpr {
     public static enum Negation {
         NONE(""),
-        NOT(AlloyStrings.NOT),
         NOT_EXCL(AlloyStrings.NOT_EXCL);
 
         private final String label;
@@ -24,7 +23,6 @@ public final class AlloyComparisonExpr extends AlloyBinaryExpr {
 
     public static enum Comp {
         IN(AlloyStrings.IN),
-        EQUAL(AlloyStrings.EQUAL),
         LESS_THAN(AlloyStrings.LT),
         GREATER_THAN(AlloyStrings.GT),
         LESS_EQUAL(AlloyStrings.LE),

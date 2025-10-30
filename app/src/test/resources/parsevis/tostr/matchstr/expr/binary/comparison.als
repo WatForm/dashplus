@@ -18,12 +18,3 @@ fact {
 	a ! >= b
 }
 
-fact {
-	a not in b
-	a not = b
-	a not < b
-	a not > b
-	a not <= b
-	a not =< b
-	a not >= b
-}
