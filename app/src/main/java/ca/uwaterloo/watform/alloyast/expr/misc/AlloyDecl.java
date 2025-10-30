@@ -55,6 +55,18 @@ public final class AlloyDecl extends AlloyExpr {
         this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, names, isDisj2, quant, expr);
     }
 
+    public AlloyDecl(AlloyNameExpr name, AlloyExpr expr) {
+        this(
+                Pos.UNKNOWN,
+                false,
+                false,
+                false,
+                Collections.singletonList(name),
+                false,
+                Quant.SET,
+                expr);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(this.isVar ? AlloyStrings.VAR + AlloyStrings.SPACE : "");
