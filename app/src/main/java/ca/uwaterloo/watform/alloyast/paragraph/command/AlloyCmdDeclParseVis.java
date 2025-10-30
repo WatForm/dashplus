@@ -95,16 +95,16 @@ public final class AlloyCmdDeclParseVis extends AlloyBaseVisitor<AlloyCmdPara.Co
                     end = (AlloyNumExpr) exprParseVis.visit(ctx.number(1));
                 } else {
                     if (!ctx.DOT().isEmpty()) {
-                        end = new AlloyNumExpr(true, Integer.MAX_VALUE);
+                        end = new AlloyNumExpr(Integer.MAX_VALUE);
                     } else {
-                        end = new AlloyNumExpr(start.isPositive, start.label);
+                        end = new AlloyNumExpr(start.label);
                     }
                 }
                 AlloyNumExpr increment;
                 if (null != ctx.number(2)) {
                     increment = (AlloyNumExpr) exprParseVis.visit(ctx.number(2));
                 } else {
-                    increment = new AlloyNumExpr(true, "1");
+                    increment = new AlloyNumExpr("1");
                 }
                 AlloyScopableExpr scopableExpr = null;
                 if (ctx.qname() != null) {

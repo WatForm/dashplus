@@ -17,4 +17,9 @@ public final class AlloyFunMaxExpr extends AlloyVarExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyFunMaxExpr rebuild(String label) {
+        return new AlloyFunMaxExpr(this.pos);
+    }
 }

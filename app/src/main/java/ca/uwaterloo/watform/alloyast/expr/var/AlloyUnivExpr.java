@@ -18,4 +18,9 @@ public final class AlloyUnivExpr extends AlloyVarExpr implements AlloySigRefExpr
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyUnivExpr rebuild(String label) {
+        return new AlloyUnivExpr(this.pos);
+    }
 }

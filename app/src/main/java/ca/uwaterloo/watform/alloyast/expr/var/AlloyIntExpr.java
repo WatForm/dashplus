@@ -17,4 +17,9 @@ public final class AlloyIntExpr extends AlloyVarExpr implements AlloyScopableExp
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyIntExpr rebuild(String label) {
+        return new AlloyIntExpr(this.pos);
+    }
 }

@@ -182,7 +182,11 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
     @Override
     public AlloyNumExpr visitNumber(AlloyParser.NumberContext ctx) {
-        return new AlloyNumExpr(new Pos(ctx), null == ctx.MINUS(), ctx.NUMBER().getText());
+        return new AlloyNumExpr(
+                new Pos(ctx),
+                null == ctx.MINUS()
+                        ? ctx.NUMBER().getText()
+                        : AlloyStrings.MINUS + ctx.NUMBER().getText());
     }
 
     @Override

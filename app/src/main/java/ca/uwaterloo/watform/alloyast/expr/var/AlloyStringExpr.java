@@ -19,4 +19,9 @@ public final class AlloyStringExpr extends AlloyVarExpr
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyStringExpr rebuild(String label) {
+        return new AlloyStringExpr(this.pos);
+    }
 }

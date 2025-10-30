@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 
-public class AlloyVarExpr extends AlloyExpr {
+public abstract class AlloyVarExpr extends AlloyExpr {
     public final String label;
 
     public AlloyVarExpr(Pos pos, String label) {
@@ -30,4 +30,11 @@ public class AlloyVarExpr extends AlloyExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    // The given label is not used for most concrete AlloyVarExpr, like AlloyUnivExpr etc. These are
+    // here
+    // for the sake of completion.
+    // The label is used for AlloyAtName, AlloyNameExpr, AlloyNumExpr, AlloyQnameExpr,
+    // AlloyStrLiteralExpr.
+    public abstract AlloyVarExpr rebuild(String label);
 }

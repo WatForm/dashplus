@@ -19,4 +19,9 @@ public final class AlloySigIntExpr extends AlloyVarExpr
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloySigIntExpr rebuild(String label) {
+        return new AlloySigIntExpr(this.pos);
+    }
 }
