@@ -12,6 +12,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.utils.*;
+import java.util.Collections;
 import java.util.List;
 
 public class DashModelResolve extends DashModelInitialize {
@@ -105,13 +106,53 @@ public class DashModelResolve extends DashModelInitialize {
 
         List<String> statesNotEntered =
                 filterBy(
-                        st.getAllNames(),
+                        st.keySet(),
                         i ->
                                 !(st.isDefault(i)
                                         || st.isAnd(i)
                                         || st.isRoot(i)
                                         || tt.allTransDestNames().contains(i)));
         if (!statesNotEntered.isEmpty()) Error.statesNotEntered(statesNotEntered);
+
+        /*
+            2024-02-21 NAD
+            Do not allow any overlaps between namespaces: state, trans, event, var, buffers
+            because in Electrum items from multiple of these categories can end up in the same
+            Alloy namespace such as:
+
+            one sig X extends Transitions {}
+            var sig X in Typ {}
+
+            If we tried to prefix names with trans_ or state_, FQNs would get VERY long
+            Also, we want to be consistent with names across all methods (traces, tcmc, Electrum)
+        */
+
+        disj(vt.keySet(), pt.keySet());
+        disj(vt.keySet(), st.keySet());
+        disj(vt.keySet(), tt.keySet());
+        disj(vt.keySet(), et.keySet());
+        disj(vt.keySet(), bt.keySet());
+
+        disj(tt.keySet(), st.keySet());
+        disj(tt.keySet(), et.keySet());
+        disj(tt.keySet(), bt.keySet());
+
+        disj(st.keySet(), et.keySet());
+        disj(st.keySet(), bt.keySet());
+
+        disj(et.keySet(), bt.keySet());
+
+        maxDepthParams = st.getMaxDepthParams();
+
+        transAtThisParamDepth = tt.transAtThisParamDepth(maxDepthParams);
+    }
+
+    private void disj(List<String> alist, List<String> blist) {
+        if (!Collections.disjoint(alist, blist)) {
+            List<String> x = alist;
+            x.retainAll(blist);
+            Error.nameOverlap(x);
+        }
     }
 
     private class Error {
@@ -142,6 +183,10 @@ public class DashModelResolve extends DashModelInitialize {
 
         public static void cantSendAnEnvEvent(Pos pos, String expString) {
             throw new Reporter.ErrorUser(pos + " can't send an environmental event: " + expString);
+        }
+
+        public static void nameOverlap(List<String> s) {
+            throw new Reporter.ErrorUser("Same name used for multiple purposes: " + s);
         }
     }
 }

@@ -37,6 +37,8 @@ public class DashModelInitialize { // extends AlloyModel {
     public VarTable vt = new VarTable();
     public BufferTable bt = new BufferTable();
     public DashPredTable pt = new DashPredTable();
+    public int maxDepthParams;
+    public boolean[] transAtThisParamDepth;
 
     public DashModelInitialize() {
         // creates an empty DashModel
