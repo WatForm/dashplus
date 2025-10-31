@@ -4,8 +4,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class DashEventDecls extends ASTNode {
-
+public final class DashEventDecls extends ASTNode implements DashStateItem {
     public final List<String> names;
     public final DashStrings.IntEnvKind kind;
 

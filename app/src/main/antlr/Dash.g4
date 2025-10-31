@@ -26,7 +26,7 @@ grammar Dash ;
 // ____________________________________
 
 dashFile
-    : (dashState | paragraph)* 
+    : (stateRoot | paragraph)* 
     ;
 
 alloyFile
@@ -35,33 +35,33 @@ alloyFile
 
 
 // ____________________________________
-// dashState
+// stateRoot
 
-dashState	: STATE qname LBRACE stateItem* RBRACE ;
+stateRoot 	: STATE qname LBRACE stateItem* RBRACE ;
 
-stateItem 	: ENV? EVENT qname LBRACE RBRACE
-			| ENV? qnames COLON expr1 
-			| qnames COLON BUF LBRACK (qname | SIGINT) RBRACK
-			| TRANS qname LBRACE transItem* RBRACE
-			| INIT block
-			| INVARIANT qname? block
-			| ENTER block
-			| EXIT block
-			| PRED qname LBRACE expr1 RBRACE
-			| DEF? STATE qname LBRACE stateItem* RBRACE
-			| DEF? CONC qname (LBRACK qname RBRACK)? LBRACE stateItem* RBRACE
+stateItem 	: ENV? EVENT qnames LBRACE RBRACE									# dashEventDecls
+			| ENV? qnames COLON expr1 											# dashVarDecls
+			| qnames COLON BUF LBRACK (qname | SIGINT) RBRACK					# dashBufferDecls
+			| TRANS qname LBRACE transItem* RBRACE								# dashTrans
+			| INIT block														# dashInit
+			| INVARIANT qname? block											# dashInv
+			| ENTER block														# dashEntered
+			| EXIT block														# dashExited
+			| PRED qname LBRACE expr1 RBRACE									# dashPred
+			| DEF? STATE qname LBRACE stateItem* RBRACE							# dashState
+			| DEF? CONC qname (LBRACK qname RBRACK)? LBRACE stateItem* RBRACE	# dashConcState
 			;
 
-transItem 	: ON qname
-			| ON dashRef
-			| SEND qname
-			| SEND dashRef
-			| WHEN expr1
-			| DO expr1
-			| FROM qname
-			| FROM dashRef 
-			| GOTO qname 
-			| GOTO dashRef 
+transItem 	: ON qname															# dashOnQname
+			| ON dashRef														# dashOnRef
+			| SEND qname														# dashSendQname
+			| SEND dashRef														# dashSendRef
+			| WHEN expr1														# dashWhen
+			| DO expr1															# dashDo
+			| FROM qname														# dashFromQname
+			| FROM dashRef 														# dashFromRef
+			| GOTO qname 														# dashGotoQname
+			| GOTO dashRef 														# dashGotoRef
 			;
 
 
@@ -165,7 +165,7 @@ baseExpr		: number																					# numberExpr
 				| AT qname																					# atNameExpr
 				| block																						# blockExpr
 				| LBRACE declMul (COMMA declMul)* body? RBRACE              								# comprehensionExpr
-				| dashRef																					# dashRefExpr
+				| {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef								# dashRefExpr
 				;
 
 transExpr		: (TRANSPOSE | TRANS_CLOS | REFL_TRANS_CLOS) (transExpr | baseExpr | bind) ;											

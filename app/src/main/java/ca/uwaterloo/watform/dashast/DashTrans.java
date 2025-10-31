@@ -2,10 +2,11 @@ package ca.uwaterloo.watform.dashast;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.passIfNull;
 
+import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
-public class DashTrans extends ASTNode {
+public final class DashTrans extends ASTNode implements DashStateItem {
     public String name;
     public List<Object> items;
     public DashFrom fromP;

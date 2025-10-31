@@ -6,6 +6,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import java.util.List;
 
 public class StateElement {

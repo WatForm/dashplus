@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class DashBufferDecls extends ASTNode {
+public final class DashBufferDecls extends ASTNode implements DashStateItem {
 
     public final List<String> names;
     public final String element;

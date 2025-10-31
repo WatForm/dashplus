@@ -1,15 +1,16 @@
-package ca.uwaterloo.watform.alloyast;
+package ca.uwaterloo.watform.dashast;
 
 import antlr.generated.*;
+import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
+public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
     @Override
-    public AlloyFile visitAlloyFile(DashParser.AlloyFileContext ctx) {
-        AlloyParagraphParseVis ppv = new AlloyParagraphParseVis();
+    public DashFile visitDashFile(DashParser.DashFileContext ctx) {
+        DashParagraphParseVis ppv = new DashParagraphParseVis();
         List<AlloyParagraph> paragraphs = new ArrayList<>();
         for (DashParser.ParagraphContext parCtx : ctx.paragraph()) {
             try {
@@ -19,9 +20,9 @@ public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
             }
         }
         if (paragraphs.isEmpty()) {
-            return new AlloyFile(paragraphs);
+            return new DashFile(paragraphs);
         } else {
-            return new AlloyFile(new Pos(ctx), paragraphs);
+            return new DashFile(new Pos(ctx), paragraphs);
         }
     }
 }

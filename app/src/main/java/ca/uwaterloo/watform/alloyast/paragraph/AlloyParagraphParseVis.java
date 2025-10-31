@@ -17,9 +17,9 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 
-public final class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
-    private final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
-    private final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
+public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
+    protected final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
+    protected final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
 
     @Override
     public AlloyParagraph visitParagraph(DashParser.ParagraphContext ctx) {

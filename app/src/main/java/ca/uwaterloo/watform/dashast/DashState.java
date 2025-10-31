@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.dashast;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class DashState extends DashParagraph {
+public class DashState extends DashParagraph implements DashStateItem {
 
     // stuff from parsing
     public final String name;
