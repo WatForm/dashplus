@@ -1,7 +1,8 @@
 package ca.uwaterloo.watform.tlaplusast;
 
+import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
-abstract class TLAPlusExpression extends TLAPlusASTNode {
-    protected List<TLAPlusASTNode> children;
+public abstract class TLAPlusExpression extends ASTNode {
+    protected List<ASTNode> children;
 }

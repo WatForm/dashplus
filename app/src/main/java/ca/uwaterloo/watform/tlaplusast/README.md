@@ -48,7 +48,7 @@
 
 ## Structure:
 
-- Every class inherits from the root class TLAPlusASTNode.
+- Every class inherits from the root class ASTNode.
 
 - Each class must have a toStringBuilderList() function, which generates a list of strings that represent all its descendants, with subsequent elements of the list assumed to be in separate lines.
 
@@ -81,7 +81,7 @@
 
 ## Class hierarchy:
 
-- TLAPlusASTNode is the root of all classes.
+- ASTNode is the root of all classes.
 
 - TLAPlusAtom is the class for things that have a name and nothing else, when turned into a string. This includes constants, variables, literals (strings and ints)
 

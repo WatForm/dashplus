@@ -1,9 +1,8 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-import java.util.ArrayList;
-import java.util.List;
+import ca.uwaterloo.watform.utils.*;
 
-abstract class TLAPlusAtom extends TLAPlusASTNode {
+abstract class TLAPlusAtom extends ASTNode {
     private final String value;
 
     protected TLAPlusAtom(String value) {
@@ -11,9 +10,8 @@ abstract class TLAPlusAtom extends TLAPlusASTNode {
     }
 
     @Override
-    public List<String> toStringList() {
-        List<String> l = new ArrayList<>();
-        l.add(this.value);
-        return l;
+    public void toString(StringBuilder sb, int indent) {
+
+        sb.append(this.value);
     }
 }

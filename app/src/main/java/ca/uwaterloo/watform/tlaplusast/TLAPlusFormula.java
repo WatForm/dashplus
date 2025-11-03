@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.tlaplusast;
 
+import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +13,18 @@ public class TLAPlusFormula extends TLAPlusExpression {
         this.children = new ArrayList<>();
     }
 
-    public TLAPlusFormula(String name, List<TLAPlusASTNode> parameters) {
+    public TLAPlusFormula(String name, List<ASTNode> parameters) {
         this.name = name;
         this.children = parameters;
     }
 
+    @Override
+    public void toString(StringBuilder sb, int ident) {
+        return;
+        // TODO fix this
+    }
+
+    /*
     @Override
     public List<String> toStringList() {
 
@@ -37,4 +45,5 @@ public class TLAPlusFormula extends TLAPlusExpression {
         result.add(TLAPlusStrings.BRACKET_CLOSE);
         return result;
     }
+     */
 }

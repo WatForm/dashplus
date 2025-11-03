@@ -1,9 +1,10 @@
 package ca.uwaterloo.watform.tlaplusast;
 
+import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusSTL extends TLAPlusASTNode { // enums used for extensibility
+public class TLAPlusSTL extends ASTNode { // enums used for extensibility
 
     public static enum LIBRARIES {
         STL_FiniteSets,
@@ -18,6 +19,7 @@ public class TLAPlusSTL extends TLAPlusASTNode { // enums used for extensibility
         this.library = library;
     }
 
+    /*
     @Override
     public List<String> toStringList() {
         String s = "Unknown";
@@ -30,33 +32,40 @@ public class TLAPlusSTL extends TLAPlusASTNode { // enums used for extensibility
         t.add(s);
         return t;
     }
+     */
 
-    public static TLAPlusFormula Cardinality(TLAPlusASTNode arg) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    @Override
+    public void toString(StringBuilder sb, int ident) {
+        return;
+        // TODO fix this
+    }
+
+    public static TLAPlusFormula Cardinality(ASTNode arg) {
+        List<ASTNode> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormula(TLAPlusStrings.CARDINALITY, children);
     }
 
-    public static TLAPlusFormula Len(TLAPlusASTNode arg) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Len(ASTNode arg) {
+        List<ASTNode> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormula(TLAPlusStrings.LEN, children);
     }
 
-    public static TLAPlusFormula Head(TLAPlusASTNode arg) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Head(ASTNode arg) {
+        List<ASTNode> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormula(TLAPlusStrings.HEAD, children);
     }
 
-    public static TLAPlusFormula Tail(TLAPlusASTNode arg) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Tail(ASTNode arg) {
+        List<ASTNode> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormula(TLAPlusStrings.TAIL, children);
     }
 
-    public static TLAPlusFormula Append(TLAPlusASTNode sequence, TLAPlusASTNode element) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Append(ASTNode sequence, ASTNode element) {
+        List<ASTNode> children = new ArrayList<>();
         children.add(sequence);
         children.add(element);
         return new TLAPlusFormula(TLAPlusStrings.APPEND, children);
