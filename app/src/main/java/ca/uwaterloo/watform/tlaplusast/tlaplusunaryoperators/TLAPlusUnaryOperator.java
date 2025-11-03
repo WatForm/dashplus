@@ -1,21 +1,17 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import ca.uwaterloo.watform.utils.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class TLAPlusUnaryOperator extends TLAPlusExpression {
 
-    private List<ASTNode> children;
+    private TLAPlusExpression operand;
 
-    public TLAPlusUnaryOperator(ASTNode operand) {
-        this.children = new ArrayList<>();
-        this.children.add(operand);
+    public TLAPlusUnaryOperator(TLAPlusExpression operand) {
+        this.operand = operand;
     }
 
-    public ASTNode getOperand() {
-        return this.children.get(0);
+    public TLAPlusExpression getOperand() {
+        return this.operand;
     }
 
     @Override

@@ -1,10 +1,9 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import ca.uwaterloo.watform.utils.*;
 
 public class TLAPlusNot extends TLAPlusUnaryOperator {
-    public TLAPlusNot(ASTNode operand) {
+    public TLAPlusNot(TLAPlusExpression operand) {
         super(operand);
     }
 

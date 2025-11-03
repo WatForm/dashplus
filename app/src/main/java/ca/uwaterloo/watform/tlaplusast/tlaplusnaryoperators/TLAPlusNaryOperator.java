@@ -1,16 +1,16 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
 public abstract class TLAPlusNaryOperator extends TLAPlusExpression {
     private String start;
     private String end;
     private String separator;
-    private List<ASTNode> children;
+    private List<TLAPlusExpression> children;
 
-    public TLAPlusNaryOperator(String start, String end, String separator, List<ASTNode> children) {
+    public TLAPlusNaryOperator(
+            String start, String end, String separator, List<TLAPlusExpression> children) {
         this.start = start;
         this.end = end;
         this.separator = separator;

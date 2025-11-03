@@ -1,10 +1,9 @@
 package ca.uwaterloo.watform.tlaplusast;
 
 import ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators.TLAPlusUnaryOperator;
-import ca.uwaterloo.watform.utils.ASTNode;
 
 public class TLAPlusPrime extends TLAPlusUnaryOperator {
-    public TLAPlusPrime(ASTNode operand) {
+    public TLAPlusPrime(TLAPlusExpression operand) {
         super(operand);
     }
 

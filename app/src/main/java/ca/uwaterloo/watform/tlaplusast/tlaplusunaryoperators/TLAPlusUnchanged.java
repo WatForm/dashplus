@@ -1,10 +1,9 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import ca.uwaterloo.watform.utils.*;
 
 public class TLAPlusUnchanged extends TLAPlusUnaryOperator {
-    public TLAPlusUnchanged(ASTNode operand) {
+    public TLAPlusUnchanged(TLAPlusExpression operand) {
         super(operand);
     }
 
