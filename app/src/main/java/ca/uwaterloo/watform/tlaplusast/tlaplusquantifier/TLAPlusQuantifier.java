@@ -3,10 +3,12 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusquantifier;
 import ca.uwaterloo.watform.tlaplusast.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TLAPlusQuantifier extends TLAPlusExpression {
 
     private String symbol;
+    private List<ASTNode> children;
 
     public TLAPlusQuantifier(TLAPlusVariable v, ASTNode set, ASTNode exp, String symbol) {
         this.children = new ArrayList<>();

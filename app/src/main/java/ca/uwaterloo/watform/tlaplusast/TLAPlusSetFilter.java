@@ -2,8 +2,12 @@ package ca.uwaterloo.watform.tlaplusast;
 
 import ca.uwaterloo.watform.utils.ASTNode;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TLAPlusSetFilter extends TLAPlusExpression {
+
+    private List<ASTNode> children;
+
     public TLAPlusSetFilter(TLAPlusVariable v, ASTNode set, ASTNode exp) {
         this.children = new ArrayList<>();
         this.children.add(v);

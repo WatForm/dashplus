@@ -3,8 +3,12 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 import ca.uwaterloo.watform.tlaplusast.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TLAPlusUnaryOperator extends TLAPlusExpression {
+
+    private List<ASTNode> children;
+
     public TLAPlusUnaryOperator(ASTNode operand) {
         this.children = new ArrayList<>();
         this.children.add(operand);

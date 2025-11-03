@@ -1,11 +1,10 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import ca.uwaterloo.watform.utils.*;
 
 public class TLAPlusImplies extends TLAPlusBinOperatorInfix {
 
-    public TLAPlusImplies(ASTNode operandOne, ASTNode operandTwo) {
+    public TLAPlusImplies(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
         super(TLAPlusStrings.IMPLICATION, operandOne, operandTwo);
     }
 }

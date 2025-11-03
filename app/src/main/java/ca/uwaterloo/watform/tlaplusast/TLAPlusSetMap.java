@@ -2,8 +2,12 @@ package ca.uwaterloo.watform.tlaplusast;
 
 import ca.uwaterloo.watform.utils.ASTNode;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TLAPlusSetMap extends TLAPlusExpression {
+
+    private List<ASTNode> children;
+
     public TLAPlusSetMap(ASTNode exp, TLAPlusVariable v, ASTNode set) {
         this.children = new ArrayList<>();
         this.children.add(exp);

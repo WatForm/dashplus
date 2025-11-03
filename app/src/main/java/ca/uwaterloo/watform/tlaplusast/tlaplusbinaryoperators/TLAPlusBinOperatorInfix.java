@@ -1,11 +1,13 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
+import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
 import ca.uwaterloo.watform.utils.*;
 
 public abstract class TLAPlusBinOperatorInfix extends TLAPlusBinaryOperator {
     private String middle;
 
-    public TLAPlusBinOperatorInfix(String middle, ASTNode operandOne, ASTNode operandTwo) {
+    public TLAPlusBinOperatorInfix(
+            String middle, TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
         this.middle = middle;
         super(operandOne, operandTwo);
     }

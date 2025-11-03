@@ -7,6 +7,7 @@ import java.util.List;
 public class TLAPlusFormula extends TLAPlusExpression {
 
     private String name;
+    private List<ASTNode> children;
 
     public TLAPlusFormula(String name) {
         this.name = name;

@@ -1,11 +1,10 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import ca.uwaterloo.watform.utils.*;
 
 public class TLAPlusIndexing extends TLAPlusBinaryOperator {
 
-    public TLAPlusIndexing(ASTNode operandOne, ASTNode operandTwo) {
+    public TLAPlusIndexing(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
         super(operandOne, operandTwo);
     }
 
