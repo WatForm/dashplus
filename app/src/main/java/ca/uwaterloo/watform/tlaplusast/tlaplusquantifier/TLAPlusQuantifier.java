@@ -4,23 +4,14 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public abstract class TLAPlusQuantifier extends TLAPlusExpression {
 
-    private String symbol;
-    private TLAPlusVariable v;
-    private TLAPlusExpression set;
-    private TLAPlusExpression exp;
+    private TLAPlusVariable v; // bound variable
+    private TLAPlusExpression set; // set that the iteration takes place over
+    private TLAPlusExpression exp; // expression used
 
-    public TLAPlusQuantifier(
-            TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp, String symbol) {
+    public TLAPlusQuantifier(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
         this.v = v;
         this.exp = exp;
         this.set = set;
-        this.symbol = symbol;
-    }
-
-    @Override
-    public void toString(StringBuilder sb, int ident) {
-        return;
-        // TODO fix this
     }
 
     /*

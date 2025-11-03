@@ -2,19 +2,11 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusquantifier;
 
 import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
-import java.util.List;
 
-public class TLAPlusSetMap extends TLAPlusExpression {
-
-    private List<TLAPlusExpression> children;
-    private TLAPlusVariable v;
-    private TLAPlusExpression set;
-    private TLAPlusExpression exp;
+public class TLAPlusSetMap extends TLAPlusQuantifier {
 
     public TLAPlusSetMap(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
-        this.v = v;
-        this.set = set;
-        this.exp = exp;
+        super(v, set, exp);
     }
 
     /*
