@@ -4,11 +4,10 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
 import ca.uwaterloo.watform.utils.*;
 
 public abstract class TLAPlusBinOperatorInfix extends TLAPlusBinaryOperator {
-    private String middle;
 
     public TLAPlusBinOperatorInfix(
-            String middle, TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
-        this.middle = middle;
+            String infixOperator, TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
+
         super(operandOne, operandTwo);
     }
 

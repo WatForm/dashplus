@@ -1,10 +1,9 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusSTL extends ASTNode { // enums used for extensibility
+public class TLAPlusSTL extends TLAPlusExpression { // enums used for extensibility
 
     public static enum LIBRARIES {
         STL_FiniteSets,
@@ -40,32 +39,32 @@ public class TLAPlusSTL extends ASTNode { // enums used for extensibility
         // TODO fix this
     }
 
-    public static TLAPlusFormula Cardinality(ASTNode arg) {
-        List<ASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Cardinality(TLAPlusVariable arg) {
+        List<TLAPlusVariable> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormula(TLAPlusStrings.CARDINALITY, children);
     }
 
-    public static TLAPlusFormula Len(ASTNode arg) {
-        List<ASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Len(TLAPlusVariable arg) {
+        List<TLAPlusVariable> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormula(TLAPlusStrings.LEN, children);
     }
 
-    public static TLAPlusFormula Head(ASTNode arg) {
-        List<ASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Head(TLAPlusVariable arg) {
+        List<TLAPlusVariable> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormula(TLAPlusStrings.HEAD, children);
     }
 
-    public static TLAPlusFormula Tail(ASTNode arg) {
-        List<ASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Tail(TLAPlusVariable arg) {
+        List<TLAPlusVariable> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormula(TLAPlusStrings.TAIL, children);
     }
 
-    public static TLAPlusFormula Append(ASTNode sequence, ASTNode element) {
-        List<ASTNode> children = new ArrayList<>();
+    public static TLAPlusFormula Append(TLAPlusVariable sequence, TLAPlusVariable element) {
+        List<TLAPlusVariable> children = new ArrayList<>();
         children.add(sequence);
         children.add(element);
         return new TLAPlusFormula(TLAPlusStrings.APPEND, children);

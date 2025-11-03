@@ -1,22 +1,21 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TLAPlusFormula extends TLAPlusExpression {
 
     private String name;
-    private List<ASTNode> children;
+    private List<TLAPlusVariable> params;
 
     public TLAPlusFormula(String name) {
         this.name = name;
-        this.children = new ArrayList<>();
+        this.params = new ArrayList<>();
     }
 
-    public TLAPlusFormula(String name, List<ASTNode> parameters) {
+    public TLAPlusFormula(String name, List<TLAPlusVariable> parameters) {
         this.name = name;
-        this.children = parameters;
+        this.params = parameters;
     }
 
     @Override

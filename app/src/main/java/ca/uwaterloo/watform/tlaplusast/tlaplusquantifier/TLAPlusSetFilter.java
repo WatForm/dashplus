@@ -1,18 +1,20 @@
-package ca.uwaterloo.watform.tlaplusast;
+package ca.uwaterloo.watform.tlaplusast.tlaplusquantifier;
 
-import ca.uwaterloo.watform.utils.ASTNode;
-import java.util.ArrayList;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 import java.util.List;
 
 public class TLAPlusSetFilter extends TLAPlusExpression {
 
-    private List<ASTNode> children;
+    private List<TLAPlusExpression> children;
+    private TLAPlusVariable v;
+    private TLAPlusExpression set;
+    private TLAPlusExpression exp;
 
-    public TLAPlusSetFilter(TLAPlusVariable v, ASTNode set, ASTNode exp) {
-        this.children = new ArrayList<>();
-        this.children.add(v);
-        this.children.add(set);
-        this.children.add(exp);
+    public TLAPlusSetFilter(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
+        this.v = v;
+        this.set = set;
+        this.exp = exp;
     }
 
     /*

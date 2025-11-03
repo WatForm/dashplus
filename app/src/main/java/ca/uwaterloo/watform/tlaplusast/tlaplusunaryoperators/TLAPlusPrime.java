@@ -1,9 +1,9 @@
-package ca.uwaterloo.watform.tlaplusast;
+package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 
-import ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators.TLAPlusUnaryOperator;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 
 public class TLAPlusPrime extends TLAPlusUnaryOperator {
-    public TLAPlusPrime(TLAPlusExpression operand) {
+    public TLAPlusPrime(TLAPlusVariable operand) {
         super(operand);
     }
 
