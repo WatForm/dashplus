@@ -39,34 +39,35 @@ public class TLAPlusSTL extends TLAPlusExpression { // enums used for extensibil
         // TODO fix this
     }
 
-    public static TLAPlusFormula Cardinality(TLAPlusVariable arg) {
+    public static TLAPlusFormulaDeclaration Cardinality(TLAPlusVariable arg) {
         List<TLAPlusVariable> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormula(TLAPlusStrings.CARDINALITY, children);
+        return new TLAPlusFormulaDeclaration(TLAPlusStrings.CARDINALITY, children);
     }
 
-    public static TLAPlusFormula Len(TLAPlusVariable arg) {
+    public static TLAPlusFormulaDeclaration Len(TLAPlusVariable arg) {
         List<TLAPlusVariable> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormula(TLAPlusStrings.LEN, children);
+        return new TLAPlusFormulaDeclaration(TLAPlusStrings.LEN, children);
     }
 
-    public static TLAPlusFormula Head(TLAPlusVariable arg) {
+    public static TLAPlusFormulaDeclaration Head(TLAPlusVariable arg) {
         List<TLAPlusVariable> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormula(TLAPlusStrings.HEAD, children);
+        return new TLAPlusFormulaDeclaration(TLAPlusStrings.HEAD, children);
     }
 
-    public static TLAPlusFormula Tail(TLAPlusVariable arg) {
+    public static TLAPlusFormulaDeclaration Tail(TLAPlusVariable arg) {
         List<TLAPlusVariable> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormula(TLAPlusStrings.TAIL, children);
+        return new TLAPlusFormulaDeclaration(TLAPlusStrings.TAIL, children);
     }
 
-    public static TLAPlusFormula Append(TLAPlusVariable sequence, TLAPlusVariable element) {
+    public static TLAPlusFormulaDeclaration Append(
+            TLAPlusVariable sequence, TLAPlusVariable element) {
         List<TLAPlusVariable> children = new ArrayList<>();
         children.add(sequence);
         children.add(element);
-        return new TLAPlusFormula(TLAPlusStrings.APPEND, children);
+        return new TLAPlusFormulaDeclaration(TLAPlusStrings.APPEND, children);
     }
 }

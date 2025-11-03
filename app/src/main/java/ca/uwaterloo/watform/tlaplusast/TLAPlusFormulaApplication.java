@@ -3,17 +3,17 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusFormula extends TLAPlusExpression {
+public class TLAPlusFormulaApplication extends TLAPlusExpression {
 
     private String name;
-    private List<TLAPlusVariable> params;
+    private List<? extends TLAPlusExpression> params;
 
-    public TLAPlusFormula(String name) {
+    public TLAPlusFormulaApplication(String name) {
         this.name = name;
         this.params = new ArrayList<>();
     }
 
-    public TLAPlusFormula(String name, List<TLAPlusVariable> parameters) {
+    public TLAPlusFormulaApplication(String name, List<? extends TLAPlusExpression> parameters) {
         this.name = name;
         this.params = parameters;
     }

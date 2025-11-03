@@ -10,12 +10,14 @@ public class TLAPlusModule {
     private List<TLAPlusConstant> constants;
     private List<TLAPlusVariable> variables;
     private List<TLAPlusSTL> extended_libraries;
+    private List<TLAPlusFormulaDefinition> formulae;
 
     public TLAPlusModule(String name) {
         this.name = name;
         this.constants = new ArrayList<>();
         this.variables = new ArrayList<>();
         this.extended_libraries = new ArrayList<>();
+        this.formulae = new ArrayList<>();
     }
 
     public void addSTL(TLAPlusSTL stl) {
