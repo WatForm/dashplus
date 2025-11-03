@@ -30,7 +30,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashExprVis;
 import ca.uwaterloo.watform.dashast.DashStrings;
@@ -63,13 +63,13 @@ public class DashRef extends AlloyExpr {
     public DashRef(
             Pos p,
             DashStrings.DashRefKind k,
-            List<AlloyQnameExpr> qnames,
+            List<AlloyNameExpr> names,
             List<? extends AlloyExpr> prmValues) {
         this(
                 p,
                 k,
-                qnames.stream()
-                        .map(AlloyQnameExpr::toString)
+                names.stream()
+                        .map(AlloyNameExpr::toString)
                         .collect(Collectors.joining(DashStrings.internalQualChar)),
                 prmValues);
     }

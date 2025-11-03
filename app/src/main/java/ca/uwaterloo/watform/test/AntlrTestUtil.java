@@ -158,6 +158,7 @@ public class AntlrTestUtil {
         } catch (ParseCancellationException pe) {
             this.dashResults.get("dashFailed").add(filePath);
             if (stopOnFirstFail) {
+                System.err.println(pe);
                 throw pe;
             }
         } catch (Exception e) {

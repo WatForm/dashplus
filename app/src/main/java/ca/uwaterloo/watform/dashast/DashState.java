@@ -50,8 +50,6 @@ public class DashState extends DashParagraph implements DashStateItem {
         else if (DashTrans.class.isInstance(i)) return 6;
         else if (DashState.class.isInstance(i)) return 7;
         else if (DashPred.class.isInstance(i)) return 8;
-        else if (DashEntered.class.isInstance(i)) return 9;
-        else if (DashExited.class.isInstance(i)) return 10;
         else {
             System.out.println(i.getClass());
             throw ImplementationError.missingCase("itemToInt");

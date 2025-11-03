@@ -14,7 +14,7 @@ public final class DashParagraphParseVis extends AlloyParagraphParseVis {
     public DashState visitStateRoot(DashParser.StateRootContext ctx) {
         return new DashState(
                 new Pos(ctx),
-                this.exprParseVis.visit(ctx.qname()).toString(),
+                this.exprParseVis.visit(ctx.name()).toString(),
                 DashState.noParam(),
                 DashStrings.StateKind.OR,
                 DashStrings.DefKind.NOTDEFAULT,

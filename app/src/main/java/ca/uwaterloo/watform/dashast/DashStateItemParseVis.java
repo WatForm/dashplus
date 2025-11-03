@@ -15,6 +15,15 @@ import java.util.stream.Collectors;
 public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> {
     private final DashExprParseVis exprParseVis = new DashExprParseVis();
 
+    private List<String> extractNames(DashParser.NamesContext ctx) {
+        if (null != ctx) {
+            return ParserUtil.visitAll(ctx.name(), exprParseVis, AlloyNameExpr.class).stream()
+                    .map(AlloyNameExpr::toString)
+                    .collect(Collectors.toList());
+        }
+        return emptyList();
+    }
+
     private List<String> extractNames(DashParser.QnamesContext ctx) {
         if (null != ctx) {
             return ParserUtil.visitAll(ctx.qname(), exprParseVis, AlloyQnameExpr.class).stream()
@@ -25,6 +34,11 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
     }
 
     private String extractName(DashParser.QnameContext ctx) {
+        if (null == ctx) return "";
+        return this.exprParseVis.visit(ctx).toString();
+    }
+
+    private String extractName(DashParser.NameContext ctx) {
         if (null == ctx) return "";
         return this.exprParseVis.visit(ctx).toString();
     }
@@ -41,7 +55,7 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
     public DashVarDecls visitDashVarDecls(DashParser.DashVarDeclsContext ctx) {
         return new DashVarDecls(
                 new Pos(ctx),
-                this.extractNames(ctx.qnames()),
+                this.extractNames(ctx.names()),
                 exprParseVis.visit(ctx.expr1()),
                 null != ctx.ENV() ? DashStrings.IntEnvKind.ENV : DashStrings.IntEnvKind.INT);
     }
@@ -50,7 +64,7 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
     public DashBufferDecls visitDashBufferDecls(DashParser.DashBufferDeclsContext ctx) {
         return new DashBufferDecls(
                 new Pos(ctx),
-                this.extractNames(ctx.qnames()),
+                this.extractNames(ctx.names()),
                 (null != ctx.qname())
                         ? this.extractName(ctx.qname())
                         : new AlloySigIntExpr().toString(),
@@ -64,7 +78,7 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
                 ParserUtil.visitAll(ctx.transItem(), transItemParseVis, DashTransItem.class);
         return new DashTrans(
                 new Pos(ctx),
-                this.extractName(ctx.qname()),
+                this.extractName(ctx.name()),
                 (DashFrom)
                         extractOneFromList(
                                 extractItemsOfClass(transItems, DashFrom.class), "DashFrom"),
@@ -96,26 +110,16 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
     }
 
     @Override
-    public DashEntered visitDashEntered(DashParser.DashEnteredContext ctx) {
-        return new DashEntered(new Pos(ctx), this.exprParseVis.visit(ctx.block()));
-    }
-
-    @Override
-    public DashExited visitDashExited(DashParser.DashExitedContext ctx) {
-        return new DashExited(new Pos(ctx), this.exprParseVis.visit(ctx.block()));
-    }
-
-    @Override
     public DashPred visitDashPred(DashParser.DashPredContext ctx) {
         return new DashPred(
-                new Pos(ctx), this.extractName(ctx.qname()), this.exprParseVis.visit(ctx.expr1()));
+                new Pos(ctx), this.extractName(ctx.name()), this.exprParseVis.visit(ctx.expr1()));
     }
 
     @Override
     public DashState visitDashState(DashParser.DashStateContext ctx) {
         return new DashState(
                 new Pos(ctx),
-                this.extractName(ctx.qname()),
+                this.extractName(ctx.name()),
                 DashState.noParam(),
                 DashStrings.StateKind.OR,
                 null != ctx.DEF() ? DashStrings.DefKind.DEFAULT : DashStrings.DefKind.NOTDEFAULT,
@@ -126,8 +130,8 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
     public DashState visitDashConcState(DashParser.DashConcStateContext ctx) {
         return new DashState(
                 new Pos(ctx),
-                this.extractName(ctx.qname(0)),
-                null != ctx.qname(1) ? this.extractName(ctx.qname(1)) : DashState.noParam(),
+                this.extractName(ctx.name()),
+                null != ctx.qname() ? this.extractName(ctx.qname()) : DashState.noParam(),
                 DashStrings.StateKind.AND,
                 null != ctx.DEF() ? DashStrings.DefKind.DEFAULT : DashStrings.DefKind.NOTDEFAULT,
                 ParserUtil.visitAll(ctx.stateItem(), new DashStateItemParseVis(), Object.class));

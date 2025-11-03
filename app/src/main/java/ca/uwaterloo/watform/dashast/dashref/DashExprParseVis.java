@@ -2,32 +2,41 @@ package ca.uwaterloo.watform.dashast.dashref;
 
 import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.ParserUtil;
 import ca.uwaterloo.watform.utils.Pos;
 
 public final class DashExprParseVis extends AlloyExprParseVis {
     @Override
-    public DashRef visitDashRefExpr(DashParser.DashRefExprContext ctx) {
-        return (DashRef) this.visit(ctx.dashRef());
+    public DashRef visitDashRef1Expr(DashParser.DashRef1ExprContext ctx) {
+        return (DashRef) this.visit(ctx.dashRef1());
     }
 
     @Override
-    public DashRef visitDashRef(DashParser.DashRefContext ctx) {
+    public DashRef visitDashRef1(DashParser.DashRef1Context ctx) {
         return new DashRef(
-                new Pos(ctx.LBRACK()), // following Dash.cup
+                new Pos(ctx),
                 DashStrings.DashRefKind.VAR,
-                ParserUtil.visitAll(ctx.qname(), this, AlloyQnameExpr.class),
+                ParserUtil.visitAll(ctx.name(), this, AlloyNameExpr.class),
                 ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
     }
 
-    public DashRef visitDashRefWithKind(
-            DashParser.DashRefContext ctx, DashStrings.DashRefKind kind) {
+    public DashRef visitDashRef1WithKind(
+            DashParser.DashRef1Context ctx, DashStrings.DashRefKind kind) {
         return new DashRef(
-                new Pos(ctx.LBRACK()), // following Dash.cup
+                new Pos(ctx),
                 kind,
-                ParserUtil.visitAll(ctx.qname(), this, AlloyQnameExpr.class),
+                ParserUtil.visitAll(ctx.name(), this, AlloyNameExpr.class),
                 ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
+    }
+
+    public DashRef visitDashRef2WithKind(
+            DashParser.DashRef2Context ctx, DashStrings.DashRefKind kind) {
+        return new DashRef(
+                new Pos(ctx),
+                kind,
+                ParserUtil.visitAll(ctx.name(), this, AlloyNameExpr.class),
+                DashRef.emptyParamValuesList());
     }
 }
