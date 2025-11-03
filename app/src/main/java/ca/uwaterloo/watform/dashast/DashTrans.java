@@ -24,7 +24,7 @@ public final class DashTrans extends ASTNode implements DashStateItem {
             DashOn onP,
             DashSend sendP,
             DashWhen whenP,
-            DashDo goP) {
+            DashDo doP) {
         super(pos);
         assert (n != null);
         assert (pos != null);

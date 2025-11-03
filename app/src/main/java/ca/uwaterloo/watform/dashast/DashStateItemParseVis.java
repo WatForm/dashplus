@@ -105,8 +105,14 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
 
     @Override
     public DashInv visitDashInv(DashParser.DashInvContext ctx) {
-        return new DashInv(
-                new Pos(ctx), this.extractName(ctx.qname()), this.exprParseVis.visit(ctx.block()));
+        if (null != ctx.qname()) {
+            return new DashInv(
+                    new Pos(ctx),
+                    this.extractName(ctx.qname()),
+                    this.exprParseVis.visit(ctx.block()));
+        } else {
+            return new DashInv(new Pos(ctx), this.exprParseVis.visit(ctx.block()));
+        }
     }
 
     @Override
