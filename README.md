@@ -39,6 +39,7 @@ Run with the desired entry point (see list of args taken in app/src/main/java/ca
 - `./gradlew build` will check for formatting issues as a dependent gradle task
 
 ## Testing:
+- `git submodule update --init --recursive` to download [dash-testing](https://github.com/WatForm/dash-testing#)
 
 - `./gradlew test` for unit testing
 
