@@ -3,7 +3,10 @@ package ca.uwaterloo.watform.utils;
 import antlr.generated.DashBaseVisitor;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.antlr.*;
+import ca.uwaterloo.watform.dashast.DashFile;
+import ca.uwaterloo.watform.dashast.DashFileParseVis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,13 +49,17 @@ public final class ParserUtil {
         if (filePath.getFileName().toString().endsWith(".als")) {
             ParseTree antlrAST = parser.alloyFile();
             AlloyFileParseVis afpv = new AlloyFileParseVis();
-            AlloyFile af = afpv.visit(antlrAST);
+            AlloyFile alloyFile = afpv.visit(antlrAST);
             Reporter.INSTANCE.exitIfHasErrors();
-            af.filename = filePath.toString();
-            return af;
+            alloyFile.filename = filePath.toString();
+            return alloyFile;
         } else {
             ParseTree antlrAST = parser.dashFile();
-            return new AlloyFile(null);
+            DashFileParseVis dfpv = new DashFileParseVis();
+            DashFile dashFile = dfpv.visit(antlrAST);
+            Reporter.INSTANCE.exitIfHasErrors();
+            dashFile.filename = filePath.toString();
+            return dashFile;
         }
     }
 

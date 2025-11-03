@@ -1,17 +1,19 @@
 package ca.uwaterloo.watform.dashast;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.emptyList;
+import static ca.uwaterloo.watform.utils.GeneralUtil.extractItemsOfClass;
+import static ca.uwaterloo.watform.utils.GeneralUtil.extractOneFromList;
 
 import antlr.generated.*;
-import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
+import ca.uwaterloo.watform.dashast.dashref.DashExprParseVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> {
-    private final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
+    private final DashExprParseVis exprParseVis = new DashExprParseVis();
 
     private List<String> extractNames(DashParser.QnamesContext ctx) {
         if (null != ctx) {
@@ -57,9 +59,29 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
 
     @Override
     public DashTrans visitDashTrans(DashParser.DashTransContext ctx) {
-        // WIP
+        DashTransItemParseVis transItemParseVis = new DashTransItemParseVis();
+        List<DashTransItem> transItems =
+                ParserUtil.visitAll(ctx.transItem(), transItemParseVis, DashTransItem.class);
         return new DashTrans(
-                new Pos(ctx), this.extractName(ctx.qname()), null, null, null, null, null, null);
+                new Pos(ctx),
+                this.extractName(ctx.qname()),
+                (DashFrom)
+                        extractOneFromList(
+                                extractItemsOfClass(transItems, DashFrom.class), "DashFrom"),
+                (DashGoto)
+                        extractOneFromList(
+                                extractItemsOfClass(transItems, DashGoto.class), "DashGoto"),
+                (DashOn)
+                        extractOneFromList(extractItemsOfClass(transItems, DashOn.class), "DashOn"),
+                (DashSend)
+                        extractOneFromList(
+                                extractItemsOfClass(transItems, DashSend.class), "DashSend"),
+                (DashWhen)
+                        extractOneFromList(
+                                extractItemsOfClass(transItems, DashWhen.class), "DashWhen"),
+                (DashDo)
+                        extractOneFromList(
+                                extractItemsOfClass(transItems, DashDo.class), "DashDo"));
     }
 
     @Override

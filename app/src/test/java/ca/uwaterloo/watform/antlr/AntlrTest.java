@@ -9,9 +9,16 @@ import org.junit.jupiter.api.Test;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AntlrTest {
+    // @Test
+    @Order(1)
+    @DisplayName("Antlr grammar parses dash-testing")
+    public void parseDashTesting() throws Exception {
+        Path p = Paths.get("src/test/resources/antlr/dash-testing");
+        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".dsh");
+    }
 
     @Test
-    @Order(1)
+    @Order(2)
     @DisplayName("Jackson's examples from Software Abstraction book and some WatForm alloy files")
     public void parseCatalystQuickTests() throws Exception {
         Path p = Paths.get("src/test/resources/antlr/catalyst/quick-tests");
@@ -19,7 +26,7 @@ public class AntlrTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     @DisplayName("Alloy builtin util files")
     public void parseUtil() throws Exception {
         Path p = Paths.get("src/test/resources/antlr/util");

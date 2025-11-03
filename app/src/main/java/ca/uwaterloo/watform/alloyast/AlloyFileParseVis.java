@@ -11,7 +11,7 @@ public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
     public AlloyFile visitAlloyFile(DashParser.AlloyFileContext ctx) {
         AlloyParagraphParseVis ppv = new AlloyParagraphParseVis();
         List<AlloyParagraph> paragraphs = new ArrayList<>();
-        for (DashParser.ParagraphContext parCtx : ctx.paragraph()) {
+        for (DashParser.AlloyParagraphContext parCtx : ctx.alloyParagraph()) {
             try {
                 paragraphs.add(ppv.visit(parCtx));
             } catch (Reporter.ErrorUser eu) {

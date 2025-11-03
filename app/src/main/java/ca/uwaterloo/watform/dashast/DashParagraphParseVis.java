@@ -6,6 +6,11 @@ import ca.uwaterloo.watform.utils.*;
 
 public final class DashParagraphParseVis extends AlloyParagraphParseVis {
     @Override
+    public DashState visitDashParagraph(DashParser.DashParagraphContext ctx) {
+        return (DashState) this.visit(ctx.stateRoot());
+    }
+
+    @Override
     public DashState visitStateRoot(DashParser.StateRootContext ctx) {
         return new DashState(
                 new Pos(ctx),

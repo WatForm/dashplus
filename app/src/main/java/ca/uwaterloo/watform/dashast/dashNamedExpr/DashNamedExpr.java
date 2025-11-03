@@ -26,7 +26,8 @@ public abstract class DashNamedExpr extends ASTNode {
     // Special toString for when expression has a name
     public void toString(String name, StringBuilder sb, int indent) {
         sb.append(DashStrings.indent(indent) + name + " {\n");
-        this.toString(sb, indent);
+        sb.append(DashStrings.indent(indent + 1));
+        this.exp.toString(sb, indent + 1);
         sb.append("\n" + DashStrings.indent(indent) + "}\n");
     }
 }

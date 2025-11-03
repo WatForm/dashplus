@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class DashFile extends AlloyFile {
-    public final String filename = "";
+    public String filename = "";
     public final List<DashParagraph> paragraphs;
 
     public DashFile(Pos pos, List<AlloyParagraph> paragraphs) {
@@ -23,9 +23,9 @@ public final class DashFile extends AlloyFile {
         this(Pos.UNKNOWN, paragraphs);
     }
 
-    // @Override
+    @Override
     public void toString(StringBuilder sb, int indent) {
-        for (DashParagraph p : paragraphs) {
+        for (AlloyParagraph p : super.paragraphs) {
             p.toString(sb, indent);
             sb.append(CommonStrings.NEWLINE + CommonStrings.NEWLINE);
         }

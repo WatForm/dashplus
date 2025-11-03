@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.test;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.antlr.*;
+import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -131,6 +132,8 @@ public class AntlrTestUtil {
             System.err.println(e);
             this.printResults(alloyResults);
             System.exit(1);
+        } finally {
+            System.out.println("=======================");
         }
     }
 
@@ -147,10 +150,11 @@ public class AntlrTestUtil {
     private void tryParseDash(CharStream input, Path filePath) {
         System.out.println(filePath);
         try {
-            ParserUtil.parse(filePath);
+            DashFile dashFile = (DashFile) ParserUtil.parse(filePath);
+            System.out.println(dashFile.toString());
+            this.dashResults.get("dashPassed").add(filePath);
             System.out.println(
                     "Successfully parsed " + dashResults.get("dashPassed").size() + " files. ");
-            this.dashResults.get("dashPassed").add(filePath);
         } catch (ParseCancellationException pe) {
             this.dashResults.get("dashFailed").add(filePath);
             if (stopOnFirstFail) {
@@ -160,21 +164,26 @@ public class AntlrTestUtil {
             System.err.println(e);
             this.printResults(dashResults);
             System.exit(1);
+        } finally {
+            System.out.println("=======================");
         }
     }
 
     // ====================================================================================
 
     private void tryParseWithTimeout(CharStream input, Path filePath, String extension) {
+        if (null == extension) {
+            throw new ImplementationError("File extension must be .dsh or .als");
+        }
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<?> future = null;
-        if (extension == ".dsh") {
+        if (extension.equals(".dsh")) {
             future =
                     executor.submit(
                             () -> {
                                 tryParseDash(input, filePath);
                             });
-        } else if (extension == ".als") {
+        } else if (extension.equals(".als")) {
             future =
                     executor.submit(
                             () -> {
@@ -187,9 +196,9 @@ public class AntlrTestUtil {
         } catch (TimeoutException te) {
             System.out.println(
                     "Parsing took longer than " + timeoutMs / 1000 + " seconds, file: " + filePath);
-            if (extension == ".dsh") {
+            if (extension.equals(".dsh")) {
                 dashResults.get("timeout").add(filePath);
-            } else if (extension == ".als") {
+            } else if (extension.equals(".als")) {
                 alloyResults.get("timeout").add(filePath);
             }
             future.cancel(true); // interrupt the parsing thread
@@ -208,7 +217,7 @@ public class AntlrTestUtil {
     }
 
     public void recurParseDir(Path dir, long timeoutMs, String extension) throws Exception {
-        if (extension != ".dsh" && extension != ".als") {
+        if (extension == null || (!extension.equals(".dsh") && !extension.equals(".als"))) {
             throw new ImplementationError("File extension must be .dsh or .als");
         }
         this.clearResults();
@@ -221,6 +230,11 @@ public class AntlrTestUtil {
             } catch (IOException e) {
                 throw new RuntimeException("Failed to read file: " + filePath, e);
             }
+        }
+        if (extension.equals(".dsh")) {
+            this.printResults(this.dashResults);
+        } else {
+            this.printResults(this.alloyResults);
         }
     }
 }

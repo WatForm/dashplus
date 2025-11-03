@@ -15,8 +15,9 @@ public final class DashInv extends DashNamedExpr implements DashStateItem {
 
     public DashInv(Pos p, String n, AlloyExpr inv) {
         super(p, inv);
-        assert (n != "");
-        assert (n != null);
+        // Looking at Dash.cup, we allow invariants with no name. - Jack
+        // assert (n != "");
+        // assert (n != null);
         this.name = n;
     }
 

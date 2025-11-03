@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.utils.*;
 
-public class DashDo extends DashNamedExpr {
+public class DashDo extends DashNamedExpr implements DashTransItem {
     public DashDo(Pos pos, AlloyExpr d) {
         super(pos, d);
     }

@@ -25,14 +25,16 @@ grammar Dash ;
 
 // ____________________________________
 
-dashFile
-    : (stateRoot | paragraph)* 
-    ;
+alloyFile: alloyParagraph* ;
 
-alloyFile
-    : paragraph* 
-    ;
+dashParagraph : stateRoot ;
 
+paragraph
+	: dashParagraph
+	| alloyParagraph
+	;
+
+dashFile: paragraph* ;
 
 // ____________________________________
 // stateRoot
@@ -68,7 +70,7 @@ transItem 	: ON qname															# dashOnQname
 // ____________________________________
 // Paragraph
 
-paragraph       : modulePara
+alloyParagraph       : modulePara
                 | importPara
                 | macroPara
                 | sigPara
@@ -153,7 +155,8 @@ impliesExprOpen 	: expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE impliesExpr
 
 dashRef			: (qname SLASH)* qname LBRACK (expr1 COMMA)* expr1 RBRACK SLASH qname ;
 
-baseExpr		: number																					# numberExpr
+baseExpr		: {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef								# dashRefExpr
+				| number																					# numberExpr
 				| STRING_LITERAL																			# strLiteralExpr
 				| IDEN																						# idenExpr
 				| THIS																						# thisExpr
@@ -165,7 +168,6 @@ baseExpr		: number																					# numberExpr
 				| AT qname																					# atNameExpr
 				| block																						# blockExpr
 				| LBRACE declMul (COMMA declMul)* body? RBRACE              								# comprehensionExpr
-				| {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef								# dashRefExpr
 				;
 
 transExpr		: (TRANSPOSE | TRANS_CLOS | REFL_TRANS_CLOS) (transExpr | baseExpr | bind) ;											
