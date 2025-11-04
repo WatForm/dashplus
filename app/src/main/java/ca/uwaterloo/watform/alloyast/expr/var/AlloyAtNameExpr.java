@@ -4,6 +4,10 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
+/*
+ * Prefixing a field name with the special symbol @ suppresses the implicit expansion in sig's facts
+ * see: section on Signatures in https://alloytools.org/spec.html
+ */
 public final class AlloyAtNameExpr extends AlloyVarExpr {
     public final AlloyQnameExpr name;
 

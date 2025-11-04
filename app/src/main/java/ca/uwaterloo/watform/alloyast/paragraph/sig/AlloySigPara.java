@@ -17,7 +17,7 @@ public final class AlloySigPara extends AlloyParagraph {
     public final List<Qual> quals;
     public final List<AlloyQnameExpr> qnames;
     public final Optional<Rel> rel;
-    public final List<AlloyDecl> decls;
+    public final List<AlloyDecl> decls; // sig's fields
     public final Optional<AlloyBlock> block;
 
     public AlloySigPara(
