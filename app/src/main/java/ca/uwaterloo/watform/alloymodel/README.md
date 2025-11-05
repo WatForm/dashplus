@@ -67,6 +67,76 @@ would allow x to contain any number of elements.
 - A signature may not declare a field whose name conflicts with the name of an inherited field.
 - Moreover, two subset signatures may not declare a field of the same name if their types overlap.
 
+
+
+## fact
+### Typechecking
+- typecheck block -> typecheck all expr in block are constraints
+
+
+
+
+
+## Fun & Pred
+- no direct or indirect recursive invocations
+    - get recursive invocations for every fun/pred
+    - check for cycles at invocation (error not thrown if not called)
+```
+sig A{
+	b: B
+}
+lone sig a extends A {}
+sig B {
+	c:C
+}
+sig C {}
+lone sig c extends C {}
+
+
+//fun b [a : A] : A {
+//	a
+//}
+
+pred A (a : A, b1: B, c1:C) {
+	a.b in B
+}
+
+pred P1 {
+	P2 and a in A
+}
+
+pred P2 {
+	P1 and a in A
+}
+
+fact {
+	P1
+}
+```
+- treat (same for fun) 
+```
+pred S.myPred(arg1: T1, arg2: T2) {
+    // body
+}
+```
+as 
+```
+pred myPred(this: one S, arg1: T1, arg2: T2) {
+    // body
+}
+```
+
+### Pred Typechecking
+- typecheck arguments
+- typecheck block with new context that has the arguments -> typecheck all expr in block are constraints
+
+### Fun Typechecking
+- typecheck arguments
+- typecheck return type
+- typecheck block with new context that has the arguments -> type(fun.block) is subtype of return type
+
+
+
 ## Decl & Multiplicity
 - x : X, if X is unary relation, default multiplicity is one
 
@@ -106,6 +176,32 @@ if (d.isPrivate != null) {
 ```
 - possibly more???
 
+## Expr
+### join (`a.b`)
+- if b is disj 
+    - throw disj needs at least two args
+- if b is a field; type(b) = {A -> B}
+    - does it belong to sig a with type A?
+    - type is B
+- if b is a fun/pred 
+    - check no cyclic invocation
+    - typecheck like it's b[a]
+    - need to be careful if it's a.b[c]
+- if it's both a valid field and valid invocation
+    - report the ambinguity error
+
+### box b[a,c]
+- if b is disj 
+    - if not enough args, throw disj needs at least two args
+    - we accept any number of arguments
+    - arguments must be relations
+    - type is a constraint
+- b must be a fun/pred
+- check no cyclic invocation
+- check correct number of args
+- check type of args
+- type is constraint if b is a pred else it's b's return type
+
 
 ## to find out
 The syntax of Alloy does in fact admit higher-order quantifications???
@@ -118,7 +214,7 @@ The syntax of Alloy does in fact admit higher-order quantifications???
 - Seems like there are 4 stages:
     1) alloyast ctor (to be decided)
     2) alloymodel ctor (duplicate names)
-    3) checking sig map (see below) & what we choose not to check in ctor, we check here
+    3) checking sig map (see below) & collect fun&pred's recursive invocations & what we choose not to check in ctor, we check here
     4) typechecking
 
 
@@ -168,4 +264,12 @@ sig s7 in t5 {
 ## decl & multiplicity
 - during typechecking, need to ensure some/lone/one only appears before a unary relation
 - there's a bunch other other checks, which can occur in ctor or before typechecking
+
+## fun & pred
+- get all recursive invocations at step 3
+    - but an error is thrown only if they are actually invoked by a dot or box
+
+## expr
+- possibly a visitor and interfaces (constraint, relation, integer) on AlloyExpr to hold some fields like arity etc
+- see above for what's to check at each expr
 
