@@ -25,7 +25,6 @@
 ## function and predicates
 - invocations are type-checked to ensure the actual arguments are not disjoint from the formal arguments
 - they can be overloaded, but need to be unambiguously resolved by the type checker
-- what defaults are used for x:X is it set or one???
 ```
 When declaring a set variable, the default is one, so in a declaration
 
@@ -68,12 +67,18 @@ would allow x to contain any number of elements.
 - A signature may not declare a field whose name conflicts with the name of an inherited field.
 - Moreover, two subset signatures may not declare a field of the same name if their types overlap.
 
-## Decl
-### Typechecking
-- in sig: a relation (S -> type(expr))
-- elsewhere: type(expr)
+## Decl & Multiplicity
+- x : X, if X is unary relation, default multiplicity is one
 
-### Others (could be checked in ctor)
+### Typechecking
+- in sig it's a relation 
+    - `sig A {b : B}`, type(b) = {A,B}
+- multiplicity symbols don't change the type of the LHS
+    - `r: e1 -> (e2 m2 -> n2 e3)`, Type\(r\) = T1 -> (T2 -> T3)
+    - `x : (lone | some | one | no) expr`, type(x) = {type(expr)}
+- need to check: After the some/lone/one multiplicity symbol, this expression must be a unary set.
+
+### Checks that can happen in ctors
 - Any variable that appears in a bounding expression must have been declared already, either earlier in the sequence of declarations in which this declaration appears, or earlier elsewhere.
 - var isn't allowed everywhere
     - quantificationExpr
@@ -87,7 +92,6 @@ if (d.disjoint2 != null) {
 
 sig Person {}
 fact {
-    // ILLEGAL: You cannot declare a quantified variable 'p' as 'var'.
     all p: disj Person | p in Person
 }
 Local variable "p" cannot be bound to a 'disjoint'
@@ -102,13 +106,21 @@ if (d.isPrivate != null) {
 ```
 - possibly more???
 
+
 ## to find out
 The syntax of Alloy does in fact admit higher-order quantifications???
+
 
 # Plan
 - WFF errors during construction
     1) don't check for anything, all at WFF, throw ErrorUser (better)
     2) check as much as we can in ctor, throw ErrorUser. rest check at WFF, throw ErrorUser
+- Seems like there are 4 stages:
+    1) alloyast ctor (to be decided)
+    2) alloymodel ctor (duplicate names)
+    3) checking sig map (see below) & what we choose not to check in ctor, we check here
+    4) typechecking
+
 
 ## sig
 - see AlloyAnalyzer/sig.java for errors thrown at construction
@@ -153,7 +165,7 @@ sig s7 in t5 {
 }
 ```
 
-## decl
-- if all check in ctor, nothing special to check during WFF
-- part of typechecking
+## decl & multiplicity
+- during typechecking, need to ensure some/lone/one only appears before a unary relation
+- there's a bunch other other checks, which can occur in ctor or before typechecking
 
