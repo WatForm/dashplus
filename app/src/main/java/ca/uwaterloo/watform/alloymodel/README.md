@@ -176,6 +176,44 @@ if (d.isPrivate != null) {
 ```
 - possibly more???
 
+
+## Commands (not all of them can be checked during construction, b/c need info on sig)
+- consistent: at most one bound may be associated with any signature, implicitly, explicitly, or by default; and
+- complete: every top-level signature must have a bound, implicitly or explicitly.
+- uniform: if a subsignature is explicitly bounded, its ancestor top-level signature must be also.
+
+ctor:
+- `throw new ErrorSyntax(pos, "Sig " + sig + " cannot have a negative starting scope (" + startingScope + ")");`
+- `throw new ErrorSyntax(cmd.pos, "Cannot specify a scope for the builtin signature \"" + sig + "\"");`
+- `throw new ErrorSyntax(cmd.pos, "Cannot specify a negative scope for sig \"" + sig + "\"");`
+- `throw new ErrorSyntax(pos, "Sig " + sig + " cannot have a negative ending scope (" + endingScope + ")");`
+- `throw new ErrorSyntax(pos, "Sig " + sig + " cannot have an ending scope (" + endingScope + ") smaller than its starting scope (" + startingScope + ")");`
+- `throw new ErrorSyntax(pos, "Sig " + sig + "'s increment value cannot be " + increment + ".\nThe increment must be 1 or greater.");`
+- `throw new ErrorSyntax(pos, "Cannot specify a bitwidth less than 0");`
+- `throw new ErrorSyntax(pos, "Cannot specify a bitwidth greater than 30");`
+- `throw new ErrorSyntax(pos, "With integer bitwidth of " + bitwidth + ", you cannot have sequence length longer than " + max());`
+- `throw new ErrorSyntax(cmd.pos, "The number of atoms exceeds the internal limit of " + Integer.MAX_VALUE);`
+- `throw new ErrorSyntax(cmd.pos, "You cannot set a scope on \"univ\".");`
+- `throw new ErrorSyntax(cmd.pos, "You can no longer set a scope on \"Int\". " + "The number of atoms in Int is always exactly equal to 2^(i" + "nteger bitwidth).\n");`
+- `throw new ErrorSyntax(cmd.pos, "You cannot set a scope on \"seq/Int\". " + "To set the maximum allowed sequence length, use the seq keyword.\n");`
+- `throw new ErrorSyntax(cmd.pos, "Sig \"String\" already has a scope of " + maxstring + ", so we cannot set it to be " + scope);`
+- `throw new ErrorSyntax(cmd.pos, "Sig \"String\" must have an exact scope.");`
+- `throw new ErrorSyntax(cmd.pos, "You cannot set a scope on \"none\".");`
+
+
+stage 3:
+- `throw new ErrorSyntax(cmd.pos, "Mutable sig " + et.sig + " is not top-level thus cannot have scopes assigned.");`
+- `throw new ErrorSyntax(cmd.pos, "Cannot specify a scope for a subset signature \"" + sig + "\"");`
+- `throw new ErrorSyntax(cmd.pos, "Sig \"" + sig + "\" already has a scope of " + old + ", so we cannot set it to be " + newValue);`
+- `throw new ErrorSyntax(cmd.pos, "Sig " + et.sig + " is variable thus scope cannot be exact.");`
+- `throw new ErrorSyntax(cmd.pos, "You must specify a scope for sig \"" + s + "\"");`
+- `throw new ErrorSyntax(cmd.pos, "You cannot set a scope on the enum \"" + s.label + "\"");`
+- `throw new ErrorSyntax(cmd.pos, "Sig \"" + s + "\" has the multiplicity of \"one\", so its scope must be 1, and cannot be " + scope);`
+- `throw new ErrorSyntax(cmd.pos, "Var sig \"" + s + "\" has the multiplicity of \"one\", so its scope must be 1 or above, and cannot be " + scope);`
+- `throw new ErrorSyntax(cmd.pos, "Sig \"" + s + "\" has the multiplicity of \"lone\", so its scope must 0 or 1, and cannot be " + scope);`
+- `throw new ErrorSyntax(cmd.pos, "Sig \"" + s + "\" has the multiplicity of \"some\", so its scope must 1 or above, and cannot be " + scope);`
+- `throw new ErrorSyntax(cmd.pos, "You cannot set a scope on \"steps\" in static models.");`
+
 ## Expr
 ### join (`a.b`)
 - if b is disj 
@@ -201,6 +239,7 @@ if (d.isPrivate != null) {
 - check correct number of args
 - check type of args
 - type is constraint if b is a pred else it's b's return type
+
 
 
 ## to find out
@@ -268,6 +307,10 @@ sig s7 in t5 {
 ## fun & pred
 - get all recursive invocations at step 3
     - but an error is thrown only if they are actually invoked by a dot or box
+
+## commands
+- some need to be checked at stage 3, b/c need AlloyModel.sigs
+- some could be checked at ctor
 
 ## expr
 - possibly a visitor and interfaces (constraint, relation, integer) on AlloyExpr to hold some fields like arity etc
