@@ -45,6 +45,9 @@ would allow x to contain any number of elements.
 - There must be an instantiating signature parameter for each parameter of the imported module. An instantiating signature may be a type, subtype, or subset, or one of the predefined types Int and univ. If the imported module declares a signature that is an extension of a signature parameter, instantiating that parameter with a subset signature or with Int is an error.
 - and more...
 
+## sigs (AlloyModel ctor)
+- check unique names
+
 ## sigs (need access to all sigs to check, only need access to other sigs)
 - can be static (default) or mutable
 - can be subset signature or type signature 
@@ -65,9 +68,92 @@ would allow x to contain any number of elements.
 - A signature may not declare a field whose name conflicts with the name of an inherited field.
 - Moreover, two subset signatures may not declare a field of the same name if their types overlap.
 
+## Decl
+### Typechecking
+- in sig: a relation (S -> type(expr))
+- elsewhere: type(expr)
 
+### Others (could be checked in ctor)
+- Any variable that appears in a bounding expression must have been declared already, either earlier in the sequence of declarations in which this declaration appears, or earlier elsewhere.
+- var isn't allowed everywhere
+    - quantificationExpr
+    - maybe more???
+- right disj isn't allowed everywhere
+```
+if (d.disjoint2 != null) {
+    ExprHasName name = d.names.get(d.names.size() - 1);
+    throw new ErrorSyntax(d.disjoint2.merge(name.pos), "Function parameter \"" + name.label + "\" cannot be bound to a 'disjoint' expression.");
+}
 
+sig Person {}
+fact {
+    // ILLEGAL: You cannot declare a quantified variable 'p' as 'var'.
+    all p: disj Person | p in Person
+}
+Local variable "p" cannot be bound to a 'disjoint'
+expression.
+```
+- private is not needed
+```
+if (d.isPrivate != null) {
+    ExprHasName name = d.names.get(0);
+    throw new ErrorSyntax(d.isPrivate.merge(name.pos), "Function parameter \"" + name.label + "\" is always private already.");
+}
+```
+- possibly more???
 
 ## to find out
 The syntax of Alloy does in fact admit higher-order quantifications???
+
+# Plan
+- WFF errors during construction
+    1) don't check for anything, all at WFF, throw ErrorUser (better)
+    2) check as much as we can in ctor, throw ErrorUser. rest check at WFF, throw ErrorUser
+
+## sig
+- see AlloyAnalyzer/sig.java for errors thrown at construction
+- check for unique names in AlloyModel.ctor
+- iterate sig map:
+    - var sigs walk up branch: var sig's parent is not static
+    - subset sig walk up branch: acyclic. Note: at a split, dfs, don't share visited set
+    - type sig walk up branch: acyclic and doens't extend from subset sig
+    - every sig walk up branch: no name conflicts
+    - check subset sig with overlapping types don't have same name:
+        1. hashmap (string field, set\<AlloySigPara\>)
+        2. iterate thru sig map, add to hashmap and check for overlap
+            1. get type of sig (look up branch, stop at first type sig or top-level sig)
+            2. no overlap if types distinct and mutually unreachible types 
+```
+sig F {}
+sig top1 {}
+sig top2 {}
+
+sig t1 extends top1 {}
+sig t2 extends top1 {}
+sig s1 in top1 {}
+sig s2 in top1 {}
+sig s8 in top2 {}
+
+sig t3 extends t1 {}
+sig t4 extends t1 {}
+sig t5 extends t2{}
+sig s3 in s1 {}
+sig s4 in s1 + s2 {
+
+}
+sig s5 in s2 {
+}
+
+sig s6 in t4 {
+	f: F
+}
+
+sig s7 in t5 {
+	f: F
+}
+```
+
+## decl
+- if all check in ctor, nothing special to check during WFF
+- part of typechecking
 
