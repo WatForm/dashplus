@@ -28,4 +28,8 @@ public class ImplementationError extends RuntimeException {
     public static ImplementationError methodShouldNotBeCalled() {
         return new ImplementationError("This method should not be called");
     }
+
+    public static ImplementationError methodShouldNotBeCalled(Pos pos) {
+        return new ImplementationError(pos, "This method should not be called: " + pos.toString());
+    }
 }

@@ -11,7 +11,6 @@ import java.util.Optional;
 public final class AlloyImportPara extends AlloyParagraph {
     public final boolean isPrivate;
     public final AlloyQnameExpr qname;
-    public final boolean hasBrackets;
     public final List<AlloySigRefExpr> sigRefs;
     public final Optional<AlloyQnameExpr> asQname;
 
@@ -19,13 +18,11 @@ public final class AlloyImportPara extends AlloyParagraph {
             Pos pos,
             boolean isPrivate,
             AlloyQnameExpr qname,
-            boolean hasBrackets,
             List<AlloySigRefExpr> sigRefs,
             AlloyQnameExpr asQname) {
         super(pos);
         this.isPrivate = isPrivate;
         this.qname = qname;
-        this.hasBrackets = hasBrackets;
         this.sigRefs = Collections.unmodifiableList(sigRefs);
         this.asQname = Optional.ofNullable(asQname);
     }
@@ -33,12 +30,14 @@ public final class AlloyImportPara extends AlloyParagraph {
     public AlloyImportPara(
             boolean isPrivate,
             AlloyQnameExpr qname,
-            boolean hasBrackets,
             List<AlloySigRefExpr> sigRefs,
             AlloyQnameExpr asQname) {
-        this(Pos.UNKNOWN, isPrivate, qname, hasBrackets, sigRefs, asQname);
+        this(Pos.UNKNOWN, isPrivate, qname, sigRefs, asQname);
     }
 
+    /*
+     * If no sigRefs, then don't print []
+     */
     @Override
     public void toString(StringBuilder sb, int indent) {
         if (isPrivate) {
@@ -48,11 +47,9 @@ public final class AlloyImportPara extends AlloyParagraph {
         sb.append(AlloyStrings.OPEN);
         sb.append(AlloyStrings.SPACE);
         this.qname.toString(sb, indent);
-        if (this.hasBrackets) {
+        if (!sigRefs.isEmpty()) {
             sb.append(AlloyStrings.LBRACK);
-            if (!sigRefs.isEmpty()) {
-                ASTNode.join(sb, indent, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);
-            }
+            ASTNode.join(sb, indent, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);
             sb.append(AlloyStrings.RBRACK);
         }
         if (!this.asQname.isEmpty()) {
@@ -61,5 +58,10 @@ public final class AlloyImportPara extends AlloyParagraph {
             sb.append(AlloyStrings.SPACE);
             this.asQname.get().toString(sb, indent);
         }
+    }
+
+    @Override
+    public Optional<String> getName() {
+        return Optional.of(this.qname.toString());
     }
 }

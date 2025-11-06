@@ -241,4 +241,12 @@ public final class AlloyCmdPara extends AlloyParagraph {
             }
         }
     }
+
+    /*
+     * AlloyCmdPara doesn't have a name
+     */
+    @Override
+    public Optional<String> getName() {
+        return Optional.empty();
+    }
 }

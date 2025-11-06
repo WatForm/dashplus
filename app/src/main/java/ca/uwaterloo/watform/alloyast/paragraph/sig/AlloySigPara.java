@@ -7,8 +7,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
-import ca.uwaterloo.watform.utils.ASTNode;
-import ca.uwaterloo.watform.utils.Pos;
+import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +50,16 @@ public final class AlloySigPara extends AlloyParagraph {
 
     public AlloySigPara(List<AlloyQnameExpr> qnames, List<AlloyDecl> decls, AlloyBlock block) {
         this(Pos.UNKNOWN, Collections.emptyList(), qnames, null, decls, block);
+    }
+
+    public AlloySigPara(AlloyQnameExpr qname, List<AlloyDecl> decls, AlloyBlock block) {
+        this(
+                Pos.UNKNOWN,
+                Collections.emptyList(),
+                Collections.singletonList(qname),
+                null,
+                decls,
+                block);
     }
 
     @Override
@@ -177,5 +186,13 @@ public final class AlloySigPara extends AlloyParagraph {
                     this.sigRefs,
                     AlloyStrings.SPACE + AlloyStrings.PLUS + AlloyStrings.SPACE);
         }
+    }
+
+    @Override
+    public Optional<String> getName() {
+        if (this.qnames.size() >= 1) {
+            throw ImplementationError.methodShouldNotBeCalled(this.pos);
+        }
+        return Optional.of(this.qnames.get(0).toString());
     }
 }

@@ -47,7 +47,6 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                 new Pos(ctx),
                 null != ctx.PRIVATE(),
                 (AlloyQnameExpr) exprParseVis.visit(ctx.qname(0)),
-                null != ctx.LBRACK(),
                 ((null != ctx.sigRefs())
                         ? this.sigRefsParseVis.visit(ctx.sigRefs())
                         : Collections.emptyList()),
@@ -114,12 +113,8 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
     // ====================================================================================
     @Override
     public AlloyParagraph visitPredPara(DashParser.PredParaContext ctx) {
-        boolean hasBrack = false;
-        boolean hasParen = false;
         List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
-            hasBrack = null != ctx.arguments().LBRACK();
-            hasParen = null != ctx.arguments().LPAREN();
             if (null != ctx.arguments().decls()) {
                 decls =
                         ParserUtil.visitAll(
@@ -132,8 +127,6 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                 null != ctx.PRIVATE(),
                 (null != ctx.sigRef()) ? (AlloySigRefExpr) exprParseVis.visit(ctx.sigRef()) : null,
                 (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
-                hasBrack,
-                hasParen,
                 decls,
                 (AlloyBlock) exprParseVis.visit(ctx.block()));
     }
@@ -143,12 +136,8 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
     // ====================================================================================
     @Override
     public AlloyFunPara visitFunPara(DashParser.FunParaContext ctx) {
-        boolean hasBrack = false;
-        boolean hasParen = false;
         List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
-            hasBrack = null != ctx.arguments().LBRACK();
-            hasParen = null != ctx.arguments().LPAREN();
             if (null != ctx.arguments().decls()) {
                 decls =
                         ParserUtil.visitAll(
@@ -176,8 +165,6 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                 null != ctx.PRIVATE(),
                 (null != ctx.sigRef()) ? (AlloySigRefExpr) exprParseVis.visit(ctx.sigRef()) : null,
                 (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
-                hasBrack,
-                hasParen,
                 decls,
                 mul,
                 exprParseVis.visit(ctx.expr1()),
@@ -219,8 +206,6 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                             ? ParserUtil.visitAll(
                                     ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                             : Collections.emptyList(),
-                    null != ctx.LBRACK(),
-                    null != ctx.LPAREN(),
                     (AlloyBlock) exprParseVis.visit(ctx.block()));
         } else if (null != ctx.expr1()) {
             return new AlloyMacroPara(
@@ -231,8 +216,6 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                             ? ParserUtil.visitAll(
                                     ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                             : Collections.emptyList(),
-                    null != ctx.LBRACK(),
-                    null != ctx.LPAREN(),
                     exprParseVis.visit(ctx.expr1()));
         } else {
             throw new AlloyUnexpTokenEx(ctx);

@@ -14,6 +14,8 @@ public final class DashFile extends AlloyFile {
 
     public DashFile(Pos pos, List<AlloyParagraph> paragraphs) {
         super(pos, GeneralUtil.extractItemsOfClass(paragraphs, AlloyParagraph.class));
+        // the filter above is currently doing nothing, b/c DashParagraphs are AlloyParagraphs Nov 6
+        // 2025
         this.paragraphs =
                 Collections.unmodifiableList(
                         GeneralUtil.extractItemsOfClass(paragraphs, DashParagraph.class));

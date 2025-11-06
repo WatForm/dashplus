@@ -416,3 +416,4 @@ sig s7 in t5 {
 
 
 throw ctor errors and wff errors catch them at pars vis or alloymodel and treat as user errors
+- add more ctor errors to AlloyAST like AlloyPredPara

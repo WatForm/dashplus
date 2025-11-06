@@ -57,4 +57,15 @@ public final class AlloyAssertPara extends AlloyParagraph {
         sb.append(AlloyStrings.ASSERT + AlloyStrings.SPACE + assertionName);
         this.block.toString(sb, indent);
     }
+
+    @Override
+    public Optional<String> getName() {
+        if (this.qname.isPresent()) {
+            return Optional.of(this.qname.get().toString());
+        } else if (this.strLit.isPresent()) {
+            return Optional.of(this.strLit.get().toString());
+        } else {
+            return Optional.empty();
+        }
+    }
 }

@@ -6,6 +6,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public final class AlloyModulePara extends AlloyParagraph {
     public static class AlloyModuleArg extends AlloyASTNode {
@@ -52,5 +53,10 @@ public final class AlloyModulePara extends AlloyParagraph {
             ASTNode.join(sb, indent, this.moduleArgs, AlloyStrings.COMMA + AlloyStrings.SPACE);
             sb.append(AlloyStrings.RBRACK);
         }
+    }
+
+    @Override
+    public Optional<String> getName() {
+        return Optional.of(this.qname.toString());
     }
 }

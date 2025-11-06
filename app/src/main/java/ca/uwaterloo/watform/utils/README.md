@@ -1,6 +1,6 @@
 # Error Handling
 
-* Try to group dir specific exceptions together (could be in private class)
+* Try to group dir specific exceptions together (could be in class)
 * Use Pos whenever possible
 
 ## Implementation Errors 

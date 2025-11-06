@@ -6,8 +6,8 @@ import ca.uwaterloo.watform.utils.ASTNode;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-// enumPara        : PRIVATE? ENUM qname LBRACE qnames RBRACE;
 public final class AlloyEnumPara extends AlloyParagraph {
     public final boolean isPrivate;
     public final AlloyQnameExpr qname;
@@ -36,5 +36,10 @@ public final class AlloyEnumPara extends AlloyParagraph {
         sb.append(AlloyStrings.SPACE + AlloyStrings.LBRACE);
         ASTNode.join(sb, indent, this.qnames, AlloyStrings.COMMA + AlloyStrings.SPACE);
         sb.append(AlloyStrings.RBRACE);
+    }
+
+    @Override
+    public Optional<String> getName() {
+        return Optional.of(this.qname.toString());
     }
 }
