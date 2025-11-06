@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 

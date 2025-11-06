@@ -1,3 +1,13 @@
+# Plan for AST checks:
+
+- scope arguments: whenever a variable is used, it must be declared globally, else belong to the declaration of the local definition
+
+- All constants must be declared globally
+
+- All applications of formulae must be preceded by their definition
+
+WARNING: the following is out of date
+
 # Design for AST:
 
 - Each node is equivalent to an expression
