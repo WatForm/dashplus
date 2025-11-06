@@ -307,6 +307,26 @@ Right type = {this/B}
 - all take in two Integers
 - return Integer
 
+### comparison opeartors
+- left and right are Relations
+- return type is Constraint
+
+### <, >, >=, <=
+- left and right are sets of Integers
+
+### AlloyQtExpr
+- sub is relation 
+- return Constraint
+
+### AlloyQuantificationExpr
+- sub is a Constraint
+- return Constraint
+- A quantified expression may be higher-order: that is, it may bind non-scalar values to variables.
+
+### temporal operators
+- expects Constraints
+- returns Constraints
+
 
 ## Type:
 - Type
@@ -393,3 +413,6 @@ sig s7 in t5 {
 - possibly a visitor 
 - see above for what's to check at each expr
 
+
+
+throw ctor errors and wff errors catch them at pars vis or alloymodel and treat as user errors
