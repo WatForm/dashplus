@@ -23,6 +23,10 @@ public abstract class TLAPlusNaryOperator extends TLAPlusExpression {
         // TODO fix this
     }
 
+    public List<TLAPlusExpression> getChildren() {
+        return this.children;
+    }
+
     /*
     @Override
     public List<String> toStringList() {

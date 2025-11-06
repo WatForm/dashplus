@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TLAPlusUnaryOperator extends TLAPlusExpression {
 
@@ -18,5 +20,11 @@ public abstract class TLAPlusUnaryOperator extends TLAPlusExpression {
     public void toString(StringBuilder sb, int ident) {
         return;
         // TODO fix this
+    }
+
+    public List<TLAPlusExpression> getChildren() {
+        List<TLAPlusExpression> children = new ArrayList<>();
+        children.add(this.operand);
+        return children;
     }
 }

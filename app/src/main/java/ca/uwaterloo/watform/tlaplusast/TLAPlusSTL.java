@@ -18,6 +18,10 @@ public class TLAPlusSTL extends TLAPlusExpression { // enums used for extensibil
         this.library = library;
     }
 
+    public List<TLAPlusExpression> getChildren() {
+        return new ArrayList<>();
+    }
+
     /*
     @Override
     public List<String> toStringList() {
@@ -40,32 +44,32 @@ public class TLAPlusSTL extends TLAPlusExpression { // enums used for extensibil
     }
 
     public static TLAPlusFormulaApplication Cardinality(TLAPlusVariable arg) {
-        List<TLAPlusVariable> children = new ArrayList<>();
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormulaApplication(TLAPlusStrings.CARDINALITY, children);
     }
 
     public static TLAPlusFormulaApplication Len(TLAPlusVariable arg) {
-        List<TLAPlusVariable> children = new ArrayList<>();
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormulaApplication(TLAPlusStrings.LEN, children);
     }
 
     public static TLAPlusFormulaApplication Head(TLAPlusVariable arg) {
-        List<TLAPlusVariable> children = new ArrayList<>();
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormulaApplication(TLAPlusStrings.HEAD, children);
     }
 
     public static TLAPlusFormulaApplication Tail(TLAPlusVariable arg) {
-        List<TLAPlusVariable> children = new ArrayList<>();
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(arg);
         return new TLAPlusFormulaApplication(TLAPlusStrings.TAIL, children);
     }
 
     public static TLAPlusFormulaApplication Append(
             TLAPlusVariable sequence, TLAPlusVariable element) {
-        List<TLAPlusVariable> children = new ArrayList<>();
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(sequence);
         children.add(element);
         return new TLAPlusFormulaApplication(TLAPlusStrings.APPEND, children);

@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusquantifier;
 
 import ca.uwaterloo.watform.tlaplusast.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TLAPlusQuantifier extends TLAPlusExpression {
 
@@ -12,6 +14,14 @@ public abstract class TLAPlusQuantifier extends TLAPlusExpression {
         this.v = v;
         this.exp = exp;
         this.set = set;
+    }
+
+    public List<TLAPlusExpression> getChildren() {
+        List<TLAPlusExpression> children = new ArrayList<>();
+        children.add(this.v);
+        children.add(this.set);
+        children.add(this.exp);
+        return children;
     }
 
     /*

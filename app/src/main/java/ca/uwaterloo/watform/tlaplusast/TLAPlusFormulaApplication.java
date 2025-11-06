@@ -6,14 +6,18 @@ import java.util.List;
 public class TLAPlusFormulaApplication extends TLAPlusExpression {
 
     private String name;
-    private List<? extends TLAPlusExpression> params;
+    private List<TLAPlusExpression> params;
 
     public TLAPlusFormulaApplication(String name) {
         this.name = name;
         this.params = new ArrayList<>();
     }
 
-    public TLAPlusFormulaApplication(String name, List<? extends TLAPlusExpression> parameters) {
+    public List<TLAPlusExpression> getChildren() {
+        return this.params;
+    }
+
+    public TLAPlusFormulaApplication(String name, List<TLAPlusExpression> parameters) {
         this.name = name;
         this.params = parameters;
     }
