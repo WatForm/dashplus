@@ -51,7 +51,7 @@ would allow x to contain any number of elements.
 - can be static (default) or mutable
 - can be subset signature or type signature 
 - can be abstract or not
-- Notice that if a mutable signature extends a static one, it is in fact necessarily static (which is signalled by a warning message).
+- Notice that if a mutable signature extends a static one, it is in fact necessarily static (which is signalled by a warning message)
 
 ### subset signature
 - A subset signature may not be extended
@@ -227,6 +227,8 @@ stage 3:
     - need to be careful if it's a.b[c]
 - if it's both a valid field and valid invocation
     - report the ambinguity error
+- if it's a relational join (a (X, Y) join b (Y, Z))
+    - return type is X,Z
 
 ### box b[a,c]
 - if b is disj 
@@ -240,11 +242,87 @@ stage 3:
 - check type of args
 - type is constraint if b is a pred else it's b's return type
 
+### ITE (b implies e1 else e2)
+- typecheck b, e1, e2
+- b must be a constraint
+- both e1 and e2 must be constraint, relations, or integers
+- return type(e1), which is equal to type(e2)
+
+### LET (let v1 = 1, v2 = v1 | v2 in Int)
+- Variables appearing in the bounding expressions must have been previously declared
+- typecheck sub with new symbols
+- return type(sub)
+
+### IN (a in b)
+- relation(a)
+- relation(b)
+- same arity
+- if not same arity
+```
+Subset operator is redundant, because the left and right
+subexpressions are always disjoint.
+Left type = {this/A, this/C}
+Right type = {this/B}
+```
+### TransClosExpr, ReflTransClosExpr, and TransExpr
+- sub is relation
+- sub is binary
+
+### union, difference, intersection and for relational override
+- left and right are relation
+- both have same arity
+
+### DomRestr(e2 <: e1) and RngRestr(e1 :> e2)
+- e1 and e2 are relations
+- e2 is a set
+
+### Arrow((A -> B) -> C)
+- Alloy is first-order: the types of A, B and C are flattened
+
+### Comprehension ({x1: e1, x2: e2, ... | F})
+- e1 and e2 must be unary
+- decls cannot contain multiplicity keywords
+- general form of decl cannot be used; only allow disj on lhs
+- return type is e1 -> e2 -> ...
+
+### ExprVar
+- If there is more than one field of the given name, the reference is resolved, or rejected if ambiguous (see section overloading-types-section)
+
+### number
+- complain if the number is not expressible within the bitwidth of the analysis scope
+
+### Int (Integer type)
+- the built-in signature Int may be used to represent the set of integers within scope
+
+### Cardinality (Integer type)
+- return type if Int??
+
+### Sum (Integers in Integer out)
+- takes in a set of Integers
+- return their sum, an Integer
+
+- `sum x1: e1, x2: e2, ... | e`, e1 and e2 must be unary relations
+
+### plus, minus, mul, div, rem
+- all take in two Integers
+- return Integer
+
+
+## Type:
+- Type
+- Constraint extends Type
+- Integer extends Type
+- Relation extends Type
+- Relation holds a list (union(for subsigs that subsets more than one Type)) of lists(relation) of Relations
+- Define equals methods on these: equals or hashcode??? what is the standard for java classes???
+- this seems to be the same set up as Alloy
+
+## Symbol table:
+- probably it's own class
 
 
 ## to find out
 The syntax of Alloy does in fact admit higher-order quantifications???
-
 
 # Plan
 - WFF errors during construction
@@ -255,7 +333,6 @@ The syntax of Alloy does in fact admit higher-order quantifications???
     2) alloymodel ctor (duplicate names)
     3) checking sig map (see below) & collect fun&pred's recursive invocations & what we choose not to check in ctor, we check here
     4) typechecking
-
 
 ## sig
 - see AlloyAnalyzer/sig.java for errors thrown at construction
@@ -313,6 +390,6 @@ sig s7 in t5 {
 - some could be checked at ctor
 
 ## expr
-- possibly a visitor and interfaces (constraint, relation, integer) on AlloyExpr to hold some fields like arity etc
+- possibly a visitor 
 - see above for what's to check at each expr
 
