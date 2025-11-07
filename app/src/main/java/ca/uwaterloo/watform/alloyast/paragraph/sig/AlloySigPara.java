@@ -62,6 +62,16 @@ public final class AlloySigPara extends AlloyParagraph {
                 block);
     }
 
+    public AlloySigPara(AlloyQnameExpr qname, AlloyBlock block) {
+        this(
+                Pos.UNKNOWN,
+                Collections.emptyList(),
+                Collections.singletonList(qname),
+                null,
+                Collections.emptyList(),
+                block);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         // cannot use ASTNode.join here b/c Qual is not ASTNode; will fail dynamic cast
@@ -190,8 +200,8 @@ public final class AlloySigPara extends AlloyParagraph {
 
     @Override
     public Optional<String> getName() {
-        if (this.qnames.size() >= 1) {
-            throw ImplementationError.methodShouldNotBeCalled(this.pos);
+        if (this.qnames.size() > 1) {
+            throw ImplementationError.methodShouldNotBeCalled(this.pos, "AlloySigPara.getName");
         }
         return Optional.of(this.qnames.get(0).toString());
     }
