@@ -15,8 +15,11 @@ public class AlloyFile extends AlloyASTNode {
     }
 
     public AlloyFile(List<AlloyParagraph> paragraphs) {
-        super();
-        this.paragraphs = Collections.unmodifiableList(paragraphs);
+        this(Pos.UNKNOWN, paragraphs);
+    }
+
+    public AlloyFile(AlloyParagraph paragraph) {
+        this(Pos.UNKNOWN, Collections.singletonList(paragraph));
     }
 
     @Override

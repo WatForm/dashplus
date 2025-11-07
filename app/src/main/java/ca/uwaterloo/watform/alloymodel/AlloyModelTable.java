@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloymodel;
 
+import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.utils.GeneralUtil;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,32 +28,47 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
 
     // final here means the reference cannot change
     // but the data structure is mutable
-    public AlloyModelTable() {
+
+    /**
+     * @param AlloyFile
+     * @param typeToken(problem with Java type erasure; cannot use the generic T)
+     */
+    public AlloyModelTable(AlloyFile alloyFile, Class<T> typeToken) {
         this.mp = new HashMap<>();
         this.li = new ArrayList<>();
         this.instanceTracker = Collections.newSetFromMap(new IdentityHashMap<>());
+        this.addParagraphs(
+                GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, typeToken),
+                new ArrayList<>());
     }
 
     /**
-     * Adds a paragraph to the table. If a paragraph with this name already exists, throw exception
-     *
-     * @param name The unique name (key) for this paragraph.
-     * @param paragraph The paragraph to add.
+     * @param paragraph
+     * @param additionalParas: need to keep a list of paragraphs added to AlloyModel, so they can be
+     *     printed after AlloyFile in AlloyModel
      */
-    public void addParagraph(T paragraph) {
+    public void addParagraph(T paragraph, List<AlloyParagraph> additionalParas) {
         checkDuplicates(paragraph);
         Optional<String> name = paragraph.getName();
         if (name == null || name.isEmpty() || name.get().isBlank()) {
             // relying on short-circuiting to not throw NoSuchElementException
             this.li.add(paragraph);
-            return;
+        } else {
+            if (this.mp.containsKey(name.get())) {
+                throw AlloyModelErrors.duplicateName(this.mp.get(name.get()).pos, paragraph.pos);
+            }
+            this.mp.put(name.get(), paragraph);
         }
+        additionalParas.add(paragraph);
+    }
 
-        if (this.mp.containsKey(name.get())) {
-            throw AlloyModelErrors.duplicateName(this.mp.get(name.get()).pos, paragraph.pos);
-        }
-
-        this.mp.put(name.get(), paragraph);
+    /**
+     * @param paragraphs
+     * @param additionalParas: need to keep a list of paragraphs added to AlloyModel, so they can be
+     *     printed after AlloyFile in AlloyModel
+     */
+    public void addParagraphs(List<T> paragraphs, List<AlloyParagraph> additionalParas) {
+        paragraphs.forEach(p -> this.addParagraph(p, additionalParas));
     }
 
     /**
