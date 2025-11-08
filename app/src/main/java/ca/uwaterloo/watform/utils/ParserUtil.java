@@ -49,16 +49,26 @@ public final class ParserUtil {
         if (filePath.getFileName().toString().endsWith(".als")) {
             ParseTree antlrAST = parser.alloyFile();
             AlloyFileParseVis afpv = new AlloyFileParseVis();
-            AlloyFile alloyFile = afpv.visit(antlrAST);
+            AlloyFile alloyFile = null;
+            try {
+                alloyFile = afpv.visit(antlrAST);
+                alloyFile.filename = filePath.toString();
+            } catch (Reporter.ErrorUser errorUser) {
+                Reporter.INSTANCE.addError(errorUser);
+            }
             Reporter.INSTANCE.exitIfHasErrors();
-            alloyFile.filename = filePath.toString();
             return alloyFile;
         } else {
             ParseTree antlrAST = parser.dashFile();
             DashFileParseVis dfpv = new DashFileParseVis();
-            DashFile dashFile = dfpv.visit(antlrAST);
+            DashFile dashFile = null;
+            try {
+                dashFile = dfpv.visit(antlrAST);
+                dashFile.filename = filePath.toString();
+            } catch (Reporter.ErrorUser errorUser) {
+                Reporter.INSTANCE.addError(errorUser);
+            }
             Reporter.INSTANCE.exitIfHasErrors();
-            dashFile.filename = filePath.toString();
             return dashFile;
         }
     }

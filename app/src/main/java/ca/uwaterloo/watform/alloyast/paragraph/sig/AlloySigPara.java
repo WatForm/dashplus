@@ -8,6 +8,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
 import ca.uwaterloo.watform.utils.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +63,10 @@ public final class AlloySigPara extends AlloyParagraph {
                 block);
     }
 
+    public AlloySigPara(List<AlloyQnameExpr> qnames, AlloyBlock block) {
+        this(Pos.UNKNOWN, Collections.emptyList(), qnames, null, Collections.emptyList(), block);
+    }
+
     public AlloySigPara(AlloyQnameExpr qname, AlloyBlock block) {
         this(
                 Pos.UNKNOWN,
@@ -74,8 +79,9 @@ public final class AlloySigPara extends AlloyParagraph {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        // cannot use ASTNode.join here b/c Qual is not ASTNode; will fail dynamic cast
-        // consider changing these Enum to an object and extend ASTNode
+        // cannot use ASTNode.join here b/c Qual is not ASTNode; will fail
+        // dynamic cast consider changing these Enum to an object and extend
+        // ASTNode
         for (Qual qual : this.quals) {
             sb.append(qual.toString() + AlloyStrings.SPACE);
         }
@@ -204,5 +210,23 @@ public final class AlloySigPara extends AlloyParagraph {
             throw ImplementationError.methodShouldNotBeCalled(this.pos, "AlloySigPara.getName");
         }
         return Optional.of(this.qnames.get(0).toString());
+    }
+
+    public List<AlloySigPara> expand() {
+        if (1 == this.qnames.size()) {
+            return Collections.singletonList(this);
+        }
+        List<AlloySigPara> expandedLi = new ArrayList<>();
+        for (AlloyQnameExpr qname : this.qnames) {
+            expandedLi.add(
+                    new AlloySigPara(
+                            this.pos,
+                            this.quals,
+                            Collections.singletonList(qname),
+                            this.rel.orElse(null),
+                            this.decls,
+                            this.block.orElse(null)));
+        }
+        return expandedLi;
     }
 }

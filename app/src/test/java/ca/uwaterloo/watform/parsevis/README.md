@@ -1,3 +1,8 @@
+# Purpose
+- These tests are designed to test .g4 grammar, parser visitors
+- The input files are expected to not contain WFF errors
+- To test WFF, see alloyast/ and alloymodel/
+
 # CLI arguments
 ./gradlew test -PstopOnFirstFail=false (true by default)
 

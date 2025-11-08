@@ -1,4 +1,4 @@
-[submodule "app/src/test/resources/antlr/dash-testing"]
-	path = app/src/test/resources/antlr/dash-testing
+[submodule "app/src/test/resources/parsevis/dash-testing"]
+	path = app/src/test/resources/parsevis/dash-testing
 	url = git@github.com:WatForm/dash-testing.git
 	branch = dashplus-unit-test

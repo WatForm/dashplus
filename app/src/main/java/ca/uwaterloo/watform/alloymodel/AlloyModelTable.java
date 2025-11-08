@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloymodel;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
@@ -37,9 +38,18 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
         this.mp = new HashMap<>();
         this.li = new ArrayList<>();
         this.instanceTracker = Collections.newSetFromMap(new IdentityHashMap<>());
-        this.addParagraphs(
-                GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, typeToken),
-                new ArrayList<>());
+        List<T> TList = new ArrayList<>();
+        if (AlloySigPara.class == typeToken) {
+            for (AlloySigPara sig :
+                    GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, AlloySigPara.class)) {
+                @SuppressWarnings("unchecked")
+                List<T> expandedSigs = (List<T>) sig.expand();
+                TList.addAll(expandedSigs);
+            }
+        } else {
+            TList = GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, typeToken);
+        }
+        this.addParagraphs(TList, new ArrayList<>());
     }
 
     /**
