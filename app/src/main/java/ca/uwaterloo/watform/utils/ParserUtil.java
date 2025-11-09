@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.utils;
 
 import antlr.generated.DashBaseVisitor;
+import ca.uwaterloo.watform.alloyast.AlloyCtorErrors;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -34,6 +35,13 @@ public final class ParserUtil {
         return filePaths;
     }
 
+    /**
+     * This method will catch AlloyCtorErrors and treat them as ErrorUser to store in Reporter
+     *
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
     public static AlloyFile parse(Path filePath) throws IOException {
         if (!filePath.getFileName().toString().endsWith(".als")
                 && !filePath.getFileName().toString().endsWith(".dsh")) {
@@ -53,7 +61,7 @@ public final class ParserUtil {
             try {
                 alloyFile = afpv.visit(antlrAST);
                 alloyFile.filename = filePath.toString();
-            } catch (Reporter.ErrorUser errorUser) {
+            } catch (AlloyCtorErrors errorUser) {
                 Reporter.INSTANCE.addError(errorUser);
             }
             Reporter.INSTANCE.exitIfHasErrors();
@@ -65,7 +73,7 @@ public final class ParserUtil {
             try {
                 dashFile = dfpv.visit(antlrAST);
                 dashFile.filename = filePath.toString();
-            } catch (Reporter.ErrorUser errorUser) {
+            } catch (AlloyCtorErrors errorUser) {
                 Reporter.INSTANCE.addError(errorUser);
             }
             Reporter.INSTANCE.exitIfHasErrors();

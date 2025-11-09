@@ -5,6 +5,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
+import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,53 @@ public final class AlloyModel {
         this.additionalParas = new ArrayList<>();
     }
 
-    public void toString(StringBuilder sb, int indent) {
+    /**
+     * Adds a new paragraph to the model *after* initial construction. This method sorts the
+     * paragraph into the correct type-safe table. The table's 'addParagraph' method is responsible
+     * for handling the 'additionalParas' list as a side-effect.
+     *
+     * @param alloyParagraph The paragraph to add.
+     */
+    public void addParagraph(AlloyParagraph alloyParagraph) {
+        switch (alloyParagraph) {
+            case null:
+                return;
+            case AlloyModulePara p:
+                modules.addParagraph(p, this.additionalParas);
+                break;
+            case AlloyImportPara p:
+                imports.addParagraph(p, this.additionalParas);
+                break;
+            case AlloyMacroPara p:
+                macros.addParagraph(p, this.additionalParas);
+                break;
+            case AlloySigPara p:
+                sigs.addParagraph(p, this.additionalParas);
+                break;
+            case AlloyEnumPara p:
+                enums.addParagraph(p, this.additionalParas);
+                break;
+            case AlloyFactPara p:
+                facts.addParagraph(p, this.additionalParas);
+                break;
+            case AlloyFunPara p:
+                funs.addParagraph(p, this.additionalParas);
+                break;
+            case AlloyPredPara p:
+                preds.addParagraph(p, this.additionalParas);
+                break;
+            case AlloyAssertPara p:
+                asserts.addParagraph(p, this.additionalParas);
+                break;
+            case AlloyCmdPara p:
+                commands.addParagraph(p, this.additionalParas);
+                break;
+            default:
+                throw ImplementationError.missingCase("AlloyModel.addParagraph");
+        }
+    }
+
+    private void toString(StringBuilder sb, int indent) {
         this.alloyFile.toString(sb, indent);
         // create a new AlloyFile, so I can reuse the AlloyFile.toString
         AlloyFile newAlloyFile = new AlloyFile(this.additionalParas);

@@ -2,12 +2,9 @@ package ca.uwaterloo.watform.alloymodel;
 
 import ca.uwaterloo.watform.utils.*;
 
-public final class AlloyModelErrors extends RuntimeException {
-    Pos pos;
-
+public final class AlloyModelErrors extends Reporter.ErrorUser {
     public AlloyModelErrors(Pos pos, String msg) {
-        super(msg);
-        this.pos = pos;
+        super(pos, msg);
     }
 
     public AlloyModelErrors(String msg) {

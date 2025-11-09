@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.reporter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -206,22 +207,17 @@ public class ReporterTest {
     @Order(16)
     @DisplayName("exitIfHasError exits if has error")
     public void exitOnError() {
-        final int[] exitCode = {-1};
+        int[] exitCode = TestUtil.changeReporterExitFn();
         reporter.addError("An Error");
-        reporter.exitFunction = (code -> exitCode[0] = code);
-        reporter.exitIfHasErrors();
-        assertEquals(1, exitCode[0], "Exit code should have been set to 1");
-        assertTrue(reporter.hasErrors(), "Reporter should still have errors recorded");
+        TestUtil.assertExited(exitCode);
     }
 
     @Test
     @Order(17)
     @DisplayName("handle Alloy Cmd Syntax Error")
     public void throwCatchErrorForAlloyCmd() throws IOException {
-        final int[] exitCode = {-1};
-        reporter.exitFunction = (code -> exitCode[0] = code);
+        int[] exitCode = TestUtil.changeReporterExitFn();
         ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als"));
-        assertEquals(1, exitCode[0], "Exit code should have been set to 1");
-        assertTrue(reporter.hasErrors(), "Reporter should still have errors recorded");
+        TestUtil.assertExited(exitCode);
     }
 }

@@ -43,6 +43,7 @@ public final class Reporter {
     public void reset() {
         this.errors.clear();
         this.comments.clear();
+        this.exitFunction = System::exit;
     }
 
     public List<ErrorUser> getErrors() {

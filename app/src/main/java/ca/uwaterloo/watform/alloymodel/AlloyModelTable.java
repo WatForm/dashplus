@@ -4,7 +4,6 @@ import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.utils.GeneralUtil;
-import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,10 +88,7 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
      */
     public T getParagraph(String name) {
         if (name == null || name.isEmpty() || name.isBlank()) {
-            throw new ImplementationError(
-                    "You are trying to get a nameless paragraph from "
-                            + "AlloyModelTable; use AlloyModelTable.getUnnamedParagraphs() "
-                            + "instead. ");
+            throw AlloyModelImplErrors.lookUpWithNoName();
         }
         if (!this.mp.containsKey(name)) {
             throw AlloyModelErrors.paragraphDNE(name);
@@ -138,20 +134,14 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
      */
     public boolean containsName(String name) {
         if (name == null || name.isEmpty() || name.isBlank()) {
-            throw new ImplementationError(
-                    "You are trying to see if AlloyModelTable contains a "
-                            + "paragraph with no name. ");
+            throw AlloyModelImplErrors.lookUpWithNoName();
         }
         return this.mp.containsKey(name);
     }
 
     private void checkDuplicates(T paragraph) {
         if (!this.instanceTracker.add(paragraph)) {
-            throw new ImplementationError(
-                    paragraph.pos,
-                    "AlloyModelTable: you added the "
-                            + "same instance twice. Paragraph at "
-                            + paragraph.pos.toString());
+            throw AlloyModelImplErrors.duplicateInstance(paragraph.pos);
         }
     }
 }

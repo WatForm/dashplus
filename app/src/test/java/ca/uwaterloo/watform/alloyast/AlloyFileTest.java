@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -27,12 +28,10 @@ public class AlloyFileTest {
     @Order(1)
     @DisplayName("Throw when file has two modules")
     public void twoModulesThrows() throws Exception {
+        int[] exitCode = TestUtil.changeReporterExitFn();
         Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
-        final int[] exitCode = {-1};
-        Reporter.INSTANCE.exitFunction = (code -> exitCode[0] = code);
         AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
-        assertEquals(1, exitCode[0], "Exit code should have been set to 1");
-        assertTrue(Reporter.INSTANCE.hasErrors(), "Reporter should still have errors recorded");
+        TestUtil.assertExited(exitCode);
     }
 
     @Test
@@ -40,10 +39,8 @@ public class AlloyFileTest {
     @DisplayName("Throw when Module is not declared at the top")
     public void moduleNotTopThrows() throws Exception {
         Path filePath = Paths.get("src/test/resources/alloyast/paragraph/moduleNotTop.als");
-        final int[] exitCode = {-1};
-        Reporter.INSTANCE.exitFunction = (code -> exitCode[0] = code);
+        int[] exitCode = TestUtil.changeReporterExitFn();
         AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
-        assertEquals(1, exitCode[0], "Exit code should have been set to 1");
-        assertTrue(Reporter.INSTANCE.hasErrors(), "Reporter should still have errors recorded");
+        TestUtil.assertExited(exitCode);
     }
 }

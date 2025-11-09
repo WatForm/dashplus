@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.RecognitionException;
@@ -32,6 +33,16 @@ public class AlloyModelTest {
 
     private AlloySigPara createSig(String name) {
         return new AlloySigPara(new AlloyQnameExpr(name), new AlloyBlock(new AlloyQnameExpr("a")));
+    }
+
+    @BeforeEach
+    void setUp() {
+        Reporter.INSTANCE.reset();
+    }
+
+    @AfterEach
+    void cleanUp() {
+        Reporter.INSTANCE.reset();
     }
 
     @Test
@@ -72,5 +83,48 @@ public class AlloyModelTest {
                         e);
             }
         }
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("addedParagraphsGetPrintedInToString")
+    public void addedParagraphsGetPrintedInToString() throws Exception {
+        AlloySigPara s1 = this.createSig("s1");
+        AlloyFile alloyFile = new AlloyFile(s1);
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+        AlloySigPara s2 = this.createSig("s2");
+        alloyModel.addParagraph(s2);
+        assertTrue(alloyModel.toString().contains(s1.toString()));
+        assertTrue(alloyModel.toString().contains(s2.toString()));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("duplicateNameThrows")
+    public void duplicateNameThrows() throws Exception {
+        AlloySigPara s1 = this.createSig("s1");
+        AlloyFile alloyFile = new AlloyFile(s1);
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+        AlloySigPara s1Again = this.createSig("s1");
+        assertThrows(AlloyModelErrors.class, () -> alloyModel.addParagraph(s1Again));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("duplicateInstanceThrows")
+    public void duplicateInstanceThrows() throws Exception {
+        AlloySigPara s1 = this.createSig("s1");
+        AlloyFile alloyFile = new AlloyFile(s1);
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+        assertThrows(ImplementationError.class, () -> alloyModel.addParagraph(s1));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("DNEParagraphThrows")
+    public void DNEParagraphThrows() throws Exception {
+        AlloyFile alloyFile = new AlloyFile(Collections.emptyList());
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+        assertThrows(AlloyModelErrors.class, () -> alloyModel.getSigs().getParagraph("s"));
     }
 }
