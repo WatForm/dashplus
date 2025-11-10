@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyinterface;
 
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.ast.Command;
@@ -36,5 +37,11 @@ public class AlloyInterface {
     public static void executeCommand(String alloyCode, int cmdnum, String XMLfileName) {
         A4Solution ans = executeCommand(alloyCode, cmdnum);
         ans.writeXML(XMLfileName);
+    }
+
+    public static A4Solution executeCommand(AlloyModel am, int cmdnum) {
+        String alloyCode = am.toString();
+        A4Solution ans = executeCommand(alloyCode, cmdnum);
+        return ans;
     }
 }
