@@ -32,7 +32,7 @@ Run with the desired entry point (see list of args taken in app/src/main/java/ca
 
 - If an IDE is used, please ensure that IDE-generated files are not present in any of the commits. This can be done by including such files in the .gitignore
 
-- See Error Handling Strategy in [`app/src/main/java/ca/uwaterloo/watform/utils/README.md`](app/src/main/java/ca/uwaterloo/watform/utils/README.md)
+- See Error Handling Strategy in [`app/src/main/java/ca/uwaterloo/watform/utils/ErrorHandling.md`](/app/src/main/java/ca/uwaterloo/watform/utils/ErrorHandling.md)
 
 ## Before Committing
 - `./gradlew spotlessApply` to format code with google-java-format
