@@ -1,9 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.utils.*;
@@ -14,34 +11,33 @@ import java.util.Optional;
 public final class AlloyImportPara extends AlloyParagraph {
     public final boolean isPrivate;
     public final AlloyQnameExpr qname;
-    public final boolean hasBrackets;
     public final List<AlloySigRefExpr> sigRefs;
-    public final Optional<AlloyNameExpr> asName;
+    public final Optional<AlloyQnameExpr> asQname;
 
     public AlloyImportPara(
             Pos pos,
             boolean isPrivate,
             AlloyQnameExpr qname,
-            boolean hasBrackets,
             List<AlloySigRefExpr> sigRefs,
-            AlloyNameExpr asName) {
+            AlloyQnameExpr asQname) {
         super(pos);
         this.isPrivate = isPrivate;
         this.qname = qname;
-        this.hasBrackets = hasBrackets;
         this.sigRefs = Collections.unmodifiableList(sigRefs);
-        this.asName = Optional.ofNullable(asName);
+        this.asQname = Optional.ofNullable(asQname);
     }
 
     public AlloyImportPara(
             boolean isPrivate,
             AlloyQnameExpr qname,
-            boolean hasBrackets,
             List<AlloySigRefExpr> sigRefs,
-            AlloyNameExpr asName) {
-        this(Pos.UNKNOWN, isPrivate, qname, hasBrackets, sigRefs, asName);
+            AlloyQnameExpr asQname) {
+        this(Pos.UNKNOWN, isPrivate, qname, sigRefs, asQname);
     }
 
+    /*
+     * If no sigRefs, then don't print []
+     */
     @Override
     public void toString(StringBuilder sb, int indent) {
         if (isPrivate) {
@@ -51,18 +47,35 @@ public final class AlloyImportPara extends AlloyParagraph {
         sb.append(AlloyStrings.OPEN);
         sb.append(AlloyStrings.SPACE);
         this.qname.toString(sb, indent);
-        if (this.hasBrackets) {
+        if (!sigRefs.isEmpty()) {
             sb.append(AlloyStrings.LBRACK);
-            if (!sigRefs.isEmpty()) {
-                ASTNode.join(sb, indent, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);
-            }
+            ASTNode.join(sb, indent, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);
             sb.append(AlloyStrings.RBRACK);
         }
-        if (!this.asName.isEmpty()) {
+        if (!this.asQname.isEmpty()) {
             sb.append(AlloyStrings.SPACE);
             sb.append(AlloyStrings.AS);
             sb.append(AlloyStrings.SPACE);
-            this.asName.get().toString(sb, indent);
+            this.asQname.get().toString(sb, indent);
         }
+    }
+
+    /*
+     * The name of a import should include the arguments;
+     * open util/ordering[Time] as to
+     * open util/ordering[Key] as ko
+     * are not the same
+     */
+    @Override
+    public Optional<String> getName() {
+        StringBuilder sb = new StringBuilder();
+        this.qname.toString(sb, 0);
+        if (!sigRefs.isEmpty()) {
+            sb.append(AlloyStrings.LBRACK);
+            ASTNode.join(sb, 0, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);
+            sb.append(AlloyStrings.RBRACK);
+        }
+
+        return Optional.of(sb.toString());
     }
 }

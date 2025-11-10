@@ -2,8 +2,12 @@ package ca.uwaterloo.watform.alloyinterface;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
+import edu.mit.csail.sdg.ast.Command;
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.parser.CompUtil;
+import edu.mit.csail.sdg.translator.A4Options;
+import edu.mit.csail.sdg.translator.A4Solution;
+import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
 
 public class AlloyInterface {
     public static CompModule parse(String alloyCode) throws Err {
@@ -17,5 +21,20 @@ public class AlloyInterface {
         } catch (Err e) {
             return false;
         }
+    }
+
+    public static A4Solution executeCommand(String alloyCode, int cmdnum) {
+        CompModule alloy = parse(alloyCode);
+        A4Reporter rep = new A4Reporter();
+        Command cmd = alloy.getAllCommands().get(cmdnum);
+        A4Solution ans =
+                TranslateAlloyToKodkod.execute_command(
+                        rep, alloy.getAllReachableSigs(), cmd, new A4Options());
+        return ans;
+    }
+
+    public static void executeCommand(String alloyCode, int cmdnum, String XMLfileName) {
+        A4Solution ans = executeCommand(alloyCode, cmdnum);
+        ans.writeXML(XMLfileName);
     }
 }

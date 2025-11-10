@@ -17,4 +17,9 @@ public final class AlloySeqExpr extends AlloyVarExpr implements AlloyScopableExp
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloySeqExpr rebuild(String label) {
+        return new AlloySeqExpr(this.pos);
+    }
 }

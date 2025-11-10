@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast;
 
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -12,11 +13,28 @@ public class AlloyFile extends AlloyASTNode {
     public AlloyFile(Pos pos, List<AlloyParagraph> paragraphs) {
         super(pos);
         this.paragraphs = Collections.unmodifiableList(paragraphs);
+
+        List<AlloyModulePara> modules =
+                GeneralUtil.extractItemsOfClass(paragraphs, AlloyModulePara.class);
+        if (modules.size() > 1) {
+            throw AlloyCtorErrors.moduleIsUnique(modules.get(0).pos, modules.get(1).pos);
+        }
+
+        if (paragraphs.size() > 1) {
+            for (AlloyParagraph para : GeneralUtil.tail(paragraphs)) {
+                if (para instanceof AlloyModulePara) {
+                    throw AlloyCtorErrors.moduleIsAtTop(para.pos);
+                }
+            }
+        }
     }
 
     public AlloyFile(List<AlloyParagraph> paragraphs) {
-        super();
-        this.paragraphs = Collections.unmodifiableList(paragraphs);
+        this(Pos.UNKNOWN, paragraphs);
+    }
+
+    public AlloyFile(AlloyParagraph paragraph) {
+        this(Pos.UNKNOWN, Collections.singletonList(paragraph));
     }
 
     @Override

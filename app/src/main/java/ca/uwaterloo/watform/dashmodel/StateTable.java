@@ -14,6 +14,7 @@ import ca.uwaterloo.watform.alloyast.expr.binary.AlloyDiffExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;

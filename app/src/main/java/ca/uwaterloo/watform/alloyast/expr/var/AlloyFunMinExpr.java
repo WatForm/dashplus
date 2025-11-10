@@ -17,4 +17,9 @@ public final class AlloyFunMinExpr extends AlloyVarExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyFunMinExpr rebuild(String label) {
+        return new AlloyFunMinExpr(this.pos);
+    }
 }

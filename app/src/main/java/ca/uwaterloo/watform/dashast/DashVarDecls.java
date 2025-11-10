@@ -5,7 +5,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class DashVarDecls extends ASTNode {
+public final class DashVarDecls extends ASTNode implements DashStateItem {
 
     public final List<String> names;
     public final AlloyExpr typ;

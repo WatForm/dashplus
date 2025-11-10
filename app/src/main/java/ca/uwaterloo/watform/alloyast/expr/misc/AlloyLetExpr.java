@@ -1,28 +1,25 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.AlloyASTNode;
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 
 public final class AlloyLetExpr extends AlloyExpr {
     public static final class AlloyLetAsn extends AlloyASTNode {
-        public final AlloyNameExpr name;
+        public final AlloyQnameExpr qname;
         public final AlloyExpr expr;
 
-        public AlloyLetAsn(Pos pos, AlloyNameExpr name, AlloyExpr expr) {
+        public AlloyLetAsn(Pos pos, AlloyQnameExpr qname, AlloyExpr expr) {
             super(pos);
-            this.name = name;
+            this.qname = qname;
             this.expr = expr;
         }
 
-        public AlloyNameExpr getName() {
-            return name;
+        public AlloyQnameExpr getName() {
+            return this.qname;
         }
 
         public AlloyExpr getExpr() {
@@ -31,7 +28,7 @@ public final class AlloyLetExpr extends AlloyExpr {
 
         @Override
         public void toString(StringBuilder sb, int indent) {
-            sb.append(name.toString());
+            sb.append(this.qname.toString());
             sb.append(AlloyStrings.EQUAL);
             expr.toString(sb, indent);
         }

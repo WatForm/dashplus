@@ -17,4 +17,9 @@ public final class AlloyFunNextExpr extends AlloyVarExpr {
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyFunNextExpr rebuild(String label) {
+        return new AlloyFunNextExpr(this.pos);
+    }
 }

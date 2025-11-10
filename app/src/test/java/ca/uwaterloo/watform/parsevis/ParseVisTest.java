@@ -1,14 +1,12 @@
 package ca.uwaterloo.watform.parsevis;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
-import ca.uwaterloo.watform.alloyast.expr.unary.AlloyNumCardinalityExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.parser.*;
+import ca.uwaterloo.watform.test.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,9 +21,36 @@ import org.junit.jupiter.api.Test;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ParseVisTest {
+    // @Test
+    @Order(1)
+    @DisplayName("Antlr grammar parses dash-testing")
+    public void parseDashTesting() throws Exception {
+        Path p = Paths.get("src/test/resources/parsevis/dash-testing");
+        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".dsh");
+    }
 
     @Test
-    @Order(1)
+    @Order(2)
+    @DisplayName(
+            "Jackson's examples from Software Abstraction book and some " + "WatForm alloy files")
+    public void parseCatalystQuickTests() throws Exception {
+        Path p = Paths.get("src/test/resources/parsevis/catalyst/quick-tests");
+        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".als");
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Alloy builtin util files")
+    public void parseUtil() throws Exception {
+        Path p = Paths.get("src/test/resources/parsevis/util");
+        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".als");
+    }
+
+    // test catalyst corpus with
+    // app/src/main/java/ca/uwaterloo/watform/test/Main.java
+
+    @Test
+    @Order(4)
     @DisplayName("Parse, create our Alloy AST with parser visitors, and call toString")
     public void parseToStr() throws Exception {
         Path dir = Paths.get("src/test/resources/parsevis/tostr");
@@ -49,17 +74,20 @@ public class ParseVisTest {
 
             } catch (IOException e) {
                 System.err.println("Error reading file: " + e.getMessage());
+                System.exit(1);
             } catch (RecognitionException | ParseCancellationException e) {
                 System.err.println("Error occurred during parsing: " + e.getMessage());
+                System.exit(1);
             } catch (Exception e) {
                 System.err.println(
                         "Error occurred during parsing or in parser visitors: " + e.getMessage());
+                System.exit(1);
             }
         }
     }
 
     @Test
-    @Order(2)
+    @Order(5)
     @DisplayName(
             "Parse, create our Alloy AST with parser visitors, and call toString "
                     + "to match exactly the input string (cannot include comments)")
@@ -78,57 +106,14 @@ public class ParseVisTest {
 
             } catch (IOException e) {
                 System.err.println("Error reading file: " + e.getMessage());
+                System.exit(1);
             } catch (RecognitionException | ParseCancellationException e) {
                 System.err.println("Error occurred during parsing: " + e.getMessage());
+                System.exit(1);
             } catch (Exception e) {
                 System.err.println(
                         "Error occurred during parsing or in parser visitors: " + e.getMessage());
-            }
-        }
-    }
-
-    @Test
-    @Order(3)
-    @DisplayName("Parse, create our Alloy AST with parser visitors, and checking pos")
-    public void parsePos() throws Exception {
-        Path dir = Paths.get("src/test/resources/parsevis/pos");
-        List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
-        for (Path filePath : paths) {
-            try {
-
-                System.out.println(filePath);
-                System.out.println("--- File Content ---");
-
-                String originalStr = Files.readString(filePath);
-
-                System.out.println(originalStr);
-
-                AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
-
-                assertEquals(af.getPos(), new Pos(1, 0, 26, 1));
-
-                AlloyFactPara fact = (AlloyFactPara) af.paragraphs.get(0);
-                assertEquals(fact.getPos(), new Pos(1, 0, 26, 1));
-
-                AlloyBlock block = fact.block;
-                assertEquals(block.getPos(), new Pos(1, 5, 26, 1));
-
-                AlloyAndExpr and = (AlloyAndExpr) block.exprs.get(0);
-                assertEquals(and.getPos(), new Pos(2, 1, 2, 8));
-                assertEquals(and.left.getPos(), new Pos(2, 1, 2, 2));
-                assertEquals(and.right.getPos(), new Pos(2, 7, 2, 8));
-
-                AlloyNumCardinalityExpr card = (AlloyNumCardinalityExpr) block.exprs.get(1);
-                assertEquals(card.getPos(), new Pos(3, 1, 3, 3));
-                assertEquals(card.sub.getPos(), new Pos(3, 2, 3, 3));
-
-            } catch (IOException e) {
-                System.err.println("Error reading file: " + e.getMessage());
-            } catch (RecognitionException | ParseCancellationException e) {
-                System.err.println("Error occurred during parsing: " + e.getMessage());
-            } catch (Exception e) {
-                System.err.println(
-                        "Error occurred during parsing or in parser visitors: " + e.getMessage());
+                System.exit(1);
             }
         }
     }

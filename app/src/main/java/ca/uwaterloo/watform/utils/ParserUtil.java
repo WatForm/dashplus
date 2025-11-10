@@ -1,10 +1,13 @@
 package ca.uwaterloo.watform.utils;
 
-import antlr.generated.AlloyBaseVisitor;
-import ca.uwaterloo.watform.alloyast.*;
+import antlr.generated.DashBaseVisitor;
+import ca.uwaterloo.watform.alloyast.AlloyCtorErrors;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.antlr.*;
+import ca.uwaterloo.watform.dashast.DashFile;
+import ca.uwaterloo.watform.dashast.DashFileParseVis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,22 +35,54 @@ public final class ParserUtil {
         return filePaths;
     }
 
+    /**
+     * This method will catch AlloyCtorErrors and treat them as ErrorUser to store in Reporter
+     *
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
     public static AlloyFile parse(Path filePath) throws IOException {
+        if (!filePath.getFileName().toString().endsWith(".als")
+                && !filePath.getFileName().toString().endsWith(".dsh")) {
+            throw new Reporter.ErrorUser("File extension must be .dsh or .als");
+        }
         CharStream input = CharStreams.fromPath(filePath);
         BailLexer lexer = new BailLexer(input);
+        if (filePath.getFileName().toString().endsWith(".dsh")) {
+            lexer.dashMode = true;
+        }
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BailParser parser = new BailParser(tokens);
-        ParseTree antlrAST = parser.alloyFile();
-
-        AlloyFileParseVis afpv = new AlloyFileParseVis();
-        AlloyFile af = afpv.visit(antlrAST);
-        Reporter.INSTANCE.exitIfHasErrors();
-        af.filename = filePath.toString();
-        return af;
+        if (filePath.getFileName().toString().endsWith(".als")) {
+            ParseTree antlrAST = parser.alloyFile();
+            AlloyFileParseVis afpv = new AlloyFileParseVis();
+            AlloyFile alloyFile = null;
+            try {
+                alloyFile = afpv.visit(antlrAST);
+                alloyFile.filename = filePath.toString();
+            } catch (AlloyCtorErrors errorUser) {
+                Reporter.INSTANCE.addError(errorUser);
+            }
+            Reporter.INSTANCE.exitIfHasErrors();
+            return alloyFile;
+        } else {
+            ParseTree antlrAST = parser.dashFile();
+            DashFileParseVis dfpv = new DashFileParseVis();
+            DashFile dashFile = null;
+            try {
+                dashFile = dfpv.visit(antlrAST);
+                dashFile.filename = filePath.toString();
+            } catch (AlloyCtorErrors errorUser) {
+                Reporter.INSTANCE.addError(errorUser);
+            }
+            Reporter.INSTANCE.exitIfHasErrors();
+            return dashFile;
+        }
     }
 
     public static <C extends ParseTree, T> List<T> visitAll(
-            List<C> contexts, AlloyBaseVisitor<?> visitor, Class<T> targetType) {
+            List<C> contexts, DashBaseVisitor<?> visitor, Class<T> targetType) {
         if (contexts == null || contexts.isEmpty()) {
             return Collections.emptyList();
         }

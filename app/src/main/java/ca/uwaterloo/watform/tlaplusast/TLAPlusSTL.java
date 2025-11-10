@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusSTL extends TLAPlusASTNode { // enums used for extensibility
+public class TLAPlusSTL extends TLAPlusExpression { // enums used for extensibility
 
     public static enum LIBRARIES {
         STL_FiniteSets,
@@ -18,6 +18,11 @@ public class TLAPlusSTL extends TLAPlusASTNode { // enums used for extensibility
         this.library = library;
     }
 
+    public List<TLAPlusExpression> getChildren() {
+        return new ArrayList<>();
+    }
+
+    /*
     @Override
     public List<String> toStringList() {
         String s = "Unknown";
@@ -30,35 +35,43 @@ public class TLAPlusSTL extends TLAPlusASTNode { // enums used for extensibility
         t.add(s);
         return t;
     }
+     */
 
-    public static TLAPlusFormula Cardinality(TLAPlusASTNode arg) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
-        children.add(arg);
-        return new TLAPlusFormula(TLAPlusStrings.CARDINALITY, children);
+    @Override
+    public void toString(StringBuilder sb, int ident) {
+        return;
+        // TODO fix this
     }
 
-    public static TLAPlusFormula Len(TLAPlusASTNode arg) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    public static TLAPlusFormulaApplication Cardinality(TLAPlusVariable arg) {
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormula(TLAPlusStrings.LEN, children);
+        return new TLAPlusFormulaApplication(TLAPlusStrings.CARDINALITY, children);
     }
 
-    public static TLAPlusFormula Head(TLAPlusASTNode arg) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    public static TLAPlusFormulaApplication Len(TLAPlusVariable arg) {
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormula(TLAPlusStrings.HEAD, children);
+        return new TLAPlusFormulaApplication(TLAPlusStrings.LEN, children);
     }
 
-    public static TLAPlusFormula Tail(TLAPlusASTNode arg) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    public static TLAPlusFormulaApplication Head(TLAPlusVariable arg) {
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormula(TLAPlusStrings.TAIL, children);
+        return new TLAPlusFormulaApplication(TLAPlusStrings.HEAD, children);
     }
 
-    public static TLAPlusFormula Append(TLAPlusASTNode sequence, TLAPlusASTNode element) {
-        List<TLAPlusASTNode> children = new ArrayList<>();
+    public static TLAPlusFormulaApplication Tail(TLAPlusVariable arg) {
+        List<TLAPlusExpression> children = new ArrayList<>();
+        children.add(arg);
+        return new TLAPlusFormulaApplication(TLAPlusStrings.TAIL, children);
+    }
+
+    public static TLAPlusFormulaApplication Append(
+            TLAPlusVariable sequence, TLAPlusVariable element) {
+        List<TLAPlusExpression> children = new ArrayList<>();
         children.add(sequence);
         children.add(element);
-        return new TLAPlusFormula(TLAPlusStrings.APPEND, children);
+        return new TLAPlusFormulaApplication(TLAPlusStrings.APPEND, children);
     }
 }

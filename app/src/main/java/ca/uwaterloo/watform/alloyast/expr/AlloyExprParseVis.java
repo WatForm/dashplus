@@ -1,8 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr;
 
-import antlr.generated.AlloyBaseVisitor;
-import antlr.generated.AlloyParser;
-import antlr.generated.AlloyParser.NameContext;
+import antlr.generated.*;
+import antlr.generated.DashParser.*;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -15,18 +14,18 @@ import java.util.Collections;
 import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
+public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
 
     // ====================================================================================
     // Bind
     // ====================================================================================
     @Override
-    public AlloyExpr visitBindExpr(AlloyParser.BindExprContext ctx) {
+    public AlloyExpr visitBindExpr(DashParser.BindExprContext ctx) {
         return this.visit(ctx.bind());
     }
 
     @Override
-    public AlloyLetExpr visitLet(AlloyParser.LetContext ctx) {
+    public AlloyLetExpr visitLet(DashParser.LetContext ctx) {
         return new AlloyLetExpr(
                 new Pos(ctx),
                 ParserUtil.visitAll(ctx.assignment(), new AlloyLetAsnParseVis(), AlloyLetAsn.class),
@@ -35,7 +34,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
 
     @Override
     public AlloyQuantificationExpr visitQuantificationExpr(
-            AlloyParser.QuantificationExprContext ctx) {
+            DashParser.QuantificationExprContext ctx) {
         List<AlloyDecl> decls =
                 null != ctx.decls()
                         ? ParserUtil.visitAll(ctx.decls().decl(), this, AlloyDecl.class)
@@ -77,12 +76,12 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // Iff
     // ============================
     @Override
-    public AlloyIffExpr visitIffExpr(AlloyParser.IffExprContext ctx) {
+    public AlloyIffExpr visitIffExpr(DashParser.IffExprContext ctx) {
         return new AlloyIffExpr(new Pos(ctx), this.visit(ctx.expr1(0)), this.visit(ctx.expr1(1)));
     }
 
     @Override
-    public AlloyIffExpr visitIffBindExpr(AlloyParser.IffBindExprContext ctx) {
+    public AlloyIffExpr visitIffBindExpr(DashParser.IffBindExprContext ctx) {
         return new AlloyIffExpr(new Pos(ctx), this.visit(ctx.expr1()), this.visit(ctx.bind()));
     }
 
@@ -91,12 +90,12 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // ============================
 
     @Override
-    public AlloyOrExpr visitOrExpr(AlloyParser.OrExprContext ctx) {
+    public AlloyOrExpr visitOrExpr(DashParser.OrExprContext ctx) {
         return new AlloyOrExpr(new Pos(ctx), this.visit(ctx.expr1(0)), this.visit(ctx.expr1(1)));
     }
 
     @Override
-    public AlloyOrExpr visitOrBindExpr(AlloyParser.OrBindExprContext ctx) {
+    public AlloyOrExpr visitOrBindExpr(DashParser.OrBindExprContext ctx) {
         return new AlloyOrExpr(new Pos(ctx), this.visit(ctx.expr1()), this.visit(ctx.bind()));
     }
 
@@ -105,13 +104,13 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // ============================
 
     @Override
-    public AlloyStateSeqExpr visitStateSeqExpr(AlloyParser.StateSeqExprContext ctx) {
+    public AlloyStateSeqExpr visitStateSeqExpr(DashParser.StateSeqExprContext ctx) {
         return new AlloyStateSeqExpr(
                 new Pos(ctx), this.visit(ctx.expr1(0)), this.visit(ctx.expr1(1)));
     }
 
     @Override
-    public AlloyStateSeqExpr visitStateSeqBindExpr(AlloyParser.StateSeqBindExprContext ctx) {
+    public AlloyStateSeqExpr visitStateSeqBindExpr(DashParser.StateSeqBindExprContext ctx) {
         return new AlloyStateSeqExpr(new Pos(ctx), this.visit(ctx.expr1()), this.visit(ctx.bind()));
     }
 
@@ -119,22 +118,22 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // impliesExpr
     // ====================================================================================
     @Override
-    public AlloyExpr visitImpExprOpenOrClose(AlloyParser.ImpExprOpenOrCloseContext ctx) {
+    public AlloyExpr visitImpExprOpenOrClose(DashParser.ImpExprOpenOrCloseContext ctx) {
         return this.visit(ctx.impliesExpr());
     }
 
     @Override
-    public AlloyExpr visitImpExprCloseFromImplies(AlloyParser.ImpExprCloseFromImpliesContext ctx) {
+    public AlloyExpr visitImpExprCloseFromImplies(DashParser.ImpExprCloseFromImpliesContext ctx) {
         return this.visit(ctx.impliesExprClose());
     }
 
     @Override
-    public AlloyExpr visitImpExprOpenFromImplies(AlloyParser.ImpExprOpenFromImpliesContext ctx) {
+    public AlloyExpr visitImpExprOpenFromImplies(DashParser.ImpExprOpenFromImpliesContext ctx) {
         return this.visit(ctx.impliesExprOpen());
     }
 
     @Override
-    public AlloyIteExpr visitIteCloseExpr(AlloyParser.IteCloseExprContext ctx) {
+    public AlloyIteExpr visitIteCloseExpr(DashParser.IteCloseExprContext ctx) {
         return new AlloyIteExpr(
                 new Pos(ctx),
                 this.visit(ctx.expr2()),
@@ -143,7 +142,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyIteExpr visitIteBindCloseExpr(AlloyParser.IteBindCloseExprContext ctx) {
+    public AlloyIteExpr visitIteBindCloseExpr(DashParser.IteBindCloseExprContext ctx) {
         return new AlloyIteExpr(
                 new Pos(ctx),
                 this.visit(ctx.expr2()),
@@ -152,12 +151,12 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyExpr visitExpr2FromImpClose(AlloyParser.Expr2FromImpCloseContext ctx) {
+    public AlloyExpr visitExpr2FromImpClose(DashParser.Expr2FromImpCloseContext ctx) {
         return this.visit(ctx.expr2());
     }
 
     @Override
-    public AlloyIteExpr visitIteOpenExpr(AlloyParser.IteOpenExprContext ctx) {
+    public AlloyIteExpr visitIteOpenExpr(DashParser.IteOpenExprContext ctx) {
         return new AlloyIteExpr(
                 new Pos(ctx),
                 this.visit(ctx.expr2()),
@@ -166,13 +165,13 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyImpliesExpr visitImpExpr(AlloyParser.ImpExprContext ctx) {
+    public AlloyImpliesExpr visitImpExpr(DashParser.ImpExprContext ctx) {
         return new AlloyImpliesExpr(
                 new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.impliesExpr()));
     }
 
     @Override
-    public AlloyImpliesExpr visitImpBindExpr(AlloyParser.ImpBindExprContext ctx) {
+    public AlloyImpliesExpr visitImpBindExpr(DashParser.ImpBindExprContext ctx) {
         return new AlloyImpliesExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
     }
 
@@ -181,62 +180,66 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // ====================================================================================
 
     @Override
-    public AlloyNumExpr visitNumber(AlloyParser.NumberContext ctx) {
-        return new AlloyNumExpr(new Pos(ctx), null == ctx.MINUS(), ctx.NUMBER().getText());
+    public AlloyNumExpr visitNumber(DashParser.NumberContext ctx) {
+        return new AlloyNumExpr(
+                new Pos(ctx),
+                null == ctx.MINUS()
+                        ? ctx.NUMBER().getText()
+                        : AlloyStrings.MINUS + ctx.NUMBER().getText());
     }
 
     @Override
-    public AlloyStrLiteralExpr visitStrLiteralExpr(AlloyParser.StrLiteralExprContext ctx) {
+    public AlloyStrLiteralExpr visitStrLiteralExpr(DashParser.StrLiteralExprContext ctx) {
         return new AlloyStrLiteralExpr(new Pos(ctx), ctx.STRING_LITERAL().getText());
     }
 
     @Override
-    public AlloyIdenExpr visitIdenExpr(AlloyParser.IdenExprContext ctx) {
+    public AlloyIdenExpr visitIdenExpr(DashParser.IdenExprContext ctx) {
         return new AlloyIdenExpr(new Pos(ctx));
     }
 
     @Override
-    public AlloyThisExpr visitThisExpr(AlloyParser.ThisExprContext ctx) {
+    public AlloyThisExpr visitThisExpr(DashParser.ThisExprContext ctx) {
         return new AlloyThisExpr(new Pos(ctx));
     }
 
     @Override
-    public AlloyFunMinExpr visitFunMinExpr(AlloyParser.FunMinExprContext ctx) {
+    public AlloyFunMinExpr visitFunMinExpr(DashParser.FunMinExprContext ctx) {
         return new AlloyFunMinExpr(new Pos(ctx));
     }
 
     @Override
-    public AlloyFunMaxExpr visitFunMaxExpr(AlloyParser.FunMaxExprContext ctx) {
+    public AlloyFunMaxExpr visitFunMaxExpr(DashParser.FunMaxExprContext ctx) {
         return new AlloyFunMaxExpr(new Pos(ctx));
     }
 
     @Override
-    public AlloyFunNextExpr visitFunNextExpr(AlloyParser.FunNextExprContext ctx) {
+    public AlloyFunNextExpr visitFunNextExpr(DashParser.FunNextExprContext ctx) {
         return new AlloyFunNextExpr(new Pos(ctx));
     }
 
     @Override
-    public AlloyParenExpr visitParenExpr(AlloyParser.ParenExprContext ctx) {
+    public AlloyParenExpr visitParenExpr(DashParser.ParenExprContext ctx) {
         return new AlloyParenExpr(new Pos(ctx), this.visit(ctx.expr1()));
     }
 
     @Override
-    public AlloyExpr visitSigRefExpr(AlloyParser.SigRefExprContext ctx) {
+    public AlloyExpr visitSigRefExpr(DashParser.SigRefExprContext ctx) {
         return this.visit(ctx.sigRef());
     }
 
     @Override
-    public AlloyAtNameExpr visitAtNameExpr(AlloyParser.AtNameExprContext ctx) {
-        return new AlloyAtNameExpr(new Pos(ctx), (AlloyNameExpr) this.visit(ctx.name()));
+    public AlloyAtNameExpr visitAtNameExpr(DashParser.AtNameExprContext ctx) {
+        return new AlloyAtNameExpr(new Pos(ctx), (AlloyQnameExpr) this.visit(ctx.qname()));
     }
 
     @Override
-    public AlloyBlock visitBlockExpr(AlloyParser.BlockExprContext ctx) {
+    public AlloyBlock visitBlockExpr(DashParser.BlockExprContext ctx) {
         return (AlloyBlock) this.visit(ctx.block());
     }
 
     @Override
-    public AlloyComprehensionExpr visitComprehensionExpr(AlloyParser.ComprehensionExprContext ctx) {
+    public AlloyComprehensionExpr visitComprehensionExpr(DashParser.ComprehensionExprContext ctx) {
         return new AlloyComprehensionExpr(
                 new Pos(ctx),
                 ParserUtil.visitAll(ctx.declMul(), this, AlloyDecl.class),
@@ -247,7 +250,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // Block
     // ============================
     @Override
-    public AlloyBlock visitBlock(AlloyParser.BlockContext ctx) {
+    public AlloyBlock visitBlock(DashParser.BlockContext ctx) {
         return new AlloyBlock(
                 new Pos(ctx), ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
     }
@@ -256,7 +259,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // SigRef
     // ============================
     @Override
-    public AlloyVarExpr visitSigRef(AlloyParser.SigRefContext ctx) {
+    public AlloyVarExpr visitSigRef(DashParser.SigRefContext ctx) {
         if (null != ctx.qname()) {
             return (AlloyVarExpr) this.visit(ctx.qname());
         }
@@ -264,17 +267,17 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyNameExpr visitName(AlloyParser.NameContext ctx) {
+    public AlloyNameExpr visitName(DashParser.NameContext ctx) {
         return new AlloyNameExpr(new Pos(ctx), ctx.ID().getText());
     }
 
     @Override
-    public AlloyQnameExpr visitSimpleQname(AlloyParser.SimpleQnameContext ctx) {
+    public AlloyQnameExpr visitSimpleQname(DashParser.SimpleQnameContext ctx) {
         return new AlloyQnameExpr(new Pos(ctx), (AlloyNameExpr) this.visit(ctx.name()));
     }
 
     @Override
-    public AlloyQnameExpr visitQualifiedQname(AlloyParser.QualifiedQnameContext ctx) {
+    public AlloyQnameExpr visitQualifiedQname(DashParser.QualifiedQnameContext ctx) {
         List<AlloyVarExpr> nameExprList = new ArrayList<>();
         if (null != ctx.SEQ()) {
             nameExprList.add(new AlloySeqExpr(new Pos(ctx.SEQ())));
@@ -292,8 +295,8 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // ====================================================================================
 
     @Override
-    public AlloyUnaryExpr visitTransExpr(AlloyParser.TransExprContext ctx) {
-        if (null != ctx.TRANS()) {
+    public AlloyUnaryExpr visitTransExpr(DashParser.TransExprContext ctx) {
+        if (null != ctx.TRANSPOSE()) {
             return new AlloyTransExpr(new Pos(ctx), this.visit(ctx.getChild(1)));
         } else if (null != ctx.TRANS_CLOS()) {
             return new AlloyTransClosExpr(new Pos(ctx), this.visit(ctx.getChild(1)));
@@ -308,7 +311,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // PrimeExpr
     // ============================
     @Override
-    public AlloyPrimeExpr visitPrimeExpr(AlloyParser.PrimeExprContext ctx) {
+    public AlloyPrimeExpr visitPrimeExpr(DashParser.PrimeExprContext ctx) {
         return new AlloyPrimeExpr(new Pos(ctx), this.visit(ctx.getChild(0)));
     }
 
@@ -320,7 +323,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // Dot
     // ============================
     @Override
-    public AlloyDotExpr visitDotExpr(AlloyParser.DotExprContext ctx) {
+    public AlloyDotExpr visitDotExpr(DashParser.DotExprContext ctx) {
         return new AlloyDotExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.getChild(2)));
     }
 
@@ -329,7 +332,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // ============================
 
     @Override
-    public AlloyBracketExpr visitBracketExpr(AlloyParser.BracketExprContext ctx) {
+    public AlloyBracketExpr visitBracketExpr(DashParser.BracketExprContext ctx) {
         return new AlloyBracketExpr(
                 new Pos(ctx),
                 this.visit(ctx.expr2()),
@@ -337,7 +340,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyBracketExpr visitBracketBuiltinExpr(AlloyParser.BracketBuiltinExprContext ctx) {
+    public AlloyBracketExpr visitBracketBuiltinExpr(DashParser.BracketBuiltinExprContext ctx) {
         return new AlloyBracketExpr(
                 new Pos(ctx),
                 this.visit(ctx.getChild(0)),
@@ -349,13 +352,13 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // ============================
 
     @Override
-    public AlloyRngRestrExpr visitRangExpr(AlloyParser.RangExprContext ctx) {
+    public AlloyRngRestrExpr visitRangExpr(DashParser.RangExprContext ctx) {
         return new AlloyRngRestrExpr(
                 new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
     }
 
     @Override
-    public AlloyRngRestrExpr visitRangBindExpr(AlloyParser.RangBindExprContext ctx) {
+    public AlloyRngRestrExpr visitRangBindExpr(DashParser.RangBindExprContext ctx) {
         return new AlloyRngRestrExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
     }
 
@@ -363,20 +366,20 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // DomRestr
     // ============================
     @Override
-    public AlloyDomRestrExpr visitDomExpr(AlloyParser.DomExprContext ctx) {
+    public AlloyDomRestrExpr visitDomExpr(DashParser.DomExprContext ctx) {
         return new AlloyDomRestrExpr(
                 new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
     }
 
     @Override
-    public AlloyDomRestrExpr visitDomBindExpr(AlloyParser.DomBindExprContext ctx) {
+    public AlloyDomRestrExpr visitDomBindExpr(DashParser.DomBindExprContext ctx) {
         return new AlloyDomRestrExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
     }
 
     // ============================
     // ArrowExpr
     // ============================
-    private AlloyArrowExpr.Mul parseMultiplicity(AlloyParser.MultiplicityContext multCtx) {
+    private AlloyArrowExpr.Mul parseMultiplicity(DashParser.MultiplicityContext multCtx) {
         if (multCtx == null) {
             return AlloyArrowExpr.Mul.DEFAULTSET;
         }
@@ -388,13 +391,13 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyArrowExpr visitArrowExpr(AlloyParser.ArrowExprContext ctx) {
+    public AlloyArrowExpr visitArrowExpr(DashParser.ArrowExprContext ctx) {
         AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.DEFAULTSET;
         AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.DEFAULTSET;
 
         int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
 
-        for (AlloyParser.MultiplicityContext multCtx : ctx.arrow().multiplicity()) {
+        for (DashParser.MultiplicityContext multCtx : ctx.arrow().multiplicity()) {
             if (multCtx.getStart().getStartIndex() < arrowPosition) {
                 mul1 = parseMultiplicity(multCtx);
             } else {
@@ -407,13 +410,13 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyArrowExpr visitArrowBindExpr(AlloyParser.ArrowBindExprContext ctx) {
+    public AlloyArrowExpr visitArrowBindExpr(DashParser.ArrowBindExprContext ctx) {
         AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.DEFAULTSET;
         AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.DEFAULTSET;
 
         int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
 
-        for (AlloyParser.MultiplicityContext multCtx : ctx.arrow().multiplicity()) {
+        for (DashParser.MultiplicityContext multCtx : ctx.arrow().multiplicity()) {
             if (multCtx.getStart().getStartIndex() < arrowPosition) {
                 mul1 = parseMultiplicity(multCtx);
             } else {
@@ -429,13 +432,13 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // IntersExpr
     // ============================
     @Override
-    public AlloyIntersExpr visitIntersectExpr(AlloyParser.IntersectExprContext ctx) {
+    public AlloyIntersExpr visitIntersectExpr(DashParser.IntersectExprContext ctx) {
         return new AlloyIntersExpr(
                 new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
     }
 
     @Override
-    public AlloyIntersExpr visitIntersectBindExpr(AlloyParser.IntersectBindExprContext ctx) {
+    public AlloyIntersExpr visitIntersectBindExpr(DashParser.IntersectBindExprContext ctx) {
         return new AlloyIntersExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
     }
 
@@ -443,14 +446,14 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // RelOvrdExpr
     // ============================
     @Override
-    public AlloyRelOvrdExpr visitRelationOverrideExpr(AlloyParser.RelationOverrideExprContext ctx) {
+    public AlloyRelOvrdExpr visitRelationOverrideExpr(DashParser.RelationOverrideExprContext ctx) {
         return new AlloyRelOvrdExpr(
                 new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
     }
 
     @Override
     public AlloyRelOvrdExpr visitRelationOverrideBindExpr(
-            AlloyParser.RelationOverrideBindExprContext ctx) {
+            DashParser.RelationOverrideBindExprContext ctx) {
         return new AlloyRelOvrdExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
     }
 
@@ -458,7 +461,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // NumericExpr
     // ============================
     @Override
-    public AlloyExpr visitNumericExpr(AlloyParser.NumericExprContext ctx) {
+    public AlloyExpr visitNumericExpr(DashParser.NumericExprContext ctx) {
         if (null != ctx.CARDINALITY()) {
             return new AlloyNumCardinalityExpr(new Pos(ctx), this.visit(ctx.expr2()));
         } else if (null != ctx.SUM()) {
@@ -474,7 +477,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // FunMul, FunDiv, FunRem
     // ============================
     @Override
-    public AlloyBinaryExpr visitMulDivRemExpr(AlloyParser.MulDivRemExprContext ctx) {
+    public AlloyBinaryExpr visitMulDivRemExpr(DashParser.MulDivRemExprContext ctx) {
         if (null != ctx.FUNMUL()) {
             return new AlloyFunMulExpr(
                     new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
@@ -490,7 +493,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyBinaryExpr visitMulDivRemBindExpr(AlloyParser.MulDivRemBindExprContext ctx) {
+    public AlloyBinaryExpr visitMulDivRemBindExpr(DashParser.MulDivRemBindExprContext ctx) {
         if (null != ctx.FUNMUL()) {
             return new AlloyFunMulExpr(
                     new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
@@ -509,7 +512,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // Union, Diff, FunAdd, FunSub
     // ============================
     @Override
-    public AlloyBinaryExpr visitPlusMinusExpr(AlloyParser.PlusMinusExprContext ctx) {
+    public AlloyBinaryExpr visitPlusMinusExpr(DashParser.PlusMinusExprContext ctx) {
         if (null != ctx.PLUS()) {
             return new AlloyUnionExpr(
                     new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
@@ -528,7 +531,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyBinaryExpr visitPlusMinusBindExpr(AlloyParser.PlusMinusBindExprContext ctx) {
+    public AlloyBinaryExpr visitPlusMinusBindExpr(DashParser.PlusMinusBindExprContext ctx) {
         if (null != ctx.PLUS()) {
             return new AlloyUnionExpr(
                     new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
@@ -549,7 +552,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // SHL, SHR, SHA
     // ============================
     @Override
-    public AlloyBinaryExpr visitShiftExpr(AlloyParser.ShiftExprContext ctx) {
+    public AlloyBinaryExpr visitShiftExpr(DashParser.ShiftExprContext ctx) {
         if (null != ctx.SHL()) {
             return new AlloyShLExpr(
                     new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
@@ -565,7 +568,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyBinaryExpr visitShiftBindExpr(AlloyParser.ShiftBindExprContext ctx) {
+    public AlloyBinaryExpr visitShiftBindExpr(DashParser.ShiftBindExprContext ctx) {
         if (null != ctx.SHL()) {
             return new AlloyShLExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
         } else if (null != ctx.SHR()) {
@@ -581,7 +584,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // Qt
     // ============================
     @Override
-    public AlloyQtExpr visitQuantifiedExpr(AlloyParser.QuantifiedExprContext ctx) {
+    public AlloyQtExpr visitQuantifiedExpr(DashParser.QuantifiedExprContext ctx) {
         AlloyQtExpr.Quant qt = AlloyQtExpr.Quant.ALL;
         if (null != ctx.ALL()) {
             qt = AlloyQtExpr.Quant.ALL;
@@ -607,7 +610,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // Comparison & Equals & NotEquals
     // ============================
     @Override
-    public AlloyBinaryExpr visitCompExpr(AlloyParser.CompExprContext ctx) {
+    public AlloyBinaryExpr visitCompExpr(DashParser.CompExprContext ctx) {
         AlloyComparisonExpr.Negation neg;
         if (null != ctx.comparison().NOT_EXCL() || null != ctx.comparison().NOT()) {
             neg = AlloyComparisonExpr.Negation.NOT_EXCL;
@@ -651,7 +654,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // Neg and UnTemp
     // ============================
     @Override
-    public AlloyUnaryExpr visitUnTempExpr(AlloyParser.UnTempExprContext ctx) {
+    public AlloyUnaryExpr visitUnTempExpr(DashParser.UnTempExprContext ctx) {
         if (null != ctx.NOT_EXCL() || null != ctx.NOT()) {
             return new AlloyNegExpr(new Pos(ctx), this.visit(ctx.expr2()));
         } else if (null != ctx.ALWAYS()) {
@@ -672,7 +675,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyUnaryExpr visitUnTempBindExpr(AlloyParser.UnTempBindExprContext ctx) {
+    public AlloyUnaryExpr visitUnTempBindExpr(DashParser.UnTempBindExprContext ctx) {
         if (null != ctx.NOT_EXCL() || null != ctx.NOT()) {
             return new AlloyNegExpr(new Pos(ctx), this.visit(ctx.bind()));
         } else if (null != ctx.ALWAYS()) {
@@ -696,7 +699,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // BinTemp
     // ============================
     @Override
-    public AlloyBinaryExpr visitBinTempExpr(AlloyParser.BinTempExprContext ctx) {
+    public AlloyBinaryExpr visitBinTempExpr(DashParser.BinTempExprContext ctx) {
         if (null != ctx.UNTIL()) {
             return new AlloyUntilExpr(
                     new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
@@ -715,7 +718,7 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyBinaryExpr visitBinTempBindExpr(AlloyParser.BinTempBindExprContext ctx) {
+    public AlloyBinaryExpr visitBinTempBindExpr(DashParser.BinTempBindExprContext ctx) {
         if (null != ctx.UNTIL()) {
             return new AlloyUntilExpr(
                     new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
@@ -737,12 +740,12 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // And
     // ============================
     @Override
-    public AlloyAndExpr visitAndExpr(AlloyParser.AndExprContext ctx) {
+    public AlloyAndExpr visitAndExpr(DashParser.AndExprContext ctx) {
         return new AlloyAndExpr(new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
     }
 
     @Override
-    public AlloyAndExpr visitAndBindExpr(AlloyParser.AndBindExprContext ctx) {
+    public AlloyAndExpr visitAndBindExpr(DashParser.AndBindExprContext ctx) {
         return new AlloyAndExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
     }
 
@@ -751,12 +754,12 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // ============================
 
     @Override
-    public AlloyExpr visitBlockBody(AlloyParser.BlockBodyContext ctx) {
+    public AlloyExpr visitBlockBody(DashParser.BlockBodyContext ctx) {
         return this.visit(ctx.block());
     }
 
     @Override
-    public AlloyExpr visitBarBody(AlloyParser.BarBodyContext ctx) {
+    public AlloyExpr visitBarBody(DashParser.BarBodyContext ctx) {
         return this.visit(ctx.expr1());
     }
 
@@ -764,20 +767,20 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
     // Decl
     // ============================
     @Override
-    public AlloyDecl visitDecl(AlloyParser.DeclContext ctx) {
+    public AlloyDecl visitDecl(DashParser.DeclContext ctx) {
         return (AlloyDecl) this.visit(ctx.getChild(0));
     }
 
     @Override
-    public AlloyDecl visitDeclMul(AlloyParser.DeclMulContext ctx) {
+    public AlloyDecl visitDeclMul(DashParser.DeclMulContext ctx) {
         AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
 
         final boolean isVar = null != ctx.VAR() ? true : false;
 
         final boolean isPrivate = null != ctx.PRIVATE() ? true : false;
 
-        List<AlloyNameExpr> names =
-                ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class);
+        List<AlloyQnameExpr> qnames =
+                ParserUtil.visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class);
 
         boolean isDisj1 = false;
         boolean isDisj2 = false;
@@ -805,27 +808,27 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
                 isVar,
                 isPrivate,
                 isDisj1,
-                names,
+                qnames,
                 isDisj2,
                 quant,
                 exprParseVis.visit(ctx.expr1()));
     }
 
     @Override
-    public AlloyDecl visitDeclExact(AlloyParser.DeclExactContext ctx) {
+    public AlloyDecl visitDeclExact(DashParser.DeclExactContext ctx) {
         AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
 
         final boolean isPrivate = null != ctx.PRIVATE() ? true : false;
 
-        List<AlloyNameExpr> names =
-                ParserUtil.visitAll(ctx.names().name(), exprParseVis, AlloyNameExpr.class);
+        List<AlloyQnameExpr> qnames =
+                ParserUtil.visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class);
 
         return new AlloyDecl(
                 new Pos(ctx),
                 false,
                 isPrivate,
                 false,
-                names,
+                qnames,
                 false,
                 AlloyDecl.Quant.EXACTLY,
                 exprParseVis.visit(ctx.expr1()));
@@ -842,40 +845,40 @@ public final class AlloyExprParseVis extends AlloyBaseVisitor<AlloyExpr> {
         int tokenType = tn.getSymbol().getType();
 
         switch (tokenType) {
-            case AlloyParser.DISJ:
+            case DashParser.DISJ:
                 return new AlloyDisjExpr(new Pos(tn));
 
-            case AlloyParser.PRED_TOTALORDER:
+            case DashParser.PRED_TOTALORDER:
                 return new AlloyPredTotOrdExpr(new Pos(tn));
 
-            case AlloyParser.INT:
+            case DashParser.INT:
                 return new AlloyIntExpr(new Pos(tn));
 
-            case AlloyParser.SUM:
+            case DashParser.SUM:
                 return new AlloySumExpr(new Pos(tn));
 
-            case AlloyParser.SEQ:
+            case DashParser.SEQ:
                 return new AlloySeqExpr(new Pos(tn));
 
-            case AlloyParser.THIS:
+            case DashParser.THIS:
                 return new AlloyThisExpr(new Pos(tn));
 
-            case AlloyParser.UNIV:
+            case DashParser.UNIV:
                 return new AlloyUnivExpr(new Pos(tn));
 
-            case AlloyParser.STRING:
+            case DashParser.STRING:
                 return new AlloyStringExpr(new Pos(tn));
 
-            case AlloyParser.STEPS:
+            case DashParser.STEPS:
                 return new AlloyStepsExpr(new Pos(tn));
 
-            case AlloyParser.SIGINT:
+            case DashParser.SIGINT:
                 return new AlloySigIntExpr(new Pos(tn));
 
-            case AlloyParser.SEQ_INT:
+            case DashParser.SEQ_INT:
                 return new AlloySeqIntExpr(new Pos(tn));
 
-            case AlloyParser.NONE:
+            case DashParser.NONE:
                 return new AlloyNoneExpr(new Pos(tn));
 
             default:

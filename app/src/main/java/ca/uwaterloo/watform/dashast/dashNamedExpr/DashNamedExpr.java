@@ -4,9 +4,10 @@
     because they are only used for parsing and printing.
 */
 
-package ca.uwaterloo.watform.dashast;
+package ca.uwaterloo.watform.dashast.dashNamedExpr;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 
 public abstract class DashNamedExpr extends ASTNode {
@@ -15,7 +16,7 @@ public abstract class DashNamedExpr extends ASTNode {
 
     public DashNamedExpr(Pos pos, AlloyExpr exp) {
         super(pos);
-        exp = exp;
+        this.exp = exp;
     }
 
     public DashNamedExpr() {
@@ -25,7 +26,8 @@ public abstract class DashNamedExpr extends ASTNode {
     // Special toString for when expression has a name
     public void toString(String name, StringBuilder sb, int indent) {
         sb.append(DashStrings.indent(indent) + name + " {\n");
-        this.toString(sb, indent);
+        sb.append(DashStrings.indent(indent + 1));
+        this.exp.toString(sb, indent + 1);
         sb.append("\n" + DashStrings.indent(indent) + "}\n");
     }
 }

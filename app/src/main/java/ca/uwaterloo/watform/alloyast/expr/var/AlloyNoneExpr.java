@@ -17,4 +17,9 @@ public final class AlloyNoneExpr extends AlloyVarExpr implements AlloySigRefExpr
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloyNoneExpr rebuild(String label) {
+        return new AlloyNoneExpr(this.pos);
+    }
 }

@@ -1,9 +1,11 @@
-package ca.uwaterloo.watform.dashast;
+package ca.uwaterloo.watform.dashast.dashNamedExpr;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.dashast.*;
+import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 
-public class DashGoto extends DashNamedExpr {
+public class DashGoto extends DashNamedExpr implements DashTransItem {
 
     public DashGoto(Pos pos, AlloyExpr d) {
         super(pos, d);

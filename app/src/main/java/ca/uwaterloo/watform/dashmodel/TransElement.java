@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import java.util.List;
 

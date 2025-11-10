@@ -10,12 +10,14 @@ public class TLAPlusModule {
     private List<TLAPlusConstant> constants;
     private List<TLAPlusVariable> variables;
     private List<TLAPlusSTL> extended_libraries;
+    private List<TLAPlusFormulaDefinition> formulae;
 
     public TLAPlusModule(String name) {
         this.name = name;
         this.constants = new ArrayList<>();
         this.variables = new ArrayList<>();
         this.extended_libraries = new ArrayList<>();
+        this.formulae = new ArrayList<>();
     }
 
     public void addSTL(TLAPlusSTL stl) {
@@ -38,12 +40,12 @@ public class TLAPlusModule {
                 + TLAPlusStrings.HEAD_DELIMITER;
     }
 
-    private static String simpleBuilder(String initial, List<? extends TLAPlusASTNode> l) {
+    private static String simpleBuilder(String initial, List<? extends ASTNode> l) {
         StringBuilder sb = new StringBuilder(initial);
         int n = l.size();
         if (n == 0) return ""; // no need for the line if nothing exists
         for (int i = 0; i < n; i++) {
-            sb.append(" " + l.get(i).toStringList().get(0));
+            sb.append(" ");
             if (i < n - 1) sb.append(TLAPlusStrings.COMMA);
         }
         return sb.toString();

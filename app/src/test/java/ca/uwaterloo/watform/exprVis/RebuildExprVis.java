@@ -9,22 +9,22 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
     @Override
     public AlloyExpr visit(AlloyBinaryExpr binExpr) {
-        AlloyExpr l = new AlloyNameExpr("binLeft");
-        AlloyExpr r = new AlloyNameExpr("binRight");
+        AlloyExpr l = new AlloyQnameExpr("binLeft");
+        AlloyExpr r = new AlloyQnameExpr("binRight");
         return binExpr.rebuild(l, r);
     }
 
     @Override
     public AlloyExpr visit(AlloyAndExpr andExpr) {
-        AlloyExpr l = new AlloyNameExpr("andLeft");
-        AlloyExpr r = new AlloyNameExpr("andRight");
+        AlloyExpr l = new AlloyQnameExpr("andLeft");
+        AlloyExpr r = new AlloyQnameExpr("andRight");
         return andExpr.rebuild(l, r);
     }
 
     @Override
     public AlloyExpr visit(AlloyArrowExpr arrowExpr) {
-        AlloyExpr l = new AlloyNameExpr("arrowLeft");
-        AlloyExpr r = new AlloyNameExpr("arrowRight");
+        AlloyExpr l = new AlloyQnameExpr("arrowLeft");
+        AlloyExpr r = new AlloyQnameExpr("arrowRight");
         return new AlloyArrowExpr(l, arrowExpr.mul1, AlloyArrowExpr.Mul.ONE, r);
     }
 

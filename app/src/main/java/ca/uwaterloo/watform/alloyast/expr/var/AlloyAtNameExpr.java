@@ -4,15 +4,19 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
+/*
+ * Prefixing a field name with the special symbol @ suppresses the implicit expansion in sig's facts
+ * see: section on Signatures in https://alloytools.org/spec.html
+ */
 public final class AlloyAtNameExpr extends AlloyVarExpr {
-    public final AlloyNameExpr name;
+    public final AlloyQnameExpr name;
 
-    public AlloyAtNameExpr(Pos pos, AlloyNameExpr name) {
+    public AlloyAtNameExpr(Pos pos, AlloyQnameExpr name) {
         super(pos, AlloyStrings.AT + name.toString());
         this.name = name;
     }
 
-    public AlloyAtNameExpr(AlloyNameExpr name) {
+    public AlloyAtNameExpr(AlloyQnameExpr name) {
         super(AlloyStrings.AT + name.toString());
         this.name = name;
     }
@@ -20,5 +24,14 @@ public final class AlloyAtNameExpr extends AlloyVarExpr {
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public AlloyAtNameExpr rebuild(String label) {
+        return new AlloyAtNameExpr(this.pos, new AlloyQnameExpr(label));
+    }
+
+    public AlloyAtNameExpr rebuild(AlloyQnameExpr nameExpr) {
+        return new AlloyAtNameExpr(this.pos, nameExpr);
     }
 }

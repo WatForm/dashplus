@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import ca.uwaterloo.watform.alloyast.AlloyCtorErrors;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -11,9 +12,7 @@ import java.util.Optional;
 public final class AlloyPredPara extends AlloyParagraph {
     public final boolean isPrivate;
     public final Optional<AlloySigRefExpr> sigRef;
-    public final AlloyNameExpr name;
-    public final boolean hasBrack;
-    public final boolean hasParen;
+    public final AlloyQnameExpr qname;
     public final List<AlloyDecl> arguments;
     public final AlloyBlock block;
 
@@ -21,46 +20,56 @@ public final class AlloyPredPara extends AlloyParagraph {
             Pos pos,
             boolean isPrivate,
             AlloySigRefExpr sigRef,
-            AlloyNameExpr name,
-            boolean hasBrack,
-            boolean hasParen,
+            AlloyQnameExpr qname,
             List<AlloyDecl> arguments,
             AlloyBlock block) {
         super(pos);
         this.isPrivate = isPrivate;
         this.sigRef = Optional.ofNullable(sigRef);
-        this.name = name;
-        this.hasBrack = hasBrack;
-        this.hasParen = hasParen;
+        this.qname = qname;
         this.arguments = Collections.unmodifiableList(arguments);
         this.block = block;
+
+        if (null == qname || qname.toString().isBlank()) {
+            throw AlloyCtorErrors.sigMustHaveName(pos);
+        }
+        if (null == arguments) {
+            throw AlloyCtorErrors.sigMustHaveArgs(pos);
+        }
+        if (null == block) {
+            throw AlloyCtorErrors.sigMustHaveBlock(pos);
+        }
     }
 
     public AlloyPredPara(
             boolean isPrivate,
             AlloySigRefExpr sigRef,
-            AlloyNameExpr name,
-            boolean hasBrack,
-            boolean hasParen,
+            AlloyQnameExpr qname,
             List<AlloyDecl> arguments,
             AlloyBlock block) {
-        this(Pos.UNKNOWN, isPrivate, sigRef, name, hasBrack, hasParen, arguments, block);
+        this(Pos.UNKNOWN, isPrivate, sigRef, qname, arguments, block);
     }
 
     public AlloyPredPara(
-            boolean isPrivate,
-            AlloyNameExpr name,
-            boolean hasBrack,
-            boolean hasParen,
-            List<AlloyDecl> arguments,
-            AlloyBlock block) {
-        this(Pos.UNKNOWN, isPrivate, null, name, hasBrack, hasParen, arguments, block);
+            boolean isPrivate, AlloyQnameExpr qname, List<AlloyDecl> arguments, AlloyBlock block) {
+        this(Pos.UNKNOWN, isPrivate, null, qname, arguments, block);
     }
 
-    public AlloyPredPara(boolean isPrivate, AlloyNameExpr name, AlloyBlock block) {
-        this(Pos.UNKNOWN, isPrivate, null, name, false, false, Collections.emptyList(), block);
+    public AlloyPredPara(boolean isPrivate, AlloyQnameExpr qname, AlloyBlock block) {
+        this(Pos.UNKNOWN, isPrivate, null, qname, Collections.emptyList(), block);
     }
 
+    public AlloyPredPara(AlloyQnameExpr qname, List<AlloyDecl> arguments, AlloyBlock block) {
+        this(Pos.UNKNOWN, false, null, qname, arguments, block);
+    }
+
+    public AlloyPredPara(AlloyQnameExpr qname, AlloyBlock block) {
+        this(Pos.UNKNOWN, false, null, qname, Collections.emptyList(), block);
+    }
+
+    /*
+     * Always use square brackets around arguments
+     */
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(this.isPrivate ? AlloyStrings.PRIVATE + AlloyStrings.SPACE : "");
@@ -69,17 +78,20 @@ public final class AlloyPredPara extends AlloyParagraph {
             ((AlloyVarExpr) this.sigRef.get()).toString(sb, indent);
             sb.append(AlloyStrings.DOT);
         }
-        this.name.toString(sb, indent);
-        if (this.hasBrack) {
+        this.qname.toString(sb, indent);
+        if (!this.arguments.isEmpty()) {
             sb.append(AlloyStrings.LBRACK);
             ASTNode.join(sb, indent, this.arguments, AlloyStrings.COMMA + AlloyStrings.SPACE);
             sb.append(AlloyStrings.RBRACK);
-        } else if (this.hasParen) {
-            sb.append(AlloyStrings.LPAREN);
-            ASTNode.join(sb, indent, this.arguments, AlloyStrings.COMMA + AlloyStrings.SPACE);
-            sb.append(AlloyStrings.RPAREN);
         }
         sb.append(AlloyStrings.SPACE);
         this.block.toString(sb, indent);
+    }
+
+    @Override
+    public Optional<String> getName() {
+        assert (null != this.qname
+                && !this.qname.toString().isBlank()); // this check is done already in ctor
+        return Optional.of(this.qname.toString());
     }
 }

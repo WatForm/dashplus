@@ -25,50 +25,50 @@ grammar Dash ;
 
 // ____________________________________
 
-dashFile
-    : (dashState | paragraph)* 
-    ;
+alloyFile: alloyParagraph* ;
 
-alloyFile
-    : paragraph* 
-    ;
+dashParagraph : stateRoot ;
 
+paragraph
+	: dashParagraph
+	| alloyParagraph
+	;
+
+dashFile: paragraph* ;
 
 // ____________________________________
-// dashState
+// stateRoot
 
-dashState	: STATE qname LBRACE stateItem* RBRACE ;
+stateRoot 	: STATE name LBRACE stateItem* RBRACE ;
 
-stateItem 	: ENV? EVENT qname LBRACE RBRACE
-			| ENV? qnames COLON expr1 
-			| qnames COLON BUF LBRACK (qname | SIGINT) RBRACK
-			| TRANS qname LBRACE transItem* RBRACE
-			| INIT block
-			| INVARIANT qname? block
-			| ENTER block
-			| EXIT block
-			| PRED qname LBRACE expr1 RBRACE
-			| DEF? STATE qname LBRACE stateItem* RBRACE
-			| DEF? CONC qname (LBRACK qname RBRACK)? LBRACE stateItem* RBRACE
+stateItem 	: ENV? EVENT qnames LBRACE RBRACE									# dashEventDecls
+			| ENV? names COLON expr1 											# dashVarDecls
+			| names COLON BUF LBRACK (qname | SIGINT) RBRACK					# dashBufferDecls
+			| TRANS name LBRACE transItem* RBRACE								# dashTrans
+			| INIT block														# dashInit
+			| INVARIANT qname? block											# dashInv
+			| PRED name LBRACE expr1 RBRACE										# dashPred
+			| DEF? STATE name LBRACE stateItem* RBRACE							# dashState
+			| DEF? CONC name (LBRACK qname RBRACK)? LBRACE stateItem* RBRACE	# dashConcState
 			;
 
-transItem 	: ON qname
-			| ON dashRef
-			| SEND qname
-			| SEND dashRef
-			| WHEN expr1
-			| DO expr1
-			| FROM qname
-			| FROM dashRef 
-			| GOTO qname 
-			| GOTO dashRef 
+transItem	: ON dashRef1														# dashOnRef1
+			| ON dashRef2														# dashOnRef2
+			| SEND dashRef1														# dashSendRef1
+			| SEND dashRef2														# dashSendRef2
+			| WHEN expr1														# dashWhen
+			| DO expr1															# dashDo
+			| FROM dashRef1 													# dashFromRef1
+			| FROM dashRef2 													# dashFromRef2
+			| GOTO dashRef1 													# dashGotoRef1
+			| GOTO dashRef2 													# dashGotoRef2
 			;
 
 
 // ____________________________________
 // Paragraph
 
-paragraph       : modulePara
+alloyParagraph  : modulePara
                 | importPara
                 | macroPara
                 | sigPara
@@ -151,9 +151,11 @@ impliesExprOpen 	: expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE impliesExpr
     				| expr2 (RFATARROW | IMPLIES) bind                                  			# impBindExpr
     				;
 
-dashRef			: (qname SLASH)* qname LBRACK (expr1 COMMA)* expr1 RBRACK SLASH qname ;
+dashRef1			: (name SLASH)* name LBRACK (expr1 COMMA)* expr1 RBRACK SLASH name ;
+dashRef2			: (name SLASH)* name ;
 
-baseExpr		: number																					# numberExpr
+baseExpr		: {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef1							# dashRef1Expr
+				| number																					# numberExpr
 				| STRING_LITERAL																			# strLiteralExpr
 				| IDEN																						# idenExpr
 				| THIS																						# thisExpr
@@ -165,7 +167,6 @@ baseExpr		: number																					# numberExpr
 				| AT qname																					# atNameExpr
 				| block																						# blockExpr
 				| LBRACE declMul (COMMA declMul)* body? RBRACE              								# comprehensionExpr
-				| dashRef																					# dashRefExpr
 				;
 
 transExpr		: (TRANSPOSE | TRANS_CLOS | REFL_TRANS_CLOS) (transExpr | baseExpr | bind) ;											
@@ -230,6 +231,7 @@ qname           : name 											# simpleQname
 				;
 qnames          : qname ( COMMA qname )* ;
 name            : ID;
+names 			: name ( COMMA name )* ;
 
 
 assignment		: qname EQUAL expr1 ;

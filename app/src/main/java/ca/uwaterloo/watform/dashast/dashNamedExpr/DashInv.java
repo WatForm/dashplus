@@ -1,14 +1,17 @@
-package ca.uwaterloo.watform.dashast;
+package ca.uwaterloo.watform.dashast.dashNamedExpr;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.dashast.DashStateItem;
+import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 
-public class DashInv extends DashNamedExpr {
+public final class DashInv extends DashNamedExpr implements DashStateItem {
 
     String name;
 
     public DashInv(Pos p, AlloyExpr inv) {
         super(p, inv);
+        this.name = "";
     }
 
     public DashInv(Pos p, String n, AlloyExpr inv) {
@@ -21,6 +24,13 @@ public class DashInv extends DashNamedExpr {
     //NADTODO we should print the name if it has one
     @Override
     public void toString(StringBuilder sb, int indent) {
-        super.toString(DashStrings.invName, sb, indent);
+        sb.append(DashStrings.indent(indent) + DashStrings.invName);
+        if (!this.name.isEmpty()) {
+            sb.append(CommonStrings.SPACE + this.name);
+        }
+        sb.append(" {\n");
+        sb.append(DashStrings.indent(indent + 1));
+        this.exp.toString(sb, indent + 1);
+        sb.append("\n" + DashStrings.indent(indent) + "}\n");
     }
 }

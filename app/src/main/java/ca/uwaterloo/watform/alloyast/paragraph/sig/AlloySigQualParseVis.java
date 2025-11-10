@@ -1,12 +1,11 @@
 package ca.uwaterloo.watform.alloyast.paragraph.sig;
 
-import antlr.generated.AlloyBaseVisitor;
-import antlr.generated.AlloyParser;
+import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.*;
 
-public final class AlloySigQualParseVis extends AlloyBaseVisitor<AlloySigPara.Qual> {
+public final class AlloySigQualParseVis extends DashBaseVisitor<AlloySigPara.Qual> {
     @Override
-    public AlloySigPara.Qual visitSigQualifier(AlloyParser.SigQualifierContext ctx) {
+    public AlloySigPara.Qual visitSigQualifier(DashParser.SigQualifierContext ctx) {
         if (null != ctx.VAR()) {
             return AlloySigPara.Qual.VAR;
         } else if (null != ctx.ABSTRACT()) {

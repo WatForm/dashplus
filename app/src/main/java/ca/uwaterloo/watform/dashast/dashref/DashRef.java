@@ -30,6 +30,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashExprVis;
 import ca.uwaterloo.watform.dashast.DashStrings;
@@ -37,6 +38,7 @@ import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DashRef extends AlloyExpr {
 
@@ -46,9 +48,7 @@ public class DashRef extends AlloyExpr {
 
     // for internal uses during translation
     public DashRef(DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
-        this.kind = k;
-        this.name = n;
-        this.paramValues = prmValues;
+        this(Pos.UNKNOWN, k, n, prmValues);
     }
 
     // for uses when parsed
@@ -58,6 +58,20 @@ public class DashRef extends AlloyExpr {
         this.kind = k;
         this.name = n;
         this.paramValues = prmValues;
+    }
+
+    public DashRef(
+            Pos p,
+            DashStrings.DashRefKind k,
+            List<AlloyNameExpr> names,
+            List<? extends AlloyExpr> prmValues) {
+        this(
+                p,
+                k,
+                names.stream()
+                        .map(AlloyNameExpr::toString)
+                        .collect(Collectors.joining(DashStrings.internalQualChar)),
+                prmValues);
     }
 
     public static List<AlloyExpr> emptyParamValuesList() {

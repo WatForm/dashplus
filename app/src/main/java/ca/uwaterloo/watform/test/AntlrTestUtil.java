@@ -3,12 +3,15 @@ package ca.uwaterloo.watform.test;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.antlr.*;
+import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,20 +25,6 @@ public class AntlrTestUtil {
     private static boolean stopOnFirstFail = true;
     private long timeoutMs = 20 * 1000;
     private static int filenamesToPrint = 20;
-
-    private List<Path> jarPassedAntlrPassed = new ArrayList<>();
-    private List<Path> jarPassedAntlrFailed = new ArrayList<>();
-    private List<Path> jarFailedAntlrPassed = new ArrayList<>();
-    private List<Path> jarFailedAntlrFailed = new ArrayList<>();
-    private List<Path> timeout = new ArrayList<>();
-
-    private void clearAllLists() {
-        jarPassedAntlrPassed.clear();
-        jarPassedAntlrFailed.clear();
-        jarFailedAntlrPassed.clear();
-        jarFailedAntlrFailed.clear();
-        timeout.clear();
-    }
 
     private void printList(String title, List<Path> list) {
         System.out.println(title + " (" + list.size() + "):");
@@ -56,17 +45,38 @@ public class AntlrTestUtil {
         System.out.println();
     }
 
-    public void printResults() {
+    public void printResults(Map<String, List<Path>> resultsMap) {
         System.out.println("=== Parsing Results ===");
-        printList("Jar Passed, ANTLR Passed", jarPassedAntlrPassed);
-        printList("Jar Passed, ANTLR Failed", jarPassedAntlrFailed);
-        printList("Jar Failed, ANTLR Passed (ignored for now)", jarFailedAntlrPassed);
-        printList("Jar Failed, ANTLR Failed (ignored for now)", jarFailedAntlrFailed);
-        printList("Timeout Files", timeout);
+        for (Map.Entry<String, List<Path>> entry : resultsMap.entrySet()) {
+            printList(entry.getKey(), entry.getValue());
+        }
         System.out.println("=======================");
     }
 
-    private void tryParse(CharStream input, Path filePath) {
+    private void clearResults() {
+        this.alloyResults.get("jarPassedAntlrPassed").clear();
+        this.alloyResults.get("jarPassedAntlrFailed").clear();
+        this.alloyResults.get("jarFailedAntlrPassed").clear();
+        this.alloyResults.get("jarFailedAntlrFailed").clear();
+        this.alloyResults.get("timeout").clear();
+        this.dashResults.get("dashPassed").clear();
+        this.dashResults.get("dashFailed").clear();
+        this.dashResults.get("timeout").clear();
+    }
+
+    // ====================================================================================
+    // For Alloy Tests
+    // ====================================================================================
+    Map<String, List<Path>> alloyResults =
+            new LinkedHashMap<>(
+                    Map.of(
+                            "jarPassedAntlrPassed", new ArrayList<>(),
+                            "jarPassedAntlrFailed", new ArrayList<>(),
+                            "jarFailedAntlrPassed", new ArrayList<>(),
+                            "jarFailedAntlrFailed", new ArrayList<>(),
+                            "timeout", new ArrayList<>()));
+
+    private void tryParseAlloy(CharStream input, Path filePath) {
         boolean jarPassed = AlloyInterface.canParse(input.toString());
         if (!jarPassed) {
             return;
@@ -80,25 +90,27 @@ public class AntlrTestUtil {
             if (jarPassed) {
                 boolean toStringCanPass = AlloyInterface.canParse(s);
                 if (toStringCanPass) {
-                    jarPassedAntlrPassed.add(filePath);
+                    alloyResults.get("jarPassedAntlrPassed").add(filePath);
                     System.out.println(
-                            "Successfully parsed " + jarPassedAntlrPassed.size() + " files. ");
+                            "Successfully parsed "
+                                    + alloyResults.get("jarPassedAntlrPassed").size()
+                                    + " files. ");
                 } else {
                     System.out.println("toString did not parse again. ");
-                    jarPassedAntlrFailed.add(filePath);
+                    alloyResults.get("jarPassedAntlrFailed").add(filePath);
                     if (stopOnFirstFail) {
                         throw new ParseCancellationException("toString did not parse again. ");
                     }
                 }
             } else {
-                jarFailedAntlrPassed.add(filePath);
+                alloyResults.get("jarFailedAntlrPassed").add(filePath);
                 // if (stopOnFirstFail) {
                 // throw new UnexpectedParsePassException();
                 // }
             }
         } catch (ParseCancellationException pe) {
             if (jarPassed) {
-                jarPassedAntlrFailed.add(filePath);
+                alloyResults.get("jarPassedAntlrFailed").add(filePath);
                 if (stopOnFirstFail) {
                     throw pe;
                 }
@@ -114,29 +126,82 @@ public class AntlrTestUtil {
                 } catch (IOException e) {
                     System.err.println("Failed to delete the file: " + e.getMessage());
                 }
-                jarFailedAntlrFailed.add(filePath);
+                alloyResults.get("jarFailedAntlrFailed").add(filePath);
             }
         } catch (Exception e) {
             System.err.println(e);
-            this.printResults();
+            this.printResults(alloyResults);
             System.exit(1);
+        } finally {
+            System.out.println("=======================");
         }
     }
 
-    private void tryParseWithTimeout(CharStream input, Path filePath) {
+    // ====================================================================================
+    // For Dash Tests
+    // ====================================================================================
+    Map<String, List<Path>> dashResults =
+            new LinkedHashMap<>(
+                    Map.of(
+                            "dashPassed", new ArrayList<>(),
+                            "dashFailed", new ArrayList<>(),
+                            "timeout", new ArrayList<>()));
+
+    private void tryParseDash(CharStream input, Path filePath) {
+        System.out.println(filePath);
+        try {
+            DashFile dashFile = (DashFile) ParserUtil.parse(filePath);
+            System.out.println(dashFile.toString());
+            this.dashResults.get("dashPassed").add(filePath);
+            System.out.println(
+                    "Successfully parsed " + dashResults.get("dashPassed").size() + " files. ");
+        } catch (ParseCancellationException pe) {
+            this.dashResults.get("dashFailed").add(filePath);
+            if (stopOnFirstFail) {
+                System.err.println(pe);
+                throw pe;
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+            this.printResults(dashResults);
+            System.exit(1);
+        } finally {
+            System.out.println("=======================");
+        }
+    }
+
+    // ====================================================================================
+
+    private void tryParseWithTimeout(CharStream input, Path filePath, String extension) {
+        if (null == extension) {
+            throw new ImplementationError("File extension must be .dsh or .als");
+        }
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<?> future =
-                executor.submit(
-                        () -> {
-                            tryParse(input, filePath);
-                        });
+        Future<?> future = null;
+        if (extension.equals(".dsh")) {
+            future =
+                    executor.submit(
+                            () -> {
+                                tryParseDash(input, filePath);
+                            });
+        } else if (extension.equals(".als")) {
+            future =
+                    executor.submit(
+                            () -> {
+                                tryParseAlloy(input, filePath);
+                            });
+        }
 
         try {
             future.get(timeoutMs, TimeUnit.MILLISECONDS);
         } catch (TimeoutException te) {
             System.out.println(
                     "Parsing took longer than " + timeoutMs / 1000 + " seconds, file: " + filePath);
-            timeout.add(filePath);
+            if (extension.equals(".dsh")) {
+                dashResults.get("timeout").add(filePath);
+            } else if (extension.equals(".als")) {
+                alloyResults.get("timeout").add(filePath);
+            }
             future.cancel(true); // interrupt the parsing thread
         } catch (ExecutionException ee) {
             Throwable cause = ee.getCause();
@@ -152,21 +217,25 @@ public class AntlrTestUtil {
         }
     }
 
-    public void recurParseDir(Path dir, long timeoutMs) throws Exception {
-        this.clearAllLists();
+    public void recurParseDir(Path dir, long timeoutMs, String extension) throws Exception {
+        if (extension == null || (!extension.equals(".dsh") && !extension.equals(".als"))) {
+            throw new ImplementationError("File extension must be .dsh or .als");
+        }
+        this.clearResults();
         this.timeoutMs = timeoutMs;
-        try {
-            List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
-            for (Path filePath : paths) {
-                try {
-                    CharStream input = CharStreams.fromPath(filePath);
-                    this.tryParseWithTimeout(input, filePath);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to read file: " + filePath, e);
-                }
+        List<Path> paths = ParserUtil.recurGetFiles(dir, extension);
+        for (Path filePath : paths) {
+            try {
+                CharStream input = CharStreams.fromPath(filePath);
+                this.tryParseWithTimeout(input, filePath, extension);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read file: " + filePath, e);
             }
-        } finally {
-            this.printResults();
+        }
+        if (extension.equals(".dsh")) {
+            this.printResults(this.dashResults);
+        } else {
+            this.printResults(this.alloyResults);
         }
     }
 }

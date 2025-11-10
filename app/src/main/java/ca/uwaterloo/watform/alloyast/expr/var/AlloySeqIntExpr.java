@@ -18,4 +18,9 @@ public final class AlloySeqIntExpr extends AlloyVarExpr implements AlloySigRefEx
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public AlloySeqIntExpr rebuild(String label) {
+        return new AlloySeqIntExpr(this.pos);
+    }
 }

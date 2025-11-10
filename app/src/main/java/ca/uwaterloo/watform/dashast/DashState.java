@@ -2,14 +2,11 @@ package ca.uwaterloo.watform.dashast;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringJoiner;
 
-public class DashState extends DashParagraph {
+public class DashState extends DashParagraph implements DashStateItem {
 
     // stuff from parsing
     public final String name;
@@ -48,7 +45,9 @@ public class DashState extends DashParagraph {
         else if (DashInv.class.isInstance(i)) return 5;
         else if (DashTrans.class.isInstance(i)) return 6;
         else if (DashState.class.isInstance(i)) return 7;
+        else if (DashPred.class.isInstance(i)) return 8;
         else {
+            System.out.println(i.getClass());
             throw ImplementationError.missingCase("itemToInt");
         }
     }
@@ -118,5 +117,10 @@ public class DashState extends DashParagraph {
 
     public List<DashInit> inits() {
         return extractItemsOfClass(items, DashInit.class);
+    }
+
+    @Override
+    public Optional<String> getName() {
+        return Optional.of(name);
     }
 }

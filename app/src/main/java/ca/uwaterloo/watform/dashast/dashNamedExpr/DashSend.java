@@ -1,13 +1,15 @@
-package ca.uwaterloo.watform.dashast;
+package ca.uwaterloo.watform.dashast.dashNamedExpr;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.dashast.*;
+import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 
 // send P[x]/ev1
 // send ev1
 // send y.x.ev1
 
-public class DashSend extends DashNamedExpr {
+public class DashSend extends DashNamedExpr implements DashTransItem {
 
     public DashSend(Pos pos, AlloyExpr e) {
         super(pos, e);

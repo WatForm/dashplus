@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.antlr;
 
-import antlr.generated.AlloyLexer;
+import antlr.generated.DashLexer;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.LexerNoViableAltException;
@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
-public class BailLexer extends AlloyLexer {
+public class BailLexer extends DashLexer {
     public BailLexer(CharStream input) {
         super(input);
 

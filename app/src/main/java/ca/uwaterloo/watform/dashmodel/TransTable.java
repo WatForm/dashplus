@@ -11,6 +11,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;

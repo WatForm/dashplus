@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.utils.*;
 
-public class DashPred extends ASTNode {
+public class DashPred extends ASTNode implements DashStateItem {
 
     public final AlloyExpr exp;
     public final String name; // has no meaning

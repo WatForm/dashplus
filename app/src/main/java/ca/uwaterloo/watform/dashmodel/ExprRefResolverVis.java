@@ -31,6 +31,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
@@ -419,7 +420,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // NADTODO: rule out var names that are bound
         List<AlloyLetExpr.AlloyLetAsn> asns = letExpr.asns;
         List<AlloyLetExpr.AlloyLetAsn> newAsns =
-                mapBy(asns, i -> new AlloyLetExpr.AlloyLetAsn(i.pos, i.name, visit(i.expr)));
+                mapBy(asns, i -> new AlloyLetExpr.AlloyLetAsn(i.pos, i.qname, visit(i.expr)));
         return new AlloyLetExpr(letExpr.pos, newAsns, visit(letExpr.body));
     }
     ;
@@ -452,7 +453,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         kind = dashRef.kind;
         AlloyExpr newExpr =
                 resolve(
-                        new AlloyVarExpr(dashRef.pos, dashRef.name),
+                        new AlloyQnameExpr(dashRef.pos, dashRef.name),
                         mapBy(dashRef.paramValues, i -> visit(i)));
         assert (newExpr instanceof DashRef);
         kind = tempKind;
