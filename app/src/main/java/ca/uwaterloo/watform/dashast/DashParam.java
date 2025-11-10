@@ -14,10 +14,10 @@
 
 package ca.uwaterloo.watform.dashast;
 
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
 
 public class DashParam extends AlloyExpr {
@@ -44,8 +44,8 @@ public class DashParam extends AlloyExpr {
 
     // p_stateName
 
-    public AlloyVarExpr paramVar() {
-        return new AlloyVarExpr(DashStrings.pName + DashStrings.alloySep + this.stateName);
+    public AlloyQnameExpr paramVar() {
+        return new AlloyQnameExpr(DashStrings.pName + DashStrings.alloySep + this.stateName);
     }
 
     // p_stateName:paramSig
@@ -54,9 +54,7 @@ public class DashParam extends AlloyExpr {
                 // name
                 paramVar(),
                 // type
-                new AlloyVarExpr(this.paramSig),
-                // isVar
-                true);
+                new AlloyQnameExpr(this.paramSig));
     }
 
     @Override

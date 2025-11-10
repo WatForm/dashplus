@@ -21,7 +21,7 @@ public final class DashInv extends DashNamedExpr implements DashStateItem {
         this.name = n;
     }
 
-    //NADTODO we should print the name if it has one
+    // NADTODO we should print the name if it has one
     @Override
     public void toString(StringBuilder sb, int indent) {
         sb.append(DashStrings.indent(indent) + DashStrings.invName);
