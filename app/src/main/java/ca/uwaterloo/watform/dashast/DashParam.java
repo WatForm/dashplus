@@ -14,8 +14,10 @@
 
 package ca.uwaterloo.watform.dashast;
 
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.utils.*;
 
 public class DashParam extends AlloyExpr {
@@ -36,6 +38,25 @@ public class DashParam extends AlloyExpr {
     public void toString(StringBuilder sb, int indent) {
         // seems like a reasonable thing to return for the toString of this Expr
         sb.append(stateName.toString());
+    }
+
+    // it's convenient to include these translation methods here
+
+    // p_stateName
+
+    public AlloyVarExpr paramVar() {
+        return new AlloyVarExpr(DashStrings.pName + DashStrings.alloySep + this.stateName);
+    }
+
+    // p_stateName:paramSig
+    public AlloyDecl paramDecl() {
+        return new AlloyDecl(
+                // name
+                paramVar(),
+                // type
+                new AlloyVarExpr(this.paramSig),
+                // isVar
+                true);
     }
 
     @Override

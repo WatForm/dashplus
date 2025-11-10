@@ -18,6 +18,7 @@ public class DashInv extends DashNamedExpr {
         this.name = n;
     }
 
+    //NADTODO we should print the name if it has one
     @Override
     public void toString(StringBuilder sb, int indent) {
         super.toString(DashStrings.invName, sb, indent);
