@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.parser;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloymodel.AlloyModelErrors;
+import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -26,10 +26,10 @@ public class Main {
             AlloyModel alloyModel = null;
             try {
                 alloyModel = new AlloyModel(af);
-            } catch (AlloyModelErrors alloyModelErrors) {
+            } catch (AlloyModelError alloyModelErrors) {
                 Reporter.INSTANCE.addError(alloyModelErrors);
-                Reporter.INSTANCE.exitIfHasErrors();
             }
+            Reporter.INSTANCE.exitIfHasErrors();
             System.out.println(alloyModel.toString());
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());

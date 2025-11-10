@@ -106,7 +106,7 @@ public class AlloyModelTest {
         AlloyFile alloyFile = new AlloyFile(s1);
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         AlloySigPara s1Again = this.createSig("s1");
-        assertThrows(AlloyModelErrors.class, () -> alloyModel.addParagraph(s1Again));
+        assertThrows(AlloyModelError.class, () -> alloyModel.addParagraph(s1Again));
     }
 
     @Test
@@ -125,6 +125,6 @@ public class AlloyModelTest {
     public void DNEParagraphThrows() throws Exception {
         AlloyFile alloyFile = new AlloyFile(Collections.emptyList());
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        assertThrows(AlloyModelErrors.class, () -> alloyModel.getSigs().getParagraph("s"));
+        assertThrows(AlloyModelError.class, () -> alloyModel.getSigs().getParagraph("s"));
     }
 }

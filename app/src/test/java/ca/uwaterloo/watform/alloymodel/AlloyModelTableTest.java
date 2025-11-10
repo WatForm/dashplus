@@ -10,7 +10,6 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
-import ca.uwaterloo.watform.test.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,7 +83,7 @@ public class AlloyModelTableTest {
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
         AlloySigPara sigS2 = this.createSig("s");
         assertThrows(
-                AlloyModelErrors.class,
+                AlloyModelError.class,
                 () -> alloyModelTable.addParagraph(sigS2, new ArrayList<>()));
     }
 
@@ -95,7 +94,7 @@ public class AlloyModelTableTest {
         AlloyFile alloyFile = new AlloyFile(Collections.emptyList());
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
-        assertThrows(AlloyModelErrors.class, () -> alloyModelTable.getParagraph("s"));
+        assertThrows(AlloyModelError.class, () -> alloyModelTable.getParagraph("s"));
     }
 
     @Test

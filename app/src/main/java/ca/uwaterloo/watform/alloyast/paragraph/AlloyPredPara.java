@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
-import ca.uwaterloo.watform.alloyast.AlloyCtorErrors;
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -31,13 +31,13 @@ public final class AlloyPredPara extends AlloyParagraph {
         this.block = block;
 
         if (null == qname || qname.toString().isBlank()) {
-            throw AlloyCtorErrors.sigMustHaveName(pos);
+            throw AlloyCtorError.sigMustHaveName(pos);
         }
         if (null == arguments) {
-            throw AlloyCtorErrors.sigMustHaveArgs(pos);
+            throw AlloyCtorError.sigMustHaveArgs(pos);
         }
         if (null == block) {
-            throw AlloyCtorErrors.sigMustHaveBlock(pos);
+            throw AlloyCtorError.sigMustHaveBlock(pos);
         }
     }
 

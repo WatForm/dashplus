@@ -198,14 +198,10 @@ public final class AlloyCmdPara extends AlloyParagraph {
                             || this.scopableExpr instanceof AlloyIntExpr
                             || this.scopableExpr instanceof AlloySeqExpr) {
                         if (this.end.value > this.start.value) {
-                            throw new Reporter.ErrorUser(
-                                    pos,
-                                    "Cannot specify a growing scope for "
-                                            + scopableExpr.toString());
+                            throw AlloyCtorError.growingScope(pos, scopableExpr);
                         }
                         if (isExactly) {
-                            throw new Reporter.ErrorUser(
-                                    pos, "The exactly keyword is redundant here");
+                            throw AlloyCtorError.redundantExactly(pos);
                         }
                     }
                 }

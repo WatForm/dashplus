@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.utils;
 
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
+import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +17,14 @@ public final class Reporter {
     public IntConsumer exitFunction = System::exit; // change this for testing purposes
 
     private Reporter() {}
+
+    public void addError(AlloyModelError alloyModelErrors) {
+        errors.add(new ErrorUser(alloyModelErrors.pos, alloyModelErrors.getMessage()));
+    }
+
+    public void addError(AlloyCtorError alloyCtorErrors) {
+        errors.add(new ErrorUser(alloyCtorErrors.pos, alloyCtorErrors.getMessage()));
+    }
 
     public void addError(ErrorUser error) {
         errors.add(error);

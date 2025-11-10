@@ -17,13 +17,13 @@ public class AlloyFile extends AlloyASTNode {
         List<AlloyModulePara> modules =
                 GeneralUtil.extractItemsOfClass(paragraphs, AlloyModulePara.class);
         if (modules.size() > 1) {
-            throw AlloyCtorErrors.moduleIsUnique(modules.get(0).pos, modules.get(1).pos);
+            throw AlloyCtorError.moduleIsUnique(modules.get(0).pos, modules.get(1).pos);
         }
 
         if (paragraphs.size() > 1) {
             for (AlloyParagraph para : GeneralUtil.tail(paragraphs)) {
                 if (para instanceof AlloyModulePara) {
-                    throw AlloyCtorErrors.moduleIsAtTop(para.pos);
+                    throw AlloyCtorError.moduleIsAtTop(para.pos);
                 }
             }
         }

@@ -64,7 +64,7 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
             this.li.add(paragraph);
         } else {
             if (this.mp.containsKey(name.get())) {
-                throw AlloyModelErrors.duplicateName(this.mp.get(name.get()).pos, paragraph.pos);
+                throw AlloyModelError.duplicateName(this.mp.get(name.get()).pos, paragraph.pos);
             }
             this.mp.put(name.get(), paragraph);
         }
@@ -91,7 +91,7 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
             throw AlloyModelImplErrors.lookUpWithNoName();
         }
         if (!this.mp.containsKey(name)) {
-            throw AlloyModelErrors.paragraphDNE(name);
+            throw AlloyModelError.paragraphDNE(name);
         }
         return this.mp.get(name);
     }
