@@ -61,6 +61,10 @@ public class EventTable {
         }
     }
 
+    public void add(String efqn, IntEnvKind k, List<DashParam> prms) {
+        add(Pos.UNKNOWN, efqn, k, prms);
+    }
+
     // so we can treat this as a table
     // to the outside world
     public EventElement get(String efqn) {

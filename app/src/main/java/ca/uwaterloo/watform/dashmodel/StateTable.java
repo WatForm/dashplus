@@ -234,9 +234,9 @@ public class StateTable {
         return filterBy(get(s).immChildren, c -> isDefault(c));
     }
 
-    public List<AlloyExpr> getLeafStatesExited(DashRef s) {
-        List<AlloyExpr> r = new ArrayList<AlloyExpr>();
-        // System.out.println("exiting" + s.toString());
+    public List<DashRef> getLeafStatesExited(DashRef s) {
+        List<DashRef> r = new ArrayList<DashRef>();
+
         if (isLeaf(s.name)) {
             r.add(s);
             return r;

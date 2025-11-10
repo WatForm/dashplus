@@ -191,7 +191,7 @@ public class DashModelInitialize { // extends AlloyModel {
                     Error.nameCantBeFQN(v.pos, x);
                 } else {
                     String xfqn = DashFQN.fqn(sfqn, x);
-                    vt.addVar(v.pos, xfqn, k, newParams, t);
+                    vt.add(v.pos, xfqn, k, newParams, t);
                 }
             }
         }

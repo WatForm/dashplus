@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.dashmodel;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -95,5 +97,97 @@ public class DashModelAccessors extends DashModelResolve {
             }
         }
         return new StateDashRef(sc, scopeParams); // no pos possible
+    }
+
+    public DashRef getConcScope(String tfqn) {
+        DashRef scope = getScope(tfqn);
+        List<DashRef> aP = st.allPrefixDashRefs(scope);
+        List<DashRef> aPc = onlyConcPlusRoot(aP);
+        return lastElement(aPc); // might be the scope
+    }
+
+    public List<DashRef> exited(String tfqn) {
+        // returns the list of states with params
+        DashRef scope = getScope(tfqn);
+        return st.getLeafStatesExited(scope);
+    }
+
+    public List<DashRef> entered(String tfqn) {
+        return st.getLeafStatesEnteredInScope(getScope(tfqn), tt.get(tfqn).gotoR);
+    }
+
+    public List<DashRef> onlyConcPlusRoot(List<DashRef> dr) {
+        List<DashRef> c = emptyList();
+        c.add(new StateDashRef(st.root, emptyList()));
+        c.addAll(filterBy(dr, x -> st.isAnd(x.name)));
+        return c;
+    }
+
+    public List<DashRef> ancesConcScopes(DashRef d) {
+        // includes d if it is a conc state
+        List<DashRef> aP = st.allPrefixDashRefs(d);
+        List<DashRef> aPc = onlyConcPlusRoot(aP);
+        return aPc;
+    }
+
+    public List<DashRef> scopesUsed(String tfqn) {
+        // includes Root only if that is the only scope
+        List<DashRef> aPc = ancesConcScopes(getScope(tfqn));
+        List<DashRef> r = new ArrayList<DashRef>();
+
+        // System.out.println(aPc);
+        if (aPc.size() == 1) {
+            // scope must be the root
+            // so add it
+            r.add(aPc.get(0));
+        } else {
+            // don't put the root in unless
+            // the root is the scope
+            r = tail(aPc);
+        }
+        return r;
+    }
+
+    public List<DashRef> nonOrthogonalScopesOf(String tfqn) {
+        List<DashRef> aPc = ancesConcScopes(getConcScope(tfqn));
+        // always needs to include Root
+        return aPc;
+    }
+
+    public void debug() {
+        System.out.println(st.toString());
+        System.out.println(tt.toString());
+        System.out.println(et.toString());
+        System.out.println(vt.toString());
+    }
+
+    public void debug(String tfqn) {
+        System.out.println(st.toString());
+        System.out.println(tt.toString());
+        System.out.println(et.toString());
+        System.out.println(vt.toString());
+        for (String x : tt.keySet()) {
+            // System.out.println(tfqn +" scope :" + getScope(x));
+        }
+        if (tfqn != null) {
+            System.out.println("src " + tt.get(tfqn).fromR);
+            System.out.println("dest " + tt.get(tfqn).gotoR);
+            System.out.println("pre " + tt.get(tfqn).whenR);
+            System.out.println("post " + tt.get(tfqn).doR);
+            System.out.println("getScope " + getScope(tfqn));
+            System.out.println(
+                    "getClosestParamAnces: " + st.getClosestParamAnces(tt.get(tfqn).fromR.name));
+            // System.out.println("getAllNonParamDesc: "
+            // +getAllNonParamDesc(getClosestConcAnces(getTransSrc(tfqn).getName())));
+            System.out.println(
+                    "getRegion:" + "Root/S1/S2: " + st.getRegion(tt.get(tfqn).fromR.name));
+            System.out.println("exited: " + exited(tfqn));
+            System.out.println("entered" + st.getLeafStatesEntered(tt.get(tfqn).gotoR));
+            System.out.println("enteredInScope" + entered(tfqn));
+            System.out.println(
+                    "allPrefixDashRefs of scope: " + st.allPrefixDashRefs(getScope(tfqn)));
+            System.out.println("scopesUsed: " + scopesUsed(tfqn));
+            System.out.println("nonOrthogonalScopes: " + nonOrthogonalScopesOf(tfqn));
+        }
     }
 }

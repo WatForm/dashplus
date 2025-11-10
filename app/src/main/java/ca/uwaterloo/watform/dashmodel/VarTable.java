@@ -58,7 +58,7 @@ public class VarTable {
         }
     }
 
-    public void addVar(Pos pos, String vfqn, IntEnvKind k, List<DashParam> prms, AlloyExpr t) {
+    public void add(Pos pos, String vfqn, IntEnvKind k, List<DashParam> prms, AlloyExpr t) {
         assert (prms != null);
         if (vt.containsKey(vfqn)) {
             DashModelErrors.duplicateName(pos, "var", vfqn);
@@ -67,6 +67,10 @@ public class VarTable {
         } else {
             vt.put(vfqn, new VarElement(k, prms, t));
         }
+    }
+
+    public void add(String vfqn, IntEnvKind k, List<DashParam> prms, AlloyExpr t) {
+        add(Pos.UNKNOWN, vfqn, k, prms, t);
     }
 
     public String toString() {
