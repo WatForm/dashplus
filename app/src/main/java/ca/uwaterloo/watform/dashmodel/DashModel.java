@@ -38,7 +38,7 @@ public class DashModel extends DashModelAccessors {
     }
 
     public void addEvent(String efqn, DashStrings.IntEnvKind k, List<DashParam> prms) {
-        // TODO what if prms don't exist??
+        // TODO check if prefix name is an existing state with the same prms
         et.add(efqn, k, prms);
         return;
     }
