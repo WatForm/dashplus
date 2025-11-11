@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -32,11 +33,10 @@ public final class AlloyMacroPara extends AlloyParagraph {
         this.block = Optional.ofNullable(block);
         this.sub = Optional.ofNullable(sub);
         if (!this.block.isEmpty() && !this.sub.isEmpty()) {
-            throw new ImplementationError("block and sub cannot both be null in AlloyMacroPara. ");
+            throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
         if (this.block.isEmpty() && this.sub.isEmpty()) {
-            throw new ImplementationError(
-                    "block and sub cannot both be non-null in AlloyMacroPara. ");
+            throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
     }
 
@@ -95,7 +95,7 @@ public final class AlloyMacroPara extends AlloyParagraph {
             sb.append(AlloyStrings.SPACE);
             this.sub.get().toString(sb, indent);
         } else {
-            throw new ImplementationError("block and sub cannot both be null in AlloyMacroPara. ");
+            throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
     }
 

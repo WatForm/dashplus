@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
-import ca.uwaterloo.watform.alloyast.AlloyCtorError;
+import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -26,19 +26,21 @@ public final class AlloyPredPara extends AlloyParagraph {
         super(pos);
         this.isPrivate = isPrivate;
         this.sigRef = Optional.ofNullable(sigRef);
-        this.qname = qname;
-        this.arguments = Collections.unmodifiableList(arguments);
-        this.block = block;
-
-        if (null == qname || qname.toString().isBlank()) {
-            throw AlloyCtorError.sigMustHaveName(pos);
-        }
-        if (null == arguments) {
-            throw AlloyCtorError.sigMustHaveArgs(pos);
-        }
-        if (null == block) {
-            throw AlloyCtorError.sigMustHaveBlock(pos);
-        }
+        this.qname =
+                GeneralUtil.requireNonNull(
+                        qname, AlloyASTImplError.nullOrBlankField(pos, "AlloyPredPara.qname"));
+        this.arguments =
+                Collections.unmodifiableList(
+                        GeneralUtil.requireNonNull(
+                                arguments,
+                                AlloyASTImplError.nullOrBlankField(
+                                        pos, "AlloyPredPara.arguments")));
+        this.block =
+                GeneralUtil.requireNonNull(
+                        block, AlloyASTImplError.nullOrBlankField(pos, "AlloyPredPara.block"));
+        GeneralUtil.requireNonNull(
+                this.qname.toString(),
+                AlloyASTImplError.nullOrBlankField(pos, "AlloyPredPara.qname"));
     }
 
     public AlloyPredPara(
@@ -65,6 +67,10 @@ public final class AlloyPredPara extends AlloyParagraph {
 
     public AlloyPredPara(AlloyQnameExpr qname, AlloyBlock block) {
         this(Pos.UNKNOWN, false, null, qname, Collections.emptyList(), block);
+    }
+
+    public AlloyPredPara(String qname, AlloyBlock block) {
+        this(Pos.UNKNOWN, false, null, new AlloyQnameExpr(qname), Collections.emptyList(), block);
     }
 
     /*

@@ -15,23 +15,21 @@ public final class AlloyQnameExpr extends AlloyVarExpr
     public AlloyQnameExpr(Pos pos, List<AlloyVarExpr> vars) {
         super(
                 pos,
-                vars.stream()
-                        .map(AlloyVarExpr::getLabel)
-                        .collect(Collectors.joining(AlloyStrings.SLASH)));
+                GeneralUtil.requireNonNull(
+                        vars.stream()
+                                .map(AlloyVarExpr::getLabel)
+                                .collect(Collectors.joining(AlloyStrings.SLASH)),
+                        AlloyASTImplError.nullOrBlankField(pos, "AlloyQnameExpr.label")));
         this.vars = Collections.unmodifiableList(vars);
         if (!vars.isEmpty()) {
             if (!(vars.getFirst() instanceof AlloyNameExpr)
                     && !(vars.getFirst() instanceof AlloySeqExpr)
                     && !(vars.getFirst() instanceof AlloyThisExpr)) {
-                throw new ImplementationError(
-                        pos,
-                        "First var of AlloyQnameExpr must be either AlloyNameExpr, AlloySeqExpr or AlloyThisExpr. ");
+                throw AlloyCtorError.qnameFirstMustBeNameThisOrSeq(pos);
             }
             for (int i = 1; i < vars.size(); i++) {
                 if (!(vars.get(i) instanceof AlloyNameExpr)) {
-                    throw new ImplementationError(
-                            pos,
-                            "Everything after the head of AlloyQnameExpr must be AlloyNameExpr. ");
+                    throw AlloyCtorError.qnameTailIsAllName(pos);
                 }
             }
         }

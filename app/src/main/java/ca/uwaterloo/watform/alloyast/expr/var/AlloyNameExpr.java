@@ -1,15 +1,15 @@
 package ca.uwaterloo.watform.alloyast.expr.var;
 
+import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyNameExpr extends AlloyVarExpr {
     public AlloyNameExpr(Pos pos, String label) {
-        super(pos, label);
-        if (null == label || label.isBlank() || label.isEmpty()) {
-            throw new ImplementationError(pos, "AlloyNameExpr.label cannot be blank");
-            // throw ImplementationError b/c cannot get empty label from parsing
-        }
+        super(
+                pos,
+                GeneralUtil.requireNonNull(
+                        label, AlloyASTImplError.nullOrBlankField(pos, "AlloyNameExpr.label")));
     }
 
     public AlloyNameExpr(String label) {

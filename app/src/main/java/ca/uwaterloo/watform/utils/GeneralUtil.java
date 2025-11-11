@@ -17,6 +17,19 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GeneralUtil {
+    public static <T> T requireNonNull(T object, RuntimeException exception) {
+        if (null == object) {
+            throw exception;
+        }
+        return object;
+    }
+
+    public static String requireNonNull(String str, RuntimeException runtimeException) {
+        if (null == str || str.isBlank()) {
+            throw runtimeException;
+        }
+        return str;
+    }
 
     /* copied from https://stackoverflow.com/questions/7414667/identify-duplicates-in-a-list */
     public static <T> Set<T> findDuplicates(Collection<T> collection) {

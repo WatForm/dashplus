@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -36,9 +37,7 @@ public final class AlloyDecl extends AlloyExpr {
         this.expr = expr;
         if (!this.quant.isEmpty() && this.quant.get() == Quant.EXACTLY) {
             if (isVar || isDisj1 || isDisj2) {
-                throw new ImplementationError(
-                        "Decl with quant EXACTLY cannot be disjoint on either "
-                                + "side and cannot be var.");
+                throw AlloyCtorError.declExactlyCannotHaveDisj(pos);
             }
         }
     }

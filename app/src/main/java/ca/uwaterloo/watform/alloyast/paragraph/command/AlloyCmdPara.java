@@ -59,14 +59,12 @@ public final class AlloyCmdPara extends AlloyParagraph {
             this.scope = Optional.ofNullable(scope);
             this.number = Optional.ofNullable(number);
             if (!this.invoQname.isEmpty() && !this.constrBlock.isEmpty()) {
-                throw new ImplementationError(
-                        "invoQname and constrBlock cannot both be non-null in "
-                                + "AlloyCmdPara.CommandDecl. ");
+                throw AlloyASTImplError.xorFields(
+                        pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
             if (this.invoQname.isEmpty() && this.constrBlock.isEmpty()) {
-                throw new ImplementationError(
-                        "invoQname and constrBlock cannot both be null in "
-                                + "AlloyCmdPara.CommandDecl. ");
+                throw AlloyASTImplError.xorFields(
+                        pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
         }
 
@@ -95,9 +93,8 @@ public final class AlloyCmdPara extends AlloyParagraph {
             } else if (!this.constrBlock.isEmpty()) {
                 this.constrBlock.get().toString(sb, indent);
             } else {
-                throw new ImplementationError(
-                        "invoQname and constrBlock cannot both be null in "
-                                + "AlloyCmdPara.CommandDecl. ");
+                throw AlloyASTImplError.xorFields(
+                        pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
             sb.append(AlloyStrings.SPACE);
             if (!this.scope.isEmpty()) {
@@ -139,10 +136,8 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 this.num = Optional.ofNullable(num);
                 this.typescopes = Collections.unmodifiableList(typescopes);
                 if (this.num.isEmpty() && this.typescopes.isEmpty()) {
-                    throw new ImplementationError(
-                            pos,
-                            "num and typescopes cannot both by empty in "
-                                    + "AlloyCmdPara.CommandDecl.Scope. ");
+                    throw AlloyASTImplError.bothNull(
+                            pos, "num", "typescopes", "AlloyCmdPara.CommandDecl.Scope");
                 }
             }
 
@@ -167,10 +162,8 @@ public final class AlloyCmdPara extends AlloyParagraph {
                     ASTNode.join(
                             sb, indent, this.typescopes, AlloyStrings.COMMA + AlloyStrings.SPACE);
                 } else {
-                    throw new ImplementationError(
-                            pos,
-                            "num and typescopes cannot both by empty in "
-                                    + "AlloyCmdPara.CommandDecl.Scope. ");
+                    throw AlloyASTImplError.bothNull(
+                            pos, "num", "typescopes", "AlloyCmdPara.CommandDecl.Scope");
                 }
             }
 

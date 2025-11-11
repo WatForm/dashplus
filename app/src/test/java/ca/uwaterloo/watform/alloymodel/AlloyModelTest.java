@@ -2,11 +2,11 @@ package ca.uwaterloo.watform.alloymodel;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
@@ -27,14 +27,6 @@ import org.junit.jupiter.api.Test;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AlloyModelTest {
-    private AlloyFactPara createNamelessFact() {
-        return new AlloyFactPara(new AlloyBlock(new AlloyQnameExpr("a")));
-    }
-
-    private AlloySigPara createSig(String name) {
-        return new AlloySigPara(new AlloyQnameExpr(name), new AlloyBlock(new AlloyQnameExpr("a")));
-    }
-
     @BeforeEach
     void setUp() {
         Reporter.INSTANCE.reset();
@@ -89,10 +81,10 @@ public class AlloyModelTest {
     @Order(2)
     @DisplayName("addedParagraphsGetPrintedInToString")
     public void addedParagraphsGetPrintedInToString() throws Exception {
-        AlloySigPara s1 = this.createSig("s1");
+        AlloySigPara s1 = TestUtil.createSig("s1");
         AlloyFile alloyFile = new AlloyFile(s1);
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        AlloySigPara s2 = this.createSig("s2");
+        AlloySigPara s2 = TestUtil.createSig("s2");
         alloyModel.addParagraph(s2);
         assertTrue(alloyModel.toString().contains(s1.toString()));
         assertTrue(alloyModel.toString().contains(s2.toString()));
@@ -102,10 +94,10 @@ public class AlloyModelTest {
     @Order(3)
     @DisplayName("duplicateNameThrows")
     public void duplicateNameThrows() throws Exception {
-        AlloySigPara s1 = this.createSig("s1");
+        AlloySigPara s1 = TestUtil.createSig("s1");
         AlloyFile alloyFile = new AlloyFile(s1);
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        AlloySigPara s1Again = this.createSig("s1");
+        AlloySigPara s1Again = TestUtil.createSig("s1");
         assertThrows(AlloyModelError.class, () -> alloyModel.addParagraph(s1Again));
     }
 
@@ -113,7 +105,7 @@ public class AlloyModelTest {
     @Order(3)
     @DisplayName("duplicateInstanceThrows")
     public void duplicateInstanceThrows() throws Exception {
-        AlloySigPara s1 = this.createSig("s1");
+        AlloySigPara s1 = TestUtil.createSig("s1");
         AlloyFile alloyFile = new AlloyFile(s1);
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         assertThrows(ImplementationError.class, () -> alloyModel.addParagraph(s1));

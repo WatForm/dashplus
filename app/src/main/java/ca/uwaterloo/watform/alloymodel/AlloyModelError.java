@@ -5,12 +5,12 @@ import ca.uwaterloo.watform.utils.*;
 public final class AlloyModelError extends RuntimeException {
     public final Pos pos;
 
-    public AlloyModelError(Pos pos, String msg) {
+    private AlloyModelError(Pos pos, String msg) {
         super(msg);
         this.pos = pos;
     }
 
-    public AlloyModelError(String msg) {
+    private AlloyModelError(String msg) {
         this(Pos.UNKNOWN, msg);
     }
 

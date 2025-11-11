@@ -2,9 +2,22 @@ package ca.uwaterloo.watform;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.binary.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
+import ca.uwaterloo.watform.parser.*;
+import ca.uwaterloo.watform.test.*;
 import ca.uwaterloo.watform.utils.*;
+import java.util.Collections;
+import org.antlr.v4.runtime.*;
+import org.junit.jupiter.api.*;
 
 public final class TestUtil {
+    private TestUtil() {}
 
     /**
      * Change Reporter.INSTANCE.exitFunction, so we don't System::exit
@@ -26,5 +39,17 @@ public final class TestUtil {
         Reporter.INSTANCE.exitIfHasErrors();
         assertEquals(1, exitCode[0], "Exit code should have been set to 1");
         assertTrue(Reporter.INSTANCE.hasErrors(), "Reporter should still have errors recorded");
+    }
+
+    public static AlloyFactPara createNamelessFact() {
+        return new AlloyFactPara(new AlloyBlock(new AlloyQnameExpr("a")));
+    }
+
+    public static AlloySigPara createSig(String name) {
+        return new AlloySigPara(new AlloyQnameExpr(name), TestUtil.createBlock());
+    }
+
+    public static AlloyBlock createBlock() {
+        return new AlloyBlock(Collections.emptyList());
     }
 }

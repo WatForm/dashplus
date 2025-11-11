@@ -3,11 +3,11 @@ package ca.uwaterloo.watform.alloymodel;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyModelImplErrors extends ImplementationError {
-    public AlloyModelImplErrors(Pos pos, String msg) {
+    private AlloyModelImplErrors(Pos pos, String msg) {
         super(pos, msg);
     }
 
-    public AlloyModelImplErrors(String msg) {
+    private AlloyModelImplErrors(String msg) {
         this(Pos.UNKNOWN, msg);
     }
 
