@@ -69,4 +69,12 @@ public final class AlloyASTImplError extends ImplementationError {
     public static AlloyASTImplError nullOrBlankField(Pos pos, String field) {
         return new AlloyASTImplError(pos, field + " cannot be null or blank: " + pos.toString());
     }
+
+    // ====================================================================================
+    // AlloyFile
+    // ====================================================================================
+    public static AlloyASTImplError dashParagraphInAlloyFile(Pos pos) {
+        return new AlloyASTImplError(
+                pos, "AlloyFile should not contain a DashParagraph: " + pos.toString());
+    }
 }

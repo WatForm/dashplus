@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast;
 
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
+import ca.uwaterloo.watform.dashast.DashParagraph;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,7 @@ public class AlloyFile extends AlloyASTNode {
 
         List<AlloyModulePara> modules =
                 GeneralUtil.extractItemsOfClass(paragraphs, AlloyModulePara.class);
+
         if (modules.size() > 1) {
             throw AlloyCtorError.moduleIsUnique(modules.get(0).pos, modules.get(1).pos);
         }
@@ -26,6 +28,12 @@ public class AlloyFile extends AlloyASTNode {
                     throw AlloyCtorError.moduleIsAtTop(para.pos);
                 }
             }
+        }
+
+        List<DashParagraph> dashParagraphs =
+                GeneralUtil.extractItemsOfClass(this.paragraphs, DashParagraph.class);
+        if (!dashParagraphs.isEmpty()) {
+            throw AlloyASTImplError.dashParagraphInAlloyFile(dashParagraphs.get(0).pos);
         }
     }
 

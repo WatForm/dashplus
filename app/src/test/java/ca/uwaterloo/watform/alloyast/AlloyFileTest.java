@@ -43,4 +43,11 @@ public class AlloyFileTest {
         AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
         TestUtil.assertExited(exitCode);
     }
+
+    @Test
+    @Order(3)
+    @DisplayName("Throw when AlloyFile's ctor gets DashParagraph")
+    public void test3() throws Exception {
+        assertThrows(AlloyASTImplError.class, () -> new AlloyFile(TestUtil.createDashState()));
+    }
 }
