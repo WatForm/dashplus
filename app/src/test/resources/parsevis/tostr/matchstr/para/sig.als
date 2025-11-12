@@ -26,7 +26,7 @@ some sig a {
 	a:A
 }
 
-private one some sig a {
+private one sig a {
 	a:A
 }
 

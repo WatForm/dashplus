@@ -48,42 +48,36 @@ public final class AlloyModel {
      * @param alloyParagraph The paragraph to add.
      */
     public void addParagraph(AlloyParagraph alloyParagraph) {
-        switch (alloyParagraph) {
-            case null:
-                return;
-            case AlloyModulePara p:
-                modules.addParagraph(p, this.additionalParas);
-                break;
-            case AlloyImportPara p:
-                imports.addParagraph(p, this.additionalParas);
-                break;
-            case AlloyMacroPara p:
-                macros.addParagraph(p, this.additionalParas);
-                break;
-            case AlloySigPara p:
-                sigs.addParagraph(p, this.additionalParas);
-                break;
-            case AlloyEnumPara p:
-                enums.addParagraph(p, this.additionalParas);
-                break;
-            case AlloyFactPara p:
-                facts.addParagraph(p, this.additionalParas);
-                break;
-            case AlloyFunPara p:
-                funs.addParagraph(p, this.additionalParas);
-                break;
-            case AlloyPredPara p:
-                preds.addParagraph(p, this.additionalParas);
-                break;
-            case AlloyAssertPara p:
-                asserts.addParagraph(p, this.additionalParas);
-                break;
-            case AlloyCmdPara p:
-                commands.addParagraph(p, this.additionalParas);
-                break;
-            default:
-                throw ImplementationError.missingCase("AlloyModel.addParagraph");
+        if (alloyParagraph == null) return;
+        AlloyModelTable<?> table = this.patternMatch(alloyParagraph.getClass());
+        @SuppressWarnings("unchecked")
+        AlloyModelTable<AlloyParagraph> castedTable = (AlloyModelTable<AlloyParagraph>) table;
+        castedTable.addParagraph(alloyParagraph, this.additionalParas);
+    }
+
+    private AlloyModelTable<?> patternMatch(Class<?> typeToken) {
+        if (typeToken.equals(AlloyModulePara.class)) {
+            return modules;
+        } else if (typeToken.equals(AlloyImportPara.class)) {
+            return imports;
+        } else if (typeToken.equals(AlloyMacroPara.class)) {
+            return macros;
+        } else if (typeToken.equals(AlloySigPara.class)) {
+            return sigs;
+        } else if (typeToken.equals(AlloyEnumPara.class)) {
+            return enums;
+        } else if (typeToken.equals(AlloyFactPara.class)) {
+            return facts;
+        } else if (typeToken.equals(AlloyFunPara.class)) {
+            return funs;
+        } else if (typeToken.equals(AlloyPredPara.class)) {
+            return preds;
+        } else if (typeToken.equals(AlloyAssertPara.class)) {
+            return asserts;
+        } else if (typeToken.equals(AlloyCmdPara.class)) {
+            return commands;
         }
+        throw ImplementationError.missingCase("AlloyModel.patternMatch");
     }
 
     private void toString(StringBuilder sb, int indent) {
@@ -98,75 +92,5 @@ public final class AlloyModel {
         StringBuilder sb = new StringBuilder();
         this.toString(sb, 0);
         return sb.toString();
-    }
-
-    /**
-     * @return The table containing all `module` paragraphs.
-     */
-    public AlloyModelTable<AlloyModulePara> getModules() {
-        return modules;
-    }
-
-    /**
-     * @return The table containing all `open` paragraphs.
-     */
-    public AlloyModelTable<AlloyImportPara> getImports() {
-        return imports;
-    }
-
-    /**
-     * @return The table containing all `macro` paragraphs.
-     */
-    public AlloyModelTable<AlloyMacroPara> getMacros() {
-        return macros;
-    }
-
-    /**
-     * @return The table containing all `sig` paragraphs.
-     */
-    public AlloyModelTable<AlloySigPara> getSigs() {
-        return sigs;
-    }
-
-    /**
-     * @return The table containing all `enum` paragraphs.
-     */
-    public AlloyModelTable<AlloyEnumPara> getEnums() {
-        return enums;
-    }
-
-    /**
-     * @return The table containing all `fact` paragraphs (named and unnamed).
-     */
-    public AlloyModelTable<AlloyFactPara> getFacts() {
-        return facts;
-    }
-
-    /**
-     * @return The table containing all `fun` paragraphs.
-     */
-    public AlloyModelTable<AlloyFunPara> getFuns() {
-        return funs;
-    }
-
-    /**
-     * @return The table containing all `pred` paragraphs.
-     */
-    public AlloyModelTable<AlloyPredPara> getPreds() {
-        return preds;
-    }
-
-    /**
-     * @return The table containing all `assert` paragraphs (named and unnamed).
-     */
-    public AlloyModelTable<AlloyAssertPara> getAsserts() {
-        return asserts;
-    }
-
-    /**
-     * @return The table containing all `run` and `check` commands.
-     */
-    public AlloyModelTable<AlloyCmdPara> getCommands() {
-        return commands;
     }
 }

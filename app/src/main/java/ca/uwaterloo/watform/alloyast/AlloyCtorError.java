@@ -18,6 +18,13 @@ public class AlloyCtorError extends RuntimeException {
     // ====================================================================================
     // Sig
     // ====================================================================================
+    public static AlloyCtorError sigContradictQuals(Pos pos, String qual1, String qual2) {
+        return new AlloyCtorError(pos, "A sig cannot contain both " + qual1 + " and " + qual2);
+    }
+
+    public static AlloyCtorError sigAbsSubset(Pos pos) {
+        return new AlloyCtorError(pos, "A subset signature cannot be abstract");
+    }
 
     // ====================================================================================
     // Module

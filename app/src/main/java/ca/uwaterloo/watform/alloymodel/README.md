@@ -45,7 +45,7 @@ would allow x to contain any number of elements.
 - and more...
 
 ## sigs (AlloyModel ctor)
-- check unique names
+- check unique names (DONE)
 
 ## sigs (need access to all sigs to check, only need access to other sigs)
 - can be static (default) or mutable

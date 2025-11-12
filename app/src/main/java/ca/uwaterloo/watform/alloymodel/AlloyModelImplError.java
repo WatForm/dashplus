@@ -31,4 +31,11 @@ public final class AlloyModelImplError extends ImplementationError {
                 "AlloyTypRel must contain at least one type. "
                         + "AlloyTypRel.unionRel cannot contain any nulls or blanks. ");
     }
+
+    public static AlloyModelImplError diffArity() {
+        return new AlloyModelImplError(
+                "AlloyTypRel.unionRel must contain "
+                        + "lists of the same length; relations of "
+                        + "same arity");
+    }
 }

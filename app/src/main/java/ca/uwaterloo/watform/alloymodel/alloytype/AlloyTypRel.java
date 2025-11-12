@@ -22,27 +22,29 @@ public sealed class AlloyTypRel implements AlloyTyp permits AlloyTypInt {
     // I don't think it's even possible to create different
     // arities from the grammar.
     public final Set<List<String>> unionRel;
+    public final int arity;
 
     public AlloyTypRel(Set<List<String>> unionRel) {
-        this.validateRelations(unionRel);
-        this.unionRel =
-                unionRel.stream()
-                        .map(Collections::unmodifiableList)
-                        .collect(Collectors.toUnmodifiableSet());
-    }
-
-    private void validateRelations(Set<List<String>> relations) {
-        if (relations == null) {
+        if (unionRel == null) {
             throw AlloyModelImplError.invalidTypRelArg();
         }
 
-        if (relations.isEmpty()) {
+        if (unionRel.isEmpty()) {
             throw AlloyModelImplError.invalidTypRelArg();
         }
 
-        for (List<String> innerList : relations) {
+        List<String> anyRel = unionRel.iterator().next();
+        if (anyRel.size() == 0) {
+            throw AlloyModelImplError.invalidTypRelArg();
+        }
+        this.arity = anyRel.size();
+
+        for (List<String> innerList : unionRel) {
             if (innerList == null) {
                 throw AlloyModelImplError.invalidTypRelArg();
+            }
+            if (this.arity != innerList.size()) {
+                throw AlloyModelImplError.diffArity();
             }
             for (String s : innerList) {
                 if (s == null || s.isBlank()) {
@@ -50,6 +52,10 @@ public sealed class AlloyTypRel implements AlloyTyp permits AlloyTypInt {
                 }
             }
         }
+        this.unionRel =
+                unionRel.stream()
+                        .map(Collections::unmodifiableList)
+                        .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override

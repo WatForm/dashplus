@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph.sig;
 
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
@@ -33,6 +34,18 @@ public final class AlloySigPara extends AlloyParagraph {
         this.rel = Optional.ofNullable(rel);
         this.decls = decls;
         this.block = Optional.ofNullable(block);
+        if (this.quals.contains(Qual.LONE) && this.quals.contains(Qual.ONE)) {
+            throw AlloyCtorError.sigContradictQuals(pos, "lone", "one");
+        }
+        if (this.quals.contains(Qual.LONE) && this.quals.contains(Qual.SOME)) {
+            throw AlloyCtorError.sigContradictQuals(pos, "lone", "some");
+        }
+        if (this.quals.contains(Qual.ONE) && this.quals.contains(Qual.SOME)) {
+            throw AlloyCtorError.sigContradictQuals(pos, "one", "some");
+        }
+        if (this.isSubset() && this.quals.contains(Qual.ABSTRACT)) {
+            throw AlloyCtorError.sigAbsSubset(pos);
+        }
     }
 
     public AlloySigPara(
@@ -80,7 +93,7 @@ public final class AlloySigPara extends AlloyParagraph {
     @Override
     public void toString(StringBuilder sb, int indent) {
         // cannot use ASTNode.join here b/c Qual is not ASTNode; will fail
-        // dynamic cast consider changing these Enum to an object and extend
+        // dynamic cast. consider changing these Enum to an object and extend
         // ASTNode
         for (Qual qual : this.quals) {
             sb.append(qual.toString() + AlloyStrings.SPACE);
@@ -108,6 +121,50 @@ public final class AlloySigPara extends AlloyParagraph {
             this.block.get().toString(sb, indent);
             sb.append(AlloyStrings.SPACE);
         }
+    }
+
+    @Override
+    public Optional<String> getName() {
+        if (this.qnames.size() > 1) {
+            throw ImplementationError.methodShouldNotBeCalled(
+                    this.pos,
+                    "AlloySigPara.getName. This should not be called because the "
+                            + "signature doesn't have a single name, but multiple. "
+                            + "See AlloySigPara.expand(). ");
+        }
+        return Optional.of(this.qnames.get(0).toString());
+    }
+
+    public List<AlloySigPara> expand() {
+        if (1 == this.qnames.size()) {
+            return Collections.singletonList(this);
+        }
+        List<AlloySigPara> expandedLi = new ArrayList<>();
+        for (AlloyQnameExpr qname : this.qnames) {
+            expandedLi.add(
+                    new AlloySigPara(
+                            this.pos,
+                            this.quals,
+                            Collections.singletonList(qname),
+                            this.rel.orElse(null),
+                            this.decls,
+                            this.block.orElse(null)));
+        }
+        return expandedLi;
+    }
+
+    public boolean isTopLevel() {
+        return this.rel.isEmpty();
+    }
+
+    public boolean isSubsig() {
+        return this.rel.isPresent() && this.rel.get().getClass() == Extends.class;
+    }
+
+    public boolean isSubset() {
+        return this.rel.isPresent()
+                && (this.rel.get().getClass() == In.class
+                        || this.rel.get().getClass() == Equal.class);
     }
 
     public enum Qual {
@@ -169,6 +226,11 @@ public final class AlloySigPara extends AlloyParagraph {
             this.sigRefs = Collections.unmodifiableList(sigRefs);
         }
 
+        public In(AlloySigRefExpr sigRef) {
+            super();
+            this.sigRefs = Collections.unmodifiableList(Collections.singletonList(sigRef));
+        }
+
         @Override
         public void toString(StringBuilder sb, int indent) {
             sb.append(AlloyStrings.IN + AlloyStrings.SPACE);
@@ -193,6 +255,11 @@ public final class AlloySigPara extends AlloyParagraph {
             this.sigRefs = Collections.unmodifiableList(sigRefs);
         }
 
+        public Equal(AlloySigRefExpr sigRef) {
+            super();
+            this.sigRefs = Collections.unmodifiableList(Collections.singletonList(sigRef));
+        }
+
         @Override
         public void toString(StringBuilder sb, int indent) {
             sb.append(AlloyStrings.EQUAL + AlloyStrings.SPACE);
@@ -202,34 +269,5 @@ public final class AlloySigPara extends AlloyParagraph {
                     this.sigRefs,
                     AlloyStrings.SPACE + AlloyStrings.PLUS + AlloyStrings.SPACE);
         }
-    }
-
-    @Override
-    public Optional<String> getName() {
-        if (this.qnames.size() > 1) {
-            throw ImplementationError.methodShouldNotBeCalled(
-                    this.pos,
-                    "AlloySigPara.getName. This should not be called because the "
-                            + "signature doesn't have a single name, but multiple. See AlloySigPara.expand(). ");
-        }
-        return Optional.of(this.qnames.get(0).toString());
-    }
-
-    public List<AlloySigPara> expand() {
-        if (1 == this.qnames.size()) {
-            return Collections.singletonList(this);
-        }
-        List<AlloySigPara> expandedLi = new ArrayList<>();
-        for (AlloyQnameExpr qname : this.qnames) {
-            expandedLi.add(
-                    new AlloySigPara(
-                            this.pos,
-                            this.quals,
-                            Collections.singletonList(qname),
-                            this.rel.orElse(null),
-                            this.decls,
-                            this.block.orElse(null)));
-        }
-        return expandedLi;
     }
 }

@@ -21,7 +21,11 @@ public class AlloyTypRelTest {
     public void test1() throws Exception {
         assertThrows(AlloyModelImplError.class, () -> new AlloyTypRel(null));
         assertThrows(AlloyModelImplError.class, () -> new AlloyTypRel(Collections.emptySet()));
-        assertThrows(AlloyModelImplError.class, () -> new AlloyTypRel(Set.of(List.of("", " "))));
+        assertThrows(AlloyModelImplError.class, () -> new AlloyTypRel(Set.of(List.of(""))));
+        assertThrows(AlloyModelImplError.class, () -> new AlloyTypRel(Set.of(List.of(" "))));
+        assertThrows(
+                AlloyModelImplError.class,
+                () -> new AlloyTypRel(Set.of(List.of("A", "B"), List.of("C"))));
     }
 
     @Test

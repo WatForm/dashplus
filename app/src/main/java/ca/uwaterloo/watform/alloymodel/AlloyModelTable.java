@@ -39,6 +39,7 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
         this.instanceTracker = Collections.newSetFromMap(new IdentityHashMap<>());
         List<T> TList = new ArrayList<>();
         if (AlloySigPara.class == typeToken) {
+			// sig is special, b/c we need to expand it
             for (AlloySigPara sig :
                     GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, AlloySigPara.class)) {
                 @SuppressWarnings("unchecked")

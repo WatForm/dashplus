@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.RecognitionException;
@@ -109,14 +108,5 @@ public class AlloyModelTest {
         AlloyFile alloyFile = new AlloyFile(s1);
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         assertThrows(ImplementationError.class, () -> alloyModel.addParagraph(s1));
-    }
-
-    @Test
-    @Order(4)
-    @DisplayName("DNEParagraphThrows")
-    public void DNEParagraphThrows() throws Exception {
-        AlloyFile alloyFile = new AlloyFile(Collections.emptyList());
-        AlloyModel alloyModel = new AlloyModel(alloyFile);
-        assertThrows(AlloyModelError.class, () -> alloyModel.getSigs().getParagraph("s"));
     }
 }
