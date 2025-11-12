@@ -1,13 +1,9 @@
 package ca.uwaterloo.watform.alloymodel;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
@@ -19,19 +15,11 @@ import org.junit.jupiter.api.Test;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AlloyModelTableTest {
-    private AlloyFactPara createNamelessFact() {
-        return new AlloyFactPara(new AlloyBlock(new AlloyQnameExpr("a")));
-    }
-
-    private AlloySigPara createSig(String name) {
-        return new AlloySigPara(new AlloyQnameExpr(name), new AlloyBlock(new AlloyQnameExpr("a")));
-    }
-
     @Test
     @Order(1)
     @DisplayName("Add one sig para")
     public void addOneSig() throws Exception {
-        AlloySigPara sigS = this.createSig("s");
+        AlloySigPara sigS = TestUtil.createSig("s");
         AlloyFile alloyFile = new AlloyFile(sigS);
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
@@ -47,7 +35,7 @@ public class AlloyModelTableTest {
     @Order(2)
     @DisplayName("Add a fact with no name")
     public void addNoName() throws Exception {
-        AlloyFactPara namelessFact = this.createNamelessFact();
+        AlloyFactPara namelessFact = TestUtil.createNamelessFact();
         AlloyFile alloyFile = new AlloyFile(namelessFact);
         AlloyModelTable<AlloyFactPara> alloyModelTable =
                 new AlloyModelTable<AlloyFactPara>(alloyFile, AlloyFactPara.class);
@@ -64,7 +52,7 @@ public class AlloyModelTableTest {
     @Order(3)
     @DisplayName("Adding same instance twice throws ImplementationError")
     public void addSameInstanceTwice() throws Exception {
-        AlloySigPara sigS = this.createSig("s");
+        AlloySigPara sigS = TestUtil.createSig("s");
         AlloyFile alloyFile = new AlloyFile(sigS);
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
@@ -77,11 +65,11 @@ public class AlloyModelTableTest {
     @Order(4)
     @DisplayName("Adding sig with same name throws AlloyModelError")
     public void addSameNameSigTwice() throws Exception {
-        AlloySigPara sigS1 = this.createSig("s");
+        AlloySigPara sigS1 = TestUtil.createSig("s");
         AlloyFile alloyFile = new AlloyFile(sigS1);
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
-        AlloySigPara sigS2 = this.createSig("s");
+        AlloySigPara sigS2 = TestUtil.createSig("s");
         assertThrows(
                 AlloyModelError.class,
                 () -> alloyModelTable.addParagraph(sigS2, new ArrayList<>()));
@@ -101,8 +89,8 @@ public class AlloyModelTableTest {
     @Order(6)
     @DisplayName("Add two sig para")
     public void addTwoSig() throws Exception {
-        AlloySigPara sigS1 = this.createSig("s1");
-        AlloySigPara sigS2 = this.createSig("s2");
+        AlloySigPara sigS1 = TestUtil.createSig("s1");
+        AlloySigPara sigS2 = TestUtil.createSig("s2");
         AlloyFile alloyFile = new AlloyFile(new ArrayList<>(List.of(sigS1, sigS2)));
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
@@ -125,11 +113,11 @@ public class AlloyModelTableTest {
     @Order(7)
     @DisplayName("AlloyModelTable.addParagraph also adds to param list")
     public void addViaAddParagraph() throws Exception {
-        AlloySigPara sigS1 = this.createSig("s1");
+        AlloySigPara sigS1 = TestUtil.createSig("s1");
         AlloyFile alloyFile = new AlloyFile(sigS1);
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
-        AlloySigPara sigS2 = this.createSig("s2");
+        AlloySigPara sigS2 = TestUtil.createSig("s2");
         List<AlloyParagraph> additionalParas = new ArrayList<>();
         assertDoesNotThrow(() -> alloyModelTable.addParagraph(sigS2, additionalParas));
         assertEquals(1, additionalParas.size());
@@ -156,8 +144,8 @@ public class AlloyModelTableTest {
         AlloyFile alloyFile = new AlloyFile(Collections.emptyList());
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
-        AlloySigPara sigS1 = this.createSig("s1");
-        AlloySigPara sigS2 = this.createSig("s2");
+        AlloySigPara sigS1 = TestUtil.createSig("s1");
+        AlloySigPara sigS2 = TestUtil.createSig("s2");
         List<AlloySigPara> paras = List.of(sigS1, sigS2);
         List<AlloyParagraph> additionalParas = new ArrayList<>();
         assertDoesNotThrow(() -> alloyModelTable.addParagraphs(paras, additionalParas));

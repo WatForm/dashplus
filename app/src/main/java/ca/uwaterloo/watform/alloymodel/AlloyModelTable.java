@@ -88,7 +88,7 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
      */
     public T getParagraph(String name) {
         if (name == null || name.isEmpty() || name.isBlank()) {
-            throw AlloyModelImplErrors.lookUpWithNoName();
+            throw AlloyModelImplError.lookUpWithNoName();
         }
         if (!this.mp.containsKey(name)) {
             throw AlloyModelError.paragraphDNE(name);
@@ -134,14 +134,14 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
      */
     public boolean containsName(String name) {
         if (name == null || name.isEmpty() || name.isBlank()) {
-            throw AlloyModelImplErrors.lookUpWithNoName();
+            throw AlloyModelImplError.lookUpWithNoName();
         }
         return this.mp.containsKey(name);
     }
 
     private void checkDuplicates(T paragraph) {
         if (!this.instanceTracker.add(paragraph)) {
-            throw AlloyModelImplErrors.duplicateInstance(paragraph.pos);
+            throw AlloyModelImplError.duplicateInstance(paragraph.pos);
         }
     }
 }
