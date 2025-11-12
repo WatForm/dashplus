@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast.paragraph.sig;
 
 import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.utils.Pos;
 
 public final class AlloySigQualParseVis extends DashBaseVisitor<AlloySigPara.Qual> {
     @Override
@@ -19,7 +20,7 @@ public final class AlloySigQualParseVis extends DashBaseVisitor<AlloySigPara.Qua
         } else if (null != ctx.SOME()) {
             return AlloySigPara.Qual.SOME;
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 }

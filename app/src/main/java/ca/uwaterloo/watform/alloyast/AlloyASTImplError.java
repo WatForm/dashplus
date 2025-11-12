@@ -71,6 +71,14 @@ public final class AlloyASTImplError extends ImplementationError {
     }
 
     // ====================================================================================
+    // AlloyParseVis
+    // ====================================================================================
+    public static AlloyASTImplError invalidCase(Pos pos) {
+        return new AlloyASTImplError(
+                pos, "Alloy parser visitor arrived at an invalid case: " + pos.toString());
+    }
+
+    // ====================================================================================
     // AlloyFile
     // ====================================================================================
     public static AlloyASTImplError dashParagraphInAlloyFile(Pos pos) {

@@ -156,7 +156,7 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
             } else if (null != ctx.multiplicity().SET()) {
                 mul = AlloyFunPara.Mul.SET;
             } else {
-                throw new AlloyUnexpTokenEx(ctx);
+                throw AlloyASTImplError.invalidCase(new Pos(ctx));
             }
         }
 
@@ -218,7 +218,7 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                             : Collections.emptyList(),
                     exprParseVis.visit(ctx.expr1()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 

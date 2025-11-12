@@ -22,7 +22,7 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
         } else if (null != ctx.CHECK()) {
             cmdType = AlloyCmdPara.CommandDecl.CmdType.CHECK;
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
 
         AlloyQnameExpr declQname = null;
@@ -32,7 +32,7 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
             if (null != ctx.block()) {
                 constrBlock = (AlloyBlock) exprParseVis.visit(ctx.block());
             } else {
-                throw new AlloyUnexpTokenEx(ctx);
+                throw AlloyASTImplError.invalidCase(new Pos(ctx));
             }
         } else if (ctx.qname().size() == 1) {
             if (null != ctx.block()) {
@@ -43,13 +43,13 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
             }
         } else if (ctx.qname().size() == 2) {
             if (null != ctx.block()) {
-                throw new AlloyUnexpTokenEx(ctx);
+                throw AlloyASTImplError.invalidCase(new Pos(ctx));
             } else {
                 declQname = (AlloyQnameExpr) exprParseVis.visit(ctx.qname(0));
                 invoQname = (AlloyQnameExpr) exprParseVis.visit(ctx.qname(1));
             }
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
 
         return new AlloyCmdPara.CommandDecl(
@@ -119,7 +119,7 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
                 } else if (ctx.STEPS() != null) {
                     scopableExpr = (AlloyScopableExpr) exprParseVis.visit(ctx.STEPS());
                 } else {
-                    throw new AlloyUnexpTokenEx(ctx);
+                    throw AlloyASTImplError.invalidCase(new Pos(ctx));
                 }
                 return new AlloyCmdPara.CommandDecl.Scope.Typescope(
                         new Pos(ctx),

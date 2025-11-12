@@ -64,7 +64,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             return new AlloyQuantificationExpr(
                     new Pos(ctx), AlloyQuantificationExpr.Quant.SUM, decls, this.visit(ctx.body()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -303,7 +303,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         } else if (null != ctx.REFL_TRANS_CLOS()) {
             return new AlloyReflTransClosExpr(new Pos(ctx), this.visit(ctx.getChild(1)));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -469,7 +469,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         } else if (null != ctx.INT()) {
             return new AlloyNumIntExpr(new Pos(ctx), this.visit(ctx.expr2()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -488,7 +488,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             return new AlloyFunRemExpr(
                     new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -504,7 +504,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             return new AlloyFunRemExpr(
                     new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -526,7 +526,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             return new AlloyFunSubExpr(
                     new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -544,7 +544,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             return new AlloyFunSubExpr(
                     new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -563,7 +563,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             return new AlloyShAExpr(
                     new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -576,7 +576,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         } else if (null != ctx.SHA()) {
             return new AlloyShAExpr(new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -601,7 +601,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         } else if (null != ctx.SEQ()) {
             qt = AlloyQtExpr.Quant.SEQ;
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
         return new AlloyQtExpr(new Pos(ctx), qt, this.visit(ctx.expr2()));
     }
@@ -643,7 +643,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         } else if (null != ctx.comparison().GE()) {
             comp = AlloyComparisonExpr.Comp.GREATER_EQUAL;
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
 
         return new AlloyComparisonExpr(
@@ -670,7 +670,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         } else if (null != ctx.BEFORE()) {
             return new AlloyBeforeExpr(new Pos(ctx), this.visit(ctx.expr2()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -691,7 +691,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         } else if (null != ctx.BEFORE()) {
             return new AlloyBeforeExpr(new Pos(ctx), this.visit(ctx.bind()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -713,7 +713,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             return new AlloyReleasesExpr(
                     new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -732,7 +732,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             return new AlloyReleasesExpr(
                     new Pos(ctx), this.visit(ctx.expr2()), this.visit(ctx.bind()));
         } else {
-            throw new AlloyUnexpTokenEx(ctx);
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
     }
 
@@ -882,7 +882,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
                 return new AlloyNoneExpr(new Pos(tn));
 
             default:
-                throw new AlloyUnexpTokenEx(tn);
+                throw AlloyASTImplError.invalidCase(new Pos(tn));
         }
     }
 }
