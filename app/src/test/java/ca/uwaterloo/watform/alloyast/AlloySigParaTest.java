@@ -152,4 +152,26 @@ public class AlloySigParaTest {
                                 Collections.emptyList(),
                                 TestUtil.createBlock()));
     }
+
+    @Test
+    @Order(4)
+    @DisplayName("isVar")
+    public void test4() {
+        assertTrue(
+                new AlloySigPara(
+                                List.of(AlloySigPara.Qual.ONE, AlloySigPara.Qual.VAR),
+                                List.of(new AlloyQnameExpr("A")),
+                                null,
+                                Collections.emptyList(),
+                                TestUtil.createBlock())
+                        .isVar());
+        assertFalse(
+                new AlloySigPara(
+                                List.of(AlloySigPara.Qual.ONE),
+                                List.of(new AlloyQnameExpr("A")),
+                                null,
+                                Collections.emptyList(),
+                                TestUtil.createBlock())
+                        .isVar());
+    }
 }

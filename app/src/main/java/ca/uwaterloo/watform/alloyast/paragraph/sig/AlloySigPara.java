@@ -167,6 +167,10 @@ public final class AlloySigPara extends AlloyParagraph {
                         || this.rel.get().getClass() == Equal.class);
     }
 
+    public boolean isVar() {
+        return this.quals.contains(Qual.VAR);
+    }
+
     public enum Qual {
         VAR(AlloyStrings.VAR),
         ABSTRACT(AlloyStrings.ABSTRACT),
