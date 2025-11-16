@@ -6,6 +6,8 @@
 
 - All applications of formulae must be preceded by their definition
 
+- STL imports must match their use - no unnecessary imports, and no missing imports
+
 WARNING: the following is out of date
 
 # Design for AST:

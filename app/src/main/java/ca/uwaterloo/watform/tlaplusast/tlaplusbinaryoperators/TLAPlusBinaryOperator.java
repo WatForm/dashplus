@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +29,4 @@ public abstract class TLAPlusBinaryOperator extends TLAPlusExpression {
         return children;
     }
 
-    public void toString(StringBuilder sb, int ident) {
-        return;
-        // TODO fix this
-    }
 }

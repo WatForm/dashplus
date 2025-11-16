@@ -8,6 +8,12 @@ public class TLAPlusIndexing extends TLAPlusBinaryOperator {
         super(operandOne, operandTwo);
     }
 
+    @Override
+    public void toString(StringBuilder sb, int ident) {
+        return;
+        // TODO fix this
+    }
+
     /*
     @Override
     public List<String> toStringList() {
