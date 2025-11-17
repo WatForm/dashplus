@@ -24,8 +24,22 @@ public class TLAPlusFormulaApplication extends TLAPlusExpression {
 
     @Override
     public void toString(StringBuilder sb, int ident) {
+
+        int n = this.params.size();
+
+        if (n == 0) {
+            sb.append(this.name);
+            return;
+        }
+
+        sb.append(this.name + TLAPlusStrings.BRACKET_OPEN);
+        for (int i = 0; i < n; i++) {
+            this.params.get(i).toString(sb, ident);
+            if (i != n - 1) sb.append(TLAPlusStrings.COMMA);
+        }
+        sb.append(TLAPlusStrings.BRACKET_CLOSE);
+
         return;
-        // TODO fix this
     }
 
     /*
