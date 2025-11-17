@@ -1,9 +1,6 @@
 package ca.uwaterloo.watform.parser;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -22,15 +19,7 @@ public class Main {
         String filePath = args[0];
 
         try {
-            AlloyFile af = ParserUtil.parse(Paths.get(filePath));
-            AlloyModel alloyModel = null;
-            try {
-                alloyModel = new AlloyModel(af);
-            } catch (AlloyModelError alloyModelErrors) {
-                Reporter.INSTANCE.addError(alloyModelErrors);
-            }
-            Reporter.INSTANCE.exitIfHasErrors();
-            System.out.println(alloyModel.toString());
+            System.out.println(ParserUtil.parseToModel(Paths.get(filePath)).toString());
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         } catch (RecognitionException | ParseCancellationException e) {

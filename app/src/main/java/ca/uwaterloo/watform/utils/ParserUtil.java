@@ -5,6 +5,8 @@ import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.antlr.*;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashFileParseVis;
@@ -79,6 +81,25 @@ public final class ParserUtil {
             Reporter.INSTANCE.exitIfHasErrors();
             return dashFile;
         }
+    }
+
+    public static AlloyModel parseToModel(Path filePath) throws IOException {
+        AlloyFile alloyFile = ParserUtil.parse(filePath);
+        if (null == alloyFile) {
+            // This happens when
+            //  1) ParserUtil.parse found UserError
+            //  2) Reporter.INSTANCE.exitFunction has been swapped for test
+            // We don't want to continue
+            return null;
+        }
+        AlloyModel alloyModel = null;
+        try {
+            alloyModel = new AlloyModel(alloyFile);
+        } catch (AlloyModelError alloyModelErrors) {
+            Reporter.INSTANCE.addError(alloyModelErrors);
+        }
+        Reporter.INSTANCE.exitIfHasErrors();
+        return alloyModel;
     }
 
     public static <C extends ParseTree, T> List<T> visitAll(

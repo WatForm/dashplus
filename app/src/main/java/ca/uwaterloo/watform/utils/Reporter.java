@@ -11,8 +11,8 @@ import java.util.function.IntConsumer;
 public final class Reporter {
     public static final Reporter INSTANCE = new Reporter();
 
-    public final List<ErrorUser> errors = new ArrayList<>();
-    public final List<CommentUser> comments = new ArrayList<>();
+    private final List<ErrorUser> errors = new ArrayList<>();
+    private final List<CommentUser> comments = new ArrayList<>();
 
     public IntConsumer exitFunction = System::exit; // change this for testing purposes
 

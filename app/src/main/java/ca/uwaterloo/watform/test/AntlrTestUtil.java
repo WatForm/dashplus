@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.test;
 
-import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.antlr.*;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.utils.*;
@@ -25,6 +25,7 @@ public class AntlrTestUtil {
     private static boolean stopOnFirstFail = true;
     private long timeoutMs = 20 * 1000;
     private static int filenamesToPrint = 20;
+    private int[] exitCode;
 
     private void printList(String title, List<Path> list) {
         System.out.println(title + " (" + list.size() + "):");
@@ -74,6 +75,7 @@ public class AntlrTestUtil {
                             "jarPassedAntlrFailed", new ArrayList<>(),
                             "jarFailedAntlrPassed", new ArrayList<>(),
                             "jarFailedAntlrFailed", new ArrayList<>(),
+                            "errorUser", new ArrayList<>(),
                             "timeout", new ArrayList<>()));
 
     private void tryParseAlloy(CharStream input, Path filePath) {
@@ -84,8 +86,15 @@ public class AntlrTestUtil {
         System.out.println(filePath);
 
         try {
-            AlloyFile af = ParserUtil.parse(filePath);
-            String s = af.toString();
+            AlloyModel alloyModel = ParserUtil.parseToModel(filePath);
+            if (1 == this.exitCode[0]) {
+                // some sort of ErrorUser has been generated.
+                // So af is null, don't continue further
+                // note we swapped out Reporter.INSTANCE.exitFunction in the AntlrTestUtil.ctor
+                this.alloyResults.get("errorUser").add(filePath);
+                return;
+            }
+            String s = alloyModel.toString();
             System.out.println(s);
             if (jarPassed) {
                 boolean toStringCanPass = AlloyInterface.canParse(s);
@@ -225,12 +234,22 @@ public class AntlrTestUtil {
         this.timeoutMs = timeoutMs;
         List<Path> paths = ParserUtil.recurGetFiles(dir, extension);
         for (Path filePath : paths) {
+            // need to swap out the System.exit in Reporter.INSTANCE
+            // This is also in TestUtil, but cannot import it
+            // This is done because CompUtil.parseEverything_fromString in the AlloyInterface
+            // doesn't check all errors, like module declaration needs to be at the top
+            // But we catch these, so need to avoid throwing a ErrorUser
+            // Maybe the A4Reporter instance has collected the error,
+            // but I'm not sure how to check via the A4Reporter instance.
+            this.exitCode = new int[] {-1};
+            Reporter.INSTANCE.exitFunction = (code -> exitCode[0] = code);
             try {
                 CharStream input = CharStreams.fromPath(filePath);
                 this.tryParseWithTimeout(input, filePath, extension);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to read file: " + filePath, e);
             }
+            Reporter.INSTANCE.reset();
         }
         if (extension.equals(".dsh")) {
             this.printResults(this.dashResults);
