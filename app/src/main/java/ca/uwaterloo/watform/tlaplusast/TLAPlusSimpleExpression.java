@@ -18,7 +18,7 @@ public abstract class TLAPlusSimpleExpression extends TLAPlusExpression {
 
     @Override
     public void toString(StringBuilder sb, int ident) {
+        sb.append(core);
         return;
-        // TODO fix this
     }
 }

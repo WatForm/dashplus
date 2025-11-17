@@ -28,5 +28,4 @@ public abstract class TLAPlusBinaryOperator extends TLAPlusExpression {
         children.add(this.operandTwo);
         return children;
     }
-
 }

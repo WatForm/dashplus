@@ -14,8 +14,10 @@ public class TLAPlusFormulaDefinition extends TLAPlusExpression {
 
     @Override
     public void toString(StringBuilder sb, int ident) {
+        this.declaration.toString(sb, ident);
+        sb.append(TLAPlusStrings.SPACE + TLAPlusStrings.DEFINITION + TLAPlusStrings.SPACE);
+        this.body.toString(sb, ident);
         return;
-        // TODO fix this
     }
 
     public List<TLAPlusExpression> getChildren() {

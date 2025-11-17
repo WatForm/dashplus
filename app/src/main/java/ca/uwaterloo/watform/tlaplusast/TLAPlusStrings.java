@@ -81,6 +81,7 @@ public final class TLAPlusStrings extends CommonStrings {
     public static final String IF = "IF";
     public static final String THEN = "THEN";
     public static final String ELSE = "ELSE";
+    public static final String DEFINITION = "==";
 
     // inbuilt functions
     public static final String HEAD = "Head";
