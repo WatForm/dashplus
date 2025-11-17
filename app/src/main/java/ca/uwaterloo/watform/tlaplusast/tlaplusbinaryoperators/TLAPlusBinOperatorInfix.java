@@ -1,27 +1,27 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 import ca.uwaterloo.watform.utils.*;
 
 public abstract class TLAPlusBinOperatorInfix extends TLAPlusBinaryOperator {
+
+    private String infixOperator;
 
     public TLAPlusBinOperatorInfix(
             String infixOperator, TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
 
         super(operandOne, operandTwo);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append(this.getOperandOne().toString());
-        // TODO fix this
-        return result.toString();
+        this.infixOperator = infixOperator;
     }
 
     @Override
     public void toString(StringBuilder sb, int ident) {
+
+        this.getOperandOne().toString(sb, ident);
+        sb.append(TLAPlusStrings.SPACE + this.infixOperator + TLAPlusStrings.SPACE);
+        this.getOperandTwo().toString(sb, ident);
+
         return;
-        // TODO fix this
     }
 }

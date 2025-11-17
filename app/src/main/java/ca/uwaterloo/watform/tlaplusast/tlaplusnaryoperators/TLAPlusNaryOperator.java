@@ -19,30 +19,21 @@ public abstract class TLAPlusNaryOperator extends TLAPlusExpression {
 
     @Override
     public void toString(StringBuilder sb, int ident) {
+
+        int n = this.children.size();
+        sb.append(this.start);
+        if (n != 0) {
+            for (int i = 0; i < n; i++) {
+                this.children.get(i).toString(sb, ident);
+                if (i != n - 1) sb.append(this.separator);
+            }
+        }
+        sb.append(this.end);
+
         return;
-        // TODO fix this
     }
 
     public List<TLAPlusExpression> getChildren() {
         return this.children;
     }
-
-    /*
-    @Override
-    public List<String> toStringList() {
-        int n = this.children.size();
-        List<String> result = new ArrayList<>();
-
-        result.add(this.start);
-        if (n != 0) {
-            for (int i = 0; i < n; i++) {
-                result.addAll(this.children.get(i).toStringList());
-                if (i != n - 1) result.add(this.separator);
-            }
-        }
-        result.add(this.end);
-
-        return result;
-    }
-     */
 }
