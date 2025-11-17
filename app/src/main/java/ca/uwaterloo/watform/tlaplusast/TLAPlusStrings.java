@@ -75,6 +75,7 @@ public final class TLAPlusStrings extends CommonStrings {
 
     public static final String PRIME = "'";
     public static final String UNCHANGED = "UNCHANGED";
+    public static final String DOMAIN = "DOMAIN";
 
     public static final String LET = "LET";
     public static final String IN = "IN";

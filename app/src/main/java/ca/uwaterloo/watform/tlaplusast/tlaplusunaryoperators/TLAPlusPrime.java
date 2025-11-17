@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 
+import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 
 public class TLAPlusPrime extends TLAPlusUnaryOperator {
@@ -7,18 +8,11 @@ public class TLAPlusPrime extends TLAPlusUnaryOperator {
         super(operand);
     }
 
-    /*
-    @Override
-    public List<String> toStringList() {
-        List<String> result = new ArrayList<>();
-        result.addAll(this.getOperand().toStringList());
-        result.add(TLAPlusStrings.PRIME);
-        return result;
-    }*/
-
     @Override
     public void toString(StringBuilder sb, int ident) {
+
+        this.getOperand().toString(sb, ident);
+        sb.append(TLAPlusStrings.PRIME);
         return;
-        // TODO fix this
     }
 }

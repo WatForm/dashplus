@@ -94,7 +94,7 @@ For brevity, formulae are made that represent complex states in terms of sets co
 | States   | 2025-11-18    |
 | Transitions |  2025-11-18   |
 | Events   |  2025-11-19   |
-| Core Alloy | |
+| Core Alloy |  |
 | guards | |
 | actions | |
 | Extra Alloy | |

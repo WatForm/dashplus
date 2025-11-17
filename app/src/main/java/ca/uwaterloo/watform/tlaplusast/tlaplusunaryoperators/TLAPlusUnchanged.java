@@ -7,13 +7,12 @@ public class TLAPlusUnchanged extends TLAPlusUnaryOperator {
         super(operand);
     }
 
-    /*
     @Override
-    public List<String> toStringList() {
-        List<String> result = new ArrayList<>();
-        result.add(TLAPlusStrings.UNCHANGED);
-        result.addAll(this.getOperand().toStringList());
-        return result;
+    public void toString(StringBuilder sb, int ident) {
+
+        sb.append(TLAPlusStrings.UNCHANGED + TLAPlusStrings.SPACE);
+        this.getOperand().toString(sb, ident);
+
+        return;
     }
-    */
 }
