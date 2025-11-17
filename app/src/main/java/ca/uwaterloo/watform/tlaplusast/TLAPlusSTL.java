@@ -22,25 +22,17 @@ public class TLAPlusSTL extends TLAPlusExpression { // enums used for extensibil
         return new ArrayList<>();
     }
 
-    /*
     @Override
-    public List<String> toStringList() {
+    public void toString(StringBuilder sb, int ident) {
+
         String s = "Unknown";
         if (this.library == LIBRARIES.STL_FiniteSets) s = TLAPlusStrings.FINITE_SETS;
         else if (this.library == LIBRARIES.STL_Naturals) s = TLAPlusStrings.NATURALS;
         else if (this.library == LIBRARIES.STL_Integers) s = TLAPlusStrings.INTEGERS;
         else if (this.library == LIBRARIES.STL_Sequences) s = TLAPlusStrings.SEQUENCES;
 
-        List<String> t = new ArrayList<String>();
-        t.add(s);
-        return t;
-    }
-     */
-
-    @Override
-    public void toString(StringBuilder sb, int ident) {
+        sb.append(s);
         return;
-        // TODO fix this
     }
 
     public static TLAPlusFormulaApplication Cardinality(TLAPlusVariable arg) {
