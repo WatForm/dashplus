@@ -62,6 +62,23 @@ The above are to be ported directly from the earlier codebase. The below depend 
 - guards
 - actions
 
+States are represented as a set of strings, with each leaf state mapped to a string, and non-leaf states represented by sets that contain leaf states. This is possible because:
+
+1) If in an OR state, the configuration is in exactly one of its child states
+2) If in an AND state, the configuration is in all of its child states
+
+This means that given a state, there is exactly one unique set of leaf states that fully describe the configuration. 
+
+Events are also modelled using sets of strings. There are no event hierarchies. Every event is either an internal event or an external event. The internal and external events are stored in separate sets. The big-step-small-step semantics are implemented by:
+
+1) Lookahead for valid transitions using primed variables and
+2) Forcing all valid small steps to be taken before an environmental event is triggered
+
+Transitions are defined in terms of the primed configuration variable - a state is added or removed in the `from` and `goto` sections.
+
+For brevity, formulae are made that represent complex states in terms of sets containing leaf states, or in terms of the formulae used to represent their leaf states. When writing transitions, these formulae are used instead of having the translator generate the leaf-state-list on the fly, since this make the translated output readable.
+
+
 ### Dash+
 
 - parameterized states
@@ -72,6 +89,18 @@ The above are to be ported directly from the earlier codebase. The below depend 
 
 ### Roadmap:
 
+| Feature  | Deadline |
+| -------- | ------- |
+| States   | 2025-11-18    |
+| Transitions |  2025-11-18   |
+| Events   |  2025-11-19   |
+| Core Alloy | |
+| guards | |
+| actions | |
+| Extra Alloy | |
+| Dash+ | |
+
+
 - Implement TLA+ AST elements
 - Implement TLA+ AST module API functions
 - Port earlier translator from the CUP-grammar variant
@@ -81,6 +110,8 @@ The above are to be ported directly from the earlier codebase. The below depend 
 
 
 ## Notes:
+
+- String representations of non-leaf states are not used, since it provides an advantage in terms of the memory needed per configuration. It does not meaningfully change the size of the statespace, since that is determined by the model, not its representation in the translation.
 
 - The implementation of the TLA+ AST and Module is expected to ensure that Modules with obvious semantic errors are impossible to build, by implementing a layer of abstraction to manipulate the AST.
 
