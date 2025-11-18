@@ -10,6 +10,10 @@ run cmdDeclName { someExpr }
 
 run cmdDeclName predA for 1
 
+run cmdDeclName predA for 1 .. someQname
+
+run cmdDeclName predA for 1 .. 9 someQname
+
 run cmdDeclName predA for 1 .. 9 : 2 someQname
 
 run cmdDeclName predA for 1 .. 9 : 2 someQname, 1 .. 9 : 2 someQname

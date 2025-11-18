@@ -55,6 +55,10 @@ public class AlloyCtorError extends RuntimeException {
         throw new AlloyCtorError(pos, "The exactly keyword is redundant here");
     }
 
+    public static AlloyCtorError endWithoutDotDot(Pos pos) {
+        throw new AlloyCtorError(pos, "Cannot specify end scope without having two dots. ");
+    }
+
     // ====================================================================================
     // Decl
     // ====================================================================================

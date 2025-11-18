@@ -89,21 +89,13 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
             public AlloyCmdPara.CommandDecl.Scope.Typescope visitTypescope(
                     DashParser.TypescopeContext ctx) {
                 AlloyNumExpr start = (AlloyNumExpr) exprParseVis.visit(ctx.number(0));
-                AlloyNumExpr end;
+                AlloyNumExpr end = null;
                 if (null != ctx.number(1)) {
                     end = (AlloyNumExpr) exprParseVis.visit(ctx.number(1));
-                } else {
-                    if (!ctx.DOT().isEmpty()) {
-                        end = new AlloyNumExpr(Integer.MAX_VALUE);
-                    } else {
-                        end = new AlloyNumExpr(start.label);
-                    }
                 }
-                AlloyNumExpr increment;
+                AlloyNumExpr increment = null;
                 if (null != ctx.number(2)) {
                     increment = (AlloyNumExpr) exprParseVis.visit(ctx.number(2));
-                } else {
-                    increment = new AlloyNumExpr("1");
                 }
                 AlloyScopableExpr scopableExpr = null;
                 if (ctx.qname() != null) {
@@ -125,6 +117,7 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
                         new Pos(ctx),
                         null != ctx.EXACTLY() || start == end,
                         start,
+                        !ctx.DOT().isEmpty(),
                         end,
                         increment,
                         scopableExpr);

@@ -170,27 +170,33 @@ public final class AlloyCmdPara extends AlloyParagraph {
             public static final class Typescope extends ASTNode {
                 public final boolean isExactly;
                 public final AlloyNumExpr start;
-                public final AlloyNumExpr end;
-                public final AlloyNumExpr increment;
+                public final boolean hasDotDot;
+                public final Optional<AlloyNumExpr> end;
+                public final Optional<AlloyNumExpr> increment;
                 public final AlloyScopableExpr scopableExpr;
 
                 public Typescope(
                         Pos pos,
                         boolean isExactly,
                         AlloyNumExpr start,
+                        boolean hasDotDot,
                         AlloyNumExpr end,
                         AlloyNumExpr increment,
                         AlloyScopableExpr scopableExpr) {
                     super(pos);
                     this.isExactly = isExactly;
                     this.start = start;
-                    this.end = end;
-                    this.increment = increment;
+                    this.hasDotDot = hasDotDot;
+                    this.end = Optional.ofNullable(end);
+                    this.increment = Optional.ofNullable(increment);
                     this.scopableExpr = scopableExpr;
+                    if (this.end.isPresent() && !this.hasDotDot) {
+                        throw AlloyCtorError.endWithoutDotDot(pos);
+                    }
                     if (this.scopableExpr instanceof AlloySigIntExpr
                             || this.scopableExpr instanceof AlloyIntExpr
                             || this.scopableExpr instanceof AlloySeqExpr) {
-                        if (this.end.value > this.start.value) {
+                        if (this.end.isPresent() && this.end.get().value > this.start.value) {
                             throw AlloyCtorError.growingScope(pos, scopableExpr);
                         }
                         if (isExactly) {
@@ -202,14 +208,11 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 public Typescope(
                         boolean isExactly,
                         AlloyNumExpr start,
+                        boolean hasDotDot,
                         AlloyNumExpr end,
                         AlloyNumExpr increment,
                         AlloyScopableExpr scopableExpr) {
-                    this.isExactly = isExactly;
-                    this.start = start;
-                    this.end = end;
-                    this.increment = increment;
-                    this.scopableExpr = scopableExpr;
+                    this(Pos.UNKNOWN, isExactly, start, hasDotDot, end, increment, scopableExpr);
                 }
 
                 @Override
@@ -219,10 +222,16 @@ public final class AlloyCmdPara extends AlloyParagraph {
                     if (!(this.scopableExpr instanceof AlloySigIntExpr)
                             && !(this.scopableExpr instanceof AlloyIntExpr)
                             && !(this.scopableExpr instanceof AlloySeqExpr)) {
-                        sb.append(AlloyStrings.DOT + AlloyStrings.DOT);
-                        this.end.toString(sb, indent);
-                        sb.append(AlloyStrings.SPACE + AlloyStrings.COLON + AlloyStrings.SPACE);
-                        this.increment.toString(sb, indent);
+                        if (this.hasDotDot) {
+                            sb.append(AlloyStrings.DOT + AlloyStrings.DOT);
+                        }
+                        if (this.end.isPresent()) {
+                            this.end.get().toString(sb, indent);
+                        }
+                        if (this.increment.isPresent()) {
+                            sb.append(AlloyStrings.SPACE + AlloyStrings.COLON + AlloyStrings.SPACE);
+                            this.increment.get().toString(sb, indent);
+                        }
                     }
                     sb.append(AlloyStrings.SPACE);
                     ((AlloyVarExpr) this.scopableExpr).toString(sb, indent);
