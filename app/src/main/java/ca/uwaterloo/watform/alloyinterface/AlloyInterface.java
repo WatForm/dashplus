@@ -39,9 +39,13 @@ public class AlloyInterface {
         ans.writeXML(XMLfileName);
     }
 
-    public static A4Solution executeCommand(AlloyModel am, int cmdnum) {
+    public static Solution executeCommand(AlloyModel am, int cmdnum) {
         String alloyCode = am.toString();
         A4Solution ans = executeCommand(alloyCode, cmdnum);
-        return ans;
+        return new Solution(ans);
+    }
+
+    public static Solution executeCommand(AlloyModel am) {
+        return AlloyInterface.executeCommand(am, 0);
     }
 }

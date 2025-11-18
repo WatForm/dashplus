@@ -19,8 +19,11 @@ public final class AlloyCmdPara extends AlloyParagraph {
     }
 
     public AlloyCmdPara(List<CommandDecl> cmdDecls) {
-        super();
-        this.cmdDecls = Collections.unmodifiableList(cmdDecls);
+        this(Pos.UNKNOWN, cmdDecls);
+    }
+
+    public AlloyCmdPara(CommandDecl cmdDecl) {
+        this(Pos.UNKNOWN, Collections.singletonList(cmdDecl));
     }
 
     @Override
@@ -145,6 +148,10 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 this(Pos.UNKNOWN, num, typescopes);
             }
 
+            public Scope(Typescope typescope) {
+                this(Pos.UNKNOWN, null, Collections.singletonList(typescope));
+            }
+
             @Override
             public void toString(StringBuilder sb, int indent) {
                 sb.append(AlloyStrings.FOR + AlloyStrings.SPACE);
@@ -213,6 +220,23 @@ public final class AlloyCmdPara extends AlloyParagraph {
                         AlloyNumExpr increment,
                         AlloyScopableExpr scopableExpr) {
                     this(Pos.UNKNOWN, isExactly, start, hasDotDot, end, increment, scopableExpr);
+                }
+
+                public Typescope(
+                        boolean isExactly,
+                        int start,
+                        boolean hasDotDot,
+                        int end,
+                        int increment,
+                        String name) {
+                    this(
+                            Pos.UNKNOWN,
+                            isExactly,
+                            new AlloyNumExpr(start),
+                            hasDotDot,
+                            new AlloyNumExpr(end),
+                            new AlloyNumExpr(increment),
+                            new AlloyQnameExpr(name));
                 }
 
                 @Override

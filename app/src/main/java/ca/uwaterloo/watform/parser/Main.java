@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.parser;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyinterface.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -19,7 +20,9 @@ public class Main {
         String filePath = args[0];
 
         try {
-            System.out.println(ParserUtil.parseToModel(Paths.get(filePath)).toString());
+            Solution instance =
+                    AlloyInterface.executeCommand(ParserUtil.parseToModel(Paths.get(filePath)), 0);
+            System.out.println(instance.toString());
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         } catch (RecognitionException | ParseCancellationException e) {

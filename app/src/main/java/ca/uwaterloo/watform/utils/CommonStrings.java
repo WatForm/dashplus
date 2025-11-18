@@ -4,4 +4,5 @@ public class CommonStrings {
     public static final String TAB = "    ";
     public static final String SPACE = " ";
     public static final String NEWLINE = "\n";
+    public static final String DIVIDER = "=====================================";
 }
