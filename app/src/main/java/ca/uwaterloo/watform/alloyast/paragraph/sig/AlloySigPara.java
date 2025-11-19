@@ -18,7 +18,7 @@ public final class AlloySigPara extends AlloyParagraph {
     public final List<Qual> quals;
     public final List<AlloyQnameExpr> qnames;
     public final Optional<Rel> rel;
-    public final List<AlloyDecl> decls; // sig's fields
+    public final List<AlloyDecl> fields; // sig's fields
     public final Optional<AlloyBlock> block;
 
     public AlloySigPara(
@@ -26,13 +26,13 @@ public final class AlloySigPara extends AlloyParagraph {
             List<Qual> quals,
             List<AlloyQnameExpr> qnames,
             Rel rel,
-            List<AlloyDecl> decls,
+            List<AlloyDecl> fields,
             AlloyBlock block) {
         super(pos);
         this.quals = Collections.unmodifiableList(quals);
         this.qnames = Collections.unmodifiableList(qnames);
         this.rel = Optional.ofNullable(rel);
-        this.decls = decls;
+        this.fields = fields;
         this.block = Optional.ofNullable(block);
         if (this.quals.contains(Qual.LONE) && this.quals.contains(Qual.ONE)) {
             throw AlloyCtorError.sigContradictQuals(pos, "lone", "one");
@@ -52,27 +52,27 @@ public final class AlloySigPara extends AlloyParagraph {
             List<Qual> quals,
             List<AlloyQnameExpr> qnames,
             Rel rel,
-            List<AlloyDecl> decls,
+            List<AlloyDecl> fields,
             AlloyBlock block) {
-        this(Pos.UNKNOWN, quals, qnames, rel, decls, block);
+        this(Pos.UNKNOWN, quals, qnames, rel, fields, block);
     }
 
     public AlloySigPara(
-            List<AlloyQnameExpr> qnames, Rel rel, List<AlloyDecl> decls, AlloyBlock block) {
-        this(Pos.UNKNOWN, Collections.emptyList(), qnames, rel, decls, block);
+            List<AlloyQnameExpr> qnames, Rel rel, List<AlloyDecl> fields, AlloyBlock block) {
+        this(Pos.UNKNOWN, Collections.emptyList(), qnames, rel, fields, block);
     }
 
-    public AlloySigPara(List<AlloyQnameExpr> qnames, List<AlloyDecl> decls, AlloyBlock block) {
-        this(Pos.UNKNOWN, Collections.emptyList(), qnames, null, decls, block);
+    public AlloySigPara(List<AlloyQnameExpr> qnames, List<AlloyDecl> fields, AlloyBlock block) {
+        this(Pos.UNKNOWN, Collections.emptyList(), qnames, null, fields, block);
     }
 
-    public AlloySigPara(AlloyQnameExpr qname, List<AlloyDecl> decls, AlloyBlock block) {
+    public AlloySigPara(AlloyQnameExpr qname, List<AlloyDecl> fields, AlloyBlock block) {
         this(
                 Pos.UNKNOWN,
                 Collections.emptyList(),
                 Collections.singletonList(qname),
                 null,
-                decls,
+                fields,
                 block);
     }
 
@@ -110,7 +110,7 @@ public final class AlloySigPara extends AlloyParagraph {
         ASTNode.join(
                 sb,
                 indent + 1,
-                this.decls,
+                this.fields,
                 AlloyStrings.COMMA
                         + AlloyStrings.SPACE
                         + AlloyStrings.NEWLINE
@@ -135,22 +135,30 @@ public final class AlloySigPara extends AlloyParagraph {
         return Optional.of(this.qnames.get(0).toString());
     }
 
+    /**
+     * Expand AlloySigPara.qnames and AlloyDecl in AlloySigPara.fields
+     *
+     * @return List<AlloySigPara>
+     */
     public List<AlloySigPara> expand() {
-        if (1 == this.qnames.size()) {
-            return Collections.singletonList(this);
+        // expand this.fields
+        List<AlloyDecl> expandedDecls = new ArrayList<>();
+        for (AlloyDecl field : this.fields) {
+            expandedDecls.addAll(field.expand());
         }
-        List<AlloySigPara> expandedLi = new ArrayList<>();
+        // expand this.qnames
+        List<AlloySigPara> expandedSigs = new ArrayList<>();
         for (AlloyQnameExpr qname : this.qnames) {
-            expandedLi.add(
+            expandedSigs.add(
                     new AlloySigPara(
                             this.pos,
                             this.quals,
                             Collections.singletonList(qname),
                             this.rel.orElse(null),
-                            this.decls,
+                            expandedDecls,
                             this.block.orElse(null)));
         }
-        return expandedLi;
+        return expandedSigs;
     }
 
     public boolean isTopLevel() {
@@ -169,6 +177,17 @@ public final class AlloySigPara extends AlloyParagraph {
 
     public boolean isVar() {
         return this.quals.contains(Qual.VAR);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj) return false;
+        return this.toString().equals(obj.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
     }
 
     public enum Qual {

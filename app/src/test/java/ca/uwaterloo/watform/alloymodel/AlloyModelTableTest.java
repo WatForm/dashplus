@@ -50,15 +50,14 @@ public class AlloyModelTableTest {
 
     @Test
     @Order(3)
-    @DisplayName("Adding same instance twice throws ImplementationError")
+    @DisplayName("Adding same instance twice throws AlloyModelTable.Error")
     public void addSameInstanceTwice() throws Exception {
         AlloySigPara sigS = TestUtil.createSig("s");
         AlloyFile alloyFile = new AlloyFile(sigS);
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
         assertThrows(
-                ImplementationError.class,
-                () -> alloyModelTable.addParagraph(sigS, new ArrayList<>()));
+                AlloyModelError.class, () -> alloyModelTable.addParagraph(sigS, new ArrayList<>()));
     }
 
     @Test

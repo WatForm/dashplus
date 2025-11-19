@@ -1,15 +1,10 @@
 package ca.uwaterloo.watform.alloyast;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
@@ -27,7 +22,7 @@ public class AlloySigParaTest {
     @Test
     @Order(1)
     @DisplayName("AlloySigPara.expand returns a list of AlloySigPara with " + "individual qname")
-    public void sigExpand() throws Exception {
+    public void test1() throws Exception {
         AlloySigPara sigABC =
                 new AlloySigPara(
                         List.of(
@@ -48,17 +43,17 @@ public class AlloySigParaTest {
 
         assertEquals(sigABC.quals, expanded.get(0).quals);
         assertEquals(sigABC.rel, expanded.get(0).rel);
-        assertEquals(sigABC.decls, expanded.get(0).decls);
+        assertEquals(sigABC.fields, expanded.get(0).fields);
         assertEquals(sigABC.block, expanded.get(0).block);
 
         assertEquals(sigABC.quals, expanded.get(1).quals);
         assertEquals(sigABC.rel, expanded.get(1).rel);
-        assertEquals(sigABC.decls, expanded.get(1).decls);
+        assertEquals(sigABC.fields, expanded.get(1).fields);
         assertEquals(sigABC.block, expanded.get(1).block);
 
         assertEquals(sigABC.quals, expanded.get(2).quals);
         assertEquals(sigABC.rel, expanded.get(2).rel);
-        assertEquals(sigABC.decls, expanded.get(2).decls);
+        assertEquals(sigABC.fields, expanded.get(2).fields);
         assertEquals(sigABC.block, expanded.get(2).block);
 
         assertDoesNotThrow(() -> expanded.get(0).getName());
@@ -68,8 +63,83 @@ public class AlloySigParaTest {
 
     @Test
     @Order(2)
-    @DisplayName("isTopLevel, isSubType, isSubset")
+    @DisplayName("AlloySigPara.expand also expands fields")
     public void test2() throws Exception {
+        AlloyDecl d12 =
+                new AlloyDecl(
+                        List.of(new AlloyQnameExpr("f1"), new AlloyQnameExpr("f2")),
+                        new AlloyQnameExpr("F12"));
+        AlloyDecl d34 =
+                new AlloyDecl(
+                        List.of(new AlloyQnameExpr("f3"), new AlloyQnameExpr("f4")),
+                        new AlloyQnameExpr("F34"));
+        AlloySigPara sigABC =
+                new AlloySigPara(
+                        List.of(
+                                new AlloyQnameExpr("A"),
+                                new AlloyQnameExpr("B"),
+                                new AlloyQnameExpr("C")),
+                        List.of(d12, d34),
+                        new AlloyBlock(new AlloyQnameExpr("a")));
+        List<AlloySigPara> expanded = sigABC.expand();
+        assertEquals(3, expanded.size());
+
+        assertEquals(1, expanded.get(0).qnames.size());
+        assertEquals(1, expanded.get(1).qnames.size());
+        assertEquals(1, expanded.get(2).qnames.size());
+
+        assertEquals("A", expanded.get(0).qnames.get(0).toString());
+        assertEquals("B", expanded.get(1).qnames.get(0).toString());
+        assertEquals("C", expanded.get(2).qnames.get(0).toString());
+
+        assertEquals(sigABC.quals, expanded.get(0).quals);
+        assertEquals(sigABC.rel, expanded.get(0).rel);
+        assertEquals(sigABC.block, expanded.get(0).block);
+
+        assertEquals(sigABC.quals, expanded.get(1).quals);
+        assertEquals(sigABC.rel, expanded.get(1).rel);
+        assertEquals(sigABC.block, expanded.get(1).block);
+
+        assertEquals(sigABC.quals, expanded.get(2).quals);
+        assertEquals(sigABC.rel, expanded.get(2).rel);
+        assertEquals(sigABC.block, expanded.get(2).block);
+
+        assertEquals("f1", expanded.get(0).fields.get(0).getName().get());
+        assertEquals("f2", expanded.get(0).fields.get(1).getName().get());
+        assertEquals("f3", expanded.get(0).fields.get(2).getName().get());
+        assertEquals("f4", expanded.get(0).fields.get(3).getName().get());
+        assertEquals(new AlloyQnameExpr("F12"), expanded.get(0).fields.get(0).expr);
+        assertEquals(new AlloyQnameExpr("F12"), expanded.get(0).fields.get(1).expr);
+        assertEquals(new AlloyQnameExpr("F34"), expanded.get(0).fields.get(2).expr);
+        assertEquals(new AlloyQnameExpr("F34"), expanded.get(0).fields.get(3).expr);
+
+        assertEquals("f1", expanded.get(1).fields.get(0).getName().get());
+        assertEquals("f2", expanded.get(1).fields.get(1).getName().get());
+        assertEquals("f3", expanded.get(1).fields.get(2).getName().get());
+        assertEquals("f4", expanded.get(1).fields.get(3).getName().get());
+        assertEquals(new AlloyQnameExpr("F12"), expanded.get(1).fields.get(0).expr);
+        assertEquals(new AlloyQnameExpr("F12"), expanded.get(1).fields.get(1).expr);
+        assertEquals(new AlloyQnameExpr("F34"), expanded.get(1).fields.get(2).expr);
+        assertEquals(new AlloyQnameExpr("F34"), expanded.get(1).fields.get(3).expr);
+
+        assertEquals("f1", expanded.get(2).fields.get(0).getName().get());
+        assertEquals("f2", expanded.get(2).fields.get(1).getName().get());
+        assertEquals("f3", expanded.get(2).fields.get(2).getName().get());
+        assertEquals("f4", expanded.get(2).fields.get(3).getName().get());
+        assertEquals(new AlloyQnameExpr("F12"), expanded.get(2).fields.get(0).expr);
+        assertEquals(new AlloyQnameExpr("F12"), expanded.get(2).fields.get(1).expr);
+        assertEquals(new AlloyQnameExpr("F34"), expanded.get(2).fields.get(2).expr);
+        assertEquals(new AlloyQnameExpr("F34"), expanded.get(2).fields.get(3).expr);
+
+        assertDoesNotThrow(() -> expanded.get(0).getName());
+        assertDoesNotThrow(() -> expanded.get(1).getName());
+        assertDoesNotThrow(() -> expanded.get(2).getName());
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("isTopLevel, isSubType, isSubset")
+    public void test3() throws Exception {
         AlloySigPara topLevel =
                 new AlloySigPara(
                         List.of(new AlloyQnameExpr("A")),
@@ -112,9 +182,9 @@ public class AlloySigParaTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     @DisplayName("invalid ctor args")
-    public void test3() throws Exception {
+    public void test4() throws Exception {
         assertThrows(
                 AlloyCtorError.class,
                 () ->
@@ -154,9 +224,9 @@ public class AlloySigParaTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("isVar")
-    public void test4() {
+    public void test5() {
         assertTrue(
                 new AlloySigPara(
                                 List.of(AlloySigPara.Qual.ONE, AlloySigPara.Qual.VAR),

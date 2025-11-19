@@ -11,14 +11,6 @@ public final class AlloyModelImplError extends ImplementationError {
         this(Pos.UNKNOWN, msg);
     }
 
-    public static AlloyModelImplError duplicateInstance(Pos pos) {
-        return new AlloyModelImplError(
-                pos,
-                "AlloyModelTable: the "
-                        + "same instance is added twice. Paragraph at "
-                        + pos.toString());
-    }
-
     public static AlloyModelImplError lookUpWithNoName() {
         return new AlloyModelImplError(
                 "Trying to get a nameless paragraph from "

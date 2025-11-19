@@ -5,7 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloySigIntExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
@@ -43,7 +47,7 @@ public class SolutionTest {
                                                 new AlloyCmdPara.CommandDecl.Scope(
                                                         new AlloyCmdPara.CommandDecl.Scope
                                                                 .Typescope(
-                                                                false, 2, true, 2, 1, "S1"))))));
+                                                                false, 2, true, 2, 1, S1))))));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         Solution solution = AlloyInterface.executeCommand(alloyModel);
         assertTrue(solution.contains(AlloyStrings.THIS + AlloyStrings.SLASH + S1));
@@ -64,5 +68,68 @@ public class SolutionTest {
         assertTrue(solution.contains(AlloyStrings.THIS + AlloyStrings.SLASH + S1));
         // no longer empty
         assertTrue(!solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1).isEmpty());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Solution.eval(sigName)")
+    public void test4() throws Exception {
+        String S1 = "S1";
+        AlloySigPara S1Sig = new AlloySigPara(new AlloyQnameExpr(S1), TestUtil.createBlock());
+        AlloyCmdPara cmdPara =
+                new AlloyCmdPara(
+                        new AlloyCmdPara.CommandDecl(
+                                AlloyCmdPara.CommandDecl.CmdType.RUN,
+                                null,
+                                TestUtil.createBlock(),
+                                new AlloyCmdPara.CommandDecl.Scope(
+                                        new AlloyCmdPara.CommandDecl.Scope.Typescope(
+                                                false, 2, true, 2, 1, S1))));
+        AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+        Solution solution = AlloyInterface.executeCommand(alloyModel);
+        assertEquals(2, solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1).size());
+        assertEquals(2, solution.eval(S1Sig).size());
+        assertEquals(
+                solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1), solution.eval(S1Sig));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Solution.eval(sigName, fieldName)")
+    public void test5() throws Exception {
+        String S1 = "S1";
+        String F = "F";
+        AlloySigPara S1Sig =
+                new AlloySigPara(
+                        new AlloyQnameExpr(S1),
+                        List.of(new AlloyDecl(new AlloyQnameExpr(F), new AlloySigIntExpr())),
+                        TestUtil.createBlock());
+        AlloyCmdPara cmdPara =
+                new AlloyCmdPara(
+                        new AlloyCmdPara.CommandDecl(
+                                AlloyCmdPara.CommandDecl.CmdType.RUN,
+                                null,
+                                TestUtil.createBlock(),
+                                new AlloyCmdPara.CommandDecl.Scope(
+                                        new AlloyCmdPara.CommandDecl.Scope.Typescope(
+                                                false, 2, true, 2, 1, S1))));
+        AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+        Solution solution = AlloyInterface.executeCommand(alloyModel);
+
+        assertEquals(2, solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1).size());
+        assertEquals(2, solution.eval(S1Sig).size());
+        assertEquals(
+                solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1), solution.eval(S1Sig));
+
+        assertEquals(
+                2,
+                solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1 + AlloyStrings.DOT + F)
+                        .size());
+        assertEquals(2, solution.eval(S1Sig, S1Sig.fields.getFirst()).size());
+        assertEquals(
+                solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1 + AlloyStrings.DOT + F),
+                solution.eval(S1Sig, S1Sig.fields.getFirst()));
     }
 }

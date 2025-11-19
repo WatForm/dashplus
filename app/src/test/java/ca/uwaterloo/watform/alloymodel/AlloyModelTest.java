@@ -107,6 +107,6 @@ public class AlloyModelTest {
         AlloySigPara s1 = TestUtil.createSig("s1");
         AlloyFile alloyFile = new AlloyFile(s1);
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        assertThrows(ImplementationError.class, () -> alloyModel.addParagraph(s1));
+        assertThrows(AlloyModelError.class, () -> alloyModel.addParagraph(s1));
     }
 }

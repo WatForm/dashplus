@@ -5,6 +5,7 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.utils.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -53,16 +54,43 @@ public final class AlloyDecl extends AlloyExpr {
         this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, qnames, isDisj2, quant, expr);
     }
 
+    public AlloyDecl(List<AlloyQnameExpr> qnames, AlloyExpr expr) {
+        this(Pos.UNKNOWN, false, false, false, qnames, false, null, expr);
+    }
+
     public AlloyDecl(AlloyQnameExpr qname, AlloyExpr expr) {
-        this(
-                Pos.UNKNOWN,
-                false,
-                false,
-                false,
-                Collections.singletonList(qname),
-                false,
-                Quant.SET,
-                expr);
+        this(Pos.UNKNOWN, false, false, false, Collections.singletonList(qname), false, null, expr);
+    }
+
+    public Optional<String> getName() {
+        if (this.qnames.size() > 1) {
+            throw ImplementationError.methodShouldNotBeCalled(
+                    this.pos,
+                    "AlloyDecl.getName. This should not be called because the "
+                            + "decl doesn't have a single name, but multiple. "
+                            + "See AlloyDecl.expand(). ");
+        }
+        return Optional.of(this.qnames.get(0).toString());
+    }
+
+    public List<AlloyDecl> expand() {
+        if (1 == this.qnames.size()) {
+            return Collections.singletonList(this);
+        }
+        List<AlloyDecl> expandedLi = new ArrayList<>();
+        for (AlloyQnameExpr qname : this.qnames) {
+            expandedLi.add(
+                    new AlloyDecl(
+                            this.pos,
+                            this.isVar,
+                            this.isPrivate,
+                            this.isDisj1,
+                            Collections.singletonList(qname),
+                            this.isDisj2,
+                            this.quant.isPresent() ? this.quant.get() : null,
+                            this.expr));
+        }
+        return expandedLi;
     }
 
     @Override

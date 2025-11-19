@@ -7,7 +7,6 @@ import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +23,6 @@ import java.util.stream.Stream;
 public final class AlloyModelTable<T extends AlloyParagraph> {
     private final Map<String, T> mp;
     private final List<T> li; // list for holding paragraphs with no name
-    private final Set<T> instanceTracker; // avoid duplicated instance
 
     // final here means the reference cannot change
     // but the data structure is mutable
@@ -36,20 +34,9 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
     public AlloyModelTable(AlloyFile alloyFile, Class<T> typeToken) {
         this.mp = new HashMap<>();
         this.li = new ArrayList<>();
-        this.instanceTracker = Collections.newSetFromMap(new IdentityHashMap<>());
-        List<T> TList = new ArrayList<>();
-        if (AlloySigPara.class == typeToken) {
-            // sig is special, b/c we need to expand it
-            for (AlloySigPara sig :
-                    GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, AlloySigPara.class)) {
-                @SuppressWarnings("unchecked")
-                List<T> expandedSigs = (List<T>) sig.expand();
-                TList.addAll(expandedSigs);
-            }
-        } else {
-            TList = GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, typeToken);
-        }
-        this.addParagraphs(TList, new ArrayList<>());
+        this.addParagraphs(
+                GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, typeToken),
+                new ArrayList<>());
     }
 
     /**
@@ -58,7 +45,19 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
      *     printed after AlloyFile in AlloyModel
      */
     public void addParagraph(T paragraph, List<AlloyParagraph> additionalParas) {
-        checkDuplicates(paragraph);
+        if (paragraph instanceof AlloySigPara) {
+            List<AlloySigPara> expandedSigs = ((AlloySigPara) paragraph).expand();
+            if (expandedSigs.size() > 1) {
+                @SuppressWarnings("unchecked")
+                List<T> castedExpandedSigs = (List<T>) expandedSigs;
+                this.addParagraphs(castedExpandedSigs, additionalParas);
+                return;
+            }
+            @SuppressWarnings("unchecked")
+            T castedExpandedSig = (T) expandedSigs.get(0);
+            paragraph = castedExpandedSig;
+        }
+
         Optional<String> name = paragraph.getName();
         if (name == null || name.isEmpty() || name.get().isBlank()) {
             // relying on short-circuiting to not throw NoSuchElementException
@@ -138,11 +137,5 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
             throw AlloyModelImplError.lookUpWithNoName();
         }
         return this.mp.containsKey(name);
-    }
-
-    private void checkDuplicates(T paragraph) {
-        if (!this.instanceTracker.add(paragraph)) {
-            throw AlloyModelImplError.duplicateInstance(paragraph.pos);
-        }
     }
 }
