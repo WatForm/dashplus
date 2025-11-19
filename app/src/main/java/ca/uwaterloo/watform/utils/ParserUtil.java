@@ -83,6 +83,31 @@ public final class ParserUtil {
         }
     }
 
+    public static DashFile parseDash(Path filePath) throws IOException {
+        if (!filePath.getFileName().toString().endsWith(".dsh")) {
+            throw new Reporter.ErrorUser("File extension must be .dsh or .als");
+        }
+        CharStream input = CharStreams.fromPath(filePath);
+        BailLexer lexer = new BailLexer(input);
+
+        lexer.dashMode = true;
+
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        BailParser parser = new BailParser(tokens);
+
+        ParseTree antlrAST = parser.dashFile();
+        DashFileParseVis dfpv = new DashFileParseVis();
+        DashFile dashFile = null;
+        try {
+            dashFile = dfpv.visit(antlrAST);
+            dashFile.filename = filePath.toString();
+        } catch (AlloyCtorError errorUser) {
+            Reporter.INSTANCE.addError(errorUser);
+        }
+        Reporter.INSTANCE.exitIfHasErrors();
+        return dashFile;
+    }
+
     public static AlloyModel parseToModel(Path filePath) throws IOException {
         AlloyFile alloyFile = ParserUtil.parse(filePath);
         if (null == alloyFile) {

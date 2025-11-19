@@ -1,7 +1,9 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
+import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.tlaplusast.*;
 import ca.uwaterloo.watform.tlaplusmodel.*;
+import ca.uwaterloo.watform.utils.ParserUtil;
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -20,6 +22,10 @@ public class Main {
             Path outPath = Paths.get(args[1]);
             String input = Files.readString(inPath);
 
+            System.out.println(input);
+
+            DashFile df = ParserUtil.parseDash(inPath);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,6 +43,6 @@ public class Main {
         module.addVariable(v2);
         module.addSTL(fs);
 
-        System.out.println(module.code());
+        // System.out.println(module.code());
     }
 }
