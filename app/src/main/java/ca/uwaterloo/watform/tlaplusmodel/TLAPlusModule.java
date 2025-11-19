@@ -45,7 +45,8 @@ public class TLAPlusModule {
         int n = l.size();
         if (n == 0) return ""; // no need for the line if nothing exists
         for (int i = 0; i < n; i++) {
-            sb.append(" ");
+            sb.append(TLAPlusStrings.SPACE);
+            l.get(i).toString(sb, 0);
             if (i < n - 1) sb.append(TLAPlusStrings.COMMA);
         }
         return sb.toString();
