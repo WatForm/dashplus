@@ -10,6 +10,7 @@ package ca.uwaterloo.watform.dashmodel;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
@@ -18,6 +19,11 @@ import java.util.List;
 public class DashModelResolve extends DashModelInitialize {
 
     private ExprRefResolverVis er = new ExprRefResolverVis(st, tt, et, vt, bt, pt);
+
+    public DashModelResolve(DashFile d) {
+        super(d);
+        this.resolve();
+    }
 
     public void resolve() {
         resolveStateTable();

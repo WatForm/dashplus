@@ -22,6 +22,10 @@ import java.util.List;
 
 public class DashModel extends DashModelAccessors {
 
+    public DashModel(DashFile d) {
+        super(d);
+    }
+
     public void setRootName(String sfqn) {
         st.root = sfqn;
     }

@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.utils.*;
@@ -12,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DashModelAccessors extends DashModelResolve {
+
+    public DashModelAccessors(DashFile d) {
+        super(d);
+    }
 
     // accessor methods
     public boolean hasOnlyOneState() {
