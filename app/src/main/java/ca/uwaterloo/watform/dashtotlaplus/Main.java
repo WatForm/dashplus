@@ -43,6 +43,8 @@ public class Main {
 
             States.translateStates(test1, model.module);
             Transitions.translateTransitions(test1, model.module);
+            Util.makeInit(model);
+            Util.makeNext(model);
 
             Files.writeString(outPath.resolve(moduleName + ".tla"), model.moduleCode());
             Files.writeString(outPath.resolve(moduleName + ".cfg"), model.configCode());

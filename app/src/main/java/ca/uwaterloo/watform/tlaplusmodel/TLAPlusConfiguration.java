@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TLAPlusConfiguration {
-    private List<TLAPlusExpression> invariants;
-    private List<TLAPlusExpression> properties;
-    private List<TLAPlusExpression> constants;
-    private TLAPlusFormulaApplication init;
-    private TLAPlusFormulaApplication next;
+    public List<TLAPlusExpression> invariants;
+    public List<TLAPlusExpression> properties;
+    public List<TLAPlusExpression> constants;
+    public TLAPlusFormulaApplication init;
+    public TLAPlusFormulaApplication next;
 
     public TLAPlusConfiguration(TLAPlusFormulaApplication init, TLAPlusFormulaApplication next) {
         this.invariants = new ArrayList<>();
@@ -19,39 +19,40 @@ public class TLAPlusConfiguration {
         this.next = next;
     }
 
-    private String init() {
+
+    private String initString() {
         return TLAPlusStrings.INIT + TLAPlusStrings.SPACE + init.toString();
     }
 
-    private String next() {
+    private String nextString() {
         return TLAPlusStrings.NEXT + TLAPlusStrings.SPACE + next.toString();
     }
 
-    private String constants() {
+    private String constantsString() {
         // TODO do this
         return "";
     }
 
-    private String invariants() {
+    private String invariantsString() {
         // TODO do this
         return "";
     }
 
-    private String properties() {
+    private String propertiesString() {
         // TODO do this
         return "";
     }
 
     public String code() {
         return "\n"
-                + constants()
+                + constantsString()
                 + "\n"
-                + invariants()
+                + invariantsString()
                 + "\n"
-                + properties()
+                + propertiesString()
                 + "\n"
-                + init()
+                + initString()
                 + "\n"
-                + next();
+                + nextString();
     }
 }
