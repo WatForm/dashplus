@@ -1,9 +1,7 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
-import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.tlaplusast.*;
 import ca.uwaterloo.watform.tlaplusmodel.*;
-import ca.uwaterloo.watform.utils.ParserUtil;
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -20,24 +18,35 @@ public class Main {
         try {
             Path inPath = Paths.get(args[0]);
             Path outPath = Paths.get(args[1]);
-            String input = Files.readString(inPath);
+            // String input = Files.readString(inPath);
+
+            String fileName = inPath.getFileName().toString();
+            if (!fileName.endsWith(".dsh")) {
+                System.out.println("First path must be a .dsh file");
+                throw new IOException();
+            }
+            if (!Files.isDirectory(outPath)) {
+                System.out.println("Second path must be a directory/folder");
+                throw new IOException();
+            }
+            String moduleName = fileName.substring(0, fileName.lastIndexOf("."));
 
             // System.out.println(input);
 
-            DashFile df = ParserUtil.parseDash(inPath);
+            // DashFile df = ParserUtil.parseDash(inPath);
             // we don't know what this is or why it fails
             // DashModelInitialize dm = new DashModelInitialize(df);
+            TLAPlusModule module = new TLAPlusModule(moduleName);
+
+            Temp test1 = Temp.testOne();
+
+            States.translateStates(test1, module);
+            Transitions.translateTransitions(test1, module);
+
+            Files.writeString(outPath.resolve(moduleName + ".tla"), module.code());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        TLAPlusModule module = new TLAPlusModule("test");
-
-        Temp test1 = Temp.testOne();
-
-        States.translateStates(test1, module);
-
-        System.out.println(module.code());
     }
 }

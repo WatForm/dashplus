@@ -4,7 +4,6 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDeclaration;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefinition;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusUnionSet;
 import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusStringLiteral;
 import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TLAPlusSet;
@@ -18,7 +17,7 @@ public class States {
 
         System.out.println("translate states called");
 
-        tm.addVariable(getConf());
+        tm.addVariable(Util.getConf());
 
         for (Temp.State s : model.leafStates) {
             tm.addFormulaDefinition(leafStateFormula(s));
@@ -30,10 +29,6 @@ public class States {
         for (Temp.AND_State s : model.ANDStates) {
             tm.addFormulaDefinition(ANDStateFormula(s));
         }
-    }
-
-    public static TLAPlusVariable getConf() {
-        return new TLAPlusVariable("_conf");
     }
 
     public static TLAPlusFormulaDefinition leafStateFormula(Temp.State s) {

@@ -121,3 +121,6 @@ For brevity, formulae are made that represent complex states in terms of sets co
 
 - Symmetry-breaking is carried out by the Alloy Analyzer. Since everything is a set in Alloy, these could be represented as lists in the translation without any loss of detail. However, it is likely that there are optimizations involved in handling sets that are implemented behind the scenes by TLC, which makes it reasonable to translate sets to sets and not lists.
 
+## Temp
+
+- Transitions into OR states vs transitions into AND states - what do they mean semantically?
