@@ -56,6 +56,16 @@ public class TLAPlusModule {
         return sb.toString();
     }
 
+    public String formulaeString() {
+        StringBuilder sb = new StringBuilder();
+        System.out.println(this.formulae.size());
+        for (TLAPlusFormulaDefinition f : this.formulae) {
+            sb.append("\n");
+            f.toString(sb, 0);
+        }
+        return sb.toString();
+    }
+
     private String stringBody() {
         String doubleSpace = "\n\n";
         return TLAPlusStrings.BODY_DELIMITER
@@ -65,6 +75,8 @@ public class TLAPlusModule {
                 + TLAPlusModule.simpleBuilder(TLAPlusStrings.CONSTANTS, this.constants)
                 + doubleSpace
                 + TLAPlusModule.simpleBuilder(TLAPlusStrings.VARIABLES, this.variables)
+                + doubleSpace
+                + this.formulaeString()
                 + doubleSpace
                 + TLAPlusStrings.BODY_DELIMITER;
     }

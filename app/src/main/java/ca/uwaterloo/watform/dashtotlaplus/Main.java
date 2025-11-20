@@ -34,17 +34,10 @@ public class Main {
 
         TLAPlusModule module = new TLAPlusModule("test");
 
-        TLAPlusSTL fs = new TLAPlusSTL(TLAPlusSTL.LIBRARIES.STL_FiniteSets);
-        TLAPlusConstant c1 = new TLAPlusConstant("c1");
-        TLAPlusConstant c2 = new TLAPlusConstant("c2");
-        TLAPlusVariable v1 = new TLAPlusVariable("v1");
-        TLAPlusVariable v2 = new TLAPlusVariable("v2");
-        module.addConstant(c1);
-        module.addConstant(c2);
-        module.addVariable(v1);
-        module.addVariable(v2);
-        module.addSTL(fs);
+        Temp test1 = Temp.testOne();
 
-        // System.out.println(module.code());
+        States.translateStates(test1, module);
+
+        System.out.println(module.code());
     }
 }

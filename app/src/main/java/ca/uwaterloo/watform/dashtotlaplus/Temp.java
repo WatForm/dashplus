@@ -85,8 +85,12 @@ public class Temp {
 
         State root = new State("root");
         State s1 = new State("s1");
-        State s2 = new State("s1");
+        State s2 = new State("s2");
         Transition t1 = new Transition("t1", s1, s2);
+
+        model.leafStates.add(s1);
+        model.leafStates.add(s2);
+        model.transitions.add(t1);
 
         return model;
     }
