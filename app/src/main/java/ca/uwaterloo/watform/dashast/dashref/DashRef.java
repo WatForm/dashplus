@@ -114,10 +114,12 @@ public class DashRef extends AlloyExpr {
 
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
+        System.out.println("alloy accept");
         throw ImplementationError.methodShouldNotBeCalled();
     }
 
     public <T> T accept(DashExprVis<T> visitor) {
+        System.out.println("dash accept");
         return visitor.visit(this);
     }
 }

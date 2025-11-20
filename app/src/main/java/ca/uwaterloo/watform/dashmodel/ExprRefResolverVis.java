@@ -63,17 +63,17 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
             VarTable vt,
             BufferTable bt,
             DashPredTable pt) {
-        st = st;
-        et = et;
-        vt = vt;
-        bt = bt;
-        pt = pt;
+        this.st = st;
+        this.et = et;
+        this.vt = vt;
+        this.bt = bt;
+        this.pt = pt;
         // default values
-        sfqn = "";
-        kind = DashStrings.DashRefKind.VAR;
-        primeOk = false;
-        primeOkInPrmExprs = false;
-        thisOk = true;
+        this.sfqn = "";
+        this.kind = DashStrings.DashRefKind.VAR;
+        this.primeOk = false;
+        this.primeOkInPrmExprs = false;
+        this.thisOk = true;
         // tables are not modified by may be modified
         // by calling functions in between calls to revolveExpr
     }
@@ -89,7 +89,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // resolving something that is a reference in an expression
         // means we are looking for variables
         inputChecks(expr, sfqn);
-        sfqn = sfqn;
+        this.sfqn = sfqn;
         assert (kind == DashStrings.DashRefKind.VAR);
         return visit(expr);
     }
@@ -99,7 +99,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // means we are looking for variables
         inputChecks(expr, sfqn);
         assert (kind == DashStrings.DashRefKind.VAR);
-        sfqn = sfqn;
+        this.sfqn = sfqn;
         primeOk = true;
         primeOkInPrmExprs = true;
         AlloyExpr x = visit(expr);
@@ -111,10 +111,16 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
     public DashRef resolveState(AlloyExpr expr, String sfqn) {
         // resolving something that is a reference to a State
         // we know this returns a DashRef rather than a more general AlloyExpr
+
+        System.out.println(expr.getClass());
+        System.out.println("this:" + this.getClass());
+        System.out.println("super:" + this.getClass());
+
         inputChecks(expr, sfqn);
-        sfqn = sfqn;
+        this.sfqn = sfqn;
         kind = kind.STATE;
-        DashRef x = (DashRef) visit(expr);
+
+        DashRef x = (DashRef) ((DashRef) expr).accept(this); // (DashRef) visit(expr) //
         kind = defaultKind;
         return x;
     }
@@ -123,9 +129,9 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // resolving something that is a reference to an event
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
-        sfqn = sfqn;
+        this.sfqn = sfqn;
         kind = kind.EVENT;
-        DashRef x = (DashRef) visit(expr);
+        DashRef x = (DashRef) ((DashRef) expr).accept(this);
         kind = defaultKind;
         return x;
     }
@@ -134,7 +140,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // resolving something that is a reference to an event
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
-        sfqn = sfqn;
+        this.sfqn = sfqn;
         kind = kind.EVENT;
         primeOkInPrmExprs = true;
         DashRef x = (DashRef) visit(expr);
