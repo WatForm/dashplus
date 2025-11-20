@@ -10,7 +10,6 @@ import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusIntersectio
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusNotEquals;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusUnionSet;
 import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TLAPlusOrList;
-import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TLAPlusSet;
 import ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators.TLAPlusPrime;
 import ca.uwaterloo.watform.tlaplusmodel.TLAPlusModule;
 import java.util.ArrayList;
@@ -65,9 +64,8 @@ public class Transitions {
 
     public static TLAPlusExpression stateInConf(Temp.State s) {
         // conf intersection state not equals phi
-        TLAPlusFormulaApplication state = new TLAPlusFormulaApplication(s.name);
-        TLAPlusSet emptySet = new TLAPlusSet(new ArrayList<>());
-        TLAPlusExpression lhs = new TLAPlusIntersectionSet(Util.getConf(), state);
-        return new TLAPlusNotEquals(lhs, emptySet);
+        return new TLAPlusNotEquals(
+                new TLAPlusIntersectionSet(Util.getConf(), new TLAPlusFormulaApplication(s.name)),
+                Util.getNullSet());
     }
 }
