@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashast.DashFile;
+import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashmodel.DashModelInitialize;
 import ca.uwaterloo.watform.tlaplusast.*;
 import ca.uwaterloo.watform.tlaplusmodel.*;
@@ -38,7 +39,7 @@ public class Main {
 
             DashFile df = ParserUtil.parseDash(inPath);
             // we don't know what this is or why it fails
-            DashModelInitialize dm = new DashModelInitialize(df);
+            DashModel dm = new DashModel(df);
 
             TLAPlusModel model = new TLAPlusModel(moduleName, Util.getInit(), Util.getNext());
 
