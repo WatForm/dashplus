@@ -58,7 +58,6 @@ public class TLAPlusModule {
 
     public String formulaeString() {
         StringBuilder sb = new StringBuilder();
-        System.out.println(this.formulae.size());
         for (TLAPlusFormulaDefinition f : this.formulae) {
             sb.append("\n");
             f.toString(sb, 0);

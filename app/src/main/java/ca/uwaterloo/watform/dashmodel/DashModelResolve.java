@@ -27,9 +27,7 @@ public class DashModelResolve extends DashModelInitialize {
 
     public void resolve() {
         resolveStateTable();
-        System.out.println("resolved state");
         resolveTransTable();
-        System.out.println("resolved trans");
         resolveVarTable();
         // buffer table does not need resolving because just buf[element] - no expression in
         // eventDecls

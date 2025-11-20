@@ -112,10 +112,6 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // resolving something that is a reference to a State
         // we know this returns a DashRef rather than a more general AlloyExpr
 
-        System.out.println(expr.getClass());
-        System.out.println("this:" + this.getClass());
-        System.out.println("super:" + this.getClass());
-
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         kind = kind.STATE;

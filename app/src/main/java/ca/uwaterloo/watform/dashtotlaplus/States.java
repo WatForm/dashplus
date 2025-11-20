@@ -33,8 +33,6 @@ public class States {
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(Util.SET_CONF),
                         new TLAPlusEquals(Util.getConf(), Util.getNullSet())));
-
-        System.out.println("translated states");
     }
 
     public static TLAPlusFormulaDefinition leafStateFormula(Temp.State s) {
