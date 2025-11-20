@@ -125,6 +125,12 @@ For brevity, formulae are made that represent complex states in terms of sets co
 
 - Transitions into OR states vs transitions into AND states - what do they mean semantically?
 
-- Issue: Clauses containing primed variables don't make sense, also under what condition does it occur exactly?
+- Issue: Clauses containing primed variables don't make sense, also under what condition does it occur exactly? isn't checking the preconditions for the translation enough
 
-- 
+- Issue: moving to the actual Dash-model
+
+- Issue: toposort states
+
+- Coding style: use addVariable, addConstant etc but these expect objects not Strings. The objects are created on the fly. Checks use equality of objects, which are implemented anyway. Checks within an expression will deal with objects, not strings. Also style is irrelevant.
+
+- Shifting to Alloy, but Alloy is contained inside Dash, so runnable models still require Dash. Only snippets can be done without, which can't be tested.

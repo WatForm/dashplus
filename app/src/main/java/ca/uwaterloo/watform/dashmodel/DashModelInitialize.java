@@ -53,16 +53,9 @@ public class DashModelInitialize { // extends AlloyModel {
         // the entire model and do this for the one
         // root state
 
-        List<DashState> dashStates = extractItemsOfClass(d.paragraphs, DashState.class);
-        if (dashStates.isEmpty()) {
-            Error.notDashModel();
-        } else if (dashStates.size() > 1) {
-            Error.onlyOneState(dashStates.get(1).pos);
-        } else {
-            DashState root = dashStates.get(0);
-            st.root = (root.name);
-            stateRecurse(root, emptyList());
-        }
+        DashState root = (DashState) d.stateRoot;
+        st.root = (root.name);
+        stateRecurse(root, emptyList());
     }
 
     private void stateRecurse(DashState s, List<String> ances) {

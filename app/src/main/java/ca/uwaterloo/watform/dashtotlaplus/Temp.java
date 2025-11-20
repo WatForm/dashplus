@@ -86,6 +86,7 @@ public class Temp {
         State s1 = new State("s1");
         State s2 = new State("s2");
         Transition t1 = new Transition("t1", s1, s2);
+        Transition t2 = new Transition("t2", s2, s2);
 
         List<State> ch = new ArrayList<>();
         ch.add(s1);
@@ -96,6 +97,7 @@ public class Temp {
         model.leafStates.add(s2);
         model.ORStates.add(root);
         model.transitions.add(t1);
+        model.transitions.add(t2);
 
         return model;
     }
