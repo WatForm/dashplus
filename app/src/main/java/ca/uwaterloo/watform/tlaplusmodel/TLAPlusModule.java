@@ -32,6 +32,10 @@ public class TLAPlusModule {
         this.constants.add(c);
     }
 
+    public void addFormulaDefinition(TLAPlusFormulaDefinition d) {
+        this.formulae.add(d);
+    }
+
     private String stringHead() {
         return TLAPlusStrings.HEAD_DELIMITER
                 + TLAPlusStrings.SPACE
