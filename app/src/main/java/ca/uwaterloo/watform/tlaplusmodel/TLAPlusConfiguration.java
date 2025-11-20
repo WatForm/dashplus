@@ -19,7 +19,6 @@ public class TLAPlusConfiguration {
         this.next = next;
     }
 
-
     private String initString() {
         return TLAPlusStrings.INIT + TLAPlusStrings.SPACE + init.toString();
     }
