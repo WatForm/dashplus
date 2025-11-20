@@ -18,7 +18,9 @@ package ca.uwaterloo.watform.dashmodel;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloymodel.*;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.dashmodel.DashFQN.*;
@@ -26,7 +28,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DashModelInitialize { // extends AlloyModel {
+public class DashModelInitialize extends AlloyModel {
 
     // we don't store the DashFile here
     // because these tables might change
@@ -42,12 +44,11 @@ public class DashModelInitialize { // extends AlloyModel {
     public boolean[] transAtThisParamDepth;
 
     public DashModelInitialize() {
-        // creates an empty DashModel
+        super();
     }
 
     public DashModelInitialize(DashFile d) {
-
-        // super((AlloyFile) d);
+        super((AlloyFile) d);
 
         // we have to go through the paragraphs in
         // the entire model and do this for the one

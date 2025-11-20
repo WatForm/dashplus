@@ -9,7 +9,7 @@ import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class AlloyModel {
+public class AlloyModel {
     private final AlloyFile alloyFile;
     private final AlloyModelTable<AlloyModulePara> modules;
     private final AlloyModelTable<AlloyImportPara> imports;
@@ -23,6 +23,22 @@ public final class AlloyModel {
     private final AlloyModelTable<AlloyCmdPara> commands;
 
     private final List<AlloyParagraph> additionalParas;
+
+    public AlloyModel() {
+        this.alloyFile = null;
+        this.modules = new AlloyModelTable<>(null, AlloyModulePara.class);
+        this.imports = new AlloyModelTable<>(null, AlloyImportPara.class);
+        this.macros = new AlloyModelTable<>(null, AlloyMacroPara.class);
+        this.sigs = new AlloyModelTable<>(null, AlloySigPara.class);
+        this.enums = new AlloyModelTable<>(null, AlloyEnumPara.class);
+        this.facts = new AlloyModelTable<>(null, AlloyFactPara.class);
+        this.funs = new AlloyModelTable<>(null, AlloyFunPara.class);
+        this.preds = new AlloyModelTable<>(null, AlloyPredPara.class);
+        this.asserts = new AlloyModelTable<>(null, AlloyAssertPara.class);
+        this.commands = new AlloyModelTable<>(null, AlloyCmdPara.class);
+
+        this.additionalParas = new ArrayList<>();
+    }
 
     public AlloyModel(AlloyFile alloyFile) {
         this.alloyFile = alloyFile;

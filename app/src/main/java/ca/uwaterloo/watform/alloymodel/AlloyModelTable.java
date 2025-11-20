@@ -34,6 +34,7 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
     public AlloyModelTable(AlloyFile alloyFile, Class<T> typeToken) {
         this.mp = new HashMap<>();
         this.li = new ArrayList<>();
+        if (null == alloyFile) return;
         this.addParagraphs(
                 GeneralUtil.extractItemsOfClass(alloyFile.paragraphs, typeToken),
                 new ArrayList<>());
