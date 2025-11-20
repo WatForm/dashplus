@@ -9,6 +9,13 @@ public final class TLAPlusStrings extends CommonStrings {
     public static final String VARIABLES = "VARIABLES";
     public static final String CONSTANTS = "CONSTANTS";
 
+    // cfg keywords
+    public static final String INVARIANTS = "INVARIANTS";
+    public static final String PROPERTIES = "PROPERTIES";
+    public static final String SPECIFICATION = "SPECIFICATION";
+    public static final String INIT = "INIT";
+    public static final String NEXT = "NEXT";
+
     // top-level structure
     public static final String HEAD_DELIMITER = "----";
     public static final String BODY_DELIMITER = "====";

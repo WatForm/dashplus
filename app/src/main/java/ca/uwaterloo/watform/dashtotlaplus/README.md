@@ -124,3 +124,7 @@ For brevity, formulae are made that represent complex states in terms of sets co
 ## Temp
 
 - Transitions into OR states vs transitions into AND states - what do they mean semantically?
+
+- Issue: Clauses containing primed variables don't make sense, also under what condition does it occur exactly?
+
+- 

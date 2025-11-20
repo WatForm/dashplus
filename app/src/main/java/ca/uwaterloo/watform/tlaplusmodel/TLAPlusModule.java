@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TLAPlusModule {
-    private String name;
     private List<TLAPlusConstant> constants;
     private List<TLAPlusVariable> variables;
     private List<TLAPlusSTL> extended_libraries;
     private List<TLAPlusFormulaDefinition> formulae;
 
-    public TLAPlusModule(String name) {
-        this.name = name;
+    public TLAPlusModule() {
         this.constants = new ArrayList<>();
         this.variables = new ArrayList<>();
         this.extended_libraries = new ArrayList<>();
@@ -36,10 +34,12 @@ public class TLAPlusModule {
         this.formulae.add(d);
     }
 
-    private String stringHead() {
+    private String stringHead(String name) {
         return TLAPlusStrings.HEAD_DELIMITER
                 + TLAPlusStrings.SPACE
-                + this.name
+                + TLAPlusStrings.MODULE
+                + TLAPlusStrings.SPACE
+                + name
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.HEAD_DELIMITER;
     }
@@ -68,9 +68,7 @@ public class TLAPlusModule {
 
     private String stringBody() {
         String doubleSpace = "\n\n";
-        return TLAPlusStrings.BODY_DELIMITER
-                + doubleSpace
-                + TLAPlusModule.simpleBuilder(TLAPlusStrings.EXTENDS, this.extended_libraries)
+        return TLAPlusModule.simpleBuilder(TLAPlusStrings.EXTENDS, this.extended_libraries)
                 + doubleSpace
                 + TLAPlusModule.simpleBuilder(TLAPlusStrings.CONSTANTS, this.constants)
                 + doubleSpace
@@ -81,7 +79,7 @@ public class TLAPlusModule {
                 + TLAPlusStrings.BODY_DELIMITER;
     }
 
-    public String code() {
-        return this.stringHead() + "\n" + this.stringBody();
+    public String code(String name) {
+        return this.stringHead(name) + "\n" + this.stringBody();
     }
 }

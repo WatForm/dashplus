@@ -36,14 +36,16 @@ public class Main {
             // DashFile df = ParserUtil.parseDash(inPath);
             // we don't know what this is or why it fails
             // DashModelInitialize dm = new DashModelInitialize(df);
-            TLAPlusModule module = new TLAPlusModule(moduleName);
+
+            TLAPlusModel model = new TLAPlusModel(moduleName, Util.getInit(), Util.getNext());
 
             Temp test1 = Temp.testOne();
 
-            States.translateStates(test1, module);
-            Transitions.translateTransitions(test1, module);
+            States.translateStates(test1, model.module);
+            Transitions.translateTransitions(test1, model.module);
 
-            Files.writeString(outPath.resolve(moduleName + ".tla"), module.code());
+            Files.writeString(outPath.resolve(moduleName + ".tla"), model.moduleCode());
+            Files.writeString(outPath.resolve(moduleName + ".cfg"), model.configCode());
 
         } catch (IOException e) {
             e.printStackTrace();
