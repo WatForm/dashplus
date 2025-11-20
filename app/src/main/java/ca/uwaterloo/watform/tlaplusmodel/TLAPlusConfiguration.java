@@ -29,17 +29,17 @@ public class TLAPlusConfiguration {
 
     private String constantsString() {
         // TODO do this
-        return "";
+        return TLAPlusStrings.CONSTANTS + TLAPlusStrings.SPACE + "";
     }
 
     private String invariantsString() {
         // TODO do this
-        return "";
+        return TLAPlusStrings.INVARIANTS + TLAPlusStrings.SPACE + "";
     }
 
     private String propertiesString() {
         // TODO do this
-        return "";
+        return TLAPlusStrings.PROPERTIES + TLAPlusStrings.SPACE + "";
     }
 
     public String code() {

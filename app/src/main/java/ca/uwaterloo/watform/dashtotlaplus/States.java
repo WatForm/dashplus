@@ -39,17 +39,21 @@ public class States {
 
     public static TLAPlusFormulaDefinition leafStateFormula(Temp.State s) {
         List<TLAPlusExpression> e = new ArrayList<>();
-        e.add(new TLAPlusStringLiteral(s.name));
+        e.add(new TLAPlusStringLiteral(getState(s)));
 
         return new TLAPlusFormulaDefinition(
-                new TLAPlusFormulaDeclaration(s.name), new TLAPlusSet(e));
+                new TLAPlusFormulaDeclaration(getState(s)), new TLAPlusSet(e));
     }
 
     public static TLAPlusExpression constructStateSet(List<Temp.State> states) {
-        TLAPlusExpression top = new TLAPlusSet(new ArrayList<>()); // null set
-        for (Temp.State s_ : states) {
+
+        if (states.size() == 0) return Util.getNullSet();
+
+        TLAPlusExpression top = new TLAPlusFormulaApplication(getState(states.get(0)));
+        for (int i = 1; i < states.size(); i++) {
+            Temp.State s = states.get(i);
             TLAPlusExpression new_top =
-                    new TLAPlusUnionSet(top, new TLAPlusFormulaApplication(s_.name));
+                    new TLAPlusUnionSet(top, new TLAPlusFormulaApplication(getState(s)));
             top = new_top;
         }
         return top;
@@ -57,11 +61,15 @@ public class States {
 
     public static TLAPlusFormulaDefinition ORStateFormula(Temp.OR_State s) {
         return new TLAPlusFormulaDefinition(
-                new TLAPlusFormulaDeclaration(s.name), constructStateSet(s.child_states));
+                new TLAPlusFormulaDeclaration(getState(s)), constructStateSet(s.child_states));
     }
 
     public static TLAPlusFormulaDefinition ANDStateFormula(Temp.AND_State s) {
         return new TLAPlusFormulaDefinition(
-                new TLAPlusFormulaDeclaration(s.name), constructStateSet(s.child_states));
+                new TLAPlusFormulaDeclaration(getState(s)), constructStateSet(s.child_states));
+    }
+
+    public static String getState(Temp.State s) {
+        return "state_" + s.name;
     }
 }

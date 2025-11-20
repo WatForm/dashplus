@@ -83,13 +83,18 @@ public class Temp {
     public static Temp testOne() {
         Temp model = new Temp();
 
-        State root = new State("root");
         State s1 = new State("s1");
         State s2 = new State("s2");
         Transition t1 = new Transition("t1", s1, s2);
 
+        List<State> ch = new ArrayList<>();
+        ch.add(s1);
+        ch.add(s2);
+        OR_State root = new OR_State("root", ch);
+
         model.leafStates.add(s1);
         model.leafStates.add(s2);
+        model.ORStates.add(root);
         model.transitions.add(t1);
 
         return model;

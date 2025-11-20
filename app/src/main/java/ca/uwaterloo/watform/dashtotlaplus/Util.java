@@ -14,11 +14,18 @@ public class Util {
     public static final String NEXT = "_next";
     public static final String INIT = "_init";
     public static final String TYPEOK = "_typeOK";
+
     public static final String CONF = "_conf";
     public static final String SET_CONF = "_set_conf";
+    public static final String EVENTS = "_events";
+    public static final String SET_EVENTS = "_set_events";
 
     public static TLAPlusVariable getConf() {
         return new TLAPlusVariable(CONF);
+    }
+
+    public static TLAPlusVariable getEvents() {
+        return new TLAPlusVariable(EVENTS);
     }
 
     public static TLAPlusFormulaApplication getNext() {

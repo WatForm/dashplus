@@ -59,13 +59,15 @@ public class Transitions {
     public static TLAPlusExpression updateConf(Temp.State s) {
         return new TLAPlusEquals(
                 new TLAPlusPrime(Util.getConf()),
-                new TLAPlusUnionSet(Util.getConf(), new TLAPlusFormulaApplication(s.name)));
+                new TLAPlusUnionSet(
+                        Util.getConf(), new TLAPlusFormulaApplication(States.getState(s))));
     }
 
     public static TLAPlusExpression stateInConf(Temp.State s) {
         // conf intersection state not equals phi
         return new TLAPlusNotEquals(
-                new TLAPlusIntersectionSet(Util.getConf(), new TLAPlusFormulaApplication(s.name)),
+                new TLAPlusIntersectionSet(
+                        Util.getConf(), new TLAPlusFormulaApplication(States.getState(s))),
                 Util.getNullSet());
     }
 }

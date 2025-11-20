@@ -42,6 +42,7 @@ public class Main {
             Temp test1 = Temp.testOne();
 
             States.translateStates(test1, model.module);
+            Events.translateEvents(test1, model.module);
             Transitions.translateTransitions(test1, model.module);
             Util.makeInit(model);
             Util.makeNext(model);
