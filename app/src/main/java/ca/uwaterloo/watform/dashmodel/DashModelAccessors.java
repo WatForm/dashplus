@@ -171,9 +171,11 @@ public class DashModelAccessors extends DashModelResolve {
         System.out.println(tt.toString());
         System.out.println(et.toString());
         System.out.println(vt.toString());
+        /*
         for (String x : tt.keySet()) {
-            // System.out.println(tfqn +" scope :" + getScope(x));
+            System.out.println(tfqn +" scope :" + getScope(x));
         }
+        */
         if (tfqn != null) {
             System.out.println("src " + tt.get(tfqn).fromR);
             System.out.println("dest " + tt.get(tfqn).gotoR);

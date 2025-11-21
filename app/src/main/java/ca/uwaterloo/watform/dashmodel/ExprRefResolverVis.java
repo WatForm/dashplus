@@ -43,7 +43,7 @@ import java.util.List;
 
 public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
-    private DashStrings.DashRefKind defaultKind = DashStrings.DashRefKind.VAR;
+    private static final DashStrings.DashRefKind defaultKind = DashStrings.DashRefKind.VAR;
 
     private StateTable st;
     private TransTable tt;
@@ -51,7 +51,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
     private VarTable vt;
     private BufferTable bt;
     private DashPredTable pt;
-    private DashStrings.DashRefKind kind = defaultKind;
+    private DashStrings.DashRefKind kind;
     private boolean primeOk;
     private boolean primeOkInPrmExprs;
     private boolean thisOk;
@@ -71,7 +71,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         this.pt = pt;
         // default values
         this.sfqn = "";
-        this.kind = DashStrings.DashRefKind.VAR;
+        this.kind = defaultKind;
         this.primeOk = false;
         this.primeOkInPrmExprs = false;
         this.thisOk = true;
@@ -115,10 +115,10 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
-        kind = DashRefKind.STATE;
+        this.kind = DashRefKind.STATE;
 
         DashRef x = (DashRef) ((DashRef) expr).accept(this); // (DashRef) visit(expr) //
-        kind = defaultKind;
+        this.kind = defaultKind;
         return x;
     }
 
@@ -127,9 +127,9 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
-        kind = DashRefKind.EVENT;
+        this.kind = DashRefKind.EVENT;
         DashRef x = (DashRef) visit((DashRef) expr);
-        kind = defaultKind;
+        this.kind = defaultKind;
         return x;
     }
 
@@ -138,10 +138,10 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
-        kind = DashRefKind.EVENT;
+        this.kind = DashRefKind.EVENT;
         primeOkInPrmExprs = true;
         DashRef x = (DashRef) visit(expr);
-        kind = defaultKind;
+        this.kind = defaultKind;
         primeOkInPrmExprs = false;
         return x;
     }
@@ -198,9 +198,9 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
             // directly in place unlike a DashRef
             // resolve the predicate value in place and add it in place
             DashStrings.DashRefKind kindTemp = kind;
-            kind = DashRefKind.VAR;
+            this.kind = DashRefKind.VAR;
             AlloyExpr ret = visit(pt.get(m).exp);
-            kind = kindTemp;
+            this.kind = kindTemp;
             return ret;
         }
 
@@ -363,9 +363,9 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
             // have to change kind to search for to STATE
             DashStrings.DashRefKind kindTemp = kind;
-            kind = DashStrings.DashRefKind.STATE;
+            this.kind = DashStrings.DashRefKind.STATE;
             List<String> matches = findMatchesInRegion(thisstate);
-            kind = kindTemp;
+            this.kind = kindTemp;
 
             String firstMatch = matches.get(0);
             if (matches.size() == 1 && st.hasParam(firstMatch)) {
@@ -453,13 +453,13 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // can exist in parsing from x[a,b] or x[a,b]/v
         // name might not be fully resolved
         DashStrings.DashRefKind tempKind = kind;
-        kind = dashRef.kind;
+        this.kind = dashRef.kind;
         AlloyExpr newExpr =
                 resolve(
                         new AlloyQnameExpr(dashRef.pos, dashRef.name),
                         mapBy(dashRef.paramValues, i -> visit(i)));
         assert (newExpr instanceof DashRef);
-        kind = tempKind;
+        this.kind = tempKind;
         return newExpr;
     }
     ;
