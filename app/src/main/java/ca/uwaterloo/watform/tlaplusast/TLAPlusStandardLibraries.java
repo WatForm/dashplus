@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusSTL extends TLAPlusExpression { // enums used for extensibility
+public class TLAPlusStandardLibraries extends TLAPlusExpression { // enums used for extensibility
 
     public static enum LIBRARIES {
         STL_FiniteSets,
@@ -14,7 +14,7 @@ public class TLAPlusSTL extends TLAPlusExpression { // enums used for extensibil
 
     private LIBRARIES library;
 
-    public TLAPlusSTL(LIBRARIES library) {
+    public TLAPlusStandardLibraries(LIBRARIES library) {
         this.library = library;
     }
 

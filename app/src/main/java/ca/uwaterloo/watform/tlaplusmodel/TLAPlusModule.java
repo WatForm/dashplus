@@ -8,7 +8,7 @@ import java.util.List;
 public class TLAPlusModule {
     private List<TLAPlusConstant> constants;
     private List<TLAPlusVariable> variables;
-    private List<TLAPlusSTL> extended_libraries;
+    private List<TLAPlusStandardLibraries> extended_libraries;
     private List<TLAPlusFormulaDefinition> formulae;
 
     public TLAPlusModule() {
@@ -18,7 +18,7 @@ public class TLAPlusModule {
         this.formulae = new ArrayList<>();
     }
 
-    public void addSTL(TLAPlusSTL stl) {
+    public void addSTL(TLAPlusStandardLibraries stl) {
         this.extended_libraries.add(stl);
     }
 

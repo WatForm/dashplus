@@ -198,7 +198,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
             // directly in place unlike a DashRef
             // resolve the predicate value in place and add it in place
             DashStrings.DashRefKind kindTemp = kind;
-            kind = kind.VAR;
+            kind = DashRefKind.VAR;
             AlloyExpr ret = visit(pt.get(m).exp);
             kind = kindTemp;
             return ret;
@@ -206,8 +206,8 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
         // now m is one match from var/state/event table
         List<DashParam> mParams;
-        if (kind == kind.STATE) mParams = st.get(m).params;
-        else if (kind == kind.EVENT) mParams = et.get(m).params;
+        if (kind == DashRefKind.STATE) mParams = st.get(m).params;
+        else if (kind == DashRefKind.EVENT) mParams = et.get(m).params;
         else mParams = vt.get(m).params;
 
         // parameters from enclosing state of this element
