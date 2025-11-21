@@ -1,0 +1,36 @@
+package ca.uwaterloo.watform.dashtotlaplus;
+
+import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.utils.GeneralUtil;
+import java.util.List;
+
+public class AuxiliaryDashAccessors {
+
+    public static String getRootStateName(DashModel dm) {
+        return dm.getRootName();
+    }
+
+    public static List<String> getAllStateNames(DashModel dm) {
+        return dm.st.getAllNames();
+    }
+
+    public static List<String> getLeafStateNames(DashModel dm) {
+        return GeneralUtil.filterBy(getAllStateNames(dm), x -> dm.st.isLeaf(x));
+    }
+
+    public static List<String> getChildStateNames(String stateName, DashModel dm) {
+        return dm.st.get(stateName).immChildren;
+    }
+
+    public static String getParentStateName(String stateName, DashModel dm) {
+        return dm.st.get(stateName).parent;
+    }
+
+    public static List<String> getDescendantStateNames(String stateName, DashModel dm) {
+        return GeneralUtil.filterBy(dm.st.getAllNames(), name -> name.startsWith(stateName));
+    }
+
+    public static List<String> getAncestorStateNames(String stateName, DashModel dm) {
+        return dm.st.getAllAnces(stateName);
+    }
+}

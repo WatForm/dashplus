@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashast.DashFile;
-import ca.uwaterloo.watform.dashmodel.DashModelResolve;
+import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaplusmodel.*;
 import ca.uwaterloo.watform.utils.ParserUtil;
 import java.io.IOException;
@@ -33,28 +33,12 @@ public class Main {
             }
             String moduleName = fileName.substring(0, fileName.lastIndexOf("."));
 
-            // System.out.println(input);
-
             DashFile df = (DashFile) ParserUtil.parse(inPath);
-            // we don't know what this is or why it fails
-            DashModelResolve dm = new DashModelResolve(df);
+            DashModel dm = new DashModel(df);
 
-            /* TLAPlusModel model = new TLAPlusModel(moduleName, Util.getInit(), Util.getNext());
-
-
-            Temp test1 = Temp.testOne();
-
-            States.translateStates(test1, model.module);
-            Events.translateEvents(test1, model.module);
-            Transitions.translateTransitions(test1, model.module);
-            Util.makeInit(model);
-            Util.makeNext(model);
-
-
+            TLAPlusModel model = DashToTLAPlus.translate(dm, moduleName);
             Files.writeString(outPath.resolve(moduleName + ".tla"), model.moduleCode());
             Files.writeString(outPath.resolve(moduleName + ".cfg"), model.configCode());
-
-            */
 
         } catch (IOException e) {
             e.printStackTrace();

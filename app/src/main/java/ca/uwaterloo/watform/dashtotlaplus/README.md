@@ -6,6 +6,18 @@
 - This serves as a feature checklist for the developer of the translator
 - This documents design decisions, notes and potential roadblocks involved
 
+## Overview:
+
+- Leaf states become singleton sets of strings which bear their name
+- AND and OR states become sets that contain all their child states
+- The set of states is stored in _conf
+
+- "In state S" is written as `_conf \union S \= {}`.
+
+## Dash Accessors:
+
+- These are present for both the object and the various tables, which are public
+
 ## Feature list
 
 ### Alloy
