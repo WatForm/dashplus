@@ -8,6 +8,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class AlloyDecl extends AlloyExpr {
@@ -140,5 +141,39 @@ public final class AlloyDecl extends AlloyExpr {
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                this.isVar,
+                this.isPrivate,
+                this.isDisj1,
+                this.qnames,
+                this.isDisj2,
+                this.quant,
+                this.expr);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyDecl other = (AlloyDecl) obj;
+        if (isVar != other.isVar) return false;
+        if (isPrivate != other.isPrivate) return false;
+        if (isDisj1 != other.isDisj1) return false;
+        if (qnames == null) {
+            if (other.qnames != null) return false;
+        } else if (!qnames.equals(other.qnames)) return false;
+        if (isDisj2 != other.isDisj2) return false;
+        if (quant == null) {
+            if (other.quant != null) return false;
+        } else if (!quant.equals(other.quant)) return false;
+        if (expr == null) {
+            if (other.expr != null) return false;
+        } else if (!expr.equals(other.expr)) return false;
+        return true;
     }
 }

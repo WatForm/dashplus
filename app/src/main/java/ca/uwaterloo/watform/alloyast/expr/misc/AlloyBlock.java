@@ -7,6 +7,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public final class AlloyBlock extends AlloyExpr {
     public final List<AlloyExpr> exprs;
@@ -50,5 +51,22 @@ public final class AlloyBlock extends AlloyExpr {
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.exprs);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyBlock other = (AlloyBlock) obj;
+        if (exprs == null) {
+            if (other.exprs != null) return false;
+        } else if (!exprs.equals(other.exprs)) return false;
+        return true;
     }
 }

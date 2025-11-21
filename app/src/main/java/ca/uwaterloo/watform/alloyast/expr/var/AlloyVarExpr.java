@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr.var;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
+import java.util.Objects;
 
 public abstract class AlloyVarExpr extends AlloyExpr {
     public final String label;
@@ -40,10 +41,7 @@ public abstract class AlloyVarExpr extends AlloyExpr {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((label == null) ? 0 : label.hashCode());
-        return result;
+        return Objects.hash(this.label);
     }
 
     @Override

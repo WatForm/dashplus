@@ -5,6 +5,7 @@ import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 // another way of writing a dot join
 public final class AlloyBracketExpr extends AlloyExpr {
@@ -34,5 +35,25 @@ public final class AlloyBracketExpr extends AlloyExpr {
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.expr, this.exprs);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyBracketExpr other = (AlloyBracketExpr) obj;
+        if (expr == null) {
+            if (other.expr != null) return false;
+        } else if (!expr.equals(other.expr)) return false;
+        if (exprs == null) {
+            if (other.exprs != null) return false;
+        } else if (!exprs.equals(other.exprs)) return false;
+        return true;
     }
 }

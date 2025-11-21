@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr.binary;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
+import java.util.Objects;
 
 public abstract class AlloyBinaryExpr extends AlloyExpr {
     public final AlloyExpr left;
@@ -56,4 +57,27 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
     }
 
     public abstract AlloyBinaryExpr rebuild(AlloyExpr left, AlloyExpr right);
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.left, this.op, this.right);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyBinaryExpr other = (AlloyBinaryExpr) obj;
+        if (left == null) {
+            if (other.left != null) return false;
+        } else if (!left.equals(other.left)) return false;
+        if (right == null) {
+            if (other.right != null) return false;
+        } else if (!right.equals(other.right)) return false;
+        if (op == null) {
+            if (other.op != null) return false;
+        } else if (!op.equals(other.op)) return false;
+        return true;
+    }
 }

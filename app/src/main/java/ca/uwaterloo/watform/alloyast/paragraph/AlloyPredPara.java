@@ -7,6 +7,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class AlloyPredPara extends AlloyParagraph {
@@ -99,5 +100,32 @@ public final class AlloyPredPara extends AlloyParagraph {
         assert (null != this.qname
                 && !this.qname.toString().isBlank()); // this check is done already in ctor
         return Optional.of(this.qname.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.isPrivate, this.sigRef, this.qname, this.arguments, this.block);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyPredPara other = (AlloyPredPara) obj;
+        if (isPrivate != other.isPrivate) return false;
+        if (sigRef == null) {
+            if (other.sigRef != null) return false;
+        } else if (!sigRef.equals(other.sigRef)) return false;
+        if (qname == null) {
+            if (other.qname != null) return false;
+        } else if (!qname.equals(other.qname)) return false;
+        if (arguments == null) {
+            if (other.arguments != null) return false;
+        } else if (!arguments.equals(other.arguments)) return false;
+        if (block == null) {
+            if (other.block != null) return false;
+        } else if (!block.equals(other.block)) return false;
+        return true;
     }
 }
