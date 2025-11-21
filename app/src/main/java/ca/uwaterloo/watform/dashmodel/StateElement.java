@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.dashmodel;
 
-import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
@@ -53,11 +52,11 @@ public class StateElement {
 
     public String toString() {
         String s = new String();
-        s += "kind: " + kind + "\n";
-        s += "params: " + NoneStringIfNeeded(params) + "\n";
-        s += "default: " + def + "\n";
-        s += "parent: " + NoneStringIfNeeded(parent) + "\n";
-        s += "immChildren: " + NoneStringIfNeeded(immChildren) + "\n";
+        s += "kind: " + this.kind + "\n";
+        s += "params: " + NoneStringIfNeeded(this.params) + "\n";
+        s += "default: " + this.def + "\n";
+        s += "parent: " + NoneStringIfNeeded(this.parent) + "\n";
+        s += "immChildren: " + NoneStringIfNeeded(this.immChildren) + "\n";
         return s;
     }
 }
