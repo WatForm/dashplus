@@ -35,6 +35,16 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 AlloyStrings.SPACE + AlloyStrings.RFATARROW + AlloyStrings.SPACE);
     }
 
+    /*
+     * This is used to uniquely identity paragraphs,
+     * but AlloyCmdPara are allowed to have the same name.
+     * So return nothing here
+     */
+    @Override
+    public Optional<String> getName() {
+        return Optional.empty();
+    }
+
     public static final class CommandDecl extends ASTNode {
         public final CmdType cmdType;
         public final Optional<AlloyQnameExpr> declQname;
@@ -84,6 +94,15 @@ public final class AlloyCmdPara extends AlloyParagraph {
         public CommandDecl(
                 CmdType cmdType, AlloyQnameExpr invoQname, AlloyBlock constrBlock, Scope scope) {
             this(Pos.UNKNOWN, cmdType, null, invoQname, constrBlock, scope, null);
+        }
+
+        public CommandDecl(
+                CmdType cmdType,
+                AlloyQnameExpr declQname,
+                AlloyQnameExpr invoQname,
+                AlloyBlock constrBlock,
+                Scope scope) {
+            this(Pos.UNKNOWN, cmdType, declQname, invoQname, constrBlock, scope, null);
         }
 
         @Override
@@ -146,6 +165,10 @@ public final class AlloyCmdPara extends AlloyParagraph {
 
             public Scope(AlloyNumExpr num, List<Typescope> typescopes) {
                 this(Pos.UNKNOWN, num, typescopes);
+            }
+
+            public Scope(List<Typescope> typescopes) {
+                this(Pos.UNKNOWN, null, typescopes);
             }
 
             public Scope(Typescope typescope) {
@@ -262,13 +285,5 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 }
             }
         }
-    }
-
-    /*
-     * AlloyCmdPara doesn't have a name
-     */
-    @Override
-    public Optional<String> getName() {
-        return Optional.empty();
     }
 }
