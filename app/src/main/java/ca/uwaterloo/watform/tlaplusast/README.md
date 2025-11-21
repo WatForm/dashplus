@@ -164,8 +164,8 @@ G(X) == F
 ┃      ┏━━━▶ Formula Application
 ┃    ┏━┻━━┓ 
 H == G(exp)
-┗━━┳━━━┛
-   ┗━━━━━━━▶ Formula Definition
+┗━━━━┳━━━━┛
+     ┗━━━━━━━▶ Formula Definition
 ```
 
 - The module consists of a list of definitions of formulae.

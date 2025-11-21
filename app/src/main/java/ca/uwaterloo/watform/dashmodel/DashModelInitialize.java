@@ -23,7 +23,6 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.*;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
-import ca.uwaterloo.watform.dashmodel.DashFQN.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;

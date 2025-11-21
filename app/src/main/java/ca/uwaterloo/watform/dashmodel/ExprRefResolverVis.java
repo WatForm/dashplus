@@ -128,7 +128,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         kind = DashRefKind.EVENT;
-        DashRef x = (DashRef) visit(expr);
+        DashRef x = (DashRef) visit((DashRef) expr);
         kind = defaultKind;
         return x;
     }
@@ -138,7 +138,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
-        kind = kind.EVENT;
+        kind = DashRefKind.EVENT;
         primeOkInPrmExprs = true;
         DashRef x = (DashRef) visit(expr);
         kind = defaultKind;
