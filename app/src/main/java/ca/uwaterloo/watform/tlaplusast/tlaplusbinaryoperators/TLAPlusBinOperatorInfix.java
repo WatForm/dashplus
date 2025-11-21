@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
-import ca.uwaterloo.watform.utils.*;
 
 public abstract class TLAPlusBinOperatorInfix extends TLAPlusBinaryOperator {
 

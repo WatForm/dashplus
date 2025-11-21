@@ -39,7 +39,8 @@ public class Main {
             // we don't know what this is or why it fails
             DashModelResolve dm = new DashModelResolve(df);
 
-            TLAPlusModel model = new TLAPlusModel(moduleName, Util.getInit(), Util.getNext());
+            /* TLAPlusModel model = new TLAPlusModel(moduleName, Util.getInit(), Util.getNext());
+
 
             Temp test1 = Temp.testOne();
 
@@ -49,8 +50,11 @@ public class Main {
             Util.makeInit(model);
             Util.makeNext(model);
 
+
             Files.writeString(outPath.resolve(moduleName + ".tla"), model.moduleCode());
             Files.writeString(outPath.resolve(moduleName + ".cfg"), model.configCode());
+
+            */
 
         } catch (IOException e) {
             e.printStackTrace();

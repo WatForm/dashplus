@@ -4,7 +4,6 @@ import antlr.generated.DashBaseVisitor;
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
-import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.antlr.*;
