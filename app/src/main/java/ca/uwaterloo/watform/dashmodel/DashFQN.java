@@ -127,7 +127,6 @@ public class DashFQN {
     public static String longestCommonFQN(String a, String b) {
         List<String> aSplit = splitFQN(a);
         List<String> bSplit = splitFQN(b);
-        String result = new String();
         int minLength = Math.min(aSplit.size(), bSplit.size());
         int i = 0;
         while (i < minLength && aSplit.get(i).equals(bSplit.get(i))) i++;
@@ -160,15 +159,16 @@ public class DashFQN {
     public static boolean suffix(String fqn, String suffix) {
         // System.out.println(a);
         // System.out.println(b);
-        if (fqn.endsWith(suffix)) {
-            int x = fqn.lastIndexOf(suffix);
-            // System.out.println(x);
-            if (x != -1) {
-                if (x == 0) return true;
-                // System.out.println(a.charAt(x-1));
-                if (fqn.charAt(x - 1) == DashStrings.internalQualChar.charAt(0)) return true;
-            }
+        if (!fqn.endsWith(suffix)) return false;
+
+        int x = fqn.lastIndexOf(suffix);
+        // System.out.println(x);
+        if (x != -1) {
+            if (x == 0) return true;
+            // System.out.println(a.charAt(x-1));
+            if (fqn.charAt(x - 1) == DashStrings.internalQualChar.charAt(0)) return true;
         }
+
         return false;
     }
 

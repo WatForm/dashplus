@@ -248,7 +248,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
     private List<String> findMatches(String name) {
         // set up names that we are searching for
-        // from appropiate 'type' of element
+        // from appropriate 'type' of element
         // for this function, match could be anywhere in Dash model
         List<String> region = new ArrayList<String>();
         if (kind == DashStrings.DashRefKind.STATE) region.addAll(st.getAllNames());
@@ -263,7 +263,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
     private List<String> findMatchesInRegion(String name) {
         // set up names that we are searching for
-        // from appropiate 'type' of element
+        // from appropriate 'type' of element
         // for this function, match can only be within enclosing sfqn
         List<String> region = new ArrayList<String>();
 
