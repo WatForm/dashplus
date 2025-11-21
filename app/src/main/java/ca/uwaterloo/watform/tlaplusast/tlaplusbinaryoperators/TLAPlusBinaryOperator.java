@@ -6,8 +6,8 @@ import java.util.List;
 
 public abstract class TLAPlusBinaryOperator extends TLAPlusExpression {
 
-    private TLAPlusExpression operandOne;
-    private TLAPlusExpression operandTwo;
+    private final TLAPlusExpression operandOne;
+    private final TLAPlusExpression operandTwo;
 
     public TLAPlusBinaryOperator(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
         this.operandOne = operandOne;

@@ -138,6 +138,41 @@ r.x                         \* record field access: the value of field x of reco
 
 ```
 
+# Formulae nomenclature:
+
+Consider the following examples:
+
+```
+┏━━━━━━━━━━▶ Formula Declaration
+┃     ┏━━━━▶ Formula Body
+F == exp
+┗━━┳━━━┛
+   ┗━━━━━━━▶ Formula Definition
+```
+
+```
+┏━━━━━━━━━━▶ Formula name
+┃ ┏━━━━━━━━▶ Parameter
+┃ ┃     ┏━━▶ Formula Application
+G(X) == F
+┗━┳┛
+  ┗━━━━━━━━▶ Formula Declaration
+```
+
+```
+┏━━━━━━━━━━▶ Formula Declaration
+┃      ┏━━━▶ Formula Application
+┃    ┏━┻━━┓ 
+H == G(exp)
+┗━━┳━━━┛
+   ┗━━━━━━━▶ Formula Definition
+```
+
+- The module consists of a list of definitions of formulae.
+- Each formula definition consists of a formula declaration and a formula body, which is a TLA+ expression.
+- A formula declaration consists of the name of the formula, along with a list of variables as parameters.
+- A formula application refers to the use of a formula within an expression, consisting of a name, along with a list of expressions as arguments.
+
 # Plan for AST checks:
 
 - scope arguments: whenever a variable is used, it must be declared globally, else belong to the declaration of the local definition

@@ -4,10 +4,10 @@ import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.List;
 
 public abstract class TLAPlusNaryOperator extends TLAPlusExpression {
-    private String start;
-    private String end;
-    private String separator;
-    private List<TLAPlusExpression> children;
+    private final String start;
+    private final String end;
+    private final String separator;
+    private final List<TLAPlusExpression> children;
 
     public TLAPlusNaryOperator(
             String start, String end, String separator, List<TLAPlusExpression> children) {

@@ -3,11 +3,11 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 
-public abstract class TLAPlusInfixBinayOperator extends TLAPlusBinaryOperator {
+public abstract class TLAPlusInfixBinaryOperator extends TLAPlusBinaryOperator {
 
-    private String infixOperator;
+    private final String infixOperator;
 
-    public TLAPlusInfixBinayOperator(
+    public TLAPlusInfixBinaryOperator(
             String infixOperator, TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
 
         super(operandOne, operandTwo);

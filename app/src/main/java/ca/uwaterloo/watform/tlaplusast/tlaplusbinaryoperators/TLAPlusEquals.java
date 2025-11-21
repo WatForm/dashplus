@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class TLAPlusEquals extends TLAPlusInfixBinayOperator {
+public class TLAPlusEquals extends TLAPlusInfixBinaryOperator {
 
     public TLAPlusEquals(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
         super(TLAPlusStrings.EQUALS, operandOne, operandTwo);

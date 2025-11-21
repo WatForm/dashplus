@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class TLAPlusSimpleExpression extends TLAPlusExpression {
 
-    private String core;
+    private final String core;
 
     public TLAPlusSimpleExpression(String core) {
         this.core = core;

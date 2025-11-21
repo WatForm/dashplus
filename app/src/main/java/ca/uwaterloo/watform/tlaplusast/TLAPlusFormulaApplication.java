@@ -5,8 +5,8 @@ import java.util.List;
 
 public class TLAPlusFormulaApplication extends TLAPlusExpression {
 
-    private String name;
-    private List<TLAPlusExpression> params;
+    private final String name;
+    private final List<TLAPlusExpression> params;
 
     public TLAPlusFormulaApplication(String name) {
         this.name = name;

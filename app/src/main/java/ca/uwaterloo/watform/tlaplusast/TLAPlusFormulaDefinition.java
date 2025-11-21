@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TLAPlusFormulaDefinition extends TLAPlusExpression {
-    private TLAPlusFormulaDeclaration declaration;
-    private TLAPlusExpression body;
+    private final TLAPlusFormulaDeclaration declaration;
+    private final TLAPlusExpression body;
 
     public TLAPlusFormulaDefinition(TLAPlusFormulaDeclaration declaration, TLAPlusExpression body) {
         this.declaration = declaration;

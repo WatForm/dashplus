@@ -6,9 +6,9 @@ import java.util.List;
 
 public abstract class TLAPlusQuantifier extends TLAPlusExpression {
 
-    private TLAPlusVariable v; // bound variable
-    private TLAPlusExpression set; // set that the iteration takes place over
-    private TLAPlusExpression exp; // expression used
+    private final TLAPlusVariable v; // bound variable
+    private final TLAPlusExpression set; // set that the iteration takes place over
+    private final TLAPlusExpression exp; // expression used
 
     public TLAPlusQuantifier(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
         this.v = v;
