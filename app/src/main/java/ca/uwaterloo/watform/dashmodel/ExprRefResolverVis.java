@@ -35,6 +35,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.dashast.DashStrings.DashRefKind;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
@@ -114,7 +115,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
-        kind = kind.STATE;
+        kind = DashRefKind.STATE;
 
         DashRef x = (DashRef) ((DashRef) expr).accept(this); // (DashRef) visit(expr) //
         kind = defaultKind;
@@ -126,8 +127,8 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
-        kind = kind.EVENT;
-        DashRef x = (DashRef) ((DashRef) expr).accept(this);
+        kind = DashRefKind.EVENT;
+        DashRef x = (DashRef) visit(expr);
         kind = defaultKind;
         return x;
     }
