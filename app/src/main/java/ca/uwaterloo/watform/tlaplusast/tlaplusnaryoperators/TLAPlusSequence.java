@@ -10,6 +10,7 @@ public class TLAPlusSequence extends TLAPlusNaryOperator {
                 TLAPlusStrings.SEQUENCE_OPEN,
                 TLAPlusStrings.SEQUENCE_CLOSE,
                 TLAPlusStrings.COMMA,
-                children);
+                children,
+                TLAPlusOperator.PrecedenceGroup.SAFE);
     }
 }

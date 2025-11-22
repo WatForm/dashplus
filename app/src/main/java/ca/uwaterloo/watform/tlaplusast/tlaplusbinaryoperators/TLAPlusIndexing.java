@@ -5,7 +5,11 @@ import ca.uwaterloo.watform.tlaplusast.*;
 public class TLAPlusIndexing extends TLAPlusBinaryOperator {
 
     public TLAPlusIndexing(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
-        super(operandOne, operandTwo);
+        super(
+                operandOne,
+                operandTwo,
+                TLAPlusOperator.Associativity.IRRELEVANT,
+                TLAPlusOperator.PrecedenceGroup.SAFE);
     }
 
     @Override

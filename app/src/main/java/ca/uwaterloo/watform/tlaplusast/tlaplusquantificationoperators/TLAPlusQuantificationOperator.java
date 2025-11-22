@@ -1,16 +1,21 @@
-package ca.uwaterloo.watform.tlaplusast.tlaplusquantifier;
+package ca.uwaterloo.watform.tlaplusast.tlaplusquantificationoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TLAPlusQuantifier extends TLAPlusExpression {
+public abstract class TLAPlusQuantificationOperator extends TLAPlusOperator {
 
     private final TLAPlusVariable v; // bound variable
     private final TLAPlusExpression set; // set that the iteration takes place over
     private final TLAPlusExpression exp; // expression used
 
-    public TLAPlusQuantifier(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
+    public TLAPlusQuantificationOperator(
+            TLAPlusVariable v,
+            TLAPlusExpression set,
+            TLAPlusExpression exp,
+            TLAPlusOperator.PrecedenceGroup precedenceGroup) {
+        super(TLAPlusOperator.Associativity.IRRELEVANT, precedenceGroup);
         this.v = v;
         this.exp = exp;
         this.set = set;

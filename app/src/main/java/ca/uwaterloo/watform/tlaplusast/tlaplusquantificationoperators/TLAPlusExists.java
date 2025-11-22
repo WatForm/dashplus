@@ -1,10 +1,10 @@
-package ca.uwaterloo.watform.tlaplusast.tlaplusquantifier;
+package ca.uwaterloo.watform.tlaplusast.tlaplusquantificationoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class TLAPlusExists extends TLAPlusQuantifier {
+public class TLAPlusExists extends TLAPlusQuantificationOperator {
     public TLAPlusExists(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
-        super(v, set, exp);
+        super(v, set, exp, TLAPlusOperator.PrecedenceGroup.PREDICATE);
     }
 
     @Override

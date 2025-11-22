@@ -116,6 +116,11 @@ public class GeneralUtil {
         return x;
     }
 
+    // number of occurrences of c in s (no idiomatic way to write this in java)
+    public static int occurrences(String s, String c) {
+        return s.length() - s.replace(c, "").length();
+    }
+
     // from: https://stackoverflow.com/questions/53441973/mapping-over-a-list-in-java
     public static <T, S> List<S> mapBy(List<T> items, Function<T, S> mapFn) {
         return items.stream().map(mapFn).collect(Collectors.toList());

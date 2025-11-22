@@ -4,12 +4,17 @@ import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TLAPlusBinaryOperator extends TLAPlusExpression {
+public abstract class TLAPlusBinaryOperator extends TLAPlusOperator {
 
     private final TLAPlusExpression operandOne;
     private final TLAPlusExpression operandTwo;
 
-    public TLAPlusBinaryOperator(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
+    public TLAPlusBinaryOperator(
+            TLAPlusExpression operandOne,
+            TLAPlusExpression operandTwo,
+            TLAPlusOperator.Associativity associativity,
+            TLAPlusOperator.PrecedenceGroup precedenceGroup) {
+        super(associativity, precedenceGroup);
         this.operandOne = operandOne;
         this.operandTwo = operandTwo;
     }

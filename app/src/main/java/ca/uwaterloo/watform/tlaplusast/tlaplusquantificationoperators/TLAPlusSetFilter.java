@@ -1,12 +1,13 @@
-package ca.uwaterloo.watform.tlaplusast.tlaplusquantifier;
+package ca.uwaterloo.watform.tlaplusast.tlaplusquantificationoperators;
 
 import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusOperator;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 
-public class TLAPlusSetFilter extends TLAPlusQuantifier {
+public class TLAPlusSetFilter extends TLAPlusQuantificationOperator {
 
     public TLAPlusSetFilter(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
-        super(v, set, exp);
+        super(v, set, exp, TLAPlusOperator.PrecedenceGroup.SAFE);
     }
 
     /*

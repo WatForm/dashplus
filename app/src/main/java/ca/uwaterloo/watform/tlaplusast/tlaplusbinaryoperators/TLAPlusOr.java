@@ -5,6 +5,11 @@ import ca.uwaterloo.watform.tlaplusast.*;
 public class TLAPlusOr extends TLAPlusInfixBinaryOperator {
 
     public TLAPlusOr(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
-        super(TLAPlusStrings.OR, operandOne, operandTwo);
+        super(
+                TLAPlusStrings.OR,
+                operandOne,
+                operandTwo,
+                TLAPlusOperator.Associativity.IRRELEVANT,
+                PrecedenceGroup.OR);
     }
 }

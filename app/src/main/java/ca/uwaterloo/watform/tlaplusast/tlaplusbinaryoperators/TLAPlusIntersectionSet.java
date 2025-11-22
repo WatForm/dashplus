@@ -5,6 +5,11 @@ import ca.uwaterloo.watform.tlaplusast.*;
 public class TLAPlusIntersectionSet extends TLAPlusInfixBinaryOperator {
 
     public TLAPlusIntersectionSet(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
-        super(TLAPlusStrings.SET_INTERSECTION, operandOne, operandTwo);
+        super(
+                TLAPlusStrings.SET_INTERSECTION,
+                operandOne,
+                operandTwo,
+                TLAPlusOperator.Associativity.IRRELEVANT,
+                PrecedenceGroup.SET_INTERSECTION);
     }
 }

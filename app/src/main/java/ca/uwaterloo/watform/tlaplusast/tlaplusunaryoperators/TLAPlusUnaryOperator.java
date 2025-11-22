@@ -4,11 +4,14 @@ import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TLAPlusUnaryOperator extends TLAPlusExpression {
+public abstract class TLAPlusUnaryOperator extends TLAPlusOperator {
 
     private TLAPlusExpression operand;
 
-    public TLAPlusUnaryOperator(TLAPlusExpression operand) {
+    public TLAPlusUnaryOperator(
+            TLAPlusExpression operand, TLAPlusOperator.PrecedenceGroup precedenceGroup) {
+
+        super(TLAPlusOperator.Associativity.IRRELEVANT, precedenceGroup);
         this.operand = operand;
     }
 

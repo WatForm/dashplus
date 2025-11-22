@@ -20,20 +20,18 @@ public class StateFormulae {
 
         List<String> names = dashModel.st.getAllNames();
 
-        toposort(names); // sorts it based on depth, thus all ancestors lie to the right and all
+        depthSort(names); // sorts it based on depth, thus all ancestors lie to the right and all
         // descendants lie to the left, for every state
 
         for (String s : names.reversed()) makeStateFormula(s, dashModel, tlaPlusModel);
     }
 
-    public static void toposort(List<String> stateNames) {
+    public static void depthSort(List<String> stateNames) {
         Collections.sort(
                 stateNames,
-                (a, b) -> occurances(a, Common.QUALIFIER) - occurances(b, Common.QUALIFIER));
-    }
-
-    public static int occurances(String s, String c) {
-        return s.length() - s.replace(c, "").length();
+                (a, b) ->
+                        GeneralUtil.occurrences(a, Common.QUALIFIER)
+                                - GeneralUtil.occurrences(b, Common.QUALIFIER));
     }
 
     public static void makeStateFormula(String s, DashModel dashModel, TLAPlusModel tlaPlusModel) {

@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusNot extends TLAPlusUnaryOperator {
     public TLAPlusNot(TLAPlusExpression operand) {
-        super(operand);
+        super(operand, TLAPlusOperator.PrecedenceGroup.NOT);
     }
 
     @Override
