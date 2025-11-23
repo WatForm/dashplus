@@ -21,6 +21,18 @@ public abstract class TLAPlusQuantificationOperator extends TLAPlusOperator {
         this.set = set;
     }
 
+    public TLAPlusExpression getSet() {
+        return this.set;
+    }
+
+    public TLAPlusVariable getV() {
+        return this.v;
+    }
+
+    public TLAPlusExpression getExp() {
+        return this.exp;
+    }
+
     public List<TLAPlusExpression> getChildren() {
         List<TLAPlusExpression> children = new ArrayList<>();
         children.add(this.v);
@@ -28,19 +40,4 @@ public abstract class TLAPlusQuantificationOperator extends TLAPlusOperator {
         children.add(this.exp);
         return children;
     }
-
-    /*
-    @Override
-    public List<String> toStringList() {
-
-        List<String> result = new ArrayList<>();
-        result.add(this.symbol);
-        result.addAll(this.children.get(0).toStringList());
-        result.add(TLAPlusStrings.SET_IN);
-        result.addAll(this.children.get(1).toStringList());
-        result.add(TLAPlusStrings.COLON);
-        result.addAll(this.children.get(2).toStringList());
-        return result;
-    }
-     */
 }

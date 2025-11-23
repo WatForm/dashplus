@@ -3,42 +3,37 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusFormulaApplication extends TLAPlusExpression {
+public class TLAPlusFormulaApplication extends TLAPlusOperator {
 
     private final String name;
-    private final List<TLAPlusExpression> params;
+    private final List<TLAPlusExpression> parameters;
+
+    public TLAPlusFormulaApplication(String name, List<TLAPlusExpression> parameters) {
+        super(TLAPlusOperator.Associativity.IRRELEVANT, TLAPlusOperator.PrecedenceGroup.SAFE);
+        this.name = name;
+        this.parameters = parameters;
+    }
 
     public TLAPlusFormulaApplication(String name) {
-        this.name = name;
-        this.params = new ArrayList<>();
+        this(name, new ArrayList<>());
     }
 
     public List<TLAPlusExpression> getChildren() {
-        return this.params;
-    }
-
-    public TLAPlusFormulaApplication(String name, List<TLAPlusExpression> parameters) {
-        this.name = name;
-        this.params = parameters;
+        return this.parameters;
     }
 
     @Override
-    public void toString(StringBuilder sb, int ident) {
+    public String toTLAPlusSnippetCore() {
+        int n = this.parameters.size();
+        if (n == 0) return this.name;
 
-        int n = this.params.size();
-
-        if (n == 0) {
-            sb.append(this.name);
-            return;
-        }
-
+        StringBuilder sb = new StringBuilder();
         sb.append(this.name + TLAPlusStrings.BRACKET_OPEN);
         for (int i = 0; i < n; i++) {
-            this.params.get(i).toString(sb, ident);
+            sb.append(this.getTLASnippetOfChild(this.parameters.get(i)));
             if (i != n - 1) sb.append(TLAPlusStrings.COMMA);
         }
         sb.append(TLAPlusStrings.BRACKET_CLOSE);
-
-        return;
+        return sb.toString();
     }
 }

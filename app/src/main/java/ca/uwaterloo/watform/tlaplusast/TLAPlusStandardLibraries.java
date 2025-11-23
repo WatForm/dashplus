@@ -23,16 +23,14 @@ public class TLAPlusStandardLibraries extends TLAPlusExpression { // enums used 
     }
 
     @Override
-    public void toString(StringBuilder sb, int ident) {
+    public String toTLAPlusSnippetCore() {
 
-        String s = "Unknown";
-        if (this.library == LIBRARIES.STL_FiniteSets) s = TLAPlusStrings.FINITE_SETS;
-        else if (this.library == LIBRARIES.STL_Naturals) s = TLAPlusStrings.NATURALS;
-        else if (this.library == LIBRARIES.STL_Integers) s = TLAPlusStrings.INTEGERS;
-        else if (this.library == LIBRARIES.STL_Sequences) s = TLAPlusStrings.SEQUENCES;
+        if (this.library == LIBRARIES.STL_FiniteSets) return TLAPlusStrings.FINITE_SETS;
+        else if (this.library == LIBRARIES.STL_Naturals) return TLAPlusStrings.NATURALS;
+        else if (this.library == LIBRARIES.STL_Integers) return TLAPlusStrings.INTEGERS;
+        else if (this.library == LIBRARIES.STL_Sequences) return TLAPlusStrings.SEQUENCES;
 
-        sb.append(s);
-        return;
+        return "Unknown"; // implementatoin error todo
     }
 
     public static TLAPlusFormulaApplication Cardinality(TLAPlusVariable arg) {

@@ -48,13 +48,24 @@ public abstract class TLAPlusOperator extends TLAPlusExpression {
         this.precedenceGroup = precedenceGroup;
     }
 
+    public static boolean childNeedsParenthesis(TLAPlusExpression parent, TLAPlusExpression child) {
+        return true;
+    }
+
+    public String getTLASnippetOfChild(TLAPlusExpression child) {
+        return child.toTLAPlusSnippet(TLAPlusOperator.childNeedsParenthesis(this, child));
+    }
+
     /*
-    public abstract String toTLAPlusSnippet(Class parentClass);
+    public abstract String toTLAPlusSnippet(Associativity parentAssociativity, PrecedenceGroup parentPrecedenceGroup);
+
+    issues:
+    the child is not guaranteed to have the right function
 
     @Override
     public void toString(StringBuilder sb, int ident)
     {
-    	sb.append(this.toTLAPlusSnippet(null));
+    	sb.append(this.toTLAPlusSnippet(Associativity.IRRELEVANT,PrecedenceGroup.SAFE));
     	return;
     }
     */

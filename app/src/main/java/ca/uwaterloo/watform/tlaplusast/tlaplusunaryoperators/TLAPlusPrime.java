@@ -10,10 +10,7 @@ public class TLAPlusPrime extends TLAPlusUnaryOperator {
     }
 
     @Override
-    public void toString(StringBuilder sb, int ident) {
-
-        this.getOperand().toString(sb, ident);
-        sb.append(TLAPlusStrings.PRIME);
-        return;
+    public String toTLAPlusSnippetCore() {
+        return this.getTLASnippetOfChild(getOperand()) + TLAPlusStrings.PRIME;
     }
 }

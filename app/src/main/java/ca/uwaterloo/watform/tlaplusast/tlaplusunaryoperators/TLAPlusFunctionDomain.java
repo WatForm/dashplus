@@ -11,11 +11,10 @@ public class TLAPlusFunctionDomain extends TLAPlusUnaryOperator {
     }
 
     @Override
-    public void toString(StringBuilder sb, int ident) {
-
-        sb.append(TLAPlusStrings.DOMAIN + TLAPlusStrings.SPACE);
-        this.getOperand().toString(sb, ident);
-
-        return;
+    public String toTLAPlusSnippetCore() {
+        return TLAPlusStrings.DOMAIN
+                + TLAPlusStrings.SPACE
+                + this.getTLASnippetOfChild(getOperand())
+                + TLAPlusStrings.PRIME;
     }
 }

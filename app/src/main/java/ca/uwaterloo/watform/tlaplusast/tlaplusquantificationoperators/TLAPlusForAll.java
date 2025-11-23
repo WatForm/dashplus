@@ -8,8 +8,9 @@ public class TLAPlusForAll extends TLAPlusQuantificationOperator {
     }
 
     @Override
-    public void toString(StringBuilder sb, int ident) {
-        return;
-        // TODO fix this
+    public String toTLAPlusSnippetCore() {
+        return TLAPlusStrings.FOR_ALL
+                + TLAPlusStrings.SPACE
+                + this.getTLASnippetOfChild(this.getV());
     }
 }

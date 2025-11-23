@@ -20,7 +20,16 @@ public abstract class TLAPlusInfixBinaryOperator extends TLAPlusBinaryOperator {
     }
 
     @Override
-    public void toString(StringBuilder sb, int ident) {
+    public String toTLAPlusSnippetCore() {
+        return this.getTLASnippetOfChild(this.getOperandOne())
+                + TLAPlusStrings.SPACE
+                + this.infixOperator
+                + TLAPlusStrings.SPACE
+                + this.getTLASnippetOfChild(getOperandTwo());
+    }
+
+    /*
+    public String TLAPlusCoreSnippet() {
 
         this.getOperandOne().toString(sb, ident);
         sb.append(TLAPlusStrings.SPACE + this.infixOperator + TLAPlusStrings.SPACE);
@@ -28,4 +37,5 @@ public abstract class TLAPlusInfixBinaryOperator extends TLAPlusBinaryOperator {
 
         return;
     }
+    */
 }

@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TLAPlusFormulaDefinition extends TLAPlusExpression {
@@ -21,9 +21,17 @@ public class TLAPlusFormulaDefinition extends TLAPlusExpression {
     }
 
     public List<TLAPlusExpression> getChildren() {
-        List<TLAPlusExpression> children = new ArrayList<>();
-        children.add(this.declaration);
-        children.add(this.body);
-        return children;
+        return Arrays.asList(this.declaration, this.body);
+    }
+
+    @Override
+    public String toTLAPlusSnippetCore() {
+
+        // precedence and associativity is never a problem with definitions
+        return this.declaration.toTLAPlusSnippet(false)
+                + TLAPlusStrings.SPACE
+                + TLAPlusStrings.DEFINITION
+                + TLAPlusStrings.SPACE
+                + this.body.toTLAPlusSnippet(false);
     }
 }

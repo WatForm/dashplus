@@ -24,6 +24,21 @@ public abstract class TLAPlusNaryOperator extends TLAPlusOperator {
     }
 
     @Override
+    public String toTLAPlusSnippetCore() {
+        int n = this.children.size();
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.start);
+        if (n != 0) {
+            for (int i = 0; i < n; i++) {
+                sb.append(this.getTLASnippetOfChild(this.children.get(i)));
+                if (i != n - 1) sb.append(this.separator);
+            }
+        }
+        sb.append(this.end);
+        return sb.toString();
+    }
+
+    @Override
     public void toString(StringBuilder sb, int ident) {
 
         int n = this.children.size();

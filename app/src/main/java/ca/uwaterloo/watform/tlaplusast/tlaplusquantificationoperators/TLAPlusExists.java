@@ -8,8 +8,9 @@ public class TLAPlusExists extends TLAPlusQuantificationOperator {
     }
 
     @Override
-    public void toString(StringBuilder sb, int ident) {
-        return;
-        // TODO fix this
+    public String toTLAPlusSnippetCore() {
+        return TLAPlusStrings.EXISTS
+                + TLAPlusStrings.SPACE
+                + this.getTLASnippetOfChild(this.getV());
     }
 }

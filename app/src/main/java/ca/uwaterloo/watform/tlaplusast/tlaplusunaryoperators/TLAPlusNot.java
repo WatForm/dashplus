@@ -8,11 +8,7 @@ public class TLAPlusNot extends TLAPlusUnaryOperator {
     }
 
     @Override
-    public void toString(StringBuilder sb, int ident) {
-
-        sb.append(TLAPlusStrings.NOT + TLAPlusStrings.SPACE);
-        this.getOperand().toString(sb, ident);
-
-        return;
+    public String toTLAPlusSnippetCore() {
+        return TLAPlusStrings.NOT + this.getTLASnippetOfChild(getOperand());
     }
 }
