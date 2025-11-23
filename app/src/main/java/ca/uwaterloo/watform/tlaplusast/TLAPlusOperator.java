@@ -40,6 +40,15 @@ public abstract class TLAPlusOperator extends TLAPlusExpression {
         CONCAT
     }
 
+    public static final PrecedenceGroup[] PRECEDENCE_ORDER =
+            new PrecedenceGroup[] {
+
+                // lowest goes here
+
+                PrecedenceGroup.ADD_SUB, PrecedenceGroup.MULT,
+                // highest goes here
+            };
+
     private final Associativity associativity;
     private final PrecedenceGroup precedenceGroup;
 
@@ -49,6 +58,26 @@ public abstract class TLAPlusOperator extends TLAPlusExpression {
     }
 
     public static boolean childNeedsParenthesis(TLAPlusExpression parent, TLAPlusExpression child) {
+        // TODO implement this to improve readability of generated code
+
+        // this is a conservative implementation - by default, parentheses are needed
+
+        // if either one is not an operator, no brackets are needed
+
+        // if either one is SAFE, no brackets are needed
+
+        // if either one is UNSAFE, brackets are needed, no more questions
+
+        // if the priority of the parent is less than that of the child, no brackets are needed
+
+        // if the priority of the parent is the same as that of the child and the parent is a binary
+        // operator:
+        // 1) if parent is left associative and child is the left child, no brackets needed
+        // 2) if parent is right associative and child is the right child, no brackets needed
+        // 3) if the parent is irrelevant associative, no brackets needed
+
+        // if the parent node is an operator with a higher precedence than a lower node, brackets
+        // are necessary
         return true;
     }
 
@@ -56,18 +85,11 @@ public abstract class TLAPlusOperator extends TLAPlusExpression {
         return child.toTLAPlusSnippet(TLAPlusOperator.childNeedsParenthesis(this, child));
     }
 
-    /*
-    public abstract String toTLAPlusSnippet(Associativity parentAssociativity, PrecedenceGroup parentPrecedenceGroup);
-
-    issues:
-    the child is not guaranteed to have the right function
-
-    @Override
-    public void toString(StringBuilder sb, int ident)
-    {
-    	sb.append(this.toTLAPlusSnippet(Associativity.IRRELEVANT,PrecedenceGroup.SAFE));
-    	return;
+    public Associativity getAssociativity() {
+        return this.associativity;
     }
-    */
 
+    public PrecedenceGroup getPrecedenceGroup() {
+        return this.precedenceGroup;
+    }
 }

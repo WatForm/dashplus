@@ -7,15 +7,16 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 
 public class TLAPlusSetFilter extends TLAPlusQuantificationOperator {
 
-    public TLAPlusSetFilter(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
-        super(v, set, exp, TLAPlusOperator.PrecedenceGroup.SAFE);
+    public TLAPlusSetFilter(
+            TLAPlusVariable variable, TLAPlusExpression set, TLAPlusExpression expression) {
+        super(variable, set, expression, TLAPlusOperator.PrecedenceGroup.SAFE);
     }
 
     // {x \in S: P(x)}
     @Override
     public String toTLAPlusSnippetCore() {
         return TLAPlusStrings.SET_START
-                + this.getTLASnippetOfChild(getV())
+                + this.getTLASnippetOfChild(getVariable())
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.IN
                 + TLAPlusStrings.SPACE
@@ -23,7 +24,7 @@ public class TLAPlusSetFilter extends TLAPlusQuantificationOperator {
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.COLON
                 + TLAPlusStrings.SPACE
-                + this.getTLASnippetOfChild(getExp())
+                + this.getTLASnippetOfChild(getExpression())
                 + TLAPlusStrings.SET_END;
     }
 }

@@ -1,23 +1,23 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusquantificationoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class TLAPlusQuantificationOperator extends TLAPlusOperator {
 
-    private final TLAPlusVariable v; // bound variable
+    private final TLAPlusVariable variable; // bound variable
     private final TLAPlusExpression set; // set that the iteration takes place over
-    private final TLAPlusExpression exp; // expression used
+    private final TLAPlusExpression expression; // expression used
 
     public TLAPlusQuantificationOperator(
-            TLAPlusVariable v,
+            TLAPlusVariable variable,
             TLAPlusExpression set,
-            TLAPlusExpression exp,
+            TLAPlusExpression expression,
             TLAPlusOperator.PrecedenceGroup precedenceGroup) {
         super(TLAPlusOperator.Associativity.IRRELEVANT, precedenceGroup);
-        this.v = v;
-        this.exp = exp;
+        this.variable = variable;
+        this.expression = expression;
         this.set = set;
     }
 
@@ -25,19 +25,30 @@ public abstract class TLAPlusQuantificationOperator extends TLAPlusOperator {
         return this.set;
     }
 
-    public TLAPlusVariable getV() {
-        return this.v;
+    public TLAPlusVariable getVariable() {
+        return this.variable;
     }
 
-    public TLAPlusExpression getExp() {
-        return this.exp;
+    public TLAPlusExpression getExpression() {
+        return this.expression;
     }
 
     public List<TLAPlusExpression> getChildren() {
-        List<TLAPlusExpression> children = new ArrayList<>();
-        children.add(this.v);
-        children.add(this.set);
-        children.add(this.exp);
-        return children;
+        return Arrays.asList(this.variable, this.set, this.expression);
+    }
+
+    // this is a common style for exists and for-all
+    static String predicateSnippetCore(TLAPlusQuantificationOperator o, String symbol) {
+        return symbol
+                + TLAPlusStrings.SPACE
+                + o.getTLASnippetOfChild(o.getVariable())
+                + TLAPlusStrings.SPACE
+                + TLAPlusStrings.IN
+                + TLAPlusStrings.SPACE
+                + o.getTLASnippetOfChild(o.getSet())
+                + TLAPlusStrings.SPACE
+                + TLAPlusStrings.COLON
+                + TLAPlusStrings.SPACE
+                + o.getTLASnippetOfChild(o.getExpression());
     }
 }

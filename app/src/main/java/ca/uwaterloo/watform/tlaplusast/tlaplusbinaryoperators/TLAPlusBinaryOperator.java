@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class TLAPlusBinaryOperator extends TLAPlusOperator {
@@ -28,9 +28,6 @@ public abstract class TLAPlusBinaryOperator extends TLAPlusOperator {
     }
 
     public List<TLAPlusExpression> getChildren() {
-        List<TLAPlusExpression> children = new ArrayList<>();
-        children.add(this.operandOne);
-        children.add(this.operandTwo);
-        return children;
+        return Arrays.asList(this.operandOne, this.operandTwo);
     }
 }

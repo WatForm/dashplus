@@ -7,19 +7,20 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 
 public class TLAPlusSetMap extends TLAPlusQuantificationOperator {
 
-    public TLAPlusSetMap(TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
-        super(v, set, exp, TLAPlusOperator.PrecedenceGroup.SAFE);
+    public TLAPlusSetMap(
+            TLAPlusVariable variable, TLAPlusExpression set, TLAPlusExpression expression) {
+        super(variable, set, expression, TLAPlusOperator.PrecedenceGroup.SAFE);
     }
 
     // {e: x \in S}
     @Override
     public String toTLAPlusSnippetCore() {
         return TLAPlusStrings.SET_START
-                + this.getTLASnippetOfChild(getExp())
+                + this.getTLASnippetOfChild(getExpression())
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.COLON
                 + TLAPlusStrings.SPACE
-                + this.getTLASnippetOfChild(getV())
+                + this.getTLASnippetOfChild(getVariable())
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.IN
                 + TLAPlusStrings.SPACE

@@ -27,15 +27,4 @@ public abstract class TLAPlusInfixBinaryOperator extends TLAPlusBinaryOperator {
                 + TLAPlusStrings.SPACE
                 + this.getTLASnippetOfChild(getOperandTwo());
     }
-
-    /*
-    public String TLAPlusCoreSnippet() {
-
-        this.getOperandOne().toString(sb, ident);
-        sb.append(TLAPlusStrings.SPACE + this.infixOperator + TLAPlusStrings.SPACE);
-        this.getOperandTwo().toString(sb, ident);
-
-        return;
-    }
-    */
 }

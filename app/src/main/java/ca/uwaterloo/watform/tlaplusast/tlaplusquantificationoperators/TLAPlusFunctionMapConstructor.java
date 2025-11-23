@@ -7,15 +7,15 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 
 public class TLAPlusFunctionMapConstructor extends TLAPlusQuantificationOperator {
     public TLAPlusFunctionMapConstructor(
-            TLAPlusVariable v, TLAPlusExpression set, TLAPlusExpression exp) {
-        super(v, set, exp, TLAPlusOperator.PrecedenceGroup.SAFE);
+            TLAPlusVariable variable, TLAPlusExpression set, TLAPlusExpression expression) {
+        super(variable, set, expression, TLAPlusOperator.PrecedenceGroup.SAFE);
     }
 
     // [x \in S |-> e]
     @Override
     public String toTLAPlusSnippetCore() {
         return TLAPlusStrings.SQUARE_BRACKET_OPEN
-                + this.getTLASnippetOfChild(getV())
+                + this.getTLASnippetOfChild(getVariable())
                 + TLAPlusStrings.IN
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.SPACE
@@ -23,8 +23,7 @@ public class TLAPlusFunctionMapConstructor extends TLAPlusQuantificationOperator
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.MAP
                 + TLAPlusStrings.SPACE
-                + this.getTLASnippetOfChild(getExp())
+                + this.getTLASnippetOfChild(getExpression())
                 + TLAPlusStrings.SPACE;
-        // TODO fix this
     }
 }
