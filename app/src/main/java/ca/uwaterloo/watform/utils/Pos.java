@@ -46,6 +46,13 @@ public final class Pos {
         this.colEnd = colEnd;
     }
 
+    public Pos(edu.mit.csail.sdg.alloy4.Pos alloyJarPos) {
+        this.rowStart = alloyJarPos.y;
+        this.rowEnd = alloyJarPos.y2;
+        this.colStart = alloyJarPos.x - 1; // change to 0 indexed
+        this.colEnd = alloyJarPos.x2 - 1; // change to 0 indexed
+    }
+
     @Override
     public String toString() {
         return "Pos: \n  rowStart: "

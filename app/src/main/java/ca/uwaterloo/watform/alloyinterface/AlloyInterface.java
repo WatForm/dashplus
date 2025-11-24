@@ -24,25 +24,23 @@ public class AlloyInterface {
         }
     }
 
-    public static A4Solution executeCommand(String alloyCode, int cmdnum) {
+    public static Solution executeCommand(String alloyCode, int cmdnum) {
         CompModule alloy = parse(alloyCode);
         A4Reporter rep = new A4Reporter();
         Command cmd = alloy.getAllCommands().get(cmdnum);
         A4Solution ans =
                 TranslateAlloyToKodkod.execute_command(
                         rep, alloy.getAllReachableSigs(), cmd, new A4Options());
-        return ans;
+        return new Solution(ans, alloy);
     }
 
     public static void executeCommand(String alloyCode, int cmdnum, String XMLfileName) {
-        A4Solution ans = executeCommand(alloyCode, cmdnum);
-        ans.writeXML(XMLfileName);
+        AlloyInterface.executeCommand(alloyCode, cmdnum).writeXML(XMLfileName);
     }
 
     public static Solution executeCommand(AlloyModel am, int cmdnum) {
         String alloyCode = am.toString();
-        A4Solution ans = executeCommand(alloyCode, cmdnum);
-        return new Solution(ans);
+        return AlloyInterface.executeCommand(alloyCode, cmdnum);
     }
 
     public static Solution executeCommand(AlloyModel am) {

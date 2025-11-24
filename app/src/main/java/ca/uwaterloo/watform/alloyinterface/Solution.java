@@ -1,18 +1,26 @@
 package ca.uwaterloo.watform.alloyinterface;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.utils.CommonStrings;
+import ca.uwaterloo.watform.utils.ImplementationError;
+import ca.uwaterloo.watform.utils.Pos;
+import edu.mit.csail.sdg.alloy4.Err;
+import edu.mit.csail.sdg.alloy4.ErrorFatal;
 import edu.mit.csail.sdg.ast.Sig;
-import edu.mit.csail.sdg.ast.Sig.*;
+import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Solution;
+import edu.mit.csail.sdg.translator.A4TupleSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import kodkod.ast.Relation;
@@ -23,10 +31,12 @@ import kodkod.instance.TupleSet;
 public final class Solution {
     private A4Solution a4Solution;
     private final Map<String, Set<List<String>>> map;
+    private final CompModule alloyModule;
 
-    public Solution(A4Solution a4Solution) {
+    public Solution(A4Solution a4Solution, CompModule alloyModule) {
         this.a4Solution = a4Solution;
         this.map = new HashMap<>();
+        this.alloyModule = alloyModule;
         populateMap();
     }
 
@@ -41,6 +51,34 @@ public final class Solution {
     public void next() {
         this.a4Solution = this.a4Solution.next();
         this.populateMap();
+    }
+
+    public EvalRes eval(AlloyExpr alloyExpr) {
+        Object evalResult = null;
+        try {
+            evalResult =
+                    this.a4Solution.eval(
+                            CompUtil.parseOneExpression_fromString(
+                                    this.alloyModule, alloyExpr.toString()));
+        } catch (ErrorFatal alloyJarErrFatal) {
+            throw new ImplementationError(alloyJarErrFatal.toString());
+        } catch (Err alloyJarErr) {
+            throw AlloyInterfaceError.solutionEvalErr(
+                    new Pos(alloyJarErr.pos), alloyJarErr.toString());
+        }
+
+        if (evalResult instanceof String) {
+            return EvalRes.of((String) evalResult);
+        } else if (evalResult instanceof Boolean) {
+            return EvalRes.of((boolean) evalResult);
+        } else if (evalResult instanceof A4TupleSet) {
+            return EvalRes.of(
+                    (Set<List<String>>)
+                            this.convertKKTupleSet(
+                                    ((A4TupleSet) evalResult).debugGetKodkodTupleset()));
+        } else {
+            throw ImplementationError.missingCase("Solution.eval(AlloyExpr alloyExpr)");
+        }
     }
 
     public Set<List<String>> eval(AlloySigPara sigPara) {
@@ -74,6 +112,10 @@ public final class Solution {
         return Collections.emptySet();
     }
 
+    public void writeXML(String filename) {
+        this.a4Solution.writeXML(filename);
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -88,11 +130,7 @@ public final class Solution {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((a4Solution == null) ? 0 : a4Solution.hashCode());
-        result = prime * result + ((map == null) ? 0 : map.hashCode());
-        return result;
+        return Objects.hash(this.a4Solution, this.alloyModule, this.map);
     }
 
     @Override
@@ -137,5 +175,31 @@ public final class Solution {
             }
         }
         return Optional.empty();
+    }
+
+    public record EvalRes(String strVal, Boolean boolVal, Set<List<String>> setVal) {
+        public static EvalRes of(String string) {
+            return new EvalRes(string, null, null);
+        }
+
+        public static EvalRes of(boolean bool) {
+            return new EvalRes(null, bool, null);
+        }
+
+        public static EvalRes of(Set<List<String>> set) {
+            return new EvalRes(null, null, set);
+        }
+
+        public boolean isString() {
+            return strVal != null;
+        }
+
+        public boolean isBool() {
+            return boolVal != null;
+        }
+
+        public boolean isSet() {
+            return setVal != null;
+        }
     }
 }

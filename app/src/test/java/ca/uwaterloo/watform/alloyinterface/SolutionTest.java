@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.expr.unary.*;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyNumExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigIntExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
@@ -131,5 +134,49 @@ public class SolutionTest {
         assertEquals(
                 solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1 + AlloyStrings.DOT + F),
                 solution.eval(S1Sig, S1Sig.fields.getFirst()));
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Solution.eval(AlloyExpr alloyExpr)")
+    public void test6() {
+        String S1 = "S1";
+        String F = "F";
+        AlloySigPara S1Sig =
+                new AlloySigPara(
+                        new AlloyQnameExpr(S1),
+                        List.of(new AlloyDecl(new AlloyQnameExpr(F), new AlloySigIntExpr())),
+                        TestUtil.createBlock());
+        AlloyCmdPara cmdPara =
+                new AlloyCmdPara(
+                        new AlloyCmdPara.CommandDecl(
+                                AlloyCmdPara.CommandDecl.CmdType.RUN,
+                                null,
+                                TestUtil.createBlock(),
+                                new AlloyCmdPara.CommandDecl.Scope(
+                                        new AlloyCmdPara.CommandDecl.Scope.Typescope(
+                                                false, 1, true, 1, 1, S1))));
+        AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+        Solution solution = AlloyInterface.executeCommand(alloyModel);
+
+        Solution.EvalRes evalRes =
+                solution.eval(
+                        new AlloyNumCardinalityExpr(
+                                new AlloyDotExpr(new AlloyQnameExpr(S1), new AlloyQnameExpr(F))));
+        assertTrue(evalRes.isString());
+        assertEquals("1", evalRes.strVal());
+        evalRes =
+                solution.eval(
+                        new AlloyEqualsExpr(
+                                new AlloyNumExpr(1),
+                                new AlloyNumCardinalityExpr(
+                                        new AlloyDotExpr(
+                                                new AlloyQnameExpr(S1), new AlloyQnameExpr(F)))));
+        assertTrue(evalRes.isBool());
+        assertTrue(evalRes.boolVal());
+        evalRes = solution.eval(new AlloyDotExpr(new AlloyQnameExpr(S1), new AlloyQnameExpr(F)));
+        assertTrue(evalRes.isSet());
+        assertEquals(1, evalRes.setVal().size());
     }
 }
