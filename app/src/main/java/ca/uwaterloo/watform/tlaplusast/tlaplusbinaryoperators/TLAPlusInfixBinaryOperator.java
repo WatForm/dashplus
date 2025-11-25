@@ -21,10 +21,10 @@ public abstract class TLAPlusInfixBinaryOperator extends TLAPlusBinaryOperator {
 
     @Override
     public String toTLAPlusSnippetCore() {
-        return this.getTLASnippetOfChild(this.getOperandOne())
+        return this.getTLASnippetOfChild(this.operandOne)
                 + TLAPlusStrings.SPACE
                 + this.infixOperator
                 + TLAPlusStrings.SPACE
-                + this.getTLASnippetOfChild(getOperandTwo());
+                + this.getTLASnippetOfChild(this.operandTwo);
     }
 }

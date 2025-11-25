@@ -105,6 +105,11 @@ S \X T                      \* Cartesian product: set of all tuples <<x, y>>, wh
 x', y'                      \* a primed variable (suffixed with ') denotes variable value in the next state 
 UNCHANGED <<x,y>>           \* variables x, y are unchanged in the next state (same as x'=x /\ y'=y)
 
+(* Control structures *)
+
+LET x == e1 IN e2           \* introduces a local definition: every occurrence of x in e2 is replaced with e1
+IF P THEN e1 ELSE e2        \* if P is true, then e1 should be true; otherwise e2 should be true
+
 ```
 
 ### Not Implemented
@@ -115,11 +120,6 @@ UNCHANGED <<x,y>>           \* variables x, y are unchanged in the next state (s
 (* This is 
    multiline comment *)
 \* This is single line comment
-
-(* Control structures *)
-
-LET x == e1 IN e2           \* introduces a local definition: every occurrence of x in e2 is replaced with e1
-IF P THEN e1 ELSE e2        \* if P is true, then e1 should be true; otherwise e2 should be true
 
 (* Records *)
 
@@ -172,6 +172,11 @@ H == G(exp)
 - Each formula definition consists of a formula declaration and a formula body, which is a TLA+ expression.
 - A formula declaration consists of the name of the formula, along with a list of variables as parameters.
 - A formula application refers to the use of a formula within an expression, consisting of a name, along with a list of expressions as arguments.
+
+
+- Note that FormulaApplication is not treated as an n-ary operator because it is a meta-operator that constructs an n-ary operator from a custom formula name. It's an n-ary operator-generator, not an n-ary operator
+
+- Similarly, FormulaDefinition is not a binary infix operator because it can't be used arbitrarily in the tree, other uses of == can be found only in LET bindings, which are their own operator.
 
 # Plan for AST checks:
 
@@ -226,4 +231,26 @@ H == G(exp)
 - TLAPlusExp is for things that get expanded out - these have children, which are either atoms or expressions. These don't have a name field, the name info is supposed to be captured by the class type.
 
 - BinOP is an abstraction for binary operators, BinOPMid is an abstraction for binary operators which are printed in the middle of the operators.
+
+
+## Misc:
+
+```
+---- MODULE m ----
+
+EXTENDS Integers, FiniteSets
+
+VARIABLES t
+
+_Init == t = {10}
+_Next == (t' \in {{t-1},{t-2}}) /\ t > 0 
+
+====
+```
+This produces an error in TLA+ and cannot be used. Note that replacing `{{t-1},{t-2}}` with `{t-1,t-2}` and `t={10}` with `t=10` makes the program work.
+
+- Using /\ and \/ in the same expression requires the use of parentheses, this is VERY IMPORTANT. TLC cannot parse this
+
+
+
 

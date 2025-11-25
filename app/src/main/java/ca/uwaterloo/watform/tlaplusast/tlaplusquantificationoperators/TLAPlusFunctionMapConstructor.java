@@ -15,15 +15,15 @@ public class TLAPlusFunctionMapConstructor extends TLAPlusQuantificationOperator
     @Override
     public String toTLAPlusSnippetCore() {
         return TLAPlusStrings.SQUARE_BRACKET_OPEN
-                + this.getTLASnippetOfChild(getVariable())
+                + this.getTLASnippetOfChild(this.variable)
                 + TLAPlusStrings.IN
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.SPACE
-                + this.getTLASnippetOfChild(getSet())
+                + this.getTLASnippetOfChild(this.set)
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.MAP
                 + TLAPlusStrings.SPACE
-                + this.getTLASnippetOfChild(getExpression())
+                + this.getTLASnippetOfChild(this.expression)
                 + TLAPlusStrings.SPACE;
     }
 }

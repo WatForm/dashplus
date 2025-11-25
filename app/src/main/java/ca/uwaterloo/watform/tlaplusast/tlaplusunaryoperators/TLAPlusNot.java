@@ -9,6 +9,6 @@ public class TLAPlusNot extends TLAPlusUnaryOperator {
 
     @Override
     public String toTLAPlusSnippetCore() {
-        return TLAPlusStrings.NOT + this.getTLASnippetOfChild(getOperand());
+        return TLAPlusStrings.NOT + this.getTLASnippetOfChild(this.operand);
     }
 }

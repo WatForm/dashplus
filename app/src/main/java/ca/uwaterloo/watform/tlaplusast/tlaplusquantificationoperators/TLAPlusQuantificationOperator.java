@@ -6,9 +6,9 @@ import java.util.List;
 
 public abstract class TLAPlusQuantificationOperator extends TLAPlusOperator {
 
-    private final TLAPlusVariable variable; // bound variable
-    private final TLAPlusExpression set; // set that the iteration takes place over
-    private final TLAPlusExpression expression; // expression used
+    public final TLAPlusVariable variable; // bound variable
+    public final TLAPlusExpression set; // set that the iteration takes place over
+    public final TLAPlusExpression expression; // expression used
 
     public TLAPlusQuantificationOperator(
             TLAPlusVariable variable,
@@ -21,18 +21,6 @@ public abstract class TLAPlusQuantificationOperator extends TLAPlusOperator {
         this.set = set;
     }
 
-    public TLAPlusExpression getSet() {
-        return this.set;
-    }
-
-    public TLAPlusVariable getVariable() {
-        return this.variable;
-    }
-
-    public TLAPlusExpression getExpression() {
-        return this.expression;
-    }
-
     public List<TLAPlusExpression> getChildren() {
         return Arrays.asList(this.variable, this.set, this.expression);
     }
@@ -41,14 +29,14 @@ public abstract class TLAPlusQuantificationOperator extends TLAPlusOperator {
     static String predicateSnippetCore(TLAPlusQuantificationOperator o, String symbol) {
         return symbol
                 + TLAPlusStrings.SPACE
-                + o.getTLASnippetOfChild(o.getVariable())
+                + o.getTLASnippetOfChild(o.variable)
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.IN
                 + TLAPlusStrings.SPACE
-                + o.getTLASnippetOfChild(o.getSet())
+                + o.getTLASnippetOfChild(o.set)
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.COLON
                 + TLAPlusStrings.SPACE
-                + o.getTLASnippetOfChild(o.getExpression());
+                + o.getTLASnippetOfChild(o.expression);
     }
 }

@@ -14,7 +14,7 @@ public class TLAPlusFunctionDomain extends TLAPlusUnaryOperator {
     public String toTLAPlusSnippetCore() {
         return TLAPlusStrings.DOMAIN
                 + TLAPlusStrings.SPACE
-                + this.getTLASnippetOfChild(getOperand())
+                + this.getTLASnippetOfChild(this.operand)
                 + TLAPlusStrings.PRIME;
     }
 }

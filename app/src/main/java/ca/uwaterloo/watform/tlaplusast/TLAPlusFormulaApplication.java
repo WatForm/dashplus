@@ -6,7 +6,7 @@ import java.util.List;
 public class TLAPlusFormulaApplication extends TLAPlusOperator {
 
     private final String name;
-    private final List<TLAPlusExpression> parameters;
+    public final List<TLAPlusExpression> parameters;
 
     public TLAPlusFormulaApplication(String name, List<TLAPlusExpression> parameters) {
         super(TLAPlusOperator.Associativity.IRRELEVANT, TLAPlusOperator.PrecedenceGroup.SAFE);

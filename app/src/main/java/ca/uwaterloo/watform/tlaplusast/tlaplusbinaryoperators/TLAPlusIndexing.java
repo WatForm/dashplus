@@ -14,9 +14,9 @@ public class TLAPlusIndexing extends TLAPlusBinaryOperator {
 
     @Override
     public String toTLAPlusSnippetCore() {
-        return this.getTLASnippetOfChild(getOperandOne())
+        return this.getTLASnippetOfChild(this.operandOne)
                 + TLAPlusStrings.SQUARE_BRACKET_OPEN
-                + this.getTLASnippetOfChild(getOperandTwo())
+                + this.getTLASnippetOfChild(this.operandTwo)
                 + TLAPlusStrings.SQUARE_BRACKET_CLOSE;
         // TODO fix this
     }

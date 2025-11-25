@@ -16,14 +16,15 @@ public class TLAPlusSetMap extends TLAPlusQuantificationOperator {
     @Override
     public String toTLAPlusSnippetCore() {
         return TLAPlusStrings.SET_START
-                + this.getTLASnippetOfChild(getExpression())
+                + this.getTLASnippetOfChild(this.expression)
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.COLON
                 + TLAPlusStrings.SPACE
-                + this.getTLASnippetOfChild(getVariable())
+                + this.getTLASnippetOfChild(this.variable)
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.IN
                 + TLAPlusStrings.SPACE
+                + this.getTLASnippetOfChild(this.set)
                 + TLAPlusStrings.SET_END;
     }
 }

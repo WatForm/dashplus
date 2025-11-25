@@ -11,6 +11,6 @@ public class TLAPlusPrime extends TLAPlusUnaryOperator {
 
     @Override
     public String toTLAPlusSnippetCore() {
-        return this.getTLASnippetOfChild(getOperand()) + TLAPlusStrings.PRIME;
+        return this.getTLASnippetOfChild(this.operand) + TLAPlusStrings.PRIME;
     }
 }

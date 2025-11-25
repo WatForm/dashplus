@@ -8,7 +8,7 @@ public abstract class TLAPlusNaryOperator extends TLAPlusOperator {
     private final String start;
     private final String end;
     private final String separator;
-    private final List<? extends TLAPlusExpression> children;
+    public final List<? extends TLAPlusExpression> children;
 
     public TLAPlusNaryOperator(
             String start,
