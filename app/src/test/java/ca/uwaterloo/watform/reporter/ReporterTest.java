@@ -129,9 +129,15 @@ public class ReporterTest {
     @Test
     @Order(17)
     @DisplayName("handle Alloy Cmd Syntax Error")
-    public void throwCatchErrorForAlloyCmd() throws IOException {
+    public void test17() throws IOException {
         int[] exitCode = TestUtil.changeReporterExitFn();
-        ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als"));
+        try {
+            ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als"));
+        } catch (AlloyCtorError alloyCtorError) {
+            Reporter.INSTANCE.addError(
+                    alloyCtorError, Paths.get("src/test/resources/reporter/badCmd.als"));
+            Reporter.INSTANCE.exitIfHasErrors();
+        }
         TestUtil.assertExited(exitCode);
     }
 
@@ -140,8 +146,14 @@ public class ReporterTest {
     @DisplayName("printing more than one pos: see the testing report")
     public void test18() throws IOException {
         int[] exitCode = TestUtil.changeReporterExitFn();
-        Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
-        AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
+        try {
+            Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
+            AlloyFile af = ParserUtil.parse(filePath);
+        } catch (AlloyCtorError alloyCtorError) {
+            Reporter.INSTANCE.addError(
+                    alloyCtorError, Paths.get("src/test/resources/reporter/badCmd.als"));
+            Reporter.INSTANCE.exitIfHasErrors();
+        }
         TestUtil.assertExited(exitCode);
     }
 }

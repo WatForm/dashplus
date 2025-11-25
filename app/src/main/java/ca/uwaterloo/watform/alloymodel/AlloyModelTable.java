@@ -64,7 +64,8 @@ public final class AlloyModelTable<T extends AlloyParagraph> {
             // relying on short-circuiting to not throw NoSuchElementException
             this.li.add(paragraph);
         } else {
-            if (this.mp.containsKey(name.get())) {
+            // AlloyFactPara names are allowed to overlap
+            if (!(paragraph instanceof AlloyFactPara) && this.mp.containsKey(name.get())) {
                 throw AlloyModelError.duplicateName(this.mp.get(name.get()).pos, paragraph.pos);
             }
             this.mp.put(name.get(), paragraph);

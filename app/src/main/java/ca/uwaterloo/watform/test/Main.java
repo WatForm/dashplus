@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.test;
 
-import ca.uwaterloo.watform.antlr.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.antlr.v4.runtime.*;

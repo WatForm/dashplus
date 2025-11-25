@@ -1,15 +1,13 @@
 package ca.uwaterloo.watform.utils;
 
 import antlr.generated.DashBaseVisitor;
-import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloymodel.AlloyModelError;
-import ca.uwaterloo.watform.antlr.*;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashFileParseVis;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.parser.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,14 +40,18 @@ public final class ParserUtil {
      *
      * @param filePath
      * @return
-     * @throws IOException
      */
-    public static AlloyFile parse(Path filePath) throws IOException {
+    public static AlloyFile parse(Path filePath) {
         if (!filePath.getFileName().toString().endsWith(".als")
                 && !filePath.getFileName().toString().endsWith(".dsh")) {
             throw new Reporter.ErrorUser("File extension must be .dsh or .als");
         }
-        CharStream input = CharStreams.fromPath(filePath);
+        CharStream input = null;
+        try {
+            input = CharStreams.fromPath(filePath);
+        } catch (IOException ioException) {
+            throw new Reporter.ErrorUser("Input file cannot be found. ");
+        }
         BailLexer lexer = new BailLexer(input);
         if (filePath.getFileName().toString().endsWith(".dsh")) {
             lexer.dashMode = true;
@@ -60,54 +62,37 @@ public final class ParserUtil {
             ParseTree antlrAST = parser.alloyFile();
             AlloyFileParseVis afpv = new AlloyFileParseVis();
             AlloyFile alloyFile = null;
-            try {
-                alloyFile = afpv.visit(antlrAST);
-                alloyFile.filename = filePath.toString();
-            } catch (AlloyCtorError errorUser) {
-                Reporter.INSTANCE.addError(errorUser, filePath);
-            }
+            alloyFile = afpv.visit(antlrAST);
+            alloyFile.filename = filePath.toString();
             Reporter.INSTANCE.exitIfHasErrors();
             return alloyFile;
         } else {
             ParseTree antlrAST = parser.dashFile();
             DashFileParseVis dfpv = new DashFileParseVis();
             DashFile dashFile = null;
-            try {
-                dashFile = dfpv.visit(antlrAST);
-                dashFile.filename = filePath.toString();
-            } catch (AlloyCtorError errorUser) {
-                Reporter.INSTANCE.addError(errorUser, filePath);
-            }
+            dashFile = dfpv.visit(antlrAST);
+            dashFile.filename = filePath.toString();
             Reporter.INSTANCE.exitIfHasErrors();
             return dashFile;
         }
     }
 
-    public static AlloyModel parseToModel(Path filePath) throws IOException {
+    public static AlloyModel parseToModel(Path filePath) {
         AlloyFile file = ParserUtil.parse(filePath);
         if (null == file) {
             // This happens when
-            //  1) ParserUtil.parse found UserError
-            //  2) Reporter.INSTANCE.exitFunction has been swapped for test
+            //   ParserUtil.parse found UserError
+            //  AND Reporter.INSTANCE.exitFunction has been swapped for test
             // We don't want to continue
             return null;
         }
         AlloyModel model = null;
         if (file instanceof DashFile) {
-            try {
-                model = new DashModel((DashFile) file);
-            } catch (AlloyModelError alloyModelErrors) {
-                Reporter.INSTANCE.addError(alloyModelErrors, filePath);
-            }
-            // ALSO NEED TO CATCH DASHMODELERRORS
+            model = new DashModel((DashFile) file);
             Reporter.INSTANCE.exitIfHasErrors();
             return model;
         } else {
-            try {
-                model = new AlloyModel(file);
-            } catch (AlloyModelError alloyModelErrors) {
-                Reporter.INSTANCE.addError(alloyModelErrors, filePath);
-            }
+            model = new AlloyModel(file);
             Reporter.INSTANCE.exitIfHasErrors();
             return model;
         }

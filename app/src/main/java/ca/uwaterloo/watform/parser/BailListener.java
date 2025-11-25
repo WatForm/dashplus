@@ -1,9 +1,9 @@
-package ca.uwaterloo.watform.antlr;
+package ca.uwaterloo.watform.parser;
 
+import ca.uwaterloo.watform.utils.*;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 // We want our lexer and parser to bail early and not try any error recovery.
 // We achieve this by throwing ParseCancellationException when the first
@@ -17,6 +17,7 @@ public final class BailListener extends BaseErrorListener {
             int charPositionInLine,
             String msg,
             RecognitionException e) {
-        throw new ParseCancellationException("line " + line + ":" + charPositionInLine + " " + msg);
+        throw new Reporter.ErrorUser(
+                new Pos(line, charPositionInLine, line, charPositionInLine), msg);
     }
 }

@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.antlr;
+package ca.uwaterloo.watform.parser;
 
 import antlr.generated.DashLexer;
 import org.antlr.v4.runtime.CharStream;

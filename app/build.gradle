@@ -32,8 +32,12 @@ dependencies {
 	// Alloy Jar
 	implementation fileTree(dir: 'libs', include: ['*.jar'])//name: 'org.alloytools.alloy.dist'
 
+	// Picocli
+	implementation 'info.picocli:picocli:4.7.5'
+
 	// Antlr
 	antlr "org.antlr:antlr4:4.13.2"
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -44,7 +48,8 @@ java {
 }
 
 application {
-    mainClass = 'ca.uwaterloo.watform.Main'
+    mainClass = 'ca.uwaterloo.watform.parser.Main'
+	applicationName = 'parser'
 }
 
 jar {
@@ -53,15 +58,24 @@ jar {
                 'Main-Class': application.mainClass
         )
     }
+}
 
-    // uber-jar
+
+task releaseJar(type: Jar) {
+    archiveBaseName.set('watform-dashplus') // Name of the output file
+    
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    with jar 
 
-	zip64 = true
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    zip64 = true
 }
 
 // for jdtls, gradle doesn't need this to compile

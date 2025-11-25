@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.test;
 
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.antlr.*;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class AntlrTestUtil {
-    private static boolean stopOnFirstFail = true;
+    private static boolean stopOnFirstFail = false;
     private long timeoutMs = 20 * 1000;
     private static int filenamesToPrint = 20;
     private int[] exitCode;

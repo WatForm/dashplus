@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.IntConsumer;
 
 public final class Reporter {
@@ -29,6 +30,10 @@ public final class Reporter {
 
     public void addError(AlloyInterfaceError alloyInterfaceError, Path filePath) {
         errors.add(new ErrorUser((DashplusError) alloyInterfaceError, filePath));
+    }
+
+    public void addError(ErrorUser error, Path filePath) {
+        errors.add(error);
     }
 
     public void addError(ErrorUser error) {
@@ -84,21 +89,21 @@ public final class Reporter {
     }
 
     public abstract static class DiagnosticException extends DashplusError {
-        public Path filePath;
+        public Optional<Path> filePath;
 
         public DiagnosticException(Pos pos, String message, Path filePath) {
             super(pos, message);
-            this.filePath = filePath;
+            this.filePath = Optional.ofNullable(filePath);
         }
 
         public DiagnosticException(String message, Path filePath) {
             super(message);
-            this.filePath = filePath;
+            this.filePath = Optional.ofNullable(filePath);
         }
 
         public DiagnosticException(DashplusError other, Path filePath) {
             super(other);
-            this.filePath = filePath;
+            this.filePath = Optional.ofNullable(filePath);
         }
 
         @Override
@@ -109,7 +114,9 @@ public final class Reporter {
                 sb.append(
                         CommonStrings.TAB
                                 + "--> "
-                                + this.filePath
+                                + (this.filePath.isPresent()
+                                        ? this.filePath.get().toString()
+                                        : "line")
                                 + ":"
                                 + pos.rowStart
                                 + ":"

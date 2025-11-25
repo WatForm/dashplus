@@ -411,7 +411,7 @@ NONE       : 'none' ;
 UNIV       : 'univ' ;
 IDEN       : 'iden' ;
 PRED_TOTALORDER : 'pred/totalOrder' ;
-DISJ       : 'disj' ;
+DISJ       : 'disj' | 'disjoint' ;
 THIS       : 'this' ;
 SIGINT    : 'Int' ;
 STEPS      : 'steps' ;
