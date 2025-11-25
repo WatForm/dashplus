@@ -114,6 +114,8 @@ IF P THEN e1 ELSE e2        \* if P is true, then e1 should be true; otherwise e
 
 ### Not Implemented
 
+Anything not explicitly listed as "implemented" is to be considered unimplemented.
+
 ```
 (* Comments *)
 
@@ -176,7 +178,7 @@ H == G(exp)
 
 - Note that FormulaApplication is not treated as an n-ary operator because it is a meta-operator that constructs an n-ary operator from a custom formula name. It's an n-ary operator-generator, not an n-ary operator
 
-- Similarly, FormulaDefinition is not a binary infix operator because it can't be used arbitrarily in the tree, other uses of == can be found only in LET bindings, which are their own operator.
+- Similarly, FormulaDefinition is not a binary infix operator because it can't be used arbitrarily in the tree, other uses of == can be found only in LET bindings, which are their own operator. BinaryInfixOperators can have themselves as their children, while FormulaDefinition cannot.
 
 # Plan for AST checks:
 

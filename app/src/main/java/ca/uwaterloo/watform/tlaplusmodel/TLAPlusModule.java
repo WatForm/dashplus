@@ -9,13 +9,13 @@ public class TLAPlusModule {
     private List<TLAPlusConstant> constants;
     private List<TLAPlusVariable> variables;
     private List<TLAPlusStandardLibraries> extended_libraries;
-    private List<TLAPlusFormulaDefinition> formulae;
+    private List<ASTNode> body;
 
     public TLAPlusModule() {
         this.constants = new ArrayList<>();
         this.variables = new ArrayList<>();
         this.extended_libraries = new ArrayList<>();
-        this.formulae = new ArrayList<>();
+        this.body = new ArrayList<>();
     }
 
     public void addSTL(TLAPlusStandardLibraries stl) {
@@ -31,10 +31,14 @@ public class TLAPlusModule {
     }
 
     public void addFormulaDefinition(TLAPlusFormulaDefinition d) {
-        this.formulae.add(d);
+        this.body.add(d);
     }
 
-    private String stringHead(String name) {
+    public void addComment(TLAPlusComment c) {
+        this.body.add(c);
+    }
+
+    private String codeHead(String name) {
         return TLAPlusStrings.HEAD_DELIMITER
                 + TLAPlusStrings.SPACE
                 + TLAPlusStrings.MODULE
@@ -56,16 +60,16 @@ public class TLAPlusModule {
         return sb.toString();
     }
 
-    public String formulaeString() {
+    public String bodyString() {
         StringBuilder sb = new StringBuilder();
-        for (TLAPlusFormulaDefinition f : this.formulae) {
+        for (ASTNode f : this.body) {
             sb.append("\n");
             f.toString(sb, 0);
         }
         return sb.toString();
     }
 
-    private String stringBody() {
+    private String codeBody() {
         String doubleSpace = "\n\n";
         return TLAPlusModule.simpleBuilder(TLAPlusStrings.EXTENDS, this.extended_libraries)
                 + doubleSpace
@@ -73,12 +77,12 @@ public class TLAPlusModule {
                 + doubleSpace
                 + TLAPlusModule.simpleBuilder(TLAPlusStrings.VARIABLES, this.variables)
                 + doubleSpace
-                + this.formulaeString()
+                + this.bodyString()
                 + doubleSpace
                 + TLAPlusStrings.BODY_DELIMITER;
     }
 
     public String code(String name) {
-        return this.stringHead(name) + "\n" + this.stringBody();
+        return this.codeHead(name) + "\n" + this.codeBody();
     }
 }

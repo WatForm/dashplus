@@ -110,5 +110,10 @@ public final class TLAPlusStrings extends CommonStrings {
     public static final String STRING_SET = "STRING";
     public static final String INT_SET = "Int";
 
+    // comments
+    public static final String MULTI_LINE_COMMENT_START = "(*";
+    public static final String MULTI_LINE_COMMENT_END = "*)";
+    public static final String SINGLE_LINE_COMMENT_START = "\\*";
+
     // public static final String = "";
 }
