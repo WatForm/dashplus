@@ -38,7 +38,6 @@ public final class TestUtil {
      * @param exitCode
      */
     public static void assertExited(int[] exitCode) {
-        Reporter.INSTANCE.exitIfHasErrors();
         assertEquals(1, exitCode[0], "Exit code should have been set to 1");
         assertTrue(Reporter.INSTANCE.hasErrors(), "Reporter should still have errors recorded");
     }

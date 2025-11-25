@@ -2,17 +2,19 @@ package ca.uwaterloo.watform.alloyast;
 
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyScopableExpr;
 import ca.uwaterloo.watform.utils.*;
+import java.util.List;
 
-public class AlloyCtorError extends RuntimeException {
-    public final Pos pos;
-
+public class AlloyCtorError extends DashplusError {
     private AlloyCtorError(Pos pos, String msg) {
-        super(msg);
-        this.pos = pos;
+        super(pos, msg);
     }
 
     private AlloyCtorError(String msg) {
-        this(Pos.UNKNOWN, msg);
+        super(msg);
+    }
+
+    private AlloyCtorError(List<Pos> posList, String msg) {
+        super(posList, msg);
     }
 
     // ====================================================================================
@@ -31,16 +33,11 @@ public class AlloyCtorError extends RuntimeException {
     // ====================================================================================
     public static AlloyCtorError moduleIsUnique(Pos pos1, Pos pos2) {
         return new AlloyCtorError(
-                pos1,
-                "A file can only contain one Module declaration: "
-                        + pos1.toString()
-                        + ", \n"
-                        + pos2.toString());
+                List.of(pos1, pos2), "A file can only contain one Module declaration: ");
     }
 
     public static AlloyCtorError moduleIsAtTop(Pos pos) {
-        return new AlloyCtorError(
-                pos, "A Module declaration must occur at the top: " + pos.toString());
+        return new AlloyCtorError(pos, "A Module declaration must occur at the top. ");
     }
 
     // ====================================================================================

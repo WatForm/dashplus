@@ -31,8 +31,7 @@ public final class AlloyASTImplError extends ImplementationError {
                         + field2
                         + " are mutually-exclusive fields in "
                         + className
-                        + ". It must contain exactly one of them: "
-                        + pos.toString());
+                        + ". It must contain exactly one of them.");
     }
 
     /**
@@ -54,8 +53,7 @@ public final class AlloyASTImplError extends ImplementationError {
                         + field2
                         + " cannot both be null in "
                         + className
-                        + ". It must contain at least one of them: "
-                        + pos.toString());
+                        + ". It must contain at least one of them. ");
     }
 
     /**
@@ -67,22 +65,20 @@ public final class AlloyASTImplError extends ImplementationError {
      * @return
      */
     public static AlloyASTImplError nullOrBlankField(Pos pos, String field) {
-        return new AlloyASTImplError(pos, field + " cannot be null or blank: " + pos.toString());
+        return new AlloyASTImplError(pos, field + " cannot be null or blank. ");
     }
 
     // ====================================================================================
     // AlloyParseVis
     // ====================================================================================
     public static AlloyASTImplError invalidCase(Pos pos) {
-        return new AlloyASTImplError(
-                pos, "Alloy parser visitor arrived at an invalid case: " + pos.toString());
+        return new AlloyASTImplError(pos, "Alloy parser visitor arrived at an invalid case. ");
     }
 
     // ====================================================================================
     // AlloyFile
     // ====================================================================================
     public static AlloyASTImplError dashParagraphInAlloyFile(Pos pos) {
-        return new AlloyASTImplError(
-                pos, "AlloyFile should not contain a DashParagraph: " + pos.toString());
+        return new AlloyASTImplError(pos, "AlloyFile should not contain a DashParagraph. ");
     }
 }

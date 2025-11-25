@@ -2,16 +2,13 @@ package ca.uwaterloo.watform.alloymodel;
 
 import ca.uwaterloo.watform.utils.*;
 
-public final class AlloyModelError extends RuntimeException {
-    public final Pos pos;
-
+public final class AlloyModelError extends DashplusError {
     private AlloyModelError(Pos pos, String msg) {
-        super(msg);
-        this.pos = pos;
+        super(pos, msg);
     }
 
     private AlloyModelError(String msg) {
-        this(Pos.UNKNOWN, msg);
+        super(msg);
     }
 
     public static AlloyModelError duplicateName(Pos pos1, Pos pos2) {

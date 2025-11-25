@@ -8,7 +8,7 @@ public final class AlloyModelImplError extends ImplementationError {
     }
 
     private AlloyModelImplError(String msg) {
-        this(Pos.UNKNOWN, msg);
+        super(msg);
     }
 
     public static AlloyModelImplError lookUpWithNoName() {

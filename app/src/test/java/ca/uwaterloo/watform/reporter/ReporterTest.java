@@ -3,8 +3,10 @@ package ca.uwaterloo.watform.reporter;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;
+import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import org.junit.jupiter.api.*;
@@ -71,51 +73,6 @@ public class ReporterTest {
     }
 
     @Test
-    @Order(5)
-    @DisplayName("Should add an error correctly using Pos and msg")
-    public void addErrorPosMsg() {
-        reporter.addError(Pos.UNKNOWN, "Error from Pos/Msg");
-
-        List<Reporter.ErrorUser> errors = reporter.getErrors();
-        assertEquals(1, errors.size());
-        assertEquals("Error from Pos/Msg", errors.get(0).getMessage());
-        assertEquals(Pos.UNKNOWN, errors.get(0).pos);
-    }
-
-    @Test
-    @Order(6)
-    @DisplayName("Should add a comment correctly using Pos and msg")
-    public void addCommentPosMsg() {
-        reporter.addComment(Pos.UNKNOWN, "Comment from Pos/Msg");
-
-        List<Reporter.CommentUser> comments = reporter.getComments();
-        assertEquals(1, comments.size());
-        assertEquals("Comment from Pos/Msg", comments.get(0).getMessage());
-        assertEquals(Pos.UNKNOWN, comments.get(0).pos);
-    }
-
-    @Test
-    @Order(7)
-    @DisplayName("Should add an error correctly using only msg")
-    public void addErrorMsg() {
-        reporter.addError("Error from Msg");
-        List<Reporter.ErrorUser> errors = reporter.getErrors();
-        assertEquals(1, errors.size());
-        assertEquals("Error from Msg", errors.get(0).getMessage());
-        assertEquals(Pos.UNKNOWN, errors.get(0).pos);
-    }
-
-    @Test
-    @Order(8)
-    @DisplayName("Should add a comment correctly using only msg")
-    public void addCommentMsg() {
-        reporter.addComment("Comment from Msg");
-        List<Reporter.CommentUser> comments = reporter.getComments();
-        assertEquals(1, comments.size());
-        assertEquals("Comment from Msg", comments.get(0).getMessage());
-    }
-
-    @Test
     @Order(9)
     @DisplayName("Should add multiple errors and comments")
     public void addMultiple() {
@@ -170,54 +127,21 @@ public class ReporterTest {
     }
 
     @Test
-    @Order(12)
-    @DisplayName("hasErrors should return true when errors exist")
-    public void hasErrorsTrue() {
-        reporter.addError(Pos.UNKNOWN, "An error");
-        assertTrue(reporter.hasErrors());
-    }
-
-    @Test
-    @Order(13)
-    @DisplayName("hasErrors should return false when no errors exist")
-    public void hasErrorsFalse() {
-        assertFalse(reporter.hasErrors());
-        reporter.addComment(Pos.UNKNOWN, "Just a comment");
-        assertFalse(reporter.hasErrors());
-    }
-
-    @Test
-    @Order(14)
-    @DisplayName("hasComments should return true when comments exist")
-    public void hasCommentsTrue() {
-        reporter.addComment(Pos.UNKNOWN, "A comment");
-        assertTrue(reporter.hasComments());
-    }
-
-    @Test
-    @Order(15)
-    @DisplayName("hasComments should return false when no comments exist")
-    public void hasCommentsFalse() {
-        assertFalse(reporter.hasComments());
-        reporter.addError(Pos.UNKNOWN, "Just an error");
-        assertFalse(reporter.hasComments());
-    }
-
-    @Test
-    @Order(16)
-    @DisplayName("exitIfHasError exits if has error")
-    public void exitOnError() {
-        int[] exitCode = TestUtil.changeReporterExitFn();
-        reporter.addError("An Error");
-        TestUtil.assertExited(exitCode);
-    }
-
-    @Test
     @Order(17)
     @DisplayName("handle Alloy Cmd Syntax Error")
     public void throwCatchErrorForAlloyCmd() throws IOException {
         int[] exitCode = TestUtil.changeReporterExitFn();
         ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als"));
+        TestUtil.assertExited(exitCode);
+    }
+
+    @Test
+    @Order(18)
+    @DisplayName("printing more than one pos: see the testing report")
+    public void test18() throws IOException {
+        int[] exitCode = TestUtil.changeReporterExitFn();
+        Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
+        AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
         TestUtil.assertExited(exitCode);
     }
 }

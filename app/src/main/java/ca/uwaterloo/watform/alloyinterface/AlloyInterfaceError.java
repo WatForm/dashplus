@@ -2,16 +2,13 @@ package ca.uwaterloo.watform.alloyinterface;
 
 import ca.uwaterloo.watform.utils.*;
 
-public class AlloyInterfaceError extends RuntimeException {
-    public final Pos pos;
-
+public class AlloyInterfaceError extends DashplusError {
     private AlloyInterfaceError(Pos pos, String msg) {
-        super(msg);
-        this.pos = pos;
+        super(pos, msg);
     }
 
     private AlloyInterfaceError(String msg) {
-        this(Pos.UNKNOWN, msg);
+        super(msg);
     }
 
     public static AlloyInterfaceError solutionEvalErr(Pos pos, String msg) {

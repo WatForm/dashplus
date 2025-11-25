@@ -1,13 +1,14 @@
 package ca.uwaterloo.watform.utils;
 
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
+import ca.uwaterloo.watform.alloyinterface.AlloyInterfaceError;
 import ca.uwaterloo.watform.alloymodel.AlloyModelError;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.IntConsumer;
 
-// todo for Jack: better formatting
 public final class Reporter {
     public static final Reporter INSTANCE = new Reporter();
 
@@ -18,36 +19,24 @@ public final class Reporter {
 
     private Reporter() {}
 
-    public void addError(AlloyModelError alloyModelErrors) {
-        errors.add(new ErrorUser(alloyModelErrors.pos, alloyModelErrors.getMessage()));
+    public void addError(AlloyModelError alloyModelError, Path filePath) {
+        errors.add(new ErrorUser((DashplusError) alloyModelError, filePath));
     }
 
-    public void addError(AlloyCtorError alloyCtorErrors) {
-        errors.add(new ErrorUser(alloyCtorErrors.pos, alloyCtorErrors.getMessage()));
+    public void addError(AlloyCtorError alloyCtorError, Path filePath) {
+        errors.add(new ErrorUser((DashplusError) alloyCtorError, filePath));
+    }
+
+    public void addError(AlloyInterfaceError alloyInterfaceError, Path filePath) {
+        errors.add(new ErrorUser((DashplusError) alloyInterfaceError, filePath));
     }
 
     public void addError(ErrorUser error) {
         errors.add(error);
     }
 
-    public void addError(Pos pos, String msg) {
-        errors.add(new ErrorUser(pos, msg));
-    }
-
-    public void addError(String msg) {
-        errors.add(new ErrorUser(msg));
-    }
-
-    public void addComment(CommentUser warning) {
-        comments.add(warning);
-    }
-
-    public void addComment(Pos pos, String msg) {
-        comments.add(new CommentUser(pos, msg));
-    }
-
-    public void addComment(String msg) {
-        comments.add(new CommentUser(msg));
+    public void addComment(CommentUser comment) {
+        comments.add(comment);
     }
 
     public void reset() {
@@ -74,15 +63,15 @@ public final class Reporter {
 
     public void print() {
         if (!this.comments.isEmpty()) {
-            System.err.println("\nComments:");
             for (CommentUser comment : this.comments) {
-                System.err.printf("[%s] %s%n", comment.pos.toString(), comment.getMessage());
+                System.err.println(comment.toString());
             }
         }
 
-        System.err.println("\nErrors:");
-        for (ErrorUser error : this.errors) {
-            System.err.printf("[%s] %s%n", error.pos.toString(), error.getMessage());
+        if (!this.errors.isEmpty()) {
+            for (ErrorUser error : this.errors) {
+                System.err.println(error.toString());
+            }
         }
     }
 
@@ -94,36 +83,92 @@ public final class Reporter {
         this.exitFunction.accept(1);
     }
 
-    public abstract static class DiagnosticException extends RuntimeException {
-        public final Pos pos;
+    public abstract static class DiagnosticException extends DashplusError {
+        public Path filePath;
 
-        public DiagnosticException(Pos pos, String message) {
-            super(message);
-            this.pos = pos;
+        public DiagnosticException(Pos pos, String message, Path filePath) {
+            super(pos, message);
+            this.filePath = filePath;
         }
 
-        public DiagnosticException(String message) {
-            this(Pos.UNKNOWN, message);
+        public DiagnosticException(String message, Path filePath) {
+            super(message);
+            this.filePath = filePath;
+        }
+
+        public DiagnosticException(DashplusError other, Path filePath) {
+            super(other);
+            this.filePath = filePath;
+        }
+
+        @Override
+        protected String toStringPosList() {
+            StringBuilder sb = new StringBuilder();
+            for (Pos pos : this.posList) {
+                if (Pos.UNKNOWN == pos) continue;
+                sb.append(
+                        CommonStrings.TAB
+                                + "--> "
+                                + this.filePath
+                                + ":"
+                                + pos.rowStart
+                                + ":"
+                                + pos.colStart
+                                + CommonStrings.NEWLINE);
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(this.toStringMsg());
+            sb.append(this.toStringPosList());
+            return sb.toString();
         }
     }
 
     public static class CommentUser extends DiagnosticException {
-        public CommentUser(Pos pos, String msg) {
-            super(pos, msg);
+        public CommentUser(String msg) {
+            super(msg, null);
         }
 
-        public CommentUser(String msg) {
-            super(msg);
+        public CommentUser(Pos pos, String msg) {
+            super(pos, msg, null);
+        }
+
+        public CommentUser(Pos pos, String msg, Path filePath) {
+            super(pos, msg, filePath);
+        }
+
+        public CommentUser(String msg, Path filePath) {
+            super(msg, filePath);
+        }
+
+        public CommentUser(DashplusError other, Path filePath) {
+            super(other, filePath);
         }
     }
 
     public static class ErrorUser extends DiagnosticException {
-        public ErrorUser(Pos pos, String msg) {
-            super(pos, msg);
+        public ErrorUser(String msg) {
+            super(msg, null);
         }
 
-        public ErrorUser(String msg) {
-            super(msg);
+        public ErrorUser(Pos pos, String msg) {
+            super(pos, msg, null);
+        }
+
+        public ErrorUser(Pos pos, String msg, Path filePath) {
+            super(pos, msg, filePath);
+        }
+
+        public ErrorUser(String msg, Path filePath) {
+            super(msg, filePath);
+        }
+
+        public ErrorUser(DashplusError other, Path filePath) {
+            super(other, filePath);
         }
     }
 }
