@@ -44,7 +44,7 @@ Run with the desired entry point (see list of args taken in app/src/main/java/ca
 - `./gradlew test` for unit testing
 
 - For testing using a JAR, the main entry point is: [`app/src/main/java/ca/uwaterloo/watform/test/Main.java`](app/src/main/java/ca/uwaterloo/watform/test/Main.java)
-    > **Note:** If the `Alloy.g4` grammar is changed, you must test it with the catalyst-corpus. 
+    > **Note:** If the `Dash.g4` grammar is changed, you must test it with the catalyst-corpus. 
     See the instructions in [`app/src/main/java/ca/uwaterloo/watform/test/README.md`](app/src/main/java/ca/uwaterloo/watform/test/README.md).
 
 

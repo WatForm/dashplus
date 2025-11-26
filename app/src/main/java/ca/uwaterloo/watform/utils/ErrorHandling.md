@@ -20,15 +20,13 @@
     - AlloyCtorError are not caught and allowed to propagate to crash the program
     - Because this reflects erroneous implementation, not bad user input
 
-- Below is an example of how to handle a syntax error and exit somewhat gracefully via the Reporter
+- Below is an example of how to handle a syntax error
 - Throw AlloyCtorError [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyFile.java)
-- Choose where to catch it to control how far to trace back and continue if wanted [(example)](/app/src/main/java/ca/uwaterloo/watform/utils/ParserUtil.java) 
-- Add into Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/utils/ParserUtil.java)
-- Call exitIfHasErrors() if needed [(example)](/app/src/main/java/ca/uwaterloo/watform/utils/ParserUtil.java)
+- Choose where to catch it to control how far to trace back (and continue if wanted) [(example)](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java) 
+- Add into Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java)
 
 #### AlloyModelError
 - similar to AlloyCtorError
 - Throw AlloyModelError [(example)](/app/src/main/java/ca/uwaterloo/watform/alloymodel/AlloyModelTable.java)
 - Catch it and add to Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java)
-- Call exitIfHasErrors() [(example)](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java)
 
