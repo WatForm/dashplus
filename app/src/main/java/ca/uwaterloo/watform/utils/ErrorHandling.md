@@ -9,7 +9,7 @@
 - These should not be caught and the program should be allowed to crash
 
 ## User Errors
-- Use the Reporter object 
+- Use the Reporter object; see [Reporter.ErrorUser](/app/src/main/java/ca/uwaterloo/watform/utils/Reporter.java)
 - There are a few places where UserErrors can be thrown: AST construction, AlloyModel, DashModel, and maybe more in the future
 - It is up to the higher level caller to decide how to interpret them 
 
@@ -21,12 +21,15 @@
     - Because this reflects erroneous implementation, not bad user input
 
 - Below is an example of how to handle a syntax error
-- Throw AlloyCtorError [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyFile.java)
-- Choose where to catch it to control how far to trace back (and continue if wanted) [(example)](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java) 
-- Add into Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java)
+- Throw AlloyCtorError.redundantExactly(pos) [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/paragraph/command/AlloyCmdPara.java)
+- Choose where to catch it to control how far to trace back and continue if wanted
+   - [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyFileParseVis.java) 
+   - In this example, we choose to continue parsing the other paragraphs
+- Add into Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyFileParseVis.java)
+- To see this example in action, parse [badCmd.als](/app/src/test/resources/reporter/badCmd.als)
 
 #### AlloyModelError
 - similar to AlloyCtorError
 - Throw AlloyModelError [(example)](/app/src/main/java/ca/uwaterloo/watform/alloymodel/AlloyModelTable.java)
-- Catch it and add to Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java)
+- Catch it and add to Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/utils/ParserUtil.java)
 

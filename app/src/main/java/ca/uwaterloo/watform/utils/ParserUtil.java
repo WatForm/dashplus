@@ -4,6 +4,7 @@ import antlr.generated.DashBaseVisitor;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashFileParseVis;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -60,18 +61,28 @@ public final class ParserUtil {
         BailParser parser = new BailParser(tokens);
         if (filePath.getFileName().toString().endsWith(".als")) {
             ParseTree antlrAST = parser.alloyFile();
-            AlloyFileParseVis afpv = new AlloyFileParseVis();
+            AlloyFileParseVis afpv = new AlloyFileParseVis(filePath);
             AlloyFile alloyFile = null;
-            alloyFile = afpv.visit(antlrAST);
-            alloyFile.filename = filePath.toString();
+            try {
+                alloyFile = afpv.visit(antlrAST);
+                alloyFile.filename = filePath.toString();
+            } catch (Reporter.ErrorUser errorUser) {
+                errorUser.setFilePath(filePath);
+                Reporter.INSTANCE.addError(errorUser);
+            }
             Reporter.INSTANCE.exitIfHasErrors();
             return alloyFile;
         } else {
             ParseTree antlrAST = parser.dashFile();
             DashFileParseVis dfpv = new DashFileParseVis();
             DashFile dashFile = null;
-            dashFile = dfpv.visit(antlrAST);
-            dashFile.filename = filePath.toString();
+            try {
+                dashFile = dfpv.visit(antlrAST);
+                dashFile.filename = filePath.toString();
+            } catch (Reporter.ErrorUser errorUser) {
+                errorUser.setFilePath(filePath);
+                Reporter.INSTANCE.addError(errorUser);
+            }
             Reporter.INSTANCE.exitIfHasErrors();
             return dashFile;
         }
@@ -81,8 +92,8 @@ public final class ParserUtil {
         AlloyFile file = ParserUtil.parse(filePath);
         if (null == file) {
             // This happens when
-            //   ParserUtil.parse found UserError
-            //  AND Reporter.INSTANCE.exitFunction has been swapped for test
+            //  1) ParserUtil.parse found UserError
+            //  2) Reporter.INSTANCE.exitFunction has been swapped for test
             // We don't want to continue
             return null;
         }
@@ -92,7 +103,12 @@ public final class ParserUtil {
             Reporter.INSTANCE.exitIfHasErrors();
             return model;
         } else {
-            model = new AlloyModel(file);
+            try {
+                model = new AlloyModel(file);
+            } catch (AlloyModelError alloyModelError) {
+                alloyModelError.setFilePath(filePath);
+                Reporter.INSTANCE.addError(alloyModelError);
+            }
             Reporter.INSTANCE.exitIfHasErrors();
             return model;
         }

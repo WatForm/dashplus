@@ -4,6 +4,7 @@ import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.utils.Reporter.ErrorUser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -116,11 +117,13 @@ public class AntlrTestUtil {
                 // throw new UnexpectedParsePassException();
                 // }
             }
-        } catch (ParseCancellationException pe) {
+        } catch (ErrorUser errorUser) {
             if (jarPassed) {
                 alloyResults.get("jarPassedAntlrFailed").add(filePath);
                 if (stopOnFirstFail) {
-                    throw pe;
+                    errorUser.setFilePath(filePath);
+                    Reporter.INSTANCE.addError(errorUser);
+                    Reporter.INSTANCE.exitIfHasErrors();
                 }
             } else {
                 try {
@@ -163,11 +166,12 @@ public class AntlrTestUtil {
             this.dashResults.get("dashPassed").add(filePath);
             System.out.println(
                     "Successfully parsed " + dashResults.get("dashPassed").size() + " files. ");
-        } catch (ParseCancellationException pe) {
+        } catch (ErrorUser errorUser) {
             this.dashResults.get("dashFailed").add(filePath);
             if (stopOnFirstFail) {
-                System.err.println(pe);
-                throw pe;
+                errorUser.setFilePath(filePath);
+                Reporter.INSTANCE.addError(errorUser);
+                Reporter.INSTANCE.exitIfHasErrors();
             }
         } catch (Exception e) {
             System.err.println(e);

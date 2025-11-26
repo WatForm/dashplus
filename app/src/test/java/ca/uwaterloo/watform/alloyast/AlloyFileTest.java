@@ -20,8 +20,10 @@ public class AlloyFileTest {
     @Order(1)
     @DisplayName("Throw when file has two modules")
     public void twoModulesThrows() throws Exception {
+        int[] exitCode = TestUtil.changeReporterExitFn();
         Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
-        assertThrows(AlloyCtorError.class, () -> ParserUtil.parse(filePath));
+        AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
+        TestUtil.assertExited(exitCode);
     }
 
     @Test
@@ -29,7 +31,9 @@ public class AlloyFileTest {
     @DisplayName("Throw when Module is not declared at the top")
     public void moduleNotTopThrows() throws Exception {
         Path filePath = Paths.get("src/test/resources/alloyast/paragraph/moduleNotTop.als");
-        assertThrows(AlloyCtorError.class, () -> ParserUtil.parse(filePath));
+        int[] exitCode = TestUtil.changeReporterExitFn();
+        AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
+        TestUtil.assertExited(exitCode);
     }
 
     @Test

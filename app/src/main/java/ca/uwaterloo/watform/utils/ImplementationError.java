@@ -3,13 +3,17 @@ package ca.uwaterloo.watform.utils;
 // borrowed from Alloy
 // NADTODO fix up pos and error messages
 
-public class ImplementationError extends DashplusError {
+public class ImplementationError extends RuntimeException {
+    public final Pos pos;
+
     public ImplementationError(String msg) {
         super(msg);
+        this.pos = Pos.UNKNOWN;
     }
 
     public ImplementationError(Pos pos, String msg) {
-        super(pos, msg);
+        super(msg);
+        this.pos = pos;
     }
 
     // missing cases in the code
@@ -28,13 +32,5 @@ public class ImplementationError extends DashplusError {
 
     public static ImplementationError methodShouldNotBeCalled(Pos pos, String methodName) {
         return new ImplementationError(pos, methodName + " should not be called. ");
-    }
-
-    @Override
-    public String toString() {
-        String s = "";
-        s += this.toStringMsg();
-        s += this.toStringPosList();
-        return s;
     }
 }

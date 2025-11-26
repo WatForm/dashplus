@@ -3,7 +3,6 @@ package ca.uwaterloo.watform.parser;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyinterface.*;
 import ca.uwaterloo.watform.utils.*;
-import ca.uwaterloo.watform.utils.Reporter.ErrorUser;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
@@ -67,20 +66,20 @@ public class Main implements Callable<Integer> {
     public Integer call() {
         try {
             // Main logic
+            Reporter.INSTANCE.setDebugMode(debug);
             Solution instance =
                     AlloyInterface.executeCommand(
                             ParserUtil.parseToModel(filePath), this.commandIndex);
             System.out.println(instance.toString());
             return 0;
-        } catch (ErrorUser errorUser) {
-            Reporter.INSTANCE.addError(errorUser, filePath);
-            if (debug) errorUser.printStackTrace();
-            Reporter.INSTANCE.print();
-            return 1;
         } catch (Exception e) {
+            // if a Reporter.ErrorUser has propagated here
+            // then either
+            // 1) need to catch it and add to Reporter before it get's here
+            // 2) intentionally not caught and it is treated as an implementation error
             System.err.println("Unexpected error: " + e.getMessage());
             if (debug) e.printStackTrace();
-            return 2;
+            return 1;
         }
     }
 

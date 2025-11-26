@@ -134,8 +134,8 @@ public class ReporterTest {
         try {
             ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als"));
         } catch (AlloyCtorError alloyCtorError) {
-            Reporter.INSTANCE.addError(
-                    alloyCtorError, Paths.get("src/test/resources/reporter/badCmd.als"));
+            alloyCtorError.setFilePath(Paths.get("src/test/resources/reporter/badCmd.als"));
+            Reporter.INSTANCE.addError(alloyCtorError);
             Reporter.INSTANCE.exitIfHasErrors();
         }
         TestUtil.assertExited(exitCode);
@@ -150,8 +150,8 @@ public class ReporterTest {
             Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
             AlloyFile af = ParserUtil.parse(filePath);
         } catch (AlloyCtorError alloyCtorError) {
-            Reporter.INSTANCE.addError(
-                    alloyCtorError, Paths.get("src/test/resources/reporter/badCmd.als"));
+            alloyCtorError.setFilePath(Paths.get("src/test/resources/reporter/badCmd.als"));
+            Reporter.INSTANCE.addError(alloyCtorError);
             Reporter.INSTANCE.exitIfHasErrors();
         }
         TestUtil.assertExited(exitCode);

@@ -22,11 +22,14 @@ public class AlloyFile extends AlloyASTNode {
             throw AlloyCtorError.moduleIsUnique(modules.get(0).pos, modules.get(1).pos);
         }
 
-        if (paragraphs.size() > 1) {
-            for (AlloyParagraph para : GeneralUtil.tail(paragraphs)) {
-                if (para instanceof AlloyModulePara) {
-                    throw AlloyCtorError.moduleIsAtTop(para.pos);
-                }
+        boolean noMoreModule = false;
+        for (AlloyParagraph alloyParagraph : this.paragraphs) {
+            if (noMoreModule && alloyParagraph instanceof AlloyModulePara) {
+                throw AlloyCtorError.moduleIsAtTop(alloyParagraph.pos);
+            }
+            if (!(alloyParagraph instanceof AlloyImportPara)
+                    && !(alloyParagraph instanceof AlloyModulePara)) {
+                noMoreModule = true;
             }
         }
 
