@@ -20,7 +20,7 @@ import java.util.Set;
 
 public final class CEValidation {
 
-    public static void addSigs(AlloyModel alloyModel, Solution solution) {
+    public static void initAndNext(AlloyModel alloyModel, Solution solution) {
         // Get the next relation on the Snapshots
         Set<List<String>> nextRelSnapSet =
                 solution.get(DashStrings.snapshotName + DashStrings.SLASH + "Ord.Next");
