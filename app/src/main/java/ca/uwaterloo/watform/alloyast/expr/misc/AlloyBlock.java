@@ -32,6 +32,11 @@ public final class AlloyBlock extends AlloyExpr {
         this.exprs = Collections.unmodifiableList(Collections.singletonList(expr));
     }
 
+    public AlloyBlock() {
+        super();
+        this.exprs = Collections.emptyList();
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         String tabs = AlloyStrings.TAB.repeat(indent);

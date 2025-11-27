@@ -67,10 +67,10 @@ public class Main implements Callable<Integer> {
         try {
             // Main logic
             Reporter.INSTANCE.setDebugMode(debug);
-            Solution instance =
+            Solution solution =
                     AlloyInterface.executeCommand(
                             ParserUtil.parseToModel(filePath), this.commandIndex);
-            System.out.println(instance.toString());
+            System.out.println(solution.toString());
             return 0;
         } catch (Exception e) {
             // if a Reporter.ErrorUser has propagated here
