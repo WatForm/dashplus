@@ -164,8 +164,8 @@ public class SolutionTest {
                 solution.eval(
                         new AlloyNumCardinalityExpr(
                                 new AlloyDotExpr(new AlloyQnameExpr(S1), new AlloyQnameExpr(F))));
-        assertTrue(evalRes.isString());
-        assertEquals("1", evalRes.strVal());
+        assertTrue(evalRes.isInt());
+        assertEquals(1, evalRes.intVal());
         evalRes =
                 solution.eval(
                         new AlloyEqualsExpr(

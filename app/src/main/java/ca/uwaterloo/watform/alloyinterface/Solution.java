@@ -68,7 +68,8 @@ public final class Solution {
         }
 
         if (evalResult instanceof String) {
-            return EvalRes.of((String) evalResult);
+            // Alloy Analyzer gives back string representation of integers
+            return EvalRes.of(Integer.parseInt((String) evalResult));
         } else if (evalResult instanceof Boolean) {
             return EvalRes.of((boolean) evalResult);
         } else if (evalResult instanceof A4TupleSet) {
@@ -177,9 +178,9 @@ public final class Solution {
         return Optional.empty();
     }
 
-    public record EvalRes(String strVal, Boolean boolVal, Set<List<String>> setVal) {
-        public static EvalRes of(String string) {
-            return new EvalRes(string, null, null);
+    public record EvalRes(Integer intVal, Boolean boolVal, Set<List<String>> setVal) {
+        public static EvalRes of(int integer) {
+            return new EvalRes(integer, null, null);
         }
 
         public static EvalRes of(boolean bool) {
@@ -190,8 +191,8 @@ public final class Solution {
             return new EvalRes(null, null, set);
         }
 
-        public boolean isString() {
-            return strVal != null;
+        public boolean isInt() {
+            return intVal != null;
         }
 
         public boolean isBool() {
