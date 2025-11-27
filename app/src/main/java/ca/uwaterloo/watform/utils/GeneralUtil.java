@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -152,6 +153,16 @@ public class GeneralUtil {
             Error.tooMany(xlist.get(1).pos, errorName);
             return null;
         } else return xlist.get(0);
+    }
+
+    public static <T> boolean uniqueness(List<T> values, BiPredicate<T, T> equality) {
+        for (int i = 0; i < values.size(); i++) {
+            for (int j = 0; j < values.size(); j++) {
+                if (i == j) continue;
+                if (equality.test(values.get(i), values.get(j))) return false;
+            }
+        }
+        return true;
     }
 
     private class Error {

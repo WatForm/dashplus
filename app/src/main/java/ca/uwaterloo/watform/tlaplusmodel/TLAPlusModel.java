@@ -1,6 +1,9 @@
 package ca.uwaterloo.watform.tlaplusmodel;
 
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusSimpleExpression;
+import ca.uwaterloo.watform.utils.GeneralUtil;
+import java.util.List;
 
 public class TLAPlusModel {
     // top-level class to handle modules and associated configs
@@ -21,5 +24,18 @@ public class TLAPlusModel {
 
     public String configCode() {
         return this.cfg.code();
+    }
+
+    private static boolean UniqueSimpleCheck(List<? extends TLAPlusSimpleExpression> l) {
+        return GeneralUtil.uniqueness(
+                l, (u, v) -> u.toTLAPlusSnippetCore().equals(v.toTLAPlusSnippetCore()));
+    }
+
+    public boolean UniqueVariablesCheck() {
+        return UniqueSimpleCheck(this.module.getVariables());
+    }
+
+    public boolean UniqueConstantsCheck() {
+        return UniqueSimpleCheck(this.module.getConstants());
     }
 }

@@ -26,6 +26,22 @@ public class TLAPlusModule {
         this.variables.add(v);
     }
 
+    public List<TLAPlusVariable> getVariables() {
+        return GeneralUtil.mapBy(this.variables, c -> c);
+    }
+
+    public List<TLAPlusConstant> getConstants() {
+        return GeneralUtil.mapBy(this.constants, c -> c);
+    }
+
+    public List<TLAPlusFormulaDefinition> getFormulaDefinitions() {
+        return GeneralUtil.extractItemsOfClass(this.body, TLAPlusFormulaDefinition.class);
+    }
+
+    public List<TLAPlusComment> getComments() {
+        return GeneralUtil.extractItemsOfClass(this.body, TLAPlusComment.class);
+    }
+
     public void addConstant(TLAPlusConstant c) {
         this.constants.add(c);
     }
