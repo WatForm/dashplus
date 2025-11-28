@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.parser;
 
-import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyinterface.*;
 import ca.uwaterloo.watform.utils.*;
 import java.nio.file.Path;

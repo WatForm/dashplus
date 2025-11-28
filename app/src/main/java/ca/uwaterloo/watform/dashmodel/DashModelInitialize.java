@@ -102,7 +102,7 @@ public class DashModelInitialize extends AlloyModel {
                     initList);
         } else {
 
-            ArrayList<String> childFQNs = new ArrayList();
+            ArrayList<String> childFQNs = new ArrayList<String>();
             s.substates().forEach(i -> childFQNs.add(DashFQN.fqn(ances, s.name, i.name)));
 
             // add this state to the table
