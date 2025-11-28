@@ -8,7 +8,7 @@ class StandardVariables {
     // this class adds standard variables that are part of every translation
 
     public static void standardVariables(DashModel dashModel, TLAPlusModel TLAPlusModel) {
-        TLAPlusModel.module.addVariable(Common.getConf());
-        TLAPlusModel.module.addVariable(Common.getEvents());
+        TLAPlusModel.addVariable(Common.getConf());
+        TLAPlusModel.addVariable(Common.getEvents());
     }
 }

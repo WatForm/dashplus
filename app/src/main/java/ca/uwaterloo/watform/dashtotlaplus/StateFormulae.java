@@ -40,7 +40,7 @@ public class StateFormulae {
     }
 
     public static void makeLeafStateFormula(String s, TLAPlusModel tlaPlusModel) {
-        tlaPlusModel.module.addFormulaDefinition(
+        tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(Common.getStateFormulaName(s)),
                         new TLAPlusSet(Arrays.asList(new TLAPlusStringLiteral(s)))));
@@ -54,7 +54,7 @@ public class StateFormulae {
                         AuxiliaryDashAccessors.getChildStateNames(s, dashModel),
                         x -> new TLAPlusFormulaApplication(Common.getStateFormulaName(x)));
 
-        tlaPlusModel.module.addFormulaDefinition(
+        tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(Common.getStateFormulaName(s)),
                         Common.repeatedUnion(childStateFormulae)));

@@ -30,7 +30,7 @@ public class TLAPlusStandardLibraries extends TLAPlusExpression { // enums used 
         else if (this.library == LIBRARIES.STL_Integers) return TLAPlusStrings.INTEGERS;
         else if (this.library == LIBRARIES.STL_Sequences) return TLAPlusStrings.SEQUENCES;
 
-        return "Unknown"; // implementatoin error todo
+        return "Unknown"; // implementation error TODO
     }
 
     public static TLAPlusFormulaApplication Cardinality(TLAPlusVariable arg) {

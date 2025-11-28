@@ -1,15 +1,20 @@
 package ca.uwaterloo.watform.tlaplusmodel;
 
+import ca.uwaterloo.watform.tlaplusast.TLAPlusComment;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusConstant;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefinition;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusSimpleExpression;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusStandardLibraries;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.List;
 
 public class TLAPlusModel {
     // top-level class to handle modules and associated configs
-    private String name;
-    public TLAPlusModule module;
-    public TLAPlusConfiguration cfg;
+    public final String name;
+    private TLAPlusModule module;
+    private TLAPlusConfiguration cfg;
 
     public TLAPlusModel(
             String name, TLAPlusFormulaApplication init, TLAPlusFormulaApplication next) {
@@ -32,10 +37,30 @@ public class TLAPlusModel {
     }
 
     public boolean UniqueVariablesCheck() {
-        return UniqueSimpleCheck(this.module.getVariables());
+        return UniqueSimpleCheck(this.module.variables);
     }
 
     public boolean UniqueConstantsCheck() {
-        return UniqueSimpleCheck(this.module.getConstants());
+        return UniqueSimpleCheck(this.module.variables);
+    }
+
+    public void addSTL(TLAPlusStandardLibraries stl) {
+        this.module.extended_libraries.add(stl);
+    }
+
+    public void addVariable(TLAPlusVariable v) {
+        this.module.variables.add(v);
+    }
+
+    public void addConstant(TLAPlusConstant c) {
+        this.module.constants.add(c);
+    }
+
+    public void addFormulaDefinition(TLAPlusFormulaDefinition d) {
+        this.module.body.add(d);
+    }
+
+    public void addComment(TLAPlusComment c) {
+        this.module.body.add(c);
     }
 }

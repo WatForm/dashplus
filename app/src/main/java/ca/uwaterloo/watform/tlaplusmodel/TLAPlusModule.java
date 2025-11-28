@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TLAPlusModule {
-    private List<TLAPlusConstant> constants;
-    private List<TLAPlusVariable> variables;
-    private List<TLAPlusStandardLibraries> extended_libraries;
-    private List<ASTNode> body;
+    public final List<TLAPlusConstant> constants;
+    public final List<TLAPlusVariable> variables;
+    public final List<TLAPlusStandardLibraries> extended_libraries;
+    public final List<ASTNode> body;
 
     public TLAPlusModule() {
         this.constants = new ArrayList<>();
@@ -18,40 +18,12 @@ public class TLAPlusModule {
         this.body = new ArrayList<>();
     }
 
-    public void addSTL(TLAPlusStandardLibraries stl) {
-        this.extended_libraries.add(stl);
-    }
-
-    public void addVariable(TLAPlusVariable v) {
-        this.variables.add(v);
-    }
-
-    public List<TLAPlusVariable> getVariables() {
-        return GeneralUtil.mapBy(this.variables, c -> c);
-    }
-
-    public List<TLAPlusConstant> getConstants() {
-        return GeneralUtil.mapBy(this.constants, c -> c);
-    }
-
     public List<TLAPlusFormulaDefinition> getFormulaDefinitions() {
         return GeneralUtil.extractItemsOfClass(this.body, TLAPlusFormulaDefinition.class);
     }
 
     public List<TLAPlusComment> getComments() {
         return GeneralUtil.extractItemsOfClass(this.body, TLAPlusComment.class);
-    }
-
-    public void addConstant(TLAPlusConstant c) {
-        this.constants.add(c);
-    }
-
-    public void addFormulaDefinition(TLAPlusFormulaDefinition d) {
-        this.body.add(d);
-    }
-
-    public void addComment(TLAPlusComment c) {
-        this.body.add(c);
     }
 
     private String codeHead(String name) {
