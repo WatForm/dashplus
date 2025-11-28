@@ -17,7 +17,7 @@ public class BufferTable {
 
     // stores Buffer Decls in a HashMap based on the FQN
     private HashMap<String, BufferElement> bt;
-    private String tableName = "Buffer"; // TODO: this is not used anywhere else
+    // private String tableName = "Buffer"; // TODO: this is not used anywhere else
     public int numBuffers = 0;
 
     public BufferTable() {
@@ -75,7 +75,7 @@ public class BufferTable {
         return s;
     }
 
-    private boolean contains(String bfqn) {
+    public boolean contains(String bfqn) {
         return (bt.containsKey(bfqn));
     }
 

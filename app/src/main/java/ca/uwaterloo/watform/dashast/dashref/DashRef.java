@@ -90,8 +90,9 @@ public class DashRef extends AlloyExpr {
 
         if (!paramValues.isEmpty()) {
             s += "[";
-            List<String> pValues = mapBy(paramValues, i -> i.toString());
-            // TODO: why is this written? is it an implementation bug?
+            // TODO: why is pValues written? is it an implementation bug? Is pValues meant to be
+            // used?
+            // List<String> pValues = mapBy(paramValues, i -> i.toString());
             // Collections.reverse(paramValues);
             s += GeneralUtil.strCommaList(paramValues);
             s += "]";

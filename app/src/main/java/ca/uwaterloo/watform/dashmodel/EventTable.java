@@ -17,7 +17,9 @@ import java.util.List;
 public class EventTable {
 
     private HashMap<String, EventElement> et;
-    private String tableName = "Event"; // TODO this is never used and is not visible anywhere else
+
+    // private String tableName = "Event"; // TODO this is never used and is not visible anywhere
+    // else
 
     public class EventElement {
         public IntEnvKind kind = IntEnvKind.INT;

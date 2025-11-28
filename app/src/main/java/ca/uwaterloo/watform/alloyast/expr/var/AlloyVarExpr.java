@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.alloyast.expr.var;
 
-import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Objects;

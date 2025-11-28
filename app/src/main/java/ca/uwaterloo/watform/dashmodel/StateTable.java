@@ -27,7 +27,8 @@ import java.util.stream.Collectors;
 public class StateTable {
 
     private HashMap<String, StateElement> st;
-    private String tableName = "State"; // TODO this is never used and is not visible anywhere else
+    // private String tableName = "State"; // TODO this is never used and is not visible anywhere
+    // else
     public String root;
 
     // these get added to

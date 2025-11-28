@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import antlr.generated.*;
-import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyLetExpr.AlloyLetAsn;
 import ca.uwaterloo.watform.alloyast.expr.var.*;

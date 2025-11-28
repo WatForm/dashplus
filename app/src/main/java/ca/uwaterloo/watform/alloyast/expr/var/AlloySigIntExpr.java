@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.alloyast.expr.var;
 
-import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
