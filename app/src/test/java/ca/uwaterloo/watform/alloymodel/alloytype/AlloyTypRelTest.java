@@ -2,10 +2,6 @@ package ca.uwaterloo.watform.alloymodel.alloytype;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyast.paragraph.*;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModelImplError;
 import java.util.Collections;
 import java.util.List;

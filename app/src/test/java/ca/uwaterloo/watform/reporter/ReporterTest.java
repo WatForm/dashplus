@@ -148,7 +148,7 @@ public class ReporterTest {
         int[] exitCode = TestUtil.changeReporterExitFn();
         try {
             Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
-            AlloyFile af = ParserUtil.parse(filePath);
+            ParserUtil.parse(filePath);
         } catch (AlloyCtorError alloyCtorError) {
             alloyCtorError.setFilePath(Paths.get("src/test/resources/reporter/badCmd.als"));
             Reporter.INSTANCE.addError(alloyCtorError);

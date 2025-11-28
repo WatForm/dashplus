@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.dashast.DashStrings.IntEnvKind;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,7 +21,7 @@ public class VarTable {
     // LinkedHashMap so order of keySet is consistent
     // Alloy requires declaration before use for variables
     private LinkedHashMap<String, VarElement> vt;
-    private String tableName = "Var";
+    private String tableName = "Var"; // TODO this is never used and is not visible anywhere else
 
     public VarTable() {
         this.vt = new LinkedHashMap<String, VarElement>();

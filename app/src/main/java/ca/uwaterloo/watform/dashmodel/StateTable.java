@@ -13,7 +13,8 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyDiffExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.dashast.*;
-import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.dashast.DashStrings.DefKind;
+import ca.uwaterloo.watform.dashast.DashStrings.StateKind;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.utils.Pos;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 public class StateTable {
 
     private HashMap<String, StateElement> st;
-    private String tableName = "State";
+    private String tableName = "State"; // TODO this is never used and is not visible anywhere else
     public String root;
 
     // these get added to

@@ -13,8 +13,6 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
-import static ca.uwaterloo.watform.utils.GeneralUtil.*;
-
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;

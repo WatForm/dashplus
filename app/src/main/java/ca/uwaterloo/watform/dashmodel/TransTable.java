@@ -10,7 +10,6 @@ import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.*;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 public class TransTable {
 
     private HashMap<String, TransElement> tt;
-    private String tableName = "Trans";
+    private String tableName = "Trans"; // TODO this is never used and is not visible anywhere else
 
     public TransTable() {
         tt = new HashMap<String, TransElement>();

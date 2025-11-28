@@ -15,7 +15,8 @@ import java.util.List;
 public class DashPredTable {
 
     private HashMap<String, PredElement> pt;
-    private String tableName = "DashPred";
+    private String tableName =
+            "DashPred"; // TODO this is never used and is not visible anywhere else
 
     public DashPredTable() {
         this.pt = new HashMap<String, PredElement>();

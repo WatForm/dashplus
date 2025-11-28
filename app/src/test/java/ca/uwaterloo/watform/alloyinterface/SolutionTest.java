@@ -14,7 +14,6 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloySigIntExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;

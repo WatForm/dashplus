@@ -8,6 +8,7 @@ import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.dashast.DashStrings.IntEnvKind;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.List;
 public class EventTable {
 
     private HashMap<String, EventElement> et;
-    private String tableName = "Event";
+    private String tableName = "Event"; // TODO this is never used and is not visible anywhere else
 
     public class EventElement {
         public IntEnvKind kind = IntEnvKind.INT;

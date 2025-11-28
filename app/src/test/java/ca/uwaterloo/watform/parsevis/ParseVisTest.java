@@ -3,9 +3,6 @@ package ca.uwaterloo.watform.parsevis;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.binary.*;
-import ca.uwaterloo.watform.alloyast.paragraph.*;
-import ca.uwaterloo.watform.parser.*;
 import ca.uwaterloo.watform.test.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
@@ -13,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.*;

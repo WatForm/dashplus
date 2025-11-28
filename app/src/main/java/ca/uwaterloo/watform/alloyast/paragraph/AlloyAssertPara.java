@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyStrLiteralExpr;

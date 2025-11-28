@@ -7,8 +7,6 @@ import ca.uwaterloo.watform.alloyast.expr.binary.AlloyAndExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyDotExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
-import ca.uwaterloo.watform.test.*;
-import org.antlr.v4.runtime.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
 
