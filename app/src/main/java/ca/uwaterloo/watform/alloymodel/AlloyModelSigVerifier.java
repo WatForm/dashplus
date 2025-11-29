@@ -11,7 +11,7 @@ import java.util.Set;
 
 // The ctor sigs arg already doesn't contain duplicates
 // 1) var sigs look at parent: var sig's parent is not static
-// 2) type sig look at parent: doens't extend from subset sig
+// 2) type sig look at parent: doesn't extend from subset sig
 // 3) check acyclic dependency by populating this.ancestors
 // 		- this table eliminates redundant recursion
 // 		- useful for step 4

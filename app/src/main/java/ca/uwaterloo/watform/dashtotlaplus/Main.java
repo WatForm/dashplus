@@ -40,6 +40,8 @@ public class Main {
             Files.writeString(outPath.resolve(moduleName + ".tla"), model.moduleCode());
             Files.writeString(outPath.resolve(moduleName + ".cfg"), model.configCode());
 
+            System.out.println("translation complete");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
