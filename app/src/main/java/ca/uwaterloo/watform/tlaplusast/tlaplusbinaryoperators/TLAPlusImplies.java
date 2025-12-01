@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusImplies extends TLAPlusInfixBinOp {
 
-    public TLAPlusImplies(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusImplies(TlaExp operandOne, TlaExp operandTwo) {
         super(
-                TLAPlusStrings.IMPLICATION,
+                TlaStrings.IMPLICATION,
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.UNSAFE,
+                TlaOperator.Associativity.UNSAFE,
                 PrecedenceGroup.IMPLICATION);
     }
 }

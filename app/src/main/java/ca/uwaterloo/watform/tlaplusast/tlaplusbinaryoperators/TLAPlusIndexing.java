@@ -4,20 +4,20 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusIndexing extends TLAPlusBinOp {
 
-    public TLAPlusIndexing(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusIndexing(TlaExp operandOne, TlaExp operandTwo) {
         super(
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.IRRELEVANT,
-                TLAPlusOp.PrecedenceGroup.SAFE);
+                TlaOperator.Associativity.IRRELEVANT,
+                TlaOperator.PrecedenceGroup.SAFE);
     }
 
     @Override
     public String toTLAPlusSnippetCore() {
         return this.getTLASnippetOfChild(this.operandOne)
-                + TLAPlusStrings.SQUARE_BRACKET_OPEN
+                + TlaStrings.SQUARE_BRACKET_OPEN
                 + this.getTLASnippetOfChild(this.operandTwo)
-                + TLAPlusStrings.SQUARE_BRACKET_CLOSE;
+                + TlaStrings.SQUARE_BRACKET_CLOSE;
         // TODO fix this
     }
 

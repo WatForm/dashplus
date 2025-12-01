@@ -3,22 +3,22 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusFormulaAppl extends TLAPlusOp {
+public class TlaFormulaAppl extends TlaOperator {
 
     private final String name;
-    public final List<TLAPlusExp> parameters;
+    public final List<TlaExp> parameters;
 
-    public TLAPlusFormulaAppl(String name, List<TLAPlusExp> parameters) {
-        super(TLAPlusOp.Associativity.IRRELEVANT, TLAPlusOp.PrecedenceGroup.SAFE);
+    public TlaFormulaAppl(String name, List<TlaExp> parameters) {
+        super(TlaOperator.Associativity.IRRELEVANT, TlaOperator.PrecedenceGroup.SAFE);
         this.name = name;
         this.parameters = parameters;
     }
 
-    public TLAPlusFormulaAppl(String name) {
+    public TlaFormulaAppl(String name) {
         this(name, new ArrayList<>());
     }
 
-    public List<TLAPlusExp> getChildren() {
+    public List<TlaExp> getChildren() {
         return this.parameters;
     }
 
@@ -28,12 +28,12 @@ public class TLAPlusFormulaAppl extends TLAPlusOp {
         if (n == 0) return this.name;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(this.name + TLAPlusStrings.BRACKET_OPEN);
+        sb.append(this.name + TlaStrings.BRACKET_OPEN);
         for (int i = 0; i < n; i++) {
             sb.append(this.getTLASnippetOfChild(this.parameters.get(i)));
-            if (i != n - 1) sb.append(TLAPlusStrings.COMMA);
+            if (i != n - 1) sb.append(TlaStrings.COMMA);
         }
-        sb.append(TLAPlusStrings.BRACKET_CLOSE);
+        sb.append(TlaStrings.BRACKET_CLOSE);
         return sb.toString();
     }
 }

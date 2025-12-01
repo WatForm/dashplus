@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusNotEq extends TLAPlusInfixBinOp {
 
-    public TLAPlusNotEq(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusNotEq(TlaExp operandOne, TlaExp operandTwo) {
         super(
-                TLAPlusStrings.NOT_EQUALS,
+                TlaStrings.NOT_EQUALS,
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.LEFT,
-                TLAPlusOp.PrecedenceGroup.COMAPRISON);
+                TlaOperator.Associativity.LEFT,
+                TlaOperator.PrecedenceGroup.COMAPRISON);
     }
 }

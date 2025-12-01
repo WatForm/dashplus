@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusInSet extends TLAPlusInfixBinOp {
 
-    public TLAPlusInSet(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusInSet(TlaExp operandOne, TlaExp operandTwo) {
         super(
-                TLAPlusStrings.SET_IN,
+                TlaStrings.SET_IN,
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.UNSAFE,
+                TlaOperator.Associativity.UNSAFE,
                 PrecedenceGroup.SET_MEMBERSHIP);
     }
 }

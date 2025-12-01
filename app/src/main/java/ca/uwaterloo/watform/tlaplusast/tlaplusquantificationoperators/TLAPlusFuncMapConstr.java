@@ -1,29 +1,29 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusquantificationoperators;
 
-import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
+import ca.uwaterloo.watform.tlaplusast.TlaExp;
+import ca.uwaterloo.watform.tlaplusast.TlaOperator;
+import ca.uwaterloo.watform.tlaplusast.TlaStrings;
+import ca.uwaterloo.watform.tlaplusast.TlaVar;
 
 public class TLAPlusFuncMapConstr extends TLAPlusQuantOp {
     public TLAPlusFuncMapConstr(
-            TLAPlusVar variable, TLAPlusExp set, TLAPlusExp expression) {
-        super(variable, set, expression, TLAPlusOp.PrecedenceGroup.SAFE);
+            TlaVar variable, TlaExp set, TlaExp expression) {
+        super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 
     // [x \in S |-> e]
     @Override
     public String toTLAPlusSnippetCore() {
-        return TLAPlusStrings.SQUARE_BRACKET_OPEN
+        return TlaStrings.SQUARE_BRACKET_OPEN
                 + this.getTLASnippetOfChild(this.variable)
-                + TLAPlusStrings.IN
-                + TLAPlusStrings.SPACE
-                + TLAPlusStrings.SPACE
+                + TlaStrings.IN
+                + TlaStrings.SPACE
+                + TlaStrings.SPACE
                 + this.getTLASnippetOfChild(this.set)
-                + TLAPlusStrings.SPACE
-                + TLAPlusStrings.MAP
-                + TLAPlusStrings.SPACE
+                + TlaStrings.SPACE
+                + TlaStrings.MAP
+                + TlaStrings.SPACE
                 + this.getTLASnippetOfChild(this.expression)
-                + TLAPlusStrings.SPACE;
+                + TlaStrings.SPACE;
     }
 }

@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.List;
 
 public class TLAPlusUnchanged extends TLAPlusNaryOp {
-    public TLAPlusUnchanged(List<TLAPlusVar> children) {
+    public TLAPlusUnchanged(List<TlaVar> children) {
         super(
-                TLAPlusStrings.UNCHANGED + TLAPlusStrings.SPACE + TLAPlusStrings.TUPLE_OPEN,
-                TLAPlusStrings.TUPLE_CLOSE,
-                TLAPlusStrings.COMMA,
+                TlaStrings.UNCHANGED + TlaStrings.SPACE + TlaStrings.TUPLE_OPEN,
+                TlaStrings.TUPLE_CLOSE,
+                TlaStrings.COMMA,
                 children,
-                TLAPlusOp.PrecedenceGroup.SAFE);
+                TlaOperator.PrecedenceGroup.SAFE);
     }
 }

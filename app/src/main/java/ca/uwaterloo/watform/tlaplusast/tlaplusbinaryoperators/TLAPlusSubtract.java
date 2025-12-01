@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusSubtract extends TLAPlusInfixBinOp {
 
-    public TLAPlusSubtract(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusSubtract(TlaExp operandOne, TlaExp operandTwo) {
         super(
-                TLAPlusStrings.MINUS,
+                TlaStrings.MINUS,
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.LEFT,
+                TlaOperator.Associativity.LEFT,
                 PrecedenceGroup.ADD_SUB);
     }
 }

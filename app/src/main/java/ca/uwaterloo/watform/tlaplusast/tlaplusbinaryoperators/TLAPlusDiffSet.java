@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusDiffSet extends TLAPlusInfixBinOp {
 
-    public TLAPlusDiffSet(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusDiffSet(TlaExp operandOne, TlaExp operandTwo) {
         super(
-                TLAPlusStrings.SET_DIFFERENCE,
+                TlaStrings.SET_DIFFERENCE,
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.LEFT,
-                TLAPlusOp.PrecedenceGroup.SET_DIFFERENCE);
+                TlaOperator.Associativity.LEFT,
+                TlaOperator.PrecedenceGroup.SET_DIFFERENCE);
     }
 }

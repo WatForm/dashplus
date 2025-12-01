@@ -4,14 +4,14 @@ import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusConfig {
-    public List<TLAPlusExp> invariants;
-    public List<TLAPlusExp> properties;
-    public List<TLAPlusExp> constants;
-    public TLAPlusFormulaAppl init;
-    public TLAPlusFormulaAppl next;
+public class TlaConfig {
+    public List<TlaExp> invariants;
+    public List<TlaExp> properties;
+    public List<TlaExp> constants;
+    public TlaFormulaAppl init;
+    public TlaFormulaAppl next;
 
-    public TLAPlusConfig(TLAPlusFormulaAppl init, TLAPlusFormulaAppl next) {
+    public TlaConfig(TlaFormulaAppl init, TlaFormulaAppl next) {
         this.invariants = new ArrayList<>();
         this.properties = new ArrayList<>();
         this.constants = new ArrayList<>();
@@ -20,26 +20,26 @@ public class TLAPlusConfig {
     }
 
     private String initString() {
-        return TLAPlusStrings.INIT + TLAPlusStrings.SPACE + init.toString();
+        return TlaStrings.INIT + TlaStrings.SPACE + init.toString();
     }
 
     private String nextString() {
-        return TLAPlusStrings.NEXT + TLAPlusStrings.SPACE + next.toString();
+        return TlaStrings.NEXT + TlaStrings.SPACE + next.toString();
     }
 
     private String constantsString() {
         // TODO do this
-        return TLAPlusStrings.CONSTANTS + TLAPlusStrings.SPACE + "";
+        return TlaStrings.CONSTANTS + TlaStrings.SPACE + "";
     }
 
     private String invariantsString() {
         // TODO do this
-        return TLAPlusStrings.INVARIANTS + TLAPlusStrings.SPACE + "";
+        return TlaStrings.INVARIANTS + TlaStrings.SPACE + "";
     }
 
     private String propertiesString() {
         // TODO do this
-        return TLAPlusStrings.PROPERTIES + TLAPlusStrings.SPACE + "";
+        return TlaStrings.PROPERTIES + TlaStrings.SPACE + "";
     }
 
     public String code() {

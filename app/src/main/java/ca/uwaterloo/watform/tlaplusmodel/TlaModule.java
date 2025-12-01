@@ -5,35 +5,35 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusModule {
-    public final List<TLAPlusConst> constants;
-    public final List<TLAPlusVar> variables;
-    public final List<TLAPlusStdLibs> extended_libraries;
+public class TlaModule {
+    public final List<TlaConst> constants;
+    public final List<TlaVar> variables;
+    public final List<TlaStdLibs> extended_libraries;
     public final List<ASTNode> body;
 
-    public TLAPlusModule() {
+    public TlaModule() {
         this.constants = new ArrayList<>();
         this.variables = new ArrayList<>();
         this.extended_libraries = new ArrayList<>();
         this.body = new ArrayList<>();
     }
 
-    public List<TLAPlusFormulaDefn> getFormulaDefinitions() {
-        return GeneralUtil.extractItemsOfClass(this.body, TLAPlusFormulaDefn.class);
+    public List<TlaFormulaDefn> getFormulaDefinitions() {
+        return GeneralUtil.extractItemsOfClass(this.body, TlaFormulaDefn.class);
     }
 
-    public List<TLAPlusComment> getComments() {
-        return GeneralUtil.extractItemsOfClass(this.body, TLAPlusComment.class);
+    public List<TlaComment> getComments() {
+        return GeneralUtil.extractItemsOfClass(this.body, TlaComment.class);
     }
 
     private String codeHead(String name) {
-        return TLAPlusStrings.HEAD_DELIMITER
-                + TLAPlusStrings.SPACE
-                + TLAPlusStrings.MODULE
-                + TLAPlusStrings.SPACE
+        return TlaStrings.HEAD_DELIMITER
+                + TlaStrings.SPACE
+                + TlaStrings.MODULE
+                + TlaStrings.SPACE
                 + name
-                + TLAPlusStrings.SPACE
-                + TLAPlusStrings.HEAD_DELIMITER;
+                + TlaStrings.SPACE
+                + TlaStrings.HEAD_DELIMITER;
     }
 
     private static String simpleBuilder(String initial, List<? extends ASTNode> l) {
@@ -41,9 +41,9 @@ public class TLAPlusModule {
         int n = l.size();
         if (n == 0) return ""; // no need for the line if nothing exists
         for (int i = 0; i < n; i++) {
-            sb.append(TLAPlusStrings.SPACE);
+            sb.append(TlaStrings.SPACE);
             l.get(i).toString(sb, 0);
-            if (i < n - 1) sb.append(TLAPlusStrings.COMMA);
+            if (i < n - 1) sb.append(TlaStrings.COMMA);
         }
         return sb.toString();
     }
@@ -59,15 +59,15 @@ public class TLAPlusModule {
 
     private String codeBody() {
         String doubleSpace = "\n\n";
-        return TLAPlusModule.simpleBuilder(TLAPlusStrings.EXTENDS, this.extended_libraries)
+        return TlaModule.simpleBuilder(TlaStrings.EXTENDS, this.extended_libraries)
                 + doubleSpace
-                + TLAPlusModule.simpleBuilder(TLAPlusStrings.CONSTANTS, this.constants)
+                + TlaModule.simpleBuilder(TlaStrings.CONSTANTS, this.constants)
                 + doubleSpace
-                + TLAPlusModule.simpleBuilder(TLAPlusStrings.VARIABLES, this.variables)
+                + TlaModule.simpleBuilder(TlaStrings.VARIABLES, this.variables)
                 + doubleSpace
                 + this.bodyString()
                 + doubleSpace
-                + TLAPlusStrings.BODY_DELIMITER;
+                + TlaStrings.BODY_DELIMITER;
     }
 
     public String code(String name) {

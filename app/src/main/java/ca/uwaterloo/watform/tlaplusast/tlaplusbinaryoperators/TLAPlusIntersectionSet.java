@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusIntersectionSet extends TLAPlusInfixBinOp {
 
-    public TLAPlusIntersectionSet(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusIntersectionSet(TlaExp operandOne, TlaExp operandTwo) {
         super(
-                TLAPlusStrings.SET_INTERSECTION,
+                TlaStrings.SET_INTERSECTION,
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.IRRELEVANT,
+                TlaOperator.Associativity.IRRELEVANT,
                 PrecedenceGroup.SET_INTERSECTION);
     }
 }

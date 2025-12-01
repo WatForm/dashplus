@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusRange extends TLAPlusInfixBinOp {
 
-    public TLAPlusRange(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusRange(TlaExp operandOne, TlaExp operandTwo) {
         super(
-                TLAPlusStrings.RANGE,
+                TlaStrings.RANGE,
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.UNSAFE,
+                TlaOperator.Associativity.UNSAFE,
                 PrecedenceGroup.RANGE);
     }
 }

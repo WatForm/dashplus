@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.tlaplusast;
 
 import ca.uwaterloo.watform.utils.*;
 
-public final class TLAPlusStrings extends CommonStrings {
+public final class TlaStrings extends CommonStrings {
     // top-level keywords
     public static final String MODULE = "MODULE";
     public static final String EXTENDS = "EXTENDS";

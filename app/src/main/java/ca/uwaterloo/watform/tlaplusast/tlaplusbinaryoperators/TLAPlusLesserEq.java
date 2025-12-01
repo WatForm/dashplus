@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusLesserEq extends TLAPlusInfixBinOp {
 
-    public TLAPlusLesserEq(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusLesserEq(TlaExp operandOne, TlaExp operandTwo) {
         super(
-                TLAPlusStrings.LESSER_THAN_EQUALS,
+                TlaStrings.LESSER_THAN_EQUALS,
                 operandOne,
                 operandTwo,
-                TLAPlusOp.Associativity.LEFT,
-                TLAPlusOp.PrecedenceGroup.COMAPRISON);
+                TlaOperator.Associativity.LEFT,
+                TlaOperator.PrecedenceGroup.COMAPRISON);
     }
 }

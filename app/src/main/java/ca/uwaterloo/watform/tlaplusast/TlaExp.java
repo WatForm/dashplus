@@ -3,16 +3,16 @@ package ca.uwaterloo.watform.tlaplusast;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
-public abstract class TLAPlusExp extends ASTNode {
-    public abstract List<TLAPlusExp> getChildren();
+public abstract class TlaExp extends ASTNode {
+    public abstract List<TlaExp> getChildren();
 
     public abstract String toTLAPlusSnippetCore();
 
     public String toTLAPlusSnippet(boolean brackets) {
         if (brackets)
-            return TLAPlusStrings.BRACKET_OPEN
+            return TlaStrings.BRACKET_OPEN
                     + toTLAPlusSnippetCore()
-                    + TLAPlusStrings.BRACKET_CLOSE;
+                    + TlaStrings.BRACKET_CLOSE;
         return toTLAPlusSnippetCore();
     }
 

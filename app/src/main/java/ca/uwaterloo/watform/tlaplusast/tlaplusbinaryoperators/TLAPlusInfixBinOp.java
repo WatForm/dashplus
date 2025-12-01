@@ -1,8 +1,8 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
-import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
+import ca.uwaterloo.watform.tlaplusast.TlaExp;
+import ca.uwaterloo.watform.tlaplusast.TlaOperator;
+import ca.uwaterloo.watform.tlaplusast.TlaStrings;
 
 public abstract class TLAPlusInfixBinOp extends TLAPlusBinOp {
 
@@ -10,10 +10,10 @@ public abstract class TLAPlusInfixBinOp extends TLAPlusBinOp {
 
     public TLAPlusInfixBinOp(
             String infixOperator,
-            TLAPlusExp operandOne,
-            TLAPlusExp operandTwo,
-            TLAPlusOp.Associativity associativity,
-            TLAPlusOp.PrecedenceGroup precedenceGroup) {
+            TlaExp operandOne,
+            TlaExp operandTwo,
+            TlaOperator.Associativity associativity,
+            TlaOperator.PrecedenceGroup precedenceGroup) {
 
         super(operandOne, operandTwo, associativity, precedenceGroup);
         this.infixOperator = infixOperator;
@@ -22,9 +22,9 @@ public abstract class TLAPlusInfixBinOp extends TLAPlusBinOp {
     @Override
     public String toTLAPlusSnippetCore() {
         return this.getTLASnippetOfChild(this.operandOne)
-                + TLAPlusStrings.SPACE
+                + TlaStrings.SPACE
                 + this.infixOperator
-                + TLAPlusStrings.SPACE
+                + TlaStrings.SPACE
                 + this.getTLASnippetOfChild(this.operandTwo);
     }
 }

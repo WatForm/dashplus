@@ -5,12 +5,12 @@ import java.util.List;
 
 public class TLAPlusSequence extends TLAPlusNaryOp {
 
-    public TLAPlusSequence(List<TLAPlusExp> children) {
+    public TLAPlusSequence(List<TlaExp> children) {
         super(
-                TLAPlusStrings.SEQUENCE_OPEN,
-                TLAPlusStrings.SEQUENCE_CLOSE,
-                TLAPlusStrings.COMMA,
+                TlaStrings.SEQUENCE_OPEN,
+                TlaStrings.SEQUENCE_CLOSE,
+                TlaStrings.COMMA,
                 children,
-                TLAPlusOp.PrecedenceGroup.SAFE);
+                TlaOperator.PrecedenceGroup.SAFE);
     }
 }

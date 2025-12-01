@@ -2,11 +2,11 @@ package ca.uwaterloo.watform.tlaplusast;
 
 import ca.uwaterloo.watform.utils.ASTNode;
 
-public class TLAPlusComment extends ASTNode {
+public class TlaComment extends ASTNode {
 
     public final String contents;
 
-    public TLAPlusComment(String contents) {
+    public TlaComment(String contents) {
         this.contents = contents;
     }
 
@@ -15,12 +15,12 @@ public class TLAPlusComment extends ASTNode {
         String core = "";
         if (this.contents.contains("\n"))
             core =
-                    TLAPlusStrings.MULTI_COMMENT_START
-                            + TLAPlusStrings.SPACE
+                    TlaStrings.MULTI_COMMENT_START
+                            + TlaStrings.SPACE
                             + this.contents
-                            + TLAPlusStrings.SPACE
-                            + TLAPlusStrings.MULTI_COMMENT_END;
-        else core = TLAPlusStrings.SINGLE_COMMENT + TLAPlusStrings.SPACE + this.contents;
+                            + TlaStrings.SPACE
+                            + TlaStrings.MULTI_COMMENT_END;
+        else core = TlaStrings.SINGLE_COMMENT + TlaStrings.SPACE + this.contents;
         sb.append(core);
         return;
     }

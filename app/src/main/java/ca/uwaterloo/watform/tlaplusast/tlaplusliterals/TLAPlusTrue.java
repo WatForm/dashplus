@@ -1,11 +1,11 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusliterals;
 
-import ca.uwaterloo.watform.tlaplusast.TLAPlusSimpleExp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
+import ca.uwaterloo.watform.tlaplusast.TlaSimpleExp;
+import ca.uwaterloo.watform.tlaplusast.TlaStrings;
 
-public class TLAPlusTrue extends TLAPlusSimpleExp {
+public class TLAPlusTrue extends TlaSimpleExp {
 
     public TLAPlusTrue() {
-        super(TLAPlusStrings.TRUE);
+        super(TlaStrings.TRUE);
     }
 }

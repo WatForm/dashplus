@@ -1,9 +1,9 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashast.DashStrings;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaAppl;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
+import ca.uwaterloo.watform.tlaplusast.TlaExp;
+import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
+import ca.uwaterloo.watform.tlaplusast.TlaVar;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusAnd;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusOr;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusUnionSet;
@@ -43,12 +43,12 @@ class TranslationStrings {
 
     public static final String QUALIFIER = DashStrings.SLASH;
 
-    public static TLAPlusVar getConf() {
-        return new TLAPlusVar(CONF);
+    public static TlaVar getConf() {
+        return new TlaVar(CONF);
     }
 
-    public static TLAPlusVar getScopeUsed() {
-        return new TLAPlusVar(SCOPE_USED);
+    public static TlaVar getScopeUsed() {
+        return new TlaVar(SCOPE_USED);
     }
 
     public static String getSetConf() {
@@ -63,36 +63,36 @@ class TranslationStrings {
         return SET_ + SCOPE_USED;
     }
 
-    public static TLAPlusVar getStable() {
-        return new TLAPlusVar(STABLE);
+    public static TlaVar getStable() {
+        return new TlaVar(STABLE);
     }
 
-    public static TLAPlusVar getEvents() {
-        return new TLAPlusVar(EVENTS);
+    public static TlaVar getEvents() {
+        return new TlaVar(EVENTS);
     }
 
     public static String getSetEvents() {
         return SET_ + EVENTS;
     }
 
-    public static TLAPlusVar getTransTaken() {
-        return new TLAPlusVar(TRANS_TAKEN);
+    public static TlaVar getTransTaken() {
+        return new TlaVar(TRANS_TAKEN);
     }
 
     public static String getSetTransTaken() {
         return SET_ + TRANS_TAKEN;
     }
 
-    public static TLAPlusVar getScopesUsed() {
-        return new TLAPlusVar(SCOPE_USED);
+    public static TlaVar getScopesUsed() {
+        return new TlaVar(SCOPE_USED);
     }
 
-    public static TLAPlusFormulaAppl getNext() {
-        return new TLAPlusFormulaAppl(NEXT);
+    public static TlaFormulaAppl getNext() {
+        return new TlaFormulaAppl(NEXT);
     }
 
-    public static TLAPlusFormulaAppl getInit() {
-        return new TLAPlusFormulaAppl(INIT);
+    public static TlaFormulaAppl getInit() {
+        return new TlaFormulaAppl(INIT);
     }
 
     public static TLAPlusSet getNullSet() {
@@ -127,30 +127,30 @@ class TranslationStrings {
 
     // todo: combine these into one
 
-    public static TLAPlusExp repeatedUnion(List<? extends TLAPlusExp> operands) {
+    public static TlaExp repeatedUnion(List<? extends TlaExp> operands) {
         if (operands.size() == 0) return getNullSet();
         if (operands.size() == 1) return operands.get(0);
-        TLAPlusExp top = new TLAPlusUnionSet(operands.get(0), operands.get(1));
+        TlaExp top = new TLAPlusUnionSet(operands.get(0), operands.get(1));
         for (int i = 2; i < operands.size(); i++) {
             top = new TLAPlusUnionSet(top, operands.get(i));
         }
         return top;
     }
 
-    public static TLAPlusExp repeatedAnd(List<? extends TLAPlusExp> operands) {
+    public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
         if (operands.size() == 0) return new TLAPlusTrue();
         if (operands.size() == 1) return operands.get(0);
-        TLAPlusExp top = new TLAPlusAnd(operands.get(0), operands.get(1));
+        TlaExp top = new TLAPlusAnd(operands.get(0), operands.get(1));
         for (int i = 2; i < operands.size(); i++) {
             top = new TLAPlusAnd(top, operands.get(i));
         }
         return top;
     }
 
-    public static TLAPlusExp repeatedOr(List<? extends TLAPlusExp> operands) {
+    public static TlaExp repeatedOr(List<? extends TlaExp> operands) {
         if (operands.size() == 0) return new TLAPlusFalse();
         if (operands.size() == 1) return operands.get(0);
-        TLAPlusExp top = new TLAPlusOr(operands.get(0), operands.get(1));
+        TlaExp top = new TLAPlusOr(operands.get(0), operands.get(1));
         for (int i = 2; i < operands.size(); i++) {
             top = new TLAPlusOr(top, operands.get(i));
         }

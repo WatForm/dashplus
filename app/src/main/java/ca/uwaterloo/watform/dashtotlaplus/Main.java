@@ -38,7 +38,7 @@ public class Main {
             DashFile df = (DashFile) ParserUtil.parse(inPath);
             DashModel dm = new DashModel(df);
 
-            TLAPlusModel model = DashToTLAPlus.translate(dm, moduleName);
+            TlaModel model = DashToTLAPlus.translate(dm, moduleName);
             Files.writeString(outPath.resolve(moduleName + ".tla"), model.moduleCode());
             Files.writeString(outPath.resolve(moduleName + ".cfg"), model.configCode());
 
