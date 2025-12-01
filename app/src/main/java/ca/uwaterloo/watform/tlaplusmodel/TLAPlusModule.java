@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TLAPlusModule {
-    public final List<TLAPlusConstant> constants;
-    public final List<TLAPlusVariable> variables;
+    public final List<TLAPlusConst> constants;
+    public final List<TLAPlusVar> variables;
     public final List<TLAPlusStandardLibraries> extended_libraries;
     public final List<ASTNode> body;
 
@@ -18,8 +18,8 @@ public class TLAPlusModule {
         this.body = new ArrayList<>();
     }
 
-    public List<TLAPlusFormulaDefinition> getFormulaDefinitions() {
-        return GeneralUtil.extractItemsOfClass(this.body, TLAPlusFormulaDefinition.class);
+    public List<TLAPlusFormulaDefn> getFormulaDefinitions() {
+        return GeneralUtil.extractItemsOfClass(this.body, TLAPlusFormulaDefn.class);
     }
 
     public List<TLAPlusComment> getComments() {

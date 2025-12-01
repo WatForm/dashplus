@@ -2,8 +2,8 @@ package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDeclaration;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefinition;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDecl;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefn;
 import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusStringLiteral;
 import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TLAPlusSet;
 import ca.uwaterloo.watform.tlaplusmodel.TLAPlusModel;
@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class StateDfinitions {
+public class StateDefinitions {
     // this class adds in formulae for every state in the dash model
     // leaf states are singleton sets that contain the fully qualified names as strings
     // non-leaf states are the union of the leaf states they contain
@@ -43,8 +43,8 @@ public class StateDfinitions {
 
         // <state-formula-name> == {"<state FQN"}
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(TranslationStrings.getStateFormulaName(s)),
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(TranslationStrings.getStateFormulaName(s)),
                         new TLAPlusSet(Arrays.asList(new TLAPlusStringLiteral(s)))));
     }
 
@@ -59,8 +59,8 @@ public class StateDfinitions {
                         x -> new TLAPlusFormulaApplication(TranslationStrings.getStateFormulaName(x)));
 
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(TranslationStrings.getStateFormulaName(s)),
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(TranslationStrings.getStateFormulaName(s)),
                         TranslationStrings.repeatedUnion(childStateFormulae)));
     }
 }

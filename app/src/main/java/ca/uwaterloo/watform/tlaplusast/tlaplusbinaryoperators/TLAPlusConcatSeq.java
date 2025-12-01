@@ -2,14 +2,14 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class TLAPlusUnionSet extends TLAPlusInfixBinOp {
+public class TLAPlusConcatSeq extends TLAPlusInfixBinOp {
 
-    public TLAPlusUnionSet(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusConcatSeq(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
         super(
-                TLAPlusStrings.SET_UNION,
+                TLAPlusStrings.CONCATENATE,
                 operandOne,
                 operandTwo,
                 TLAPlusOp.Associativity.IRRELEVANT,
-                PrecedenceGroup.SET_UNION);
+                TLAPlusOp.PrecedenceGroup.CONCAT);
     }
 }

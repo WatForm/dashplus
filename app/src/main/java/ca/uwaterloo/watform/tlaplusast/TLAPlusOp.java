@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.tlaplusast;
 
-public abstract class TLAPlusOperator extends TLAPlusExpression {
+public abstract class TLAPlusOp extends TLAPlusExp {
 
     public static enum Associativity {
         LEFT, // a.b.c is parsed as (a.b).c  e.g. subtraction
@@ -52,12 +52,12 @@ public abstract class TLAPlusOperator extends TLAPlusExpression {
     private final Associativity associativity;
     private final PrecedenceGroup precedenceGroup;
 
-    public TLAPlusOperator(Associativity associativity, PrecedenceGroup precedenceGroup) {
+    public TLAPlusOp(Associativity associativity, PrecedenceGroup precedenceGroup) {
         this.associativity = associativity;
         this.precedenceGroup = precedenceGroup;
     }
 
-    public static boolean childNeedsParenthesis(TLAPlusExpression parent, TLAPlusExpression child) {
+    public static boolean childNeedsParenthesis(TLAPlusExp parent, TLAPlusExp child) {
         // TODO implement this to improve readability of generated code
 
         // this is a conservative implementation - by default, parentheses are needed
@@ -81,8 +81,8 @@ public abstract class TLAPlusOperator extends TLAPlusExpression {
         return true;
     }
 
-    public String getTLASnippetOfChild(TLAPlusExpression child) {
-        return child.toTLAPlusSnippet(TLAPlusOperator.childNeedsParenthesis(this, child));
+    public String getTLASnippetOfChild(TLAPlusExp child) {
+        return child.toTLAPlusSnippet(TLAPlusOp.childNeedsParenthesis(this, child));
     }
 
     public Associativity getAssociativity() {

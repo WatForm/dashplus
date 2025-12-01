@@ -1,14 +1,14 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusquantificationoperators;
 
-import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusOperator;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
 
 public class TLAPlusFunctionMapConstructor extends TLAPlusQuantificationOperator {
     public TLAPlusFunctionMapConstructor(
-            TLAPlusVariable variable, TLAPlusExpression set, TLAPlusExpression expression) {
-        super(variable, set, expression, TLAPlusOperator.PrecedenceGroup.SAFE);
+            TLAPlusVar variable, TLAPlusExp set, TLAPlusExp expression) {
+        super(variable, set, expression, TLAPlusOp.PrecedenceGroup.SAFE);
     }
 
     // [x \in S |-> e]

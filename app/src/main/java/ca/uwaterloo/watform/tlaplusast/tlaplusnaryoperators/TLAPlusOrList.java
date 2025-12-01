@@ -1,12 +1,12 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators;
 
-import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusOperator;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 import java.util.List;
 
-public class TLAPlusOrList extends TLAPlusNaryOperator {
-    public TLAPlusOrList(List<TLAPlusExpression> children) {
-        super("", "", TLAPlusStrings.OR, children, TLAPlusOperator.PrecedenceGroup.OR_LIST);
+public class TLAPlusOrList extends TLAPlusNaryOp {
+    public TLAPlusOrList(List<TLAPlusExp> children) {
+        super("", "", TLAPlusStrings.OR, children, TLAPlusOp.PrecedenceGroup.OR_LIST);
     }
 }

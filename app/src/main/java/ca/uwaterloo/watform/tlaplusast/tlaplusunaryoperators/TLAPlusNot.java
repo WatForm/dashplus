@@ -2,9 +2,9 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class TLAPlusNot extends TLAPlusUnaryOperator {
-    public TLAPlusNot(TLAPlusExpression operand) {
-        super(operand, TLAPlusOperator.PrecedenceGroup.NOT);
+public class TLAPlusNot extends TLAPlusUnaryOp {
+    public TLAPlusNot(TLAPlusExp operand) {
+        super(operand, TLAPlusOp.PrecedenceGroup.NOT);
     }
 
     @Override

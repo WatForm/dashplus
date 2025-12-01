@@ -3,19 +3,19 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.Arrays;
 import java.util.List;
 
-public class TLAPlusLetBinding extends TLAPlusOperator {
+public class TLAPlusLetBinding extends TLAPlusOp {
 
-    private TLAPlusFormulaDefinition definition;
-    private TLAPlusExpression expression;
+    private TLAPlusFormulaDefn definition;
+    private TLAPlusExp expression;
 
-    public TLAPlusLetBinding(TLAPlusFormulaDefinition definition, TLAPlusExpression expression) {
-        super(TLAPlusOperator.Associativity.IRRELEVANT, TLAPlusOperator.PrecedenceGroup.SAFE);
+    public TLAPlusLetBinding(TLAPlusFormulaDefn definition, TLAPlusExp expression) {
+        super(TLAPlusOp.Associativity.IRRELEVANT, TLAPlusOp.PrecedenceGroup.SAFE);
         this.definition = definition;
         this.expression = expression;
     }
 
     @Override
-    public List<TLAPlusExpression> getChildren() {
+    public List<TLAPlusExp> getChildren() {
         return Arrays.asList(this.definition, this.expression);
     }
 

@@ -4,8 +4,8 @@ import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TLAPlusForAll extends TLAPlusQuantificationOperator {
     public TLAPlusForAll(
-            TLAPlusVariable variable, TLAPlusExpression set, TLAPlusExpression expression) {
-        super(variable, set, expression, TLAPlusOperator.PrecedenceGroup.PREDICATE);
+            TLAPlusVar variable, TLAPlusExp set, TLAPlusExp expression) {
+        super(variable, set, expression, TLAPlusOp.PrecedenceGroup.PREDICATE);
     }
 
     @Override

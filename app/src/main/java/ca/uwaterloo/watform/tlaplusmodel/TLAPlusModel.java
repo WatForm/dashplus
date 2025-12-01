@@ -2,12 +2,12 @@ package ca.uwaterloo.watform.tlaplusmodel;
 
 import ca.uwaterloo.watform.tlaplusast.TLAPlusBlankLine;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusComment;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusConstant;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusConst;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefinition;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusSimpleExpression;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefn;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusSimpleExp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStandardLibraries;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class TLAPlusModel {
         return this.cfg.code();
     }
 
-    private static boolean UniqueSimpleCheck(List<? extends TLAPlusSimpleExpression> l) {
+    private static boolean UniqueSimpleCheck(List<? extends TLAPlusSimpleExp> l) {
         return GeneralUtil.uniqueness(
                 l, (u, v) -> u.toTLAPlusSnippetCore().equals(v.toTLAPlusSnippetCore()));
     }
@@ -49,15 +49,15 @@ public class TLAPlusModel {
         this.module.extended_libraries.add(stl);
     }
 
-    public void addVariable(TLAPlusVariable v) {
+    public void addVariable(TLAPlusVar v) {
         this.module.variables.add(v);
     }
 
-    public void addConstant(TLAPlusConstant c) {
+    public void addConstant(TLAPlusConst c) {
         this.module.constants.add(c);
     }
 
-    public void addFormulaDefinition(TLAPlusFormulaDefinition d) {
+    public void addFormulaDefinition(TLAPlusFormulaDefn d) {
         this.module.body.add(d);
     }
 

@@ -2,11 +2,11 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class TLAPlusLesser extends TLAPlusInfixBinOp {
+public class TLAPlusGreaterEq extends TLAPlusInfixBinOp {
 
-    public TLAPlusLesser(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
+    public TLAPlusGreaterEq(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
         super(
-                TLAPlusStrings.LESSER_THAN,
+                TLAPlusStrings.GREATER_THAN_EQUALS,
                 operandOne,
                 operandTwo,
                 TLAPlusOp.Associativity.LEFT,

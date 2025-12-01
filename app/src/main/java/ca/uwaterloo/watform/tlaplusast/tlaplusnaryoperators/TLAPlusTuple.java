@@ -3,14 +3,14 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators;
 import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.List;
 
-public class TLAPlusTuple extends TLAPlusNaryOperator {
+public class TLAPlusTuple extends TLAPlusNaryOp {
 
-    public TLAPlusTuple(List<TLAPlusExpression> children) {
+    public TLAPlusTuple(List<TLAPlusExp> children) {
         super(
                 TLAPlusStrings.TUPLE_OPEN,
                 TLAPlusStrings.TUPLE_CLOSE,
                 TLAPlusStrings.COMMA,
                 children,
-                TLAPlusOperator.PrecedenceGroup.SAFE);
+                TLAPlusOp.PrecedenceGroup.SAFE);
     }
 }

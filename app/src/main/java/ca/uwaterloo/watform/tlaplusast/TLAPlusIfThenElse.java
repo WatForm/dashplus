@@ -3,24 +3,24 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.Arrays;
 import java.util.List;
 
-public class TLAPlusIfThenElse extends TLAPlusOperator {
+public class TLAPlusIfThenElse extends TLAPlusOp {
 
-    public final TLAPlusExpression condition;
-    public final TLAPlusExpression thenExpression;
-    public final TLAPlusExpression elseExpression;
+    public final TLAPlusExp condition;
+    public final TLAPlusExp thenExpression;
+    public final TLAPlusExp elseExpression;
 
     public TLAPlusIfThenElse(
-            TLAPlusExpression condition,
-            TLAPlusExpression thenExpression,
-            TLAPlusExpression elseExpression) {
-        super(TLAPlusOperator.Associativity.IRRELEVANT, TLAPlusOperator.PrecedenceGroup.SAFE);
+            TLAPlusExp condition,
+            TLAPlusExp thenExpression,
+            TLAPlusExp elseExpression) {
+        super(TLAPlusOp.Associativity.IRRELEVANT, TLAPlusOp.PrecedenceGroup.SAFE);
         this.condition = condition;
         this.thenExpression = thenExpression;
         this.elseExpression = elseExpression;
     }
 
     @Override
-    public List<TLAPlusExpression> getChildren() {
+    public List<TLAPlusExp> getChildren() {
         return Arrays.asList(condition, thenExpression, elseExpression);
     }
 

@@ -1,19 +1,19 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
-import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusOperator;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 
-public abstract class TLAPlusInfixBinaryOperator extends TLAPlusBinaryOperator {
+public abstract class TLAPlusInfixBinOp extends TLAPlusBinOp {
 
     private final String infixOperator;
 
-    public TLAPlusInfixBinaryOperator(
+    public TLAPlusInfixBinOp(
             String infixOperator,
-            TLAPlusExpression operandOne,
-            TLAPlusExpression operandTwo,
-            TLAPlusOperator.Associativity associativity,
-            TLAPlusOperator.PrecedenceGroup precedenceGroup) {
+            TLAPlusExp operandOne,
+            TLAPlusExp operandTwo,
+            TLAPlusOp.Associativity associativity,
+            TLAPlusOp.PrecedenceGroup precedenceGroup) {
 
         super(operandOne, operandTwo, associativity, precedenceGroup);
         this.infixOperator = infixOperator;

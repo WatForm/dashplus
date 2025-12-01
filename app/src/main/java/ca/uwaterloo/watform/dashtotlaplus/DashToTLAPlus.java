@@ -13,7 +13,7 @@ public class DashToTLAPlus {
 
         model.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants");
-        StateDfinitions.stateFormulae(dashModel, model);
+        StateDefinitions.stateFormulae(dashModel, model);
 
         model.addBlankLine();
         model.addComment(

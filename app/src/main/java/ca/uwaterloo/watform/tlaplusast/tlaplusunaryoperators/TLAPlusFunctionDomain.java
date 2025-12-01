@@ -1,13 +1,13 @@
 package ca.uwaterloo.watform.tlaplusast.tlaplusunaryoperators;
 
-import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusOperator;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 
-public class TLAPlusFunctionDomain extends TLAPlusUnaryOperator {
+public class TLAPlusFunctionDomain extends TLAPlusUnaryOp {
 
-    public TLAPlusFunctionDomain(TLAPlusExpression operand) {
-        super(operand, TLAPlusOperator.PrecedenceGroup.UNSAFE);
+    public TLAPlusFunctionDomain(TLAPlusExp operand) {
+        super(operand, TLAPlusOp.PrecedenceGroup.UNSAFE);
     }
 
     @Override

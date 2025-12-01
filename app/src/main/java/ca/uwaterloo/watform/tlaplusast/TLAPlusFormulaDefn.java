@@ -3,11 +3,11 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.Arrays;
 import java.util.List;
 
-public class TLAPlusFormulaDefinition extends TLAPlusExpression {
-    public final TLAPlusFormulaDeclaration declaration;
-    public final TLAPlusExpression body;
+public class TLAPlusFormulaDefn extends TLAPlusExp {
+    public final TLAPlusFormulaDecl declaration;
+    public final TLAPlusExp body;
 
-    public TLAPlusFormulaDefinition(TLAPlusFormulaDeclaration declaration, TLAPlusExpression body) {
+    public TLAPlusFormulaDefn(TLAPlusFormulaDecl declaration, TLAPlusExp body) {
         this.declaration = declaration;
         this.body = body;
     }
@@ -20,7 +20,7 @@ public class TLAPlusFormulaDefinition extends TLAPlusExpression {
         return;
     }
 
-    public List<TLAPlusExpression> getChildren() {
+    public List<TLAPlusExp> getChildren() {
         return Arrays.asList(this.declaration, this.body);
     }
 

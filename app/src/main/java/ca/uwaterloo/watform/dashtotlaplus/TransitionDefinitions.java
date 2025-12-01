@@ -1,15 +1,15 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusExpression;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDeclaration;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefinition;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusVariable;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDecl;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefn;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusAnd;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusEquals;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusIntersectionSet;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusNotEquals;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusNotEq;
 import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusStringLiteral;
 import ca.uwaterloo.watform.tlaplusmodel.TLAPlusModel;
 import ca.uwaterloo.watform.utils.GeneralUtil;
@@ -34,16 +34,16 @@ public class TransitionDefinitions {
     public static void makeTransitionTakenNameFormulae(
             String transitionFullyQualifiedName, TLAPlusModel tlaPlusModel) {
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(
                                 TranslationStrings.getTakenTransFormulaName(transitionFullyQualifiedName)),
                         new TLAPlusStringLiteral(transitionFullyQualifiedName)));
     }
 
-    public static List<TLAPlusVariable> enabledArgList() {
+    public static List<TLAPlusVar> enabledArgList() {
         return Arrays.asList(
-                new TLAPlusVariable(TranslationStrings.getArg(TranslationStrings.CONF)),
-                new TLAPlusVariable(TranslationStrings.getArg(TranslationStrings.SCOPE_USED)));
+                new TLAPlusVar(TranslationStrings.getArg(TranslationStrings.CONF)),
+                new TLAPlusVar(TranslationStrings.getArg(TranslationStrings.SCOPE_USED)));
     }
 
     public static void addTransitionGeneralFormulae(
@@ -55,8 +55,8 @@ public class TransitionDefinitions {
         List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
 
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(TranslationStrings.SOME_TRANSITION),
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(TranslationStrings.SOME_TRANSITION),
                         TranslationStrings.repeatedOr(
                                 GeneralUtil.mapBy(
                                         transitions,
@@ -65,8 +65,8 @@ public class TransitionDefinitions {
                                                         TranslationStrings.getTransFormulaName(t))))));
 
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(TranslationStrings.NEXT_IS_STABLE, enabledArgList()),
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(TranslationStrings.NEXT_IS_STABLE, enabledArgList()),
                         TranslationStrings.repeatedOr(
                                 GeneralUtil.mapBy(
                                         transitions,
@@ -83,8 +83,8 @@ public class TransitionDefinitions {
         String sourceStateFullQualifiedName =
                 "standin"; // AuxiliaryDashAccessors.getSourceOfTrans(transitionFullyQualifiedName,
         // dashModel);  this doesn't work for whatever reason
-        TLAPlusExpression conf_exp =
-                new TLAPlusNotEquals(
+        TLAPlusExp conf_exp =
+                new TLAPlusNotEq(
                         new TLAPlusIntersectionSet(
                                 TranslationStrings.getConf(),
                                 new TLAPlusFormulaApplication(
@@ -92,8 +92,8 @@ public class TransitionDefinitions {
                         TranslationStrings.getNullSet());
 
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(
                                 TranslationStrings.getPreTransFormulaName(transitionFullyQualifiedName)),
                         TranslationStrings.repeatedAnd(Arrays.asList(conf_exp))));
     }
@@ -101,14 +101,14 @@ public class TransitionDefinitions {
     public static void addTransitionPostFormula(
             String transitionFullyQualifiedName, DashModel dashModel, TLAPlusModel tlaPlusModel) {
 
-        TLAPlusExpression taken =
+        TLAPlusExp taken =
                 new TLAPlusEquals(
                         TranslationStrings.getTransTaken(),
                         new TLAPlusFormulaApplication(
                                 TranslationStrings.getTakenTransFormulaName(transitionFullyQualifiedName)));
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(
                                 TranslationStrings.getPostTransFormulaName(transitionFullyQualifiedName)),
                         TranslationStrings.repeatedAnd(Arrays.asList(taken))));
     }
@@ -116,12 +116,12 @@ public class TransitionDefinitions {
     public static void addTransitionIsEnabledFormula(
             String transitionFullyQualifiedName, DashModel dashModel, TLAPlusModel tlaPlusModel) {
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(
                                 TranslationStrings.getEnabledTransFormulaName(transitionFullyQualifiedName),
                                 Arrays.asList(
-                                        new TLAPlusVariable(TranslationStrings.getArg(TranslationStrings.CONF)),
-                                        new TLAPlusVariable(TranslationStrings.getArg(TranslationStrings.SCOPE_USED)))),
+                                        new TLAPlusVar(TranslationStrings.getArg(TranslationStrings.CONF)),
+                                        new TLAPlusVar(TranslationStrings.getArg(TranslationStrings.SCOPE_USED)))),
                         TranslationStrings.repeatedAnd(Arrays.asList())));
     }
 
@@ -136,8 +136,8 @@ public class TransitionDefinitions {
 
 		// body = pre /\ post
         tlaPlusModel.addFormulaDefinition(
-                new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(
+                new TLAPlusFormulaDefn(
+                        new TLAPlusFormulaDecl(
                                 TranslationStrings.getTransFormulaName(transitionFullyQualifiedName)),
                         new TLAPlusAnd(
                                 new TLAPlusFormulaApplication(

@@ -3,16 +3,16 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TLAPlusSimpleExpression extends TLAPlusExpression {
+public abstract class TLAPlusSimpleExp extends TLAPlusExp {
 
     private final String core;
 
-    public TLAPlusSimpleExpression(String core) {
+    public TLAPlusSimpleExp(String core) {
         this.core = core;
     }
 
     @Override
-    public List<TLAPlusExpression> getChildren() {
+    public List<TLAPlusExp> getChildren() {
         return new ArrayList<>();
     }
 

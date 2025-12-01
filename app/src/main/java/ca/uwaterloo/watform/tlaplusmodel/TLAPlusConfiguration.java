@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TLAPlusConfiguration {
-    public List<TLAPlusExpression> invariants;
-    public List<TLAPlusExpression> properties;
-    public List<TLAPlusExpression> constants;
+    public List<TLAPlusExp> invariants;
+    public List<TLAPlusExp> properties;
+    public List<TLAPlusExp> constants;
     public TLAPlusFormulaApplication init;
     public TLAPlusFormulaApplication next;
 

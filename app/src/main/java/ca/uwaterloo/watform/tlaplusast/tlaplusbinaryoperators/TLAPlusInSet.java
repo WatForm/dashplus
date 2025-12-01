@@ -2,14 +2,14 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class TLAPlusInSet extends TLAPlusInfixBinaryOperator {
+public class TLAPlusInSet extends TLAPlusInfixBinOp {
 
-    public TLAPlusInSet(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
+    public TLAPlusInSet(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
         super(
                 TLAPlusStrings.SET_IN,
                 operandOne,
                 operandTwo,
-                TLAPlusOperator.Associativity.UNSAFE,
+                TLAPlusOp.Associativity.UNSAFE,
                 PrecedenceGroup.SET_MEMBERSHIP);
     }
 }

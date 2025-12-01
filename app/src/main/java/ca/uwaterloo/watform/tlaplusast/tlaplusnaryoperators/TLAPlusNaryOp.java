@@ -4,19 +4,19 @@ import ca.uwaterloo.watform.tlaplusast.*;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.List;
 
-public abstract class TLAPlusNaryOperator extends TLAPlusOperator {
+public abstract class TLAPlusNaryOp extends TLAPlusOp {
     private final String start;
     private final String end;
     private final String separator;
-    public final List<? extends TLAPlusExpression> children;
+    public final List<? extends TLAPlusExp> children;
 
-    public TLAPlusNaryOperator(
+    public TLAPlusNaryOp(
             String start,
             String end,
             String separator,
-            List<? extends TLAPlusExpression> children,
-            TLAPlusOperator.PrecedenceGroup precedenceGroup) {
-        super(TLAPlusOperator.Associativity.IRRELEVANT, precedenceGroup);
+            List<? extends TLAPlusExp> children,
+            TLAPlusOp.PrecedenceGroup precedenceGroup) {
+        super(TLAPlusOp.Associativity.IRRELEVANT, precedenceGroup);
         this.start = start;
         this.end = end;
         this.separator = separator;
@@ -38,7 +38,7 @@ public abstract class TLAPlusNaryOperator extends TLAPlusOperator {
         return sb.toString();
     }
 
-    public List<TLAPlusExpression> getChildren() {
+    public List<TLAPlusExp> getChildren() {
         return GeneralUtil.mapBy(this.children, c -> c);
     }
 }

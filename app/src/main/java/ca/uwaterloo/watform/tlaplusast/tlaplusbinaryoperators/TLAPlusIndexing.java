@@ -2,14 +2,14 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class TLAPlusIndexing extends TLAPlusBinaryOperator {
+public class TLAPlusIndexing extends TLAPlusBinOp {
 
-    public TLAPlusIndexing(TLAPlusExpression operandOne, TLAPlusExpression operandTwo) {
+    public TLAPlusIndexing(TLAPlusExp operandOne, TLAPlusExp operandTwo) {
         super(
                 operandOne,
                 operandTwo,
-                TLAPlusOperator.Associativity.IRRELEVANT,
-                TLAPlusOperator.PrecedenceGroup.SAFE);
+                TLAPlusOp.Associativity.IRRELEVANT,
+                TLAPlusOp.PrecedenceGroup.SAFE);
     }
 
     @Override
