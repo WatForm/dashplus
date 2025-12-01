@@ -23,7 +23,10 @@ public class StateDefinitions {
         depthSort(names); // sorts it based on depth, thus all ancestors lie to the right and all
         // descendants lie to the left, for every state
 
-        for (String s : names.reversed()) makeStateFormula(s, dashModel, tlaPlusModel);
+        for (String s : names.reversed()) 
+                if (dashModel.st.isLeaf(s))
+                        makeLeafStateFormula(s, tlaPlusModel);
+                else makeNonLeafStateFormula(s, dashModel, tlaPlusModel);
     }
 
     public static void depthSort(List<String> stateNames) {
@@ -32,11 +35,6 @@ public class StateDefinitions {
                 (a, b) ->
                         GeneralUtil.occurrences(a, TranslationStrings.QUALIFIER)
                                 - GeneralUtil.occurrences(b, TranslationStrings.QUALIFIER));
-    }
-
-    public static void makeStateFormula(String s, DashModel dashModel, TlaModel tlaPlusModel) {
-        if (dashModel.st.isLeaf(s)) makeLeafStateFormula(s, tlaPlusModel);
-        else makeNonLeafStateFormula(s, dashModel, tlaPlusModel);
     }
 
     public static void makeLeafStateFormula(String s, TlaModel tlaPlusModel) {

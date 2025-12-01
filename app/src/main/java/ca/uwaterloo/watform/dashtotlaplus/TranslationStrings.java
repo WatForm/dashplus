@@ -5,6 +5,7 @@ import ca.uwaterloo.watform.tlaplusast.TlaExp;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TlaVar;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.Tla;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaBinOp;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaOr;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaUnionSet;
 import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaFalse;
@@ -99,28 +100,28 @@ class TranslationStrings {
         return new TlaSet(new ArrayList<>());
     }
 
-    public static String getStateFormulaName(String stateFullyQualifiedName) {
-        return SPECIAL + stateFullyQualifiedName.replace(QUALIFIER, SPECIAL);
+    public static String getStateFormulaName(String stateFQN) {
+        return SPECIAL + stateFQN.replace(QUALIFIER, SPECIAL);
     }
 
-    public static String getTakenTransFormulaName(String transitionFullyQualifiedName) {
-        return SPECIAL + TAKEN + SPECIAL + getTransFormulaName(transitionFullyQualifiedName);
+    public static String getTakenTransFormulaName(String transitionFQN) {
+        return SPECIAL + TAKEN + SPECIAL + getTransFormulaName(transitionFQN);
     }
 
-    public static String getPreTransFormulaName(String transitionFullyQualifiedName) {
-        return PRE + SPECIAL + getTransFormulaName(transitionFullyQualifiedName);
+    public static String getPreTransFormulaName(String transitionFQN) {
+        return PRE + SPECIAL + getTransFormulaName(transitionFQN);
     }
 
-    public static String getPostTransFormulaName(String transitionFullyQualifiedName) {
-        return POST + SPECIAL + getTransFormulaName(transitionFullyQualifiedName);
+    public static String getPostTransFormulaName(String transitionFQN) {
+        return POST + SPECIAL + getTransFormulaName(transitionFQN);
     }
 
-    public static String getEnabledTransFormulaName(String transitionFullyQualifiedName) {
-        return ENABLED + SPECIAL + getTransFormulaName(transitionFullyQualifiedName);
+    public static String getEnabledTransFormulaName(String transitionFQN) {
+        return ENABLED + SPECIAL + getTransFormulaName(transitionFQN);
     }
 
-    public static String getTransFormulaName(String transitionFullyQualifiedName) {
-        return transitionFullyQualifiedName.replace(QUALIFIER, SPECIAL);
+    public static String getTransFormulaName(String transitionFQN) {
+        return transitionFQN.replace(QUALIFIER, SPECIAL);
     }
 
 
