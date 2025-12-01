@@ -161,7 +161,7 @@ public class AntlrTestUtil {
         System.out.println(filePath);
         try {
             DashFile dashFile = (DashFile) ParserUtil.parse(filePath);
-			String s = dashFile.toString();
+            String s = dashFile.toString();
             this.dashResults.get("dashPassed").add(filePath);
             System.out.println(
                     "Successfully parsed " + dashResults.get("dashPassed").size() + " files. ");
