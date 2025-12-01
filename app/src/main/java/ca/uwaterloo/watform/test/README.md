@@ -5,9 +5,7 @@
 4) ./gradlew releaseJar
 5) java -cp app/build/libs/watform-dashplus.jar ca.uwaterloo.watform.test.Main
 
-- Should be able to parse everything within 10 mins with no timeouts (excpet the onces we moved)
-- Note: Testing may run out of memory
-
 - It also tests for the generation of our Alloy AST objects, AlloyModel constructor, and the toString does not throw exceptions. 
+- It also checkes the toString return from AlloyModel.toString() will parse again
 - But it DOES NOT check if AlloyFile.toString() produces the same string
 

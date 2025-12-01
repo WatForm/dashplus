@@ -95,7 +95,6 @@ public class AntlrTestUtil {
                 return;
             }
             String s = alloyModel.toString();
-            System.out.println(s);
             if (jarPassed) {
                 boolean toStringCanPass = AlloyInterface.canParse(s);
                 if (toStringCanPass) {
@@ -162,7 +161,7 @@ public class AntlrTestUtil {
         System.out.println(filePath);
         try {
             DashFile dashFile = (DashFile) ParserUtil.parse(filePath);
-            System.out.println(dashFile.toString());
+			String s = dashFile.toString();
             this.dashResults.get("dashPassed").add(filePath);
             System.out.println(
                     "Successfully parsed " + dashResults.get("dashPassed").size() + " files. ");

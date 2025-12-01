@@ -22,4 +22,5 @@ bin/
 app/src/main/java/ca/uwaterloo/watform/test/catalyst/catalyst-corpus.zip
 app/src/main/java/ca/uwaterloo/watform/test/catalyst/catalyst-corpus
 app/src/main/java/ca/uwaterloo/watform/test/catalyst/timeout
+app/src/main/java/ca/uwaterloo/watform/test/catalyst/problemFiles
 
