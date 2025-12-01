@@ -12,12 +12,22 @@ import java.util.Arrays;
 
 public class InitFormula {
     public static void addInitFormula(DashModel dashModel, TLAPlusModel tlaPlusModel) {
+
+		// stable = TRUE
         TLAPlusExpression stable_exp = new TLAPlusEquals(Common.getStable(), new TLAPlusTrue());
+
+		// trans_taken = {}
         TLAPlusExpression trans_taken_exp =
                 new TLAPlusEquals(Common.getTransTaken(), new TLAPlusStringLiteral(Common.NONE));
-        TLAPlusExpression scopes_used_exp =
-                new TLAPlusEquals(Common.getScopeUsed(), new TLAPlusStringLiteral(Common.NONE));
+        
+		// scopes_used = {}
+		TLAPlusExpression scopes_used_exp =
+                new TLAPlusEquals(Common.getScopeUsed(), Common.getNullSet());
+
+		// events = {}
         TLAPlusExpression events_exp = new TLAPlusEquals(Common.getEvents(), Common.getNullSet());
+
+		// conf = {<initial states>}
         TLAPlusExpression conf_exp =
                 new TLAPlusEquals(Common.getEvents(), new TLAPlusStringLiteral("placeholder"));
 

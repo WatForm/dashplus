@@ -12,6 +12,8 @@ public class Main {
 
         System.out.println("Hello from the dashtotlaplus class");
 
+        // TODO implement pico-cli
+
         if (args.length != 2) {
             System.out.println("Path to input file.dsh and output file.tla are needed");
             return;

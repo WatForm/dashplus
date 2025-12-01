@@ -6,6 +6,8 @@ import ca.uwaterloo.watform.tlaplusmodel.TLAPlusModel;
 
 public class StandardLibraries {
     public static void addStandardLibraries(DashModel dashModel, TLAPlusModel tlaPlusModel) {
+
+		// EXTENDS FiniteSets, Integers 
         tlaPlusModel.addSTL(
                 new TLAPlusStandardLibraries(TLAPlusStandardLibraries.LIBRARIES.STL_FiniteSets));
         tlaPlusModel.addSTL(

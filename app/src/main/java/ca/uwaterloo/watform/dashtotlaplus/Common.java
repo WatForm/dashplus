@@ -16,7 +16,7 @@ import java.util.List;
 class Common {
     // this class stores information about things that are common to every part of the translation
 
-    public static final String SPECIAL = "_";
+    public static final String SPECIAL = "_"; // special character used for naming translation artefacts
     public static final String TRANSITIONS = SPECIAL + "transitions";
     public static final String NEXT = SPECIAL + "Next";
     public static final String INIT = SPECIAL + "Init";
@@ -122,6 +122,10 @@ class Common {
     public static String getTransFormulaName(String transitionFullyQualifiedName) {
         return transitionFullyQualifiedName.replace(QUALIFIER, SPECIAL);
     }
+
+    
+
+    // todo: combine these into one
 
     public static TLAPlusExpression repeatedUnion(List<? extends TLAPlusExpression> operands) {
         if (operands.size() == 0) return getNullSet();

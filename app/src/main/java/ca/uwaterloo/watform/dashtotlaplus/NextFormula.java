@@ -1,3 +1,5 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
-public class NextFormula {}
+public class NextFormula {
+	// Next = small_step /\ typeOK
+}

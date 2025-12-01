@@ -21,10 +21,13 @@ public class Transitions {
 
         List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
 
+		// taken_<trans-name> == "taken_<trans-fully-qualified-name"
         for (String s : transitions) makeTransitionTakenNameFormulae(s, tlaPlusModel);
 
+		// pre, post, enabled and body
         for (String s : transitions) addTransitionCompleteFormula(s, dashModel, tlaPlusModel);
 
+		// small-step and isEnabled
         addTransitionGeneralFormulae(dashModel, tlaPlusModel);
     }
 
@@ -131,6 +134,7 @@ public class Transitions {
         addTransitionPostFormula(transitionFullyQualifiedName, dashModel, tlaPlusModel);
         addTransitionIsEnabledFormula(transitionFullyQualifiedName, dashModel, tlaPlusModel);
 
+		// body = pre /\ post
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(

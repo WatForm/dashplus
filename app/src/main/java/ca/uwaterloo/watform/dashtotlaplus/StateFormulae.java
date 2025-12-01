@@ -40,6 +40,8 @@ public class StateFormulae {
     }
 
     public static void makeLeafStateFormula(String s, TLAPlusModel tlaPlusModel) {
+
+        // <state-formula-name> == {"<state FQN"}
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(Common.getStateFormulaName(s)),
@@ -49,6 +51,8 @@ public class StateFormulae {
     public static void makeNonLeafStateFormula(
             String s, DashModel dashModel, TLAPlusModel tlaPlusModel) {
 
+        // <state-formula-name> = <child1-formula-name> union <child2-formula-name> ...
+        
         List<TLAPlusFormulaApplication> childStateFormulae =
                 GeneralUtil.mapBy(
                         AuxiliaryDashAccessors.getChildStateNames(s, dashModel),

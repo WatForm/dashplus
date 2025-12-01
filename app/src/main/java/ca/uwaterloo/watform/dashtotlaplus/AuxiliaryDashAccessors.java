@@ -6,6 +6,8 @@ import java.util.List;
 
 public class AuxiliaryDashAccessors {
 
+    // this is a temporary class to use accessors pending a rewrite with proper adherence to access specification standards. This is to be deleted later, and references to this be replaced
+
     public static String getRootStateName(DashModel dm) {
         return dm.getRootName();
     }

@@ -1,5 +1,8 @@
 # Dash to TLA+ Translator
 
+
+IMPORTANT: this is out of date and should be ignored
+
 ## Introduction:
 
 - This is a high-level description of the Dash to TLA+ translator
@@ -106,17 +109,6 @@ For brevity, formulae are made that represent complex states in terms of sets co
 - temporal operators
 
 ### Roadmap:
-
-| Feature  | Deadline |
-| -------- | ------- |
-| States   | 2025-11-18    |
-| Transitions |  2025-11-18   |
-| Events   |  2025-11-19   |
-| Core Alloy |  |
-| guards | |
-| actions | |
-| Extra Alloy | |
-| Dash+ | |
 
 
 - Implement TLA+ AST elements
