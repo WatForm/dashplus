@@ -5,7 +5,7 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
 
-public class TLAPlusSetFilter extends TLAPlusQuantificationOperator {
+public class TLAPlusSetFilter extends TLAPlusQuantOp {
 
     public TLAPlusSetFilter(
             TLAPlusVar variable, TLAPlusExp set, TLAPlusExp expression) {

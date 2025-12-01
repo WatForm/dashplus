@@ -5,7 +5,7 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
 
-public class TLAPlusSetMap extends TLAPlusQuantificationOperator {
+public class TLAPlusSetMap extends TLAPlusQuantOp {
 
     public TLAPlusSetMap(
             TLAPlusVar variable, TLAPlusExp set, TLAPlusExp expression) {

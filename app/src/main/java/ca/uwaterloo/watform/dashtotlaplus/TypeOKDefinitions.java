@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDecl;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefn;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusInSet;
@@ -32,14 +32,14 @@ public class TypeOKDefinitions {
     public static void addTypeOKFormula(TLAPlusModel tlaPlusModel) {
         TLAPlusExp conf_exp =
                 new TLAPlusInSet(
-                        TranslationStrings.getConf(), new TLAPlusFormulaApplication(TranslationStrings.getSetConf()));
+                        TranslationStrings.getConf(), new TLAPlusFormulaAppl(TranslationStrings.getSetConf()));
         TLAPlusExp trans_taken_exp =
                 new TLAPlusInSet(
                         TranslationStrings.getTransTaken(),
-                        new TLAPlusFormulaApplication(TranslationStrings.getSetTransTaken()));
+                        new TLAPlusFormulaAppl(TranslationStrings.getSetTransTaken()));
         TLAPlusExp scope_exp =
                 new TLAPlusInSet(
-                        TranslationStrings.getScopeUsed(), new TLAPlusFormulaApplication(TranslationStrings.getSetConf()));
+                        TranslationStrings.getScopeUsed(), new TLAPlusFormulaAppl(TranslationStrings.getSetConf()));
         TLAPlusExp stable_exp = new TLAPlusInSet(TranslationStrings.getStable(), new TLAPlusBoolean());
 
         tlaPlusModel.addFormulaDefinition(
@@ -53,10 +53,10 @@ public class TypeOKDefinitions {
         // this function adds in a formula used for typeOK:
         // _set_conf = union of all leaf state formulae
 
-        List<TLAPlusFormulaApplication> leafStateFormulaApplications =
+        List<TLAPlusFormulaAppl> leafStateFormulaApplications =
                 GeneralUtil.mapBy(
                         AuxiliaryDashAccessors.getLeafStateNames(dashModel),
-                        name -> new TLAPlusFormulaApplication(TranslationStrings.getStateFormulaName(name)));
+                        name -> new TLAPlusFormulaAppl(TranslationStrings.getStateFormulaName(name)));
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefn(
@@ -74,7 +74,7 @@ public class TypeOKDefinitions {
                                                 AuxiliaryDashAccessors.getTransitionNames(
                                                         dashModel),
                                                 s ->
-                                                        new TLAPlusFormulaApplication(
+                                                        new TLAPlusFormulaAppl(
                                                                 TranslationStrings.getTakenTransFormulaName(
                                                                         s)))))));
     }
@@ -83,6 +83,6 @@ public class TypeOKDefinitions {
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefn(
                         new TLAPlusFormulaDecl(TranslationStrings.getSetScopesUsed()),
-                        unionNone(new TLAPlusFormulaApplication(TranslationStrings.getSetConf()))));
+                        unionNone(new TLAPlusFormulaAppl(TranslationStrings.getSetConf()))));
     }
 }

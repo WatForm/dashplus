@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusStandardLibraries;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusStdLibs;
 import ca.uwaterloo.watform.tlaplusmodel.TLAPlusModel;
 
 public class StandardLibraries {
@@ -9,8 +9,8 @@ public class StandardLibraries {
 
 		// EXTENDS FiniteSets, Integers 
         tlaPlusModel.addSTL(
-                new TLAPlusStandardLibraries(TLAPlusStandardLibraries.LIBRARIES.STL_FiniteSets));
+                new TLAPlusStdLibs(TLAPlusStdLibs.LIBRARIES.STL_FiniteSets));
         tlaPlusModel.addSTL(
-                new TLAPlusStandardLibraries(TLAPlusStandardLibraries.LIBRARIES.STL_Integers));
+                new TLAPlusStdLibs(TLAPlusStdLibs.LIBRARIES.STL_Integers));
     }
 }

@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusquantificationoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class TLAPlusExists extends TLAPlusQuantificationOperator {
+public class TLAPlusExists extends TLAPlusQuantOp {
     public TLAPlusExists(
             TLAPlusVar variable, TLAPlusExp set, TLAPlusExp expression) {
         super(variable, set, expression, TLAPlusOp.PrecedenceGroup.PREDICATE);
@@ -10,6 +10,6 @@ public class TLAPlusExists extends TLAPlusQuantificationOperator {
 
     @Override
     public String toTLAPlusSnippetCore() {
-        return TLAPlusQuantificationOperator.predicateSnippetCore(this, TLAPlusStrings.EXISTS);
+        return TLAPlusQuantOp.predicateSnippetCore(this, TLAPlusStrings.EXISTS);
     }
 }

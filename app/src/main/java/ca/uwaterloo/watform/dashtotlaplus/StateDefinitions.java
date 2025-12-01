@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDecl;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefn;
 import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusStringLiteral;
@@ -53,10 +53,10 @@ public class StateDefinitions {
 
         // <state-formula-name> = <child1-formula-name> union <child2-formula-name> ...
         
-        List<TLAPlusFormulaApplication> childStateFormulae =
+        List<TLAPlusFormulaAppl> childStateFormulae =
                 GeneralUtil.mapBy(
                         AuxiliaryDashAccessors.getChildStateNames(s, dashModel),
-                        x -> new TLAPlusFormulaApplication(TranslationStrings.getStateFormulaName(x)));
+                        x -> new TLAPlusFormulaAppl(TranslationStrings.getStateFormulaName(x)));
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefn(

@@ -4,9 +4,9 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 
-public class TLAPlusFunctionDomain extends TLAPlusUnaryOp {
+public class TLAPlusFuncDomain extends TLAPlusUnaryOp {
 
-    public TLAPlusFunctionDomain(TLAPlusExp operand) {
+    public TLAPlusFuncDomain(TLAPlusExp operand) {
         super(operand, TLAPlusOp.PrecedenceGroup.UNSAFE);
     }
 

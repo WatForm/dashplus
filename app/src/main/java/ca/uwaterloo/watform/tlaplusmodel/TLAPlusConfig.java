@@ -4,14 +4,14 @@ import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusConfiguration {
+public class TLAPlusConfig {
     public List<TLAPlusExp> invariants;
     public List<TLAPlusExp> properties;
     public List<TLAPlusExp> constants;
-    public TLAPlusFormulaApplication init;
-    public TLAPlusFormulaApplication next;
+    public TLAPlusFormulaAppl init;
+    public TLAPlusFormulaAppl next;
 
-    public TLAPlusConfiguration(TLAPlusFormulaApplication init, TLAPlusFormulaApplication next) {
+    public TLAPlusConfig(TLAPlusFormulaAppl init, TLAPlusFormulaAppl next) {
         this.invariants = new ArrayList<>();
         this.properties = new ArrayList<>();
         this.constants = new ArrayList<>();

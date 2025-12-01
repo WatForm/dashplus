@@ -4,13 +4,13 @@ import ca.uwaterloo.watform.tlaplusast.*;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class TLAPlusQuantificationOperator extends TLAPlusOp {
+public abstract class TLAPlusQuantOp extends TLAPlusOp {
 
     public final TLAPlusVar variable; // bound variable
     public final TLAPlusExp set; // set that the iteration takes place over
     public final TLAPlusExp expression; // expression used
 
-    public TLAPlusQuantificationOperator(
+    public TLAPlusQuantOp(
             TLAPlusVar variable,
             TLAPlusExp set,
             TLAPlusExp expression,
@@ -26,7 +26,7 @@ public abstract class TLAPlusQuantificationOperator extends TLAPlusOp {
     }
 
     // this is a common style for exists and for-all
-    static String predicateSnippetCore(TLAPlusQuantificationOperator o, String symbol) {
+    static String predicateSnippetCore(TLAPlusQuantOp o, String symbol) {
         return symbol
                 + TLAPlusStrings.SPACE
                 + o.getTLASnippetOfChild(o.variable)

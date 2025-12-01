@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.dashtotlaplus;
 
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusExp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusAnd;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusOr;
@@ -87,12 +87,12 @@ class TranslationStrings {
         return new TLAPlusVar(SCOPE_USED);
     }
 
-    public static TLAPlusFormulaApplication getNext() {
-        return new TLAPlusFormulaApplication(NEXT);
+    public static TLAPlusFormulaAppl getNext() {
+        return new TLAPlusFormulaAppl(NEXT);
     }
 
-    public static TLAPlusFormulaApplication getInit() {
-        return new TLAPlusFormulaApplication(INIT);
+    public static TLAPlusFormulaAppl getInit() {
+        return new TLAPlusFormulaAppl(INIT);
     }
 
     public static TLAPlusSet getNullSet() {

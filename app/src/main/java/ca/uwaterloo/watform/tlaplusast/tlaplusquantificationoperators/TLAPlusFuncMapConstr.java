@@ -5,8 +5,8 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusOp;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
 
-public class TLAPlusFunctionMapConstructor extends TLAPlusQuantificationOperator {
-    public TLAPlusFunctionMapConstructor(
+public class TLAPlusFuncMapConstr extends TLAPlusQuantOp {
+    public TLAPlusFuncMapConstr(
             TLAPlusVar variable, TLAPlusExp set, TLAPlusExp expression) {
         super(variable, set, expression, TLAPlusOp.PrecedenceGroup.SAFE);
     }

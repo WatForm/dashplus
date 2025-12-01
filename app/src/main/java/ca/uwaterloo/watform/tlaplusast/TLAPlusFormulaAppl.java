@@ -3,18 +3,18 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusFormulaApplication extends TLAPlusOp {
+public class TLAPlusFormulaAppl extends TLAPlusOp {
 
     private final String name;
     public final List<TLAPlusExp> parameters;
 
-    public TLAPlusFormulaApplication(String name, List<TLAPlusExp> parameters) {
+    public TLAPlusFormulaAppl(String name, List<TLAPlusExp> parameters) {
         super(TLAPlusOp.Associativity.IRRELEVANT, TLAPlusOp.PrecedenceGroup.SAFE);
         this.name = name;
         this.parameters = parameters;
     }
 
-    public TLAPlusFormulaApplication(String name) {
+    public TLAPlusFormulaAppl(String name) {
         this(name, new ArrayList<>());
     }
 

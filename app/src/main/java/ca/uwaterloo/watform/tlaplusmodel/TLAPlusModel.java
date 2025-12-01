@@ -3,10 +3,10 @@ package ca.uwaterloo.watform.tlaplusmodel;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusBlankLine;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusComment;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusConst;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaDefn;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusSimpleExp;
-import ca.uwaterloo.watform.tlaplusast.TLAPlusStandardLibraries;
+import ca.uwaterloo.watform.tlaplusast.TLAPlusStdLibs;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusVar;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.List;
@@ -15,13 +15,13 @@ public class TLAPlusModel {
     // top-level class to handle modules and associated configs
     public final String name;
     private TLAPlusModule module;
-    private TLAPlusConfiguration cfg;
+    private TLAPlusConfig cfg;
 
     public TLAPlusModel(
-            String name, TLAPlusFormulaApplication init, TLAPlusFormulaApplication next) {
+            String name, TLAPlusFormulaAppl init, TLAPlusFormulaAppl next) {
         this.name = name;
         this.module = new TLAPlusModule();
-        this.cfg = new TLAPlusConfiguration(init, next);
+        this.cfg = new TLAPlusConfig(init, next);
     }
 
     public String moduleCode() {
@@ -45,7 +45,7 @@ public class TLAPlusModel {
         return UniqueSimpleCheck(this.module.variables);
     }
 
-    public void addSTL(TLAPlusStandardLibraries stl) {
+    public void addSTL(TLAPlusStdLibs stl) {
         this.module.extended_libraries.add(stl);
     }
 

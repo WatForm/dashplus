@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusFormulaDecl extends TLAPlusFormulaApplication {
+public class TLAPlusFormulaDecl extends TLAPlusFormulaAppl {
 
     public TLAPlusFormulaDecl(String name) {
         super(name);

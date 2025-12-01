@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.tlaplusast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLAPlusStandardLibraries extends TLAPlusExp { // enums used for extensibility
+public class TLAPlusStdLibs extends TLAPlusExp { // enums used for extensibility
 
     public static enum LIBRARIES {
         STL_FiniteSets,
@@ -14,7 +14,7 @@ public class TLAPlusStandardLibraries extends TLAPlusExp { // enums used for ext
 
     private LIBRARIES library;
 
-    public TLAPlusStandardLibraries(LIBRARIES library) {
+    public TLAPlusStdLibs(LIBRARIES library) {
         this.library = library;
     }
 
@@ -33,35 +33,35 @@ public class TLAPlusStandardLibraries extends TLAPlusExp { // enums used for ext
         return "Unknown"; // implementation error TODO
     }
 
-    public static TLAPlusFormulaApplication Cardinality(TLAPlusVar arg) {
+    public static TLAPlusFormulaAppl Cardinality(TLAPlusVar arg) {
         List<TLAPlusExp> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormulaApplication(TLAPlusStrings.CARDINALITY, children);
+        return new TLAPlusFormulaAppl(TLAPlusStrings.CARDINALITY, children);
     }
 
-    public static TLAPlusFormulaApplication Len(TLAPlusVar arg) {
+    public static TLAPlusFormulaAppl Len(TLAPlusVar arg) {
         List<TLAPlusExp> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormulaApplication(TLAPlusStrings.LEN, children);
+        return new TLAPlusFormulaAppl(TLAPlusStrings.LEN, children);
     }
 
-    public static TLAPlusFormulaApplication Head(TLAPlusVar arg) {
+    public static TLAPlusFormulaAppl Head(TLAPlusVar arg) {
         List<TLAPlusExp> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormulaApplication(TLAPlusStrings.HEAD, children);
+        return new TLAPlusFormulaAppl(TLAPlusStrings.HEAD, children);
     }
 
-    public static TLAPlusFormulaApplication Tail(TLAPlusVar arg) {
+    public static TLAPlusFormulaAppl Tail(TLAPlusVar arg) {
         List<TLAPlusExp> children = new ArrayList<>();
         children.add(arg);
-        return new TLAPlusFormulaApplication(TLAPlusStrings.TAIL, children);
+        return new TLAPlusFormulaAppl(TLAPlusStrings.TAIL, children);
     }
 
-    public static TLAPlusFormulaApplication Append(
+    public static TLAPlusFormulaAppl Append(
             TLAPlusVar sequence, TLAPlusVar element) {
         List<TLAPlusExp> children = new ArrayList<>();
         children.add(sequence);
         children.add(element);
-        return new TLAPlusFormulaApplication(TLAPlusStrings.APPEND, children);
+        return new TLAPlusFormulaAppl(TLAPlusStrings.APPEND, children);
     }
 }

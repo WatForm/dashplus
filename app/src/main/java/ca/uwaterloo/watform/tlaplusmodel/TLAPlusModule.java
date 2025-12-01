@@ -8,7 +8,7 @@ import java.util.List;
 public class TLAPlusModule {
     public final List<TLAPlusConst> constants;
     public final List<TLAPlusVar> variables;
-    public final List<TLAPlusStandardLibraries> extended_libraries;
+    public final List<TLAPlusStdLibs> extended_libraries;
     public final List<ASTNode> body;
 
     public TLAPlusModule() {
