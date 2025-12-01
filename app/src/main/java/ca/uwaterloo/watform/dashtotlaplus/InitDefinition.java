@@ -10,7 +10,7 @@ import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusTrue;
 import ca.uwaterloo.watform.tlaplusmodel.TLAPlusModel;
 import java.util.Arrays;
 
-public class InitFormula {
+public class InitDefinition {
     public static void addInitFormula(DashModel dashModel, TLAPlusModel tlaPlusModel) {
 
 		// stable = TRUE

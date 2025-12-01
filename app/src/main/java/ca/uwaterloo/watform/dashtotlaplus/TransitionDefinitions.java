@@ -16,7 +16,7 @@ import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
 import java.util.List;
 
-public class Transitions {
+public class TransitionDefinitions {
     public static void transitionFormulae(DashModel dashModel, TLAPlusModel tlaPlusModel) {
 
         List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);

@@ -15,7 +15,7 @@ import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
 import java.util.List;
 
-public class TypeOKFormula {
+public class TypeOKDefinitions {
 
     public static void AddTypeOKFormula(DashModel dashModel, TLAPlusModel tlaPlusModel) {
         addSetStates(dashModel, tlaPlusModel);

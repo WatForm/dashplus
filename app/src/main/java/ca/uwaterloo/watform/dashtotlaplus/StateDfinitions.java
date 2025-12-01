@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class StateFormulae {
+public class StateDfinitions {
     // this class adds in formulae for every state in the dash model
     // leaf states are singleton sets that contain the fully qualified names as strings
     // non-leaf states are the union of the leaf states they contain

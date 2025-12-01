@@ -13,22 +13,22 @@ public class DashToTLAPlus {
 
         model.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants");
-        StateFormulae.stateFormulae(dashModel, model);
+        StateDfinitions.stateFormulae(dashModel, model);
 
         model.addBlankLine();
         model.addComment(
                 "string literal representations of transitions taken, which are the values taken by the "
                         + TranslationStrings.getTransTaken()
                         + " variable");
-        Transitions.transitionFormulae(dashModel, model);
+        TransitionDefinitions.transitionFormulae(dashModel, model);
 
         model.addBlankLine();
         model.addComment("type restrictions on variables");
-        TypeOKFormula.AddTypeOKFormula(dashModel, model);
+        TypeOKDefinitions.AddTypeOKFormula(dashModel, model);
 
         model.addBlankLine();
         model.addComment("initial values for variables");
-        InitFormula.addInitFormula(dashModel, model);
+        InitDefinition.addInitFormula(dashModel, model);
 
         return model;
     }
