@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.utils;
 
 import antlr.generated.DashBaseVisitor;
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -66,22 +67,22 @@ public final class ParserUtil {
             try {
                 alloyFile = afpv.visit(antlrAST);
                 alloyFile.filename = filePath.toString();
-            } catch (Reporter.ErrorUser errorUser) {
-                errorUser.setFilePath(filePath);
-                Reporter.INSTANCE.addError(errorUser);
+            } catch (AlloyCtorError alloyCtorError) {
+                alloyCtorError.setFilePath(filePath);
+                Reporter.INSTANCE.addError(alloyCtorError);
             }
             Reporter.INSTANCE.exitIfHasErrors();
             return alloyFile;
         } else {
             ParseTree antlrAST = parser.dashFile();
-            DashFileParseVis dfpv = new DashFileParseVis();
+            DashFileParseVis dfpv = new DashFileParseVis(filePath);
             DashFile dashFile = null;
             try {
                 dashFile = dfpv.visit(antlrAST);
                 dashFile.filename = filePath.toString();
-            } catch (Reporter.ErrorUser errorUser) {
-                errorUser.setFilePath(filePath);
-                Reporter.INSTANCE.addError(errorUser);
+            } catch (AlloyCtorError alloyCtorError) {
+                alloyCtorError.setFilePath(filePath);
+                Reporter.INSTANCE.addError(alloyCtorError);
             }
             Reporter.INSTANCE.exitIfHasErrors();
             return dashFile;

@@ -25,7 +25,6 @@ public class AntlrTestUtil {
     private static boolean stopOnFirstFail = false;
     private long timeoutMs = 20 * 1000;
     private static int filenamesToPrint = 20;
-    private int[] exitCode;
 
     private void printList(String title, List<Path> list) {
         System.out.println(title + " (" + list.size() + "):");
@@ -87,13 +86,6 @@ public class AntlrTestUtil {
 
         try {
             AlloyModel alloyModel = ParserUtil.parseToModel(filePath);
-            if (1 == this.exitCode[0]) {
-                // some sort of ErrorUser has been generated.
-                // So af is null, don't continue further
-                // note we swapped out Reporter.INSTANCE.exitFunction in the AntlrTestUtil.ctor
-                this.alloyResults.get("errorUser").add(filePath);
-                return;
-            }
             String s = alloyModel.toString();
             if (jarPassed) {
                 boolean toStringCanPass = AlloyInterface.canParse(s);
@@ -243,8 +235,6 @@ public class AntlrTestUtil {
             // But we catch these, so need to avoid throwing a ErrorUser
             // Maybe the A4Reporter instance has collected the error,
             // but I'm not sure how to check via the A4Reporter instance.
-            this.exitCode = new int[] {-1};
-            Reporter.INSTANCE.exitFunction = (code -> exitCode[0] = code);
             try {
                 CharStream input = CharStreams.fromPath(filePath);
                 this.tryParseWithTimeout(input, filePath, extension);

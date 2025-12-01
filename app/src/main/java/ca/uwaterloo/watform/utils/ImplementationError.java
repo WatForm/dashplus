@@ -3,17 +3,17 @@ package ca.uwaterloo.watform.utils;
 // borrowed from Alloy
 // NADTODO fix up pos and error messages
 
-public class ImplementationError extends RuntimeException {
-    public final Pos pos;
-
+public class ImplementationError extends DashPlusError {
     public ImplementationError(String msg) {
         super(msg);
-        this.pos = Pos.UNKNOWN;
     }
 
     public ImplementationError(Pos pos, String msg) {
-        super(msg);
-        this.pos = pos;
+        super(pos, msg);
+    }
+
+    public ImplementationError(DashPlusError other) {
+        super(other.posList, other.filePath.orElseGet(null), other.getMessage());
     }
 
     // missing cases in the code

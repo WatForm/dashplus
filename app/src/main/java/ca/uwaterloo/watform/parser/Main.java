@@ -71,14 +71,33 @@ public class Main implements Callable<Integer> {
                             ParserUtil.parseToModel(filePath), this.commandIndex);
             System.out.println(solution.toString());
             return 0;
+
+            // User error exit code: 1
+        } catch (Reporter.ErrorUser errorUser) {
+            errorUser.setFilePath(filePath);
+            Reporter.INSTANCE.addError(errorUser);
+            Reporter.INSTANCE.print();
+            return 1;
+        } catch (Reporter.AbortSignal abortSignal) {
+            return 1;
+
+            // Implementation Error exit code: 2
+        } catch (ImplementationError implementationError) {
+            System.err.println(implementationError);
+            if (debug) implementationError.printStackTrace();
+            return 2;
+            // DashPlusError bubbled up here are treated ImplementationError
+            // see ErrorHandling.md
+        } catch (DashPlusError dashPlusError) {
+            System.err.println(dashPlusError);
+            if (debug) dashPlusError.printStackTrace();
+            return 2;
+
+            // Unexpected Error exit code: 3
         } catch (Exception e) {
-            // if a Reporter.ErrorUser has propagated here
-            // then either
-            // 1) need to catch it and add to Reporter before it get's here
-            // 2) intentionally not caught and it is treated as an implementation error
             System.err.println("Unexpected error: " + e.getMessage());
             if (debug) e.printStackTrace();
-            return 1;
+            return 3;
         }
     }
 

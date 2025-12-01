@@ -21,9 +21,9 @@ public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
         for (DashParser.AlloyParagraphContext parCtx : ctx.alloyParagraph()) {
             try {
                 paragraphs.add(ppv.visit(parCtx));
-            } catch (Reporter.ErrorUser eu) {
-                eu.setFilePath(this.filePath);
-                Reporter.INSTANCE.addError(eu);
+            } catch (AlloyCtorError alloyCtorError) {
+                alloyCtorError.setFilePath(this.filePath);
+                Reporter.INSTANCE.addError(alloyCtorError);
             }
         }
         if (paragraphs.isEmpty()) {

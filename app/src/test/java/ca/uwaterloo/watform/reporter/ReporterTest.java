@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.reporter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
@@ -52,7 +51,7 @@ public class ReporterTest {
         Reporter.ErrorUser error = new Reporter.ErrorUser(Pos.UNKNOWN, "Test error message");
         reporter.addError(error);
 
-        List<Reporter.ErrorUser> errors = reporter.getErrors();
+        List<DashPlusError> errors = reporter.getErrors();
         assertEquals(1, errors.size(), "Errors list should contain one error.");
         assertSame(error, errors.get(0), "The added error should be in the list.");
         assertTrue(reporter.getComments().isEmpty(), "Comments list should still be empty.");
@@ -84,7 +83,7 @@ public class ReporterTest {
         reporter.addComment(comment1);
         reporter.addError(error2);
 
-        List<Reporter.ErrorUser> errors = reporter.getErrors();
+        List<DashPlusError> errors = reporter.getErrors();
         List<Reporter.CommentUser> comments = reporter.getComments();
 
         assertEquals(2, errors.size(), "Should have 2 errors.");
@@ -99,7 +98,7 @@ public class ReporterTest {
     @DisplayName("Returned error list should be unmodifiable")
     public void errorsUnmodifiable() {
         Reporter.ErrorUser error = new Reporter.ErrorUser(Pos.UNKNOWN, "Temporary error");
-        List<Reporter.ErrorUser> errors = reporter.getErrors();
+        List<DashPlusError> errors = reporter.getErrors();
 
         assertThrows(
                 UnsupportedOperationException.class,
@@ -130,30 +129,16 @@ public class ReporterTest {
     @Order(17)
     @DisplayName("handle Alloy Cmd Syntax Error")
     public void test17() throws IOException {
-        int[] exitCode = TestUtil.changeReporterExitFn();
-        try {
-            ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als"));
-        } catch (AlloyCtorError alloyCtorError) {
-            alloyCtorError.setFilePath(Paths.get("src/test/resources/reporter/badCmd.als"));
-            Reporter.INSTANCE.addError(alloyCtorError);
-            Reporter.INSTANCE.exitIfHasErrors();
-        }
-        TestUtil.assertExited(exitCode);
+        assertThrows(
+                Reporter.AbortSignal.class,
+                () -> ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als")));
     }
 
     @Test
     @Order(18)
     @DisplayName("printing more than one pos: see the testing report")
     public void test18() throws IOException {
-        int[] exitCode = TestUtil.changeReporterExitFn();
-        try {
-            Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
-            ParserUtil.parse(filePath);
-        } catch (AlloyCtorError alloyCtorError) {
-            alloyCtorError.setFilePath(Paths.get("src/test/resources/reporter/badCmd.als"));
-            Reporter.INSTANCE.addError(alloyCtorError);
-            Reporter.INSTANCE.exitIfHasErrors();
-        }
-        TestUtil.assertExited(exitCode);
+        Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
+        assertThrows(Reporter.AbortSignal.class, () -> ParserUtil.parse(filePath));
     }
 }

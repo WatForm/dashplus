@@ -1,12 +1,21 @@
 package ca.uwaterloo.watform.dashast;
 
 import antlr.generated.*;
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
+    public final Path filePath;
+
+    public DashFileParseVis(Path filePath) {
+        super();
+        this.filePath = filePath;
+    }
+
     @Override
     public DashFile visitDashFile(DashParser.DashFileContext ctx) {
         DashParagraphParseVis ppv = new DashParagraphParseVis();
@@ -14,8 +23,9 @@ public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
         for (DashParser.ParagraphContext parCtx : ctx.paragraph()) {
             try {
                 paragraphs.add(ppv.visit(parCtx));
-            } catch (Reporter.ErrorUser eu) {
-                Reporter.INSTANCE.addError(eu);
+            } catch (AlloyCtorError alloyCtorError) {
+                alloyCtorError.setFilePath(this.filePath);
+                Reporter.INSTANCE.addError(alloyCtorError);
             }
         }
         if (paragraphs.isEmpty()) {

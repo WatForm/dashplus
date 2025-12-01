@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyScopableExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
-public class AlloyCtorError extends Reporter.ErrorUser {
+public class AlloyCtorError extends DashPlusError {
     private AlloyCtorError(Pos pos, String msg) {
         super(pos, msg);
     }
@@ -14,7 +14,7 @@ public class AlloyCtorError extends Reporter.ErrorUser {
     }
 
     private AlloyCtorError(List<Pos> posList, String msg) {
-        super(posList, msg);
+        super(posList, null, msg);
     }
 
     // ====================================================================================
