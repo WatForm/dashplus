@@ -2,12 +2,12 @@
 1) cd app/src/main/java/ca/uwaterloo/watform/test/catalyst
 2) ./download-corpus.sh, which will download the zip (github release), unzip it, and move problematic files
 3) cd back to dashplus/
-4) ./gradlew build
-5) java -jar app/build/libs/app.jar --test 
+4) ./gradlew releaseJar
+5) java -cp app/build/libs/watform-dashplus.jar ca.uwaterloo.watform.test.Main
 
 - Should be able to parse everything within 10 mins with no timeouts (excpet the onces we moved)
 - Note: Testing may run out of memory
 
-- It also tests for the generation of our Alloy AST objects and their toString methods does not throw exceptions. 
-- But it DOES NOT check if AlloyFile.toString() produces the same string.
+- It also tests for the generation of our Alloy AST objects, AlloyModel constructor, and the toString does not throw exceptions. 
+- But it DOES NOT check if AlloyFile.toString() produces the same string
 
