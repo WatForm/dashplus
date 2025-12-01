@@ -22,3 +22,25 @@
 - ❌ - incomplete
 - ❔ - unclear definition
 - ❕ - unresolved dependencies
+
+
+## things:
+
+- Common to thing
+- note start with _
+- inconsistency in name of model
+- at the TLA+ translation level - addStateDefinitions
+- make it consistently add everywhere
+- maybe use two different types of add? useful for showing difference
+- use FQN everywhere, use short form
+- TLAplusFQN
+- name the thing TLA not TLAPlus
+- name the things after the thing
+- arg-name-of.
+
+in general - avoid breaking up functions
+
+
+
+- what if Alloy does things in a roundabout way? explicit non-support
+

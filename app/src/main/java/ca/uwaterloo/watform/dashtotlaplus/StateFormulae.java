@@ -30,8 +30,8 @@ public class StateFormulae {
         Collections.sort(
                 stateNames,
                 (a, b) ->
-                        GeneralUtil.occurrences(a, Common.QUALIFIER)
-                                - GeneralUtil.occurrences(b, Common.QUALIFIER));
+                        GeneralUtil.occurrences(a, TranslationStrings.QUALIFIER)
+                                - GeneralUtil.occurrences(b, TranslationStrings.QUALIFIER));
     }
 
     public static void makeStateFormula(String s, DashModel dashModel, TLAPlusModel tlaPlusModel) {
@@ -44,7 +44,7 @@ public class StateFormulae {
         // <state-formula-name> == {"<state FQN"}
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.getStateFormulaName(s)),
+                        new TLAPlusFormulaDeclaration(TranslationStrings.getStateFormulaName(s)),
                         new TLAPlusSet(Arrays.asList(new TLAPlusStringLiteral(s)))));
     }
 
@@ -56,11 +56,11 @@ public class StateFormulae {
         List<TLAPlusFormulaApplication> childStateFormulae =
                 GeneralUtil.mapBy(
                         AuxiliaryDashAccessors.getChildStateNames(s, dashModel),
-                        x -> new TLAPlusFormulaApplication(Common.getStateFormulaName(x)));
+                        x -> new TLAPlusFormulaApplication(TranslationStrings.getStateFormulaName(x)));
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.getStateFormulaName(s)),
-                        Common.repeatedUnion(childStateFormulae)));
+                        new TLAPlusFormulaDeclaration(TranslationStrings.getStateFormulaName(s)),
+                        TranslationStrings.repeatedUnion(childStateFormulae)));
     }
 }

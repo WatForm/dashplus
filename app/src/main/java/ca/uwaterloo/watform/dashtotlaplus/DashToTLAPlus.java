@@ -6,7 +6,7 @@ import ca.uwaterloo.watform.tlaplusmodel.TLAPlusModel;
 public class DashToTLAPlus {
     public static TLAPlusModel translate(DashModel dashModel, String moduleName) {
 
-        TLAPlusModel model = new TLAPlusModel(moduleName, Common.getInit(), Common.getNext());
+        TLAPlusModel model = new TLAPlusModel(moduleName, TranslationStrings.getInit(), TranslationStrings.getNext());
 
         StandardLibraries.addStandardLibraries(dashModel, model);
         StandardVariables.standardVariables(dashModel, model);
@@ -18,7 +18,7 @@ public class DashToTLAPlus {
         model.addBlankLine();
         model.addComment(
                 "string literal representations of transitions taken, which are the values taken by the "
-                        + Common.getTransTaken()
+                        + TranslationStrings.getTransTaken()
                         + " variable");
         Transitions.transitionFormulae(dashModel, model);
 

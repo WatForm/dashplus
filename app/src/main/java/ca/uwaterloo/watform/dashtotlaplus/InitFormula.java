@@ -14,27 +14,27 @@ public class InitFormula {
     public static void addInitFormula(DashModel dashModel, TLAPlusModel tlaPlusModel) {
 
 		// stable = TRUE
-        TLAPlusExpression stable_exp = new TLAPlusEquals(Common.getStable(), new TLAPlusTrue());
+        TLAPlusExpression stable_exp = new TLAPlusEquals(TranslationStrings.getStable(), new TLAPlusTrue());
 
 		// trans_taken = {}
         TLAPlusExpression trans_taken_exp =
-                new TLAPlusEquals(Common.getTransTaken(), new TLAPlusStringLiteral(Common.NONE));
+                new TLAPlusEquals(TranslationStrings.getTransTaken(), new TLAPlusStringLiteral(TranslationStrings.NONE));
         
 		// scopes_used = {}
 		TLAPlusExpression scopes_used_exp =
-                new TLAPlusEquals(Common.getScopeUsed(), Common.getNullSet());
+                new TLAPlusEquals(TranslationStrings.getScopeUsed(), TranslationStrings.getNullSet());
 
 		// events = {}
-        TLAPlusExpression events_exp = new TLAPlusEquals(Common.getEvents(), Common.getNullSet());
+        TLAPlusExpression events_exp = new TLAPlusEquals(TranslationStrings.getEvents(), TranslationStrings.getNullSet());
 
 		// conf = {<initial states>}
         TLAPlusExpression conf_exp =
-                new TLAPlusEquals(Common.getEvents(), new TLAPlusStringLiteral("placeholder"));
+                new TLAPlusEquals(TranslationStrings.getEvents(), new TLAPlusStringLiteral("placeholder"));
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.INIT),
-                        Common.repeatedAnd(
+                        new TLAPlusFormulaDeclaration(TranslationStrings.INIT),
+                        TranslationStrings.repeatedAnd(
                                 Arrays.asList(
                                         conf_exp,
                                         events_exp,

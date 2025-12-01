@@ -26,26 +26,26 @@ public class TypeOKFormula {
 
     private static TLAPlusUnionSet unionNone(TLAPlusExpression e) {
         return new TLAPlusUnionSet(
-                e, new TLAPlusSet(Arrays.asList(new TLAPlusStringLiteral(Common.NONE))));
+                e, new TLAPlusSet(Arrays.asList(new TLAPlusStringLiteral(TranslationStrings.NONE))));
     }
 
     public static void addTypeOKFormula(TLAPlusModel tlaPlusModel) {
         TLAPlusExpression conf_exp =
                 new TLAPlusInSet(
-                        Common.getConf(), new TLAPlusFormulaApplication(Common.getSetConf()));
+                        TranslationStrings.getConf(), new TLAPlusFormulaApplication(TranslationStrings.getSetConf()));
         TLAPlusExpression trans_taken_exp =
                 new TLAPlusInSet(
-                        Common.getTransTaken(),
-                        new TLAPlusFormulaApplication(Common.getSetTransTaken()));
+                        TranslationStrings.getTransTaken(),
+                        new TLAPlusFormulaApplication(TranslationStrings.getSetTransTaken()));
         TLAPlusExpression scope_exp =
                 new TLAPlusInSet(
-                        Common.getScopeUsed(), new TLAPlusFormulaApplication(Common.getSetConf()));
-        TLAPlusExpression stable_exp = new TLAPlusInSet(Common.getStable(), new TLAPlusBoolean());
+                        TranslationStrings.getScopeUsed(), new TLAPlusFormulaApplication(TranslationStrings.getSetConf()));
+        TLAPlusExpression stable_exp = new TLAPlusInSet(TranslationStrings.getStable(), new TLAPlusBoolean());
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.TYPEOK),
-                        Common.repeatedAnd(
+                        new TLAPlusFormulaDeclaration(TranslationStrings.TYPEOK),
+                        TranslationStrings.repeatedAnd(
                                 Arrays.asList(conf_exp, trans_taken_exp, stable_exp, scope_exp))));
     }
 
@@ -56,18 +56,18 @@ public class TypeOKFormula {
         List<TLAPlusFormulaApplication> leafStateFormulaApplications =
                 GeneralUtil.mapBy(
                         AuxiliaryDashAccessors.getLeafStateNames(dashModel),
-                        name -> new TLAPlusFormulaApplication(Common.getStateFormulaName(name)));
+                        name -> new TLAPlusFormulaApplication(TranslationStrings.getStateFormulaName(name)));
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.getSetConf()),
-                        Common.repeatedUnion(leafStateFormulaApplications)));
+                        new TLAPlusFormulaDeclaration(TranslationStrings.getSetConf()),
+                        TranslationStrings.repeatedUnion(leafStateFormulaApplications)));
     }
 
     public static void addSetTransitionTaken(DashModel dashModel, TLAPlusModel tlaPlusModel) {
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.getSetTransTaken()),
+                        new TLAPlusFormulaDeclaration(TranslationStrings.getSetTransTaken()),
                         unionNone(
                                 new TLAPlusSet(
                                         GeneralUtil.mapBy(
@@ -75,14 +75,14 @@ public class TypeOKFormula {
                                                         dashModel),
                                                 s ->
                                                         new TLAPlusFormulaApplication(
-                                                                Common.getTakenTransFormulaName(
+                                                                TranslationStrings.getTakenTransFormulaName(
                                                                         s)))))));
     }
 
     public static void addSetScopesUsed(DashModel dashModel, TLAPlusModel tlaPlusModel) {
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.getSetScopesUsed()),
-                        unionNone(new TLAPlusFormulaApplication(Common.getSetConf()))));
+                        new TLAPlusFormulaDeclaration(TranslationStrings.getSetScopesUsed()),
+                        unionNone(new TLAPlusFormulaApplication(TranslationStrings.getSetConf()))));
     }
 }

@@ -36,14 +36,14 @@ public class Transitions {
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(
-                                Common.getTakenTransFormulaName(transitionFullyQualifiedName)),
+                                TranslationStrings.getTakenTransFormulaName(transitionFullyQualifiedName)),
                         new TLAPlusStringLiteral(transitionFullyQualifiedName)));
     }
 
     public static List<TLAPlusVariable> enabledArgList() {
         return Arrays.asList(
-                new TLAPlusVariable(Common.getArg(Common.CONF)),
-                new TLAPlusVariable(Common.getArg(Common.SCOPE_USED)));
+                new TLAPlusVariable(TranslationStrings.getArg(TranslationStrings.CONF)),
+                new TLAPlusVariable(TranslationStrings.getArg(TranslationStrings.SCOPE_USED)));
     }
 
     public static void addTransitionGeneralFormulae(
@@ -56,23 +56,23 @@ public class Transitions {
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.SOME_TRANSITION),
-                        Common.repeatedOr(
+                        new TLAPlusFormulaDeclaration(TranslationStrings.SOME_TRANSITION),
+                        TranslationStrings.repeatedOr(
                                 GeneralUtil.mapBy(
                                         transitions,
                                         t ->
                                                 new TLAPlusFormulaApplication(
-                                                        Common.getTransFormulaName(t))))));
+                                                        TranslationStrings.getTransFormulaName(t))))));
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
-                        new TLAPlusFormulaDeclaration(Common.NEXT_IS_STABLE, enabledArgList()),
-                        Common.repeatedOr(
+                        new TLAPlusFormulaDeclaration(TranslationStrings.NEXT_IS_STABLE, enabledArgList()),
+                        TranslationStrings.repeatedOr(
                                 GeneralUtil.mapBy(
                                         transitions,
                                         t ->
                                                 new TLAPlusFormulaApplication(
-                                                        Common.getTransFormulaName(t),
+                                                        TranslationStrings.getTransFormulaName(t),
                                                         GeneralUtil.mapBy(
                                                                 enabledArgList(), u -> u))))));
     }
@@ -86,16 +86,16 @@ public class Transitions {
         TLAPlusExpression conf_exp =
                 new TLAPlusNotEquals(
                         new TLAPlusIntersectionSet(
-                                Common.getConf(),
+                                TranslationStrings.getConf(),
                                 new TLAPlusFormulaApplication(
-                                        Common.getStateFormulaName(sourceStateFullQualifiedName))),
-                        Common.getNullSet());
+                                        TranslationStrings.getStateFormulaName(sourceStateFullQualifiedName))),
+                        TranslationStrings.getNullSet());
 
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(
-                                Common.getPreTransFormulaName(transitionFullyQualifiedName)),
-                        Common.repeatedAnd(Arrays.asList(conf_exp))));
+                                TranslationStrings.getPreTransFormulaName(transitionFullyQualifiedName)),
+                        TranslationStrings.repeatedAnd(Arrays.asList(conf_exp))));
     }
 
     public static void addTransitionPostFormula(
@@ -103,14 +103,14 @@ public class Transitions {
 
         TLAPlusExpression taken =
                 new TLAPlusEquals(
-                        Common.getTransTaken(),
+                        TranslationStrings.getTransTaken(),
                         new TLAPlusFormulaApplication(
-                                Common.getTakenTransFormulaName(transitionFullyQualifiedName)));
+                                TranslationStrings.getTakenTransFormulaName(transitionFullyQualifiedName)));
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(
-                                Common.getPostTransFormulaName(transitionFullyQualifiedName)),
-                        Common.repeatedAnd(Arrays.asList(taken))));
+                                TranslationStrings.getPostTransFormulaName(transitionFullyQualifiedName)),
+                        TranslationStrings.repeatedAnd(Arrays.asList(taken))));
     }
 
     public static void addTransitionIsEnabledFormula(
@@ -118,11 +118,11 @@ public class Transitions {
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(
-                                Common.getEnabledTransFormulaName(transitionFullyQualifiedName),
+                                TranslationStrings.getEnabledTransFormulaName(transitionFullyQualifiedName),
                                 Arrays.asList(
-                                        new TLAPlusVariable(Common.getArg(Common.CONF)),
-                                        new TLAPlusVariable(Common.getArg(Common.SCOPE_USED)))),
-                        Common.repeatedAnd(Arrays.asList())));
+                                        new TLAPlusVariable(TranslationStrings.getArg(TranslationStrings.CONF)),
+                                        new TLAPlusVariable(TranslationStrings.getArg(TranslationStrings.SCOPE_USED)))),
+                        TranslationStrings.repeatedAnd(Arrays.asList())));
     }
 
     public static void addTransitionCompleteFormula(
@@ -138,13 +138,13 @@ public class Transitions {
         tlaPlusModel.addFormulaDefinition(
                 new TLAPlusFormulaDefinition(
                         new TLAPlusFormulaDeclaration(
-                                Common.getTransFormulaName(transitionFullyQualifiedName)),
+                                TranslationStrings.getTransFormulaName(transitionFullyQualifiedName)),
                         new TLAPlusAnd(
                                 new TLAPlusFormulaApplication(
-                                        Common.getPreTransFormulaName(
+                                        TranslationStrings.getPreTransFormulaName(
                                                 transitionFullyQualifiedName)),
                                 new TLAPlusFormulaApplication(
-                                        Common.getPostTransFormulaName(
+                                        TranslationStrings.getPostTransFormulaName(
                                                 transitionFullyQualifiedName)))));
     }
 }

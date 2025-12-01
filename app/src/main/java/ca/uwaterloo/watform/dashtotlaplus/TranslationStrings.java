@@ -13,7 +13,7 @@ import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TLAPlusSet;
 import java.util.ArrayList;
 import java.util.List;
 
-class Common {
+class TranslationStrings {
     // this class stores information about things that are common to every part of the translation
 
     public static final String SPECIAL = "_"; // special character used for naming translation artefacts
@@ -123,7 +123,7 @@ class Common {
         return transitionFullyQualifiedName.replace(QUALIFIER, SPECIAL);
     }
 
-    
+
 
     // todo: combine these into one
 
