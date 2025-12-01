@@ -41,7 +41,7 @@ public class AuxiliaryDashAccessors {
         return dm.tt.keySet();
     }
 
-    public static String getSourceOfTrans(String transFullyQualifiedName, DashModel dm) {
-        return dm.tt.get(transFullyQualifiedName).fromP.toString();
+    public static String getSourceOfTrans(String transFQN, DashModel dm) {
+        return dm.tt.get(transFQN).fromP.toString();
     }
 }
