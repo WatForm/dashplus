@@ -3,8 +3,7 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusquantificationoperators;
 import ca.uwaterloo.watform.tlaplusast.*;
 
 public class TlaForAll extends TlaQuantOp {
-    public TlaForAll(
-            TlaVar variable, TlaExp set, TlaExp expression) {
+    public TlaForAll(TlaVar variable, TlaExp set, TlaExp expression) {
         super(variable, set, expression, TlaOperator.PrecedenceGroup.PREDICATE);
     }
 

@@ -5,7 +5,6 @@ import ca.uwaterloo.watform.tlaplusast.TlaExp;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TlaVar;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.Tla;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaBinOp;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaOr;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaUnionSet;
 import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaFalse;
@@ -17,7 +16,8 @@ import java.util.List;
 class TranslationStrings {
     // this class stores information about things that are common to every part of the translation
 
-    public static final String SPECIAL = "_"; // special character used for naming translation artefacts
+    public static final String SPECIAL =
+            "_"; // special character used for naming translation artefacts
     public static final String TRANSITIONS = SPECIAL + "transitions";
     public static final String NEXT = SPECIAL + "Next";
     public static final String INIT = SPECIAL + "Init";
@@ -123,8 +123,6 @@ class TranslationStrings {
     public static String getTransFormulaName(String transitionFQN) {
         return transitionFQN.replace(QUALIFIER, SPECIAL);
     }
-
-
 
     // todo: combine these into one
 

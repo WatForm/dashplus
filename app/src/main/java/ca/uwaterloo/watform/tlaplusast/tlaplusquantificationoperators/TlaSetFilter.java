@@ -7,8 +7,7 @@ import ca.uwaterloo.watform.tlaplusast.TlaVar;
 
 public class TlaSetFilter extends TlaQuantOp {
 
-    public TlaSetFilter(
-            TlaVar variable, TlaExp set, TlaExp expression) {
+    public TlaSetFilter(TlaVar variable, TlaExp set, TlaExp expression) {
         super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 

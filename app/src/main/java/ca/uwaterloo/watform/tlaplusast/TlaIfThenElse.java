@@ -9,10 +9,7 @@ public class TlaIfThenElse extends TlaOperator {
     public final TlaExp thenExpression;
     public final TlaExp elseExpression;
 
-    public TlaIfThenElse(
-            TlaExp condition,
-            TlaExp thenExpression,
-            TlaExp elseExpression) {
+    public TlaIfThenElse(TlaExp condition, TlaExp thenExpression, TlaExp elseExpression) {
         super(TlaOperator.Associativity.IRRELEVANT, TlaOperator.PrecedenceGroup.SAFE);
         this.condition = condition;
         this.thenExpression = thenExpression;

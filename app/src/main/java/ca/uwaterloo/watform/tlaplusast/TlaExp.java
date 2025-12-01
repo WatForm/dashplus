@@ -10,9 +10,7 @@ public abstract class TlaExp extends ASTNode {
 
     public String toTLAPlusSnippet(boolean brackets) {
         if (brackets)
-            return TlaStrings.BRACKET_OPEN
-                    + toTLAPlusSnippetCore()
-                    + TlaStrings.BRACKET_CLOSE;
+            return TlaStrings.BRACKET_OPEN + toTLAPlusSnippetCore() + TlaStrings.BRACKET_CLOSE;
         return toTLAPlusSnippetCore();
     }
 

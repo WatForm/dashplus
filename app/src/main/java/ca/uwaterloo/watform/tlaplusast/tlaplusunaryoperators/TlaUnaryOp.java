@@ -8,8 +8,7 @@ public abstract class TlaUnaryOp extends TlaOperator {
 
     public final TlaExp operand;
 
-    public TlaUnaryOp(
-            TlaExp operand, TlaOperator.PrecedenceGroup precedenceGroup) {
+    public TlaUnaryOp(TlaExp operand, TlaOperator.PrecedenceGroup precedenceGroup) {
 
         super(TlaOperator.Associativity.IRRELEVANT, precedenceGroup);
         this.operand = operand;

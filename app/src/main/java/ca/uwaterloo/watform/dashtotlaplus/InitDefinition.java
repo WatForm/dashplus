@@ -13,21 +13,24 @@ import java.util.Arrays;
 public class InitDefinition {
     public static void addInitFormula(DashModel dashModel, TlaModel tlaPlusModel) {
 
-		// stable = TRUE
+        // stable = TRUE
         TlaExp stable_exp = new TlaEquals(TranslationStrings.getStable(), new TlaTrue());
 
-		// trans_taken = {}
+        // trans_taken = {}
         TlaExp trans_taken_exp =
-                new TlaEquals(TranslationStrings.getTransTaken(), new TlaLiteral(TranslationStrings.NONE));
-        
-		// scopes_used = {}
-		TlaExp scopes_used_exp =
+                new TlaEquals(
+                        TranslationStrings.getTransTaken(),
+                        new TlaLiteral(TranslationStrings.NONE));
+
+        // scopes_used = {}
+        TlaExp scopes_used_exp =
                 new TlaEquals(TranslationStrings.getScopeUsed(), TranslationStrings.getNullSet());
 
-		// events = {}
-        TlaExp events_exp = new TlaEquals(TranslationStrings.getEvents(), TranslationStrings.getNullSet());
+        // events = {}
+        TlaExp events_exp =
+                new TlaEquals(TranslationStrings.getEvents(), TranslationStrings.getNullSet());
 
-		// conf = {<initial states>}
+        // conf = {<initial states>}
         TlaExp conf_exp =
                 new TlaEquals(TranslationStrings.getEvents(), new TlaLiteral("placeholder"));
 

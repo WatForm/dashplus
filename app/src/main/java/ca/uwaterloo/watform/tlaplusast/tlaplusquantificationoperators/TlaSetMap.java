@@ -7,8 +7,7 @@ import ca.uwaterloo.watform.tlaplusast.TlaVar;
 
 public class TlaSetMap extends TlaQuantOp {
 
-    public TlaSetMap(
-            TlaVar variable, TlaExp set, TlaExp expression) {
+    public TlaSetMap(TlaVar variable, TlaExp set, TlaExp expression) {
         super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 

@@ -6,8 +6,7 @@ import ca.uwaterloo.watform.tlaplusast.TlaStrings;
 import ca.uwaterloo.watform.tlaplusast.TlaVar;
 
 public class TlaFuncMapConstr extends TlaQuantOp {
-    public TlaFuncMapConstr(
-            TlaVar variable, TlaExp set, TlaExp expression) {
+    public TlaFuncMapConstr(TlaVar variable, TlaExp set, TlaExp expression) {
         super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 

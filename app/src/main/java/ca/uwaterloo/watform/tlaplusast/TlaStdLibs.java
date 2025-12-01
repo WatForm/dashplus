@@ -57,8 +57,7 @@ public class TlaStdLibs extends TlaExp { // enums used for extensibility
         return new TlaFormulaAppl(TlaStrings.TAIL, children);
     }
 
-    public static TlaFormulaAppl Append(
-            TlaVar sequence, TlaVar element) {
+    public static TlaFormulaAppl Append(TlaVar sequence, TlaVar element) {
         List<TlaExp> children = new ArrayList<>();
         children.add(sequence);
         children.add(element);

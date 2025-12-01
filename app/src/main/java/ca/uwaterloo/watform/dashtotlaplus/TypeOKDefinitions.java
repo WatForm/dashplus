@@ -32,14 +32,16 @@ public class TypeOKDefinitions {
     public static void addTypeOKFormula(TlaModel tlaPlusModel) {
         TlaExp conf_exp =
                 new TlaInSet(
-                        TranslationStrings.getConf(), new TlaFormulaAppl(TranslationStrings.getSetConf()));
+                        TranslationStrings.getConf(),
+                        new TlaFormulaAppl(TranslationStrings.getSetConf()));
         TlaExp trans_taken_exp =
                 new TlaInSet(
                         TranslationStrings.getTransTaken(),
                         new TlaFormulaAppl(TranslationStrings.getSetTransTaken()));
         TlaExp scope_exp =
                 new TlaInSet(
-                        TranslationStrings.getScopeUsed(), new TlaFormulaAppl(TranslationStrings.getSetConf()));
+                        TranslationStrings.getScopeUsed(),
+                        new TlaFormulaAppl(TranslationStrings.getSetConf()));
         TlaExp stable_exp = new TlaInSet(TranslationStrings.getStable(), new TlaBoolean());
 
         tlaPlusModel.addFormulaDefinition(
@@ -75,8 +77,9 @@ public class TypeOKDefinitions {
                                                         dashModel),
                                                 s ->
                                                         new TlaFormulaAppl(
-                                                                TranslationStrings.getTakenTransFormulaName(
-                                                                        s)))))));
+                                                                TranslationStrings
+                                                                        .getTakenTransFormulaName(
+                                                                                s)))))));
     }
 
     public static void addSetScopesUsed(DashModel dashModel, TlaModel tlaPlusModel) {

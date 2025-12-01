@@ -17,8 +17,7 @@ public class TlaModel {
     private TlaModule module;
     private TlaConfig cfg;
 
-    public TlaModel(
-            String name, TlaFormulaAppl init, TlaFormulaAppl next) {
+    public TlaModel(String name, TlaFormulaAppl init, TlaFormulaAppl next) {
         this.name = name;
         this.module = new TlaModule();
         this.cfg = new TlaConfig(init, next);
