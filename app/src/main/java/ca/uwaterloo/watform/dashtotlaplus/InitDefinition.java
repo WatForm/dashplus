@@ -4,9 +4,9 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaplusast.TlaExp;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDecl;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDefn;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusEquals;
-import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusStringLiteral;
-import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusTrue;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaEquals;
+import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaLiteral;
+import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaTrue;
 import ca.uwaterloo.watform.tlaplusmodel.TlaModel;
 import java.util.Arrays;
 
@@ -14,22 +14,22 @@ public class InitDefinition {
     public static void addInitFormula(DashModel dashModel, TlaModel tlaPlusModel) {
 
 		// stable = TRUE
-        TlaExp stable_exp = new TLAPlusEquals(TranslationStrings.getStable(), new TLAPlusTrue());
+        TlaExp stable_exp = new TlaEquals(TranslationStrings.getStable(), new TlaTrue());
 
 		// trans_taken = {}
         TlaExp trans_taken_exp =
-                new TLAPlusEquals(TranslationStrings.getTransTaken(), new TLAPlusStringLiteral(TranslationStrings.NONE));
+                new TlaEquals(TranslationStrings.getTransTaken(), new TlaLiteral(TranslationStrings.NONE));
         
 		// scopes_used = {}
 		TlaExp scopes_used_exp =
-                new TLAPlusEquals(TranslationStrings.getScopeUsed(), TranslationStrings.getNullSet());
+                new TlaEquals(TranslationStrings.getScopeUsed(), TranslationStrings.getNullSet());
 
 		// events = {}
-        TlaExp events_exp = new TLAPlusEquals(TranslationStrings.getEvents(), TranslationStrings.getNullSet());
+        TlaExp events_exp = new TlaEquals(TranslationStrings.getEvents(), TranslationStrings.getNullSet());
 
 		// conf = {<initial states>}
         TlaExp conf_exp =
-                new TLAPlusEquals(TranslationStrings.getEvents(), new TLAPlusStringLiteral("placeholder"));
+                new TlaEquals(TranslationStrings.getEvents(), new TlaLiteral("placeholder"));
 
         tlaPlusModel.addFormulaDefinition(
                 new TlaFormulaDefn(

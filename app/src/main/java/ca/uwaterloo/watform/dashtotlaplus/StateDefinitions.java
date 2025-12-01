@@ -4,8 +4,8 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDecl;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDefn;
-import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusStringLiteral;
-import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TLAPlusSet;
+import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaLiteral;
+import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TlaSet;
 import ca.uwaterloo.watform.tlaplusmodel.TlaModel;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class StateDefinitions {
         tlaPlusModel.addFormulaDefinition(
                 new TlaFormulaDefn(
                         new TlaFormulaDecl(TranslationStrings.getStateFormulaName(s)),
-                        new TLAPlusSet(Arrays.asList(new TLAPlusStringLiteral(s)))));
+                        new TlaSet(Arrays.asList(new TlaLiteral(s)))));
     }
 
     public static void makeNonLeafStateFormula(

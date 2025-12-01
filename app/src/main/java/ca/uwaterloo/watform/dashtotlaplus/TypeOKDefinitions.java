@@ -5,11 +5,11 @@ import ca.uwaterloo.watform.tlaplusast.TlaExp;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDecl;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDefn;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusInSet;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusUnionSet;
-import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusBoolean;
-import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusStringLiteral;
-import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TLAPlusSet;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaInSet;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaUnionSet;
+import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaBoolean;
+import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaLiteral;
+import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TlaSet;
 import ca.uwaterloo.watform.tlaplusmodel.TlaModel;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
@@ -24,23 +24,23 @@ public class TypeOKDefinitions {
         addTypeOKFormula(tlaPlusModel);
     }
 
-    private static TLAPlusUnionSet unionNone(TlaExp e) {
-        return new TLAPlusUnionSet(
-                e, new TLAPlusSet(Arrays.asList(new TLAPlusStringLiteral(TranslationStrings.NONE))));
+    private static TlaUnionSet unionNone(TlaExp e) {
+        return new TlaUnionSet(
+                e, new TlaSet(Arrays.asList(new TlaLiteral(TranslationStrings.NONE))));
     }
 
     public static void addTypeOKFormula(TlaModel tlaPlusModel) {
         TlaExp conf_exp =
-                new TLAPlusInSet(
+                new TlaInSet(
                         TranslationStrings.getConf(), new TlaFormulaAppl(TranslationStrings.getSetConf()));
         TlaExp trans_taken_exp =
-                new TLAPlusInSet(
+                new TlaInSet(
                         TranslationStrings.getTransTaken(),
                         new TlaFormulaAppl(TranslationStrings.getSetTransTaken()));
         TlaExp scope_exp =
-                new TLAPlusInSet(
+                new TlaInSet(
                         TranslationStrings.getScopeUsed(), new TlaFormulaAppl(TranslationStrings.getSetConf()));
-        TlaExp stable_exp = new TLAPlusInSet(TranslationStrings.getStable(), new TLAPlusBoolean());
+        TlaExp stable_exp = new TlaInSet(TranslationStrings.getStable(), new TlaBoolean());
 
         tlaPlusModel.addFormulaDefinition(
                 new TlaFormulaDefn(
@@ -69,7 +69,7 @@ public class TypeOKDefinitions {
                 new TlaFormulaDefn(
                         new TlaFormulaDecl(TranslationStrings.getSetTransTaken()),
                         unionNone(
-                                new TLAPlusSet(
+                                new TlaSet(
                                         GeneralUtil.mapBy(
                                                 AuxiliaryDashAccessors.getTransitionNames(
                                                         dashModel),

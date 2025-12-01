@@ -6,11 +6,11 @@ import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDecl;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDefn;
 import ca.uwaterloo.watform.tlaplusast.TlaVar;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusAnd;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusEquals;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusIntersectionSet;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusNotEq;
-import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusStringLiteral;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.Tla;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaEquals;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaIntersectionSet;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaNotEq;
+import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaLiteral;
 import ca.uwaterloo.watform.tlaplusmodel.TlaModel;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class TransitionDefinitions {
                 new TlaFormulaDefn(
                         new TlaFormulaDecl(
                                 TranslationStrings.getTakenTransFormulaName(transitionFullyQualifiedName)),
-                        new TLAPlusStringLiteral(transitionFullyQualifiedName)));
+                        new TlaLiteral(transitionFullyQualifiedName)));
     }
 
     public static List<TlaVar> enabledArgList() {
@@ -84,8 +84,8 @@ public class TransitionDefinitions {
                 "standin"; // AuxiliaryDashAccessors.getSourceOfTrans(transitionFullyQualifiedName,
         // dashModel);  this doesn't work for whatever reason
         TlaExp conf_exp =
-                new TLAPlusNotEq(
-                        new TLAPlusIntersectionSet(
+                new TlaNotEq(
+                        new TlaIntersectionSet(
                                 TranslationStrings.getConf(),
                                 new TlaFormulaAppl(
                                         TranslationStrings.getStateFormulaName(sourceStateFullQualifiedName))),
@@ -102,7 +102,7 @@ public class TransitionDefinitions {
             String transitionFullyQualifiedName, DashModel dashModel, TlaModel tlaPlusModel) {
 
         TlaExp taken =
-                new TLAPlusEquals(
+                new TlaEquals(
                         TranslationStrings.getTransTaken(),
                         new TlaFormulaAppl(
                                 TranslationStrings.getTakenTransFormulaName(transitionFullyQualifiedName)));
@@ -139,7 +139,7 @@ public class TransitionDefinitions {
                 new TlaFormulaDefn(
                         new TlaFormulaDecl(
                                 TranslationStrings.getTransFormulaName(transitionFullyQualifiedName)),
-                        new TLAPlusAnd(
+                        new Tla(
                                 new TlaFormulaAppl(
                                         TranslationStrings.getPreTransFormulaName(
                                                 transitionFullyQualifiedName)),

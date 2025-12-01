@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.tlaplusast.TlaExp;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TlaVar;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusAnd;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusOr;
-import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TLAPlusUnionSet;
-import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusFalse;
-import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TLAPlusTrue;
-import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TLAPlusSet;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.Tla;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaOr;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaUnionSet;
+import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaFalse;
+import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaTrue;
+import ca.uwaterloo.watform.tlaplusast.tlaplusnaryoperators.TlaSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,8 +95,8 @@ class TranslationStrings {
         return new TlaFormulaAppl(INIT);
     }
 
-    public static TLAPlusSet getNullSet() {
-        return new TLAPlusSet(new ArrayList<>());
+    public static TlaSet getNullSet() {
+        return new TlaSet(new ArrayList<>());
     }
 
     public static String getStateFormulaName(String stateFullyQualifiedName) {
@@ -130,29 +130,29 @@ class TranslationStrings {
     public static TlaExp repeatedUnion(List<? extends TlaExp> operands) {
         if (operands.size() == 0) return getNullSet();
         if (operands.size() == 1) return operands.get(0);
-        TlaExp top = new TLAPlusUnionSet(operands.get(0), operands.get(1));
+        TlaExp top = new TlaUnionSet(operands.get(0), operands.get(1));
         for (int i = 2; i < operands.size(); i++) {
-            top = new TLAPlusUnionSet(top, operands.get(i));
+            top = new TlaUnionSet(top, operands.get(i));
         }
         return top;
     }
 
     public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
-        if (operands.size() == 0) return new TLAPlusTrue();
+        if (operands.size() == 0) return new TlaTrue();
         if (operands.size() == 1) return operands.get(0);
-        TlaExp top = new TLAPlusAnd(operands.get(0), operands.get(1));
+        TlaExp top = new Tla(operands.get(0), operands.get(1));
         for (int i = 2; i < operands.size(); i++) {
-            top = new TLAPlusAnd(top, operands.get(i));
+            top = new Tla(top, operands.get(i));
         }
         return top;
     }
 
     public static TlaExp repeatedOr(List<? extends TlaExp> operands) {
-        if (operands.size() == 0) return new TLAPlusFalse();
+        if (operands.size() == 0) return new TlaFalse();
         if (operands.size() == 1) return operands.get(0);
-        TlaExp top = new TLAPlusOr(operands.get(0), operands.get(1));
+        TlaExp top = new TlaOr(operands.get(0), operands.get(1));
         for (int i = 2; i < operands.size(); i++) {
-            top = new TLAPlusOr(top, operands.get(i));
+            top = new TlaOr(top, operands.get(i));
         }
         return top;
     }
