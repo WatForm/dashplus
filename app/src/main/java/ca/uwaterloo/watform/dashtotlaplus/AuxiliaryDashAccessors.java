@@ -33,4 +33,12 @@ public class AuxiliaryDashAccessors {
     public static List<String> getAncestorStateNames(String stateName, DashModel dm) {
         return dm.st.getAllAnces(stateName);
     }
+
+    public static List<String> getTransitionNames(DashModel dm) {
+        return dm.tt.keySet();
+    }
+
+    public static String getSourceOfTrans(String transFullyQualifiedName, DashModel dm) {
+        return dm.tt.get(transFullyQualifiedName).fromP.toString();
+    }
 }

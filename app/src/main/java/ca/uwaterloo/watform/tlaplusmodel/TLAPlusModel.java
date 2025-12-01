@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.tlaplusmodel;
 
+import ca.uwaterloo.watform.tlaplusast.TLAPlusBlankLine;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusComment;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusConstant;
 import ca.uwaterloo.watform.tlaplusast.TLAPlusFormulaApplication;
@@ -60,7 +61,11 @@ public class TLAPlusModel {
         this.module.body.add(d);
     }
 
-    public void addComment(TLAPlusComment c) {
-        this.module.body.add(c);
+    public void addComment(String c) {
+        this.module.body.add(new TLAPlusComment(c));
+    }
+
+    public void addBlankLine() {
+        this.module.body.add(new TLAPlusBlankLine());
     }
 }

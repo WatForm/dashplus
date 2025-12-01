@@ -5,7 +5,7 @@ import ca.uwaterloo.watform.tlaplusast.TLAPlusStrings;
 
 public class TLAPlusBoolean extends TLAPlusSimpleExpression {
 
-    protected TLAPlusBoolean() {
+    public TLAPlusBoolean() {
         super(TLAPlusStrings.BOOLEAN);
     }
 }

@@ -10,5 +10,7 @@ class StandardVariables {
     public static void standardVariables(DashModel dashModel, TLAPlusModel TLAPlusModel) {
         TLAPlusModel.addVariable(Common.getConf());
         TLAPlusModel.addVariable(Common.getEvents());
+        TLAPlusModel.addVariable(Common.getTransTaken());
+        TLAPlusModel.addVariable(Common.getScopesUsed());
     }
 }

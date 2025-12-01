@@ -6,6 +6,12 @@
 - This serves as a feature checklist for the developer of the translator
 - This documents design decisions, notes and potential roadblocks involved
 
+## Variables:
+
+- transtaken
+- conf
+- scopes used
+
 ## Overview:
 
 - Leaf states become singleton sets of strings which bear their name
