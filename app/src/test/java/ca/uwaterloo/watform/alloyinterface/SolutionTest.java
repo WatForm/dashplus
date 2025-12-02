@@ -48,8 +48,7 @@ public class SolutionTest {
                                                 TestUtil.createBlock(),
                                                 new AlloyCmdPara.CommandDecl.Scope(
                                                         new AlloyCmdPara.CommandDecl.Scope
-                                                                .Typescope(
-                                                                false, 2, true, 2, 1, S1))))));
+                                                                .Typescope(false, 2, 2, 1, S1))))));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         Solution solution = AlloyInterface.executeCommand(alloyModel);
         assertTrue(solution.contains(AlloyStrings.THIS + AlloyStrings.SLASH + S1));
@@ -86,7 +85,7 @@ public class SolutionTest {
                                 TestUtil.createBlock(),
                                 new AlloyCmdPara.CommandDecl.Scope(
                                         new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                false, 2, true, 2, 1, S1))));
+                                                false, 2, 2, 1, S1))));
         AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         Solution solution = AlloyInterface.executeCommand(alloyModel);
@@ -115,7 +114,7 @@ public class SolutionTest {
                                 TestUtil.createBlock(),
                                 new AlloyCmdPara.CommandDecl.Scope(
                                         new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                false, 2, true, 2, 1, S1))));
+                                                false, 2, 2, 1, S1))));
         AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         Solution solution = AlloyInterface.executeCommand(alloyModel);
@@ -154,7 +153,7 @@ public class SolutionTest {
                                 TestUtil.createBlock(),
                                 new AlloyCmdPara.CommandDecl.Scope(
                                         new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                false, 1, true, 1, 1, S1))));
+                                                false, 1, 1, 1, S1))));
         AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         Solution solution = AlloyInterface.executeCommand(alloyModel);

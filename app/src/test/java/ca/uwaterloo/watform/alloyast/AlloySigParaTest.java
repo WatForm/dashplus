@@ -215,6 +215,43 @@ public class AlloySigParaTest {
                                 new AlloySigPara.In(new AlloyQnameExpr("B")),
                                 Collections.emptyList(),
                                 TestUtil.createBlock()));
+
+        assertThrows(
+                AlloyCtorError.class,
+                () ->
+                        new AlloySigPara(
+                                List.of(),
+                                List.of(new AlloyQnameExpr("A")),
+                                new AlloySigPara.Extends(new AlloySigIntExpr()),
+                                Collections.emptyList(),
+                                TestUtil.createBlock()));
+        assertThrows(
+                AlloyCtorError.class,
+                () ->
+                        new AlloySigPara(
+                                List.of(),
+                                List.of(new AlloyQnameExpr("A")),
+                                new AlloySigPara.Extends(new AlloySeqIntExpr()),
+                                Collections.emptyList(),
+                                TestUtil.createBlock()));
+        assertThrows(
+                AlloyCtorError.class,
+                () ->
+                        new AlloySigPara(
+                                List.of(),
+                                List.of(new AlloyQnameExpr("A")),
+                                new AlloySigPara.Extends(new AlloyStringExpr()),
+                                Collections.emptyList(),
+                                TestUtil.createBlock()));
+        assertThrows(
+                AlloyCtorError.class,
+                () ->
+                        new AlloySigPara(
+                                List.of(),
+                                List.of(new AlloyQnameExpr("A")),
+                                new AlloySigPara.Extends(new AlloyNoneExpr()),
+                                Collections.emptyList(),
+                                TestUtil.createBlock()));
     }
 
     @Test

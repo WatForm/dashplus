@@ -183,12 +183,6 @@ if (d.isPrivate != null) {
 - uniform: if a subsignature is explicitly bounded, its ancestor top-level signature must be also.
 
 ctor:
-- `throw new ErrorSyntax(pos, "Sig " + sig + " cannot have a negative starting scope (" + startingScope + ")");`
-- `throw new ErrorSyntax(cmd.pos, "Cannot specify a scope for the builtin signature \"" + sig + "\"");`
-- `throw new ErrorSyntax(cmd.pos, "Cannot specify a negative scope for sig \"" + sig + "\"");`
-- `throw new ErrorSyntax(pos, "Sig " + sig + " cannot have a negative ending scope (" + endingScope + ")");`
-- `throw new ErrorSyntax(pos, "Sig " + sig + " cannot have an ending scope (" + endingScope + ") smaller than its starting scope (" + startingScope + ")");`
-- `throw new ErrorSyntax(pos, "Sig " + sig + "'s increment value cannot be " + increment + ".\nThe increment must be 1 or greater.");`
 - `throw new ErrorSyntax(pos, "Cannot specify a bitwidth less than 0");`
 - `throw new ErrorSyntax(pos, "Cannot specify a bitwidth greater than 30");`
 - `throw new ErrorSyntax(pos, "With integer bitwidth of " + bitwidth + ", you cannot have sequence length longer than " + max());`

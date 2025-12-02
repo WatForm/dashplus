@@ -197,6 +197,9 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 }
             }
 
+            // The fields only reflect the syntax
+            // In the constructor, do not try to infer the fields from the arguments given
+            // For example, if start is equal to end, don't make isExactly true
             public static final class Typescope extends ASTNode {
                 public final boolean isExactly;
                 public final AlloyNumExpr start;
@@ -233,6 +236,42 @@ public final class AlloyCmdPara extends AlloyParagraph {
                             throw AlloyCtorError.redundantExactly(pos);
                         }
                     }
+
+                    if (this.start.value < 0
+                            || (this.end.isPresent() && this.end.get().value < 0)) {
+                        throw AlloyCtorError.cmdNegScop(pos);
+                    }
+
+                    if (this.end.isPresent() && this.end.get().value < this.start.value) {
+                        throw AlloyCtorError.cmdDecreasingScope(pos);
+                    }
+
+                    if (this.increment.isPresent() && this.increment.get().value < 1) {
+                        throw AlloyCtorError.cmdInvalidIncrement(pos);
+                    }
+
+                    if ((this.scopableExpr instanceof AlloySigIntExpr
+                                    || this.scopableExpr instanceof AlloyIntExpr)
+                            && this.start.value > 30) {
+                        throw AlloyCtorError.cmdBitwidthTooBig(pos);
+                    }
+                }
+
+                public Typescope(
+                        boolean isExactly,
+                        int start,
+                        boolean hasDotDot,
+                        int end,
+                        int increment,
+                        AlloyScopableExpr scopableExpr) {
+                    this(
+                            Pos.UNKNOWN,
+                            isExactly,
+                            new AlloyNumExpr(start),
+                            hasDotDot,
+                            new AlloyNumExpr(end),
+                            new AlloyNumExpr(increment),
+                            scopableExpr);
                 }
 
                 public Typescope(
@@ -246,17 +285,12 @@ public final class AlloyCmdPara extends AlloyParagraph {
                 }
 
                 public Typescope(
-                        boolean isExactly,
-                        int start,
-                        boolean hasDotDot,
-                        int end,
-                        int increment,
-                        String name) {
+                        boolean isExactly, int start, int end, int increment, String name) {
                     this(
                             Pos.UNKNOWN,
                             isExactly,
                             new AlloyNumExpr(start),
-                            hasDotDot,
+                            true,
                             new AlloyNumExpr(end),
                             new AlloyNumExpr(increment),
                             new AlloyQnameExpr(name));

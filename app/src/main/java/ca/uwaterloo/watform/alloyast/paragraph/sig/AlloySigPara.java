@@ -4,8 +4,12 @@ import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyNoneExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloySeqIntExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloySigIntExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyStringExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
 import ca.uwaterloo.watform.utils.*;
@@ -222,11 +226,16 @@ public final class AlloySigPara extends AlloyParagraph {
         public Extends(Pos pos, AlloySigRefExpr sigRef) {
             super(pos);
             this.sigRef = sigRef;
+            if (this.sigRef instanceof AlloySigIntExpr
+                    || this.sigRef instanceof AlloySeqIntExpr
+                    || this.sigRef instanceof AlloyStringExpr
+                    || this.sigRef instanceof AlloyNoneExpr) {
+                throw AlloyCtorError.sigCannotExtend(pos, sigRef.toString());
+            }
         }
 
         public Extends(AlloySigRefExpr sigRef) {
-            super();
-            this.sigRef = sigRef;
+            this(Pos.UNKNOWN, sigRef);
         }
 
         @Override

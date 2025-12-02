@@ -28,6 +28,10 @@ public class AlloyCtorError extends DashPlusError {
         return new AlloyCtorError(pos, "A subset signature cannot be abstract");
     }
 
+    public static AlloyCtorError sigCannotExtend(Pos pos, String sigRef) {
+        return new AlloyCtorError(pos, "Signature cannot extend builtin " + sigRef + " signature");
+    }
+
     // ====================================================================================
     // Module
     // ====================================================================================
@@ -54,6 +58,22 @@ public class AlloyCtorError extends DashPlusError {
 
     public static AlloyCtorError endWithoutDotDot(Pos pos) {
         throw new AlloyCtorError(pos, "Cannot specify end scope without having two dots. ");
+    }
+
+    public static AlloyCtorError cmdNegScop(Pos pos) {
+        throw new AlloyCtorError(pos, "Scope cannot be negative");
+    }
+
+    public static AlloyCtorError cmdDecreasingScope(Pos pos) {
+        throw new AlloyCtorError(pos, "The end scope cannot be smaller than the start scope");
+    }
+
+    public static AlloyCtorError cmdInvalidIncrement(Pos pos) {
+        throw new AlloyCtorError(pos, "The increment cannot be smaller than 1");
+    }
+
+    public static AlloyCtorError cmdBitwidthTooBig(Pos pos) {
+        throw new AlloyCtorError(pos, "Cannot specify a bitwidth greater than 30");
     }
 
     // ====================================================================================
