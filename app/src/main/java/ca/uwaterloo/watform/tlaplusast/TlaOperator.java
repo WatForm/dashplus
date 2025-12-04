@@ -67,6 +67,8 @@ public abstract class TlaOperator extends TlaExp {
 
         PrecedenceGroup parentPrecedenceGroup = ((TlaOperator) parent).precedenceGroup;
         PrecedenceGroup childPrecedenceGroup = ((TlaOperator) child).precedenceGroup;
+        Associativity parentAssociativity = ((TlaOperator) parent).associativity;
+        Associativity childAssociativity = ((TlaOperator) child).associativity;
 
         // if either one is SAFE, no brackets are needed
         if (parentPrecedenceGroup == PrecedenceGroup.SAFE) return false;
@@ -75,6 +77,11 @@ public abstract class TlaOperator extends TlaExp {
         // if either one is UNSAFE, brackets are needed, no more questions
         if (parentPrecedenceGroup == TlaOperator.PrecedenceGroup.UNSAFE) return true;
         if (childPrecedenceGroup == TlaOperator.PrecedenceGroup.UNSAFE) return true;
+
+        // if parent and child are the same operator and associativity is irrelevant, then no need
+        // brackets
+        if (parent.getClass() == child.getClass()
+                && parentAssociativity == Associativity.IRRELEVANT) return false;
 
         // if the priority of the parent is less than that of the child, no brackets are needed
 

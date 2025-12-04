@@ -6,11 +6,9 @@ import ca.uwaterloo.watform.tlaplusmodel.TlaModel;
 public class DashToTLAPlus {
     public static TlaModel translate(DashModel dashModel, String moduleName) {
 
-        TlaModel tlaModel = 
+        TlaModel tlaModel =
                 new TlaModel(
-                        moduleName, 
-                        TranslationStrings.INIT.appl(), 
-                        TranslationStrings.NEXT.appl());
+                        moduleName, TranslationStrings.INIT.appl(), TranslationStrings.NEXT.appl());
 
         StandardLibraries.translate(dashModel, tlaModel);
         StandardVariables.translate(dashModel, tlaModel);

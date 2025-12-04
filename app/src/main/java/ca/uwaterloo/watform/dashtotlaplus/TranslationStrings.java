@@ -18,24 +18,18 @@ import java.util.function.BiFunction;
 class TranslationStrings {
     // this class stores information about things that are common to every part of the translation
 
-    public static final String SPECIAL =
-            "_"; // special character used for naming translation artefacts
-    public static final String TRANSITIONS = SPECIAL + "transitions";
+    public static final String SPECIAL = "_";
+    // special character used for naming translation artefacts
 
-    public static final String SET_ = SPECIAL + "set";
+    public static final String TRANSITIONS = SPECIAL + "transitions";
 
     public static final String TAKEN = SPECIAL + "taken";
     public static final String PRE = SPECIAL + "pre";
     public static final String POST = SPECIAL + "post";
     public static final String ENABLED = SPECIAL + "enabled";
 
-    public static final String NEXT_IS_STABLE = SPECIAL + "next" + SPECIAL + "stable";
-    public static final String SOME_TRANSITION = SPECIAL + "some" + SPECIAL + "transition";
-
     public static final String ARG = SPECIAL + "arg";
     public static final String ALL = SPECIAL + "all";
-
-    public static final String NONE = "none";
 
     public static final String QUALIFIER = DashStrings.SLASH;
 
@@ -90,6 +84,16 @@ class TranslationStrings {
     public static final CommonFormula INIT = new CommonFormula(SPECIAL + "Init");
     public static final CommonFormula NEXT = new CommonFormula(SPECIAL + "Next");
     public static final CommonFormula TYPE_OK = new CommonFormula(SPECIAL + "TypeOK");
+
+    public static final CommonFormula STUTTER = new CommonFormula(SPECIAL + "stutter");
+    public static final CommonFormula SMALL_STEP =
+            new CommonFormula(SPECIAL + "small" + SPECIAL + "step");
+    public static final CommonFormula SOME_TRANSITION =
+            new CommonFormula(SPECIAL + "some" + SPECIAL + "transition");
+    public static final CommonFormula SOME_PRE_TRANSITION =
+            new CommonFormula(SPECIAL + "some" + SPECIAL + PRE + SPECIAL + "transition");
+    public static final String NEXT_IS_STABLE =
+            SPECIAL + "next" + SPECIAL + "is" + SPECIAL + "stable";
 
     public static final TlaSet NULL_SET = new TlaSet(new ArrayList<>());
 

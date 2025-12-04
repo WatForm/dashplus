@@ -15,5 +15,7 @@ class StandardVariables {
         // VARIABLES _conf, _events, _trans_taken, _scopes_used, _stable, _ct
         Arrays.asList(CONF, EVENTS, TRANS_TAKEN, SCOPE_USED, STABLE, CT)
                 .forEach(v -> tlaModel.addVariable(v.globalVar()));
+
+        // this is subject to optimizations, and should remain its own function
     }
 }

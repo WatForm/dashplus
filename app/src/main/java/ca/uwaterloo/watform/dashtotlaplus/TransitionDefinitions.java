@@ -1,5 +1,8 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
+import static ca.uwaterloo.watform.dashtotlaplus.TranslationStrings.NEXT_IS_STABLE;
+import static ca.uwaterloo.watform.dashtotlaplus.TranslationStrings.SOME_TRANSITION;
+
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaplusast.TlaExp;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
@@ -24,7 +27,14 @@ public class TransitionDefinitions {
         // taken_<trans-name> == "taken_<trans-fully-qualified-name"
         transitions.forEach(x -> makeTransitionTakenNameFormulae(x, tlaModel));
 
-        // pre, post, enabled and body
+        // enabled
+        tlaModel.addBlankLine();
+        transitions.forEach(x -> addTransitionIsEnabledFormula(x, dashModel, tlaModel));
+
+        tlaModel.addBlankLine();
+        addNextIsStable(dashModel, tlaModel);
+
+        // pre, post, and body
         transitions.forEach(x -> addTransitionCompleteFormula(x, dashModel, tlaModel));
 
         // small-step and isEnabled
@@ -40,8 +50,25 @@ public class TransitionDefinitions {
     }
 
     public static List<TlaVar> enabledArgList() {
-        return Arrays.asList(
-                TranslationStrings.CONF.paramVar(), TranslationStrings.SCOPE_USED.paramVar());
+        // this is subject to optimization, and is thus a separate function
+        return Arrays.asList(TranslationStrings.SCOPE_USED.paramVar());
+    }
+
+    public static void addNextIsStable(DashModel dashModel, TlaModel tlaModel) {
+
+        // _next_is_stable(args) = \/ enabled_after_step_ti(args) ...
+        List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
+        tlaModel.addFormulaDefinition(
+                new TlaFormulaDefn(
+                        new TlaFormulaDecl(NEXT_IS_STABLE, enabledArgList()),
+                        TranslationStrings.repeatedOr(
+                                GeneralUtil.mapBy(
+                                        transitions,
+                                        t ->
+                                                new TlaFormulaAppl(
+                                                        TranslationStrings.getTransFormulaName(t),
+                                                        GeneralUtil.mapBy(
+                                                                enabledArgList(), u -> u))))));
     }
 
     public static void addTransitionGeneralFormulae(DashModel dashModel, TlaModel tlaModel) {
@@ -53,7 +80,7 @@ public class TransitionDefinitions {
 
         tlaModel.addFormulaDefinition(
                 new TlaFormulaDefn(
-                        new TlaFormulaDecl(TranslationStrings.SOME_TRANSITION),
+                        SOME_TRANSITION.decl(),
                         TranslationStrings.repeatedOr(
                                 GeneralUtil.mapBy(
                                         transitions,
@@ -61,18 +88,6 @@ public class TransitionDefinitions {
                                                 new TlaFormulaAppl(
                                                         TranslationStrings.getTransFormulaName(
                                                                 t))))));
-
-        tlaModel.addFormulaDefinition(
-                new TlaFormulaDefn(
-                        new TlaFormulaDecl(TranslationStrings.NEXT_IS_STABLE, enabledArgList()),
-                        TranslationStrings.repeatedOr(
-                                GeneralUtil.mapBy(
-                                        transitions,
-                                        t ->
-                                                new TlaFormulaAppl(
-                                                        TranslationStrings.getTransFormulaName(t),
-                                                        GeneralUtil.mapBy(
-                                                                enabledArgList(), u -> u))))));
     }
 
     public static void addTransitionPreFormula(
@@ -130,7 +145,6 @@ public class TransitionDefinitions {
 
         addTransitionPreFormula(transitionFQN, dashModel, tlaModel);
         addTransitionPostFormula(transitionFQN, dashModel, tlaModel);
-        addTransitionIsEnabledFormula(transitionFQN, dashModel, tlaModel);
 
         // body = pre /\ post
         tlaModel.addFormulaDefinition(

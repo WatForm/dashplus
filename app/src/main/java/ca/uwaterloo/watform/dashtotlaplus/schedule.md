@@ -40,3 +40,104 @@ in general - avoid breaking up functions
 
 - what if Alloy does things in a roundabout way? explicit non-support
 
+
+## Todo
+
+### General variables
+
+- conf
+- events
+- stable
+- trans_taken
+- ct
+
+### States
+
+### Transitions
+
+
+#### Pre-condition
+
+- conf
+- scopes_used
+- events
+
+#### Post-condition
+
+- conf
+- scopes_used
+- events
+
+#### Enabled
+
+- scopes_used
+
+### Init
+
+### Next
+
+### TypeOK
+
+### Stutter
+
+### small-step
+
+### Parameters
+
+
+### Signatures
+
+- basic sigs
+- sig subtypes
+- sig subsets (multiple parents, not necessarily pairwise disjoint)
+- multi-sig declarations
+
+### Multiplicities
+
+- some
+- lone
+- one
+- none
+- set
+
+### Fields
+
+- basic (A -> B)
+- with multiplicities (some A -> lone B)
+- nested (A -> B -> C)
+
+### Operators
+
+- unary
+- dot join
+- box join
+- restriction
+- arrow product
+- intersection
+- override
+- cardinality
+- union
+- difference
+- comparison (in, not, !, =, <, etc.>)
+- logical (not, and , or, implication, bi-implication)
+- arithmetic
+
+### Expressions:
+
+- let (refer multiplicities)
+- conditional expressions
+
+
+### Predicates
+
+### Functions
+
+
+
+### Buffers
+
+### Variables
+
+
+
+
