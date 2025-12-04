@@ -1,0 +1,12 @@
+package ca.uwaterloo.watform.tlaast.tlaplusnaryops;
+
+import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.TlaOperator;
+import ca.uwaterloo.watform.tlaast.TlaStrings;
+import java.util.List;
+
+public class TlaOrList extends TlaNaryOp {
+    public TlaOrList(List<TlaExp> children) {
+        super("", "", TlaStrings.OR, children, TlaOperator.PrecedenceGroup.OR_LIST);
+    }
+}
