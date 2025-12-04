@@ -6,32 +6,32 @@ import ca.uwaterloo.watform.tlaplusmodel.TlaModel;
 public class DashToTLAPlus {
     public static TlaModel translate(DashModel dashModel, String moduleName) {
 
-        TlaModel model =
+        TlaModel tlaModel =
                 new TlaModel(
-                        moduleName, TranslationStrings.getInit(), TranslationStrings.getNext());
+                        moduleName, TranslationStrings.INIT.appl(), TranslationStrings.NEXT.appl());
 
-        StandardLibraries.addStandardLibraries(dashModel, model);
-        StandardVariables.standardVariables(dashModel, model);
+        StandardLibraries.addStandardLibraries(dashModel, tlaModel);
+        StandardVariables.standardVariables(dashModel, tlaModel);
 
-        model.addComment(
+        tlaModel.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants");
-        StateDefinitions.stateFormulae(dashModel, model);
+        StateDefinitions.stateFormulae(dashModel, tlaModel);
 
-        model.addBlankLine();
-        model.addComment(
+        tlaModel.addBlankLine();
+        tlaModel.addComment(
                 "string literal representations of transitions taken, which are the values taken by the "
-                        + TranslationStrings.getTransTaken()
+                        + TranslationStrings.TRANS_TAKEN.name
                         + " variable");
-        TransitionDefinitions.transitionFormulae(dashModel, model);
+        TransitionDefinitions.transitionFormulae(dashModel, tlaModel);
 
-        model.addBlankLine();
-        model.addComment("type restrictions on variables");
-        TypeOKDefinitions.AddTypeOKFormula(dashModel, model);
+        tlaModel.addBlankLine();
+        tlaModel.addComment("type restrictions on variables");
+        TypeOKDefinitions.AddTypeOKFormula(dashModel, tlaModel);
 
-        model.addBlankLine();
-        model.addComment("initial values for variables");
-        InitDefinition.addInitFormula(dashModel, model);
+        tlaModel.addBlankLine();
+        tlaModel.addComment("initial values for variables");
+        InitDefinition.addInitFormula(dashModel, tlaModel);
 
-        return model;
+        return tlaModel;
     }
 }

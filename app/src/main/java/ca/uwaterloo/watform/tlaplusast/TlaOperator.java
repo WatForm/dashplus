@@ -49,8 +49,8 @@ public abstract class TlaOperator extends TlaExp {
                 // highest goes here
             };
 
-    private final Associativity associativity;
-    private final PrecedenceGroup precedenceGroup;
+    public final Associativity associativity;
+    public final PrecedenceGroup precedenceGroup;
 
     public TlaOperator(Associativity associativity, PrecedenceGroup precedenceGroup) {
         this.associativity = associativity;
@@ -63,10 +63,18 @@ public abstract class TlaOperator extends TlaExp {
         // this is a conservative implementation - by default, parentheses are needed
 
         // if either one is not an operator, no brackets are needed
+        if (!(parent instanceof TlaOperator && child instanceof TlaOperator)) return false;
+
+        PrecedenceGroup parentPrecedenceGroup = ((TlaOperator) parent).precedenceGroup;
+        PrecedenceGroup childPrecedenceGroup = ((TlaOperator) child).precedenceGroup;
 
         // if either one is SAFE, no brackets are needed
+        if (parentPrecedenceGroup == PrecedenceGroup.SAFE) return false;
+        if (childPrecedenceGroup == PrecedenceGroup.SAFE) return false;
 
         // if either one is UNSAFE, brackets are needed, no more questions
+        if (parentPrecedenceGroup == TlaOperator.PrecedenceGroup.UNSAFE) return true;
+        if (childPrecedenceGroup == TlaOperator.PrecedenceGroup.UNSAFE) return true;
 
         // if the priority of the parent is less than that of the child, no brackets are needed
 

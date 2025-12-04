@@ -2,9 +2,9 @@ package ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators;
 
 import ca.uwaterloo.watform.tlaplusast.*;
 
-public class Tla extends TlaInfixBinOp {
+public class TlaAnd extends TlaInfixBinOp {
 
-    public Tla(TlaExp operandOne, TlaExp operandTwo) {
+    public TlaAnd(TlaExp operandOne, TlaExp operandTwo) {
         super(
                 TlaStrings.AND,
                 operandOne,

@@ -1,19 +1,19 @@
 package ca.uwaterloo.watform.dashtotlaplus;
 
+import static ca.uwaterloo.watform.dashtotlaplus.TranslationStrings.*;
+
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaplusmodel.TlaModel;
+import java.util.Arrays;
 
 class StandardVariables {
 
     // this class adds standard variables that are part of every translation
 
-    public static void standardVariables(DashModel dashModel, TlaModel TLAPlusModel) {
+    public static void standardVariables(DashModel dashModel, TlaModel tlaModel) {
 
-        // VARIABLES _conf, _events, _trans_taken, _scopes_used, _stable
-        TLAPlusModel.addVariable(TranslationStrings.getConf());
-        TLAPlusModel.addVariable(TranslationStrings.getEvents());
-        TLAPlusModel.addVariable(TranslationStrings.getTransTaken());
-        TLAPlusModel.addVariable(TranslationStrings.getScopesUsed());
-        TLAPlusModel.addVariable(TranslationStrings.getStable());
+        // VARIABLES _conf, _events, _trans_taken, _scopes_used, _stable, _ct
+        Arrays.asList(CONF, EVENTS, TRANS_TAKEN, SCOPE_USED, STABLE, CT)
+                .forEach(v -> tlaModel.addVariable(v.globalVar()));
     }
 }
