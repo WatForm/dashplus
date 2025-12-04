@@ -10,7 +10,7 @@ class StandardVariables {
 
     // this class adds standard variables that are part of every translation
 
-    public static void standardVariables(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         // VARIABLES _conf, _events, _trans_taken, _scopes_used, _stable, _ct
         Arrays.asList(CONF, EVENTS, TRANS_TAKEN, SCOPE_USED, STABLE, CT)

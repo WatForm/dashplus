@@ -5,10 +5,10 @@ import ca.uwaterloo.watform.tlaplusast.TlaStdLibs;
 import ca.uwaterloo.watform.tlaplusmodel.TlaModel;
 
 public class StandardLibraries {
-    public static void addStandardLibraries(DashModel dashModel, TlaModel tlaPlusModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         // EXTENDS FiniteSets, Integers
-        tlaPlusModel.addSTL(new TlaStdLibs(TlaStdLibs.LIBRARIES.STL_FiniteSets));
-        tlaPlusModel.addSTL(new TlaStdLibs(TlaStdLibs.LIBRARIES.STL_Integers));
+        tlaModel.addSTL(new TlaStdLibs(TlaStdLibs.LIBRARIES.STL_FiniteSets));
+        tlaModel.addSTL(new TlaStdLibs(TlaStdLibs.LIBRARIES.STL_Integers));
     }
 }

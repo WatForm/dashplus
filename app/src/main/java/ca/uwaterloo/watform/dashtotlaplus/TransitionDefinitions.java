@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TransitionDefinitions {
-    public static void transitionFormulae(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
 

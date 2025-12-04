@@ -5,6 +5,7 @@ import ca.uwaterloo.watform.tlaplusast.TlaExp;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaAppl;
 import ca.uwaterloo.watform.tlaplusast.TlaFormulaDefn;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaInSet;
+import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaSubsetEq;
 import ca.uwaterloo.watform.tlaplusast.tlaplusbinaryoperators.TlaUnionSet;
 import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaBoolean;
 import ca.uwaterloo.watform.tlaplusast.tlaplusliterals.TlaLiteral;
@@ -16,11 +17,11 @@ import java.util.List;
 
 public class TypeOKDefinitions {
 
-    public static void AddTypeOKFormula(DashModel dashModel, TlaModel tlaPlusModel) {
-        addSetStates(dashModel, tlaPlusModel);
-        addSetTransitionTaken(dashModel, tlaPlusModel);
-        addSetScopesUsed(dashModel, tlaPlusModel);
-        addTypeOKFormula(tlaPlusModel);
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+        typeStates(dashModel, tlaModel);
+        typeTransitionTaken(dashModel, tlaModel);
+        typeScopesUsed(dashModel, tlaModel);
+        addTypeOKFormula(tlaModel);
     }
 
     private static TlaUnionSet unionNone(TlaExp e) {
@@ -28,10 +29,10 @@ public class TypeOKDefinitions {
                 e, new TlaSet(Arrays.asList(new TlaLiteral(TranslationStrings.NONE))));
     }
 
-    public static void addTypeOKFormula(TlaModel tlaPlusModel) {
+    public static void addTypeOKFormula(TlaModel tlaModel) {
 
         TlaExp conf_exp =
-                new TlaInSet(
+                new TlaSubsetEq(
                         TranslationStrings.CONF.globalVar(), TranslationStrings.CONF.typeAppl());
 
         TlaExp trans_taken_exp =
@@ -40,36 +41,36 @@ public class TypeOKDefinitions {
                         TranslationStrings.TRANS_TAKEN.typeAppl());
 
         TlaExp scope_exp =
-                new TlaInSet(
+                new TlaSubsetEq(
                         TranslationStrings.SCOPE_USED.globalVar(),
                         TranslationStrings.CONF.typeAppl());
 
         TlaExp stable_exp = new TlaInSet(TranslationStrings.STABLE.globalVar(), new TlaBoolean());
 
-        tlaPlusModel.addFormulaDefinition(
+        tlaModel.addFormulaDefinition(
                 new TlaFormulaDefn(
                         TranslationStrings.TYPE_OK.decl(),
                         TranslationStrings.repeatedAnd(
                                 Arrays.asList(conf_exp, trans_taken_exp, stable_exp, scope_exp))));
     }
 
-    public static void addSetStates(DashModel dashModel, TlaModel tlaPlusModel) {
+    public static void typeStates(DashModel dashModel, TlaModel tlaModel) {
         // this function adds in a formula used for typeOK:
-        // _set_conf = union of all leaf state formulae
+        // _all_conf = union of all leaf state formulae
 
         List<TlaFormulaAppl> leafStateFormulaApplications =
                 GeneralUtil.mapBy(
                         AuxiliaryDashAccessors.getLeafStateNames(dashModel),
                         name -> new TlaFormulaAppl(TranslationStrings.getStateFormulaName(name)));
 
-        tlaPlusModel.addFormulaDefinition(
+        tlaModel.addFormulaDefinition(
                 new TlaFormulaDefn(
                         TranslationStrings.CONF.typeDecl(),
                         TranslationStrings.repeatedUnion(leafStateFormulaApplications)));
     }
 
-    public static void addSetTransitionTaken(DashModel dashModel, TlaModel tlaPlusModel) {
-        tlaPlusModel.addFormulaDefinition(
+    public static void typeTransitionTaken(DashModel dashModel, TlaModel tlaModel) {
+        tlaModel.addFormulaDefinition(
                 new TlaFormulaDefn(
                         TranslationStrings.TRANS_TAKEN.typeDecl(),
                         unionNone(
@@ -84,8 +85,8 @@ public class TypeOKDefinitions {
                                                                                 s)))))));
     }
 
-    public static void addSetScopesUsed(DashModel dashModel, TlaModel tlaPlusModel) {
-        tlaPlusModel.addFormulaDefinition(
+    public static void typeScopesUsed(DashModel dashModel, TlaModel tlaModel) {
+        tlaModel.addFormulaDefinition(
                 new TlaFormulaDefn(
                         TranslationStrings.SCOPE_USED.typeDecl(),
                         unionNone(TranslationStrings.CONF.typeAppl())));
