@@ -51,22 +51,20 @@ public class TlaModule {
     public String bodyString() {
         StringBuilder sb = new StringBuilder();
         for (ASTNode f : this.body) {
-            sb.append("\n");
             f.toString(sb, 0);
+            sb.append("\n");
         }
         return sb.toString();
     }
 
     private String codeBody() {
-        String doubleSpace = "\n\n";
         return TlaModule.simpleBuilder(TlaStrings.EXTENDS, this.extended_libraries)
-                + doubleSpace
+                + "\n"
                 + TlaModule.simpleBuilder(TlaStrings.CONSTANTS, this.constants)
-                + doubleSpace
+                + "\n"
                 + TlaModule.simpleBuilder(TlaStrings.VARIABLES, this.variables)
-                + doubleSpace
+                + "\n"
                 + this.bodyString()
-                + doubleSpace
                 + TlaStrings.BODY_DELIMITER;
     }
 

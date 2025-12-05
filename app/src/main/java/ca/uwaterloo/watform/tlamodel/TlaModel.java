@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.tlamodel;
 
 import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaBlankLine;
 import ca.uwaterloo.watform.tlaast.TlaComment;
 import ca.uwaterloo.watform.tlaast.TlaConst;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
@@ -56,15 +55,11 @@ public class TlaModel {
         this.module.constants.add(c);
     }
 
-    public void addFormulaDefinition(TlaDefn d) {
+    public void addDefn(TlaDefn d) {
         this.module.body.add(d);
     }
 
     public void addComment(String c) {
         this.module.body.add(new TlaComment(c));
-    }
-
-    public void addBlankLine() {
-        this.module.body.add(new TlaBlankLine());
     }
 }

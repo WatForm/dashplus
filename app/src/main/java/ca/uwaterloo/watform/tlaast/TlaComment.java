@@ -21,7 +21,7 @@ public class TlaComment extends ASTNode {
                             + TlaStrings.SPACE
                             + TlaStrings.MULTI_COMMENT_END;
         else core = TlaStrings.SINGLE_COMMENT + TlaStrings.SPACE + this.contents;
-        sb.append(core);
+        sb.append("\n" + core);
         return;
     }
 }

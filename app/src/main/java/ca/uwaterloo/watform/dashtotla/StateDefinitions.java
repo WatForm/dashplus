@@ -44,9 +44,9 @@ public class StateDefinitions {
     public static void LeafStateDefinition(String stateFQN, TlaModel tlaModel) {
 
         // <state-formula-name> == {"<state FQN>"}
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(getStateFormulaName(stateFQN)),
+                        new TlaDecl(tlaFQN(stateFQN)),
                         new TlaSet(Arrays.asList(new TlaLiteral(stateFQN)))));
     }
 
@@ -58,11 +58,9 @@ public class StateDefinitions {
         List<TlaAppl> childStateFormulae =
                 GeneralUtil.mapBy(
                         AuxiliaryDashAccessors.getChildStateNames(stateFQN, dashModel),
-                        x -> new TlaAppl(getStateFormulaName(x)));
+                        x -> new TlaAppl(tlaFQN(x)));
 
-        tlaModel.addFormulaDefinition(
-                new TlaDefn(
-                        new TlaDecl(getStateFormulaName(stateFQN)),
-                        repeatedUnion(childStateFormulae)));
+        tlaModel.addDefn(
+                new TlaDefn(new TlaDecl(tlaFQN(stateFQN)), repeatedUnion(childStateFormulae)));
     }
 }

@@ -14,7 +14,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
 
 public class InitDefinition {
-    public static void addInitFormula(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         // stable = TRUE
         TlaExp stable_exp = new TlaEquals(new TlaVar(STABLE), new TlaTrue());
@@ -31,10 +31,10 @@ public class InitDefinition {
         // conf = {<initial states>}
         TlaExp conf_exp = new TlaEquals(new TlaVar(CONF), new TlaLiteral("placeholder"));
 
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(INIT),
-                        TranslationStrings.repeatedAnd(
+                        repeatedAnd(
                                 Arrays.asList(
                                         conf_exp,
                                         events_exp,

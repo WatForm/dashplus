@@ -68,7 +68,7 @@ public abstract class TlaOperator extends TlaExp {
         PrecedenceGroup parentPrecedenceGroup = ((TlaOperator) parent).precedenceGroup;
         PrecedenceGroup childPrecedenceGroup = ((TlaOperator) child).precedenceGroup;
         Associativity parentAssociativity = ((TlaOperator) parent).associativity;
-        Associativity childAssociativity = ((TlaOperator) child).associativity;
+        // Associativity childAssociativity = ((TlaOperator) child).associativity;
 
         // if either one is SAFE, no brackets are needed
         if (parentPrecedenceGroup == PrecedenceGroup.SAFE) return false;

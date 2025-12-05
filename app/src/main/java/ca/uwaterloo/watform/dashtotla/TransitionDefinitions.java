@@ -12,8 +12,6 @@ import ca.uwaterloo.watform.tlaast.tlabinops.TlaAnd;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaIntersectionSet;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaNotEq;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaFalse;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaNot;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
@@ -30,23 +28,24 @@ public class TransitionDefinitions {
         transitions.forEach(x -> makeTransitionTakenNameFormulae(x, tlaModel));
 
         // enabled
-        tlaModel.addBlankLine();
+        tlaModel.addComment("parameterized formulae to check if transitions are enabled");
         transitions.forEach(x -> addTransitionIsEnabledFormula(x, dashModel, tlaModel));
 
-        tlaModel.addBlankLine();
+        tlaModel.addComment("negation of disjunction of enabled-formulae");
         addNextIsStable(dashModel, tlaModel);
 
         // pre, post, and body
-        transitions.forEach(x -> addTransitionCompleteFormula(x, dashModel, tlaModel));
-
-        // small-step and isEnabled
-        addTransitionGeneralFormulae(dashModel, tlaModel);
+        transitions.forEach(
+                transFQN -> {
+                    tlaModel.addComment("Translation of transition " + transFQN);
+                    addTransitionCompleteFormula(transFQN, dashModel, tlaModel);
+                });
     }
 
     public static void makeTransitionTakenNameFormulae(String transitionFQN, TlaModel tlaModel) {
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(TranslationStrings.getTakenTransFormulaName(transitionFQN)),
+                        new TlaDecl(TakenTransFormulaName(transitionFQN)),
                         new TlaLiteral(transitionFQN)));
     }
 
@@ -61,75 +60,36 @@ public class TransitionDefinitions {
 
         // _next_is_stable(args) = \/ enabled_after_step_ti(args) ...
         List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(NEXT_IS_STABLE, enabledArgList()),
-                        TranslationStrings.repeatedOr(
-                                GeneralUtil.mapBy(
-                                        transitions,
-                                        t ->
-                                                new TlaAppl(
-                                                        TranslationStrings.getTransFormulaName(t),
-                                                        GeneralUtil.mapBy(
-                                                                enabledArgList(), u -> u))))));
-    }
-
-    public static void addTransitionGeneralFormulae(DashModel dashModel, TlaModel tlaModel) {
-
-        tlaModel.addBlankLine();
-        tlaModel.addComment("general formulae for transitions");
-
-        List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
-
-        tlaModel.addFormulaDefinition(
-                new TlaDefn(
-                        new TlaDecl(SOME_TRANSITION),
-                        TranslationStrings.repeatedOr(
-                                GeneralUtil.mapBy(
-                                        transitions,
-                                        t ->
-                                                new TlaAppl(
-                                                        TranslationStrings.getTransFormulaName(
-                                                                t))))));
-
-        tlaModel.addFormulaDefinition(
-                new TlaDefn(
-                        new TlaDecl(SOME_PRE_TRANSITION),
-                        repeatedOr(
-                                GeneralUtil.mapBy(
-                                        transitions, t -> new TlaAppl(getTransFormulaName(t))))));
-
-        tlaModel.addFormulaDefinition(new TlaDefn(new TlaDecl(STUTTER), new TlaFalse()));
-
-        tlaModel.addFormulaDefinition(
-                new TlaDefn(
-                        new TlaDecl(SMALL_STEP),
-                        new TlaOr(
-                                new TlaDecl(SOME_TRANSITION),
-                                new TlaAnd(
-                                        new TlaDecl(STUTTER),
-                                        new TlaNot(new TlaDecl(SOME_PRE_TRANSITION))))));
+                        new TlaNot(
+                                repeatedOr(
+                                        GeneralUtil.mapBy(
+                                                transitions,
+                                                t ->
+                                                        new TlaAppl(
+                                                                EnabledTransFormulaName(t),
+                                                                GeneralUtil.mapBy(
+                                                                        enabledArgList(),
+                                                                        u -> u)))))));
     }
 
     public static void addTransitionPreFormula(
             String transitionFQN, DashModel dashModel, TlaModel tlaModel) {
 
-        String sourceStateFullQualifiedName =
-                "standin"; // AuxiliaryDashAccessors.getSourceOfTrans(transitionFQN,
+        String sourceStateFQN = "standin"; // AuxiliaryDashAccessors.getSourceOfTrans(transitionFQN,
         // dashModel);  this doesn't work for whatever reason
         TlaExp conf_exp =
                 new TlaNotEq(
                         new TlaIntersectionSet(
-                                new TlaVar(CONF),
-                                new TlaAppl(
-                                        TranslationStrings.getStateFormulaName(
-                                                sourceStateFullQualifiedName))),
-                        TranslationStrings.NULL_SET);
+                                new TlaVar(CONF), new TlaAppl(tlaFQN(sourceStateFQN))),
+                        NULL_SET);
 
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(TranslationStrings.getPreTransFormulaName(transitionFQN)),
-                        TranslationStrings.repeatedAnd(Arrays.asList(conf_exp))));
+                        new TlaDecl(PreTransFormulaName(transitionFQN)),
+                        repeatedAnd(Arrays.asList(conf_exp))));
     }
 
     public static void addTransitionPostFormula(
@@ -137,42 +97,33 @@ public class TransitionDefinitions {
 
         TlaExp taken =
                 new TlaEquals(
-                        new TlaVar(TRANS_TAKEN),
-                        new TlaAppl(TranslationStrings.getTakenTransFormulaName(transitionFQN)));
-        tlaModel.addFormulaDefinition(
+                        new TlaVar(TRANS_TAKEN), new TlaAppl(TakenTransFormulaName(transitionFQN)));
+        tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(TranslationStrings.getPostTransFormulaName(transitionFQN)),
-                        TranslationStrings.repeatedAnd(Arrays.asList(taken))));
+                        new TlaDecl(PostTransFormulaName(transitionFQN)),
+                        repeatedAnd(Arrays.asList(taken))));
     }
 
     public static void addTransitionIsEnabledFormula(
             String transitionFQN, DashModel dashModel, TlaModel tlaModel) {
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(
-                                TranslationStrings.getEnabledTransFormulaName(transitionFQN),
-                                enabledArgList()),
-                        TranslationStrings.repeatedAnd(Arrays.asList())));
+                        new TlaDecl(EnabledTransFormulaName(transitionFQN), enabledArgList()),
+                        repeatedAnd(Arrays.asList())));
     }
 
     public static void addTransitionCompleteFormula(
             String transitionFQN, DashModel dashModel, TlaModel tlaModel) {
 
-        tlaModel.addBlankLine();
-        tlaModel.addComment("Translation of transition " + transitionFQN);
-
         addTransitionPreFormula(transitionFQN, dashModel, tlaModel);
         addTransitionPostFormula(transitionFQN, dashModel, tlaModel);
 
         // body = pre /\ post
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(TranslationStrings.getTransFormulaName(transitionFQN)),
+                        new TlaDecl(tlaFQN(transitionFQN)),
                         new TlaAnd(
-                                new TlaAppl(
-                                        TranslationStrings.getPreTransFormulaName(transitionFQN)),
-                                new TlaAppl(
-                                        TranslationStrings.getPostTransFormulaName(
-                                                transitionFQN)))));
+                                new TlaAppl(PreTransFormulaName(transitionFQN)),
+                                new TlaAppl(PostTransFormulaName(transitionFQN)))));
     }
 }

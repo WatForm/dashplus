@@ -38,7 +38,7 @@ public class TypeOKDefinitions {
 
         TlaExp stable_exp = new TlaInSet(new TlaVar(STABLE), new TlaBoolean());
 
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(TYPE_OK),
                         repeatedAnd(
@@ -51,31 +51,27 @@ public class TypeOKDefinitions {
 
         List<String> leafStateFQNs = AuxiliaryDashAccessors.getLeafStateNames(dashModel);
 
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(CONF),
                         repeatedUnion(
-                                GeneralUtil.mapBy(
-                                        leafStateFQNs, x -> new TlaAppl(getStateFormulaName(x))))));
+                                GeneralUtil.mapBy(leafStateFQNs, x -> new TlaAppl(tlaFQN(x))))));
     }
 
     public static void typeTransTaken(DashModel dashModel, TlaModel tlaModel) {
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(TRANS_TAKEN),
                         new TlaSet(
                                 GeneralUtil.mapBy(
                                         AuxiliaryDashAccessors.getTransitionNames(dashModel),
-                                        s ->
-                                                new TlaAppl(
-                                                        TranslationStrings.getTakenTransFormulaName(
-                                                                s))))));
+                                        s -> new TlaAppl(TakenTransFormulaName(s))))));
     }
 
     public static void typeScopesUsed(DashModel dashModel, TlaModel tlaModel) {
 
         // _all_scopes_used == _all_conf
-        tlaModel.addFormulaDefinition(
+        tlaModel.addDefn(
                 new TlaDefn(new TlaDecl(typeFormula(SCOPE_USED)), new TlaDecl(typeFormula(CONF))));
     }
 }

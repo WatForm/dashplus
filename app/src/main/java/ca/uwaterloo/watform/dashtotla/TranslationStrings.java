@@ -54,34 +54,30 @@ class TranslationStrings {
     public static final String SMALL_STEP = SPECIAL + "small" + SPECIAL + "step";
     public static final String SOME_TRANSITION = SPECIAL + "some" + SPECIAL + "transition";
     public static final String SOME_PRE_TRANSITION =
-            SPECIAL + "some" + SPECIAL + PRE + SPECIAL + "transition";
+            SPECIAL + "some" + PRE + SPECIAL + "transition";
     public static final String NEXT_IS_STABLE =
             SPECIAL + "next" + SPECIAL + "is" + SPECIAL + "stable";
 
     public static final TlaSet NULL_SET = new TlaSet(new ArrayList<>());
 
-    public static String getStateFormulaName(String stateFQN) {
-        return SPECIAL + stateFQN.replace(QUALIFIER, SPECIAL);
+    public static String tlaFQN(String dashFQN) {
+        return SPECIAL + dashFQN.replace(QUALIFIER, SPECIAL);
     }
 
-    public static String getTakenTransFormulaName(String transitionFQN) {
-        return SPECIAL + TAKEN + SPECIAL + getTransFormulaName(transitionFQN);
+    public static String TakenTransFormulaName(String transitionFQN) {
+        return TAKEN + tlaFQN(transitionFQN);
     }
 
-    public static String getPreTransFormulaName(String transitionFQN) {
-        return PRE + SPECIAL + getTransFormulaName(transitionFQN);
+    public static String PreTransFormulaName(String transitionFQN) {
+        return PRE + tlaFQN(transitionFQN);
     }
 
-    public static String getPostTransFormulaName(String transitionFQN) {
-        return POST + SPECIAL + getTransFormulaName(transitionFQN);
+    public static String PostTransFormulaName(String transitionFQN) {
+        return POST + tlaFQN(transitionFQN);
     }
 
-    public static String getEnabledTransFormulaName(String transitionFQN) {
-        return ENABLED + SPECIAL + getTransFormulaName(transitionFQN);
-    }
-
-    public static String getTransFormulaName(String transitionFQN) {
-        return transitionFQN.replace(QUALIFIER, SPECIAL);
+    public static String EnabledTransFormulaName(String transitionFQN) {
+        return ENABLED + tlaFQN(transitionFQN);
     }
 
     private static TlaExp reduceBinaryOperation(
