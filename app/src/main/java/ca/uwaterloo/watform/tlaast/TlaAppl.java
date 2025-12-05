@@ -1,14 +1,15 @@
 package ca.uwaterloo.watform.tlaast;
 
+import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TlaAppl extends TlaOperator {
 
-    private final String name;
-    public final List<TlaExp> parameters;
+    public final String name;
+    public final List<? extends TlaExp> parameters;
 
-    public TlaAppl(String name, List<TlaExp> parameters) {
+    public TlaAppl(String name, List<? extends TlaExp> parameters) {
         super(TlaOperator.Associativity.IRRELEVANT, TlaOperator.PrecedenceGroup.SAFE);
         this.name = name;
         this.parameters = parameters;
@@ -19,7 +20,7 @@ public class TlaAppl extends TlaOperator {
     }
 
     public List<TlaExp> getChildren() {
-        return this.parameters;
+        return GeneralUtil.mapBy(this.parameters, x -> x);
     }
 
     @Override

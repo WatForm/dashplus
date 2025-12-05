@@ -5,7 +5,7 @@ import java.util.List;
 
 public class TlaSeq extends TlaNaryOp {
 
-    public TlaSeq(List<TlaExp> children) {
+    public TlaSeq(List<? extends TlaExp> children) {
         super(
                 TlaStrings.SEQUENCE_OPEN,
                 TlaStrings.SEQUENCE_CLOSE,

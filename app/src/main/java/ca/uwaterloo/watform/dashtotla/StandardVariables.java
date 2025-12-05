@@ -13,10 +13,19 @@ class StandardVariables {
 
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        // VARIABLES _conf, _events, _trans_taken, _scopes_used, _stable, _ct
-        Arrays.asList(CONF, EVENTS, TRANS_TAKEN, SCOPE_USED, STABLE, CT)
+        // VARIABLES _conf, _trans_taken, _scopes_used, _stable, _ct
+        Arrays.asList(CONF, TRANS_TAKEN, SCOPES_USED, STABLE, CT)
                 .forEach(v -> tlaModel.addVariable(new TlaVar(v)));
 
         // this is subject to optimizations, and should remain its own function
+
+        // _conf - stores the leaf states of the snapshot
+        // _trans_taken - does not affect model execution, stored the transition taken to get to the
+        // current snapshot, used for easy interpretation of TLC traces
+        // _scopes_used - stores scopes (currently the same as leaf states), used to implement
+        // big-step semantics
+        // _stable - boolean variable, true if the current snapshot is stable
+        // _ct - used to implement stutter, since TLC has it's own stuttering that cannot be turned
+        // off, _ct is used to implement dash stuttering
     }
 }

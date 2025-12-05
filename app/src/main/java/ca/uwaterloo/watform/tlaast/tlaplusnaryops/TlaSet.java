@@ -5,7 +5,7 @@ import java.util.List;
 
 public class TlaSet extends TlaNaryOp {
 
-    public TlaSet(List<TlaExp> children) {
+    public TlaSet(List<? extends TlaExp> children) {
         super(
                 TlaStrings.SET_START,
                 TlaStrings.SET_END,

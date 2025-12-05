@@ -15,36 +15,26 @@ import java.util.function.BiFunction;
 class TranslationStrings {
     // this class stores information about things that are common to every part of the translation
 
+    public static final String QUALIFIER = DashStrings.SLASH;
+    // this is used as a separator for DashFQNs
+
     public static final String SPECIAL = "_";
     // special character used for naming translation artefacts
+    // this scheme has flaws, TODO: come up with a better scheme
 
     public static final String TRANSITIONS = SPECIAL + "transitions";
-
     public static final String TAKEN = SPECIAL + "taken";
     public static final String PRE = SPECIAL + "pre";
     public static final String POST = SPECIAL + "post";
     public static final String ENABLED = SPECIAL + "enabled";
 
-    public static final String ARG = SPECIAL + "arg";
-    public static final String ALL = SPECIAL + "all";
-
-    public static final String QUALIFIER = DashStrings.SLASH;
-
     // common variables
     public static final String CONF = SPECIAL + "conf";
     public static final String EVENTS = SPECIAL + "events";
     public static final String TRANS_TAKEN = SPECIAL + "trans" + SPECIAL + "taken";
-    public static final String SCOPE_USED = SPECIAL + "scope" + SPECIAL + "used";
+    public static final String SCOPES_USED = SPECIAL + "scopes" + SPECIAL + "used";
     public static final String STABLE = SPECIAL + "stable";
     public static final String CT = SPECIAL + "ct";
-
-    public static final String parameterVariable(String varName) {
-        return ARG + varName;
-    }
-
-    public static final String typeFormula(String varName) {
-        return ALL + varName;
-    }
 
     // common formulae
     public static final String INIT = SPECIAL + "Init";
@@ -57,6 +47,17 @@ class TranslationStrings {
             SPECIAL + "some" + PRE + SPECIAL + "transition";
     public static final String NEXT_IS_STABLE =
             SPECIAL + "next" + SPECIAL + "is" + SPECIAL + "stable";
+
+    public static final String ARG = SPECIAL + "arg"; // used as a prefix for parameter variables
+    public static final String ALL = SPECIAL + "all"; // used as a prefix for type formulae
+
+    public static final String parameterVariable(String varName) {
+        return ARG + varName;
+    }
+
+    public static final String typeFormula(String varName) {
+        return ALL + varName;
+    }
 
     public static final TlaSet NULL_SET = new TlaSet(new ArrayList<>());
 
@@ -80,6 +81,7 @@ class TranslationStrings {
         return ENABLED + tlaFQN(transitionFQN);
     }
 
+    // x1 * (x2 * ...)) where * is an operator and xi is the ith operand
     private static TlaExp reduceBinaryOperation(
             List<? extends TlaExp> operands,
             BiFunction<TlaExp, TlaExp, TlaExp> constructor,

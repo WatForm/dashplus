@@ -20,16 +20,18 @@ public class StateDefinitions {
     // non-leaf states are the union of the leaf states they contain
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        List<String> names = dashModel.st.getAllNames();
+        List<String> stateFQNs = dashModel.st.getAllNames();
 
-        depthSort(names); // sorts it based on depth, thus all ancestors lie to the left and all
+        depthSort(stateFQNs); // sorts it based on depth, thus all ancestors lie to the left and all
         // descendants lie to the right, for every state
 
-        names.reversed()
+        stateFQNs
+                .reversed()
                 .forEach(
-                        x -> {
-                            if (dashModel.st.isLeaf(x)) LeafStateDefinition(x, tlaModel);
-                            else nonLeafStateDefinition(x, dashModel, tlaModel);
+                        stateFQN -> {
+                            if (dashModel.st.isLeaf(stateFQN))
+                                LeafStateDefinition(stateFQN, tlaModel);
+                            else nonLeafStateDefinition(stateFQN, dashModel, tlaModel);
                         });
     }
 

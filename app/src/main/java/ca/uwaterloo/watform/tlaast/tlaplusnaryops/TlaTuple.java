@@ -5,7 +5,7 @@ import java.util.List;
 
 public class TlaTuple extends TlaNaryOp {
 
-    public TlaTuple(List<TlaExp> children) {
+    public TlaTuple(List<? extends TlaExp> children) {
         super(
                 TlaStrings.TUPLE_OPEN,
                 TlaStrings.TUPLE_CLOSE,

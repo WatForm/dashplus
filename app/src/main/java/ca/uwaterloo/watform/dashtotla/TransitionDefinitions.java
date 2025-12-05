@@ -24,10 +24,10 @@ public class TransitionDefinitions {
 
         List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
 
-        // taken_<trans-name> == "taken_<trans-fully-qualified-name"
-        transitions.forEach(x -> makeTransitionTakenNameFormulae(x, tlaModel));
+        // taken_<trans-name> == "taken_<transFQN>"
+        transitions.forEach(x -> addTransitionTakenFormulae(x, tlaModel));
 
-        // enabled
+        // _enabled_<transFQN> == <body>
         tlaModel.addComment("parameterized formulae to check if transitions are enabled");
         transitions.forEach(x -> addTransitionIsEnabledFormula(x, dashModel, tlaModel));
 
@@ -42,17 +42,17 @@ public class TransitionDefinitions {
                 });
     }
 
-    public static void makeTransitionTakenNameFormulae(String transitionFQN, TlaModel tlaModel) {
+    public static void addTransitionTakenFormulae(String transitionFQN, TlaModel tlaModel) {
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(TakenTransFormulaName(transitionFQN)),
                         new TlaLiteral(transitionFQN)));
     }
 
-    public static List<TlaVar> enabledArgList() {
+    public static List<TlaVar> isEnabledParams() {
 
         // this is subject to optimization, and is thus a separate function
-        List<String> parameters = Arrays.asList(SCOPE_USED);
+        List<String> parameters = Arrays.asList(SCOPES_USED);
         return GeneralUtil.mapBy(parameters, v -> new TlaVar(parameterVariable(v)));
     }
 
@@ -62,7 +62,7 @@ public class TransitionDefinitions {
         List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
         tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(NEXT_IS_STABLE, enabledArgList()),
+                        new TlaDecl(NEXT_IS_STABLE, isEnabledParams()),
                         new TlaNot(
                                 repeatedOr(
                                         GeneralUtil.mapBy(
@@ -70,9 +70,7 @@ public class TransitionDefinitions {
                                                 t ->
                                                         new TlaAppl(
                                                                 EnabledTransFormulaName(t),
-                                                                GeneralUtil.mapBy(
-                                                                        enabledArgList(),
-                                                                        u -> u)))))));
+                                                                isEnabledParams()))))));
     }
 
     public static void addTransitionPreFormula(
@@ -90,6 +88,8 @@ public class TransitionDefinitions {
                 new TlaDefn(
                         new TlaDecl(PreTransFormulaName(transitionFQN)),
                         repeatedAnd(Arrays.asList(conf_exp))));
+
+        // TODO add stuff
     }
 
     public static void addTransitionPostFormula(
@@ -102,13 +102,15 @@ public class TransitionDefinitions {
                 new TlaDefn(
                         new TlaDecl(PostTransFormulaName(transitionFQN)),
                         repeatedAnd(Arrays.asList(taken))));
+
+        // TODO add stuff
     }
 
     public static void addTransitionIsEnabledFormula(
             String transitionFQN, DashModel dashModel, TlaModel tlaModel) {
         tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(EnabledTransFormulaName(transitionFQN), enabledArgList()),
+                        new TlaDecl(EnabledTransFormulaName(transitionFQN), isEnabledParams()),
                         repeatedAnd(Arrays.asList())));
     }
 

@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.tlaast.*;
 import java.util.List;
 
 public class TlaUnchanged extends TlaNaryOp {
-    public TlaUnchanged(List<TlaVar> children) {
+    public TlaUnchanged(List<? extends TlaVar> children) {
         super(
                 TlaStrings.UNCHANGED + TlaStrings.SPACE + TlaStrings.TUPLE_OPEN,
                 TlaStrings.TUPLE_CLOSE,

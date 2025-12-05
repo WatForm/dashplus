@@ -23,7 +23,7 @@ public class InitDefinition {
         TlaExp trans_taken_exp = new TlaEquals(new TlaVar(TRANS_TAKEN), NULL_SET);
 
         // scopes_used = {}
-        TlaExp scopes_used_exp = new TlaEquals(new TlaVar(SCOPE_USED), NULL_SET);
+        TlaExp scopes_used_exp = new TlaEquals(new TlaVar(SCOPES_USED), NULL_SET);
 
         // events = {}
         TlaExp events_exp = new TlaEquals(new TlaVar(EVENTS), NULL_SET);

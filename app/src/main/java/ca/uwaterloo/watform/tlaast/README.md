@@ -145,29 +145,29 @@ r.x                         \* record field access: the value of field x of reco
 Consider the following examples:
 
 ```
-┏━━━━━━━━━━▶ Formula Declaration
-┃     ┏━━━━▶ Formula Body
+┏━━━━━━━━━━▶ Declaration
+┃     ┏━━━━▶ body
 F == exp
 ┗━━┳━━━┛
-   ┗━━━━━━━▶ Formula Definition
+   ┗━━━━━━━▶ Definition
 ```
 
 ```
-┏━━━━━━━━━━▶ Formula name
-┃ ┏━━━━━━━━▶ Parameter
-┃ ┃     ┏━━▶ Formula Application
-G(X) == F
+┏━━━━━━━━━━▶ name
+┃ ┏━━━━━━━━▶ parameter
+┃ ┃      ┏━━▶ body
+G(X) == exp
 ┗━┳┛
-  ┗━━━━━━━━▶ Formula Declaration
+  ┗━━━━━━━━▶ Declaration
 ```
 
 ```
-┏━━━━━━━━━━▶ Formula Declaration
-┃      ┏━━━▶ Formula Application
+┏━━━━━━━━━━▶ Declaration
+┃      ┏━━━▶ Application
 ┃    ┏━┻━━┓ 
 H == G(exp)
 ┗━━━━┳━━━━┛
-     ┗━━━━━━━▶ Formula Definition
+     ┗━━━━━━━▶ Definition
 ```
 
 - The module consists of a list of definitions of formulae.

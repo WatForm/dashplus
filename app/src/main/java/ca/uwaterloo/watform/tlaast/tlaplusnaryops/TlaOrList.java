@@ -6,7 +6,7 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 import java.util.List;
 
 public class TlaOrList extends TlaNaryOp {
-    public TlaOrList(List<TlaExp> children) {
+    public TlaOrList(List<? extends TlaExp> children) {
         super("", "", TlaStrings.OR, children, TlaOperator.PrecedenceGroup.OR_LIST);
     }
 }

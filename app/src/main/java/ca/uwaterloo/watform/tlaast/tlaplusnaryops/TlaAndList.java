@@ -6,7 +6,7 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 import java.util.List;
 
 public class TlaAndList extends TlaNaryOp {
-    public TlaAndList(List<TlaExp> children) {
+    public TlaAndList(List<? extends TlaExp> children) {
         super("", "", TlaStrings.AND, children, TlaOperator.PrecedenceGroup.AND_LIST);
     }
 }
