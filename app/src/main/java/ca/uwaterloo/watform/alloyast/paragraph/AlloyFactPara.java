@@ -7,7 +7,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyStrLiteralExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Optional;
 
-public final class AlloyFactPara extends AlloyParagraph {
+public final class AlloyFactPara extends AlloyPara {
     public final AlloyBlock block;
     // mutually exclusive fields
     public final Optional<AlloyQnameExpr> qname;

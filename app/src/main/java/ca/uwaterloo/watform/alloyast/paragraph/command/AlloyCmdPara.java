@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public final class AlloyCmdPara extends AlloyParagraph {
+public final class AlloyCmdPara extends AlloyPara {
 
     public final List<CommandDecl> cmdDecls;
 

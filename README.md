@@ -24,15 +24,12 @@ Run with the desired entry point:
 - Predicate Abstraction:              `java -cp app/build/libs/watform-dashplus.jar ca.uwaterloo.watform.predabstraction.Main <args>`
 
 ## Instructions for Contributors:
-- Directory names: All lowercase and avoid underscores
-
-- Class and .java file names: UpperCamelCase
-
-- Method and variable names: lowerCamelCase 
 
 - If an IDE is used, please ensure that IDE-generated files are not present in any of the commits. This can be done by including such files in the .gitignore
 
-- See Error Handling Strategy in [`app/src/main/java/ca/uwaterloo/watform/utils/ErrorHandling.md`](/app/src/main/java/ca/uwaterloo/watform/utils/ErrorHandling.md)
+- See [Coding Standards](/CodingStandards.md)
+
+- See [Error Handling Strategy](/app/src/main/java/ca/uwaterloo/watform/utils/ErrorHandling.md)
 
 ## Before Committing
 - `./gradlew test` for unit testing

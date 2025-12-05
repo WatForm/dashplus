@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.test;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
+
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashFile;
@@ -85,7 +87,7 @@ public class AntlrTestUtil {
         System.out.println(filePath);
 
         try {
-            AlloyModel alloyModel = ParserUtil.parseToModel(filePath);
+            AlloyModel alloyModel = parseToModel(filePath);
             String s = alloyModel.toString();
             if (jarPassed) {
                 boolean toStringCanPass = AlloyInterface.canParse(s);
@@ -152,7 +154,7 @@ public class AntlrTestUtil {
     private void tryParseDash(CharStream input, Path filePath) {
         System.out.println(filePath);
         try {
-            DashFile dashFile = (DashFile) ParserUtil.parse(filePath);
+            DashFile dashFile = (DashFile) parse(filePath);
             String s = dashFile.toString();
             this.dashResults.get("dashPassed").add(filePath);
             System.out.println(
@@ -226,7 +228,7 @@ public class AntlrTestUtil {
         }
         this.clearResults();
         this.timeoutMs = timeoutMs;
-        List<Path> paths = ParserUtil.recurGetFiles(dir, extension);
+        List<Path> paths = recurGetFiles(dir, extension);
         for (Path filePath : paths) {
             // need to swap out the System.exit in Reporter.INSTANCE
             // This is also in TestUtil, but cannot import it

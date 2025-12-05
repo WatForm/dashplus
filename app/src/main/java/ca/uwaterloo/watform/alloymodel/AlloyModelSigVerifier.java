@@ -56,7 +56,7 @@ public final class AlloyModelSigVerifier {
     }
 
     private void verifyVar() {
-        for (AlloySigPara sig : this.sigs.getAllParagraphs()) {
+        for (AlloySigPara sig : this.sigs.getAllParas()) {
             if (!sig.isVar()) {
                 continue;
             }

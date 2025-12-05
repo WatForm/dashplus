@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class AlloyPredPara extends AlloyParagraph {
+public final class AlloyPredPara extends AlloyPara {
     public final boolean isPrivate;
     public final Optional<AlloySigRefExpr> sigRef;
     public final AlloyQnameExpr qname;

@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.dashast;
 import static ca.uwaterloo.watform.utils.GeneralUtil.emptyList;
 import static ca.uwaterloo.watform.utils.GeneralUtil.extractItemsOfClass;
 import static ca.uwaterloo.watform.utils.GeneralUtil.extractOneFromList;
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
 
 import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -17,7 +18,7 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
 
     private List<String> extractNames(DashParser.NamesContext ctx) {
         if (null != ctx) {
-            return ParserUtil.visitAll(ctx.name(), exprParseVis, AlloyNameExpr.class).stream()
+            return visitAll(ctx.name(), exprParseVis, AlloyNameExpr.class).stream()
                     .map(AlloyNameExpr::toString)
                     .collect(Collectors.toList());
         }
@@ -26,7 +27,7 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
 
     private List<String> extractNames(DashParser.QnamesContext ctx) {
         if (null != ctx) {
-            return ParserUtil.visitAll(ctx.qname(), exprParseVis, AlloyQnameExpr.class).stream()
+            return visitAll(ctx.qname(), exprParseVis, AlloyQnameExpr.class).stream()
                     .map(AlloyQnameExpr::toString)
                     .collect(Collectors.toList());
         }
@@ -75,7 +76,7 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
     public DashTrans visitDashTrans(DashParser.DashTransContext ctx) {
         DashTransItemParseVis transItemParseVis = new DashTransItemParseVis();
         List<DashTransItem> transItems =
-                ParserUtil.visitAll(ctx.transItem(), transItemParseVis, DashTransItem.class);
+                visitAll(ctx.transItem(), transItemParseVis, DashTransItem.class);
         return new DashTrans(
                 new Pos(ctx),
                 this.extractName(ctx.name()),
@@ -129,7 +130,7 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
                 DashState.noParam(),
                 DashStrings.StateKind.OR,
                 null != ctx.DEF() ? DashStrings.DefKind.DEFAULT : DashStrings.DefKind.NOTDEFAULT,
-                ParserUtil.visitAll(ctx.stateItem(), new DashStateItemParseVis(), Object.class));
+                visitAll(ctx.stateItem(), new DashStateItemParseVis(), Object.class));
     }
 
     @Override
@@ -140,6 +141,6 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
                 null != ctx.qname() ? this.extractName(ctx.qname()) : DashState.noParam(),
                 DashStrings.StateKind.AND,
                 null != ctx.DEF() ? DashStrings.DefKind.DEFAULT : DashStrings.DefKind.NOTDEFAULT,
-                ParserUtil.visitAll(ctx.stateItem(), new DashStateItemParseVis(), Object.class));
+                visitAll(ctx.stateItem(), new DashStateItemParseVis(), Object.class));
     }
 }

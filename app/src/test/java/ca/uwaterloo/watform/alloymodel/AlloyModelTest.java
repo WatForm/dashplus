@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloymodel;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;
@@ -36,7 +37,7 @@ public class AlloyModelTest {
     @DisplayName("parseCatalystDirToAlloyModelThenToString")
     public void alloyModelCatalyst() throws Exception {
         Path dir = Paths.get("src/test/resources/parsevis/catalyst");
-        List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
+        List<Path> paths = recurGetFiles(dir, ".als");
         for (Path filePath : paths) {
             try {
 
@@ -47,7 +48,7 @@ public class AlloyModelTest {
 
                 System.out.println(originalStr);
 
-                AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
+                AlloyFile af = assertDoesNotThrow(() -> (parse(filePath)));
                 AlloyModel alloyModel = new AlloyModel(af);
                 String parsedStr = assertDoesNotThrow(() -> alloyModel.toString());
 

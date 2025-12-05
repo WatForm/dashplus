@@ -11,14 +11,14 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloySigIntExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyStringExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyParagraph;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public final class AlloySigPara extends AlloyParagraph {
+public final class AlloySigPara extends AlloyPara {
     public final List<Qual> quals;
     public final List<AlloyQnameExpr> qnames;
     public final Optional<Rel> rel;

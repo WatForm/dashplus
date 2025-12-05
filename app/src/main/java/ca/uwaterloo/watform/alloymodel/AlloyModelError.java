@@ -20,7 +20,7 @@ public final class AlloyModelError extends DashPlusError {
         return new AlloyModelError(List.of(pos1, pos2), "A duplicated name is found. ");
     }
 
-    public static AlloyModelError paragraphDNE(String name) {
+    public static AlloyModelError paraDNE(String name) {
         return new AlloyModelError("The paragraph with " + name + " does not exist. ");
     }
 }

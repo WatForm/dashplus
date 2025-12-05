@@ -1,10 +1,11 @@
 package ca.uwaterloo.watform.dashast.dashref;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
+
 import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
-import ca.uwaterloo.watform.utils.ParserUtil;
 import ca.uwaterloo.watform.utils.Pos;
 
 public final class DashExprParseVis extends AlloyExprParseVis {
@@ -18,8 +19,8 @@ public final class DashExprParseVis extends AlloyExprParseVis {
         return new DashRef(
                 new Pos(ctx),
                 DashStrings.DashRefKind.VAR,
-                ParserUtil.visitAll(ctx.name(), this, AlloyNameExpr.class),
-                ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
+                visitAll(ctx.name(), this, AlloyNameExpr.class),
+                visitAll(ctx.expr1(), this, AlloyExpr.class));
     }
 
     public DashRef visitDashRef1WithKind(
@@ -27,8 +28,8 @@ public final class DashExprParseVis extends AlloyExprParseVis {
         return new DashRef(
                 new Pos(ctx),
                 kind,
-                ParserUtil.visitAll(ctx.name(), this, AlloyNameExpr.class),
-                ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
+                visitAll(ctx.name(), this, AlloyNameExpr.class),
+                visitAll(ctx.expr1(), this, AlloyExpr.class));
     }
 
     public DashRef visitDashRef2WithKind(
@@ -36,7 +37,7 @@ public final class DashExprParseVis extends AlloyExprParseVis {
         return new DashRef(
                 new Pos(ctx),
                 kind,
-                ParserUtil.visitAll(ctx.name(), this, AlloyNameExpr.class),
+                visitAll(ctx.name(), this, AlloyNameExpr.class),
                 DashRef.emptyParamValuesList());
     }
 }

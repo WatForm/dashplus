@@ -23,7 +23,7 @@ public class AlloyModel {
     private final AlloyModelTable<AlloyAssertPara> asserts;
     private final AlloyModelTable<AlloyCmdPara> commands;
 
-    private final List<AlloyParagraph> additionalParas;
+    private final List<AlloyPara> additionalParas;
 
     public AlloyModel() {
         this(new AlloyFile(Collections.emptyList()));
@@ -50,22 +50,22 @@ public class AlloyModel {
      * paragraph into the correct type-safe table. The table's 'addParagraph' method is responsible
      * for handling the 'additionalParas' list as a side-effect.
      *
-     * @param alloyParagraph The paragraph to add.
+     * @param alloyPara The paragraph to add.
      */
-    public void addPara(AlloyParagraph alloyParagraph) {
-        if (alloyParagraph == null) return;
-        AlloyModelTable<?> table = this.patternMatch(alloyParagraph.getClass());
+    public void addPara(AlloyPara alloyPara) {
+        if (alloyPara == null) return;
+        AlloyModelTable<?> table = this.patternMatch(alloyPara.getClass());
         @SuppressWarnings("unchecked")
-        AlloyModelTable<AlloyParagraph> castedTable = (AlloyModelTable<AlloyParagraph>) table;
-        castedTable.addParagraph(alloyParagraph, this.additionalParas);
+        AlloyModelTable<AlloyPara> castedTable = (AlloyModelTable<AlloyPara>) table;
+        castedTable.addPara(alloyPara, this.additionalParas);
     }
 
-    public <T extends AlloyParagraph> List<T> getParas(Class<T> typeToken) {
-        return this.patternMatch(typeToken).getAllParagraphs();
+    public <T extends AlloyPara> List<T> getParas(Class<T> typeToken) {
+        return this.patternMatch(typeToken).getAllParas();
     }
 
-    public <T extends AlloyParagraph> T getPara(Class<T> typeToken, String name) {
-        return this.patternMatch(typeToken).getParagraph(name);
+    public <T extends AlloyPara> T getPara(Class<T> typeToken, String name) {
+        return this.patternMatch(typeToken).getPara(name);
     }
 
     private void toString(StringBuilder sb, int indent) {
@@ -83,7 +83,7 @@ public class AlloyModel {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends AlloyParagraph> AlloyModelTable<T> patternMatch(Class<T> typeToken) {
+    private <T extends AlloyPara> AlloyModelTable<T> patternMatch(Class<T> typeToken) {
         if (typeToken.equals(AlloyModulePara.class)) {
             return (AlloyModelTable<T>) modules;
         } else if (typeToken.equals(AlloyImportPara.class)) {

@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public final class AlloyMacroPara extends AlloyParagraph {
+public final class AlloyMacroPara extends AlloyPara {
     public final boolean isPrivate;
     public final AlloyQnameExpr qname;
     public final List<AlloyQnameExpr> qnames;

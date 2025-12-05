@@ -1,9 +1,10 @@
 package ca.uwaterloo.watform.alloyast.paragraph.sig;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
+
 import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
-import ca.uwaterloo.watform.utils.ParserUtil;
 import ca.uwaterloo.watform.utils.Pos;
 
 public final class AlloySigRelParseVis extends DashBaseVisitor<AlloySigPara.Rel> {
@@ -18,14 +19,12 @@ public final class AlloySigRelParseVis extends DashBaseVisitor<AlloySigPara.Rel>
     @Override
     public AlloySigPara.In visitInSigIn(DashParser.InSigInContext ctx) {
         return new AlloySigPara.In(
-                new Pos(ctx),
-                ParserUtil.visitAll(ctx.sigRef(), exprParseVis, AlloySigRefExpr.class));
+                new Pos(ctx), visitAll(ctx.sigRef(), exprParseVis, AlloySigRefExpr.class));
     }
 
     @Override
     public AlloySigPara.Equal visitEqualSigIn(DashParser.EqualSigInContext ctx) {
         return new AlloySigPara.Equal(
-                new Pos(ctx),
-                ParserUtil.visitAll(ctx.sigRef(), exprParseVis, AlloySigRefExpr.class));
+                new Pos(ctx), visitAll(ctx.sigRef(), exprParseVis, AlloySigRefExpr.class));
     }
 }

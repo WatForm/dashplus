@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.parser;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
+
 import ca.uwaterloo.watform.alloyinterface.*;
 import ca.uwaterloo.watform.utils.*;
 import java.nio.file.Path;
@@ -67,8 +69,7 @@ public class Main implements Callable<Integer> {
             // Main logic
             Reporter.INSTANCE.setDebugMode(debug);
             Solution solution =
-                    AlloyInterface.executeCommand(
-                            ParserUtil.parseToModel(filePath), this.commandIndex);
+                    AlloyInterface.executeCommand(parseToModel(filePath), this.commandIndex);
             System.out.println(solution.toString());
             return 0;
 

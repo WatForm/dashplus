@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.reporter;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.alloyast.*;
@@ -131,7 +132,7 @@ public class ReporterTest {
     public void test17() throws IOException {
         assertThrows(
                 Reporter.AbortSignal.class,
-                () -> ParserUtil.parse(Paths.get("src/test/resources/reporter/badCmd.als")));
+                () -> parse(Paths.get("src/test/resources/reporter/badCmd.als")));
     }
 
     @Test
@@ -139,6 +140,6 @@ public class ReporterTest {
     @DisplayName("printing more than one pos: see the testing report")
     public void test18() throws IOException {
         Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
-        assertThrows(Reporter.AbortSignal.class, () -> ParserUtil.parse(filePath));
+        assertThrows(Reporter.AbortSignal.class, () -> parse(filePath));
     }
 }

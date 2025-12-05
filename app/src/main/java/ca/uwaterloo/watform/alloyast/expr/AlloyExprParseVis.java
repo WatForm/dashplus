@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
+
 import antlr.generated.*;
 import antlr.generated.DashParser.*;
 import ca.uwaterloo.watform.alloyast.*;
@@ -28,7 +30,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     public AlloyLetExpr visitLet(DashParser.LetContext ctx) {
         return new AlloyLetExpr(
                 new Pos(ctx),
-                ParserUtil.visitAll(ctx.assignment(), new AlloyLetAsnParseVis(), AlloyLetAsn.class),
+                visitAll(ctx.assignment(), new AlloyLetAsnParseVis(), AlloyLetAsn.class),
                 this.visit(ctx.body()));
     }
 
@@ -37,7 +39,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             DashParser.QuantificationExprContext ctx) {
         List<AlloyDecl> decls =
                 null != ctx.decls()
-                        ? ParserUtil.visitAll(ctx.decls().decl(), this, AlloyDecl.class)
+                        ? visitAll(ctx.decls().decl(), this, AlloyDecl.class)
                         : Collections.emptyList();
         if (null != ctx.ALL()) {
             return new AlloyQuantificationExpr(
@@ -242,7 +244,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     public AlloyComprehensionExpr visitComprehensionExpr(DashParser.ComprehensionExprContext ctx) {
         return new AlloyComprehensionExpr(
                 new Pos(ctx),
-                ParserUtil.visitAll(ctx.declMul(), this, AlloyDecl.class),
+                visitAll(ctx.declMul(), this, AlloyDecl.class),
                 (null != ctx.body()) ? this.visit(ctx.body()) : null);
     }
 
@@ -251,8 +253,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     // ============================
     @Override
     public AlloyBlock visitBlock(DashParser.BlockContext ctx) {
-        return new AlloyBlock(
-                new Pos(ctx), ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
+        return new AlloyBlock(new Pos(ctx), visitAll(ctx.expr1(), this, AlloyExpr.class));
     }
 
     // ============================
@@ -336,7 +337,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         return new AlloyBracketExpr(
                 new Pos(ctx),
                 this.visit(ctx.expr2()),
-                ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
+                visitAll(ctx.expr1(), this, AlloyExpr.class));
     }
 
     @Override
@@ -344,7 +345,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         return new AlloyBracketExpr(
                 new Pos(ctx),
                 this.visit(ctx.getChild(0)),
-                ParserUtil.visitAll(ctx.expr1(), this, AlloyExpr.class));
+                visitAll(ctx.expr1(), this, AlloyExpr.class));
     }
 
     // ============================
@@ -780,7 +781,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         final boolean isPrivate = null != ctx.PRIVATE() ? true : false;
 
         List<AlloyQnameExpr> qnames =
-                ParserUtil.visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class);
+                visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class);
 
         boolean isDisj1 = false;
         boolean isDisj2 = false;
@@ -821,7 +822,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         final boolean isPrivate = null != ctx.PRIVATE() ? true : false;
 
         List<AlloyQnameExpr> qnames =
-                ParserUtil.visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class);
+                visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class);
 
         return new AlloyDecl(
                 new Pos(ctx),

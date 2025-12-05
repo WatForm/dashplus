@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
+
 import antlr.generated.*;
 import antlr.generated.DashBaseVisitor;
 import ca.uwaterloo.watform.alloyast.*;
@@ -17,12 +19,12 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 
-public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
+public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     protected final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
     protected final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
 
     @Override
-    public AlloyParagraph visitParagraph(DashParser.ParagraphContext ctx) {
+    public AlloyPara visitParagraph(DashParser.ParagraphContext ctx) {
         return this.visit(ctx.getChild(0));
     }
 
@@ -34,8 +36,7 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
         return new AlloyModulePara(
                 new Pos(ctx),
                 (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
-                ParserUtil.visitAll(
-                        ctx.moduleArg(), new AlloyModuleArgParseVis(), AlloyModuleArg.class));
+                visitAll(ctx.moduleArg(), new AlloyModuleArgParseVis(), AlloyModuleArg.class));
     }
 
     // ====================================================================================
@@ -62,14 +63,12 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
     public AlloySigPara visitSigPara(DashParser.SigParaContext ctx) {
         return new AlloySigPara(
                 new Pos(ctx),
-                ParserUtil.visitAll(
-                        ctx.sigQualifier(), new AlloySigQualParseVis(), AlloySigPara.Qual.class),
+                visitAll(ctx.sigQualifier(), new AlloySigQualParseVis(), AlloySigPara.Qual.class),
                 null != ctx.qnames()
-                        ? ParserUtil.visitAll(
-                                ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
+                        ? visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                         : Collections.emptyList(),
                 null != ctx.sigRel() ? new AlloySigRelParseVis().visit(ctx.sigRel()) : null,
-                ParserUtil.visitAll(ctx.decl(), exprParseVis, AlloyDecl.class),
+                visitAll(ctx.decl(), exprParseVis, AlloyDecl.class),
                 null != ctx.block() ? (AlloyBlock) exprParseVis.visit(ctx.block()) : null);
     }
 
@@ -82,8 +81,7 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                 null != ctx.PRIVATE(),
                 (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
                 null != ctx.qnames()
-                        ? ParserUtil.visitAll(
-                                ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
+                        ? visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                         : Collections.emptyList());
     }
 
@@ -112,13 +110,11 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
     // Pred
     // ====================================================================================
     @Override
-    public AlloyParagraph visitPredPara(DashParser.PredParaContext ctx) {
+    public AlloyPredPara visitPredPara(DashParser.PredParaContext ctx) {
         List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
             if (null != ctx.arguments().decls()) {
-                decls =
-                        ParserUtil.visitAll(
-                                ctx.arguments().decls().decl(), exprParseVis, AlloyDecl.class);
+                decls = visitAll(ctx.arguments().decls().decl(), exprParseVis, AlloyDecl.class);
             }
         }
 
@@ -139,9 +135,7 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
         List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
             if (null != ctx.arguments().decls()) {
-                decls =
-                        ParserUtil.visitAll(
-                                ctx.arguments().decls().decl(), exprParseVis, AlloyDecl.class);
+                decls = visitAll(ctx.arguments().decls().decl(), exprParseVis, AlloyDecl.class);
             }
         }
 
@@ -203,8 +197,7 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                     null != ctx.PRIVATE(),
                     (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
                     null != ctx.qnames()
-                            ? ParserUtil.visitAll(
-                                    ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
+                            ? visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                             : Collections.emptyList(),
                     (AlloyBlock) exprParseVis.visit(ctx.block()));
         } else if (null != ctx.expr1()) {
@@ -213,8 +206,7 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
                     null != ctx.PRIVATE(),
                     (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
                     null != ctx.qnames()
-                            ? ParserUtil.visitAll(
-                                    ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
+                            ? visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                             : Collections.emptyList(),
                     exprParseVis.visit(ctx.expr1()));
         } else {
@@ -229,7 +221,7 @@ public class AlloyParagraphParseVis extends DashBaseVisitor<AlloyParagraph> {
     public AlloyCmdPara visitCommandPara(DashParser.CommandParaContext ctx) {
         return new AlloyCmdPara(
                 new Pos(ctx),
-                ParserUtil.visitAll(
+                visitAll(
                         ctx.commandDecl(),
                         new AlloyCmdDeclParseVis(),
                         AlloyCmdPara.CommandDecl.class));

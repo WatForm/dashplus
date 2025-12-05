@@ -78,7 +78,7 @@ public final class AlloyASTImplError extends ImplementationError {
     // ====================================================================================
     // AlloyFile
     // ====================================================================================
-    public static AlloyASTImplError dashParagraphInAlloyFile(Pos pos) {
+    public static AlloyASTImplError dashParaInAlloyFile(Pos pos) {
         return new AlloyASTImplError(pos, "AlloyFile should not contain a DashParagraph. ");
     }
 }

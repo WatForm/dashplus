@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public final class AlloyFunPara extends AlloyParagraph {
+public final class AlloyFunPara extends AlloyPara {
     public final boolean isPrivate;
     public final Optional<AlloySigRefExpr> sigRef;
     public final AlloyQnameExpr qname;

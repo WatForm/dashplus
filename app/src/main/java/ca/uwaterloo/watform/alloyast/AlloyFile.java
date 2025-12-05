@@ -1,56 +1,56 @@
 package ca.uwaterloo.watform.alloyast;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
-import ca.uwaterloo.watform.dashast.DashParagraph;
+import ca.uwaterloo.watform.dashast.DashPara;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 
 public class AlloyFile extends AlloyASTNode {
     public String filename = "";
-    public final List<AlloyParagraph> paragraphs;
+    public final List<AlloyPara> paras;
 
-    public AlloyFile(Pos pos, List<AlloyParagraph> paragraphs) {
+    public AlloyFile(Pos pos, List<AlloyPara> paragraphs) {
         super(pos);
-        this.paragraphs = Collections.unmodifiableList(paragraphs);
+        this.paras = Collections.unmodifiableList(paragraphs);
 
-        List<AlloyModulePara> modules =
-                GeneralUtil.extractItemsOfClass(paragraphs, AlloyModulePara.class);
+        List<AlloyModulePara> modules = extractItemsOfClass(paragraphs, AlloyModulePara.class);
 
         if (modules.size() > 1) {
             throw AlloyCtorError.moduleIsUnique(modules.get(0).pos, modules.get(1).pos);
         }
 
         boolean noMoreModule = false;
-        for (AlloyParagraph alloyParagraph : this.paragraphs) {
-            if (noMoreModule && alloyParagraph instanceof AlloyModulePara) {
-                throw AlloyCtorError.moduleIsAtTop(alloyParagraph.pos);
+        for (AlloyPara alloyPara : this.paras) {
+            if (noMoreModule && alloyPara instanceof AlloyModulePara) {
+                throw AlloyCtorError.moduleIsAtTop(alloyPara.pos);
             }
-            if (!(alloyParagraph instanceof AlloyImportPara)
-                    && !(alloyParagraph instanceof AlloyModulePara)) {
+            if (!(alloyPara instanceof AlloyImportPara)
+                    && !(alloyPara instanceof AlloyModulePara)) {
                 noMoreModule = true;
             }
         }
 
-        List<DashParagraph> dashParagraphs =
-                GeneralUtil.extractItemsOfClass(this.paragraphs, DashParagraph.class);
-        if (!dashParagraphs.isEmpty()) {
-            throw AlloyASTImplError.dashParagraphInAlloyFile(dashParagraphs.get(0).pos);
+        List<DashPara> dashParas = extractItemsOfClass(this.paras, DashPara.class);
+        if (!dashParas.isEmpty()) {
+            throw AlloyASTImplError.dashParaInAlloyFile(dashParas.get(0).pos);
         }
     }
 
-    public AlloyFile(List<AlloyParagraph> paragraphs) {
+    public AlloyFile(List<AlloyPara> paragraphs) {
         this(Pos.UNKNOWN, paragraphs);
     }
 
-    public AlloyFile(AlloyParagraph paragraph) {
+    public AlloyFile(AlloyPara paragraph) {
         this(Pos.UNKNOWN, Collections.singletonList(paragraph));
     }
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        for (AlloyParagraph p : paragraphs) {
+        for (AlloyPara p : this.paras) {
             sb.append(AlloyStrings.TAB.repeat(indent));
             p.toString(sb, indent);
             sb.append(AlloyStrings.NEWLINE + AlloyStrings.NEWLINE);

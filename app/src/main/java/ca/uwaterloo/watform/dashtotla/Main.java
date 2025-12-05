@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.dashtotla;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
+
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlamodel.*;
@@ -35,7 +37,7 @@ public class Main {
             }
             String moduleName = fileName.substring(0, fileName.lastIndexOf("."));
 
-            DashFile df = (DashFile) ParserUtil.parse(inPath);
+            DashFile df = (DashFile) parse(inPath);
             DashModel dm = new DashModel(df);
 
             TlaModel model = DashToTla.translate(dm, moduleName);

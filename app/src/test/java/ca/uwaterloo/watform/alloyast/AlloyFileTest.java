@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyast;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;
@@ -21,7 +22,7 @@ public class AlloyFileTest {
     @DisplayName("Throw when file has two modules")
     public void twoModulesThrows() throws Exception {
         Path filePath = Paths.get("src/test/resources/alloyast/paragraph/twoModules.als");
-        assertThrows(Reporter.AbortSignal.class, () -> ParserUtil.parse(filePath));
+        assertThrows(Reporter.AbortSignal.class, () -> parse(filePath));
     }
 
     @Test
@@ -29,7 +30,7 @@ public class AlloyFileTest {
     @DisplayName("Throw when Module is not declared at the top")
     public void moduleNotTopThrows() throws Exception {
         Path filePath = Paths.get("src/test/resources/alloyast/paragraph/moduleNotTop.als");
-        assertThrows(Reporter.AbortSignal.class, () -> ParserUtil.parse(filePath));
+        assertThrows(Reporter.AbortSignal.class, () -> parse(filePath));
     }
 
     @Test

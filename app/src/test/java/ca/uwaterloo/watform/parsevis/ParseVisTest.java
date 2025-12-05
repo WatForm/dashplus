@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.parsevis;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.alloyast.*;
@@ -50,7 +51,7 @@ public class ParseVisTest {
     @DisplayName("Parse, create our Alloy AST with parser visitors, and call toString")
     public void parseToStr() throws Exception {
         Path dir = Paths.get("src/test/resources/parsevis/tostr");
-        List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
+        List<Path> paths = recurGetFiles(dir, ".als");
         for (Path filePath : paths) {
             try {
 
@@ -61,7 +62,7 @@ public class ParseVisTest {
 
                 System.out.println(originalStr);
 
-                AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
+                AlloyFile af = assertDoesNotThrow(() -> (parse(filePath)));
                 String parsedStr = assertDoesNotThrow(() -> af.toString());
 
                 System.out.println("--- Parse & toString ---");
@@ -89,13 +90,13 @@ public class ParseVisTest {
                     + "to match exactly the input string (cannot include comments)")
     public void parseMatchStr() throws Exception {
         Path dir = Paths.get("src/test/resources/parsevis/tostr/matchstr");
-        List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
+        List<Path> paths = recurGetFiles(dir, ".als");
         for (Path filePath : paths) {
             try {
 
                 System.out.println(filePath);
                 String originalStr = Files.readString(filePath);
-                AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
+                AlloyFile af = assertDoesNotThrow(() -> (parse(filePath)));
                 String parsedStr = assertDoesNotThrow(() -> af.toString());
 
                 assertEquals(originalStr.replaceAll("\\s", ""), parsedStr.replaceAll("\\s", ""));

@@ -6,3 +6,14 @@
 ## Abbreviations
 * Expressions --> expr
 * Type --> typ
+
+## Naming
+* Directory names: All lowercase and avoid underscores
+* Class and .java file names: UpperCamelCase
+* Method and variable names: lowerCamelCase 
+
+## Importing
+* Import utils files like so to avoid cluttering code:
+    - `import static ca.uwaterloo.watform.utils.GeneralUtil.*;`
+    - `extractOneFromList(...)` instead of `GeneralUtil.extractOneFromList(...)`
+

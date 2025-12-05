@@ -6,7 +6,7 @@ import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
-public class DashState extends DashParagraph implements DashStateItem {
+public class DashState extends DashPara implements DashStateItem {
 
     // stuff from parsing
     public final String name;

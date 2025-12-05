@@ -25,9 +25,9 @@ public class AlloyModelTableTest {
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
 
         assertTrue(alloyModelTable.containsName(sigS.getName().get()));
-        assertEquals(sigS, alloyModelTable.getParagraph(sigS.getName().get()));
-        assertEquals(1, alloyModelTable.getAllParagraphs().size());
-        assertTrue(alloyModelTable.getUnnamedParagraphs().isEmpty());
+        assertEquals(sigS, alloyModelTable.getPara(sigS.getName().get()));
+        assertEquals(1, alloyModelTable.getAllParas().size());
+        assertTrue(alloyModelTable.getUnnamedParas().isEmpty());
         assertTrue(alloyModelTable.getNames().contains(sigS.getName().get()));
     }
 
@@ -41,10 +41,10 @@ public class AlloyModelTableTest {
                 new AlloyModelTable<AlloyFactPara>(alloyFile, AlloyFactPara.class);
 
         assertThrows(ImplementationError.class, () -> alloyModelTable.containsName(""));
-        assertThrows(ImplementationError.class, () -> alloyModelTable.getParagraph(""));
-        assertEquals(1, alloyModelTable.getAllParagraphs().size());
-        assertEquals(1, alloyModelTable.getUnnamedParagraphs().size());
-        assertEquals(namelessFact, alloyModelTable.getUnnamedParagraphs().get(0));
+        assertThrows(ImplementationError.class, () -> alloyModelTable.getPara(""));
+        assertEquals(1, alloyModelTable.getAllParas().size());
+        assertEquals(1, alloyModelTable.getUnnamedParas().size());
+        assertEquals(namelessFact, alloyModelTable.getUnnamedParas().get(0));
         assertTrue(alloyModelTable.getNames().isEmpty());
     }
 
@@ -56,8 +56,7 @@ public class AlloyModelTableTest {
         AlloyFile alloyFile = new AlloyFile(sigS);
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
-        assertThrows(
-                AlloyModelError.class, () -> alloyModelTable.addParagraph(sigS, new ArrayList<>()));
+        assertThrows(AlloyModelError.class, () -> alloyModelTable.addPara(sigS, new ArrayList<>()));
     }
 
     @Test
@@ -70,8 +69,7 @@ public class AlloyModelTableTest {
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
         AlloySigPara sigS2 = TestUtil.createSig("s");
         assertThrows(
-                AlloyModelError.class,
-                () -> alloyModelTable.addParagraph(sigS2, new ArrayList<>()));
+                AlloyModelError.class, () -> alloyModelTable.addPara(sigS2, new ArrayList<>()));
     }
 
     @Test
@@ -81,7 +79,7 @@ public class AlloyModelTableTest {
         AlloyFile alloyFile = new AlloyFile(Collections.emptyList());
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
-        assertThrows(AlloyModelError.class, () -> alloyModelTable.getParagraph("s"));
+        assertThrows(AlloyModelError.class, () -> alloyModelTable.getPara("s"));
     }
 
     @Test
@@ -97,12 +95,12 @@ public class AlloyModelTableTest {
         assertTrue(alloyModelTable.containsName(sigS1.getName().get()));
         assertTrue(alloyModelTable.containsName(sigS2.getName().get()));
 
-        assertEquals(sigS1, alloyModelTable.getParagraph(sigS1.getName().get()));
-        assertEquals(sigS2, alloyModelTable.getParagraph(sigS2.getName().get()));
+        assertEquals(sigS1, alloyModelTable.getPara(sigS1.getName().get()));
+        assertEquals(sigS2, alloyModelTable.getPara(sigS2.getName().get()));
 
-        assertEquals(2, alloyModelTable.getAllParagraphs().size());
+        assertEquals(2, alloyModelTable.getAllParas().size());
 
-        assertTrue(alloyModelTable.getUnnamedParagraphs().isEmpty());
+        assertTrue(alloyModelTable.getUnnamedParas().isEmpty());
 
         assertTrue(alloyModelTable.getNames().contains(sigS1.getName().get()));
         assertTrue(alloyModelTable.getNames().contains(sigS2.getName().get()));
@@ -117,20 +115,20 @@ public class AlloyModelTableTest {
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
         AlloySigPara sigS2 = TestUtil.createSig("s2");
-        List<AlloyParagraph> additionalParas = new ArrayList<>();
-        assertDoesNotThrow(() -> alloyModelTable.addParagraph(sigS2, additionalParas));
+        List<AlloyPara> additionalParas = new ArrayList<>();
+        assertDoesNotThrow(() -> alloyModelTable.addPara(sigS2, additionalParas));
         assertEquals(1, additionalParas.size());
         assertEquals(sigS2, additionalParas.get(0));
 
         assertTrue(alloyModelTable.containsName(sigS1.getName().get()));
         assertTrue(alloyModelTable.containsName(sigS2.getName().get()));
 
-        assertEquals(sigS1, alloyModelTable.getParagraph(sigS1.getName().get()));
-        assertEquals(sigS2, alloyModelTable.getParagraph(sigS2.getName().get()));
+        assertEquals(sigS1, alloyModelTable.getPara(sigS1.getName().get()));
+        assertEquals(sigS2, alloyModelTable.getPara(sigS2.getName().get()));
 
-        assertEquals(2, alloyModelTable.getAllParagraphs().size());
+        assertEquals(2, alloyModelTable.getAllParas().size());
 
-        assertTrue(alloyModelTable.getUnnamedParagraphs().isEmpty());
+        assertTrue(alloyModelTable.getUnnamedParas().isEmpty());
 
         assertTrue(alloyModelTable.getNames().contains(sigS1.getName().get()));
         assertTrue(alloyModelTable.getNames().contains(sigS2.getName().get()));
@@ -146,8 +144,8 @@ public class AlloyModelTableTest {
         AlloySigPara sigS1 = TestUtil.createSig("s1");
         AlloySigPara sigS2 = TestUtil.createSig("s2");
         List<AlloySigPara> paras = List.of(sigS1, sigS2);
-        List<AlloyParagraph> additionalParas = new ArrayList<>();
-        assertDoesNotThrow(() -> alloyModelTable.addParagraphs(paras, additionalParas));
+        List<AlloyPara> additionalParas = new ArrayList<>();
+        assertDoesNotThrow(() -> alloyModelTable.addParas(paras, additionalParas));
         assertEquals(2, additionalParas.size());
         assertEquals(sigS1, additionalParas.get(0));
         assertEquals(sigS2, additionalParas.get(1));
@@ -155,12 +153,12 @@ public class AlloyModelTableTest {
         assertTrue(alloyModelTable.containsName(sigS1.getName().get()));
         assertTrue(alloyModelTable.containsName(sigS2.getName().get()));
 
-        assertEquals(sigS1, alloyModelTable.getParagraph(sigS1.getName().get()));
-        assertEquals(sigS2, alloyModelTable.getParagraph(sigS2.getName().get()));
+        assertEquals(sigS1, alloyModelTable.getPara(sigS1.getName().get()));
+        assertEquals(sigS2, alloyModelTable.getPara(sigS2.getName().get()));
 
-        assertEquals(2, alloyModelTable.getAllParagraphs().size());
+        assertEquals(2, alloyModelTable.getAllParas().size());
 
-        assertTrue(alloyModelTable.getUnnamedParagraphs().isEmpty());
+        assertTrue(alloyModelTable.getUnnamedParas().isEmpty());
 
         assertTrue(alloyModelTable.getNames().contains(sigS1.getName().get()));
         assertTrue(alloyModelTable.getNames().contains(sigS2.getName().get()));

@@ -33,6 +33,6 @@ public class DashFileTest {
     @DisplayName("DashFile.super(), which is an AlloyFile, doesn't contain DashParagraph")
     public void superAlloyFileNoDashPara() throws Exception {
         DashFile dashFile = new DashFile(List.of(TestUtil.createDashState()));
-        assertEquals(Collections.emptyList(), dashFile.getAlloyParagraphs());
+        assertEquals(Collections.emptyList(), dashFile.getAlloyParas());
     }
 }

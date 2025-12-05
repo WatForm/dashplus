@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph.command;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
+
 import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
@@ -7,7 +9,6 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNumExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyScopableExpr;
-import ca.uwaterloo.watform.utils.ParserUtil;
 import ca.uwaterloo.watform.utils.Pos;
 
 public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.CommandDecl> {
@@ -75,7 +76,7 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
             return new AlloyCmdPara.CommandDecl.Scope(
                     new Pos(ctx),
                     (null != ctx.number()) ? (AlloyNumExpr) exprParseVis.visit(ctx.number()) : null,
-                    ParserUtil.visitAll(
+                    visitAll(
                             ctx.typescope(),
                             typescopeParseVis,
                             AlloyCmdPara.CommandDecl.Scope.Typescope.class));

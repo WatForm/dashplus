@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyast;
 
+import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -24,7 +25,7 @@ public class PosTest {
     @DisplayName("Parse, create our Alloy AST with parser visitors, and checking pos")
     public void parsePos() throws Exception {
         Path dir = Paths.get("src/test/resources/alloyast/pos");
-        List<Path> paths = ParserUtil.recurGetFiles(dir, ".als");
+        List<Path> paths = recurGetFiles(dir, ".als");
         for (Path filePath : paths) {
             try {
 
@@ -35,11 +36,11 @@ public class PosTest {
 
                 System.out.println(originalStr);
 
-                AlloyFile af = assertDoesNotThrow(() -> (ParserUtil.parse(filePath)));
+                AlloyFile af = assertDoesNotThrow(() -> (parse(filePath)));
 
                 assertEquals(af.getPos(), new Pos(1, 0, 26, 1));
 
-                AlloyFactPara fact = (AlloyFactPara) af.paragraphs.get(0);
+                AlloyFactPara fact = (AlloyFactPara) af.paras.get(0);
                 assertEquals(fact.getPos(), new Pos(1, 0, 26, 1));
 
                 AlloyBlock block = fact.block;

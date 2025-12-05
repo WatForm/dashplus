@@ -18,8 +18,8 @@ public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
 
     @Override
     public DashFile visitDashFile(DashParser.DashFileContext ctx) {
-        DashParagraphParseVis ppv = new DashParagraphParseVis();
-        List<AlloyParagraph> paragraphs = new ArrayList<>();
+        DashParaParseVis ppv = new DashParaParseVis();
+        List<AlloyPara> paragraphs = new ArrayList<>();
         for (DashParser.ParagraphContext parCtx : ctx.paragraph()) {
             try {
                 paragraphs.add(ppv.visit(parCtx));

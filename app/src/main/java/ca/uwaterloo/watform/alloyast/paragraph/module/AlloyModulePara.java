@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public final class AlloyModulePara extends AlloyParagraph {
+public final class AlloyModulePara extends AlloyPara {
     public static class AlloyModuleArg extends AlloyASTNode {
         public final boolean isExactly;
         public final AlloyQnameExpr qname;
