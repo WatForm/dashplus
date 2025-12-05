@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlamodel.*;
-import ca.uwaterloo.watform.utils.ParserUtil;
 import java.io.IOException;
 import java.nio.file.*;
 
