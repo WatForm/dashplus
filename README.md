@@ -20,7 +20,7 @@ The build process is the same for Linux, MacOS and Windows powershell. On Window
 
 Run with the desired entry point: 
 - Execute command in Dash/Alloy file: `java -jar app/build/libs/watform-dashplus.jar <args>`
-- TLA Translation:                    `java -cp app/build/libs/watform-dashplus.jar ca.uwaterloo.watform.dashtotlaplus.Main <args>`
+- TLA Translation:                    `java -cp app/build/libs/watform-dashplus.jar ca.uwaterloo.watform.dashtotla.Main <args>`
 - Predicate Abstraction:              `java -cp app/build/libs/watform-dashplus.jar ca.uwaterloo.watform.predabstraction.Main <args>`
 
 ## Instructions for Contributors:
