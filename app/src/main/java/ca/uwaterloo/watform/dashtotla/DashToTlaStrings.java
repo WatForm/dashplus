@@ -10,7 +10,8 @@ import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
 import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
+
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 class DashToTlaStrings {
     // this class stores information about things that are common to every part of the translation
@@ -81,30 +82,17 @@ class DashToTlaStrings {
         return ENABLED + tlaFQN(transitionFQN);
     }
 
-    // x1 * (x2 * ...)) where * is an operator and xi is the ith operand
-    private static TlaExp reduceBinaryOperation(
-            List<? extends TlaExp> operands,
-            BiFunction<TlaExp, TlaExp, TlaExp> constructor,
-            TlaExp emptyCaseResult) {
-
-        if (operands.isEmpty()) return emptyCaseResult;
-        if (operands.size() == 1) return operands.get(0);
-
-        TlaExp result = constructor.apply(operands.get(0), operands.get(1));
-        for (int i = 2; i < operands.size(); i++)
-            result = constructor.apply(result, operands.get(i));
-        return result;
-    }
+    
 
     public static TlaExp repeatedUnion(List<? extends TlaExp> operands) {
-        return reduceBinaryOperation(operands, TlaUnionSet::new, NULL_SET);
+        return foldRight(operands, TlaUnionSet::new, NULL_SET);
     }
 
     public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
-        return reduceBinaryOperation(operands, TlaAnd::new, new TlaTrue());
+        return foldRight(operands, TlaAnd::new, new TlaTrue());
     }
 
     public static TlaExp repeatedOr(List<? extends TlaExp> operands) {
-        return reduceBinaryOperation(operands, TlaOr::new, new TlaFalse());
+        return foldRight(operands, TlaOr::new, new TlaFalse());
     }
 }
