@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.List;
 
-public class AuxiliaryDashAccessors {
+public class AuxDashAccessors {
 
     // this is a temporary class to use accessors pending a rewrite with proper adherence to access
     // specification standards. This is to be deleted later, and references to this be replaced

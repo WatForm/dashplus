@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import static ca.uwaterloo.watform.dashtotla.TranslationStrings.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class StateDefinitions {
+public class StateDefns {
     // this class adds in formulae for every state in the dash model
     // leaf states are singleton sets that contain the fully qualified names as strings
     // non-leaf states are the union of the leaf states they contain
@@ -59,7 +59,7 @@ public class StateDefinitions {
 
         List<TlaAppl> childStateFormulae =
                 GeneralUtil.mapBy(
-                        AuxiliaryDashAccessors.getChildStateNames(stateFQN, dashModel),
+                        AuxDashAccessors.getChildStateNames(stateFQN, dashModel),
                         x -> new TlaAppl(tlaFQN(x)));
 
         tlaModel.addDefn(

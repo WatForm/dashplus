@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import static ca.uwaterloo.watform.dashtotla.TranslationStrings.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -18,7 +18,7 @@ import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
 import java.util.List;
 
-public class TypeOKDefinitions {
+public class TypeOKDefn {
 
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
@@ -34,7 +34,7 @@ public class TypeOKDefinitions {
 
         // _all_conf = <union of all leaf state formulae>
 
-        List<String> leafStateFQNs = AuxiliaryDashAccessors.getLeafStateNames(dashModel);
+        List<String> leafStateFQNs = AuxDashAccessors.getLeafStateNames(dashModel);
 
         tlaModel.addDefn(
                 new TlaDefn(
@@ -51,7 +51,7 @@ public class TypeOKDefinitions {
                         new TlaDecl(typeFormula(TRANS_TAKEN)),
                         new TlaSet(
                                 GeneralUtil.mapBy(
-                                        AuxiliaryDashAccessors.getTransitionNames(dashModel),
+                                        AuxDashAccessors.getTransitionNames(dashModel),
                                         s -> new TlaAppl(TakenTransFormulaName(s))))));
     }
 

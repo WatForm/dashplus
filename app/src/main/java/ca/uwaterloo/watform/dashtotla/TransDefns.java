@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import static ca.uwaterloo.watform.dashtotla.TranslationStrings.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -19,10 +19,10 @@ import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
 import java.util.List;
 
-public class TransitionDefinitions {
+public class TransDefns {
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
+        List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
         // taken_<trans-name> == "taken_<transFQN>"
         transitions.forEach(x -> addTransitionTakenFormulae(x, tlaModel));
@@ -59,7 +59,7 @@ public class TransitionDefinitions {
     public static void addNextIsStable(DashModel dashModel, TlaModel tlaModel) {
 
         // _next_is_stable(args) = \/ enabled_after_step_ti(args) ...
-        List<String> transitions = AuxiliaryDashAccessors.getTransitionNames(dashModel);
+        List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(NEXT_IS_STABLE, isEnabledParams()),

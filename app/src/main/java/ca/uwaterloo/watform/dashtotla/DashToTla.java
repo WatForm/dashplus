@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import static ca.uwaterloo.watform.dashtotla.TranslationStrings.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -11,24 +11,24 @@ public class DashToTla {
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
-        StandardLibraries.translate(dashModel, tlaModel);
-        StandardVariables.translate(dashModel, tlaModel);
+        StdLibDefns.translate(dashModel, tlaModel);
+        StandardVars.translate(dashModel, tlaModel);
 
         tlaModel.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants");
-        StateDefinitions.translate(dashModel, tlaModel);
+        StateDefns.translate(dashModel, tlaModel);
 
         tlaModel.addComment(
                 "string literal representations of transitions taken, which are the values taken by the "
                         + TRANS_TAKEN
                         + " variable");
-        TransitionDefinitions.translate(dashModel, tlaModel);
+        TransDefns.translate(dashModel, tlaModel);
 
         tlaModel.addComment("Small step definition");
-        SmallStepDefinition.translate(dashModel, tlaModel);
+        SmallStepDefn.translate(dashModel, tlaModel);
 
         tlaModel.addComment("type restrictions on variables");
-        TypeOKDefinitions.translate(dashModel, tlaModel);
+        TypeOKDefn.translate(dashModel, tlaModel);
 
         tlaModel.addComment("initial values for variables");
         InitDefinition.translate(dashModel, tlaModel);

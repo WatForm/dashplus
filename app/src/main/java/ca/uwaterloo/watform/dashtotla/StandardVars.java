@@ -1,13 +1,13 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import static ca.uwaterloo.watform.dashtotla.TranslationStrings.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
 
-class StandardVariables {
+class StandardVars {
 
     // this class adds standard variables that are part of every translation
 

@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
-public class StandardLibraries {
+public class StdLibDefns {
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         // FiniteSets is used for Cardinality and Integers

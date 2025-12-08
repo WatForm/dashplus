@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-class TranslationStrings {
+class DashToTlaStrings {
     // this class stores information about things that are common to every part of the translation
 
     public static final String QUALIFIER = DashStrings.SLASH;
