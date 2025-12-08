@@ -31,10 +31,10 @@ public class DashToTla {
         TypeOKDefn.translate(dashModel, tlaModel);
 
         tlaModel.addComment("initial values for variables");
-        InitDefinition.translate(dashModel, tlaModel);
+        InitDefn.translate(dashModel, tlaModel);
 
         tlaModel.addComment("Next relation");
-        NextDefinition.translate(dashModel, tlaModel);
+        NextDefn.translate(dashModel, tlaModel);
 
         return tlaModel;
     }

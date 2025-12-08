@@ -9,7 +9,7 @@ import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaAnd;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
-public class NextDefinition {
+public class NextDefn {
 
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
         // Next = small_step /\ typeOK

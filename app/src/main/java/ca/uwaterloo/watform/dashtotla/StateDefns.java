@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -9,7 +10,6 @@ import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
 import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,10 +37,7 @@ public class StateDefns {
 
     public static void depthSort(List<String> stateFQNs) {
         Collections.sort(
-                stateFQNs,
-                (a, b) ->
-                        GeneralUtil.occurrences(a, QUALIFIER)
-                                - GeneralUtil.occurrences(b, QUALIFIER));
+                stateFQNs, (a, b) -> occurrences(a, QUALIFIER) - occurrences(b, QUALIFIER));
     }
 
     public static void LeafStateDefinition(String stateFQN, TlaModel tlaModel) {
@@ -58,7 +55,7 @@ public class StateDefns {
         // <state-formula-name> = <child1-formula-name> union <child2-formula-name> ...
 
         List<TlaAppl> childStateFormulae =
-                GeneralUtil.mapBy(
+                mapBy(
                         AuxDashAccessors.getChildStateNames(stateFQN, dashModel),
                         x -> new TlaAppl(tlaFQN(x)));
 

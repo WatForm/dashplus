@@ -65,19 +65,19 @@ class DashToTlaStrings {
         return SPECIAL + dashFQN.replace(QUALIFIER, SPECIAL);
     }
 
-    public static String TakenTransFormulaName(String transitionFQN) {
+    public static String takenTransTlaFQN(String transitionFQN) {
         return TAKEN + tlaFQN(transitionFQN);
     }
 
-    public static String PreTransFormulaName(String transitionFQN) {
+    public static String preTransTlaFQN(String transitionFQN) {
         return PRE + tlaFQN(transitionFQN);
     }
 
-    public static String PostTransFormulaName(String transitionFQN) {
+    public static String postTransTlaFQN(String transitionFQN) {
         return POST + tlaFQN(transitionFQN);
     }
 
-    public static String EnabledTransFormulaName(String transitionFQN) {
+    public static String enabledTransTlaFQN(String transitionFQN) {
         return ENABLED + tlaFQN(transitionFQN);
     }
 

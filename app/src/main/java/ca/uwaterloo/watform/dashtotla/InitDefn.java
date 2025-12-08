@@ -13,7 +13,7 @@ import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
 
-public class InitDefinition {
+public class InitDefn {
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         // stable = TRUE

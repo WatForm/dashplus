@@ -25,7 +25,6 @@ class StandardVars {
         // _scopes_used - stores scopes (currently the same as leaf states), used to implement
         // big-step semantics
         // _stable - boolean variable, true if the current snapshot is stable
-        // _ct - used to implement stutter, since TLC has it's own stuttering that cannot be turned
-        // off, _ct is used to implement dash stuttering
+
     }
 }

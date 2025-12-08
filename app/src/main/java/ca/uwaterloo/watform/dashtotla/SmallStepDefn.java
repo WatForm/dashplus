@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -17,7 +18,6 @@ import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaUnchanged;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaNot;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaPrime;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,14 +29,12 @@ public class SmallStepDefn {
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(SOME_TRANSITION),
-                        repeatedOr(GeneralUtil.mapBy(transitions, t -> new TlaAppl(tlaFQN(t))))));
+                        repeatedOr(mapBy(transitions, t -> new TlaAppl(tlaFQN(t))))));
 
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(SOME_PRE_TRANSITION),
-                        repeatedOr(
-                                GeneralUtil.mapBy(
-                                        transitions, t -> new TlaAppl(PreTransFormulaName(t))))));
+                        repeatedOr(mapBy(transitions, t -> new TlaAppl(preTransTlaFQN(t))))));
 
         addStutter(tlaModel, dashModel);
 

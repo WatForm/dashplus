@@ -52,7 +52,7 @@ public class TypeOKDefn {
                         new TlaSet(
                                 GeneralUtil.mapBy(
                                         AuxDashAccessors.getTransitionNames(dashModel),
-                                        s -> new TlaAppl(TakenTransFormulaName(s))))));
+                                        s -> new TlaAppl(takenTransTlaFQN(s))))));
     }
 
     public static void typeScopesUsed(DashModel dashModel, TlaModel tlaModel) {
