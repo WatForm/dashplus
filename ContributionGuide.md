@@ -19,7 +19,9 @@ DashFile dashFile = (DashFile) parse(inPath);
 DashModel dashModel = (DashModel) ParserUtils.parseToModel(inPath);
 ```
 
-- The available accessor functions are listed in `DashAccessors.java`
+- The available accessor functions are listed in `DashAccessors.java`. Individual accessors are also listed in the various Table files. 
+- The accessors that depend on the resolution of information from multiple tables is listed in DashAccessors.java.
+- Computations on the DashAST is to be done by accessors, not in separate packages.
 - The FQN of an element consists of the location of the definition of the element in the .dsh file, separated using `/` (DashStrings.java)
 - It is expected to place all hard-coded strings in a file called `XStrings.java`, where X is the name of the feature being developed.
 - If a function with general use outside the feature is being written, it should be placed in GeneralUtils.java, with parameterized types
