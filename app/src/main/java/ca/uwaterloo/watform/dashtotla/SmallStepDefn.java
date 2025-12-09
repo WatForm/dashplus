@@ -9,14 +9,10 @@ import ca.uwaterloo.watform.tlaast.TlaDecl;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaAdd;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaAnd;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaIntLiteral;
 import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaUnchanged;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaNot;
-import ca.uwaterloo.watform.tlaast.tlaunops.TlaPrime;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
 import java.util.List;
@@ -49,11 +45,11 @@ public class SmallStepDefn {
     }
 
     public static void addStutter(TlaModel tlaModel, DashModel dashModel) {
-        // ct' = ct + 1
-        TlaExp ct_exp =
-                new TlaEquals(
-                        new TlaPrime(new TlaVar(CT)),
-                        new TlaAdd(new TlaVar(CT), new TlaIntLiteral(1)));
+        // // ct' = ct + 1
+        // TlaExp ct_exp =
+        //         new TlaEquals(
+        //                 new TlaPrime(new TlaVar(CT)),
+        //                 new TlaAdd(new TlaVar(CT), new TlaIntLiteral(1)));
 
         // UNCHANGED <<_conf,_stable,_scope_used>>
         TlaExp unchanged_exp =
@@ -62,7 +58,6 @@ public class SmallStepDefn {
                                 new TlaVar(CONF), new TlaVar(STABLE), new TlaVar(SCOPES_USED)));
 
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(STUTTER), repeatedAnd(Arrays.asList(ct_exp, unchanged_exp))));
+                new TlaDefn(new TlaDecl(STUTTER), repeatedAnd(Arrays.asList(unchanged_exp))));
     }
 }

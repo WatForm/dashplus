@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.dashtotla;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaAnd;
@@ -10,8 +12,6 @@ import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
 import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaSet;
 import java.util.ArrayList;
 import java.util.List;
-
-import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 class DashToTlaStrings {
     // this class stores information about things that are common to every part of the translation
@@ -35,7 +35,6 @@ class DashToTlaStrings {
     public static final String TRANS_TAKEN = SPECIAL + "trans" + SPECIAL + "taken";
     public static final String SCOPES_USED = SPECIAL + "scopes" + SPECIAL + "used";
     public static final String STABLE = SPECIAL + "stable";
-    public static final String CT = SPECIAL + "ct";
 
     // common formulae
     public static final String INIT = SPECIAL + "Init";
@@ -81,8 +80,6 @@ class DashToTlaStrings {
     public static String enabledTransTlaFQN(String transitionFQN) {
         return ENABLED + tlaFQN(transitionFQN);
     }
-
-    
 
     public static TlaExp repeatedUnion(List<? extends TlaExp> operands) {
         return foldRight(operands, TlaUnionSet::new, NULL_SET);

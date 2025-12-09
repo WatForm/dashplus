@@ -11,7 +11,6 @@ import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaInSet;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaSubsetEq;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaBoolean;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaIntSet;
 import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.GeneralUtil;
@@ -79,17 +78,12 @@ public class TypeOKDefn {
 
         TlaExp stable_exp = new TlaInSet(new TlaVar(STABLE), new TlaBoolean());
 
-        TlaExp ct_exp = new TlaInSet(new TlaVar(CT), new TlaIntSet());
+        // TlaExp ct_exp = new TlaInSet(new TlaVar(CT), new TlaIntSet());
 
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(TYPE_OK),
                         repeatedAnd(
-                                Arrays.asList(
-                                        conf_exp,
-                                        trans_taken_exp,
-                                        stable_exp,
-                                        scope_exp,
-                                        ct_exp))));
+                                Arrays.asList(conf_exp, trans_taken_exp, stable_exp, scope_exp))));
     }
 }

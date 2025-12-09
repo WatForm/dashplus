@@ -13,8 +13,8 @@ class StandardVars {
 
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        // VARIABLES _conf, _trans_taken, _scopes_used, _stable, _ct
-        Arrays.asList(CONF, TRANS_TAKEN, SCOPES_USED, STABLE, CT)
+        // VARIABLES _conf, _trans_taken, _scopes_used, _stable
+        Arrays.asList(CONF, TRANS_TAKEN, SCOPES_USED, STABLE)
                 .forEach(v -> tlaModel.addVariable(new TlaVar(v)));
 
         // this is subject to optimizations, and should remain its own function

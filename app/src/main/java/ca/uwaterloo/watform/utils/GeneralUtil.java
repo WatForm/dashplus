@@ -130,24 +130,20 @@ public class GeneralUtil {
 
     // https://en.wikipedia.org/wiki/Fold_(higher-order_function)#Linear_vs._tree-like_folds
     // f: S -> T -> T
-    public static <S, T> T foldRight(List<? extends S> items, BiFunction<S, T, T> f, T defaultVal)
-    {
-        if(items.size() == 0)return defaultVal;
+    public static <S, T> T foldRight(List<? extends S> items, BiFunction<S, T, T> f, T defaultVal) {
+        if (items.size() == 0) return defaultVal;
         int n = items.size();
-        T top = f.apply(items.get(n-1),defaultVal);
-        for(int i=n-2;i>=0;i--)
-            top = f.apply(items.get(i), top);
+        T top = f.apply(items.get(n - 1), defaultVal);
+        for (int i = n - 2; i >= 0; i--) top = f.apply(items.get(i), top);
         return defaultVal;
     }
 
     // f: T -> S -> T
-    public static <S, T> T foldLeft(List<? extends S> items, BiFunction<T, S, T> f, T defaultVal)
-    {
-        if(items.size() == 0)return defaultVal;
+    public static <S, T> T foldLeft(List<? extends S> items, BiFunction<T, S, T> f, T defaultVal) {
+        if (items.size() == 0) return defaultVal;
         int n = items.size();
-        T top = f.apply(defaultVal,items.get(0));
-        for(int i = 1 ; i<n;i++)
-            top = f.apply(top, items.get(i));
+        T top = f.apply(defaultVal, items.get(0));
+        for (int i = 1; i < n; i++) top = f.apply(top, items.get(i));
         return top;
     }
 
