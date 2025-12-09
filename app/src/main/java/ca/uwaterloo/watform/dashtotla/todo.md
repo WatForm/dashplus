@@ -16,8 +16,8 @@
 
 - translation: there exists working code in the translator to produce this
 - running: the produced code results in a runnable TLA+ model
-- output-test: the produced code is tested and produces correct output
-- code-test: unit tests written for the translator
+- integration tests: the produced code is tested and produces correct output
+- unit tests: unit tests written for the translator
 
 ## Core Dash
 
@@ -41,7 +41,7 @@
 |post-trans|scopes update|||||
 |enabled-trans|defining enabled-trans|||||
 |transition|combining pre and post|||||
-|nextIsstable|combining enabled|||||
+|nextIsStable|combining enabled|||||
 |Init|Defining initial values|||||
 |Init sync|Syncing config and module|||||
 |Init conf|defining initial value of conf|||||
