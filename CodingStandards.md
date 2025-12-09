@@ -6,6 +6,13 @@
 ## Abbreviations
 * Expressions --> expr
 * Type --> typ
+* Definition --> defn
+* Application --> appl
+* Declaration --> decl
+* Reference --> ref
+* Variable --> var
+* Fully Qualified Name --> FQN
+* Temporal Logic of Actions (TLA+) --> Tla
 
 ## Naming
 * Directory names: All lowercase and avoid underscores
