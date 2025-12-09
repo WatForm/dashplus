@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TransDefns {
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
