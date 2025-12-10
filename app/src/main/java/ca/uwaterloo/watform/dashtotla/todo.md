@@ -27,17 +27,17 @@
 |trans_taken|adding variable|✅||||
 |scopes_used|adding variable|✅||||
 |stable|adding variable|✅||||
-|events|adding variable|||||
+|events|adding variable|❕||||
 |state literals|constructing state hierarchy using sets of strings|✅||||
 |transition literals|values for trans_taken|✅||||
 |pre-trans|defining pre-tans|✅||||
 |pre-trans|pre-trans from states|||||
 |pre-trans|pre-trans on|||||
-|pre-trans|events clause|||||
+|pre-trans|events clause|❕||||
 |pre-trans|scopes clause|||||
 |post-trans|defining post-trans|✅||||
 |post-trans|handling stability|||||
-|post-trans|sending events|||||
+|post-trans|sending events|❕||||
 |post-trans|scopes update|||||
 |enabled-trans|defining enabled-trans|✅||||
 |transition|combining pre and post|✅||||
@@ -46,8 +46,8 @@
 |Init sync|Syncing config and module|✅||||
 |Init conf|defining initial value of conf|||||
 |Small step|combine trans, pre-trans and stutter|✅||||
-|Stutter|Defining stutter in TLA+|||||
-|Implementing stutter|implementing a stutter framework|||||
+|Stutter|Defining stutter in TLA+|✅||||
+|Implementing stutter|implementing a stutter framework|❔||||
 |stable|type definition|✅||||
 |conf|type definition|✅||||
 |scopes_used|type definition|✅||||
