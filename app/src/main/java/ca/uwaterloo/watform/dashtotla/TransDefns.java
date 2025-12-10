@@ -16,6 +16,7 @@ import ca.uwaterloo.watform.tlaast.tlabinops.TlaNotEq;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaNot;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,28 +26,28 @@ public class TransDefns {
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
         // taken_<trans-name> == "taken_<transFQN>"
-        transitions.forEach(x -> addTransitionTakenFormulae(x, tlaModel));
+        if (varNames.contains(TRANS_TAKEN)) transitions.forEach(x -> TransTakenDefn(x, tlaModel));
 
-        // _enabled_<transFQN> == <body>
-        tlaModel.addComment("parameterized formulae to check if transitions are enabled");
-        transitions.forEach(x -> addTransitionIsEnabledFormula(x, dashModel, tlaModel));
+        if (varNames.contains(STABLE) && varNames.contains(SCOPES_USED)) {
+            // _enabled_<transFQN> == <body>
+            tlaModel.addComment("parameterized formulae to check if transitions are enabled");
+            transitions.forEach(x -> TransIsEnabledDefn(x, dashModel, tlaModel));
 
-        tlaModel.addComment("negation of disjunction of enabled-formulae");
-        addNextIsStable(dashModel, tlaModel);
+            tlaModel.addComment("negation of disjunction of enabled-formulae");
+            NextIsStableDefn(dashModel, tlaModel);
+        }
 
         // pre, post, and body
         transitions.forEach(
                 transFQN -> {
                     tlaModel.addComment("Translation of transition " + transFQN);
-                    addTransitionCompleteFormula(transFQN, dashModel, tlaModel);
+                    TransDefn(transFQN, varNames, dashModel, tlaModel);
                 });
     }
 
-    public static void addTransitionTakenFormulae(String transitionFQN, TlaModel tlaModel) {
+    public static void TransTakenDefn(String transFQN, TlaModel tlaModel) {
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(takenTransTlaFQN(transitionFQN)),
-                        new TlaLiteral(transitionFQN)));
+                new TlaDefn(new TlaDecl(takenTransTlaFQN(transFQN)), new TlaLiteral(transFQN)));
     }
 
     public static List<TlaVar> isEnabledParams() {
@@ -56,7 +57,7 @@ public class TransDefns {
         return mapBy(parameters, v -> new TlaVar(parameterVariable(v)));
     }
 
-    public static void addNextIsStable(DashModel dashModel, TlaModel tlaModel) {
+    public static void NextIsStableDefn(DashModel dashModel, TlaModel tlaModel) {
 
         // _next_is_stable(args) = \/ enabled_after_step_ti(args) ...
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
@@ -73,10 +74,10 @@ public class TransDefns {
                                                                 isEnabledParams()))))));
     }
 
-    public static void addTransitionPreFormula(
-            String transitionFQN, DashModel dashModel, TlaModel tlaModel) {
+    public static void PreTransDefn(
+            String transFQN, List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
-        String sourceStateFQN = "standin"; // AuxiliaryDashAccessors.getSourceOfTrans(transitionFQN,
+        String sourceStateFQN = "stand-in"; // AuxiliaryDashAccessors.getSourceOfTrans(transFQN,
         // dashModel);  this doesn't work for whatever reason
         TlaExp conf_exp =
                 new TlaNotEq(
@@ -86,46 +87,46 @@ public class TransDefns {
 
         tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(preTransTlaFQN(transitionFQN)),
+                        new TlaDecl(preTransTlaFQN(transFQN)),
                         repeatedAnd(Arrays.asList(conf_exp))));
 
         // TODO add stuff
     }
 
-    public static void addTransitionPostFormula(
-            String transitionFQN, DashModel dashModel, TlaModel tlaModel) {
+    public static void PostTransDefn(
+            String transFQN, List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
         TlaExp taken =
-                new TlaEquals(
-                        new TlaVar(TRANS_TAKEN), new TlaAppl(takenTransTlaFQN(transitionFQN)));
+                new TlaEquals(new TlaVar(TRANS_TAKEN), new TlaAppl(takenTransTlaFQN(transFQN)));
+
+        List<TlaExp> expressions = new ArrayList<>();
+        expressions.add(taken);
+
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(postTransTlaFQN(transitionFQN)),
-                        repeatedAnd(Arrays.asList(taken))));
+                new TlaDefn(new TlaDecl(postTransTlaFQN(transFQN)), repeatedAnd(expressions)));
 
         // TODO add stuff
     }
 
-    public static void addTransitionIsEnabledFormula(
-            String transitionFQN, DashModel dashModel, TlaModel tlaModel) {
+    public static void TransIsEnabledDefn(String transFQN, DashModel dashModel, TlaModel tlaModel) {
         tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(enabledTransTlaFQN(transitionFQN), isEnabledParams()),
+                        new TlaDecl(enabledTransTlaFQN(transFQN), isEnabledParams()),
                         repeatedAnd(Arrays.asList())));
     }
 
-    public static void addTransitionCompleteFormula(
-            String transitionFQN, DashModel dashModel, TlaModel tlaModel) {
+    public static void TransDefn(
+            String transFQN, List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
-        addTransitionPreFormula(transitionFQN, dashModel, tlaModel);
-        addTransitionPostFormula(transitionFQN, dashModel, tlaModel);
+        PreTransDefn(transFQN, varNames, dashModel, tlaModel);
+        PostTransDefn(transFQN, varNames, dashModel, tlaModel);
 
         // body = pre /\ post
         tlaModel.addDefn(
                 new TlaDefn(
-                        new TlaDecl(tlaFQN(transitionFQN)),
+                        new TlaDecl(tlaFQN(transFQN)),
                         new TlaAnd(
-                                new TlaAppl(preTransTlaFQN(transitionFQN)),
-                                new TlaAppl(postTransTlaFQN(transitionFQN)))));
+                                new TlaAppl(preTransTlaFQN(transFQN)),
+                                new TlaAppl(postTransTlaFQN(transFQN)))));
     }
 }

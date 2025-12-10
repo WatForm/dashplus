@@ -8,7 +8,9 @@ import ca.uwaterloo.watform.tlaast.TlaDecl;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaInSet;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaSubsetEq;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaBoolean;
 import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaSet;
@@ -69,9 +71,13 @@ public class TypeOKDefn {
         // _conf \subseteq _all_conf
         TlaExp conf_exp = new TlaSubsetEq(new TlaVar(CONF), new TlaAppl(typeFormula(CONF)));
 
-        // _trans_taken \in _all_trans_taken
+        // _trans_taken \in _all_trans_taken \/ _trans_taken = {}
+        // _trans_taken = {} is for stutter
         TlaExp trans_taken_exp =
-                new TlaInSet(new TlaVar(TRANS_TAKEN), new TlaAppl(typeFormula(TRANS_TAKEN)));
+                new TlaOr(
+                        new TlaInSet(
+                                new TlaVar(TRANS_TAKEN), new TlaAppl(typeFormula(TRANS_TAKEN))),
+                        new TlaEquals(new TlaVar(TRANS_TAKEN), NULL_SET));
 
         // _scope_used \subseteq _all_scope_used
         TlaExp scope_exp =

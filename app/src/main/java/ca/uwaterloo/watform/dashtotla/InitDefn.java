@@ -12,7 +12,6 @@ import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class InitDefn {
@@ -40,15 +39,8 @@ public class InitDefn {
         if (varNames.contains(TRANS_TAKEN)) expressions.add(trans_taken_exp);
         if (varNames.contains(EVENTS)) expressions.add(events_exp);
 
-        tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(INIT),
-                        repeatedAnd(
-                                Arrays.asList(
-                                        conf_exp,
-                                        events_exp,
-                                        scopes_used_exp,
-                                        stable_exp,
-                                        trans_taken_exp))));
+        System.out.println(expressions);
+
+        tlaModel.addDefn(new TlaDefn(new TlaDecl(INIT), repeatedAnd(expressions)));
     }
 }

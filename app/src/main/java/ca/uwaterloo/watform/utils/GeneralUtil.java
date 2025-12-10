@@ -135,7 +135,7 @@ public class GeneralUtil {
         int n = items.size();
         T top = f.apply(items.get(n - 1), defaultVal);
         for (int i = n - 2; i >= 0; i--) top = f.apply(items.get(i), top);
-        return defaultVal;
+        return top;
     }
 
     // f: T -> S -> T
