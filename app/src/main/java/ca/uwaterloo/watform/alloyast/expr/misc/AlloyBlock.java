@@ -76,21 +76,21 @@ public final class AlloyBlock extends AlloyExpr {
     }
 
     @Override
-    public void pp(PPrinter pp) {
-        pp.append(LBRACE);
-        pp.brk();
+    public void pp(PrintContext pCtx) {
+        pCtx.append(LBRACE);
+        pCtx.brk();
 
         for (AlloyExpr alloyExpr : this.exprs) {
-            pp.begin();
-            alloyExpr.pp(pp);
-            pp.end();
+            pCtx.begin();
+            alloyExpr.pp(pCtx);
+            pCtx.end();
             if (alloyExpr == this.exprs.getLast()) {
-                pp.nlNoIndent();
+                pCtx.nlNoIndent();
             } else {
-                pp.nl();
+                pCtx.nl();
             }
         }
 
-        pp.append(RBRACE);
+        pCtx.append(RBRACE);
     }
 }

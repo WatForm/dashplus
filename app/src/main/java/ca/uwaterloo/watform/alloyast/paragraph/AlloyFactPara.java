@@ -71,7 +71,7 @@ public final class AlloyFactPara extends AlloyPara {
     }
 
     @Override
-    public void pp(PPrinter pp) {
+    public void pp(PrintContext pCtx) {
         String factName = "";
         if (!this.qname.isEmpty()) {
             factName = this.qname.get().toString() + " ";
@@ -79,7 +79,7 @@ public final class AlloyFactPara extends AlloyPara {
             factName = this.strLit.get().toString() + " ";
         }
 
-        pp.append(FACT + SPACE + factName);
-        this.block.pp(pp);
+        pCtx.append(FACT + SPACE + factName);
+        this.block.pp(pCtx);
     }
 }

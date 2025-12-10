@@ -14,7 +14,7 @@ import java.util.List;
 import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PPrinterTest {
+public class PrintContextTest {
     private static final AlloyQnameExpr shortAQname = new AlloyQnameExpr("A");
     private static final AlloyQnameExpr shortBQname = new AlloyQnameExpr("B");
     private static final AlloyQnameExpr shortCQname = new AlloyQnameExpr("C");
@@ -37,30 +37,30 @@ public class PPrinterTest {
                                         new AlloyBlock(
                                                 List.of(
                                                         new AlloyAndExpr(
-                                                                PPrinterTest.longAQname,
-                                                                PPrinterTest.longBQname),
+                                                                PrintContextTest.longAQname,
+                                                                PrintContextTest.longBQname),
                                                         new AlloyAndExpr(
-                                                                PPrinterTest.longAQname,
-                                                                PPrinterTest.longBQname),
+                                                                PrintContextTest.longAQname,
+                                                                PrintContextTest.longBQname),
                                                         new AlloyAndExpr(
-                                                                PPrinterTest.longAQname,
-                                                                PPrinterTest.longBQname),
+                                                                PrintContextTest.longAQname,
+                                                                PrintContextTest.longBQname),
                                                         new AlloyBlock(
                                                                 List.of(
                                                                         new AlloyAndExpr(
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longAQname,
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longBQname),
                                                                         new AlloyAndExpr(
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longAQname,
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longBQname),
                                                                         new AlloyAndExpr(
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longAQname,
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longBQname))))))));
         System.out.println(alloyFile.toPrettyString(40, 4));
     }
@@ -77,30 +77,30 @@ public class PPrinterTest {
                                         new AlloyBlock(
                                                 List.of(
                                                         new AlloyAndExpr(
-                                                                PPrinterTest.longAQname,
-                                                                PPrinterTest.longBQname),
+                                                                PrintContextTest.longAQname,
+                                                                PrintContextTest.longBQname),
                                                         new AlloyAndExpr(
-                                                                PPrinterTest.longAQname,
-                                                                PPrinterTest.longBQname),
+                                                                PrintContextTest.longAQname,
+                                                                PrintContextTest.longBQname),
                                                         new AlloyAndExpr(
-                                                                PPrinterTest.longAQname,
-                                                                PPrinterTest.longBQname),
+                                                                PrintContextTest.longAQname,
+                                                                PrintContextTest.longBQname),
                                                         new AlloyBlock(
                                                                 List.of(
                                                                         new AlloyAndExpr(
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longAQname,
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longBQname),
                                                                         new AlloyAndExpr(
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longAQname,
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longBQname),
                                                                         new AlloyAndExpr(
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longAQname,
-                                                                                PPrinterTest
+                                                                                PrintContextTest
                                                                                         .longBQname))))))));
         System.out.println(alloyFile.toPrettyString(10, 4));
     }
@@ -116,9 +116,10 @@ public class PPrinterTest {
                                         new AlloyQnameExpr("name"),
                                         new AlloyBlock(
                                                 List.of(
-                                                        new AlloyPrimeExpr(PPrinterTest.longAQname),
+                                                        new AlloyPrimeExpr(
+                                                                PrintContextTest.longAQname),
                                                         new AlloyCardExpr(
-                                                                PPrinterTest.longAQname))))));
+                                                                PrintContextTest.longAQname))))));
         System.out.println(alloyFile.toPrettyString(10, 4));
     }
 
@@ -134,18 +135,43 @@ public class PPrinterTest {
                                         new AlloyBlock(
                                                 List.of(
                                                         new AlloyBracketExpr(
-                                                                PPrinterTest.shortAQname,
+                                                                PrintContextTest.shortAQname,
                                                                 List.of(
-                                                                        PPrinterTest.shortBQname,
-                                                                        PPrinterTest.shortCQname,
-                                                                        PPrinterTest.shortDQname)),
+                                                                        PrintContextTest
+                                                                                .shortBQname,
+                                                                        PrintContextTest
+                                                                                .shortCQname,
+                                                                        PrintContextTest
+                                                                                .shortDQname)),
                                                         new AlloyBracketExpr(
-                                                                PPrinterTest.longAQname,
+                                                                PrintContextTest.longAQname,
                                                                 List.of(
-                                                                        PPrinterTest.longBQname,
-                                                                        PPrinterTest.longCQname,
-                                                                        PPrinterTest
+                                                                        PrintContextTest.longBQname,
+                                                                        PrintContextTest.longCQname,
+                                                                        PrintContextTest
                                                                                 .longDQname)))))));
         System.out.println(alloyFile.toPrettyString(20, 4));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("AlloyIteExpr")
+    public void test5() {
+        AlloyFile alloyFile =
+                new AlloyFile(
+                        List.of(
+                                new AlloyFactPara(
+                                        new AlloyQnameExpr("name"),
+                                        new AlloyBlock(
+                                                List.of(
+                                                        new AlloyIteExpr(
+                                                                PrintContextTest.shortAQname,
+                                                                PrintContextTest.shortBQname,
+                                                                PrintContextTest.shortCQname),
+                                                        new AlloyIteExpr(
+                                                                PrintContextTest.longAQname,
+                                                                PrintContextTest.longBQname,
+                                                                PrintContextTest.longCQname))))));
+        System.out.println(alloyFile.toPrettyString(30, 4));
     }
 }

@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
@@ -28,14 +29,31 @@ public final class AlloyIteExpr extends AlloyExpr {
     @Override
     public void toString(StringBuilder sb, int indent) {
         this.cond.toString(sb, indent);
-        sb.append(AlloyStrings.SPACE);
-        sb.append(AlloyStrings.RFATARROW);
-        sb.append(AlloyStrings.SPACE);
+        sb.append(SPACE);
+        sb.append(RFATARROW);
+        sb.append(SPACE);
         this.conseq.toString(sb, indent);
-        sb.append(AlloyStrings.SPACE);
-        sb.append(AlloyStrings.ELSE);
-        sb.append(AlloyStrings.SPACE);
+        sb.append(SPACE);
+        sb.append(ELSE);
+        sb.append(SPACE);
         this.alt.toString(sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        this.cond.pp(pCtx);
+        pCtx.brk();
+
+        pCtx.align();
+
+        pCtx.append(IMPLIES + SPACE);
+        this.conseq.pp(pCtx);
+        pCtx.brk();
+
+        pCtx.append(ELSE + SPACE);
+        this.alt.pp(pCtx);
+
+        pCtx.end();
     }
 
     @Override

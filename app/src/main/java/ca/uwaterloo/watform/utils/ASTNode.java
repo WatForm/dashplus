@@ -29,30 +29,30 @@ public abstract class ASTNode {
         return sb.toString();
     }
 
-    public void pp(PPrinter pp) {}
+    public void pp(PrintContext pCtx) {}
 
     // this is to replace toString later,
     // but for the sake of getting changes compiling,
     // it's its separate method for now
     public String toPrettyString() {
         StringWriter sw = new StringWriter();
-        PPrinter pp = new PPrinter(sw);
-        this.ppWrapper(pp);
+        PrintContext pCtx = new PrintContext(sw);
+        this.ppWrapper(pCtx);
         return sw.toString();
     }
 
     public String toPrettyString(int lineWidth, int indentSize) {
         StringWriter sw = new StringWriter();
-        PPrinter pp = new PPrinter(sw, lineWidth, indentSize);
-        this.ppWrapper(pp);
+        PrintContext pCtx = new PrintContext(sw, lineWidth, indentSize);
+        this.ppWrapper(pCtx);
         return sw.toString();
     }
 
-    private void ppWrapper(PPrinter pp) {
-        pp.begin();
-        this.pp(pp);
-        pp.end();
-        pp.flush();
+    private void ppWrapper(PrintContext pCtx) {
+        pCtx.begin();
+        this.pp(pCtx);
+        pCtx.end();
+        pCtx.flush();
     }
 
     public abstract void toString(StringBuilder sb, int indent);

@@ -62,8 +62,8 @@ public abstract class AlloyUnaryExpr extends AlloyExpr {
     }
 
     @Override
-    public void pp(PPrinter pp) {
-        pp.append(op);
-        this.sub.pp(pp);
+    public void pp(PrintContext pCtx) {
+        pCtx.append(op);
+        this.sub.pp(pCtx);
     }
 }

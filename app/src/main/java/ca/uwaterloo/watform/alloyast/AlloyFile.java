@@ -58,10 +58,10 @@ public class AlloyFile extends AlloyASTNode {
     }
 
     @Override
-    public void pp(PPrinter pp) {
+    public void pp(PrintContext pCtx) {
         for (AlloyPara p : this.paras) {
-            p.pp(pp);
-            pp.blankLine();
+            p.pp(pCtx);
+            pCtx.blankLine();
         }
     }
 }

@@ -76,11 +76,11 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
     }
 
     @Override
-    public void pp(PPrinter pp) {
-        this.left.pp(pp);
-        pp.brk();
-        pp.append(this.op);
-        pp.brk();
-        this.right.pp(pp);
+    public void pp(PrintContext pCtx) {
+        this.left.pp(pCtx);
+        pCtx.brk();
+        pCtx.append(this.op);
+        pCtx.brk();
+        this.right.pp(pCtx);
     }
 }
