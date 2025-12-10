@@ -1,14 +1,15 @@
 package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaDecl;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
@@ -30,7 +31,14 @@ public class InitDefn {
         TlaExp events_exp = new TlaEquals(new TlaVar(EVENTS), NULL_SET);
 
         // conf = {<initial states>}
-        TlaExp conf_exp = new TlaEquals(new TlaVar(CONF), new TlaLiteral("placeholder"));
+
+        TlaExp conf_exp =
+                new TlaEquals(
+                        new TlaVar(CONF),
+                        repeatedUnion(
+                                mapBy(
+                                        AuxDashAccessors.initialEntered(dashModel),
+                                        sFQN -> new TlaAppl(tlaFQN(sFQN)))));
 
         List<TlaExp> expressions = new ArrayList<>();
         if (varNames.contains(CONF)) expressions.add(conf_exp);
@@ -38,8 +46,6 @@ public class InitDefn {
         if (varNames.contains(STABLE)) expressions.add(stable_exp);
         if (varNames.contains(TRANS_TAKEN)) expressions.add(trans_taken_exp);
         if (varNames.contains(EVENTS)) expressions.add(events_exp);
-
-        System.out.println(expressions);
 
         tlaModel.addDefn(new TlaDefn(new TlaDecl(INIT), repeatedAnd(expressions)));
     }

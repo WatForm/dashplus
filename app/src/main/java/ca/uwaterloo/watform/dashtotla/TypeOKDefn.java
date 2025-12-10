@@ -13,7 +13,7 @@ import ca.uwaterloo.watform.tlaast.tlabinops.TlaInSet;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaSubsetEq;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaBoolean;
-import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaSet;
+import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.ArrayList;

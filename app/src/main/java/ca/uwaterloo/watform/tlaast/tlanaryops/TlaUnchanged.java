@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.tlaast.tlaplusnaryops;
+package ca.uwaterloo.watform.tlaast.tlanaryops;
 
 import ca.uwaterloo.watform.tlaast.*;
 import java.util.List;

@@ -8,7 +8,7 @@ import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaDecl;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
-import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaSet;
+import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
 import java.util.Collections;

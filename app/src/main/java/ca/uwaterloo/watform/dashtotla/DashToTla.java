@@ -28,7 +28,7 @@ public class DashToTla {
         TransDefns.translate(varNames, dashModel, tlaModel);
 
         tlaModel.addComment("Small step definition");
-        SmallStepDefn.translate(dashModel, tlaModel);
+        SmallStepDefn.translate(varNames, dashModel, tlaModel);
 
         tlaModel.addComment("type restrictions on variables");
         TypeOKDefn.translate(varNames, dashModel, tlaModel);

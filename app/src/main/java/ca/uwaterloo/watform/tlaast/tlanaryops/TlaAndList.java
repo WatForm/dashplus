@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.tlaast.tlaplusnaryops;
+package ca.uwaterloo.watform.tlaast.tlanaryops;
 
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
@@ -7,6 +7,6 @@ import java.util.List;
 
 public class TlaAndList extends TlaNaryOp {
     public TlaAndList(List<? extends TlaExp> children) {
-        super("", "", TlaStrings.AND, children, TlaOperator.PrecedenceGroup.AND_LIST);
+        super("", "", TlaStrings.AND, children, TlaOperator.PrecedenceGroup.UNSAFE);
     }
 }

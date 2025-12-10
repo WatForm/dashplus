@@ -10,15 +10,17 @@ import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaAnd;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
-import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaUnchanged;
+import ca.uwaterloo.watform.tlaast.tlanaryops.TlaUnchanged;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaNot;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class SmallStepDefn {
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
@@ -32,7 +34,7 @@ public class SmallStepDefn {
                         new TlaDecl(SOME_PRE_TRANSITION),
                         repeatedOr(mapBy(transitions, t -> new TlaAppl(preTransTlaFQN(t))))));
 
-        addStutter(tlaModel, dashModel);
+        StutterDefn(varNames, tlaModel, dashModel);
 
         tlaModel.addDefn(
                 new TlaDefn(
@@ -44,20 +46,21 @@ public class SmallStepDefn {
                                         new TlaNot(new TlaDecl(SOME_PRE_TRANSITION))))));
     }
 
-    public static void addStutter(TlaModel tlaModel, DashModel dashModel) {
-        // // ct' = ct + 1
-        // TlaExp ct_exp =
-        //         new TlaEquals(
-        //                 new TlaPrime(new TlaVar(CT)),
-        //                 new TlaAdd(new TlaVar(CT), new TlaIntLiteral(1)));
+    public static void StutterDefn(List<String> varNames, TlaModel tlaModel, DashModel dashModel) {
+
+        List<String> unchangedVars =
+                filterBy(Arrays.asList(CONF, STABLE, SCOPES_USED), v -> varNames.contains(v));
 
         // UNCHANGED <<_conf,_stable,_scope_used>>
-        TlaExp unchanged_exp =
-                new TlaUnchanged(
-                        Arrays.asList(
-                                new TlaVar(CONF), new TlaVar(STABLE), new TlaVar(SCOPES_USED)));
+        TlaExp unchanged_exp = new TlaUnchanged(mapBy(unchangedVars, v -> new TlaVar(v)));
 
-        tlaModel.addDefn(
-                new TlaDefn(new TlaDecl(STUTTER), repeatedAnd(Arrays.asList(unchanged_exp))));
+        // _trans_taken = {}
+        TlaExp trans_taken_exp = new TlaEquals(new TlaVar(TRANS_TAKEN), NULL_SET);
+
+        List<TlaExp> expressions = new ArrayList<>();
+        if (varNames.contains(TRANS_TAKEN)) expressions.add(trans_taken_exp);
+        if (unchangedVars.size() != 0) expressions.add(unchanged_exp);
+
+        tlaModel.addDefn(new TlaDefn(new TlaDecl(STUTTER), repeatedAnd(expressions)));
     }
 }
