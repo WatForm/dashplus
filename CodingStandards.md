@@ -4,7 +4,7 @@
 * all attributes of AST nodes should be final
 
 ## Abbreviations
-* Expression --> expr
+* Expression --> expr/exp
 * Type --> typ
 * Definition --> defn
 * Application --> appl

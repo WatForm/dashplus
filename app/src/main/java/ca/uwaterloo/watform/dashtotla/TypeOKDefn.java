@@ -1,18 +1,11 @@
 package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaDecl;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaVar;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaInSet;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaSubsetEq;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaBoolean;
-import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +30,9 @@ public class TypeOKDefn {
         List<String> leafStateFQNs = AuxDashAccessors.getLeafStateNames(dashModel);
 
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(typeFormula(CONF)),
-                        repeatedUnion(mapBy(leafStateFQNs, x -> new TlaAppl(tlaFQN(x))))));
+                TlaDefn(
+                        TlaDecl(typeFormula(CONF)),
+                        repeatedUnion(mapBy(leafStateFQNs, x -> TlaAppl(tlaFQN(x))))));
     }
 
     public static void typeTransTaken(DashModel dashModel, TlaModel tlaModel) {
@@ -50,16 +43,15 @@ public class TypeOKDefn {
         transTakenNames.add((NONE_TRANSITION));
 
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(typeFormula(TRANS_TAKEN)),
-                        new TlaSet(mapBy(transTakenNames, x -> new TlaAppl(x)))));
+                TlaDefn(
+                        TlaDecl(typeFormula(TRANS_TAKEN)),
+                        TlaSet(mapBy(transTakenNames, x -> TlaAppl(x)))));
     }
 
     public static void typeScopesUsed(DashModel dashModel, TlaModel tlaModel) {
 
         // _all_scopes_used == _all_conf
-        tlaModel.addDefn(
-                new TlaDefn(new TlaDecl(typeFormula(SCOPES_USED)), new TlaDecl(typeFormula(CONF))));
+        tlaModel.addDefn(TlaDefn(TlaDecl(typeFormula(SCOPES_USED)), TlaDecl(typeFormula(CONF))));
 
         // this may be subject to change later
     }
@@ -67,18 +59,16 @@ public class TypeOKDefn {
     public static void TypeOK(List<String> varNames, TlaModel tlaModel) {
 
         // _conf \subseteq _all_conf
-        TlaExp conf_exp = new TlaSubsetEq(new TlaVar(CONF), new TlaAppl(typeFormula(CONF)));
+        TlaExp conf_exp = TlaSubsetEq(TlaVar(CONF), TlaAppl(typeFormula(CONF)));
 
         // _trans_taken \in _all_trans_taken
-        TlaExp trans_taken_exp =
-                new TlaInSet(new TlaVar(TRANS_TAKEN), new TlaAppl(typeFormula(TRANS_TAKEN)));
+        TlaExp trans_taken_exp = TlaInSet(TlaVar(TRANS_TAKEN), TlaAppl(typeFormula(TRANS_TAKEN)));
 
         // _scope_used \subseteq _all_scope_used
-        TlaExp scope_exp =
-                new TlaSubsetEq(new TlaVar(SCOPES_USED), new TlaAppl(typeFormula(SCOPES_USED)));
+        TlaExp scope_exp = TlaSubsetEq(TlaVar(SCOPES_USED), TlaAppl(typeFormula(SCOPES_USED)));
 
         // _stable \in BOOLEAN
-        TlaExp stable_exp = new TlaInSet(new TlaVar(STABLE), new TlaBoolean());
+        TlaExp stable_exp = TlaInSet(TlaVar(STABLE), TlaBoolean());
 
         List<TlaExp> expressions = new ArrayList<>();
         if (varNames.contains(CONF)) expressions.add(conf_exp);
@@ -86,6 +76,6 @@ public class TypeOKDefn {
         if (varNames.contains(SCOPES_USED)) expressions.add(scope_exp);
         if (varNames.contains(TRANS_TAKEN)) expressions.add(trans_taken_exp);
 
-        tlaModel.addDefn(new TlaDefn(new TlaDecl(TYPE_OK), repeatedAnd(expressions)));
+        tlaModel.addDefn(TlaDefn(TlaDecl(TYPE_OK), repeatedAnd(expressions)));
     }
 }

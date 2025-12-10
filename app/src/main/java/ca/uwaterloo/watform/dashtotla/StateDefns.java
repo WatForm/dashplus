@@ -1,14 +1,11 @@
 package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaDecl;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
-import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,9 +42,9 @@ public class StateDefns {
 
         // <state-formula-name> == {"<state FQN>"}
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(tlaFQN(stateFQN)),
-                        new TlaSet(Arrays.asList(new TlaStringLiteral(stateFQN)))));
+                TlaDefn(
+                        TlaDecl(tlaFQN(stateFQN)),
+                        TlaSet(Arrays.asList(TlaStringLiteral(stateFQN)))));
     }
 
     public static void nonLeafStateDefinition(
@@ -58,9 +55,8 @@ public class StateDefns {
         List<TlaAppl> childStateFormulae =
                 mapBy(
                         AuxDashAccessors.getChildStateNames(stateFQN, dashModel),
-                        x -> new TlaAppl(tlaFQN(x)));
+                        x -> TlaAppl(tlaFQN(x)));
 
-        tlaModel.addDefn(
-                new TlaDefn(new TlaDecl(tlaFQN(stateFQN)), repeatedUnion(childStateFormulae)));
+        tlaModel.addDefn(TlaDefn(TlaDecl(tlaFQN(stateFQN)), repeatedUnion(childStateFormulae)));
     }
 }

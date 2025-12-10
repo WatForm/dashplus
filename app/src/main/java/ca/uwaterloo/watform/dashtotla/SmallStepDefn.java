@@ -25,7 +25,7 @@ public class SmallStepDefn {
 
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
-        // _some_transition = 
+        // _some_transition =
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(SOME_TRANSITION),
