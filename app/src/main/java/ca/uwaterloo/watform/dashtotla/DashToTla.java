@@ -15,8 +15,6 @@ public class DashToTla {
         StdLibDefns.translate(dashModel, tlaModel);
         List<String> varNames = StandardVars.translate(dashModel, tlaModel);
 
-        System.out.println(varNames);
-
         tlaModel.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants");
         StateDefns.translate(varNames, dashModel, tlaModel);

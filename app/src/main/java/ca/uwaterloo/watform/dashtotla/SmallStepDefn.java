@@ -25,6 +25,7 @@ public class SmallStepDefn {
 
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
+        // _some_transition = 
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(SOME_TRANSITION),
@@ -53,15 +54,15 @@ public class SmallStepDefn {
                 filterBy(Arrays.asList(CONF, STABLE, SCOPES_USED), v -> varNames.contains(v));
 
         // UNCHANGED <<_conf,_stable,_scope_used>>
-        TlaExp unchanged_exp = new TlaUnchanged(mapBy(unchangedVars, v -> new TlaVar(v)));
+        TlaExp unchangedExp = new TlaUnchanged(mapBy(unchangedVars, v -> new TlaVar(v)));
 
         // _trans_taken' = _none_transition
-        TlaExp trans_taken_exp =
+        TlaExp transTakenExp =
                 new TlaEquals(new TlaPrime(new TlaVar(TRANS_TAKEN)), new TlaAppl(NONE_TRANSITION));
 
         List<TlaExp> expressions = new ArrayList<>();
-        if (varNames.contains(TRANS_TAKEN)) expressions.add(trans_taken_exp);
-        if (unchangedVars.size() != 0) expressions.add(unchanged_exp);
+        if (varNames.contains(TRANS_TAKEN)) expressions.add(transTakenExp);
+        if (unchangedVars.size() != 0) expressions.add(unchangedExp);
 
         tlaModel.addDefn(new TlaDefn(new TlaDecl(STUTTER), repeatedAnd(expressions)));
     }

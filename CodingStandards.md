@@ -4,15 +4,21 @@
 * all attributes of AST nodes should be final
 
 ## Abbreviations
-* Expressions --> expr
+* Expression --> expr
 * Type --> typ
 * Definition --> defn
 * Application --> appl
 * Declaration --> decl
 * Reference --> ref
 * Variable --> var
+* Visitor --> vis 
 * Fully Qualified Name --> FQN
 * Temporal Logic of Actions (TLA+) --> Tla
+* Ancestor --> ances
+* --> asn
+* --> iter
+
+Use the abbreviated form everywhere in the code, to keep names short and readable. If a new abbreviation is added, update this list.
 
 ## Naming
 * Directory names: All lowercase and avoid underscores

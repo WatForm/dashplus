@@ -19,21 +19,21 @@ public class InitDefn {
     public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
         // stable = TRUE
-        TlaExp stable_exp = new TlaEquals(new TlaVar(STABLE), new TlaTrue());
+        TlaExp stableExp = new TlaEquals(new TlaVar(STABLE), new TlaTrue());
 
         // trans_taken = {}
-        TlaExp trans_taken_exp =
+        TlaExp transTakenExp =
                 new TlaEquals(new TlaVar(TRANS_TAKEN), new TlaAppl(NONE_TRANSITION));
 
         // scopes_used = {}
-        TlaExp scopes_used_exp = new TlaEquals(new TlaVar(SCOPES_USED), NULL_SET);
+        TlaExp scopesUsedExp = new TlaEquals(new TlaVar(SCOPES_USED), NULL_SET);
 
         // events = {}
-        TlaExp events_exp = new TlaEquals(new TlaVar(EVENTS), NULL_SET);
+        TlaExp eventsExp = new TlaEquals(new TlaVar(EVENTS), NULL_SET);
 
         // conf = {<initial states>}
 
-        TlaExp conf_exp =
+        TlaExp confExp =
                 new TlaEquals(
                         new TlaVar(CONF),
                         repeatedUnion(
@@ -42,11 +42,11 @@ public class InitDefn {
                                         sFQN -> new TlaAppl(tlaFQN(sFQN)))));
 
         List<TlaExp> expressions = new ArrayList<>();
-        if (varNames.contains(CONF)) expressions.add(conf_exp);
-        if (varNames.contains(SCOPES_USED)) expressions.add(scopes_used_exp);
-        if (varNames.contains(STABLE)) expressions.add(stable_exp);
-        if (varNames.contains(TRANS_TAKEN)) expressions.add(trans_taken_exp);
-        if (varNames.contains(EVENTS)) expressions.add(events_exp);
+        if (varNames.contains(CONF)) expressions.add(confExp);
+        if (varNames.contains(SCOPES_USED)) expressions.add(scopesUsedExp);
+        if (varNames.contains(STABLE)) expressions.add(stableExp);
+        if (varNames.contains(TRANS_TAKEN)) expressions.add(transTakenExp);
+        if (varNames.contains(EVENTS)) expressions.add(eventsExp);
 
         tlaModel.addDefn(new TlaDefn(new TlaDecl(INIT), repeatedAnd(expressions)));
     }
