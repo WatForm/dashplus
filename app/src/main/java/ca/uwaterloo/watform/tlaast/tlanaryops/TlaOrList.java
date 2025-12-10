@@ -7,6 +7,11 @@ import java.util.List;
 
 public class TlaOrList extends TlaNaryOp {
     public TlaOrList(List<? extends TlaExp> children) {
-        super("", "", TlaStrings.OR, children, TlaOperator.PrecedenceGroup.UNSAFE);
+        super(
+                "",
+                "",
+                TlaStrings.SPACE + TlaStrings.OR + TlaStrings.SPACE,
+                children,
+                TlaOperator.PrecedenceGroup.UNSAFE);
     }
 }

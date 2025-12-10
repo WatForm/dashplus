@@ -7,7 +7,7 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaDecl;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
+import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ public class StateDefns {
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(tlaFQN(stateFQN)),
-                        new TlaSet(Arrays.asList(new TlaLiteral(stateFQN)))));
+                        new TlaSet(Arrays.asList(new TlaStringLiteral(stateFQN)))));
     }
 
     public static void nonLeafStateDefinition(

@@ -47,6 +47,9 @@ class DashToTlaStrings {
             SPECIAL + "some" + PRE + SPECIAL + "transition";
     public static final String NEXT_IS_STABLE =
             SPECIAL + "next" + SPECIAL + "is" + SPECIAL + "stable";
+    public static final String NONE_TRANSITION = SPECIAL + "none" + SPECIAL + "transition";
+
+    public static final String NONE_TRANSITION_LITERAL = "[none]";
 
     public static final String ARG = SPECIAL + "arg"; // used as a prefix for parameter variables
     public static final String ALL = SPECIAL + "all"; // used as a prefix for type formulae

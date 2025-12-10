@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -8,14 +9,11 @@ import ca.uwaterloo.watform.tlaast.TlaDecl;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaInSet;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaSubsetEq;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaBoolean;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,20 +39,20 @@ public class TypeOKDefn {
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(typeFormula(CONF)),
-                        repeatedUnion(
-                                GeneralUtil.mapBy(leafStateFQNs, x -> new TlaAppl(tlaFQN(x))))));
+                        repeatedUnion(mapBy(leafStateFQNs, x -> new TlaAppl(tlaFQN(x))))));
     }
 
     public static void typeTransTaken(DashModel dashModel, TlaModel tlaModel) {
 
-        // _all_trans_taken == {_taken_<ti>,...}
+        // _all_trans_taken == {_taken_<ti>,...,_none_transition}
+        List<String> transTakenNames =
+                mapBy(AuxDashAccessors.getTransitionNames(dashModel), x -> takenTransTlaFQN(x));
+        transTakenNames.add((NONE_TRANSITION));
+
         tlaModel.addDefn(
                 new TlaDefn(
                         new TlaDecl(typeFormula(TRANS_TAKEN)),
-                        new TlaSet(
-                                GeneralUtil.mapBy(
-                                        AuxDashAccessors.getTransitionNames(dashModel),
-                                        s -> new TlaAppl(takenTransTlaFQN(s))))));
+                        new TlaSet(mapBy(transTakenNames, x -> new TlaAppl(x)))));
     }
 
     public static void typeScopesUsed(DashModel dashModel, TlaModel tlaModel) {
@@ -71,13 +69,9 @@ public class TypeOKDefn {
         // _conf \subseteq _all_conf
         TlaExp conf_exp = new TlaSubsetEq(new TlaVar(CONF), new TlaAppl(typeFormula(CONF)));
 
-        // _trans_taken \in _all_trans_taken \/ _trans_taken = {}
-        // _trans_taken = {} is for stutter
+        // _trans_taken \in _all_trans_taken
         TlaExp trans_taken_exp =
-                new TlaOr(
-                        new TlaInSet(
-                                new TlaVar(TRANS_TAKEN), new TlaAppl(typeFormula(TRANS_TAKEN))),
-                        new TlaEquals(new TlaVar(TRANS_TAKEN), NULL_SET));
+                new TlaInSet(new TlaVar(TRANS_TAKEN), new TlaAppl(typeFormula(TRANS_TAKEN)));
 
         // _scope_used \subseteq _all_scope_used
         TlaExp scope_exp =

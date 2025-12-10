@@ -14,6 +14,7 @@ import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaUnchanged;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaNot;
+import ca.uwaterloo.watform.tlaast.tlaunops.TlaPrime;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,8 +55,9 @@ public class SmallStepDefn {
         // UNCHANGED <<_conf,_stable,_scope_used>>
         TlaExp unchanged_exp = new TlaUnchanged(mapBy(unchangedVars, v -> new TlaVar(v)));
 
-        // _trans_taken = {}
-        TlaExp trans_taken_exp = new TlaEquals(new TlaVar(TRANS_TAKEN), NULL_SET);
+        // _trans_taken' = _none_transition
+        TlaExp trans_taken_exp =
+                new TlaEquals(new TlaPrime(new TlaVar(TRANS_TAKEN)), new TlaAppl(NONE_TRANSITION));
 
         List<TlaExp> expressions = new ArrayList<>();
         if (varNames.contains(TRANS_TAKEN)) expressions.add(trans_taken_exp);

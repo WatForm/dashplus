@@ -22,7 +22,8 @@ public class InitDefn {
         TlaExp stable_exp = new TlaEquals(new TlaVar(STABLE), new TlaTrue());
 
         // trans_taken = {}
-        TlaExp trans_taken_exp = new TlaEquals(new TlaVar(TRANS_TAKEN), NULL_SET);
+        TlaExp trans_taken_exp =
+                new TlaEquals(new TlaVar(TRANS_TAKEN), new TlaAppl(NONE_TRANSITION));
 
         // scopes_used = {}
         TlaExp scopes_used_exp = new TlaEquals(new TlaVar(SCOPES_USED), NULL_SET);

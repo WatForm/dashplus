@@ -11,9 +11,7 @@ import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaAnd;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaIntersectionSet;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaNotEq;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
+import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaNot;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
@@ -26,7 +24,15 @@ public class TransDefns {
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
         // taken_<trans-name> == "taken_<transFQN>"
-        if (varNames.contains(TRANS_TAKEN)) transitions.forEach(x -> TransTakenDefn(x, tlaModel));
+        if (varNames.contains(TRANS_TAKEN)) {
+            transitions.forEach(x -> TransTakenDefn(x, tlaModel));
+
+            // _none_transition = "[none]"
+            tlaModel.addDefn(
+                    new TlaDefn(
+                            new TlaDecl(NONE_TRANSITION),
+                            new TlaStringLiteral(NONE_TRANSITION_LITERAL)));
+        }
 
         if (varNames.contains(STABLE) && varNames.contains(SCOPES_USED)) {
             // _enabled_<transFQN> == <body>
@@ -47,7 +53,8 @@ public class TransDefns {
 
     public static void TransTakenDefn(String transFQN, TlaModel tlaModel) {
         tlaModel.addDefn(
-                new TlaDefn(new TlaDecl(takenTransTlaFQN(transFQN)), new TlaLiteral(transFQN)));
+                new TlaDefn(
+                        new TlaDecl(takenTransTlaFQN(transFQN)), new TlaStringLiteral(transFQN)));
     }
 
     public static List<TlaVar> isEnabledParams() {
@@ -77,18 +84,18 @@ public class TransDefns {
     public static void PreTransDefn(
             String transFQN, List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
-        String sourceStateFQN = "stand-in"; // AuxiliaryDashAccessors.getSourceOfTrans(transFQN,
+        // String sourceStateFQN = "stand-in"; // AuxiliaryDashAccessors.getSourceOfTrans(transFQN,
         // dashModel);  this doesn't work for whatever reason
-        TlaExp conf_exp =
-                new TlaNotEq(
-                        new TlaIntersectionSet(
-                                new TlaVar(CONF), new TlaAppl(tlaFQN(sourceStateFQN))),
-                        NULL_SET);
+        // TlaExp conf_exp =
+        //         new TlaNotEq(
+        //                 new TlaIntersectionSet(
+        //                         new TlaVar(CONF), new TlaAppl(tlaFQN(sourceStateFQN))),
+        //                 NULL_SET);
+
+        List<TlaExp> expressions = new ArrayList<>();
 
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(preTransTlaFQN(transFQN)),
-                        repeatedAnd(Arrays.asList(conf_exp))));
+                new TlaDefn(new TlaDecl(preTransTlaFQN(transFQN)), repeatedAnd(expressions)));
 
         // TODO add stuff
     }
