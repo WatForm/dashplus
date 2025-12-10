@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
@@ -38,18 +39,18 @@ public final class AlloyBlock extends AlloyExpr {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        String tabs = AlloyStrings.TAB.repeat(indent);
+        String tabs = TAB.repeat(indent);
 
-        sb.append(AlloyStrings.LBRACE);
+        sb.append(LBRACE);
 
         for (AlloyExpr expr : this.exprs) {
-            sb.append(AlloyStrings.NEWLINE + tabs + AlloyStrings.TAB);
+            sb.append(NEWLINE + tabs + TAB);
             expr.toString(sb, indent + 1);
         }
-        sb.append(AlloyStrings.NEWLINE);
+        sb.append(NEWLINE);
 
         sb.append(tabs);
-        sb.append(AlloyStrings.RBRACE);
+        sb.append(RBRACE);
     }
 
     @Override
@@ -72,5 +73,24 @@ public final class AlloyBlock extends AlloyExpr {
             if (other.exprs != null) return false;
         } else if (!exprs.equals(other.exprs)) return false;
         return true;
+    }
+
+    @Override
+    public void pp(PPrinter pp) {
+        pp.append(LBRACE);
+        pp.brk();
+
+        for (AlloyExpr alloyExpr : this.exprs) {
+            pp.begin();
+            alloyExpr.pp(pp);
+            pp.end();
+            if (alloyExpr == this.exprs.getLast()) {
+                pp.nlNoIndent();
+            } else {
+                pp.nl();
+            }
+        }
+
+        pp.append(RBRACE);
     }
 }

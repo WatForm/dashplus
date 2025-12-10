@@ -8,17 +8,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class AlloyComprehensionExpr extends AlloyExpr {
+// AlloyComprehensionExpr
+public final class AlloyCphExpr extends AlloyExpr {
     public final List<AlloyDecl> decls;
     public final Optional<AlloyExpr> body;
 
-    public AlloyComprehensionExpr(Pos pos, List<AlloyDecl> decls, AlloyExpr body) {
+    public AlloyCphExpr(Pos pos, List<AlloyDecl> decls, AlloyExpr body) {
         super(pos);
         this.decls = Collections.unmodifiableList(decls);
         this.body = Optional.ofNullable(body);
     }
 
-    public AlloyComprehensionExpr(List<AlloyDecl> decls, AlloyExpr body) {
+    public AlloyCphExpr(List<AlloyDecl> decls, AlloyExpr body) {
         super();
         this.decls = Collections.unmodifiableList(decls);
         this.body = Optional.ofNullable(body);
@@ -52,7 +53,7 @@ public final class AlloyComprehensionExpr extends AlloyExpr {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        AlloyComprehensionExpr other = (AlloyComprehensionExpr) obj;
+        AlloyCphExpr other = (AlloyCphExpr) obj;
         if (decls == null) {
             if (other.decls != null) return false;
         } else if (!decls.equals(other.decls)) return false;

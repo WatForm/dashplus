@@ -403,11 +403,11 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
     ;
 
     @Override
-    public AlloyExpr visit(AlloyComprehensionExpr comprehensionExpr) {
+    public AlloyExpr visit(AlloyCphExpr comprehensionExpr) {
         List<AlloyDecl> decls = mapBy(comprehensionExpr.decls, i -> (AlloyDecl) visit(i));
         AlloyExpr body = comprehensionExpr.body.map(value -> visit(value)).orElse(null);
 
-        return new AlloyComprehensionExpr(comprehensionExpr.pos, decls, body);
+        return new AlloyCphExpr(comprehensionExpr.pos, decls, body);
     }
     ;
 

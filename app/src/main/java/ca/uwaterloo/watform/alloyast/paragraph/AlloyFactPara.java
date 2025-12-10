@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -66,5 +68,18 @@ public final class AlloyFactPara extends AlloyPara {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public void pp(PPrinter pp) {
+        String factName = "";
+        if (!this.qname.isEmpty()) {
+            factName = this.qname.get().toString() + " ";
+        } else if (!this.strLit.isEmpty()) {
+            factName = this.strLit.get().toString() + " ";
+        }
+
+        pp.append(FACT + SPACE + factName);
+        this.block.pp(pp);
     }
 }

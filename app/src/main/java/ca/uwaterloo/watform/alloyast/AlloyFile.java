@@ -56,4 +56,12 @@ public class AlloyFile extends AlloyASTNode {
             sb.append(AlloyStrings.NEWLINE + AlloyStrings.NEWLINE);
         }
     }
+
+    @Override
+    public void pp(PPrinter pp) {
+        for (AlloyPara p : this.paras) {
+            p.pp(pp);
+            pp.blankLine();
+        }
+    }
 }

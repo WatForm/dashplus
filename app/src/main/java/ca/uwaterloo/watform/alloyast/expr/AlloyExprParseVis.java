@@ -241,8 +241,8 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     }
 
     @Override
-    public AlloyComprehensionExpr visitComprehensionExpr(DashParser.ComprehensionExprContext ctx) {
-        return new AlloyComprehensionExpr(
+    public AlloyCphExpr visitComprehensionExpr(DashParser.ComprehensionExprContext ctx) {
+        return new AlloyCphExpr(
                 new Pos(ctx),
                 visitAll(ctx.declMul(), this, AlloyDecl.class),
                 (null != ctx.body()) ? this.visit(ctx.body()) : null);
@@ -464,7 +464,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     @Override
     public AlloyExpr visitNumericExpr(DashParser.NumericExprContext ctx) {
         if (null != ctx.CARDINALITY()) {
-            return new AlloyNumCardinalityExpr(new Pos(ctx), this.visit(ctx.expr2()));
+            return new AlloyCardExpr(new Pos(ctx), this.visit(ctx.expr2()));
         } else if (null != ctx.SUM()) {
             return new AlloyNumSumExpr(new Pos(ctx), this.visit(ctx.expr2()));
         } else if (null != ctx.INT()) {
@@ -612,16 +612,16 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     // ============================
     @Override
     public AlloyBinaryExpr visitCompExpr(DashParser.CompExprContext ctx) {
-        AlloyComparisonExpr.Negation neg;
+        AlloyCmpExpr.Negation neg;
         if (null != ctx.comparison().NOT_EXCL() || null != ctx.comparison().NOT()) {
-            neg = AlloyComparisonExpr.Negation.NOT_EXCL;
+            neg = AlloyCmpExpr.Negation.NOT_EXCL;
         } else {
-            neg = AlloyComparisonExpr.Negation.NONE;
+            neg = AlloyCmpExpr.Negation.NONE;
         }
 
         // Equal & NotEquals
         if (null != ctx.comparison().EQUAL()) {
-            if (neg == AlloyComparisonExpr.Negation.NOT_EXCL) {
+            if (neg == AlloyCmpExpr.Negation.NOT_EXCL) {
                 return new AlloyNotEqualsExpr(
                         new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
             } else {
@@ -630,24 +630,24 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             }
         }
 
-        AlloyComparisonExpr.Comp comp;
+        AlloyCmpExpr.Comp comp;
         if (null != ctx.comparison().IN()) {
-            comp = AlloyComparisonExpr.Comp.IN;
+            comp = AlloyCmpExpr.Comp.IN;
         } else if (null != ctx.comparison().LT()) {
-            comp = AlloyComparisonExpr.Comp.LESS_THAN;
+            comp = AlloyCmpExpr.Comp.LESS_THAN;
         } else if (null != ctx.comparison().GT()) {
-            comp = AlloyComparisonExpr.Comp.GREATER_THAN;
+            comp = AlloyCmpExpr.Comp.GREATER_THAN;
         } else if (null != ctx.comparison().LE()) {
-            comp = AlloyComparisonExpr.Comp.LESS_EQUAL;
+            comp = AlloyCmpExpr.Comp.LESS_EQUAL;
         } else if (null != ctx.comparison().EL()) {
-            comp = AlloyComparisonExpr.Comp.EQUAL_LESS;
+            comp = AlloyCmpExpr.Comp.EQUAL_LESS;
         } else if (null != ctx.comparison().GE()) {
-            comp = AlloyComparisonExpr.Comp.GREATER_EQUAL;
+            comp = AlloyCmpExpr.Comp.GREATER_EQUAL;
         } else {
             throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
 
-        return new AlloyComparisonExpr(
+        return new AlloyCmpExpr(
                 new Pos(ctx), this.visit(ctx.expr2(0)), neg, comp, this.visit(ctx.expr2(1)));
     }
 

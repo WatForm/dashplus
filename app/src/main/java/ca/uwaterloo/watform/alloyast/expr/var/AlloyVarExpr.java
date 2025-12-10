@@ -27,6 +27,11 @@ public abstract class AlloyVarExpr extends AlloyExpr {
     }
 
     @Override
+    public void pp(PPrinter pp) {
+        pp.append(this.getLabel());
+    }
+
+    @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }

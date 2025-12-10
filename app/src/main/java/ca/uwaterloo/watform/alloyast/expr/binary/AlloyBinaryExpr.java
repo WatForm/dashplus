@@ -38,12 +38,6 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        if (AlloyStrings.DOT == this.op) {
-            this.left.toString(sb, indent);
-            sb.append(op);
-            this.right.toString(sb, indent);
-            return;
-        }
         this.left.toString(sb, indent);
         sb.append(AlloyStrings.SPACE);
         sb.append(op);
@@ -79,5 +73,14 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
             if (other.op != null) return false;
         } else if (!op.equals(other.op)) return false;
         return true;
+    }
+
+    @Override
+    public void pp(PPrinter pp) {
+        this.left.pp(pp);
+        pp.brk();
+        pp.append(this.op);
+        pp.brk();
+        this.right.pp(pp);
     }
 }

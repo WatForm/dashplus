@@ -56,7 +56,7 @@ public class CollectDashRefVis implements DashExprVis<List<DashRef>> {
     ;
 
     @Override
-    public List<DashRef> visit(AlloyComprehensionExpr comprehensionExpr) {
+    public List<DashRef> visit(AlloyCphExpr comprehensionExpr) {
         comprehensionExpr.body.ifPresent(value -> x.addAll(visit(value)));
         return x;
     }

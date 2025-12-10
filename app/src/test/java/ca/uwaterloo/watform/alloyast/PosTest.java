@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
-import ca.uwaterloo.watform.alloyast.expr.unary.AlloyNumCardinalityExpr;
+import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class PosTest {
                 assertEquals(and.left.getPos(), new Pos(2, 1, 2, 2));
                 assertEquals(and.right.getPos(), new Pos(2, 7, 2, 8));
 
-                AlloyNumCardinalityExpr card = (AlloyNumCardinalityExpr) block.exprs.get(1);
+                AlloyCardExpr card = (AlloyCardExpr) block.exprs.get(1);
                 assertEquals(card.getPos(), new Pos(3, 1, 3, 3));
                 assertEquals(card.sub.getPos(), new Pos(3, 2, 3, 3));
 

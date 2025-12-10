@@ -38,6 +38,8 @@ dependencies {
 	// Antlr
 	antlr "org.antlr:antlr4:4.13.2"
 
+	// jpplib (oppen style pretty printing)
+	implementation 'com.io7m.jpplib:com.io7m.jpplib.core:1.0.0'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

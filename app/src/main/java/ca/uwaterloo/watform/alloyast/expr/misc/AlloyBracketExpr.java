@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
@@ -30,6 +32,27 @@ public final class AlloyBracketExpr extends AlloyExpr {
         sb.append(AlloyStrings.LBRACK);
         ASTNode.join(sb, indent, exprs, AlloyStrings.COMMA + AlloyStrings.SPACE);
         sb.append(AlloyStrings.RBRACK);
+    }
+
+    @Override
+    public void pp(PPrinter pp) {
+        this.expr.pp(pp);
+        pp.append(LBRACK);
+        pp.brkNoSpace();
+        for (AlloyExpr alloyExpr : this.exprs) {
+            pp.begin();
+            alloyExpr.pp(pp);
+            if (alloyExpr != this.exprs.getLast()) {
+                pp.append(COMMA);
+            }
+            pp.end();
+            if (alloyExpr == this.exprs.getLast()) {
+                pp.brk(0, -PPrinter.indentSize);
+            } else {
+                pp.brk();
+            }
+        }
+        pp.append(RBRACK);
     }
 
     @Override

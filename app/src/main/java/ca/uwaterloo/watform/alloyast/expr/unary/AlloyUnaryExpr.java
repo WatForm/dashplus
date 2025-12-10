@@ -60,4 +60,10 @@ public abstract class AlloyUnaryExpr extends AlloyExpr {
         } else if (!op.equals(other.op)) return false;
         return true;
     }
+
+    @Override
+    public void pp(PPrinter pp) {
+        pp.append(op);
+        this.sub.pp(pp);
+    }
 }
