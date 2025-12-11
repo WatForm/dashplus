@@ -2,10 +2,11 @@
 
 ## Overview:
 
-- Core Dash
-- Core Alloy
-- Properties
-- Parameterized Dash
+- Dash (states, transitions, events, stability, concurrency, variables)
+- Alloy
+- Dash+ (parameters, buffers)
+- Properties (safety, liveness)
+
 
 ## Key:
 
