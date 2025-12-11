@@ -43,5 +43,9 @@ Run with the desired entry point:
     > **Note:** If the `Dash.g4` grammar is changed, you must test it with the catalyst-corpus. 
     See the instructions in [`app/src/main/java/ca/uwaterloo/watform/test/README.md`](app/src/main/java/ca/uwaterloo/watform/test/README.md).
 
+## Index:
+
+- [Feature list for TLA+ translator](./app/src/main/java/ca/uwaterloo/watform/dashtotla/todo.md)
+
 
 
