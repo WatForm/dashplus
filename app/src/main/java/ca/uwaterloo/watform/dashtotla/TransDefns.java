@@ -82,7 +82,10 @@ public class TransDefns {
         //                          TlaVar(CONF),  TlaAppl(tlaFQN(sourceStateFQN))),
         //                 NULL_SET);
 
+        TlaExp confExp = TlaTrue();
+
         List<TlaExp> expressions = new ArrayList<>();
+        if (varNames.contains(CONF)) expressions.add(confExp);
 
         tlaModel.addDefn(TlaDefn(TlaDecl(preTransTlaFQN(transFQN)), repeatedAnd(expressions)));
 
@@ -96,8 +99,17 @@ public class TransDefns {
         TlaExp transTakenExp =
                 TlaEquals(TlaPrime(TlaVar(TRANS_TAKEN)), TlaAppl(takenTransTlaFQN(transFQN)));
 
+        TlaExp confExp = TlaUnchanged(Arrays.asList(TlaVar(CONF)));
+
+        TlaExp scopesUsedExp = TlaUnchanged(Arrays.asList(TlaVar(SCOPES_USED)));
+
+        TlaExp stableExp = TlaUnchanged(Arrays.asList(TlaVar(STABLE)));
+
         List<TlaExp> expressions = new ArrayList<>();
-        expressions.add(transTakenExp);
+        if (varNames.contains(TRANS_TAKEN)) expressions.add(transTakenExp);
+        if (varNames.contains(CONF)) expressions.add(confExp);
+        if (varNames.contains(SCOPES_USED)) expressions.add(scopesUsedExp);
+        if (varNames.contains(STABLE)) expressions.add(stableExp);
 
         tlaModel.addDefn(TlaDefn(TlaDecl(postTransTlaFQN(transFQN)), repeatedAnd(expressions)));
 

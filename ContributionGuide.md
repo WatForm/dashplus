@@ -27,3 +27,7 @@ DashModel dashModel = (DashModel) ParserUtils.parseToModel(inPath);
 - If a function with general use outside the feature is being written, it should be placed in GeneralUtils.java, with parameterized types
 - Before writing such a function, make sure that it doesn't already exist in GeneralUtils.java
 - When making a new package, include a README.md file in it, to explain the features of the package at a high-level
+
+
+R - post-resolved objects
+P - post-parsing
