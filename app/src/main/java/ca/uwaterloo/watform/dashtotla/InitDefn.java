@@ -16,7 +16,7 @@ public class InitDefn {
         // stable = TRUE
         TlaExp stableExp = TlaEquals(TlaVar(STABLE), TlaTrue());
 
-        // trans_taken = {}
+        // _trans_taken = _none_transition
         TlaExp transTakenExp = TlaEquals(TlaVar(TRANS_TAKEN), TlaAppl(NONE_TRANSITION));
 
         // scopes_used = {}

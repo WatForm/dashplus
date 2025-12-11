@@ -45,101 +45,10 @@ in general - avoid breaking up functions
 
 
 
-
-## Todo
-
-### General variables
-
-- conf
-- events
-- stable
-- trans_taken
-- ct
-
-### States
-
-### Transitions
+Stuff:
 
 
-#### Pre-condition
+- what is found states
 
-- conf
-- scopes_used
-- events
-
-#### Post-condition
-
-- conf
-- scopes_used
-- events
-
-#### Enabled
-
-- scopes_used
-
-### Init
-
-### Next
-
-### TypeOK
-
-### Stutter
-
-### small-step
-
-### Parameters
-
-
-### Signatures
-
-- basic sigs
-- sig subtypes
-- sig subsets (multiple parents, not necessarily pairwise disjoint)
-- multi-sig declarations
-
-### Multiplicities
-
-- some
-- lone
-- one
-- none
-- set
-
-### Fields
-
-- basic (A -> B)
-- with multiplicities (some A -> lone B)
-- nested (A -> B -> C)
-
-### Operators
-
-- unary
-- dot join
-- box join
-- restriction
-- arrow product
-- intersection
-- override
-- cardinality
-- union
-- difference
-- comparison (in, not, !, =, <, etc.>)
-- logical (not, and , or, implication, bi-implication)
-- arithmetic
-
-### Expressions:
-
-- let (refer multiplicities)
-- conditional expressions
-
-
-### Predicates
-
-### Functions
-
-
-
-### Buffers
-
-### Variables
+- unit tests the models can be put into dashplus (resources)
 

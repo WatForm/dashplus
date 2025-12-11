@@ -19,4 +19,5 @@ public abstract class TlaExp extends ASTNode {
         sb.append(this.toTLAPlusSnippet(false));
         return;
     }
+
 }
