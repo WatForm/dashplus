@@ -30,13 +30,18 @@ public final class PrintContext {
         }
     }
 
-    public void begin() {
-        begin(PrintContext.indentSize);
-    }
-
+    /**
+     * @param indent Begins a CONSISTENT block: if a brk is taken in a block, then all the other
+     *     brks are taken too. If that's not what's needed, try to use multiple blocks. The
+     *     INCONSISTENT interface is not made visible here, because it's unlikely that we want it.
+     */
     public void begin(int indent) {
         layouter.begin(
                 Layouter.BreakConsistency.CONSISTENT, Layouter.IndentationBase.FROM_POS, indent);
+    }
+
+    public void begin() {
+        this.begin(PrintContext.indentSize);
     }
 
     public void align() {
@@ -87,10 +92,10 @@ public final class PrintContext {
         this.brk(PrintContext.largeSize, -PrintContext.indentSize);
     }
 
-    public void blankLine() {
-        this.nl();
-        this.brkNoIndent();
-    }
+    // public void blankLine() {
+    //     this.nl();
+    //     this.brkNoIndent();
+    // }
 
     public void flush() {
         try {
@@ -118,9 +123,9 @@ public final class PrintContext {
         }
     }
 
-    public void dedent() {
-        begin(-PrintContext.indentSize);
-    }
+    // public void dedent() {
+    //     begin(-PrintContext.indentSize);
+    // }
 
     /**
      * put break after li's elements; The last break will not be indented put seprator in between

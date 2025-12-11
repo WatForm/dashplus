@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
@@ -78,8 +80,7 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
     @Override
     public void pp(PrintContext pCtx) {
         this.left.ppNewBlock(pCtx);
-        pCtx.brk();
-        pCtx.append(this.op);
+        pCtx.append(SPACE + this.op);
         pCtx.brk();
         this.right.ppNewBlock(pCtx);
     }

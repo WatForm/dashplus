@@ -61,7 +61,8 @@ public class AlloyFile extends AlloyASTNode {
     public void pp(PrintContext pCtx) {
         for (AlloyPara p : this.paras) {
             p.pp(pCtx);
-            pCtx.blankLine();
+            pCtx.nl();
+            pCtx.nlNoIndent();
         }
     }
 }

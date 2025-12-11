@@ -44,15 +44,15 @@ public final class AlloyIteExpr extends AlloyExpr {
         this.cond.pp(pCtx);
         pCtx.brk();
 
-        pCtx.align();
-
+        pCtx.begin();
         pCtx.append(IMPLIES + SPACE);
         this.conseq.pp(pCtx);
+        pCtx.end();
         pCtx.brk();
 
+        pCtx.begin();
         pCtx.append(ELSE + SPACE);
         this.alt.pp(pCtx);
-
         pCtx.end();
     }
 

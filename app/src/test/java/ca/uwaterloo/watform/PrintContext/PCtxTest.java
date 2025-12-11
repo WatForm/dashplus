@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyLetExpr.AlloyLetAsn;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
@@ -25,6 +26,21 @@ public class PCtxTest {
     private static final AlloyQnameExpr longCQname = new AlloyQnameExpr("C".repeat(10));
     private static final AlloyQnameExpr longDQname = new AlloyQnameExpr("D".repeat(10));
 
+    private static AlloyAndExpr and1() {
+        return new AlloyAndExpr(longAQname, longBQname);
+    }
+
+    private static AlloyIteExpr ite1() {
+        return new AlloyIteExpr(
+                longAQname,
+                new AlloyIteExpr(longAQname, longBQname, longCQname),
+                new AlloyIteExpr(longAQname, longBQname, longCQname));
+    }
+
+    private static AlloyLetAsn letAsn1() {
+        return new AlloyLetAsn(shortAQname, shortBQname);
+    }
+
     @Test
     @Order(1)
     @DisplayName("fact with line width 40")
@@ -36,23 +52,14 @@ public class PCtxTest {
                                         new AlloyQnameExpr("name"),
                                         new AlloyBlock(
                                                 List.of(
-                                                        new AlloyAndExpr(longAQname, longBQname),
-                                                        new AlloyAndExpr(longAQname, longBQname),
-                                                        new AlloyAndExpr(longAQname, longBQname),
+                                                        and1(),
+                                                        and1(),
+                                                        and1(),
+                                                        ite1(),
                                                         new AlloyBlock(
                                                                 List.of(
-                                                                        new AlloyAndExpr(
-                                                                                longAQname,
-                                                                                PCtxTest
-                                                                                        .longBQname),
-                                                                        new AlloyAndExpr(
-                                                                                longAQname,
-                                                                                PCtxTest
-                                                                                        .longBQname),
-                                                                        new AlloyAndExpr(
-                                                                                longAQname,
-                                                                                PCtxTest
-                                                                                        .longBQname))))))));
+                                                                        and1(), and1(), and1(),
+                                                                        ite1())))))));
         System.out.println(alloyFile.toPrettyString(40, 4));
     }
 
@@ -83,7 +90,8 @@ public class PCtxTest {
                                                                         new AlloyAndExpr(
                                                                                 longAQname,
                                                                                 PCtxTest
-                                                                                        .longBQname))))))));
+                                                                                        .longBQname),
+                                                                        ite1())))))));
         System.out.println(alloyFile.toPrettyString(10, 4));
     }
 
@@ -125,7 +133,7 @@ public class PCtxTest {
                                                                 List.of(
                                                                         longBQname,
                                                                         longCQname,
-                                                                        longDQname)))))));
+                                                                        ite1())))))));
         System.out.println(alloyFile.toPrettyString(20, 4));
     }
 
@@ -145,9 +153,15 @@ public class PCtxTest {
                                                                 shortBQname,
                                                                 shortCQname),
                                                         new AlloyIteExpr(
+                                                                longAQname, longBQname, longCQname),
+                                                        new AlloyIteExpr(
                                                                 longAQname,
                                                                 longBQname,
-                                                                longCQname))))));
+                                                                new AlloyIteExpr(
+                                                                        longAQname,
+                                                                        longBQname,
+                                                                        longCQname)),
+                                                        ite1())))));
         System.out.println(alloyFile.toPrettyString(30, 4));
     }
 
@@ -225,9 +239,9 @@ public class PCtxTest {
                                                                         new AlloyDecl(
                                                                                 List.of(
                                                                                         shortAQname,
-                                                                                        shortBQname,
+                                                                                                shortBQname,
                                                                                         shortCQname,
-                                                                                        shortDQname),
+                                                                                                shortDQname),
                                                                                 shortAQname),
                                                                         new AlloyDecl(
                                                                                 true,
@@ -235,9 +249,9 @@ public class PCtxTest {
                                                                                 true,
                                                                                 List.of(
                                                                                         shortAQname,
-                                                                                        shortBQname,
+                                                                                                shortBQname,
                                                                                         shortCQname,
-                                                                                        shortDQname),
+                                                                                                shortDQname),
                                                                                 true,
                                                                                 AlloyDecl.Quant
                                                                                         .LONE,
@@ -278,5 +292,32 @@ public class PCtxTest {
                                                                                 longCQname,
                                                                                 longDQname))))))));
         System.out.println(alloyFile.toPrettyString(40, 4));
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Let")
+    public void test8() {
+        AlloyLetExpr let1 = new AlloyLetExpr(List.of(letAsn1()), shortCQname);
+        AlloyLetExpr let5 = new AlloyLetExpr(List.of(letAsn1(), letAsn1()), shortCQname);
+        AlloyLetExpr let2 =
+                new AlloyLetExpr(List.of(letAsn1(), letAsn1(), letAsn1(), letAsn1()), shortCQname);
+        AlloyLetExpr let3 =
+                new AlloyLetExpr(List.of(letAsn1(), letAsn1(), letAsn1(), letAsn1()), let2);
+        AlloyLetExpr let4 =
+                new AlloyLetExpr(
+                        List.of(
+                                letAsn1(),
+                                new AlloyLetAsn(shortAQname, let2),
+                                letAsn1(),
+                                letAsn1()),
+                        let2);
+        AlloyFile alloyFile =
+                new AlloyFile(
+                        List.of(
+                                new AlloyFactPara(
+                                        new AlloyQnameExpr("name"),
+                                        new AlloyBlock(List.of(let1, let5, let2, let3, let4)))));
+        System.out.println(alloyFile.toPrettyString(30, 4));
     }
 }
