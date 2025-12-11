@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
@@ -28,6 +30,15 @@ public final class AlloyParenExpr extends AlloyExpr {
         sb.append(AlloyStrings.LPAREN);
         this.sub.toString(sb, indent);
         sb.append(AlloyStrings.RPAREN);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        pCtx.append(LPAREN);
+        pCtx.brkNoSpace();
+        this.sub.ppNewBlock(pCtx);
+        pCtx.brkNoSpaceNoIndent();
+        pCtx.append(RPAREN);
     }
 
     @Override

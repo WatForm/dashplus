@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
@@ -69,6 +71,15 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
         sb.append(AlloyStrings.BAR);
         sb.append(AlloyStrings.SPACE);
         this.body.toString(sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        pCtx.append(this.quant.toString() + SPACE);
+        pCtx.appendList(this.decls, COMMA);
+        pCtx.append(SPACE + BAR);
+        pCtx.brk();
+        this.body.ppNewBlock(pCtx);
     }
 
     @Override

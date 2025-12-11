@@ -80,6 +80,10 @@ public final class PrintContext {
         this.brk(1, -PrintContext.indentSize);
     }
 
+    public void brkNoSpaceNoIndent() {
+        this.brk(0, -PrintContext.indentSize);
+    }
+
     public void nl() {
         try {
             layouter.nl();

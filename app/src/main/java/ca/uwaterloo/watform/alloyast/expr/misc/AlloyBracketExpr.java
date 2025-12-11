@@ -40,7 +40,7 @@ public final class AlloyBracketExpr extends AlloyExpr {
         pCtx.append(LBRACK);
         pCtx.brkNoSpace();
         pCtx.appendList(this.exprs, COMMA);
-        pCtx.brk(0, -PrintContext.indentSize);
+        pCtx.brkNoSpaceNoIndent();
         pCtx.append(RBRACK);
     }
 

@@ -41,6 +41,14 @@ public class PCtxTest {
         return new AlloyLetAsn(shortAQname, shortBQname);
     }
 
+    private static AlloyDecl decl1() {
+        return new AlloyDecl(shortAQname, shortBQname);
+    }
+
+    private static AlloyDecl decl2() {
+        return new AlloyDecl(longAQname, longBQname);
+    }
+
     @Test
     @Order(1)
     @DisplayName("fact with line width 40")
@@ -318,6 +326,41 @@ public class PCtxTest {
                                 new AlloyFactPara(
                                         new AlloyQnameExpr("name"),
                                         new AlloyBlock(List.of(let1, let5, let2, let3, let4)))));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("Paren")
+    public void test9() {
+        AlloyParenExpr paren1 = new AlloyParenExpr(and1());
+        AlloyParenExpr paren2 = new AlloyParenExpr(ite1());
+        AlloyParenExpr paren3 = new AlloyParenExpr(shortAQname);
+        AlloyFile alloyFile =
+                new AlloyFile(
+                        List.of(
+                                new AlloyFactPara(
+                                        new AlloyQnameExpr("name"),
+                                        new AlloyBlock(List.of(paren3, paren1, paren2)))));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @Order(10)
+    @DisplayName("Quantification")
+    public void test10() {
+        AlloyQuantificationExpr qt1 =
+                new AlloyQuantificationExpr(
+                        AlloyQuantificationExpr.Quant.ALL, List.of(decl1(), decl1()), shortAQname);
+        AlloyQuantificationExpr qt2 =
+                new AlloyQuantificationExpr(
+                        AlloyQuantificationExpr.Quant.ALL, List.of(decl2(), decl2()), ite1());
+        AlloyFile alloyFile =
+                new AlloyFile(
+                        List.of(
+                                new AlloyFactPara(
+                                        new AlloyQnameExpr("name"),
+                                        new AlloyBlock(List.of(qt1, qt2)))));
         System.out.println(alloyFile.toPrettyString(30, 4));
     }
 }
