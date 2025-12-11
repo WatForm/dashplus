@@ -14,22 +14,21 @@ public class InitDefn {
     public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
         // stable = TRUE
-        TlaExp stableExp = TlaEquals(TlaVar(STABLE), TlaTrue());
+        TlaExp stableExp = TlaEquals(STABLE(), TlaTrue());
 
         // _trans_taken = _none_transition
-        TlaExp transTakenExp = TlaEquals(TlaVar(TRANS_TAKEN), TlaAppl(NONE_TRANSITION));
+        TlaExp transTakenExp = TlaEquals(TRANS_TAKEN(), TlaAppl(NONE_TRANSITION));
 
         // scopes_used = {}
-        TlaExp scopesUsedExp = TlaEquals(TlaVar(SCOPES_USED), TlaNullSet());
+        TlaExp scopesUsedExp = TlaEquals(SCOPES_USED(), TlaNullSet());
 
         // events = {}
-        TlaExp eventsExp = TlaEquals(TlaVar(EVENTS), TlaNullSet());
+        TlaExp eventsExp = TlaEquals(EVENTS(), TlaNullSet());
 
         // conf = {<initial states>}
-
         TlaExp confExp =
                 TlaEquals(
-                        TlaVar(CONF),
+                        CONF(),
                         repeatedUnion(
                                 mapBy(
                                         AuxDashAccessors.initialEntered(dashModel),

@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaUnionSet;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import java.util.ArrayList;
@@ -32,6 +33,26 @@ class DashToTlaStrings {
     public static final String TRANS_TAKEN = SPECIAL + "trans" + SPECIAL + "taken";
     public static final String SCOPES_USED = SPECIAL + "scopes" + SPECIAL + "used";
     public static final String STABLE = SPECIAL + "stable";
+
+    public static TlaVar CONF() {
+        return TlaVar(CONF);
+    }
+
+    public static TlaVar EVENTS() {
+        return TlaVar(EVENTS);
+    }
+
+    public static TlaVar TRANS_TAKEN() {
+        return TlaVar(TRANS_TAKEN);
+    }
+
+    public static TlaVar SCOPES_USED() {
+        return TlaVar(SCOPES_USED);
+    }
+
+    public static TlaVar STABLE() {
+        return TlaVar(STABLE);
+    }
 
     // common formulae
     public static final String INIT = SPECIAL + "Init";
