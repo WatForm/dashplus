@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
@@ -96,18 +98,41 @@ public final class AlloyDecl extends AlloyExpr {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        sb.append(this.isVar ? AlloyStrings.VAR + AlloyStrings.SPACE : "");
-        sb.append(this.isPrivate ? AlloyStrings.PRIVATE + AlloyStrings.SPACE : "");
-        sb.append((this.isDisj1 ? AlloyStrings.DISJ + AlloyStrings.SPACE : ""));
-        ASTNode.join(sb, indent, this.qnames, AlloyStrings.COMMA + AlloyStrings.SPACE);
+        sb.append(this.isVar ? VAR + SPACE : "");
+        sb.append(this.isPrivate ? PRIVATE + SPACE : "");
+        sb.append((this.isDisj1 ? DISJ + SPACE : ""));
+        ASTNode.join(sb, indent, this.qnames, COMMA + SPACE);
         if (!this.quant.isEmpty() && this.quant.get() == Quant.EXACTLY) {
-            sb.append(AlloyStrings.EQUAL);
+            sb.append(EQUAL);
         } else {
-            sb.append(AlloyStrings.COLON);
-            sb.append((this.isDisj2 ? AlloyStrings.DISJ + AlloyStrings.SPACE : ""));
-            sb.append(this.quant.map(q -> q.toString() + AlloyStrings.SPACE).orElse(""));
+            sb.append(COLON);
+            sb.append((this.isDisj2 ? DISJ + SPACE : ""));
+            sb.append(this.quant.map(q -> q.toString() + SPACE).orElse(""));
         }
         this.expr.toString(sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        pCtx.append(this.isVar ? VAR + SPACE : "");
+        pCtx.append(this.isPrivate ? PRIVATE + SPACE : "");
+        pCtx.append((this.isDisj1 ? DISJ + SPACE : ""));
+        pCtx.appendList(this.qnames, COMMA);
+        pCtx.append(SPACE);
+        if (this.quant.isPresent() && this.quant.get() == Quant.EXACTLY) {
+            pCtx.append(EQUAL);
+            pCtx.brk();
+        } else {
+            pCtx.append(COLON);
+            pCtx.brk();
+            if (this.isDisj2) {
+                pCtx.append(DISJ + SPACE);
+            }
+            if (this.quant.isPresent()) {
+                pCtx.append(this.quant.get().toString() + SPACE);
+            }
+        }
+        this.expr.pp(pCtx);
     }
 
     public AlloyDecl withExpr(AlloyExpr newExpr) {

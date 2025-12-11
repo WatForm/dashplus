@@ -5,6 +5,7 @@ import de.uka.ilkd.pp.WriterBackend;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.util.List;
 
 public final class PrintContext {
     private final Layouter<IOException> layouter;
@@ -97,5 +98,46 @@ public final class PrintContext {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    /**
+     * Indent relative to the indentation level if surrounding block is broken. If the surrounding
+     * block fits on one line, insert <code>width</code> spaces. Otherwise, indent to the current
+     * indentation level, plus <code>offset</code>, unless that position has already been exceeded
+     * on the current line. If that is the case, nothing is printed. No line break is possible at
+     * this point.
+     *
+     * @param width space to insert if not broken
+     * @param offset offset relative to current indentation level
+     */
+    public void indent(int width, int offset) {
+        try {
+            layouter.ind(width, offset);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public void dedent() {
+        begin(-PrintContext.indentSize);
+    }
+
+    /**
+     * put break after li's elements; The last break will not be indented put seprator in between
+     * li's elements
+     *
+     * @param li
+     * @param separator
+     */
+    public void appendList(List<? extends ASTNode> li, String separator) {
+        this.align();
+        for (ASTNode astNode : li) {
+            astNode.ppNewBlock(this);
+            if (!(astNode == li.getLast())) {
+                this.append(separator);
+                this.brk();
+            }
+        }
+        this.end();
     }
 }

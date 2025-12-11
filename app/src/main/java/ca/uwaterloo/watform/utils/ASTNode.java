@@ -37,22 +37,23 @@ public abstract class ASTNode {
     public String toPrettyString() {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw);
-        this.ppWrapper(pCtx);
+        this.ppNewBlock(pCtx);
+        pCtx.flush();
         return sw.toString();
     }
 
     public String toPrettyString(int lineWidth, int indentSize) {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw, lineWidth, indentSize);
-        this.ppWrapper(pCtx);
+        this.ppNewBlock(pCtx);
+        pCtx.flush();
         return sw.toString();
     }
 
-    private void ppWrapper(PrintContext pCtx) {
+    public void ppNewBlock(PrintContext pCtx) {
         pCtx.begin();
         this.pp(pCtx);
         pCtx.end();
-        pCtx.flush();
     }
 
     public abstract void toString(StringBuilder sb, int indent);

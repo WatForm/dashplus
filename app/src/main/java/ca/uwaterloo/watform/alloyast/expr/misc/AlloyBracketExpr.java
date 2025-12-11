@@ -39,19 +39,8 @@ public final class AlloyBracketExpr extends AlloyExpr {
         this.expr.pp(pCtx);
         pCtx.append(LBRACK);
         pCtx.brkNoSpace();
-        for (AlloyExpr alloyExpr : this.exprs) {
-            pCtx.begin();
-            alloyExpr.pp(pCtx);
-            if (alloyExpr != this.exprs.getLast()) {
-                pCtx.append(COMMA);
-            }
-            pCtx.end();
-            if (alloyExpr == this.exprs.getLast()) {
-                pCtx.brk(0, -PrintContext.indentSize);
-            } else {
-                pCtx.brk();
-            }
-        }
+        pCtx.appendList(this.exprs, COMMA);
+        pCtx.brk(0, -PrintContext.indentSize);
         pCtx.append(RBRACK);
     }
 
