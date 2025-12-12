@@ -35,11 +35,11 @@ public class TlaModel {
                 l, (u, v) -> u.toTLAPlusSnippetCore().equals(v.toTLAPlusSnippetCore()));
     }
 
-    public boolean UniqueVariablesCheck() {
+    public boolean UniqueVarsCheck() {
         return UniqueSimpleCheck(this.module.variables);
     }
 
-    public boolean UniqueConstantsCheck() {
+    public boolean UniqueConstsCheck() {
         return UniqueSimpleCheck(this.module.variables);
     }
 
@@ -47,11 +47,11 @@ public class TlaModel {
         this.module.extended_libraries.add(stl);
     }
 
-    public void addVariable(TlaVar v) {
+    public void addVar(TlaVar v) {
         this.module.variables.add(v);
     }
 
-    public void addConstant(TlaConst c) {
+    public void addConst(TlaConst c) {
         this.module.constants.add(c);
     }
 

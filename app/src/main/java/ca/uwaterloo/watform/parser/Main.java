@@ -34,7 +34,7 @@ import picocli.CommandLine.Parameters;
             "  by specifying their class name:",
             "",
             "  @|yellow,bold [TLA]|@ ",
-            "    java -cp watform-dashplus.jar " + "ca.uwaterloo.watform.dashtotlaplus.Main <args>",
+            "    java -cp watform-dashplus.jar " + "ca.uwaterloo.watform.dashtotla.Main <args>",
             "",
             "  @|yellow,bold [Predicate Abstraction]|@   ",
             "    java -cp watform-dashplus.jar "

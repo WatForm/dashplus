@@ -4,7 +4,8 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 
-public final class AlloyComparisonExpr extends AlloyBinaryExpr {
+// AlloyComparisonExpr
+public final class AlloyCmpExpr extends AlloyBinaryExpr {
     public static enum Negation {
         NONE(""),
         NOT_EXCL(AlloyStrings.NOT_EXCL);
@@ -44,7 +45,7 @@ public final class AlloyComparisonExpr extends AlloyBinaryExpr {
     public final Negation neg;
     public final Comp comp;
 
-    public AlloyComparisonExpr(Pos pos, AlloyExpr left, Negation neg, Comp comp, AlloyExpr right) {
+    public AlloyCmpExpr(Pos pos, AlloyExpr left, Negation neg, Comp comp, AlloyExpr right) {
         super(
                 pos,
                 left,
@@ -56,7 +57,7 @@ public final class AlloyComparisonExpr extends AlloyBinaryExpr {
         this.comp = comp;
     }
 
-    public AlloyComparisonExpr(AlloyExpr left, Negation neg, Comp comp, AlloyExpr right) {
+    public AlloyCmpExpr(AlloyExpr left, Negation neg, Comp comp, AlloyExpr right) {
         super(
                 left,
                 right,
@@ -73,7 +74,7 @@ public final class AlloyComparisonExpr extends AlloyBinaryExpr {
     }
 
     @Override
-    public AlloyComparisonExpr rebuild(AlloyExpr left, AlloyExpr right) {
-        return new AlloyComparisonExpr(this.pos, left, this.neg, this.comp, right);
+    public AlloyCmpExpr rebuild(AlloyExpr left, AlloyExpr right) {
+        return new AlloyCmpExpr(this.pos, left, this.neg, this.comp, right);
     }
 }

@@ -160,7 +160,7 @@ public class SolutionTest {
 
         Solution.EvalRes evalRes =
                 solution.eval(
-                        new AlloyNumCardinalityExpr(
+                        new AlloyCardExpr(
                                 new AlloyDotExpr(new AlloyQnameExpr(S1), new AlloyQnameExpr(F))));
         assertTrue(evalRes.isInt());
         assertEquals(1, evalRes.intVal());
@@ -168,7 +168,7 @@ public class SolutionTest {
                 solution.eval(
                         new AlloyEqualsExpr(
                                 new AlloyNumExpr(1),
-                                new AlloyNumCardinalityExpr(
+                                new AlloyCardExpr(
                                         new AlloyDotExpr(
                                                 new AlloyQnameExpr(S1), new AlloyQnameExpr(F)))));
         assertTrue(evalRes.isBool());

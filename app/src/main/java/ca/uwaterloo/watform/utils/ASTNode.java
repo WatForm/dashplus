@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.utils;
 
+import java.io.StringWriter;
 import java.util.List;
 
 public abstract class ASTNode {
@@ -26,6 +27,33 @@ public abstract class ASTNode {
         StringBuilder sb = new StringBuilder();
         toString(sb, indent);
         return sb.toString();
+    }
+
+    public void pp(PrintContext pCtx) {}
+
+    // this is to replace toString later,
+    // but for the sake of getting changes compiling,
+    // it's its separate method for now
+    public String toPrettyString() {
+        StringWriter sw = new StringWriter();
+        PrintContext pCtx = new PrintContext(sw);
+        this.ppNewBlock(pCtx);
+        pCtx.flush();
+        return sw.toString();
+    }
+
+    public String toPrettyString(int lineWidth, int indentSize) {
+        StringWriter sw = new StringWriter();
+        PrintContext pCtx = new PrintContext(sw, lineWidth, indentSize);
+        this.ppNewBlock(pCtx);
+        pCtx.flush();
+        return sw.toString();
+    }
+
+    public void ppNewBlock(PrintContext pCtx) {
+        pCtx.begin();
+        this.pp(pCtx);
+        pCtx.end();
     }
 
     public abstract void toString(StringBuilder sb, int indent);

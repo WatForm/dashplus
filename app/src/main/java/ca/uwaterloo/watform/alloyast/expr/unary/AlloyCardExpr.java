@@ -4,12 +4,12 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 
-public final class AlloyNumCardinalityExpr extends AlloyUnaryExpr {
-    public AlloyNumCardinalityExpr(Pos pos, AlloyExpr sub) {
+public final class AlloyCardExpr extends AlloyUnaryExpr {
+    public AlloyCardExpr(Pos pos, AlloyExpr sub) {
         super(pos, sub, AlloyStrings.CARDINALITY);
     }
 
-    public AlloyNumCardinalityExpr(AlloyExpr sub) {
+    public AlloyCardExpr(AlloyExpr sub) {
         super(sub, AlloyStrings.CARDINALITY);
     }
 
@@ -19,7 +19,7 @@ public final class AlloyNumCardinalityExpr extends AlloyUnaryExpr {
     }
 
     @Override
-    public AlloyNumCardinalityExpr rebuild(AlloyExpr sub) {
-        return new AlloyNumCardinalityExpr(this.pos, sub);
+    public AlloyCardExpr rebuild(AlloyExpr sub) {
+        return new AlloyCardExpr(this.pos, sub);
     }
 }

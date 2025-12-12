@@ -49,7 +49,7 @@ public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
     }
 
     @Override
-    public AlloyExpr visit(AlloyComprehensionExpr comprehensionExpr) {
+    public AlloyExpr visit(AlloyCphExpr comprehensionExpr) {
         return null;
     }
 

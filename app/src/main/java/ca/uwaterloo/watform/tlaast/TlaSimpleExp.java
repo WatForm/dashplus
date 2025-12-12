@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class TlaSimpleExp extends TlaExp {
 
-    private final String core;
+    public final String core;
 
     public TlaSimpleExp(String core) {
         this.core = core;

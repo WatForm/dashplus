@@ -1,45 +1,46 @@
 package ca.uwaterloo.watform.dashtotla;
 
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaast.TlaDecl;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaVar;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaLiteral;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InitDefn {
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
-        // stable = TRUE
-        TlaExp stable_exp = new TlaEquals(new TlaVar(STABLE), new TlaTrue());
-
-        // trans_taken = {}
-        TlaExp trans_taken_exp = new TlaEquals(new TlaVar(TRANS_TAKEN), NULL_SET);
-
-        // scopes_used = {}
-        TlaExp scopes_used_exp = new TlaEquals(new TlaVar(SCOPES_USED), NULL_SET);
-
-        // events = {}
-        TlaExp events_exp = new TlaEquals(new TlaVar(EVENTS), NULL_SET);
+        List<TlaExp> expressions = new ArrayList<>();
 
         // conf = {<initial states>}
-        TlaExp conf_exp = new TlaEquals(new TlaVar(CONF), new TlaLiteral("placeholder"));
+        List<String> initialEnteredStates = AuxDashAccessors.initialEntered(dashModel);
+        TlaExp confExp =
+                CONF().EQUALS(
+                                repeatedUnion(
+                                        mapBy(
+                                                initialEnteredStates,
+                                                sFQN -> TlaAppl(tlaFQN(sFQN)))));
+        if (varNames.contains(CONF)) expressions.add(confExp);
 
-        tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(INIT),
-                        repeatedAnd(
-                                Arrays.asList(
-                                        conf_exp,
-                                        events_exp,
-                                        scopes_used_exp,
-                                        stable_exp,
-                                        trans_taken_exp))));
+        if (varNames.contains(STABLE))
+            expressions.add(
+                    // stable = TRUE
+                    STABLE().EQUALS(TRUE()));
+
+        if (varNames.contains(SCOPES_USED))
+            expressions.add(
+                    // scopes_used = {}
+                    SCOPES_USED().EQUALS(NULL_SET()));
+
+        if (varNames.contains(TRANS_TAKEN))
+            expressions.add(
+                    // _trans_taken = _none_transition
+                    TRANS_TAKEN().EQUALS(NONE_TRANSITION()));
+
+        tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(expressions)));
     }
 }

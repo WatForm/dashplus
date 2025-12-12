@@ -56,4 +56,13 @@ public class AlloyFile extends AlloyASTNode {
             sb.append(AlloyStrings.NEWLINE + AlloyStrings.NEWLINE);
         }
     }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        for (AlloyPara p : this.paras) {
+            p.pp(pCtx);
+            pCtx.nl();
+            pCtx.nlNoIndent();
+        }
+    }
 }

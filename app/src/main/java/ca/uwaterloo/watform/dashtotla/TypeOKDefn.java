@@ -1,33 +1,27 @@
 package ca.uwaterloo.watform.dashtotla;
 
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaDecl;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaVar;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaInSet;
-import ca.uwaterloo.watform.tlaast.tlabinops.TlaSubsetEq;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaBoolean;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaIntSet;
-import ca.uwaterloo.watform.tlaast.tlaplusnaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import ca.uwaterloo.watform.utils.GeneralUtil;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TypeOKDefn {
 
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
         // these are separate functions since the presence of the variables themselves are subject
         // to optimization
-        typeConf(dashModel, tlaModel);
-        typeTransTaken(dashModel, tlaModel);
-        typeScopesUsed(dashModel, tlaModel);
-        addTypeOKFormula(tlaModel);
+
+        if (varNames.contains(CONF)) typeConf(dashModel, tlaModel);
+        if (varNames.contains(TRANS_TAKEN)) typeTransTaken(dashModel, tlaModel);
+        if (varNames.contains(SCOPES_USED)) typeScopesUsed(dashModel, tlaModel);
+        TypeOK(varNames, tlaModel);
     }
 
     public static void typeConf(DashModel dashModel, TlaModel tlaModel) {
@@ -37,59 +31,56 @@ public class TypeOKDefn {
         List<String> leafStateFQNs = AuxDashAccessors.getLeafStateNames(dashModel);
 
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(typeFormula(CONF)),
-                        repeatedUnion(
-                                GeneralUtil.mapBy(leafStateFQNs, x -> new TlaAppl(tlaFQN(x))))));
+                TlaDefn(
+                        typeDefn(CONF),
+                        repeatedUnion(mapBy(leafStateFQNs, x -> TlaAppl(tlaFQN(x))))));
     }
 
     public static void typeTransTaken(DashModel dashModel, TlaModel tlaModel) {
 
-        // _all_trans_taken == {_taken_<ti>,...}
+        // _all_trans_taken == {_taken_<ti>,...,_none_transition}
+        List<String> transTakenNames =
+                mapBy(AuxDashAccessors.getTransitionNames(dashModel), x -> takenTransTlaFQN(x));
+        transTakenNames.add((NONE_TRANSITION));
+
         tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(typeFormula(TRANS_TAKEN)),
-                        new TlaSet(
-                                GeneralUtil.mapBy(
-                                        AuxDashAccessors.getTransitionNames(dashModel),
-                                        s -> new TlaAppl(takenTransTlaFQN(s))))));
+                TlaDefn(
+                        TlaDecl(typeDefn(TRANS_TAKEN)),
+                        TlaSet(mapBy(transTakenNames, x -> TlaAppl(x)))));
     }
 
     public static void typeScopesUsed(DashModel dashModel, TlaModel tlaModel) {
 
         // _all_scopes_used == _all_conf
-        tlaModel.addDefn(
-                new TlaDefn(new TlaDecl(typeFormula(SCOPES_USED)), new TlaDecl(typeFormula(CONF))));
+        tlaModel.addDefn(TlaDefn(TlaDecl(typeDefn(SCOPES_USED)), TlaDecl(typeDefn(CONF))));
 
         // this may be subject to change later
     }
 
-    public static void addTypeOKFormula(TlaModel tlaModel) {
+    public static void TypeOK(List<String> varNames, TlaModel tlaModel) {
 
-        // _TypeOK == (_conf \subseteq _all_conf) /\ (_trans_taken \in _all_trans_taken) /\ (_stable
-        // \in BOOLEAN) /\ (_scope_used \subseteq _all_scope_used) /\ (_ct \in Int)
+        List<TlaExp> expressions = new ArrayList<>();
 
-        TlaExp conf_exp = new TlaSubsetEq(new TlaVar(CONF), new TlaAppl(typeFormula(CONF)));
+        if (varNames.contains(CONF))
+            expressions.add(
+                    // _conf \subseteq _all_conf
+                    CONF().SUBSETEQ(TlaAppl(typeDefn(CONF))));
 
-        TlaExp trans_taken_exp =
-                new TlaInSet(new TlaVar(TRANS_TAKEN), new TlaAppl(typeFormula(TRANS_TAKEN)));
+        if (varNames.contains(STABLE))
+            expressions.add(
+                    // _stable \in BOOLEAN
+                    STABLE().IN(TlaBoolean()));
 
-        TlaExp scope_exp =
-                new TlaSubsetEq(new TlaVar(SCOPES_USED), new TlaAppl(typeFormula(SCOPES_USED)));
+        if (varNames.contains(SCOPES_USED))
+            expressions.add(
+                    // _scope_used \subseteq _all_scope_used
+                    SCOPES_USED().SUBSETEQ(TlaAppl(typeDefn(SCOPES_USED))));
 
-        TlaExp stable_exp = new TlaInSet(new TlaVar(STABLE), new TlaBoolean());
+        if (varNames.contains(TRANS_TAKEN))
+            expressions.add(
+                    // _trans_taken \in _all_trans_taken
+                    TRANS_TAKEN().IN(TlaAppl(typeDefn(TRANS_TAKEN))));
 
-        TlaExp ct_exp = new TlaInSet(new TlaVar(CT), new TlaIntSet());
-
-        tlaModel.addDefn(
-                new TlaDefn(
-                        new TlaDecl(TYPE_OK),
-                        repeatedAnd(
-                                Arrays.asList(
-                                        conf_exp,
-                                        trans_taken_exp,
-                                        stable_exp,
-                                        scope_exp,
-                                        ct_exp))));
+        tlaModel.addDefn(TlaDefn(TYPE_OK, repeatedAnd(expressions)));
     }
 }

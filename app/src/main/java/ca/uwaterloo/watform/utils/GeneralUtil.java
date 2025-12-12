@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -125,6 +126,25 @@ public class GeneralUtil {
     // from: https://stackoverflow.com/questions/53441973/mapping-over-a-list-in-java
     public static <T, S> List<S> mapBy(List<T> items, Function<T, S> mapFn) {
         return items.stream().map(mapFn).collect(Collectors.toList());
+    }
+
+    // https://en.wikipedia.org/wiki/Fold_(higher-order_function)#Linear_vs._tree-like_folds
+    // f: S -> T -> T
+    public static <S, T> T foldRight(List<? extends S> items, BiFunction<S, T, T> f, T defaultVal) {
+        if (items.size() == 0) return defaultVal;
+        int n = items.size();
+        T top = f.apply(items.get(n - 1), defaultVal);
+        for (int i = n - 2; i >= 0; i--) top = f.apply(items.get(i), top);
+        return top;
+    }
+
+    // f: T -> S -> T
+    public static <S, T> T foldLeft(List<? extends S> items, BiFunction<T, S, T> f, T defaultVal) {
+        if (items.size() == 0) return defaultVal;
+        int n = items.size();
+        T top = f.apply(defaultVal, items.get(0));
+        for (int i = 1; i < n; i++) top = f.apply(top, items.get(i));
+        return top;
     }
 
     public static <T> List<T> filterBy(List<T> items, Predicate<T> filterFn) {

@@ -1,21 +1,18 @@
 package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
+import java.util.List;
 
 class StandardVars {
 
     // this class adds standard variables that are part of every translation
 
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
-
-        // VARIABLES _conf, _trans_taken, _scopes_used, _stable, _ct
-        Arrays.asList(CONF, TRANS_TAKEN, SCOPES_USED, STABLE, CT)
-                .forEach(v -> tlaModel.addVariable(new TlaVar(v)));
+    public static List<String> translate(DashModel dashModel, TlaModel tlaModel) {
 
         // this is subject to optimizations, and should remain its own function
 
@@ -26,5 +23,11 @@ class StandardVars {
         // big-step semantics
         // _stable - boolean variable, true if the current snapshot is stable
 
+        List<String> varNames = Arrays.asList(CONF, TRANS_TAKEN, SCOPES_USED, STABLE);
+
+        // VARIABLES _conf, _trans_taken, _scopes_used, _stable
+        varNames.forEach(v -> tlaModel.addVar(TlaVar(v)));
+
+        return varNames;
     }
 }

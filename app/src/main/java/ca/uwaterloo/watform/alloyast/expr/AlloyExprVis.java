@@ -23,7 +23,7 @@ public interface AlloyExprVis<T> {
 
     T visit(AlloyBracketExpr bracketExpr);
 
-    T visit(AlloyComprehensionExpr comprehensionExpr);
+    T visit(AlloyCphExpr comprehensionExpr);
 
     T visit(AlloyIteExpr iteExpr);
 
@@ -49,7 +49,7 @@ public interface AlloyExprVis<T> {
         return visit((AlloyBinaryExpr) expr);
     }
 
-    default T visit(AlloyComparisonExpr expr) {
+    default T visit(AlloyCmpExpr expr) {
         return visit((AlloyBinaryExpr) expr);
     }
 
@@ -170,7 +170,7 @@ public interface AlloyExprVis<T> {
         return visit((AlloyUnaryExpr) expr);
     }
 
-    default T visit(AlloyNumCardinalityExpr expr) {
+    default T visit(AlloyCardExpr expr) {
         return visit((AlloyUnaryExpr) expr);
     }
 

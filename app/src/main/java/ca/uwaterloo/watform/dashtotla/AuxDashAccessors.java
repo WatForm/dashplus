@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.dashtotla;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.List;
@@ -43,5 +45,9 @@ public class AuxDashAccessors {
 
     public static String getSourceOfTrans(String transFQN, DashModel dm) {
         return dm.tt.get(transFQN).fromP.toString();
+    }
+
+    public static List<String> initialEntered(DashModel dashModel) {
+        return mapBy(dashModel.st.getRootLeafStatesEntered(), x -> x.toString());
     }
 }

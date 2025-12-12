@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -48,6 +50,15 @@ public final class AlloyLetExpr extends AlloyExpr {
     }
 
     @Override
+    public void pp(PrintContext pCtx) {
+        pCtx.append(LET + SPACE);
+        pCtx.appendList(this.asns, COMMA);
+        pCtx.append(SPACE + BAR);
+        pCtx.brk();
+        this.body.ppNewBlock(pCtx);
+    }
+
+    @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
@@ -82,6 +93,10 @@ public final class AlloyLetExpr extends AlloyExpr {
             this.expr = expr;
         }
 
+        public AlloyLetAsn(AlloyQnameExpr qname, AlloyExpr expr) {
+            this(Pos.UNKNOWN, qname, expr);
+        }
+
         public AlloyQnameExpr getName() {
             return this.qname;
         }
@@ -95,6 +110,14 @@ public final class AlloyLetExpr extends AlloyExpr {
             sb.append(this.qname.toString());
             sb.append(AlloyStrings.EQUAL);
             expr.toString(sb, indent);
+        }
+
+        @Override
+        public void pp(PrintContext pCtx) {
+            this.qname.pp(pCtx);
+            pCtx.append(SPACE + EQUAL);
+            pCtx.brk();
+            this.expr.pp(pCtx);
         }
 
         @Override

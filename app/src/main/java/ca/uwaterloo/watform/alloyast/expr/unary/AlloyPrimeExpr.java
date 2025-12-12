@@ -20,6 +20,12 @@ public final class AlloyPrimeExpr extends AlloyUnaryExpr {
     }
 
     @Override
+    public void pp(PrintContext pCtx) {
+        this.sub.pp(pCtx);
+        pCtx.append(this.op);
+    }
+
+    @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
