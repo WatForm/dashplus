@@ -4,6 +4,8 @@
 * all attributes of AST nodes should be final
 
 ## Abbreviations
+
+### General:
 * Expression --> expr/exp
 * Type --> typ
 * Definition --> defn
@@ -13,13 +15,19 @@
 * Reference --> ref
 * Variable --> var
 * Visitor --> vis 
-* Fully Qualified Name --> FQN
-* Temporal Logic of Actions (TLA+) --> Tla
 * Ancestor --> ances
 * Assignment --> asn
 * Iterator? --> iter
 * Concurrent --> conc
 * Operand --> op
+
+### Domain-specific:
+
+* Fully Qualified Name --> FQN
+* Temporal Logic of Actions (TLA+) --> Tla
+* Resolved --> R
+* Parsed --> P
+
 
 
 Use the abbreviated form everywhere in the code, to keep names short and readable. If a new abbreviation is added, update this list.
