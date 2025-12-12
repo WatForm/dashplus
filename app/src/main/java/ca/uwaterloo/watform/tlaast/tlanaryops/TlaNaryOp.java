@@ -2,12 +2,14 @@ package ca.uwaterloo.watform.tlaast.tlanaryops;
 
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.GeneralUtil;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class TlaNaryOp extends TlaOperator {
     private final String start;
     private final String end;
     private final String separator;
+
     public final List<? extends TlaExp> children;
 
     public TlaNaryOp(
@@ -20,7 +22,7 @@ public abstract class TlaNaryOp extends TlaOperator {
         this.start = start;
         this.end = end;
         this.separator = separator;
-        this.children = children;
+        this.children = Collections.unmodifiableList(children);
     }
 
     @Override

@@ -19,6 +19,7 @@
 * Assignment --> asn
 * Iterator? --> iter
 * Concurrent --> conc
+* Operand --> op
 
 
 Use the abbreviated form everywhere in the code, to keep names short and readable. If a new abbreviation is added, update this list.

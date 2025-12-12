@@ -5,8 +5,8 @@ import java.util.List;
 
 public class TlaLetBinding extends TlaOperator {
 
-    private TlaDefn definition;
-    private TlaExp expression;
+    public final TlaDefn definition;
+    public final TlaExp expression;
 
     public TlaLetBinding(TlaDefn definition, TlaExp expression) {
         super(TlaOperator.Associativity.IRRELEVANT, TlaOperator.PrecedenceGroup.SAFE);
