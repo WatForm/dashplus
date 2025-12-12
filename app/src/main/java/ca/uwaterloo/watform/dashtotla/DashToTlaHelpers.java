@@ -87,6 +87,14 @@ public class DashToTlaHelpers {
         return TlaAppl(NONE_TRANSITION);
     }
 
+    public static TlaAppl INTERNAL_EVENTS() {
+        return TlaAppl(INTERNAL_EVENTS);
+    }
+
+    public static TlaAppl ENVIRONMENTAL_EVENTS() {
+        return TlaAppl(ENVIRONMENTAL_EVENTS);
+    }
+
     public static TlaStringLiteral NONE_TRANSITION_LITERAL() {
         return TlaStringLiteral(NONE_TRANSITION_LITERAL);
     }

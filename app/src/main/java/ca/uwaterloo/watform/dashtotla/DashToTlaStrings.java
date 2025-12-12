@@ -35,6 +35,9 @@ class DashToTlaStrings {
     public static final String SOME_PRE_TRANSITION =
             SPECIAL + "some" + PRE + SPECIAL + "transition";
     public static final String NONE_TRANSITION = SPECIAL + "none" + SPECIAL + "transition";
+    public static final String INTERNAL_EVENTS = SPECIAL + "internal" + SPECIAL + "events";
+    public static final String ENVIRONMENTAL_EVENTS =
+            SPECIAL + "environmental" + SPECIAL + "events";
 
     // common formulae with arguments
     public static final String NEXT_IS_STABLE =

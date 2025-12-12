@@ -21,6 +21,12 @@ public class DashToTla {
 
         tlaModel.addComment(
                 "string literal representations of transitions taken, which are the values taken by the "
+                        + EVENTS
+                        + " variable");
+        EventDefns.translate(vars, dashModel, tlaModel);
+
+        tlaModel.addComment(
+                "string literal representations of transitions taken, which are the values taken by the "
                         + TRANS_TAKEN
                         + " variable");
         TransDefns.translate(vars, dashModel, tlaModel);
