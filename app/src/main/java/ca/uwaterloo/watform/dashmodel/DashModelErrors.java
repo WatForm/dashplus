@@ -1,10 +1,10 @@
+// these are common errors across multiple files
+
 package ca.uwaterloo.watform.dashmodel;
 
 import ca.uwaterloo.watform.utils.*;
 
 public class DashModelErrors {
-
-    // these are common errors across multiple files
 
     // errors discovered in initializing DashModel phase
     public static void duplicateName(Pos pos, String type, String fqn) throws Reporter.ErrorUser {

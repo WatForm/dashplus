@@ -1,6 +1,6 @@
 /*
     This visitor over expressions takes an AlloyExpr
-    (which include DashParam's and DashRef's)
+    (which include DashParams and DashRefs)
     and figures out the full Dash reference to
     variable names that are Dash dynamic variables. It
     does this by:
@@ -20,6 +20,8 @@
     - stateTable resolving for inits and invariants
     - varTable for resolving type of dynamic variables (where it resolves only the name, not the parameters )
     - transTable to resolve all parts of transitions.
+
+    NADTODO: check flags !
 */
 
 package ca.uwaterloo.watform.dashmodel;
@@ -41,42 +43,24 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
+public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr> {
 
-    private static final DashStrings.DashRefKind defaultKind = DashStrings.DashRefKind.VAR;
-
-    private StateTable st;
-    private TransTable tt;
-    private EventTable et;
-    private VarTable vt;
-    private BufferTable bt;
-    private DashPredTable pt;
+    // these bits of state are used throughout the
+    // visit functions with the same values
     private DashStrings.DashRefKind kind;
     private boolean primeOk;
     private boolean primeOkInPrmExprs;
     private boolean thisOk;
-    private String sfqn; // of state Expr itself or is parent of Expr
+    // of state Expr itself or is parent of Expr
+    // needed for context of expr being resolved
+    private String sfqn;
 
-    public ExprRefResolverVis(
-            StateTable st,
-            TransTable tt,
-            EventTable et,
-            VarTable vt,
-            BufferTable bt,
-            DashPredTable pt) {
-        this.st = st;
-        this.et = et;
-        this.vt = vt;
-        this.bt = bt;
-        this.pt = pt;
-        // default values
-        this.sfqn = "";
-        this.kind = defaultKind;
-        this.primeOk = false;
-        this.primeOkInPrmExprs = false;
-        this.thisOk = true;
-        // tables are not modified by may be modified
-        // by calling functions in between calls to revolveExpr
+    public ResolverVisDM() {
+        super();
+    }
+
+    public ResolverVisDM(DashFile d) {
+        super(d);
     }
 
     private void inputChecks(AlloyExpr expr, String sfqn) {
@@ -86,64 +70,65 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
 
     // top-level calls
 
-    public AlloyExpr resolveVar(AlloyExpr expr, String sfqn) {
+    protected AlloyExpr resolveVar(AlloyExpr expr, String sfqn) {
         // resolving something that is a reference in an expression
         // means we are looking for variables
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
-        assert (kind == DashStrings.DashRefKind.VAR);
+        this.kind = DashStrings.DashRefKind.VAR;
+        this.primeOk = false;
+        this.primeOkInPrmExprs = false;
+        this.thisOk = true;
         return visit(expr);
     }
 
-    public AlloyExpr resolveVarPrimesOkAnywhere(AlloyExpr expr, String sfqn) {
+    protected AlloyExpr resolveVarPrimesOkAnywhere(AlloyExpr expr, String sfqn) {
         // resolving something that is a reference in an expression
         // means we are looking for variables
         inputChecks(expr, sfqn);
-        assert (kind == DashStrings.DashRefKind.VAR);
         this.sfqn = sfqn;
-        primeOk = true;
-        primeOkInPrmExprs = true;
-        AlloyExpr x = visit(expr);
-        primeOk = false;
-        primeOkInPrmExprs = false;
-        return x;
+        this.kind = DashStrings.DashRefKind.VAR;
+        this.primeOk = true;
+        this.primeOkInPrmExprs = true;
+        this.thisOk = true;
+        return visit(expr);
     }
 
-    public DashRef resolveState(AlloyExpr expr, String sfqn) {
+    protected DashRef resolveState(AlloyExpr expr, String sfqn) {
         // resolving something that is a reference to a State
         // we know this returns a DashRef rather than a more general AlloyExpr
 
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         this.kind = DashRefKind.STATE;
-
-        DashRef x = (DashRef) ((DashRef) expr).accept(this); // (DashRef) visit(expr) //
-        this.kind = defaultKind;
-        return x;
+        this.primeOk = false;
+        this.primeOkInPrmExprs = false;
+        this.thisOk = true;
+        return (DashRef) visit(expr);
     }
 
-    public DashRef resolveEvent(AlloyExpr expr, String sfqn) {
+    protected DashRef resolveEvent(AlloyExpr expr, String sfqn) {
         // resolving something that is a reference to an event
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         this.kind = DashRefKind.EVENT;
-        DashRef x = (DashRef) ((DashRef) expr).accept(this); // (DashRef) visit((DashRef) expr);
-        this.kind = defaultKind;
-        return x;
+        this.primeOk = false;
+        this.primeOkInPrmExprs = false;
+        this.thisOk = true;
+        return (DashRef) visit((DashRef) expr);
     }
 
-    public DashRef resolveEventPrimesOkInPrmExprs(AlloyExpr expr, String sfqn) {
+    protected DashRef resolveEventPrimesOkInPrmExprs(AlloyExpr expr, String sfqn) {
         // resolving something that is a reference to an event
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         this.kind = DashRefKind.EVENT;
-        primeOkInPrmExprs = true;
-        DashRef x = (DashRef) visit(expr);
-        this.kind = defaultKind;
-        primeOkInPrmExprs = false;
-        return x;
+        this.primeOk = true;
+        this.primeOkInPrmExprs = true;
+        this.thisOk = true;
+        return (DashRef) visit(expr);
     }
 
     // private functions
@@ -191,7 +176,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         }
         // something defined as a predicate with the Dash module
         // TODO: check on this logic
-        if (pt.contains(m)) {
+        if (containsPred(m)) {
             // best match is a predicate name
             // has to be treated a little differently
             // because does not have params and have to put its exp
@@ -199,19 +184,19 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
             // resolve the predicate value in place and add it in place
             DashStrings.DashRefKind kindTemp = kind;
             this.kind = DashRefKind.VAR;
-            AlloyExpr ret = visit(pt.get(m).exp);
+            AlloyExpr ret = visit(predExp(m));
             this.kind = kindTemp;
             return ret;
         }
 
         // now m is one match from var/state/event table
         List<DashParam> mParams;
-        if (kind == DashRefKind.STATE) mParams = st.get(m).params;
-        else if (kind == DashRefKind.EVENT) mParams = et.get(m).params;
-        else mParams = vt.get(m).params;
+        if (kind == DashRefKind.STATE) mParams = stateParams(m);
+        else if (kind == DashRefKind.EVENT) mParams = eventParams(m);
+        else mParams = varParams(m);
 
         // parameters from enclosing state of this element
-        List<DashParam> sfqn_params = st.get(sfqn).params;
+        List<DashParam> sfqn_params = stateParams(sfqn);
         if (v_params.isEmpty()) {
             // did not have any parameter values in use
             // must have same param values as sfqn b/c in same region
@@ -251,12 +236,12 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // from appropriate 'type' of element
         // for this function, match could be anywhere in Dash model
         List<String> region = new ArrayList<String>();
-        if (kind == DashStrings.DashRefKind.STATE) region.addAll(st.getAllNames());
-        else if (kind == DashStrings.DashRefKind.EVENT) region.addAll(et.getAllNames());
+        if (kind == DashStrings.DashRefKind.STATE) region.addAll(this.allStateNames());
+        else if (kind == DashStrings.DashRefKind.EVENT) region.addAll(allEventNames());
         else if (kind == DashStrings.DashRefKind.VAR) {
-            region.addAll(vt.getAllVarNames());
-            region.addAll(bt.getAllBufferNames());
-            region.addAll(pt.getAllNames());
+            region.addAll(allVarNames());
+            region.addAll(allBufferNames());
+            region.addAll(allPredNames());
         }
         return compareNames(name, region);
     }
@@ -267,16 +252,16 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         // for this function, match can only be within enclosing sfqn
         List<String> region = new ArrayList<String>();
 
-        if (kind == DashStrings.DashRefKind.STATE) region = st.getRegion(sfqn);
+        if (kind == DashStrings.DashRefKind.STATE) region = region(sfqn);
         else if (kind == DashStrings.DashRefKind.EVENT) {
             // get all the events within these regions
-            for (String x : st.getRegion(sfqn)) region.addAll(et.getEventsWithinState(x));
+            for (String x : region(sfqn)) region.addAll(eventsWithinState(x));
         } else if (kind == DashStrings.DashRefKind.VAR) {
-            for (String x : st.getRegion(sfqn)) {
-                region.addAll(vt.getVarsOfState(x));
-                region.addAll(bt.getBuffersOfState(x));
+            for (String x : region(sfqn)) {
+                region.addAll(varsOfState(x));
+                region.addAll(buffersOfState(x));
             }
-            region.addAll(pt.getAllNames());
+            region.addAll(allPredNames());
         }
         return compareNames(name, region);
     }
@@ -343,7 +328,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
             // must be a DashRef (no other kind of
             // value can be primed)
             if (!(newExpr instanceof DashRef)) cantPrimeNonDynamicVarError(unaryExpr);
-            else if (vt.isInternal(((DashRef) newExpr).name)) cantPrimeExternalVarError(newExpr);
+            else if (isIntVar(((DashRef) newExpr).name)) cantPrimeExternalVarError(newExpr);
         }
         // can't use a withSub here
         // because this is a parent class
@@ -368,16 +353,16 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
             this.kind = kindTemp;
 
             String firstMatch = matches.get(0);
-            if (matches.size() == 1 && st.hasParam(firstMatch)) {
+            if (matches.size() == 1 && stateHasParams(firstMatch)) {
                 // parameters of a state are DashParam's
                 // parameters used within an expression are Expr
-                List<DashParam> ps = st.get(firstMatch).params;
+                List<DashParam> ps = stateParams(firstMatch);
                 if (ps.size() == 1)
                     // any "thisState" use must be for a state with only one param
                     // this is already an Expr
                     return ps.get(0);
                 else ambiguousUseOfThisError(varExpr);
-            } else if (matches.size() == 1 && !st.hasParam(firstMatch))
+            } else if (matches.size() == 1 && !stateHasParams(firstMatch))
                 nonParamUseOfThisError(varExpr);
             else if (matches.size() > 1) ambiguousUseOfThisError(varExpr);
         }
@@ -473,7 +458,7 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
     // or be static because they reference attributes
     // of the class
 
-    private void unknownError(AlloyExpr expr) {
+    public void unknownError(AlloyExpr expr) {
         if (kind == DashStrings.DashRefKind.STATE)
             throw new Reporter.ErrorUser(expr.pos, "state does not exist: " + expr.toString());
         else if (kind == DashStrings.DashRefKind.EVENT)
@@ -481,51 +466,51 @@ public class ExprRefResolverVis implements DashExprVis<AlloyExpr> {
         else throw new Reporter.ErrorUser(expr.pos, "variable does not exist: " + expr.toString());
     }
 
-    private void wrongNumberParamsError(AlloyExpr expr) {
+    public void wrongNumberParamsError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, "Incorrect number of parameters: " + expr.toString());
     }
 
-    private void ambiguousRefError(AlloyExpr expr) {
+    public void ambiguousRefError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(expr.pos, " Name not unique: " + expr.toString());
     }
 
-    private void unknownElementWithParamsError(AlloyExpr expr) {
+    public void unknownElementWithParamsError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, " " + "Unknown Dash element with params: " + expr.toString());
     }
 
-    private void cantPrimeNonVarError(AlloyExpr expr) {
+    public void cantPrimeNonVarError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, " " + " Non-var/buffer cannot be primed: " + expr.toString());
     }
 
-    private void unknownSrcDestError(String x, String t, String tfqn) {
+    public void unknownSrcDestError(String x, String t, String tfqn) {
         throw new Reporter.ErrorUser(
                 "Src/Dest of trans is unknown: " + "trans " + tfqn + " " + t + " " + x);
     }
 
-    private void cantPrimeExternalVarError(AlloyExpr expr) {
+    public void cantPrimeExternalVarError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, " Internal var/buffer cannot be primed: " + expr.toString());
     }
 
-    private void noPrimedVarsError(AlloyExpr expr) {
+    public void noPrimedVarsError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, "Primed variables are not allowed in: " + expr.toString());
     }
 
-    private void cantPrimeNonDynamicVarError(AlloyExpr expr) {
+    public void cantPrimeNonDynamicVarError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos,
                 "Cannot prime something that is not a dynamic variable: " + expr.toString());
     }
 
-    private void ambiguousUseOfThisError(AlloyExpr expr) {
+    public void ambiguousUseOfThisError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(expr.pos, "Ambiguous use of 'this' " + expr.toString());
     }
 
-    private void nonParamUseOfThisError(AlloyExpr expr) {
+    public void nonParamUseOfThisError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, " 'this' must refer to a parametrized state: " + expr.toString());
     }

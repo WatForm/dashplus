@@ -8,7 +8,7 @@
 
 * All others are subclasses of either ASTNode or DashExpr (which is a subclass of ASTNote).
 
-* in DashTrans, "P" var name extension (as in whenP) is for the parsed version (it is later replaced in TransElement with "R" as in whenR for the resolved version of the expression).
+* in DashTrans, "P" var name extension (as in whenP) is for the parsed version (it is later replaced in TransR with "R" as in whenR for the resolved version of the expression).
 
 * DashExpr provides a wrapper for printing method expressions of DashFrom, DashDo, etc.  
 

@@ -23,7 +23,9 @@ public class DashFQN {
     // creating FQNs from inputs --------------------------
 
     public static String fqn(String s1, String s2) {
-        String q = new String(s1);
+        String q;
+        if (s1 == null) q = new String(s1);
+        else q = "";
         q += DashStrings.internalQualChar;
         q += s2;
         return q;

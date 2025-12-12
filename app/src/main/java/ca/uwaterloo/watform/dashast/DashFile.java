@@ -9,7 +9,7 @@ import java.util.List;
 
 public final class DashFile extends AlloyFile {
     public String filename = "";
-    public final DashPara stateRoot;
+    public final DashState stateRoot;
 
     public DashFile(Pos pos, List<AlloyPara> paragraphs) {
         super(pos, filterBy(paragraphs, alloyPara -> !(alloyPara instanceof DashPara)));
@@ -17,7 +17,7 @@ public final class DashFile extends AlloyFile {
         if (1 != dashParas.size()) {
             throw DashCtorError.exactlyOneStateRoot();
         }
-        this.stateRoot = dashParas.get(0);
+        this.stateRoot = (DashState) dashParas.get(0);
     }
 
     public DashFile(List<AlloyPara> paragraphs) {
