@@ -20,6 +20,10 @@ public class CreateHelper {
         return new TlaDefn(decl, body);
     }
 
+    public static TlaDefn TlaDefn(String name, TlaExp body) {
+        return new TlaDefn(new TlaDecl(name), body);
+    }
+
     public static TlaDecl TlaDecl(String name) {
         return new TlaDecl(name);
     }

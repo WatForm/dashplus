@@ -1,5 +1,11 @@
 package ca.uwaterloo.watform.tlaast;
 
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaAnd;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaInSet;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaNotEq;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaSubsetEq;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
@@ -18,5 +24,37 @@ public abstract class TlaExp extends ASTNode {
     public void toString(StringBuilder sb, int ident) {
         sb.append(this.toTLAPlusSnippet(false));
         return;
+    }
+
+    // convenience in writing
+    /*
+    public Tla (TlaExp op)
+    {
+        return new Tla(this, op);
+    }
+    */
+
+    public TlaAnd AND(TlaExp op) {
+        return new TlaAnd(this, op);
+    }
+
+    public TlaOr OR(TlaExp op) {
+        return new TlaOr(this, op);
+    }
+
+    public TlaEquals EQUALS(TlaExp op) {
+        return new TlaEquals(this, op);
+    }
+
+    public TlaInSet IN(TlaExp op) {
+        return new TlaInSet(this, op);
+    }
+
+    public TlaSubsetEq SUBSETEQ(TlaExp op) {
+        return new TlaSubsetEq(this, op);
+    }
+
+    public TlaNotEq NOT_EQUALS(TlaExp op) {
+        return new TlaNotEq(this, op);
     }
 }

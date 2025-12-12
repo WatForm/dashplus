@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.dashtotla;
 
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
@@ -17,18 +18,25 @@ public class TransDefns {
 
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
-        // taken_<trans-name> == "taken_<transFQN>"
         if (varNames.contains(TRANS_TAKEN)) {
-            transitions.forEach(x -> TransTakenDefn(x, tlaModel));
 
-            // _none_transition = "[none]"
+            transitions.forEach(
+                    transFQN ->
+                            tlaModel.addDefn(
+                                    // taken_<trans-name> == "taken_<transFQN>"
+                                    TlaDefn(
+                                            takenTransTlaFQN(transFQN),
+                                            TlaStringLiteral(transFQN))));
+
             tlaModel.addDefn(
-                    TlaDefn(TlaDecl(NONE_TRANSITION), TlaStringLiteral(NONE_TRANSITION_LITERAL)));
+                    // _none_transition == "[none]"
+                    TlaDefn(NONE_TRANSITION, NONE_TRANSITION_LITERAL()));
         }
 
         if (varNames.contains(STABLE) && varNames.contains(SCOPES_USED)) {
-            // _enabled_<transFQN> == <body>
+
             tlaModel.addComment("parameterized formulae to check if transitions are enabled");
+            // _enabled_<transFQN> == <body>
             transitions.forEach(x -> TransIsEnabledDefn(x, dashModel, tlaModel));
 
             tlaModel.addComment("negation of disjunction of enabled-formulae");
@@ -43,15 +51,11 @@ public class TransDefns {
                 });
     }
 
-    public static void TransTakenDefn(String transFQN, TlaModel tlaModel) {
-        tlaModel.addDefn(TlaDefn(TlaDecl(takenTransTlaFQN(transFQN)), TlaStringLiteral(transFQN)));
-    }
-
     public static List<TlaVar> isEnabledParams() {
 
         // this is subject to optimization, and is thus a separate function
         List<String> parameters = Arrays.asList(SCOPES_USED);
-        return mapBy(parameters, v -> TlaVar(parameterVariable(v)));
+        return mapBy(parameters, v -> TlaVar(paramVar(v)));
     }
 
     public static void NextIsStableDefn(DashModel dashModel, TlaModel tlaModel) {
@@ -74,30 +78,18 @@ public class TransDefns {
     public static void PreTransDefn(
             String transFQN, List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
-        // String sourceStateFQN = "stand-in"; // AuxiliaryDashAccessors.getSourceOfTrans(transFQN,
-        // dashModel);  this doesn't work for whatever reason
-        // TlaExp conf_exp =
-        //          TlaNotEq(
-        //                  TlaIntersectionSet(
-        //                          TlaVar(CONF),  TlaAppl(tlaFQN(sourceStateFQN))),
-        //                 NULL_SET);
-
         TlaExp confExp = TlaTrue();
 
         List<TlaExp> expressions = new ArrayList<>();
         if (varNames.contains(CONF)) expressions.add(confExp);
 
-        tlaModel.addDefn(TlaDefn(TlaDecl(preTransTlaFQN(transFQN)), repeatedAnd(expressions)));
+        tlaModel.addDefn(TlaDefn(preTransTlaFQN(transFQN), repeatedAnd(expressions)));
 
         // TODO add stuff
     }
 
     public static void PostTransDefn(
             String transFQN, List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
-
-        // _trans_taken' = <taken-trans-formula>
-        TlaExp transTakenExp =
-                TlaEquals(TlaPrime(TlaVar(TRANS_TAKEN)), TlaAppl(takenTransTlaFQN(transFQN)));
 
         TlaExp confExp = TlaUnchanged(Arrays.asList(TlaVar(CONF)));
 
@@ -106,12 +98,17 @@ public class TransDefns {
         TlaExp stableExp = TlaUnchanged(Arrays.asList(TlaVar(STABLE)));
 
         List<TlaExp> expressions = new ArrayList<>();
-        if (varNames.contains(TRANS_TAKEN)) expressions.add(transTakenExp);
+
+        if (varNames.contains(TRANS_TAKEN))
+            expressions.add(
+                    // _trans_taken' = <taken-trans-formula>
+                    TRANS_TAKEN().PRIME().EQUALS(TlaAppl(takenTransTlaFQN(transFQN))));
+
         if (varNames.contains(CONF)) expressions.add(confExp);
         if (varNames.contains(SCOPES_USED)) expressions.add(scopesUsedExp);
         if (varNames.contains(STABLE)) expressions.add(stableExp);
 
-        tlaModel.addDefn(TlaDefn(TlaDecl(postTransTlaFQN(transFQN)), repeatedAnd(expressions)));
+        tlaModel.addDefn(TlaDefn(postTransTlaFQN(transFQN), repeatedAnd(expressions)));
 
         // TODO add stuff
     }

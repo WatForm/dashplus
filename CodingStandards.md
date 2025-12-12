@@ -18,6 +18,7 @@
 * Ancestor --> ances
 * Assignment --> asn
 * Iterator? --> iter
+* Concurrent --> conc
 
 
 Use the abbreviated form everywhere in the code, to keep names short and readable. If a new abbreviation is added, update this list.
