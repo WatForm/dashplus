@@ -8,12 +8,12 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.List;
 
 public class DashToTla {
-    public static TlaModel translate(DashModel dashModel, String moduleName) {
+    public static TlaModel translate(DashModel dashModel, String moduleName, boolean optimize) {
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
         StdLibDefns.translate(dashModel, tlaModel);
-        List<String> vars = StandardVars.translate(dashModel, tlaModel);
+        List<String> vars = StandardVars.translate(dashModel, tlaModel, optimize);
 
         tlaModel.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants");
