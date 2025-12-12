@@ -26,18 +26,6 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
         this.op = op;
     }
 
-    public AlloyExpr getLeft() {
-        return left;
-    }
-
-    public AlloyExpr getRight() {
-        return right;
-    }
-
-    public String getOp() {
-        return op;
-    }
-
     @Override
     public void toString(StringBuilder sb, int indent) {
         this.left.toString(sb, indent);

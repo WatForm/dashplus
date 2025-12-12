@@ -7,7 +7,7 @@ import ca.uwaterloo.watform.utils.*;
 
 public final class DashInv extends DashNamedExpr implements DashStateItem {
 
-    String name;
+    public final String name;
 
     public DashInv(Pos p, AlloyExpr inv) {
         super(p, inv);

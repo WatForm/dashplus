@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.dashast;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.utils.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -14,7 +15,7 @@ public final class DashVarDecls extends ASTNode implements DashStateItem {
     public DashVarDecls(Pos pos, List<String> n, AlloyExpr e, DashStrings.IntEnvKind k) {
         super(pos);
         assert (n != null && e != null);
-        this.names = n;
+        this.names = Collections.unmodifiableList(n);
         this.typ = e;
         this.kind = k;
     }

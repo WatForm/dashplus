@@ -8,7 +8,6 @@ import ca.uwaterloo.watform.utils.Pos;
 import java.util.List;
 
 public final class DashFile extends AlloyFile {
-    public String filename = "";
     public final DashState stateRoot;
 
     public DashFile(Pos pos, List<AlloyPara> paragraphs) {

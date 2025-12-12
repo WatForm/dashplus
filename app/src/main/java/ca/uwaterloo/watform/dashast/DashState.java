@@ -30,7 +30,7 @@ public class DashState extends DashPara implements DashStateItem {
         this.param = prm;
         this.kind = k;
         this.def = d;
-        this.items = i;
+        this.items = Collections.unmodifiableList(i);
     }
 
     // to sort the items in a state for display

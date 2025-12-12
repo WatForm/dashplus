@@ -12,7 +12,7 @@ import ca.uwaterloo.watform.utils.*;
 
 public abstract class DashNamedExpr extends ASTNode {
 
-    public AlloyExpr exp;
+    public final AlloyExpr exp;
 
     public DashNamedExpr(Pos pos, AlloyExpr exp) {
         super(pos);
@@ -21,6 +21,7 @@ public abstract class DashNamedExpr extends ASTNode {
 
     public DashNamedExpr() {
         super();
+        this.exp = null;
     }
 
     // Special toString for when expression has a name

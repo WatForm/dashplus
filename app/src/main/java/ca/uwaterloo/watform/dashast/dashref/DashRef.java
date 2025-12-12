@@ -36,6 +36,7 @@ import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,7 +57,7 @@ public class DashRef extends AlloyExpr {
         super(p);
         this.kind = k;
         this.name = n;
-        this.paramValues = prmValues;
+        this.paramValues = Collections.unmodifiableList(prmValues);
     }
 
     public DashRef(

@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.dashast;
 
 import ca.uwaterloo.watform.utils.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -11,7 +12,7 @@ public final class DashEventDecls extends ASTNode implements DashStateItem {
     public DashEventDecls(Pos pos, List<String> n, DashStrings.IntEnvKind kind) {
         super(pos);
         assert (n != null);
-        this.names = n;
+        this.names = Collections.unmodifiableList(n);
         this.kind = kind;
     }
 

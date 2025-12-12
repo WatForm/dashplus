@@ -4,17 +4,15 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.passIfNull;
 
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.*;
-import java.util.List;
 
 public final class DashTrans extends ASTNode implements DashStateItem {
-    public String name;
-    public List<Object> items;
-    public DashFrom fromP;
-    public DashGoto gotoP;
-    public DashOn onP;
-    public DashSend sendP;
-    public DashWhen whenP;
-    public DashDo doP;
+    public final String name;
+    public final DashFrom fromP;
+    public final DashGoto gotoP;
+    public final DashOn onP;
+    public final DashSend sendP;
+    public final DashWhen whenP;
+    public final DashDo doP;
 
     public DashTrans(
             Pos pos,

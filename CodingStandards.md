@@ -2,6 +2,7 @@
 
 * use public attributes for any attributes that is get/set only (rather than get/set methods)
 * all attributes of AST nodes should be final
+* AST fields that are List should use Collections.Unmodifiable
 
 ## Abbreviations
 

@@ -8,17 +8,6 @@ import ca.uwaterloo.watform.utils.*;
 public final class DashTransItemParseVis extends DashBaseVisitor<DashTransItem> {
     private final DashExprParseVis exprParseVis = new DashExprParseVis();
 
-    // @Override
-    // public DashOn visitDashOnQname(DashParser.DashOnQnameContext ctx) {
-    //     return new DashOn(
-    //             new Pos(ctx),
-    //             new DashRef(
-    //                     new Pos(ctx),
-    //                     DashStrings.DashRefKind.EVENT,
-    //                     this.exprParseVis.visit(ctx.qname()).toString(),
-    //                     DashRef.emptyParamValuesList()));
-    // }
-
     @Override
     public DashOn visitDashOnRef1(DashParser.DashOnRef1Context ctx) {
         return new DashOn(
@@ -34,17 +23,6 @@ public final class DashTransItemParseVis extends DashBaseVisitor<DashTransItem> 
                 this.exprParseVis.visitDashRef2WithKind(
                         ctx.dashRef2(), DashStrings.DashRefKind.EVENT));
     }
-
-    // @Override
-    // public DashSend visitDashSendQname(DashParser.DashSendQnameContext ctx) {
-    //     return new DashSend(
-    //             new Pos(ctx),
-    //             new DashRef(
-    //                     new Pos(ctx),
-    //                     DashStrings.DashRefKind.EVENT,
-    //                     this.exprParseVis.visit(ctx.qname()).toString(),
-    //                     DashRef.emptyParamValuesList()));
-    // }
 
     @Override
     public DashSend visitDashSendRef1(DashParser.DashSendRef1Context ctx) {
@@ -72,17 +50,6 @@ public final class DashTransItemParseVis extends DashBaseVisitor<DashTransItem> 
         return new DashDo(new Pos(ctx), this.exprParseVis.visit(ctx.expr1()));
     }
 
-    // @Override
-    // public DashFrom visitDashFromQname(DashParser.DashFromQnameContext ctx) {
-    //     return new DashFrom(
-    //             new Pos(ctx),
-    //             new DashRef(
-    //                     new Pos(ctx),
-    //                     DashStrings.DashRefKind.STATE,
-    //                     this.exprParseVis.visit(ctx.qname()).toString(),
-    //                     DashRef.emptyParamValuesList()));
-    // }
-
     @Override
     public DashFrom visitDashFromRef1(DashParser.DashFromRef1Context ctx) {
         return new DashFrom(
@@ -98,17 +65,6 @@ public final class DashTransItemParseVis extends DashBaseVisitor<DashTransItem> 
                 this.exprParseVis.visitDashRef2WithKind(
                         ctx.dashRef2(), DashStrings.DashRefKind.STATE));
     }
-
-    // @Override
-    // public DashGoto visitDashGotoQname(DashParser.DashGotoQnameContext ctx) {
-    //     return new DashGoto(
-    //             new Pos(ctx),
-    //             new DashRef(
-    //                     new Pos(ctx),
-    //                     DashStrings.DashRefKind.STATE,
-    //                     this.exprParseVis.visit(ctx.qname()).toString(),
-    //                     DashRef.emptyParamValuesList()));
-    // }
 
     @Override
     public DashGoto visitDashGotoRef1(DashParser.DashGotoRef1Context ctx) {
