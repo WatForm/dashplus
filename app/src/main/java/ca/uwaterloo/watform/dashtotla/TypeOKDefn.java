@@ -38,7 +38,7 @@ public class TypeOKDefn {
 
     public static void typeTransTaken(DashModel dashModel, TlaModel tlaModel) {
 
-        // _all_trans_taken == {_taken_<ti>,...,_none_transition}
+        // _all_trans_taken == {_taken_<trans-i>,...,_none_transition}
         List<String> transTakenNames =
                 mapBy(AuxDashAccessors.getTransitionNames(dashModel), x -> takenTransTlaFQN(x));
         transTakenNames.add((NONE_TRANSITION));
@@ -59,28 +59,33 @@ public class TypeOKDefn {
 
     public static void TypeOK(List<String> vars, TlaModel tlaModel) {
 
-        List<TlaExp> expressions = new ArrayList<>();
+        List<TlaExp> exps = new ArrayList<>();
 
         if (vars.contains(CONF))
-            expressions.add(
+            exps.add(
                     // _conf \subseteq _all_conf
                     CONF().SUBSETEQ(TlaAppl(typeDefn(CONF))));
 
         if (vars.contains(STABLE))
-            expressions.add(
+            exps.add(
                     // _stable \in BOOLEAN
                     STABLE().IN(TlaBoolean()));
 
         if (vars.contains(SCOPES_USED))
-            expressions.add(
+            exps.add(
                     // _scope_used \subseteq _all_scope_used
                     SCOPES_USED().SUBSETEQ(TlaAppl(typeDefn(SCOPES_USED))));
 
         if (vars.contains(TRANS_TAKEN))
-            expressions.add(
+            exps.add(
                     // _trans_taken \in _all_trans_taken
                     TRANS_TAKEN().IN(TlaAppl(typeDefn(TRANS_TAKEN))));
 
-        tlaModel.addDefn(TlaDefn(TYPE_OK, repeatedAnd(expressions)));
+        if (vars.contains(EVENTS))
+            exps.add(
+                    // _events \in _environmental_events union _internal_events
+                    EVENTS().IN(ENVIRONMENTAL_EVENTS().UNION(INTERNAL_EVENTS())));
+
+        tlaModel.addDefn(TlaDefn(TYPE_OK, repeatedAnd(exps)));
     }
 }
