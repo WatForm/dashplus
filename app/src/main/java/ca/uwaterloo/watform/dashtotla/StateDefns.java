@@ -7,7 +7,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,7 +19,7 @@ public class StateDefns {
     public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
 
         if (!varNames.contains(CONF)) return;
-        List<String> stateFQNs =  new ArrayList<>(); //dashModel.st.getAllNames();
+        List<String> stateFQNs = new ArrayList<>(); // dashModel.st.getAllNames();
 
         depthSort(stateFQNs);
         /* sorts it based on depth, thus all ancestors lie to the left and all descendants lie to the right, for every state */
@@ -29,7 +28,8 @@ public class StateDefns {
                 .reversed()
                 .forEach(
                         stateFQN -> {
-                            if (true/*dashModel.st.isLeaf(stateFQN)*/) LeafStateDefn(stateFQN, tlaModel);
+                            if (true /*dashModel.st.isLeaf(stateFQN)*/)
+                                LeafStateDefn(stateFQN, tlaModel);
                             else nonLeafStateDefn(stateFQN, dashModel, tlaModel);
                         });
     }
