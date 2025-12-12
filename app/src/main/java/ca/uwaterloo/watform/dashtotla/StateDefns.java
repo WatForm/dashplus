@@ -6,8 +6,8 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,20 +41,20 @@ public class StateDefns {
 
     public static void LeafStateDefn(String stateFQN, TlaModel tlaModel) {
 
-        // <state-formula-name> == {"<state FQN>"}
         tlaModel.addDefn(
-                TlaDefn(tlaFQN(stateFQN), TlaSet(Arrays.asList(TlaStringLiteral(stateFQN)))));
+                // <state-formula-name> == {"<state FQN>"}
+                TlaDefn(tlaFQN(stateFQN), TlaSet(TlaStringLiteral(stateFQN))));
     }
 
     public static void nonLeafStateDefn(String stateFQN, DashModel dashModel, TlaModel tlaModel) {
 
-        // <state-formula-name> = <child1-formula-name> union <child2-formula-name> ...
-
-        List<String> childStates = AuxDashAccessors.getChildStateNames(stateFQN, dashModel);
+        List<TlaAppl> childStates =
+                mapBy(
+                        AuxDashAccessors.getChildStateNames(stateFQN, dashModel),
+                        s -> TlaAppl(tlaFQN(s)));
 
         tlaModel.addDefn(
-                TlaDefn(
-                        tlaFQN(stateFQN),
-                        repeatedUnion(mapBy(childStates, s -> TlaAppl(tlaFQN(s))))));
+                // <state-formula-name> = union <child_i-formula-name>...
+                TlaDefn(tlaFQN(stateFQN), repeatedUnion(childStates)));
     }
 }

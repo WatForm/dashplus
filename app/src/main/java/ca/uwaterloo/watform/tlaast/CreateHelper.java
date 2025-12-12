@@ -5,6 +5,7 @@ import ca.uwaterloo.watform.tlaast.tlaliterals.*;
 import ca.uwaterloo.watform.tlaast.tlanaryops.*;
 import ca.uwaterloo.watform.tlaast.tlaquantops.*;
 import ca.uwaterloo.watform.tlaast.tlaunops.*;
+import java.util.Arrays;
 import java.util.List;
 
 public class CreateHelper {
@@ -254,15 +255,31 @@ public class CreateHelper {
         return new TlaSeq(children);
     }
 
+    public static TlaSeq TlaSeq(TlaExp... children) {
+        return new TlaSeq(Arrays.asList(children));
+    }
+
     public static TlaSet TlaSet(List<? extends TlaExp> children) {
         return new TlaSet(children);
+    }
+
+    public static TlaSet TlaSet(TlaExp... children) {
+        return new TlaSet(Arrays.asList(children));
     }
 
     public static TlaTuple TlaTuple(List<? extends TlaExp> children) {
         return new TlaTuple(children);
     }
 
+    public static TlaTuple TlaTuple(TlaExp... children) {
+        return new TlaTuple(Arrays.asList(children));
+    }
+
     public static TlaUnchanged TlaUnchanged(List<? extends TlaVar> children) {
         return new TlaUnchanged(children);
+    }
+
+    public static TlaUnchanged TlaUnchanged(TlaVar... children) {
+        return new TlaUnchanged(Arrays.asList(children));
     }
 }

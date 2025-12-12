@@ -6,8 +6,10 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
+import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,11 +18,11 @@ import java.util.List;
 public class TransDefns {
     public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
-        List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
+        List<String> transFQNs = AuxDashAccessors.getTransitionNames(dashModel);
 
         if (vars.contains(TRANS_TAKEN)) {
 
-            transitions.forEach(
+            transFQNs.forEach(
                     transFQN ->
                             tlaModel.addDefn(
                                     // taken_<trans-name> == "taken_<transFQN>"
@@ -37,102 +39,107 @@ public class TransDefns {
 
             tlaModel.addComment("parameterized formulae to check if transitions are enabled");
             // _enabled_<transFQN> == <body>
-            transitions.forEach(x -> TransIsEnabledDefn(x, vars, dashModel, tlaModel));
+            transFQNs.forEach(x -> TransenabledDefn(x, vars, dashModel, tlaModel));
 
             tlaModel.addComment("negation of disjunction of enabled-formulae");
             NextIsStableDefn(vars, dashModel, tlaModel);
         }
 
-        // pre, post, and body
-        transitions.forEach(
+        transFQNs.forEach(
                 transFQN -> {
+                    // pre, post, and body
                     tlaModel.addComment("Translation of transition " + transFQN);
-                    TransDefn(transFQN, vars, dashModel, tlaModel);
+                    PreTransDefn(transFQN, vars, dashModel, tlaModel);
+                    PostTransDefn(transFQN, vars, dashModel, tlaModel);
+                    TransDefn(transFQN, tlaModel);
                 });
     }
 
-    public static List<TlaVar> isEnabledParams(List<String> vars) {
+    public static List<TlaVar> enabledParams(List<String> vars) {
 
-        // this is subject to optimization, and is thus a separate function
-        List<String> parameters = Arrays.asList(SCOPES_USED);
+        // list of parameters for enabledTransition formulae
+        List<String> parameters = filterBy(Arrays.asList(SCOPES_USED, EVENTS), vars::contains);
         return mapBy(parameters, v -> TlaVar(paramVar(v)));
     }
 
     public static void NextIsStableDefn(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
-        // _next_is_stable(args) = /\ ~enabled_after_step_ti(args) ...
-        List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
+        List<TlaAppl> enabledTrans =
+                mapBy(
+                        AuxDashAccessors.getTransitionNames(dashModel),
+                        tFQN -> TlaAppl(enabledTransTlaFQN(tFQN), enabledParams(vars)));
+
         tlaModel.addDefn(
+                // _next_is_stable(args) = ~ (\/ enabled_after_step_ti(args) ...)
                 TlaDefn(
-                        TlaDecl(NEXT_IS_STABLE, isEnabledParams(vars)),
-                        repeatedAnd(
-                                mapBy(
-                                        transitions,
-                                        t ->
-                                                TlaNot(
-                                                        TlaAppl(
-                                                                enabledTransTlaFQN(t),
-                                                                isEnabledParams(vars)))))));
+                        TlaDecl(NEXT_IS_STABLE, enabledParams(vars)),
+                        TlaNot(repeatedOr(enabledTrans))));
     }
 
     public static void PreTransDefn(
             String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
-        TlaExp confExp = TlaTrue();
+        TlaAppl fromState = TlaAppl(dashModel.entered(transFQN).toString());
 
-        List<TlaExp> expressions = new ArrayList<>();
-        if (vars.contains(CONF)) expressions.add(confExp);
+        List<TlaExp> exps = new ArrayList<>();
 
-        tlaModel.addDefn(TlaDefn(preTransTlaFQN(transFQN), repeatedAnd(expressions)));
+        if (vars.contains(CONF))
+            exps.add(
+                    // _conf \intersection <fromState> \= {}
+                    CONF().INTERSECTION(fromState).NOT_EQUALS(NULL_SET()));
 
-        // TODO add stuff
+        // TODO add events and scope
+
+        tlaModel.addDefn(TlaDefn(preTransTlaFQN(transFQN), repeatedAnd(exps)));
     }
 
     public static void PostTransDefn(
             String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
-        TlaExp confExp = TlaUnchanged(Arrays.asList(TlaVar(CONF)));
-
-        TlaExp scopesUsedExp = TlaUnchanged(Arrays.asList(TlaVar(SCOPES_USED)));
-
-        TlaExp stableExp = TlaUnchanged(Arrays.asList(TlaVar(STABLE)));
-
-        List<TlaExp> expressions = new ArrayList<>();
+        List<TlaExp> exps = new ArrayList<>();
 
         if (vars.contains(TRANS_TAKEN))
-            expressions.add(
+            exps.add(
                     // _trans_taken' = <taken-trans-formula>
                     TRANS_TAKEN().PRIME().EQUALS(TlaAppl(takenTransTlaFQN(transFQN))));
 
-        if (vars.contains(CONF)) expressions.add(confExp);
-        if (vars.contains(SCOPES_USED)) expressions.add(scopesUsedExp);
-        if (vars.contains(STABLE)) expressions.add(stableExp);
+        if (vars.contains(CONF)) {
+            List<TlaAppl> entered = mapBy(dashModel.entered(transFQN), s -> TlaAppl(s.toString()));
+            List<TlaAppl> exited = mapBy(dashModel.exited(transFQN), s -> TlaAppl(s.toString()));
+            exps.add(
+                    // _conf' = conf \ {<exited>} union {<entered>}
+                    CONF().PRIME().EQUALS(CONF().DIFF(TlaSet(exited)).UNION(TlaSet(entered))));
+        }
 
-        tlaModel.addDefn(TlaDefn(postTransTlaFQN(transFQN), repeatedAnd(expressions)));
+        if (vars.contains(SCOPES_USED))
+            exps.add(
+                    // TODO fix this
+                    TlaUnchanged(SCOPES_USED()));
+
+        if (vars.contains(STABLE))
+            exps.add(
+                    // todo fix this
+                    TlaUnchanged(STABLE()));
+
+        tlaModel.addDefn(TlaDefn(postTransTlaFQN(transFQN), repeatedAnd(exps)));
 
         // TODO add stuff
     }
 
-    public static void TransIsEnabledDefn(
+    public static void TransenabledDefn(
             String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
         tlaModel.addDefn(
                 TlaDefn(
-                        TlaDecl(enabledTransTlaFQN(transFQN), isEnabledParams(vars)),
+                        TlaDecl(enabledTransTlaFQN(transFQN), enabledParams(vars)),
                         repeatedAnd(Arrays.asList())));
     }
 
-    public static void TransDefn(
-            String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void TransDefn(String transFQN, TlaModel tlaModel) {
 
-        PreTransDefn(transFQN, vars, dashModel, tlaModel);
-        PostTransDefn(transFQN, vars, dashModel, tlaModel);
-
-        // body = pre /\ post
+        TlaAppl preTrans = TlaAppl(preTransTlaFQN(transFQN));
+        TlaAppl postTrans = TlaAppl(postTransTlaFQN(transFQN));
         tlaModel.addDefn(
-                TlaDefn(
-                        TlaDecl(tlaFQN(transFQN)),
-                        TlaAnd(
-                                TlaAppl(preTransTlaFQN(transFQN)),
-                                TlaAppl(postTransTlaFQN(transFQN)))));
+                // body == pre /\ post
+                TlaDefn(tlaFQN(transFQN), preTrans.AND(postTrans)));
     }
 }

@@ -64,7 +64,7 @@ public class ResolveDM extends ResolverVisDM {
         // the params are also deduced in the resolvers
         // so they are not passed as an additional arg to
         // the resolvers
-        List<DashParam> sparams = new ArrayList(stateParams(sfqn));
+        List<DashParam> sparams = new ArrayList<>(stateParams(sfqn));
 
         this.initsR.addAll(mapBy(s.inits(), i -> resolveVar(i.exp, sfqn)));
         this.invsR.addAll(mapBy(s.invs(), i -> resolveVar(i.exp, sfqn)));

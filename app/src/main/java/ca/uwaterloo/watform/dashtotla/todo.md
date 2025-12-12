@@ -23,39 +23,38 @@
 
 |feature|description|translation|running|tests|
 |--|--|--|--|--|
-|conf|adding variable|✅|✅|✅|
-|trans_taken|adding variable|✅|✅|✅|
-|scopes_used|adding variable|✅|✅|✅|
-|stable|adding variable|✅|✅|✅|
-|events|adding variable|❕|❕|❕|
-|state literals|constructing state hierarchy using sets of strings|✅|✅|✅|
-|transition literals|values for trans_taken|✅|✅|✅|
-|pre-trans|defining pre-tans|✅|✅|✅|
-|pre-trans|pre-trans from states|❌|❌|❌|
-|pre-trans|pre-trans on|❌|❌|❌|
-|pre-trans|events clause|❕|❕|❕|
-|pre-trans|scopes clause|❌|❌|❌|
-|post-trans|defining post-trans|✅|✅|✅|
-|post-trans|handling stability|❌|❌|❌|
-|post-trans|sending events|❕|❕|❕|
-|post-trans|scopes update|❌|❌|❌|
-|enabled-trans|defining enabled-trans|✅|✅|❌|
-|enabled-trans|logic|❌|❌|❌|
-|transition|combining pre and post|✅|✅|✅|
-|nextIsStable|combining enabled|✅|✅|❌|
-|Init|Defining initial values (except conf)|✅|✅|✅|
-|Init sync|Syncing config and module|✅|✅|✅|
-|Init conf|defining initial value of conf|✅|✅|✅|
-|Small step|combine trans, pre-trans and stutter|✅|✅|✅|
-|Stutter|Defining stutter in TLA+|✅|✅|❌|
+|conf|adding variable|✅|❕|❕|
+|trans_taken|adding variable|✅|❕|❕|
+|scopes_used|adding variable|✅|❕|❕|
+|stable|adding variable|✅|❕|❕|
+|events|adding variable|❌|❕|❕|
+|state literals|constructing state hierarchy using sets of strings|✅|❕|❕|
+|transition literals|values for trans_taken|✅|❕|❕|
+|pre-trans|defining pre-tans|✅|❕|❕|
+|pre-trans|pre-trans from states|✅|❕|❕|
+|pre-trans|events clause|❌|❕|❕|
+|pre-trans|scopes clause|❌|❕|❕|
+|post-trans|defining post-trans|✅|❕|❕|
+|post-trans|scopes update|✅|❕|❕|
+|post-trans|handling stability|❌|❕|❕|
+|post-trans|sending events|❌|❕|❕|
+|enabled-trans|defining enabled-trans|✅|❕|❕|
+|enabled-trans|logic|❌|❕|❕|
+|transition|combining pre and post|✅|❕|❕|
+|nextIsStable|combining enabled|✅|❕|❕|
+|Init|Defining initial values (except conf)|✅|❕|❕|
+|Init sync|Syncing config and module|✅|❕|❕|
+|Init conf|defining initial value of conf|✅|❕|❕|
+|Small step|combine trans, pre-trans and stutter|✅|❕|❕|
+|Stutter|Defining stutter in TLA+|✅|❕|❕|
 |Implementing stutter|implementing a stutter framework|❔|❔|❔|
-|stable|type definition|✅|✅|✅|
-|conf|type definition|✅|✅|✅|
-|scopes_used|type definition|✅|✅|✅|
-|trans_taken|type definition (none included)|✅|✅|✅|
-|TypeOK|combining types|✅|✅|✅|
-|Next|Defining Next|✅|✅|✅|
-|Next sync|Syncing config and module|✅|✅|✅|
+|stable|type definition|✅|❕|❕|
+|conf|type definition|✅|❕|❕|
+|scopes_used|type definition|✅|❕|❕|
+|trans_taken|type definition (none included)|✅|❕|❕|
+|TypeOK|combining types|✅|❕|❕|
+|Next|Defining Next|✅|❕|❕|
+|Next sync|Syncing config and module|✅|❕|❕|
 |User-defined vars|declaration|❕|❕|❕|
 |User-defined vars|type definition|❕|❕|❕|
 |User-defined vars|sync with config|❔|❔|❔|
