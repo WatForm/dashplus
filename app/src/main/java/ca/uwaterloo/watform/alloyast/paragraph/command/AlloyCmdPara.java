@@ -1,5 +1,8 @@
 package ca.uwaterloo.watform.alloyast.paragraph.command;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.EXACTLY;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -33,6 +36,11 @@ public final class AlloyCmdPara extends AlloyPara {
                 indent,
                 this.cmdDecls,
                 AlloyStrings.SPACE + AlloyStrings.RFATARROW + AlloyStrings.SPACE);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        pCtx.appendList(this.cmdDecls, SPACE + RFATARROW + SPACE);
     }
 
     /*
@@ -129,6 +137,32 @@ public final class AlloyCmdPara extends AlloyPara {
             }
         }
 
+        @Override
+        public void pp(PrintContext pCtx) {
+            pCtx.append(this.cmdType.toString() + SPACE);
+            if (this.declQname.isPresent()) {
+                this.declQname.get().pp(pCtx);
+                pCtx.append(SPACE);
+            }
+            if (this.invoQname.isPresent()) {
+                this.invoQname.get().pp(pCtx);
+            } else if (this.constrBlock.isPresent()) {
+                this.constrBlock.get().ppNewBlock(pCtx);
+            } else {
+                throw AlloyASTImplError.xorFields(
+                        pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
+            }
+            pCtx.append(SPACE);
+            if (this.scope.isPresent()) {
+                this.scope.get().pp(pCtx);
+                pCtx.append(SPACE);
+            }
+            if (this.number.isPresent()) {
+                pCtx.append(AlloyStrings.EXPECT + AlloyStrings.SPACE);
+                this.number.get().pp(pCtx);
+            }
+        }
+
         public enum CmdType {
             CHECK(AlloyStrings.CHECK),
             RUN(AlloyStrings.RUN);
@@ -191,6 +225,22 @@ public final class AlloyCmdPara extends AlloyPara {
                 } else if (!this.typescopes.isEmpty()) {
                     ASTNode.join(
                             sb, indent, this.typescopes, AlloyStrings.COMMA + AlloyStrings.SPACE);
+                } else {
+                    throw AlloyASTImplError.bothNull(
+                            pos, "num", "typescopes", "AlloyCmdPara.CommandDecl.Scope");
+                }
+            }
+
+            public void pp(PrintContext pCtx) {
+                pCtx.append(FOR + SPACE);
+                if (!this.num.isEmpty()) {
+                    this.num.get().pp(pCtx);
+                    if (!this.typescopes.isEmpty()) {
+                        pCtx.append(AlloyStrings.SPACE + AlloyStrings.BUT + AlloyStrings.SPACE);
+                        pCtx.appendList(this.typescopes, COMMA);
+                    }
+                } else if (!this.typescopes.isEmpty()) {
+                    pCtx.appendList(this.typescopes, COMMA);
                 } else {
                     throw AlloyASTImplError.bothNull(
                             pos, "num", "typescopes", "AlloyCmdPara.CommandDecl.Scope");
@@ -316,6 +366,30 @@ public final class AlloyCmdPara extends AlloyPara {
                     }
                     sb.append(AlloyStrings.SPACE);
                     ((AlloyVarExpr) this.scopableExpr).toString(sb, indent);
+                }
+
+                @Override
+                public void pp(PrintContext pCtx) {
+                    if (isExactly) {
+                        pCtx.append(EXACTLY + SPACE);
+                    }
+                    this.start.pp(pCtx);
+                    if (!(this.scopableExpr instanceof AlloySigIntExpr)
+                            && !(this.scopableExpr instanceof AlloyIntExpr)
+                            && !(this.scopableExpr instanceof AlloySeqExpr)) {
+                        if (this.hasDotDot) {
+                            pCtx.append(DOT + DOT);
+                        }
+                        if (this.end.isPresent()) {
+                            this.end.get().pp(pCtx);
+                        }
+                        if (this.increment.isPresent()) {
+                            pCtx.append(SPACE + COLON + SPACE);
+                            this.increment.get().pp(pCtx);
+                        }
+                    }
+                    pCtx.append(SPACE);
+                    ((AlloyVarExpr) this.scopableExpr).pp(pCtx);
                 }
             }
         }

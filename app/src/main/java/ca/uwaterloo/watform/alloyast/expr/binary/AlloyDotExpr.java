@@ -28,6 +28,13 @@ public final class AlloyDotExpr extends AlloyBinaryExpr {
         this.left.toString(sb, indent);
         sb.append(op);
         this.right.toString(sb, indent);
-        return;
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        this.left.pp(pCtx);
+        pCtx.append(op);
+        pCtx.brkNoSpace();
+        this.right.pp(pCtx);
     }
 }

@@ -3,13 +3,15 @@ package ca.uwaterloo.watform.PrintContext;
 import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyLetExpr.AlloyLetAsn;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
+import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import org.junit.jupiter.api.*;
@@ -26,27 +28,36 @@ public class PCtxTest {
     private static final AlloyQnameExpr longCQname = new AlloyQnameExpr("C".repeat(10));
     private static final AlloyQnameExpr longDQname = new AlloyQnameExpr("D".repeat(10));
 
-    private static AlloyAndExpr and1() {
+    public static AlloyAndExpr and1() {
         return new AlloyAndExpr(longAQname, longBQname);
     }
 
-    private static AlloyIteExpr ite1() {
+    public static AlloyIteExpr ite1() {
         return new AlloyIteExpr(
                 longAQname,
                 new AlloyIteExpr(longAQname, longBQname, longCQname),
                 new AlloyIteExpr(longAQname, longBQname, longCQname));
     }
 
-    private static AlloyLetAsn letAsn1() {
+    public static AlloyLetAsn letAsn1() {
         return new AlloyLetAsn(shortAQname, shortBQname);
     }
 
-    private static AlloyDecl decl1() {
+    public static AlloyDecl decl1() {
         return new AlloyDecl(shortAQname, shortBQname);
     }
 
-    private static AlloyDecl decl2() {
+    public static AlloyDecl decl2() {
         return new AlloyDecl(longAQname, longBQname);
+    }
+
+    public static AlloyCmdPara.CommandDecl cmdDecl1() {
+        return new AlloyCmdPara.CommandDecl(
+                AlloyCmdPara.CommandDecl.CmdType.RUN,
+                null,
+                TestUtil.createBlock(),
+                new AlloyCmdPara.CommandDecl.Scope(
+                        new AlloyCmdPara.CommandDecl.Scope.Typescope(false, 1, 3, 1, "sigName")));
     }
 
     @Test
@@ -361,6 +372,16 @@ public class PCtxTest {
                                 new AlloyFactPara(
                                         new AlloyQnameExpr("name"),
                                         new AlloyBlock(List.of(qt1, qt2)))));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("Command")
+    public void test11() {
+        AlloyCmdPara cmd1 = new AlloyCmdPara(cmdDecl1());
+        AlloyCmdPara cmd2 = new AlloyCmdPara(List.of(cmdDecl1(), cmdDecl1(), cmdDecl1()));
+        AlloyFile alloyFile = new AlloyFile(List.of(cmd1, cmd2));
         System.out.println(alloyFile.toPrettyString(30, 4));
     }
 }
