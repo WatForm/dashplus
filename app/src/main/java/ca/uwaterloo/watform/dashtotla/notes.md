@@ -50,5 +50,11 @@ Stuff:
 
 - what is found states
 
+[https://discuss.tlapl.us/msg03729.html](https://discuss.tlapl.us/msg03729.html)
+
 - unit tests the models can be put into dashplus (resources)
 
+## Flags:
+
+- unoptimized (leaves in boilerplate)
+- 

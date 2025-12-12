@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SmallStepDefn {
-    public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
         List<String> transitions = AuxDashAccessors.getTransitionNames(dashModel);
 
@@ -27,7 +27,7 @@ public class SmallStepDefn {
                         SOME_PRE_TRANSITION,
                         repeatedOr(mapBy(transitions, t -> TlaAppl(preTransTlaFQN(t))))));
 
-        StutterDefn(varNames, tlaModel, dashModel);
+        StutterDefn(vars, tlaModel, dashModel);
 
         tlaModel.addDefn(
                 // _small_step == _some_transition \/ (_stutter /\ ~_some_pre_transition)
@@ -47,16 +47,16 @@ public class SmallStepDefn {
         */
     }
 
-    public static void StutterDefn(List<String> varNames, TlaModel tlaModel, DashModel dashModel) {
+    public static void StutterDefn(List<String> vars, TlaModel tlaModel, DashModel dashModel) {
         List<TlaExp> expressions = new ArrayList<>();
 
-        if (varNames.contains(TRANS_TAKEN))
+        if (vars.contains(TRANS_TAKEN))
             expressions.add(
                     // _trans_taken' = _none_transition
                     TRANS_TAKEN().PRIME().EQUALS(NONE_TRANSITION()));
 
         List<String> unchangedVars =
-                filterBy(Arrays.asList(CONF, STABLE, SCOPES_USED), v -> varNames.contains(v));
+                filterBy(Arrays.asList(CONF, STABLE, SCOPES_USED), v -> vars.contains(v));
 
         if (unchangedVars.size() != 0)
             expressions.add(

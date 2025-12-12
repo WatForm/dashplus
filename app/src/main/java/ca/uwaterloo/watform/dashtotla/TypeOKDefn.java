@@ -13,15 +13,15 @@ import java.util.List;
 
 public class TypeOKDefn {
 
-    public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
         // these are separate functions since the presence of the variables themselves are subject
         // to optimization
 
-        if (varNames.contains(CONF)) typeConf(dashModel, tlaModel);
-        if (varNames.contains(TRANS_TAKEN)) typeTransTaken(dashModel, tlaModel);
-        if (varNames.contains(SCOPES_USED)) typeScopesUsed(dashModel, tlaModel);
-        TypeOK(varNames, tlaModel);
+        if (vars.contains(CONF)) typeConf(dashModel, tlaModel);
+        if (vars.contains(TRANS_TAKEN)) typeTransTaken(dashModel, tlaModel);
+        if (vars.contains(SCOPES_USED)) typeScopesUsed(dashModel, tlaModel);
+        TypeOK(vars, tlaModel);
     }
 
     public static void typeConf(DashModel dashModel, TlaModel tlaModel) {
@@ -57,26 +57,26 @@ public class TypeOKDefn {
         // this may be subject to change later
     }
 
-    public static void TypeOK(List<String> varNames, TlaModel tlaModel) {
+    public static void TypeOK(List<String> vars, TlaModel tlaModel) {
 
         List<TlaExp> expressions = new ArrayList<>();
 
-        if (varNames.contains(CONF))
+        if (vars.contains(CONF))
             expressions.add(
                     // _conf \subseteq _all_conf
                     CONF().SUBSETEQ(TlaAppl(typeDefn(CONF))));
 
-        if (varNames.contains(STABLE))
+        if (vars.contains(STABLE))
             expressions.add(
                     // _stable \in BOOLEAN
                     STABLE().IN(TlaBoolean()));
 
-        if (varNames.contains(SCOPES_USED))
+        if (vars.contains(SCOPES_USED))
             expressions.add(
                     // _scope_used \subseteq _all_scope_used
                     SCOPES_USED().SUBSETEQ(TlaAppl(typeDefn(SCOPES_USED))));
 
-        if (varNames.contains(TRANS_TAKEN))
+        if (vars.contains(TRANS_TAKEN))
             expressions.add(
                     // _trans_taken \in _all_trans_taken
                     TRANS_TAKEN().IN(TlaAppl(typeDefn(TRANS_TAKEN))));

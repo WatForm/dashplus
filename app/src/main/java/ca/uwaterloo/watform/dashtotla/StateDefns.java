@@ -7,7 +7,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,10 +15,11 @@ public class StateDefns {
     // this class adds in formulae for every state in the dash model
     // leaf states are singleton sets that contain the fully qualified names as strings
     // non-leaf states are the union of the leaf states they contain
-    public static void translate(List<String> varNames, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
-        if (!varNames.contains(CONF)) return;
-        List<String> stateFQNs = new ArrayList<>(); // dashModel.st.getAllNames();
+        if (!vars.contains(CONF)) return;
+        List<String> stateFQNs =
+                AuxDashAccessors.getAllStateNames(dashModel); // dashModel.st.getAllNames();
 
         depthSort(stateFQNs);
         /* sorts it based on depth, thus all ancestors lie to the left and all descendants lie to the right, for every state */
@@ -28,7 +28,7 @@ public class StateDefns {
                 .reversed()
                 .forEach(
                         stateFQN -> {
-                            if (true /*dashModel.st.isLeaf(stateFQN)*/)
+                            if (AuxDashAccessors.isLeaf(stateFQN, dashModel))
                                 LeafStateDefn(stateFQN, tlaModel);
                             else nonLeafStateDefn(stateFQN, dashModel, tlaModel);
                         });

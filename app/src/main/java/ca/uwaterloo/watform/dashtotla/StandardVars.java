@@ -23,11 +23,11 @@ class StandardVars {
         // big-step semantics
         // _stable - boolean variable, true if the current snapshot is stable
 
-        List<String> varNames = Arrays.asList(CONF, TRANS_TAKEN, SCOPES_USED, STABLE);
+        List<String> vars = Arrays.asList(CONF, TRANS_TAKEN, SCOPES_USED, STABLE);
 
         // VARIABLES _conf, _trans_taken, _scopes_used, _stable
-        varNames.forEach(v -> tlaModel.addVar(TlaVar(v)));
+        vars.forEach(v -> tlaModel.addVar(TlaVar(v)));
 
-        return varNames;
+        return vars;
     }
 }
