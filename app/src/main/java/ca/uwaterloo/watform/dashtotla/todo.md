@@ -27,7 +27,7 @@
 |trans_taken|adding variable|✅|❕|❕|
 |scopes_used|adding variable|✅|❕|❕|
 |stable|adding variable|✅|❕|❕|
-|events|adding variable|❌|❕|❕|
+|events|adding variable|✅|❕|❕|
 |state literals|constructing state hierarchy using sets of strings|✅|❕|❕|
 |transition literals|values for trans_taken|✅|❕|❕|
 |pre-trans|defining pre-tans|✅|❕|❕|
