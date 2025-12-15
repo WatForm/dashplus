@@ -104,7 +104,13 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         this.primeOk = false;
         this.primeOkInPrmExprs = false;
         this.thisOk = true;
-        return (DashRef) visit(expr);
+        System.out.println(expr.getClass());
+        // expr is a DashRef
+        // visit is a function that expects an AlloyExpr
+        // calling this with a DashRef is fine because Liskov substitution
+        // However, this leads to a methodShouldNotBeCalled error
+        // return (DashRef) visit(expr); - this is wrong
+        return (DashRef) ((DashRef) expr).accept(this); // this is right
     }
 
     protected DashRef resolveEvent(AlloyExpr expr, String sfqn) {
@@ -116,7 +122,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         this.primeOk = false;
         this.primeOkInPrmExprs = false;
         this.thisOk = true;
-        return (DashRef) visit((DashRef) expr);
+        return (DashRef) ((DashRef) expr).accept(this);
     }
 
     protected DashRef resolveEventPrimesOkInPrmExprs(AlloyExpr expr, String sfqn) {
@@ -128,7 +134,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         this.primeOk = true;
         this.primeOkInPrmExprs = true;
         this.thisOk = true;
-        return (DashRef) visit(expr);
+        return (DashRef) ((DashRef) expr).accept(this);
     }
 
     // private functions
