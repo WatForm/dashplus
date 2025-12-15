@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class StatesDM extends TransDM {
 
@@ -198,10 +197,14 @@ public class StatesDM extends TransDM {
                     } // if equal this is empty so don't include it
                 }
                 // siblings
+                /* removed code
                 List<String> children = immChildren(d.name);
                 List<String> andChildren =
                         children.stream().filter(c -> isAnd(c)).collect(Collectors.toList());
                 andChildren.remove(chOfDest.name);
+                */
+                List<String> andChildren =
+                        filterBy(immChildren(d.name), c -> isAnd(c) && !c.equals(chOfDest.name));
                 // siblings
                 for (String ch : andChildren) {
                     nP = new ArrayList<AlloyExpr>(d.paramValues);
@@ -342,9 +345,7 @@ public class StatesDM extends TransDM {
     }
 
     private List<String> prefixParamAnces(String sfqn) {
-        return allAnces(sfqn).stream()
-                .filter(i -> (isAnd(i) && stateHasParams(i)) || isRoot(i))
-                .collect(Collectors.toList());
+        return filterBy(allAnces(sfqn), s -> (isAnd(s) && stateHasParams(s)) || isRoot(s));
     }
 
     public String closestParamAnces(String sfqn) {
