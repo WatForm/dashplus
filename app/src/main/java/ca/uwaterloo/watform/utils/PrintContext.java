@@ -11,7 +11,7 @@ public final class PrintContext {
     private final Layouter<IOException> layouter;
     public static final int lineWidth = 80;
     // this is used to guarantee a size that cannot fit within a line
-    public static final int largeSize = PrintContext.lineWidth * 2;
+    public static final int largeSize = lineWidth * 2;
     public static final int indentSize = 4;
 
     public PrintContext(Writer w, int lineWidth, int indentSize) {
@@ -19,7 +19,7 @@ public final class PrintContext {
     }
 
     public PrintContext(Writer w) {
-        this(w, PrintContext.lineWidth, PrintContext.indentSize);
+        this(w, lineWidth, indentSize);
     }
 
     public void append(String s) {
@@ -41,7 +41,7 @@ public final class PrintContext {
     }
 
     public void begin() {
-        this.begin(PrintContext.indentSize);
+        this.begin(indentSize);
     }
 
     public void align() {
@@ -77,11 +77,11 @@ public final class PrintContext {
     }
 
     public void brkNoIndent() {
-        this.brk(1, -PrintContext.indentSize);
+        this.brk(1, -indentSize);
     }
 
     public void brkNoSpaceNoIndent() {
-        this.brk(0, -PrintContext.indentSize);
+        this.brk(0, -indentSize);
     }
 
     public void nl() {
@@ -93,7 +93,7 @@ public final class PrintContext {
     }
 
     public void nlNoIndent() {
-        this.brk(PrintContext.largeSize, -PrintContext.indentSize);
+        this.brk(largeSize, -indentSize);
     }
 
     // public void blankLine() {
@@ -127,8 +127,16 @@ public final class PrintContext {
         }
     }
 
+    public void indent() {
+        try {
+            layouter.ind(indentSize, 0);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     // public void dedent() {
-    //     begin(-PrintContext.indentSize);
+    //     begin(-indentSize);
     // }
 
     /**
@@ -138,13 +146,22 @@ public final class PrintContext {
      * @param li
      * @param separator
      */
-    public void appendList(List<? extends ASTNode> li, String separator) {
+    public <T> void appendList(List<T> li, String separator) {
+        if (li == null || li.isEmpty()) {
+            return;
+        }
         this.align();
-        for (ASTNode astNode : li) {
-            astNode.ppNewBlock(this);
-            if (!(astNode == li.getLast())) {
-                this.append(separator);
-                this.brk();
+        for (T element : li) {
+            try {
+                ASTNode astNode = (ASTNode) element;
+                astNode.ppNewBlock(this);
+                if (!(astNode == li.getLast())) {
+                    this.append(separator);
+                    this.brk();
+                }
+            } catch (ClassCastException e) {
+                throw ImplementationError.failedCast(
+                        "Cannot cast to ASTNode in PrintContext.appendList \n" + e.toString());
             }
         }
         this.end();

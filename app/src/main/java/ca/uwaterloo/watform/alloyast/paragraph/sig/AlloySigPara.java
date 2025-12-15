@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph.sig;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
@@ -18,6 +20,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/*
+ * Use the following to import to avoid long names
+import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.*;
+
+ */
 public final class AlloySigPara extends AlloyPara {
     public final List<Qual> quals;
     public final List<AlloyQnameExpr> qnames;
@@ -94,6 +102,26 @@ public final class AlloySigPara extends AlloyPara {
                 block);
     }
 
+    public AlloySigPara(AlloyQnameExpr qname) {
+        this(
+                Pos.UNKNOWN,
+                Collections.emptyList(),
+                Collections.singletonList(qname),
+                null,
+                Collections.emptyList(),
+                null);
+    }
+
+    public AlloySigPara(String label) {
+        this(
+                Pos.UNKNOWN,
+                Collections.emptyList(),
+                Collections.singletonList(new AlloyQnameExpr(label)),
+                null,
+                Collections.emptyList(),
+                null);
+    }
+
     @Override
     public void toString(StringBuilder sb, int indent) {
         // cannot use ASTNode.join here b/c Qual is not ASTNode; will fail
@@ -124,6 +152,30 @@ public final class AlloySigPara extends AlloyPara {
             sb.append(AlloyStrings.SPACE);
             this.block.get().toString(sb, indent);
             sb.append(AlloyStrings.SPACE);
+        }
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        for (Qual qual : this.quals) {
+            pCtx.append(qual.toString() + AlloyStrings.SPACE);
+        }
+        pCtx.append(SIG + SPACE);
+        pCtx.appendList(this.qnames, COMMA);
+        pCtx.append(SPACE);
+        if (this.rel.isPresent()) {
+            ((ASTNode) this.rel.get()).pp(pCtx);
+            pCtx.append(SPACE);
+        }
+        pCtx.append(LBRACE);
+        if (!this.fields.isEmpty()) {
+            pCtx.brkNoSpace();
+            pCtx.appendList(this.fields, COMMA);
+            pCtx.brkNoSpaceNoIndent();
+        }
+        pCtx.append(RBRACE + SPACE);
+        if (this.block.isPresent()) {
+            this.block.get().pp(pCtx);
         }
     }
 
@@ -243,6 +295,13 @@ public final class AlloySigPara extends AlloyPara {
             sb.append(AlloyStrings.EXTENDS + AlloyStrings.SPACE);
             ((AlloyVarExpr) this.sigRef).toString(sb, indent);
         }
+
+        @Override
+        public void pp(PrintContext pCtx) {
+            pCtx.append(EXTENDS);
+            pCtx.brk();
+            ((AlloyVarExpr) this.sigRef).pp(pCtx);
+        }
     }
 
     public static final class In extends ASTNode implements Rel {
@@ -272,6 +331,13 @@ public final class AlloySigPara extends AlloyPara {
                     this.sigRefs,
                     AlloyStrings.SPACE + AlloyStrings.PLUS + AlloyStrings.SPACE);
         }
+
+        @Override
+        public void pp(PrintContext pCtx) {
+            pCtx.append(IN);
+            pCtx.brk();
+            pCtx.appendList(this.sigRefs, SPACE + PLUS);
+        }
     }
 
     public static final class Equal extends ASTNode implements Rel {
@@ -300,6 +366,13 @@ public final class AlloySigPara extends AlloyPara {
                     indent,
                     this.sigRefs,
                     AlloyStrings.SPACE + AlloyStrings.PLUS + AlloyStrings.SPACE);
+        }
+
+        @Override
+        public void pp(PrintContext pCtx) {
+            pCtx.append(EQUAL);
+            pCtx.brk();
+            pCtx.appendList(this.sigRefs, SPACE + PLUS);
         }
     }
 }

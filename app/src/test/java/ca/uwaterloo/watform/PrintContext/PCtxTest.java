@@ -17,6 +17,8 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.CommandDecl.
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.CommandDecl.Scope.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara.*;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import org.junit.jupiter.api.*;
@@ -299,9 +301,9 @@ public class PCtxTest {
                                                                         new AlloyDecl(
                                                                                 List.of(
                                                                                         shortAQname,
-                                                                                                shortBQname,
+                                                                                        shortBQname,
                                                                                         shortCQname,
-                                                                                                shortDQname),
+                                                                                        shortDQname),
                                                                                 shortAQname),
                                                                         new AlloyDecl(
                                                                                 true,
@@ -309,9 +311,9 @@ public class PCtxTest {
                                                                                 true,
                                                                                 List.of(
                                                                                         shortAQname,
-                                                                                                shortBQname,
+                                                                                        shortBQname,
                                                                                         shortCQname,
-                                                                                                shortDQname),
+                                                                                        shortDQname),
                                                                                 true,
                                                                                 AlloyDecl.Quant
                                                                                         .LONE,
@@ -452,6 +454,37 @@ public class PCtxTest {
                                 new AlloyModuleArg(true, longBQname),
                                 new AlloyModuleArg(true, longBQname)));
         alloyFile = new AlloyFile(List.of(mod2));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @Order(13)
+    @DisplayName("sig")
+    public void test13() {
+        AlloySigPara sig1 = new AlloySigPara(longAQname);
+        AlloySigPara sig2 = new AlloySigPara(longAQname, new AlloyBlock(ite1()));
+        AlloySigPara sig3 =
+                new AlloySigPara(
+                        List.of(Qual.ONE, Qual.VAR, Qual.PRIVATE),
+                        List.of(longAQname, longBQname, longCQname),
+                        new In(List.of(longAQname, longBQname, longCQname)),
+                        List.of(decl1(), decl2(), decl1()),
+                        new AlloyBlock(ite1()));
+        AlloySigPara sig4 =
+                new AlloySigPara(
+                        List.of(shortAQname), List.of(decl1(), decl2(), decl1()), new AlloyBlock());
+        AlloyFile alloyFile = new AlloyFile(List.of(sig1, sig2, sig3, sig4));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("assert")
+    public void test14() {
+        AlloyAssertPara assert1 =
+                new AlloyAssertPara(new AlloyStrLiteralExpr("name"), new AlloyBlock(ite1()));
+        AlloyAssertPara assert2 = new AlloyAssertPara(longAQname, new AlloyBlock(ite1()));
+        AlloyFile alloyFile = new AlloyFile(List.of(assert1, assert2));
         System.out.println(alloyFile.toPrettyString(30, 4));
     }
 }

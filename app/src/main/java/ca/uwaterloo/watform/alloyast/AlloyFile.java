@@ -60,7 +60,7 @@ public class AlloyFile extends AlloyASTNode {
     @Override
     public void pp(PrintContext pCtx) {
         for (AlloyPara p : this.paras) {
-            p.pp(pCtx);
+            p.ppNewBlock(pCtx);
             pCtx.nl();
             pCtx.nlNoIndent();
         }
