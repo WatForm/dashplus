@@ -12,6 +12,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/*
+* Use the following to import this class to avoid long names
+	import ca.uwaterloo.watform.alloyast.paragraph.command.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.CommandDecl.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.CommandDecl.Scope.*;
+*/
 public final class AlloyCmdPara extends AlloyPara {
 
     public final List<CommandDecl> cmdDecls;
@@ -113,6 +120,14 @@ public final class AlloyCmdPara extends AlloyPara {
             this(Pos.UNKNOWN, cmdType, declQname, invoQname, constrBlock, scope, null);
         }
 
+        public CommandDecl(CmdType cmdType, AlloyQnameExpr invoQname, Scope scope) {
+            this(Pos.UNKNOWN, cmdType, null, invoQname, null, scope, null);
+        }
+
+        public CommandDecl(CmdType cmdType, AlloyBlock constrBlock, Scope scope) {
+            this(Pos.UNKNOWN, cmdType, null, null, constrBlock, scope, null);
+        }
+
         @Override
         public void toString(StringBuilder sb, int indent) {
             sb.append(this.cmdType.toString());
@@ -147,12 +162,12 @@ public final class AlloyCmdPara extends AlloyPara {
             if (this.invoQname.isPresent()) {
                 this.invoQname.get().pp(pCtx);
             } else if (this.constrBlock.isPresent()) {
-                this.constrBlock.get().ppNewBlock(pCtx);
+                this.constrBlock.get().pp(pCtx);
             } else {
                 throw AlloyASTImplError.xorFields(
                         pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
-            pCtx.append(SPACE);
+            pCtx.brk();
             if (this.scope.isPresent()) {
                 this.scope.get().pp(pCtx);
                 pCtx.append(SPACE);

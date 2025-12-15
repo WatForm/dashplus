@@ -12,6 +12,11 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.CommandDecl.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.CommandDecl.Scope.*;
+import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
+import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import org.junit.jupiter.api.*;
@@ -51,13 +56,49 @@ public class PCtxTest {
         return new AlloyDecl(longAQname, longBQname);
     }
 
+    public static AlloyCmdPara.CommandDecl.Scope.Typescope typescope1() {
+        return new Typescope(false, 1, 3, 1, "sigName");
+    }
+
     public static AlloyCmdPara.CommandDecl cmdDecl1() {
-        return new AlloyCmdPara.CommandDecl(
-                AlloyCmdPara.CommandDecl.CmdType.RUN,
+        return new CommandDecl(CmdType.RUN, TestUtil.createBlock(), new Scope(typescope1()));
+    }
+
+    public static CommandDecl cmdDecl2() {
+        return new CommandDecl(
+                CmdType.RUN,
+                new AlloyBlock(ite1()),
+                new AlloyCmdPara.CommandDecl.Scope(typescope1()));
+    }
+
+    public static CommandDecl cmdDecl3() {
+        return new CommandDecl(CmdType.RUN, longAQname, new Scope(typescope1()));
+    }
+
+    public static CommandDecl cmdDecl4() {
+        return new CommandDecl(
+                Pos.UNKNOWN,
+                CmdType.RUN,
+                longAQname,
+                longBQname,
                 null,
-                TestUtil.createBlock(),
-                new AlloyCmdPara.CommandDecl.Scope(
-                        new AlloyCmdPara.CommandDecl.Scope.Typescope(false, 1, 3, 1, "sigName")));
+                new Scope(typescope1()),
+                new AlloyNumExpr(3));
+    }
+
+    public static CommandDecl cmdDecl5() {
+        return new CommandDecl(
+                Pos.UNKNOWN,
+                CmdType.RUN,
+                longAQname,
+                null,
+                new AlloyBlock(ite1()),
+                new Scope(
+                        new AlloyNumExpr(3),
+                        List.of(
+                                typescope1(), typescope1(),
+                                typescope1(), typescope1())),
+                new AlloyNumExpr(3));
     }
 
     @Test
@@ -381,7 +422,36 @@ public class PCtxTest {
     public void test11() {
         AlloyCmdPara cmd1 = new AlloyCmdPara(cmdDecl1());
         AlloyCmdPara cmd2 = new AlloyCmdPara(List.of(cmdDecl1(), cmdDecl1(), cmdDecl1()));
-        AlloyFile alloyFile = new AlloyFile(List.of(cmd1, cmd2));
+        AlloyCmdPara cmd3 = new AlloyCmdPara(List.of(cmdDecl2()));
+        AlloyCmdPara cmd4 = new AlloyCmdPara(List.of(cmdDecl3()));
+        AlloyCmdPara cmd5 = new AlloyCmdPara(List.of(cmdDecl4()));
+        AlloyCmdPara cmd6 = new AlloyCmdPara(List.of(cmdDecl5()));
+        AlloyFile alloyFile = new AlloyFile(List.of(cmd1, cmd2, cmd3, cmd4, cmd5, cmd6));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("Command")
+    public void test12() {
+        AlloyModulePara mod1 =
+                new AlloyModulePara(
+                        longAQname,
+                        List.of(
+                                new AlloyModuleArg(false, shortBQname),
+                                new AlloyModuleArg(false, shortBQname),
+                                new AlloyModuleArg(false, shortBQname)));
+        AlloyFile alloyFile = new AlloyFile(List.of(mod1));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+
+        AlloyModulePara mod2 =
+                new AlloyModulePara(
+                        longAQname,
+                        List.of(
+                                new AlloyModuleArg(true, longBQname),
+                                new AlloyModuleArg(true, longBQname),
+                                new AlloyModuleArg(true, longBQname)));
+        alloyFile = new AlloyFile(List.of(mod2));
         System.out.println(alloyFile.toPrettyString(30, 4));
     }
 }
