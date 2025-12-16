@@ -1,7 +1,4 @@
-package ca.uwaterloo.watform.PrintContext;
-
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
-import static org.junit.jupiter.api.Assertions.*;
+package ca.uwaterloo.watform.printcontext;
 
 import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.*;
