@@ -18,11 +18,11 @@ import org.junit.jupiter.api.Test;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ParseVisTest {
-    // @Test
+    @Test
     @Order(1)
     @DisplayName("Antlr grammar parses dash-testing")
     public void parseDashTesting() throws Exception {
-        Path p = Paths.get("src/test/resources/parsevis/dash-testing");
+        Path p = Paths.get("src/test/resources/dashmodel/");
         new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".dsh");
     }
 

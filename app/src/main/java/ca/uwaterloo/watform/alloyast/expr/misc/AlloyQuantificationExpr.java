@@ -76,8 +76,11 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
     @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(this.quant.toString() + SPACE);
-        pCtx.appendList(this.decls, COMMA);
-        pCtx.append(SPACE + BAR);
+        if (!this.decls.isEmpty()) {
+            pCtx.appendList(this.decls, COMMA);
+            pCtx.append(SPACE);
+        }
+        pCtx.append(BAR);
         pCtx.brk();
         this.body.ppNewBlock(pCtx);
     }

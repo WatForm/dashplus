@@ -80,14 +80,19 @@ public final class AlloyBlock extends AlloyExpr {
         pCtx.append(LBRACE);
         if (!this.exprs.isEmpty()) {
             pCtx.brkNoSpace();
-            for (AlloyExpr alloyExpr : this.exprs) {
-                alloyExpr.ppNewBlock(pCtx);
-                if (alloyExpr != this.exprs.getLast()) {
-                    pCtx.nl();
-                    pCtx.nl();
+            if (1 == exprs.size()) {
+                exprs.getFirst().ppNewBlock(pCtx);
+                pCtx.brkNoSpaceNoIndent();
+            } else {
+                for (AlloyExpr alloyExpr : this.exprs) {
+                    alloyExpr.ppNewBlock(pCtx);
+                    if (alloyExpr != this.exprs.getLast()) {
+                        pCtx.nl();
+                        pCtx.nl();
+                    }
                 }
+                pCtx.nlNoIndent();
             }
-            pCtx.nlNoIndent();
         }
         pCtx.append(RBRACE);
     }

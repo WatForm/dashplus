@@ -52,16 +52,12 @@ stateItem 	: ENV? EVENT qnames LBRACE RBRACE									# dashEventDecls
 			| DEF? CONC name (LBRACK qname RBRACK)? LBRACE stateItem* RBRACE	# dashConcState
 			;
 
-transItem	: ON dashRef1														# dashOnRef1
-			| ON dashRef2														# dashOnRef2
-			| SEND dashRef1														# dashSendRef1
-			| SEND dashRef2														# dashSendRef2
+transItem	: ON dashRef														# dashOnRef
+			| SEND dashRef														# dashSendRef
 			| WHEN expr1														# dashWhen
 			| DO expr1															# dashDo
-			| FROM dashRef1 													# dashFromRef1
-			| FROM dashRef2 													# dashFromRef2
-			| GOTO dashRef1 													# dashGotoRef1
-			| GOTO dashRef2 													# dashGotoRef2
+			| FROM dashRef 														# dashFromRef
+			| GOTO dashRef 														# dashGotoRef
 			;
 
 
@@ -151,10 +147,9 @@ impliesExprOpen 	: expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE impliesExpr
     				| expr2 (RFATARROW | IMPLIES) bind                                  			# impBindExpr
     				;
 
-dashRef1			: (name SLASH)* name LBRACK (expr1 COMMA)* expr1 RBRACK SLASH name ;
-dashRef2			: (name SLASH)* name ;
+dashRef			: (name SLASH)* name (LBRACK (expr1 COMMA)* expr1 RBRACK (SLASH name)?)? ;
 
-baseExpr		: {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef1							# dashRef1Expr
+baseExpr		: {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef								# dashRefExpr
 				| number																					# numberExpr
 				| STRING_LITERAL																			# strLiteralExpr
 				| IDEN																						# idenExpr

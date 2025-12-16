@@ -422,7 +422,7 @@ public class PCtxTest {
     }
 
     @Test
-    @DisplayName("Command")
+    @DisplayName("module")
     public void test12() {
         AlloyModulePara mod1 =
                 new AlloyModulePara(
@@ -460,7 +460,10 @@ public class PCtxTest {
         AlloySigPara sig4 =
                 new AlloySigPara(
                         List.of(shortAQname), List.of(decl1(), decl2(), decl1()), new AlloyBlock());
-        AlloyFile alloyFile = new AlloyFile(List.of(sig1, sig2, sig3, sig4));
+        AlloySigPara sig5 =
+                new AlloySigPara(
+                        List.of(shortAQname), List.of(decl1()), new AlloyBlock(shortBQname));
+        AlloyFile alloyFile = new AlloyFile(List.of(sig1, sig2, sig3, sig4, sig5));
         System.out.println(alloyFile.toPrettyString(30, 4));
     }
 
