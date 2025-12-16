@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -93,6 +95,28 @@ public final class AlloyPredPara extends AlloyPara {
         }
         sb.append(AlloyStrings.SPACE);
         this.block.toString(sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        if (isPrivate) {
+            pCtx.append(PRIVATE + SPACE);
+        }
+        pCtx.append(PRED + SPACE);
+        if (sigRef.isPresent()) {
+            ((AlloyVarExpr) sigRef.get()).pp(pCtx);
+            pCtx.append(DOT);
+        }
+        qname.pp(pCtx);
+        pCtx.append(SPACE);
+        if (!arguments.isEmpty()) {
+            pCtx.append(LBRACK);
+            pCtx.brkNoSpace();
+            pCtx.appendList(arguments, COMMA);
+            pCtx.brkNoSpaceNoIndent();
+            pCtx.append(RBRACK + SPACE);
+        }
+        block.pp(pCtx);
     }
 
     @Override

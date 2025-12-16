@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
@@ -57,6 +59,27 @@ public final class AlloyImportPara extends AlloyPara {
             sb.append(AlloyStrings.AS);
             sb.append(AlloyStrings.SPACE);
             this.asQname.get().toString(sb, indent);
+        }
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        if (isPrivate) {
+            pCtx.append(PRIVATE + SPACE);
+        }
+        pCtx.append(OPEN + SPACE);
+        qname.pp(pCtx);
+        pCtx.append(SPACE);
+        if (!sigRefs.isEmpty()) {
+            pCtx.append(LBRACK);
+            pCtx.brkNoSpace();
+            pCtx.appendList(sigRefs, COMMA);
+            pCtx.brkNoSpaceNoIndent();
+            pCtx.append(RBRACK + SPACE);
+        }
+        if (this.asQname.isPresent()) {
+            pCtx.append(AS + SPACE);
+            this.asQname.get().pp(pCtx);
         }
     }
 

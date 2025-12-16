@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -70,7 +72,7 @@ public final class AlloyFunPara extends AlloyPara {
     }
 
     /*
-     * always print square brackets around brackets
+     * always print square brackets around args
      */
     @Override
     public void toString(StringBuilder sb, int indent) {
@@ -93,6 +95,34 @@ public final class AlloyFunPara extends AlloyPara {
         this.sub.toString(sb, indent);
         sb.append(AlloyStrings.SPACE);
         this.block.toString(sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        if (isPrivate) {
+            pCtx.append(PRIVATE + SPACE);
+        }
+        pCtx.append(FUN + SPACE);
+        if (sigRef.isPresent()) {
+            ((AlloyVarExpr) sigRef.get()).pp(pCtx);
+            pCtx.append(DOT);
+        }
+        qname.pp(pCtx);
+        pCtx.append(SPACE);
+        if (!arguments.isEmpty()) {
+            pCtx.append(LBRACK);
+            pCtx.brkNoSpace();
+            pCtx.appendList(arguments, COMMA);
+            pCtx.brkNoSpaceNoIndent();
+            pCtx.append(RBRACK + SPACE);
+        }
+        pCtx.append(COLON + SPACE);
+        if (mul != Mul.DEFAULTSET) {
+            pCtx.append(mul.toString() + SPACE);
+        }
+        sub.pp(pCtx);
+        pCtx.append(SPACE);
+        block.pp(pCtx);
     }
 
     public enum Mul {

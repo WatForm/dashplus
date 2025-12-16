@@ -1,12 +1,13 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
-import ca.uwaterloo.watform.utils.Pos;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -94,6 +95,32 @@ public final class AlloyMacroPara extends AlloyPara {
             sb.append(AlloyStrings.EQUAL);
             sb.append(AlloyStrings.SPACE);
             this.sub.get().toString(sb, indent);
+        } else {
+            throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
+        }
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        if (isPrivate) {
+            pCtx.append(PRIVATE + SPACE);
+        }
+        pCtx.append(LET + SPACE);
+        qname.pp(pCtx);
+        pCtx.append(SPACE);
+        if (!qnames.isEmpty()) {
+            pCtx.append(LBRACK);
+            pCtx.brkNoSpace();
+            pCtx.appendList(qnames, COMMA);
+            pCtx.brkNoSpaceNoIndent();
+            pCtx.append(RBRACK + SPACE);
+        }
+        if (this.block.isPresent()) {
+            this.block.get().pp(pCtx);
+        } else if (this.sub.isPresent()) {
+            pCtx.append(EQUAL);
+            pCtx.brk();
+            this.sub.get().pp(pCtx);
         } else {
             throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }

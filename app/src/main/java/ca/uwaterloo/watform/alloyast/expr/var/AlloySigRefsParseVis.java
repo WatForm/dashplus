@@ -1,10 +1,9 @@
-package ca.uwaterloo.watform.alloyast.paragraph;
+package ca.uwaterloo.watform.alloyast.expr.var;
 
 import static ca.uwaterloo.watform.utils.ParserUtil.*;
 
 import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import java.util.List;
 
 public final class AlloySigRefsParseVis extends DashBaseVisitor<List<AlloySigRefExpr>> {

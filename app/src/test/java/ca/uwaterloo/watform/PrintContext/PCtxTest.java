@@ -11,6 +11,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyLetExpr.AlloyLetAsn;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyFunPara.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara.CommandDecl.*;
@@ -23,7 +24,6 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import org.junit.jupiter.api.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PCtxTest {
     private static final AlloyQnameExpr shortAQname = new AlloyQnameExpr("A");
     private static final AlloyQnameExpr shortBQname = new AlloyQnameExpr("B");
@@ -104,7 +104,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(1)
     @DisplayName("fact with line width 40")
     public void test1() {
         AlloyFile alloyFile =
@@ -126,7 +125,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(2)
     @DisplayName("fact with line width 10")
     public void test2() {
         AlloyFile alloyFile =
@@ -158,7 +156,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(3)
     @DisplayName("Unary expr")
     public void test3() {
         AlloyFile alloyFile =
@@ -174,7 +171,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(4)
     @DisplayName("AlloyBracketExpr")
     public void test4() {
         AlloyFile alloyFile =
@@ -200,7 +196,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(5)
     @DisplayName("AlloyIteExpr")
     public void test5() {
         AlloyFile alloyFile =
@@ -228,7 +223,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(6)
     @DisplayName("decl")
     public void test6() {
         AlloyFile alloyFile =
@@ -283,7 +277,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(7)
     @DisplayName("ComprehensionExpr")
     public void test7() {
         AlloyFile alloyFile =
@@ -357,7 +350,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(8)
     @DisplayName("Let")
     public void test8() {
         AlloyLetExpr let1 = new AlloyLetExpr(List.of(letAsn1()), shortCQname);
@@ -384,7 +376,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(9)
     @DisplayName("Paren")
     public void test9() {
         AlloyParenExpr paren1 = new AlloyParenExpr(and1());
@@ -400,7 +391,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(10)
     @DisplayName("Quantification")
     public void test10() {
         AlloyQuantificationExpr qt1 =
@@ -419,7 +409,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(11)
     @DisplayName("Command")
     public void test11() {
         AlloyCmdPara cmd1 = new AlloyCmdPara(cmdDecl1());
@@ -433,7 +422,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(12)
     @DisplayName("Command")
     public void test12() {
         AlloyModulePara mod1 =
@@ -458,7 +446,6 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(13)
     @DisplayName("sig")
     public void test13() {
         AlloySigPara sig1 = new AlloySigPara(longAQname);
@@ -478,13 +465,107 @@ public class PCtxTest {
     }
 
     @Test
-    @Order(14)
     @DisplayName("assert")
     public void test14() {
         AlloyAssertPara assert1 =
                 new AlloyAssertPara(new AlloyStrLiteralExpr("name"), new AlloyBlock(ite1()));
         AlloyAssertPara assert2 = new AlloyAssertPara(longAQname, new AlloyBlock(ite1()));
         AlloyFile alloyFile = new AlloyFile(List.of(assert1, assert2));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @DisplayName("assert")
+    public void test15() {
+        AlloyEnumPara enum1 =
+                new AlloyEnumPara(true, longAQname, List.of(longBQname, longCQname, longDQname));
+        AlloyEnumPara enum2 =
+                new AlloyEnumPara(
+                        true, shortAQname, List.of(shortBQname, shortCQname, shortDQname));
+        AlloyFile alloyFile = new AlloyFile(List.of(enum1, enum2));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @DisplayName("function")
+    public void test16() {
+        AlloyFunPara fun1 =
+                new AlloyFunPara(
+                        true,
+                        longAQname,
+                        longBQname,
+                        List.of(decl1(), decl2()),
+                        Mul.SET,
+                        and1(),
+                        new AlloyBlock(ite1()));
+        AlloyFunPara fun2 =
+                new AlloyFunPara(
+                        false,
+                        shortAQname,
+                        shortBQname,
+                        List.of(decl1()),
+                        Mul.DEFAULTSET,
+                        shortCQname,
+                        new AlloyBlock(and1()));
+        AlloyFile alloyFile = new AlloyFile(List.of(fun1, fun2));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @DisplayName("import")
+    public void test17() {
+        AlloyImportPara imp1 =
+                new AlloyImportPara(
+                        true, longAQname, List.of(longBQname, longCQname, longDQname), longAQname);
+        AlloyImportPara imp2 =
+                new AlloyImportPara(
+                        true,
+                        shortAQname,
+                        List.of(shortBQname, shortCQname, shortDQname),
+                        shortAQname);
+        AlloyFile alloyFile = new AlloyFile(List.of(imp1, imp2));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @DisplayName("macro")
+    public void test18() {
+        AlloyMacroPara mac1 =
+                new AlloyMacroPara(
+                        true, longAQname, List.of(longBQname, longCQname, longDQname), ite1());
+        AlloyMacroPara mac2 =
+                new AlloyMacroPara(
+                        true,
+                        longAQname,
+                        List.of(longBQname, longCQname, longDQname),
+                        new AlloyBlock(ite1()));
+        AlloyMacroPara mac3 =
+                new AlloyMacroPara(
+                        true, shortAQname, List.of(shortBQname, shortCQname, shortDQname), ite1());
+        AlloyMacroPara mac4 =
+                new AlloyMacroPara(
+                        true,
+                        shortAQname,
+                        List.of(shortBQname, shortCQname, shortDQname),
+                        new AlloyBlock(ite1()));
+        AlloyFile alloyFile = new AlloyFile(List.of(mac1, mac2, mac3, mac4));
+        System.out.println(alloyFile.toPrettyString(30, 4));
+    }
+
+    @Test
+    @DisplayName("pred")
+    public void test19() {
+        AlloyPredPara pred1 =
+                new AlloyPredPara(
+                        true,
+                        longAQname,
+                        longBQname,
+                        List.of(decl1(), decl2()),
+                        new AlloyBlock(List.of(ite1(), and1())));
+        AlloyPredPara pred2 =
+                new AlloyPredPara(
+                        true, shortAQname, shortBQname, List.of(decl1()), new AlloyBlock(and1()));
+        AlloyFile alloyFile = new AlloyFile(List.of(pred1, pred2));
         System.out.println(alloyFile.toPrettyString(30, 4));
     }
 }
