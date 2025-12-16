@@ -37,8 +37,6 @@ Run with the desired entry point:
 - `./gradlew build` will check for formatting issues as a dependent gradle task
 
 ## Integration Testing:
-- `git submodule update --init --recursive` to download [dash-testing](https://github.com/WatForm/dash-testing#)
-
 - For testing using a JAR, the main entry point is: [`app/src/main/java/ca/uwaterloo/watform/test/Main.java`](app/src/main/java/ca/uwaterloo/watform/test/Main.java)
     > **Note:** If the `Dash.g4` grammar is changed, you must test it with the catalyst-corpus. 
     See the instructions in [`app/src/main/java/ca/uwaterloo/watform/test/README.md`](app/src/main/java/ca/uwaterloo/watform/test/README.md).

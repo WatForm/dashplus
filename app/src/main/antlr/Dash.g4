@@ -149,8 +149,7 @@ impliesExprOpen 	: expr2 (RFATARROW | IMPLIES) impliesExprClose ELSE impliesExpr
 
 dashRef			: (name SLASH)* name (LBRACK (expr1 COMMA)* expr1 RBRACK (SLASH name)?)? ;
 
-baseExpr		: {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef								# dashRefExpr
-				| number																					# numberExpr
+baseExpr		: number																					# numberExpr
 				| STRING_LITERAL																			# strLiteralExpr
 				| IDEN																						# idenExpr
 				| THIS																						# thisExpr
@@ -162,6 +161,7 @@ baseExpr		: {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef							
 				| AT qname																					# atNameExpr
 				| block																						# blockExpr
 				| LBRACE declMul (COMMA declMul)* body? RBRACE              								# comprehensionExpr
+				| {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef								# dashRefExpr
 				;
 
 transExpr		: (TRANSPOSE | TRANS_CLOS | REFL_TRANS_CLOS) (transExpr | baseExpr | bind) ;											

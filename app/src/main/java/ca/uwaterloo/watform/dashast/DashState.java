@@ -71,8 +71,9 @@ public class DashState extends DashPara implements DashStateItem {
             StringJoiner j = new StringJoiner("");
             // sorting items for display order
             // map type of item to an integer (in function above)
-            Collections.sort(items, (i1, i2) -> Integer.compare(itemToInt(i1), itemToInt(i2)));
-            items.forEach(k -> j.add(((ASTNode) k).toString(indent + 1)));
+            List<Object> itemsCopy = new ArrayList<>(items);
+            Collections.sort(itemsCopy, (i1, i2) -> Integer.compare(itemToInt(i1), itemToInt(i2)));
+            itemsCopy.forEach(k -> j.add(((ASTNode) k).toString(indent + 1)));
             s += j.toString() + ind + "}\n";
         }
         sb.append(s);

@@ -20,18 +20,17 @@ import org.junit.jupiter.api.Test;
 public class ParseVisTest {
     @Test
     @Order(1)
-    @DisplayName("Antlr grammar parses dash-testing")
-    public void parseDashTesting() throws Exception {
-        Path p = Paths.get("src/test/resources/dashmodel/");
-        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".dsh");
+    @DisplayName("parse Jackson's examples from Software Abstraction book")
+    public void parseJackson() throws Exception {
+        Path p = Paths.get("src/test/resources/parsevis/jackson");
+        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".als");
     }
 
     @Test
     @Order(2)
-    @DisplayName(
-            "Jackson's examples from Software Abstraction book and some " + "WatForm alloy files")
-    public void parseCatalystQuickTests() throws Exception {
-        Path p = Paths.get("src/test/resources/parsevis/catalyst/quick-tests");
+    @DisplayName("parse WatForm alloy files")
+    public void parseWatformAls() throws Exception {
+        Path p = Paths.get("src/test/resources/parsevis/watformals");
         new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".als");
     }
 
@@ -112,6 +111,25 @@ public class ParseVisTest {
                         "Error occurred during parsing or in parser visitors: " + e.getMessage());
                 System.exit(1);
             }
+        }
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Antlr grammar parses dash-testing")
+    public void parseDashTesting() throws Exception {
+        Path p = Paths.get("src/test/resources/dashmodel/");
+        new AntlrTestUtil().recurParseDir(p, 5 * 1000, ".dsh");
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Parsing bad files should fail")
+    public void parseFail() throws Exception {
+        List<Path> paths =
+                recurGetFiles(Paths.get("src/test/resources/parsevis/parsefail"), ".dsh");
+        for (Path path : paths) {
+            assertThrows(RuntimeException.class, () -> parse(path));
         }
     }
 }
