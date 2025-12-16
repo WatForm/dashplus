@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.dashmodel;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
@@ -48,41 +49,40 @@ public class DashFQNTest {
         assertEquals(k, "Root/B/Bit");
     }
 
-    /*
     @Test
-    public void getChildOfContextAncesOfDest1() {
+    public void childOfContextAncesOfDest1() {
         assertEquals(DashFQN.childOfContextAncesOfDest("A/B/C", "A/B/C/D/E"), "A/B/C/D");
     }
 
     @Test
-    public void getChildOfContextAncesOfDest2() {
-        assertEquals(DashFQN.getChildOfContextAncesOfDest("A/B/C", "A/B/C"), "A/B/C");
+    public void childOfContextAncesOfDest2() {
+        assertEquals(DashFQN.childOfContextAncesOfDest("A/B/C", "A/B/C"), "A/B/C");
     }
 
     @Test
-    public void getChildOfContextAncesOfDest3() {
+    public void childOfContextAncesOfDest3() {
         Exception exception =
                 assertThrows(
-                        ErrorFatal.class,
+                        ImplementationError.class,
                         () -> {
-                            DashFQN.getChildOfContextAncesOfDest("A/D/C", "A/B/C");
+                            DashFQN.childOfContextAncesOfDest("A/D/C", "A/B/C");
                         });
         String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(DashErrors.ancesNotPrefixMsg));
+        assertTrue(actualMessage.contains(DashModelErrors.ancesNotPrefixMsg));
     }
 
     @Test
-    public void getChildOfContextAncesOfDest4() {
+    public void childOfContextAncesOfDest4() {
         Exception exception =
                 assertThrows(
-                        ErrorFatal.class,
+                        ImplementationError.class,
                         () -> {
-                            DashFQN.getChildOfContextAncesOfDest("A/B/C", "A/B");
+                            DashFQN.childOfContextAncesOfDest("A/B/C", "A/B");
                         });
         String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(DashErrors.ancesNotPrefixMsg));
+        assertTrue(actualMessage.contains(DashModelErrors.ancesNotPrefixMsg));
     }
-    */
+
     @Test
     public void allPrefixes1() {
         assertTrue(DashFQN.allPrefixes("A").equals(ll(new String[] {"A"})));

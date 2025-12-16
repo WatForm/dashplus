@@ -175,7 +175,7 @@ public class DashFQN {
     }
 
     /* ances: A/B/C dest: A/B/C/D/E returns A/B/C/D */
-    public static String getChildOfContextAncesOfDest(String ances, String dest) {
+    public static String childOfContextAncesOfDest(String ances, String dest) {
         if (dest.equals(ances)) return dest;
         else if (dest.startsWith(ances))
             // dest must be longer than ances
