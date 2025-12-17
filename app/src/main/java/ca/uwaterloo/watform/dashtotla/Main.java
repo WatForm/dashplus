@@ -37,6 +37,7 @@ public class Main {
             String moduleName = fileName.substring(0, fileName.lastIndexOf("."));
 
             DashFile df = (DashFile) parse(inPath);
+            System.out.println("Dash File generated");
             DashModel dm = new DashModel(df);
 
             TlaModel model = DashToTla.translate(dm, moduleName, true);

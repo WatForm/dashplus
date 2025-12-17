@@ -52,14 +52,15 @@ public class InitializeDM extends PredsDM {
 
         DashState root = d.stateRoot;
         this.rootName = root.name;
-        stateRecurseToInitilizeStatesVarsEventsBuffers(root, null, emptyList(), DefKind.DEFAULT, 0);
+        stateRecurseToInitializeStatesVarsEventsBuffers(
+                root, null, emptyList(), DefKind.DEFAULT, 0);
     }
 
     private void addToParamsList(DashParam p) {
         allParamsInOrder.add(p);
     }
 
-    private void stateRecurseToInitilizeStatesVarsEventsBuffers(
+    private void stateRecurseToInitializeStatesVarsEventsBuffers(
             DashState s, String parentFQN, List<DashParam> parentParams, DefKind def, int depth) {
 
         // this state is not yet in the st
@@ -165,7 +166,7 @@ public class InitializeDM extends PredsDM {
                 // want to keep only one place
                 // where we call stateRecurse
                 // to make sure all args are correct
-                stateRecurseToInitilizeStatesVarsEventsBuffers(
+                stateRecurseToInitializeStatesVarsEventsBuffers(
                         sub, parentFQN, newParams, defk, depth + 1);
             }
         }

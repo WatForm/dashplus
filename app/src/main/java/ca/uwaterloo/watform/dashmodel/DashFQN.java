@@ -68,12 +68,15 @@ public class DashFQN {
     }
 
     // operations on FQNs
+    // MKJ - this can return "" when /root is fed in, thus a filter is added
     public static List<String> splitFQN(String fqn) {
-        return Arrays.asList(fqn.split(DashStrings.internalQualChar));
+        return filterBy(
+                Arrays.asList(fqn.split(DashStrings.internalQualChar)), sfqn -> !sfqn.isEmpty());
     }
 
     // A/B + B/C => A/B/C
     // no longer used probably
+    // MKJ - it's not being used in this repo as of now
     public static String mergeFQN(String fqn1, String fqn2) {
         List<String> fqn1parts = splitFQN(fqn1);
         List<String> fqn2parts = splitFQN(fqn2);

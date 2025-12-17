@@ -50,20 +50,27 @@ public class StatesDM extends TransDM {
 
     // individual state attributes
 
+    private StateEntry getStateEntry(String s) {
+        StateEntry answer = this.st.get(s);
+        if (answer == null)
+            System.out.println("Attempt to access State Entry using String \"" + s + "\"");
+        return answer;
+    }
+
     protected void setRootName(String r) {
         this.rootName = r;
     }
 
     public boolean isLeaf(String s) {
-        return (this.st.get(s).immChildren.isEmpty());
+        return (this.getStateEntry(s).immChildren.isEmpty());
     }
 
     public boolean isOr(String s) {
-        return (this.st.get(s).kind == StateKind.OR);
+        return (this.getStateEntry(s).kind == StateKind.OR);
     }
 
     public boolean isAnd(String s) {
-        return (this.st.get(s).kind == StateKind.AND);
+        return (this.getStateEntry(s).kind == StateKind.AND);
     }
 
     public DashParam stateParam(String sfqn) {
@@ -79,7 +86,7 @@ public class StatesDM extends TransDM {
     }
 
     public boolean isDefault(String s) {
-        return (this.st.get(s).def == DefKind.DEFAULT);
+        return (this.getStateEntry(s).def == DefKind.DEFAULT);
     }
 
     public String parent(String sfqn) {
@@ -126,9 +133,9 @@ public class StatesDM extends TransDM {
     }
 
     public Boolean hasConcurrency(String s) {
-        if (this.st.get(s).kind == DashStrings.StateKind.AND) return true;
+        if (this.getStateEntry(s).kind == DashStrings.StateKind.AND) return true;
         else
-            for (String k : this.st.get(s).immChildren) {
+            for (String k : this.getStateEntry(s).immChildren) {
                 if (hasConcurrency(k)) return true;
             }
         return false;
@@ -281,6 +288,8 @@ public class StatesDM extends TransDM {
         List<DashRef> aP = prefixDashRefs(scope);
         List<DashRef> aPc = onlyConcPlusRoot(aP);
         return lastElement(aPc); // might be the scope
+        // MKJ - what does "might" mean here?
+        // aP and aPc are not descriptive names
     }
 
     public List<DashRef> exited(String tfqn) {
@@ -335,12 +344,19 @@ public class StatesDM extends TransDM {
 
     private List<String> allAnces(String sfqn) {
         // do not need to walk over tree for this operation; can just use FQNs
+        // MKJ - earlier implementations of this function returned illegal strings which are not
+        // state names, resulting in NullPointerExceptions when applied to getter functions
+        // is there any benefit to avoiding a walk over the tree? The cost is minimal, and the code
+        // is easier to read and maintain since it doesn't rely on the FQN notation. The code may be
+        // harder to write but it's only written once
+        // this fails when sfqn = "/root"
         List<String> sfqnSplit = DashFQN.splitFQN(sfqn);
         List<String> x = new ArrayList<String>();
         // include the state itself (could be Root)
         if (sfqnSplit.size() > 0)
             for (int i = 0; i < sfqnSplit.size(); i++)
                 x.add(DashFQN.fqn(sfqnSplit.subList(0, i + 1)));
+        if (x.contains("")) System.out.println(sfqn);
         return x;
     }
 
