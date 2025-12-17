@@ -1,3 +1,5 @@
+// this is a model that has the minimum amount of complexity to parse and resolve - one state and one transition, nothing else
+
 state root
 {
 	trans t

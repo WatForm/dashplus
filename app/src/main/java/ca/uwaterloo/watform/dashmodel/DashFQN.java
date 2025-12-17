@@ -68,10 +68,8 @@ public class DashFQN {
     }
 
     // operations on FQNs
-    // MKJ - this can return "" when /root is fed in, thus a filter is added
     public static List<String> splitFQN(String fqn) {
-        return filterBy(
-                Arrays.asList(fqn.split(DashStrings.internalQualChar)), sfqn -> !sfqn.isEmpty());
+        return Arrays.asList(fqn.split(DashStrings.internalQualChar));
     }
 
     // A/B + B/C => A/B/C
