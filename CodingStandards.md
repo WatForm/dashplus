@@ -21,6 +21,7 @@
 * Iterator? --> iter
 * Concurrent --> conc
 * Operand --> op
+* Context --> ctx
 
 ### Domain-specific:
 
