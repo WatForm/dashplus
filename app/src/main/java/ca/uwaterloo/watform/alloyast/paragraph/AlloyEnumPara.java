@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -22,17 +24,15 @@ public final class AlloyEnumPara extends AlloyPara {
         this.isPrivate = isPrivate;
         this.qname = qname;
         this.qnames = Collections.unmodifiableList(qnames);
+        reqNonNull(nullField(pos, this), this.qname, this.qnames);
     }
 
     public AlloyEnumPara(boolean isPrivate, AlloyQnameExpr qname, List<AlloyQnameExpr> qnames) {
-        super();
-        this.isPrivate = isPrivate;
-        this.qname = qname;
-        this.qnames = Collections.unmodifiableList(qnames);
+        this(Pos.UNKNOWN, isPrivate, qname, qnames);
     }
 
     public AlloyEnumPara(AlloyQnameExpr qname, List<AlloyQnameExpr> qnames) {
-        this(false, qname, qnames);
+        this(Pos.UNKNOWN, false, qname, qnames);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -27,6 +29,7 @@ public final class AlloyImportPara extends AlloyPara {
         this.qname = qname;
         this.sigRefs = Collections.unmodifiableList(sigRefs);
         this.asQname = Optional.ofNullable(asQname);
+        reqNonNull(nullField(pos, this), this.qname, this.sigRefs, this.asQname);
     }
 
     public AlloyImportPara(

@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
@@ -38,6 +39,8 @@ public class AlloyFile extends AlloyASTNode {
         if (!dashParas.isEmpty()) {
             throw AlloyASTImplError.dashParaInAlloyFile(dashParas.get(0).pos);
         }
+
+        reqNonNull(nullField(pos, this), this.paras);
     }
 
     public AlloyFile(List<AlloyPara> paragraphs) {

@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.paragraph.module;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -24,6 +26,7 @@ public final class AlloyModulePara extends AlloyPara {
             super(pos);
             this.isExactly = isExactly;
             this.qname = qname;
+            reqNonNull(nullField(pos, this), this.qname);
         }
 
         public AlloyModuleArg(boolean isExactly, AlloyQnameExpr qname) {
@@ -55,12 +58,11 @@ public final class AlloyModulePara extends AlloyPara {
         super(pos);
         this.qname = moduleName;
         this.moduleArgs = Collections.unmodifiableList(moduleArgs);
+        reqNonNull(nullField(pos, this), this.qname, this.moduleArgs);
     }
 
     public AlloyModulePara(AlloyQnameExpr moduleName, List<AlloyModuleArg> moduleArgs) {
-        super();
-        this.qname = moduleName;
-        this.moduleArgs = Collections.unmodifiableList(moduleArgs);
+        this(Pos.UNKNOWN, moduleName, moduleArgs);
     }
 
     @Override

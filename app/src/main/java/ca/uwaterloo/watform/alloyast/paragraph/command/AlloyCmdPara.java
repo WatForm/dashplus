@@ -1,7 +1,8 @@
 package ca.uwaterloo.watform.alloyast.paragraph.command;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
-import static ca.uwaterloo.watform.alloyast.AlloyStrings.EXACTLY;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -26,6 +27,7 @@ public final class AlloyCmdPara extends AlloyPara {
     public AlloyCmdPara(Pos pos, List<CommandDecl> cmdDecls) {
         super(pos);
         this.cmdDecls = Collections.unmodifiableList(cmdDecls);
+        reqNonNull(nullField(pos, this), this.cmdDecls);
     }
 
     public AlloyCmdPara(List<CommandDecl> cmdDecls) {
@@ -94,6 +96,14 @@ public final class AlloyCmdPara extends AlloyPara {
                 throw AlloyASTImplError.xorFields(
                         pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
+            reqNonNull(
+                    nullField(pos, this),
+                    this.cmdType,
+                    this.declQname,
+                    this.invoQname,
+                    this.constrBlock,
+                    this.scope,
+                    this.number);
         }
 
         public CommandDecl(
@@ -210,6 +220,7 @@ public final class AlloyCmdPara extends AlloyPara {
                     throw AlloyASTImplError.bothNull(
                             pos, "num", "typescopes", "AlloyCmdPara.CommandDecl.Scope");
                 }
+                reqNonNull(nullField(pos, this), this.num, this.typescopes);
             }
 
             public Scope(AlloyNumExpr num, List<Typescope> typescopes) {
@@ -320,6 +331,13 @@ public final class AlloyCmdPara extends AlloyPara {
                             && this.start.value > 30) {
                         throw AlloyCtorError.cmdBitwidthTooBig(pos);
                     }
+
+                    reqNonNull(
+                            nullField(pos, this),
+                            this.start,
+                            this.end,
+                            this.increment,
+                            this.scopableExpr);
                 }
 
                 public Typescope(

@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
@@ -39,6 +41,7 @@ public final class AlloyMacroPara extends AlloyPara {
         if (this.block.isEmpty() && this.sub.isEmpty()) {
             throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
+        reqNonNull(nullField(pos, this), this.qname, this.qnames, this.block, this.sub);
     }
 
     public AlloyMacroPara(

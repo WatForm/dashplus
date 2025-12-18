@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.paragraph.sig;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
@@ -58,6 +60,8 @@ public final class AlloySigPara extends AlloyPara {
         if (this.isSubset() && this.quals.contains(Qual.ABSTRACT)) {
             throw AlloyCtorError.sigAbsSubset(pos);
         }
+        reqNonNull(
+                nullField(pos, this), this.quals, this.qnames, this.rel, this.fields, this.block);
     }
 
     public AlloySigPara(
@@ -284,6 +288,7 @@ public final class AlloySigPara extends AlloyPara {
                     || this.sigRef instanceof AlloyNoneExpr) {
                 throw AlloyCtorError.sigCannotExtend(pos, sigRef.toString());
             }
+            reqNonNull(nullField(pos, this), this.sigRef);
         }
 
         public Extends(AlloySigRefExpr sigRef) {
@@ -310,16 +315,15 @@ public final class AlloySigPara extends AlloyPara {
         public In(Pos pos, List<AlloySigRefExpr> sigRefs) {
             super(pos);
             this.sigRefs = Collections.unmodifiableList(sigRefs);
+            reqNonNull(nullField(pos, this), this.sigRefs);
         }
 
         public In(List<AlloySigRefExpr> sigRefs) {
-            super();
-            this.sigRefs = Collections.unmodifiableList(sigRefs);
+            this(Pos.UNKNOWN, sigRefs);
         }
 
         public In(AlloySigRefExpr sigRef) {
-            super();
-            this.sigRefs = Collections.unmodifiableList(Collections.singletonList(sigRef));
+            this(Pos.UNKNOWN, Collections.singletonList(sigRef));
         }
 
         @Override
@@ -346,16 +350,15 @@ public final class AlloySigPara extends AlloyPara {
         public Equal(Pos pos, List<AlloySigRefExpr> sigRefs) {
             super(pos);
             this.sigRefs = Collections.unmodifiableList(sigRefs);
+            reqNonNull(nullField(pos, this), this.sigRefs);
         }
 
         public Equal(List<AlloySigRefExpr> sigRefs) {
-            super();
-            this.sigRefs = Collections.unmodifiableList(sigRefs);
+            this(Pos.UNKNOWN, sigRefs);
         }
 
         public Equal(AlloySigRefExpr sigRef) {
-            super();
-            this.sigRefs = Collections.unmodifiableList(Collections.singletonList(sigRef));
+            this(Pos.UNKNOWN, Collections.singletonList(sigRef));
         }
 
         @Override
