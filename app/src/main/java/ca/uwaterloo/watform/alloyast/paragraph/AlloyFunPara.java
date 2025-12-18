@@ -131,7 +131,7 @@ public final class AlloyFunPara extends AlloyPara {
         if (mul != Mul.DEFAULTSET) {
             pCtx.append(mul.toString() + SPACE);
         }
-        sub.pp(pCtx);
+        sub.ppNewBlock(pCtx);
         pCtx.append(SPACE);
         block.pp(pCtx);
     }

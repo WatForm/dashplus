@@ -36,8 +36,10 @@ public class AlloyModelTest {
     @Order(1)
     @DisplayName("parseCatalystDirToAlloyModelThenToString")
     public void alloyModelCatalyst() throws Exception {
-        Path dir = Paths.get("src/test/resources/parsevis/catalyst");
+        Path dir = Paths.get("src/test/resources/parsevis/jackson");
         List<Path> paths = recurGetFiles(dir, ".als");
+        dir = Paths.get("src/test/resources/parsevis/watformals");
+        paths.addAll(recurGetFiles(dir, ".als"));
         for (Path filePath : paths) {
             try {
 
@@ -81,8 +83,8 @@ public class AlloyModelTest {
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         AlloySigPara s2 = TestUtil.createSig("s2");
         alloyModel.addPara(s2);
-        assertTrue(alloyModel.toString().contains(s1.toString()));
-        assertTrue(alloyModel.toString().contains(s2.toString()));
+        assertTrue(alloyModel.toString().contains(s1.toPrettyString()));
+        assertTrue(alloyModel.toString().contains(s2.toPrettyString()));
     }
 
     @Test

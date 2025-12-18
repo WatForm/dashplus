@@ -5,7 +5,9 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,18 +70,19 @@ public class AlloyModel {
         return this.patternMatch(typeToken).getPara(name);
     }
 
-    private void toString(StringBuilder sb, int indent) {
-        this.alloyFile.toString(sb, indent);
+    private void toPrettyString(PrintContext pCtx) {
+        this.alloyFile.ppNewBlock(pCtx);
         // create a new AlloyFile, so I can reuse the AlloyFile.toString
         AlloyFile newAlloyFile = new AlloyFile(this.additionalParas);
-        newAlloyFile.toString(sb, indent);
+        newAlloyFile.ppNewBlock(pCtx);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        this.toString(sb, 0);
-        return sb.toString();
+        StringWriter sw = new StringWriter();
+        PrintContext pCtx = new PrintContext(sw);
+        toPrettyString(pCtx);
+        return sw.toString();
     }
 
     @SuppressWarnings("unchecked")

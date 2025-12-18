@@ -45,7 +45,7 @@ public final class AlloyIteExpr extends AlloyExpr {
         pCtx.brk();
 
         pCtx.begin();
-        pCtx.append(IMPLIES + SPACE);
+        pCtx.append(RFATARROW + SPACE);
         this.conseq.pp(pCtx);
         pCtx.end();
         pCtx.brk();
