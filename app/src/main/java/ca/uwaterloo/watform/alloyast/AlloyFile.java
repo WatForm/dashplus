@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.dashast.DashPara;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class AlloyFile extends AlloyASTNode {
     public String filename = "";
@@ -67,5 +68,25 @@ public class AlloyFile extends AlloyASTNode {
             pCtx.nl();
             pCtx.nlNoIndent();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.filename, this.paras);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyFile other = (AlloyFile) obj;
+        if (filename == null) {
+            if (other.filename != null) return false;
+        } else if (!filename.equals(other.filename)) return false;
+        if (paras == null) {
+            if (other.paras != null) return false;
+        } else if (!paras.equals(other.paras)) return false;
+        return true;
     }
 }

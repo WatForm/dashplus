@@ -10,6 +10,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class AlloyImportPara extends AlloyPara {
@@ -103,5 +104,29 @@ public final class AlloyImportPara extends AlloyPara {
         }
 
         return Optional.of(sb.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.isPrivate, this.qname, this.sigRefs, this.asQname);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyImportPara other = (AlloyImportPara) obj;
+        if (isPrivate != other.isPrivate) return false;
+        if (qname == null) {
+            if (other.qname != null) return false;
+        } else if (!qname.equals(other.qname)) return false;
+        if (sigRefs == null) {
+            if (other.sigRefs != null) return false;
+        } else if (!sigRefs.equals(other.sigRefs)) return false;
+        if (asQname == null) {
+            if (other.asQname != null) return false;
+        } else if (!asQname.equals(other.asQname)) return false;
+        return true;
     }
 }

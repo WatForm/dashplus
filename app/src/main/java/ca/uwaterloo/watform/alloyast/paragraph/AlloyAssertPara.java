@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyStrLiteralExpr;
 import ca.uwaterloo.watform.utils.*;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class AlloyAssertPara extends AlloyPara {
@@ -84,5 +85,28 @@ public final class AlloyAssertPara extends AlloyPara {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.qname, this.strLit, this.block);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyAssertPara other = (AlloyAssertPara) obj;
+        if (block == null) {
+            if (other.block != null) return false;
+        } else if (!block.equals(other.block)) return false;
+        if (qname == null) {
+            if (other.qname != null) return false;
+        } else if (!qname.equals(other.qname)) return false;
+        if (strLit == null) {
+            if (other.strLit != null) return false;
+        } else if (!strLit.equals(other.strLit)) return false;
+        return true;
     }
 }

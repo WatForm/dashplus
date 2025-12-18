@@ -10,6 +10,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /*
@@ -48,6 +49,24 @@ public final class AlloyModulePara extends AlloyPara {
                 pCtx.append(EXACTLY + SPACE);
             }
             this.qname.pp(pCtx);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.isExactly, this.qname);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            AlloyModuleArg other = (AlloyModuleArg) obj;
+            if (isExactly != other.isExactly) return false;
+            if (qname == null) {
+                if (other.qname != null) return false;
+            } else if (!qname.equals(other.qname)) return false;
+            return true;
         }
     }
 
@@ -93,5 +112,25 @@ public final class AlloyModulePara extends AlloyPara {
     @Override
     public Optional<String> getName() {
         return Optional.of(this.qname.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.qname, this.moduleArgs);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyModulePara other = (AlloyModulePara) obj;
+        if (qname == null) {
+            if (other.qname != null) return false;
+        } else if (!qname.equals(other.qname)) return false;
+        if (moduleArgs == null) {
+            if (other.moduleArgs != null) return false;
+        } else if (!moduleArgs.equals(other.moduleArgs)) return false;
+        return true;
     }
 }

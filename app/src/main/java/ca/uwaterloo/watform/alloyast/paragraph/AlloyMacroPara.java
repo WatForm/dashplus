@@ -12,6 +12,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class AlloyMacroPara extends AlloyPara {
@@ -132,5 +133,32 @@ public final class AlloyMacroPara extends AlloyPara {
     @Override
     public Optional<String> getName() {
         return Optional.of(this.qname.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.isPrivate, this.qname, this.qnames, this.block, this.sub);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyMacroPara other = (AlloyMacroPara) obj;
+        if (isPrivate != other.isPrivate) return false;
+        if (qname == null) {
+            if (other.qname != null) return false;
+        } else if (!qname.equals(other.qname)) return false;
+        if (qnames == null) {
+            if (other.qnames != null) return false;
+        } else if (!qnames.equals(other.qnames)) return false;
+        if (block == null) {
+            if (other.block != null) return false;
+        } else if (!block.equals(other.block)) return false;
+        if (sub == null) {
+            if (other.sub != null) return false;
+        } else if (!sub.equals(other.sub)) return false;
+        return true;
     }
 }

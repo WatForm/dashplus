@@ -4,22 +4,15 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
-import ca.uwaterloo.watform.alloyast.AlloyCtorError;
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNoneExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloySeqIntExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloySigIntExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyStringExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara;
+import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /*
@@ -240,14 +233,32 @@ public final class AlloySigPara extends AlloyPara {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (null == obj) return false;
-        return this.toString().equals(obj.toString());
+    public int hashCode() {
+        return Objects.hash(this.quals, this.qnames, this.rel, this.fields, this.block);
     }
 
     @Override
-    public int hashCode() {
-        return this.toString().hashCode();
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloySigPara other = (AlloySigPara) obj;
+        if (quals == null) {
+            if (other.quals != null) return false;
+        } else if (!quals.equals(other.quals)) return false;
+        if (qnames == null) {
+            if (other.qnames != null) return false;
+        } else if (!qnames.equals(other.qnames)) return false;
+        if (rel == null) {
+            if (other.rel != null) return false;
+        } else if (!rel.equals(other.rel)) return false;
+        if (fields == null) {
+            if (other.fields != null) return false;
+        } else if (!fields.equals(other.fields)) return false;
+        if (block == null) {
+            if (other.block != null) return false;
+        } else if (!block.equals(other.block)) return false;
+        return true;
     }
 
     public enum Qual {
@@ -307,6 +318,23 @@ public final class AlloySigPara extends AlloyPara {
             pCtx.brk();
             ((AlloyVarExpr) this.sigRef).pp(pCtx);
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.sigRef);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            Extends other = (Extends) obj;
+            if (sigRef == null) {
+                if (other.sigRef != null) return false;
+            } else if (!sigRef.equals(other.sigRef)) return false;
+            return true;
+        }
     }
 
     public static final class In extends ASTNode implements Rel {
@@ -342,6 +370,23 @@ public final class AlloySigPara extends AlloyPara {
             pCtx.brk();
             pCtx.appendList(this.sigRefs, SPACE + PLUS);
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.sigRefs);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            In other = (In) obj;
+            if (sigRefs == null) {
+                if (other.sigRefs != null) return false;
+            } else if (!sigRefs.equals(other.sigRefs)) return false;
+            return true;
+        }
     }
 
     public static final class Equal extends ASTNode implements Rel {
@@ -376,6 +421,23 @@ public final class AlloySigPara extends AlloyPara {
             pCtx.append(EQUAL);
             pCtx.brk();
             pCtx.appendList(this.sigRefs, SPACE + PLUS);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.sigRefs);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            Equal other = (Equal) obj;
+            if (sigRefs == null) {
+                if (other.sigRefs != null) return false;
+            } else if (!sigRefs.equals(other.sigRefs)) return false;
+            return true;
         }
     }
 }

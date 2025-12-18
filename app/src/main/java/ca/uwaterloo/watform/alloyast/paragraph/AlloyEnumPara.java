@@ -11,6 +11,7 @@ import ca.uwaterloo.watform.utils.Pos;
 import ca.uwaterloo.watform.utils.PrintContext;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class AlloyEnumPara extends AlloyPara {
@@ -62,5 +63,26 @@ public final class AlloyEnumPara extends AlloyPara {
     @Override
     public Optional<String> getName() {
         return Optional.of(this.qname.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.isPrivate, this.qname, this.qnames);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyEnumPara other = (AlloyEnumPara) obj;
+        if (isPrivate != other.isPrivate) return false;
+        if (qname == null) {
+            if (other.qname != null) return false;
+        } else if (!qname.equals(other.qname)) return false;
+        if (qnames == null) {
+            if (other.qnames != null) return false;
+        } else if (!qnames.equals(other.qnames)) return false;
+        return true;
     }
 }

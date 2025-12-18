@@ -11,6 +11,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /*
@@ -60,6 +61,23 @@ public final class AlloyCmdPara extends AlloyPara {
     @Override
     public Optional<String> getName() {
         return Optional.empty();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.cmdDecls);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlloyCmdPara other = (AlloyCmdPara) obj;
+        if (cmdDecls == null) {
+            if (other.cmdDecls != null) return false;
+        } else if (!cmdDecls.equals(other.cmdDecls)) return false;
+        return true;
     }
 
     public static final class CommandDecl extends ASTNode {
@@ -208,6 +226,42 @@ public final class AlloyCmdPara extends AlloyPara {
             }
         }
 
+        @Override
+        public int hashCode() {
+            return Objects.hash(
+                    this.cmdType,
+                    this.declQname,
+                    this.invoQname,
+                    this.constrBlock,
+                    this.scope,
+                    this.number);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            CommandDecl other = (CommandDecl) obj;
+            if (cmdType != other.cmdType) return false;
+            if (declQname == null) {
+                if (other.declQname != null) return false;
+            } else if (!declQname.equals(other.declQname)) return false;
+            if (invoQname == null) {
+                if (other.invoQname != null) return false;
+            } else if (!invoQname.equals(other.invoQname)) return false;
+            if (constrBlock == null) {
+                if (other.constrBlock != null) return false;
+            } else if (!constrBlock.equals(other.constrBlock)) return false;
+            if (scope == null) {
+                if (other.scope != null) return false;
+            } else if (!scope.equals(other.scope)) return false;
+            if (number == null) {
+                if (other.number != null) return false;
+            } else if (!number.equals(other.number)) return false;
+            return true;
+        }
+
         public static final class Scope extends ASTNode {
             public final Optional<AlloyNumExpr> num;
             public final List<Typescope> typescopes;
@@ -271,6 +325,26 @@ public final class AlloyCmdPara extends AlloyPara {
                     throw AlloyASTImplError.bothNull(
                             pos, "num", "typescopes", "AlloyCmdPara.CommandDecl.Scope");
                 }
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(this.num, this.typescopes);
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) return true;
+                if (obj == null) return false;
+                if (getClass() != obj.getClass()) return false;
+                Scope other = (Scope) obj;
+                if (num == null) {
+                    if (other.num != null) return false;
+                } else if (!num.equals(other.num)) return false;
+                if (typescopes == null) {
+                    if (other.typescopes != null) return false;
+                } else if (!typescopes.equals(other.typescopes)) return false;
+                return true;
             }
 
             // The fields only reflect the syntax
@@ -423,6 +497,40 @@ public final class AlloyCmdPara extends AlloyPara {
                     }
                     pCtx.append(SPACE);
                     ((AlloyVarExpr) this.scopableExpr).pp(pCtx);
+                }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(
+                            this.isExactly,
+                            this.start,
+                            this.hasDotDot,
+                            this.end,
+                            this.increment,
+                            this.scopableExpr);
+                }
+
+                @Override
+                public boolean equals(Object obj) {
+                    if (this == obj) return true;
+                    if (obj == null) return false;
+                    if (getClass() != obj.getClass()) return false;
+                    Typescope other = (Typescope) obj;
+                    if (isExactly != other.isExactly) return false;
+                    if (start == null) {
+                        if (other.start != null) return false;
+                    } else if (!start.equals(other.start)) return false;
+                    if (hasDotDot != other.hasDotDot) return false;
+                    if (end == null) {
+                        if (other.end != null) return false;
+                    } else if (!end.equals(other.end)) return false;
+                    if (increment == null) {
+                        if (other.increment != null) return false;
+                    } else if (!increment.equals(other.increment)) return false;
+                    if (scopableExpr == null) {
+                        if (other.scopableExpr != null) return false;
+                    } else if (!scopableExpr.equals(other.scopableExpr)) return false;
+                    return true;
                 }
             }
         }
