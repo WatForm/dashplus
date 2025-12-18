@@ -19,18 +19,25 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GeneralUtil {
-    public static <T> T requireNonNull(T object, RuntimeException exception) {
-        if (null == object) {
-            throw exception;
+    public static void reqNonNull(RuntimeException e, Object... objects) {
+        for (Object object : objects) {
+            if (object instanceof String) {
+                String str = (String) object;
+                if (null == str || str.isBlank()) {
+                    throw e;
+                }
+            } else if (object instanceof Iterable) {
+                for (Object item : (Iterable<?>) object) {
+                    if (null == item) {
+                        throw e;
+                    }
+                }
+            } else {
+                if (null == object) {
+                    throw e;
+                }
+            }
         }
-        return object;
-    }
-
-    public static String requireNonNull(String str, RuntimeException runtimeException) {
-        if (null == str || str.isBlank()) {
-            throw runtimeException;
-        }
-        return str;
     }
 
     /* copied from https://stackoverflow.com/questions/7414667/identify-duplicates-in-a-list */

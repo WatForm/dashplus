@@ -1,5 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.var;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Objects;
@@ -10,25 +13,21 @@ public abstract class AlloyVarExpr extends AlloyExpr {
     public AlloyVarExpr(Pos pos, String label) {
         super(pos);
         this.label = label;
+        reqNonNull(nullField(pos, this), this.label);
     }
 
     public AlloyVarExpr(String label) {
-        super();
-        this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
+        this(Pos.UNKNOWN, label);
     }
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        sb.append(this.getLabel());
+        sb.append(label);
     }
 
     @Override
     public void pp(PrintContext pCtx) {
-        pCtx.append(this.getLabel());
+        pCtx.append(label);
     }
 
     @Override
@@ -36,10 +35,9 @@ public abstract class AlloyVarExpr extends AlloyExpr {
         return visitor.visit(this);
     }
 
-    // The given label is not used for most concrete AlloyVarExpr, like AlloyUnivExpr etc. These are
-    // here
-    // for the sake of completion.
-    // The label is used for AlloyAtName, AlloyNameExpr, AlloyNumExpr, AlloyQnameExpr,
+    // The given label is not used for most concrete AlloyVarExpr, like
+    // AlloyUnivExpr etc. These are here for the sake of completion. The label
+    // is used for AlloyAtName, AlloyNameExpr, AlloyNumExpr, AlloyQnameExpr,
     // AlloyStrLiteralExpr.
     public abstract AlloyVarExpr rebuild(String label);
 

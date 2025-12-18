@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
@@ -15,26 +17,23 @@ public final class AlloyBlock extends AlloyExpr {
     public AlloyBlock(Pos pos, List<AlloyExpr> exprs) {
         super(pos);
         this.exprs = Collections.unmodifiableList(exprs);
+        reqNonNull(nullField(pos, this), this.exprs);
     }
 
     public AlloyBlock(List<AlloyExpr> exprs) {
-        super();
-        this.exprs = Collections.unmodifiableList(exprs);
+        this(Pos.UNKNOWN, exprs);
     }
 
     public AlloyBlock(Pos pos, AlloyExpr expr) {
-        super(pos);
-        this.exprs = Collections.unmodifiableList(Collections.singletonList(expr));
+        this(pos, Collections.singletonList(expr));
     }
 
     public AlloyBlock(AlloyExpr expr) {
-        super();
-        this.exprs = Collections.unmodifiableList(Collections.singletonList(expr));
+        this(Pos.UNKNOWN, Collections.singletonList(expr));
     }
 
     public AlloyBlock() {
-        super();
-        this.exprs = Collections.emptyList();
+        this(Pos.UNKNOWN, Collections.emptyList());
     }
 
     @Override

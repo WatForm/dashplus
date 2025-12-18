@@ -56,18 +56,6 @@ public final class AlloyASTImplError extends ImplementationError {
                         + ". It must contain at least one of them. ");
     }
 
-    /**
-     * A WFF error, but it cannot occur through the ANTLR parser. So it cannot occur during parsing;
-     * it must be an ImplementationError
-     *
-     * @param pos
-     * @param field
-     * @return
-     */
-    public static AlloyASTImplError nullOrBlankField(Pos pos, String field) {
-        return new AlloyASTImplError(pos, field + " cannot be null or blank. ");
-    }
-
     // ====================================================================================
     // AlloyParseVis
     // ====================================================================================

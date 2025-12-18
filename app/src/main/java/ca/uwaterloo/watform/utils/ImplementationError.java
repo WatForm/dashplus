@@ -33,4 +33,17 @@ public class ImplementationError extends DashPlusError {
     public static ImplementationError methodShouldNotBeCalled(Pos pos, String methodName) {
         return new ImplementationError(pos, methodName + " should not be called. ");
     }
+
+    /**
+     * A WFF error, but it cannot occur through the ANTLR parser. Since it cannot occur during
+     * parsing; it must be an ImplementationError
+     *
+     * @param pos
+     * @param object
+     * @return
+     */
+    public static ImplementationError nullField(Pos pos, Object object) {
+        return new ImplementationError(
+                pos, object.getClass().getSimpleName() + " cannot have null or blank fields. ");
+    }
 }

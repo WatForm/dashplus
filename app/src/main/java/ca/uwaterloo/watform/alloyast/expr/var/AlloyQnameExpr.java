@@ -1,7 +1,10 @@
 package ca.uwaterloo.watform.alloyast.expr.var;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
@@ -13,13 +16,7 @@ public final class AlloyQnameExpr extends AlloyVarExpr
     public final List<AlloyVarExpr> vars;
 
     public AlloyQnameExpr(Pos pos, List<AlloyVarExpr> vars) {
-        super(
-                pos,
-                GeneralUtil.requireNonNull(
-                        vars.stream()
-                                .map(AlloyVarExpr::getLabel)
-                                .collect(Collectors.joining(AlloyStrings.SLASH)),
-                        AlloyASTImplError.nullOrBlankField(pos, "AlloyQnameExpr.label")));
+        super(pos, vars.stream().map(v -> v.label).collect(Collectors.joining(SLASH)));
         this.vars = Collections.unmodifiableList(vars);
         if (!vars.isEmpty()) {
             if (!(vars.getFirst() instanceof AlloyNameExpr)
@@ -33,6 +30,8 @@ public final class AlloyQnameExpr extends AlloyVarExpr
                 }
             }
         }
+
+        reqNonNull(nullField(pos, this), this.vars);
     }
 
     public AlloyQnameExpr(List<AlloyVarExpr> vars) {

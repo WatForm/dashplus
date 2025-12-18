@@ -1,5 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.unary;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Objects;
@@ -12,12 +15,11 @@ public abstract class AlloyUnaryExpr extends AlloyExpr {
         super(pos);
         this.sub = sub;
         this.op = op;
+        reqNonNull(nullField(pos, this), this.sub, this.op);
     }
 
     public AlloyUnaryExpr(AlloyExpr sub, String op) {
-        super();
-        this.sub = sub;
-        this.op = op;
+        this(Pos.UNKNOWN, sub, op);
     }
 
     public AlloyExpr getSub() {

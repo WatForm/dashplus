@@ -1,8 +1,9 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
-import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -29,21 +30,10 @@ public final class AlloyPredPara extends AlloyPara {
         super(pos);
         this.isPrivate = isPrivate;
         this.sigRef = Optional.ofNullable(sigRef);
-        this.qname =
-                GeneralUtil.requireNonNull(
-                        qname, AlloyASTImplError.nullOrBlankField(pos, "AlloyPredPara.qname"));
-        this.arguments =
-                Collections.unmodifiableList(
-                        GeneralUtil.requireNonNull(
-                                arguments,
-                                AlloyASTImplError.nullOrBlankField(
-                                        pos, "AlloyPredPara.arguments")));
-        this.block =
-                GeneralUtil.requireNonNull(
-                        block, AlloyASTImplError.nullOrBlankField(pos, "AlloyPredPara.block"));
-        GeneralUtil.requireNonNull(
-                this.qname.toString(),
-                AlloyASTImplError.nullOrBlankField(pos, "AlloyPredPara.qname"));
+        this.qname = qname;
+        this.arguments = arguments;
+        this.block = block;
+        reqNonNull(nullField(pos, this), this.sigRef, this.qname, this.arguments, this.block);
     }
 
     public AlloyPredPara(

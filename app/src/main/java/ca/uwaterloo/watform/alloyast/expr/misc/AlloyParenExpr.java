@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
@@ -14,11 +16,11 @@ public final class AlloyParenExpr extends AlloyExpr {
     public AlloyParenExpr(Pos pos, AlloyExpr sub) {
         super(pos);
         this.sub = sub;
+        reqNonNull(nullField(pos, this), this.sub);
     }
 
     public AlloyParenExpr(AlloyExpr sub) {
-        super();
-        this.sub = sub;
+        this(Pos.UNKNOWN, sub);
     }
 
     public AlloyExpr getSub() {

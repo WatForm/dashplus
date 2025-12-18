@@ -23,7 +23,7 @@ public class AlloyPredParaTest {
     public void invalidCtorArgs() throws Exception {
 
         assertThrows(
-                AlloyASTImplError.class,
+                ImplementationError.class,
                 () ->
                         new AlloyPredPara(
                                 Pos.UNKNOWN,
@@ -33,7 +33,7 @@ public class AlloyPredParaTest {
                                 Collections.emptyList(),
                                 TestUtil.createBlock()));
         assertThrows(
-                AlloyASTImplError.class,
+                ImplementationError.class,
                 () ->
                         new AlloyPredPara(
                                 Pos.UNKNOWN,
@@ -43,7 +43,7 @@ public class AlloyPredParaTest {
                                 null,
                                 TestUtil.createBlock()));
         assertThrows(
-                AlloyASTImplError.class,
+                ImplementationError.class,
                 () ->
                         new AlloyPredPara(
                                 Pos.UNKNOWN,

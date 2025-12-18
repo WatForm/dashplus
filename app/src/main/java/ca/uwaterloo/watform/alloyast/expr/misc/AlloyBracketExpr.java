@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
@@ -18,12 +20,11 @@ public final class AlloyBracketExpr extends AlloyExpr {
         super(pos);
         this.expr = expr;
         this.exprs = Collections.unmodifiableList(exprs);
+        reqNonNull(nullField(pos, this), this.expr, this.exprs);
     }
 
     public AlloyBracketExpr(AlloyExpr expr, List<AlloyExpr> exprs) {
-        super();
-        this.expr = expr;
-        this.exprs = Collections.unmodifiableList(exprs);
+        this(Pos.UNKNOWN, expr, exprs);
     }
 
     @Override

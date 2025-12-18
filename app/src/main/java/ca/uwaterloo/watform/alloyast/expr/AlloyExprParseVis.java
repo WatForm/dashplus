@@ -381,20 +381,17 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     // ArrowExpr
     // ============================
     private AlloyArrowExpr.Mul parseMultiplicity(DashParser.MultiplicityContext multCtx) {
-        if (multCtx == null) {
-            return AlloyArrowExpr.Mul.DEFAULTSET;
-        }
         if (multCtx.LONE() != null) return AlloyArrowExpr.Mul.LONE;
         if (multCtx.SOME() != null) return AlloyArrowExpr.Mul.SOME;
         if (multCtx.ONE() != null) return AlloyArrowExpr.Mul.ONE;
         if (multCtx.SET() != null) return AlloyArrowExpr.Mul.SET;
-        return AlloyArrowExpr.Mul.DEFAULTSET;
+        return null;
     }
 
     @Override
     public AlloyArrowExpr visitArrowExpr(DashParser.ArrowExprContext ctx) {
-        AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.DEFAULTSET;
-        AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.DEFAULTSET;
+        AlloyArrowExpr.Mul mul1 = null;
+        AlloyArrowExpr.Mul mul2 = null;
 
         int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
 
@@ -412,8 +409,8 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
 
     @Override
     public AlloyArrowExpr visitArrowBindExpr(DashParser.ArrowBindExprContext ctx) {
-        AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.DEFAULTSET;
-        AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.DEFAULTSET;
+        AlloyArrowExpr.Mul mul1 = null;
+        AlloyArrowExpr.Mul mul2 = null;
 
         int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
 
@@ -612,16 +609,11 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     // ============================
     @Override
     public AlloyBinaryExpr visitCompExpr(DashParser.CompExprContext ctx) {
-        AlloyCmpExpr.Negation neg;
-        if (null != ctx.comparison().NOT_EXCL() || null != ctx.comparison().NOT()) {
-            neg = AlloyCmpExpr.Negation.NOT_EXCL;
-        } else {
-            neg = AlloyCmpExpr.Negation.NONE;
-        }
+        boolean neg = (null != ctx.comparison().NOT_EXCL() || null != ctx.comparison().NOT());
 
         // Equal & NotEquals
         if (null != ctx.comparison().EQUAL()) {
-            if (neg == AlloyCmpExpr.Negation.NOT_EXCL) {
+            if (neg) {
                 return new AlloyNotEqualsExpr(
                         new Pos(ctx), this.visit(ctx.expr2(0)), this.visit(ctx.expr2(1)));
             } else {

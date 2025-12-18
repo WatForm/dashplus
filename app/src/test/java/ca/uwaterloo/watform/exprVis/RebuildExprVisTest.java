@@ -44,8 +44,8 @@ public class RebuildExprVisTest {
                         new AlloyQnameExpr("right"));
         AlloyArrowExpr rebuiltArrow = (AlloyArrowExpr) arrow.accept(new RebuildExprVis());
         assertEquals("arrowLeft", rebuiltArrow.left.toString());
-        assertEquals("some", rebuiltArrow.mul1.toString());
-        assertEquals("one", rebuiltArrow.mul2.toString());
+        assertEquals("some", rebuiltArrow.mul1.get().toString());
+        assertEquals("one", rebuiltArrow.mul2.get().toString());
         assertEquals("arrowRight", rebuiltArrow.right.toString());
     }
 }

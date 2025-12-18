@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
@@ -17,13 +19,11 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
         this.left = left;
         this.right = right;
         this.op = op;
+        reqNonNull(nullField(pos, this), this.left, this.right, this.op);
     }
 
     public AlloyBinaryExpr(AlloyExpr left, AlloyExpr right, String op) {
-        super();
-        this.left = left;
-        this.right = right;
-        this.op = op;
+        this(Pos.UNKNOWN, left, right, op);
     }
 
     @Override

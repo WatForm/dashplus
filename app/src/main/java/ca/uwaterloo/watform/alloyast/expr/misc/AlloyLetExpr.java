@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.*;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
@@ -18,24 +20,19 @@ public final class AlloyLetExpr extends AlloyExpr {
         super(pos);
         this.asns = Collections.unmodifiableList(asns);
         this.body = body;
+        reqNonNull(nullField(pos, this), this.asns, this.body);
     }
 
     public AlloyLetExpr(List<AlloyLetAsn> asns, AlloyExpr body) {
-        super();
-        this.asns = Collections.unmodifiableList(asns);
-        this.body = body;
+        this(Pos.UNKNOWN, asns, body);
     }
 
     public AlloyLetExpr(Pos pos, AlloyLetAsn asn, AlloyExpr body) {
-        super(pos);
-        this.asns = Collections.unmodifiableList(Collections.singletonList(asn));
-        this.body = body;
+        this(pos, Collections.singletonList(asn), body);
     }
 
     public AlloyLetExpr(AlloyLetAsn asn, AlloyExpr body) {
-        super();
-        this.asns = Collections.unmodifiableList(Collections.singletonList(asn));
-        this.body = body;
+        this(Pos.UNKNOWN, Collections.singletonList(asn), body);
     }
 
     @Override
@@ -91,6 +88,7 @@ public final class AlloyLetExpr extends AlloyExpr {
             super(pos);
             this.qname = qname;
             this.expr = expr;
+            reqNonNull(nullField(pos, this), this.qname, this.expr);
         }
 
         public AlloyLetAsn(AlloyQnameExpr qname, AlloyExpr expr) {

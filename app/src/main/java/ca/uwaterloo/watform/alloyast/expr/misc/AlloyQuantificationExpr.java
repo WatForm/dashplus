@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
@@ -20,14 +22,12 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
         this.quant = quant;
         this.decls = Collections.unmodifiableList(decls);
         this.body = body;
+        reqNonNull(nullField(pos, this), this.quant, this.decls, this.body);
     }
 
     public AlloyQuantificationExpr(
             AlloyQuantificationExpr.Quant quant, List<AlloyDecl> decls, AlloyExpr body) {
-        super();
-        this.quant = quant;
-        this.decls = Collections.unmodifiableList(decls);
-        this.body = body;
+        this(Pos.UNKNOWN, quant, decls, body);
     }
 
     public enum Quant {

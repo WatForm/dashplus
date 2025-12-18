@@ -9,3 +9,13 @@
     - this may change in the future
     - Nov 20, 2025
 
+# Non-Nullable fields
+- All AST fields are non-nullable
+- Optional fields are wrapped in the Optional class
+- `GeneralUtil.reqNonNull` is used to check all fields are not null at the end of ctors
+    - NOTE: ctor args can be null for optional fields, but by end
+        of ctor, all fields should not be null
+    - AlloyBinaryExpr ex: 
+        `reqNonNull(nullField(pos, this), this.left, this.right, this.op);`
+- If a field is null, an Implementation Error is thrown: `ImplementationError.nullField`
+

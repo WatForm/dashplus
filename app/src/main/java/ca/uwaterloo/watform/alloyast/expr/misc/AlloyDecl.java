@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
+import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
@@ -44,6 +46,7 @@ public final class AlloyDecl extends AlloyExpr {
                 throw AlloyCtorError.declExactlyCannotHaveDisj(pos);
             }
         }
+        reqNonNull(nullField(pos, this), this.qnames, this.quant, this.expr);
     }
 
     public AlloyDecl(
