@@ -1,8 +1,9 @@
 package ca.uwaterloo.watform.dashast.dashNamedExpr;
 
+import static ca.uwaterloo.watform.dashast.DashStrings.sendName;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
-import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 
 // send P[x]/ev1
@@ -17,6 +18,11 @@ public class DashSend extends DashNamedExpr implements DashTransItem {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        super.toString(DashStrings.sendName, sb, indent);
+        super.toString(sendName, sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        super.pp(pCtx, sendName);
     }
 }

@@ -1,5 +1,8 @@
 package ca.uwaterloo.watform.dashast;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.dashast.DashStrings.*;
+
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +29,17 @@ public final class DashEventDecls extends ASTNode implements DashStateItem {
         names.forEach(n -> sj.add(n));
         s += DashStrings.eventName + " " + sj.toString() + " {}\n";
         sb.append(DashStrings.indent(indent) + s);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        if (kind == IntEnvKind.ENV) {
+            pCtx.append(envName + SPACE);
+        }
+        pCtx.append(eventName + SPACE);
+        pCtx.appendList(names, COMMA);
+        pCtx.append(SPACE);
+        pCtx.append(LBRACE + RBRACE);
     }
 
     public List<String> getNames() {

@@ -152,16 +152,19 @@ public final class PrintContext {
         }
         this.align();
         for (T element : li) {
-            try {
+            if (element instanceof ASTNode) {
                 ASTNode astNode = (ASTNode) element;
                 astNode.ppNewBlock(this);
-                if (!(astNode == li.getLast())) {
-                    this.append(separator);
-                    this.brk();
-                }
-            } catch (ClassCastException e) {
+            } else if (element instanceof String) {
+                append((String) element);
+            } else {
                 throw ImplementationError.failedCast(
-                        "Cannot cast to ASTNode in PrintContext.appendList \n" + e.toString());
+                        "Cannot cast to ASTNode in PrintContext.appendList \n"
+                                + element.toString());
+            }
+            if (!(element == li.getLast())) {
+                this.append(separator);
+                this.brk();
             }
         }
         this.end();

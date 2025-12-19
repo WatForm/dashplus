@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.dashast.dashNamedExpr;
 
+import static ca.uwaterloo.watform.dashast.DashStrings.whenName;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.utils.*;
@@ -12,6 +14,11 @@ public class DashWhen extends DashNamedExpr implements DashTransItem {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        super.toString(DashStrings.whenName, sb, indent);
+        super.toString(whenName, sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        super.pp(pCtx, whenName);
     }
 }

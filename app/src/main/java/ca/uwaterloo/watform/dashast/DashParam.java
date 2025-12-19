@@ -40,6 +40,11 @@ public class DashParam extends AlloyExpr {
         sb.append(stateName.toString());
     }
 
+    @Override
+    public void pp(PrintContext pCtx) {
+        pCtx.append(stateName);
+    }
+
     // it's convenient to include these translation methods here
 
     // p_stateName

@@ -34,7 +34,6 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashExprVis;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
-import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -104,6 +103,34 @@ public class DashRef extends AlloyExpr {
         }
         // System.out.println(s + "\n");
         sb.append(s);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        // STATE: Root/A/B[a1,b1]
+        // other: Root/A/B[a1,b1]/var1
+        String s = "";
+        if (kind == DashStrings.DashRefKind.STATE) {
+            s += name;
+        } else {
+            s += chopPrefixFromFQN(name);
+        }
+
+        if (!paramValues.isEmpty()) {
+            s += "[";
+            // TODO: why is pValues written? is it an implementation bug? Is pValues meant to be
+            // used?
+            // List<String> pValues = mapBy(paramValues, i -> i.toString());
+            // Collections.reverse(paramValues);
+            s += GeneralUtil.strCommaList(paramValues);
+            s += "]";
+        }
+        if (kind != DashStrings.DashRefKind.STATE) {
+            s += "/";
+            s += chopNameFromFQN(name);
+        }
+        // System.out.println(s + "\n");
+        pCtx.append(s);
     }
 
     // referencing a for loop variable in a filter does not work

@@ -1,5 +1,8 @@
 package ca.uwaterloo.watform.dashast;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.dashast.DashStrings.*;
+
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -23,13 +26,27 @@ public final class DashBufferDecls extends ASTNode implements DashStateItem {
     public void toString(StringBuilder sb, int indent) {
         // indices are hidden
         String s = new String("");
-        if (kind == DashStrings.IntEnvKind.ENV) {
-            s += DashStrings.envName + " ";
+        if (kind == IntEnvKind.ENV) {
+            s += envName + " ";
         }
         StringJoiner sj = new StringJoiner(",\n");
         names.forEach(n -> sj.add(n));
-        s += sj.toString() + ":" + DashStrings.bufName + "[" + element + "]\n";
+        s += sj.toString() + ":" + bufName + "[" + element + "]\n";
         sb.append(DashStrings.indent(indent) + s);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        // indices are hidden
+        if (kind == IntEnvKind.ENV) {
+            pCtx.append(envName);
+            pCtx.append(SPACE);
+        }
+        pCtx.appendList(names, COMMA);
+        pCtx.brk();
+        pCtx.append(COLON + SPACE);
+        pCtx.append(bufName);
+        pCtx.append(LBRACK + element + RBRACK);
     }
 
     public List<String> getNames() {

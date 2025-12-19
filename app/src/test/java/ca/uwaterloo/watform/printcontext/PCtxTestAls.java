@@ -21,7 +21,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import org.junit.jupiter.api.*;
 
-public class PCtxTest {
+public class PCtxTestAls {
     private static final AlloyQnameExpr shortAQname = new AlloyQnameExpr("A");
     private static final AlloyQnameExpr shortBQname = new AlloyQnameExpr("B");
     private static final AlloyQnameExpr shortCQname = new AlloyQnameExpr("C");
@@ -138,16 +138,13 @@ public class PCtxTest {
                                                                 List.of(
                                                                         new AlloyAndExpr(
                                                                                 longAQname,
-                                                                                PCtxTest
-                                                                                        .longBQname),
+                                                                                longBQname),
                                                                         new AlloyAndExpr(
                                                                                 longAQname,
-                                                                                PCtxTest
-                                                                                        .longBQname),
+                                                                                longBQname),
                                                                         new AlloyAndExpr(
                                                                                 longAQname,
-                                                                                PCtxTest
-                                                                                        .longBQname),
+                                                                                longBQname),
                                                                         ite1())))))));
         System.out.println(alloyFile.toPrettyString(10, 4));
     }

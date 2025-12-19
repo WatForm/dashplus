@@ -1,9 +1,14 @@
 package ca.uwaterloo.watform.dashast;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.dashast.DashStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.passIfNull;
 
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class DashTrans extends ASTNode implements DashStateItem {
     public final String name;
@@ -61,5 +66,28 @@ public final class DashTrans extends ASTNode implements DashStateItem {
             sb.append(ind + "}\n");
         }
         sb.append(s);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        pCtx.append(transName + SPACE + name + SPACE + LBRACE);
+        if (!emptyTrans()) {
+            pCtx.brkNoSpace();
+            List<DashNamedExpr> li = new ArrayList<>();
+            if (null != fromP) li.add(fromP);
+            if (null != gotoP) li.add(gotoP);
+            if (null != onP) li.add(onP);
+            if (null != sendP) li.add(sendP);
+            if (null != whenP) li.add(whenP);
+            if (null != doP) li.add(doP);
+            for (DashNamedExpr dne : li) {
+                dne.ppNewBlock(pCtx);
+                if (!(dne == li.getLast())) {
+                    pCtx.nl();
+                }
+            }
+            pCtx.brkNoSpaceNoIndent();
+        }
+        pCtx.append(RBRACE);
     }
 }

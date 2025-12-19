@@ -1,8 +1,9 @@
 package ca.uwaterloo.watform.dashast.dashNamedExpr;
 
+import static ca.uwaterloo.watform.dashast.DashStrings.onName;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
-import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 
 public class DashOn extends DashNamedExpr implements DashTransItem {
@@ -13,6 +14,11 @@ public class DashOn extends DashNamedExpr implements DashTransItem {
 
     @Override
     public void toString(StringBuilder sb, int indent) {
-        super.toString(DashStrings.onName, sb, indent);
+        super.toString(onName, sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        super.pp(pCtx, onName);
     }
 }

@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.Pos;
+import ca.uwaterloo.watform.utils.PrintContext;
 import java.util.List;
 
 public final class DashFile extends AlloyFile {
@@ -31,5 +32,11 @@ public final class DashFile extends AlloyFile {
     public void toString(StringBuilder sb, int indent) {
         super.toString(sb, indent);
         this.stateRoot.toString(sb, indent);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        super.pp(pCtx);
+        stateRoot.pp(pCtx);
     }
 }

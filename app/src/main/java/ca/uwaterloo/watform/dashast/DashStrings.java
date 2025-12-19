@@ -8,7 +8,7 @@ package ca.uwaterloo.watform.dashast;
 import ca.uwaterloo.watform.utils.CommonStrings;
 import java.util.Collections;
 
-public final class DashStrings {
+public final class DashStrings extends CommonStrings {
 
     private DashStrings() {}
 

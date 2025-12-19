@@ -6,6 +6,8 @@
 
 package ca.uwaterloo.watform.dashast.dashNamedExpr;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
@@ -30,5 +32,14 @@ public abstract class DashNamedExpr extends ASTNode {
         sb.append(DashStrings.indent(indent + 1));
         this.exp.toString(sb, indent + 1);
         sb.append("\n" + DashStrings.indent(indent) + "}\n");
+    }
+
+    public final void pp(PrintContext pCtx, String name) {
+        pCtx.append(name);
+        pCtx.append(SPACE + LBRACE);
+        pCtx.brkNoSpace();
+        exp.ppNewBlock(pCtx);
+        pCtx.brkNoSpaceNoIndent();
+        pCtx.append(RBRACE);
     }
 }

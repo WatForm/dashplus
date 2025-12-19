@@ -1,6 +1,9 @@
 package ca.uwaterloo.watform.dashast;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.utils.*;
@@ -77,6 +80,49 @@ public class DashState extends DashPara implements DashStateItem {
             s += j.toString() + ind + "}\n";
         }
         sb.append(s);
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        if (def == DefKind.DEFAULT) {
+            pCtx.append(defaultName + SPACE);
+        }
+        if (kind == StateKind.AND) {
+            pCtx.append(concName + SPACE);
+        }
+        pCtx.append(stateName + SPACE + name + SPACE);
+        if (items.isEmpty()) {
+            pCtx.append(LBRACE + RBRACE);
+        } else {
+            if (param != null) pCtx.append(LBRACK + param + RBRACK + SPACE);
+            pCtx.append(LBRACE);
+            pCtx.nl();
+            // sorting items for display order
+            // map type of item to an integer (in function above)
+            List<Object> itemsCopy = new ArrayList<>(items);
+            Collections.sort(itemsCopy, (i1, i2) -> Integer.compare(itemToInt(i1), itemToInt(i2)));
+            if (!itemsCopy.isEmpty()) {
+                if (1 == itemsCopy.size()) {
+                    ((ASTNode) itemsCopy.getFirst()).ppNewBlock(pCtx);
+                    pCtx.nlNoIndent();
+                } else {
+                    for (Object item : itemsCopy) {
+                        try {
+                            ASTNode astNode = (ASTNode) item;
+                            astNode.ppNewBlock(pCtx);
+                        } catch (ClassCastException e) {
+                            throw failedCast("DashState.pp");
+                        }
+                        if (item != itemsCopy.getLast()) {
+                            pCtx.nl();
+                            pCtx.nl();
+                        }
+                    }
+                    pCtx.nlNoIndent();
+                }
+            }
+            pCtx.append(RBRACE);
+        }
     }
 
     public static String noParam() {
