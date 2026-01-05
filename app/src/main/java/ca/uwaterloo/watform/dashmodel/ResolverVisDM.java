@@ -110,7 +110,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         // calling this with a DashRef is fine because Liskov substitution
         // However, this leads to a methodShouldNotBeCalled error
         // return (DashRef) visit(expr); - this is wrong
-        return (DashRef) ((DashRef) expr).accept(this); // this is right
+        return (DashRef) visit(expr); // this is right
     }
 
     protected DashRef resolveEvent(AlloyExpr expr, String sfqn) {

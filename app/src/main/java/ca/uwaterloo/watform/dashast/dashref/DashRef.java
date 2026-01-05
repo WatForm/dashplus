@@ -31,6 +31,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.dashast.DashExpr;
 import ca.uwaterloo.watform.dashast.DashExprVis;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
@@ -39,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DashRef extends AlloyExpr {
+public class DashRef extends DashExpr {
 
     public final DashStrings.DashRefKind kind;
     public final String name;

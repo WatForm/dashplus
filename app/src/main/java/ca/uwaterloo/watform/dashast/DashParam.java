@@ -14,13 +14,12 @@
 
 package ca.uwaterloo.watform.dashast;
 
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
 
-public class DashParam extends AlloyExpr {
+public class DashParam extends DashExpr {
 
     public final String stateName;
     public final String paramSig;
@@ -28,8 +27,9 @@ public class DashParam extends AlloyExpr {
     public DashParam(String stateName, String paramSig) {
         // for compatibility with Expr
         // NADTODO is DashParam only ever created and never parsed?
-        super();
-
+        // super();
+        // does not have a pos of origin
+        super(Pos.UNKNOWN);
         this.stateName = stateName;
         this.paramSig = paramSig;
     }
