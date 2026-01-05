@@ -13,7 +13,7 @@ import picocli.CommandLine.Parameters;
 
 @Command(
         usageHelpWidth = 120,
-        name = "dashplus",
+        name = "java -cp watform-dashplus.jar",
         mixinStandardHelpOptions = true,
         version = "dashplus 1.0",
         header = {
