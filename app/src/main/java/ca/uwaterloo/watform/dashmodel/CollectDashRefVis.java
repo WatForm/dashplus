@@ -112,12 +112,10 @@ public class CollectDashRefVis implements AlloyExprVis<List<DashRef>> {
     }
     ;
 
-
     public List<DashRef> visit(DashRef d) {
         x.add(d);
         return x;
     }
-    
 
     public List<DashRef> visit(DashParam dashParam) {
         return x;

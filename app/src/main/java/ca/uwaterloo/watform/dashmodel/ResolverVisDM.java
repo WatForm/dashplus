@@ -105,7 +105,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         this.primeOk = false;
         this.primeOkInPrmExprs = false;
         this.thisOk = true;
-        //System.out.println(expr.getClass());
+        // System.out.println(expr.getClass());
         // expr is a DashRef
         // visit is a function that expects an AlloyExpr
         // calling this with a DashRef is fine because Liskov substitution
@@ -150,7 +150,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
             References to the parameter values of the current context (whether from a thisState or from lack of parameters) become DashParam(statename, parameter sig) within the expression.
         */
-        // v is the name, 
+        // v is the name,
         // v_params as the possibly empty set
         // of _resolved_ param expr (which could include DashParams)
         // but it could still need to be added to
@@ -315,7 +315,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     public AlloyExpr visit(AlloyExpr expr) {
         if (DashRef.class.isInstance(expr))
             return this.visitDashRef((DashRef)expr);
-        else 
+        else
             return expr.accept((ResolverVisDM)this);
     }
     */
@@ -417,7 +417,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     @Override
     public AlloyExpr visit(AlloyIteExpr iteExpr) {
         return new AlloyIteExpr(
-                iteExpr.pos, this.visit(iteExpr.cond), this.visit(iteExpr.conseq), this.visit(iteExpr.alt));
+                iteExpr.pos,
+                this.visit(iteExpr.cond),
+                this.visit(iteExpr.conseq),
+                this.visit(iteExpr.alt));
     }
     ;
 
@@ -457,7 +460,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         // name might not be fully resolved
         DashStrings.DashRefKind tempKind = kind;
         List<AlloyExpr> resolvedParamValues = new ArrayList<AlloyExpr>();
-        for (AlloyExpr p:dashRef.paramValues) {
+        for (AlloyExpr p : dashRef.paramValues) {
             // anything in a param value is a variable
             this.kind = DashStrings.DashRefKind.VAR;
             resolvedParamValues.add(this.visit(p));
@@ -465,9 +468,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         }
         this.kind = dashRef.kind;
         AlloyExpr newExpr =
-                resolve(
-                        new AlloyQnameExpr(dashRef.pos, dashRef.name),
-                        resolvedParamValues);
+                resolve(new AlloyQnameExpr(dashRef.pos, dashRef.name), resolvedParamValues);
         assert (newExpr instanceof DashRef);
         this.kind = tempKind;
         return newExpr;
@@ -476,7 +477,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
     @Override
     public AlloyExpr visit(DashParam dashParam) {
-        return (AlloyExpr)dashParam;
+        return (AlloyExpr) dashParam;
     }
 
     // errors methods cannot be grouped in a subclass

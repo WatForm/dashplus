@@ -23,7 +23,7 @@ public class DashFQN {
     // creating FQNs from inputs --------------------------
 
     public static String fqn(String parent, String child) {
-        assert(child != null && !child.isEmpty());
+        assert (child != null && !child.isEmpty());
         String q;
         if (parent != null && !parent.isEmpty()) {
             // in case the parent is empty
@@ -39,14 +39,13 @@ public class DashFQN {
     // not really needed unless we change it so that
     // inputQualChar != internal QualChar
     public static String fqn(String n) {
-        assert(n != null && !n.isEmpty());
+        assert (n != null && !n.isEmpty());
         return n.replace(DashStrings.inputQualChar, DashStrings.internalQualChar);
     }
 
     public static String fqn(List<String> pth) {
-        assert(pth != null);
-        for (String n:pth)
-            assert(n != null && !n.isEmpty());
+        assert (pth != null);
+        for (String n : pth) assert (n != null && !n.isEmpty());
         if (pth.isEmpty()) return null; // for root
         StringJoiner sj = new StringJoiner(DashStrings.internalQualChar);
         pth.forEach(n -> sj.add(fqn(n)));
@@ -54,8 +53,8 @@ public class DashFQN {
     }
 
     public static String fqn(List<String> pth, String name) {
-        assert(pth != null);
-        assert(name != null && name.isEmpty());
+        assert (pth != null);
+        assert (name != null && name.isEmpty());
         if (isFQN(name)) return fqn(name);
         else {
             StringJoiner sj = new StringJoiner(DashStrings.internalQualChar);
@@ -70,7 +69,7 @@ public class DashFQN {
         assert(pth != null);
         assert(child != null && !child.isEmpty());
         assert(parent != null && !parent.isEmpty());
-        for (String n:pth) 
+        for (String n:pth)
             assert(n != null & !n.isEmpty());
         if (isFQN(child))
             // return child.replace(inputQualChar,outputQualChar);
@@ -241,7 +240,7 @@ public class DashFQN {
             int x = sfqn.length();
             // A/B/C/ev
             // A/B
-            if (fqn.charAt(x)  == DashStrings.internalQualChar.charAt(0)) {
+            if (fqn.charAt(x) == DashStrings.internalQualChar.charAt(0)) {
                 return true;
             }
         }

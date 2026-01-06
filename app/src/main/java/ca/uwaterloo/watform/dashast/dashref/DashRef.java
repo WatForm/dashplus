@@ -64,14 +64,11 @@ public class DashRef extends AlloyExpr {
             List<AlloyNameExpr> names,
             List<? extends AlloyExpr> prmValues) {
 
-        String n = names.stream()
+        String n =
+                names.stream()
                         .map(AlloyNameExpr::toString)
                         .collect(Collectors.joining(DashStrings.internalQualChar));
-        this(
-                p,
-                k,
-                n,
-                prmValues);
+        this(p, k, n, prmValues);
     }
 
     public static List<AlloyExpr> emptyParamValuesList() {
@@ -90,7 +87,7 @@ public class DashRef extends AlloyExpr {
                 s += name;
             } else {
                 s += chopPrefixFromFQN(name);
-            } 
+            }
             s += "[";
             s += GeneralUtil.strCommaList(paramValues);
             s += "]";
@@ -137,10 +134,8 @@ public class DashRef extends AlloyExpr {
         return o;
     }
 
-    
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
     }
-
 }

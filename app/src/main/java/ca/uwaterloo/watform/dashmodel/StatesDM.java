@@ -10,7 +10,6 @@ package ca.uwaterloo.watform.dashmodel;
 
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
-import ca.uwaterloo.watform.utils.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -21,6 +20,7 @@ import ca.uwaterloo.watform.dashast.DashStrings.DefKind;
 import ca.uwaterloo.watform.dashast.DashStrings.StateKind;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.dashast.dashref.*;
+import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,8 +54,8 @@ public class StatesDM extends TransDM {
         StateEntry answer = this.st.get(s);
         if (answer == null) {
             printStackTrace();
-            throw new ImplementationError("Attempt to access State Entry using String \"" + s + "\"");
-
+            throw new ImplementationError(
+                    "Attempt to access State Entry using String \"" + s + "\"");
         }
         return answer;
     }
@@ -354,16 +354,16 @@ public class StatesDM extends TransDM {
         // harder to write but it's only written once
         // this fails when sfqn = "/root"
 
-        //System.out.println("in allAnces");
-        //System.out.println(sfqn);
+        // System.out.println("in allAnces");
+        // System.out.println(sfqn);
         List<String> sfqnSplit = DashFQN.splitFQN(sfqn);
         List<String> x = new ArrayList<String>();
         // include the state itself (could be Root)
         if (sfqnSplit.size() > 0)
             for (int i = 0; i < sfqnSplit.size(); i++)
                 x.add(DashFQN.fqn(sfqnSplit.subList(0, i + 1)));
-        //if (x.contains("")) System.out.println(sfqn);
-        //System.out.println(x);
+        // if (x.contains("")) System.out.println(sfqn);
+        // System.out.println(x);
         return x;
     }
 

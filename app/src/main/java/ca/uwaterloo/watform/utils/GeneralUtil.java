@@ -204,8 +204,7 @@ public class GeneralUtil {
         try {
             throw new RuntimeException("Something went wrong!");
         } catch (RuntimeException e) {
-            e.printStackTrace(); 
+            e.printStackTrace();
         }
     }
-
 }

@@ -184,7 +184,6 @@ public class ResolveDM extends ResolverVisDM {
         }
     }
 
-
     public void debug() {
         System.out.println(stToString());
         System.out.println(ttToString());

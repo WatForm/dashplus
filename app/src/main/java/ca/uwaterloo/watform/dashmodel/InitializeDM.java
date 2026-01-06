@@ -71,7 +71,7 @@ public class InitializeDM extends PredsDM {
         String sfqn;
         if (parentFQN != null) {
             sfqn = DashFQN.fqn(parentFQN, s.name);
-        } else{
+        } else {
             sfqn = s.name;
         }
 
@@ -104,15 +104,7 @@ public class InitializeDM extends PredsDM {
 
         // add this state to the table
         // childFQNs can be empty
-        addState(
-                s.pos,
-                sfqn,
-                s.kind,
-                thisStateParam,
-                newParams,
-                def,
-                parentFQN,
-                childFQNs);
+        addState(s.pos, sfqn, s.kind, thisStateParam, newParams, def, parentFQN, childFQNs);
 
         // process the children
         if (!substatesList.isEmpty()) {
