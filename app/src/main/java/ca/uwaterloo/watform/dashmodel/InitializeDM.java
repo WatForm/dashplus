@@ -68,14 +68,20 @@ public class InitializeDM extends PredsDM {
 
         // figure out its sfqn and its parent's fqn
         if (DashFQN.isFQN(s.name)) Error.nameCantBeFQN(s.pos, s.name);
-        String sfqn = DashFQN.fqn(parentFQN, s.name);
+        String sfqn;
+        if (parentFQN != null) {
+            sfqn = DashFQN.fqn(parentFQN, s.name);
+        } else{
+            sfqn = s.name;
+        }
 
         List<DashParam> newParams = new ArrayList<DashParam>(parentParams);
+        DashParam thisStateParam = null;
         if (s.param != null) {
-            DashParam p = new DashParam(sfqn, s.param);
-            newParams.add(p);
+            thisStateParam = new DashParam(sfqn, s.param);
+            newParams.add(thisStateParam);
             // add to the overall param list for the DashModel
-            this.allParamsInOrder.add(p);
+            this.allParamsInOrder.add(thisStateParam);
             if (this.maxDepthParams < depth) this.maxDepthParams = depth + 1;
         }
 
@@ -102,7 +108,7 @@ public class InitializeDM extends PredsDM {
                 s.pos,
                 sfqn,
                 s.kind,
-                new DashParam(sfqn, s.param),
+                thisStateParam,
                 newParams,
                 def,
                 parentFQN,
@@ -161,13 +167,13 @@ public class InitializeDM extends PredsDM {
                 // will be caught when children are
                 // added to the state table
                 defk = null;
-                if (defList.contains(sub)) defk = DefKind.DEFAULT;
+                if (defList.contains(sub.name)) defk = DefKind.DEFAULT;
                 else defk = DefKind.NOTDEFAULT;
                 // want to keep only one place
                 // where we call stateRecurse
                 // to make sure all args are correct
                 stateRecurseToInitializeStatesVarsEventsBuffers(
-                        sub, parentFQN, newParams, defk, depth + 1);
+                        sub, sfqn, newParams, defk, depth + 1);
             }
         }
 

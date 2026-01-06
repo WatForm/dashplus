@@ -10,7 +10,7 @@ package ca.uwaterloo.watform.dashmodel;
 
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
-import static ca.uwaterloo.watform.utils.ImplementationError.*;
+import ca.uwaterloo.watform.utils.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -52,8 +52,11 @@ public class StatesDM extends TransDM {
 
     private StateEntry getStateEntry(String s) {
         StateEntry answer = this.st.get(s);
-        if (answer == null)
-            System.out.println("Attempt to access State Entry using String \"" + s + "\"");
+        if (answer == null) {
+            printStackTrace();
+            throw new ImplementationError("Attempt to access State Entry using String \"" + s + "\"");
+
+        }
         return answer;
     }
 
@@ -342,7 +345,7 @@ public class StatesDM extends TransDM {
 
     // private functions below; used to calculate above
 
-    private List<String> allAnces(String sfqn) {
+    public List<String> allAnces(String sfqn) {
         // do not need to walk over tree for this operation; can just use FQNs
         // MKJ - earlier implementations of this function returned illegal strings which are not
         // state names, resulting in NullPointerExceptions when applied to getter functions
@@ -350,13 +353,17 @@ public class StatesDM extends TransDM {
         // is easier to read and maintain since it doesn't rely on the FQN notation. The code may be
         // harder to write but it's only written once
         // this fails when sfqn = "/root"
+
+        //System.out.println("in allAnces");
+        //System.out.println(sfqn);
         List<String> sfqnSplit = DashFQN.splitFQN(sfqn);
         List<String> x = new ArrayList<String>();
         // include the state itself (could be Root)
         if (sfqnSplit.size() > 0)
             for (int i = 0; i < sfqnSplit.size(); i++)
                 x.add(DashFQN.fqn(sfqnSplit.subList(0, i + 1)));
-        if (x.contains("")) System.out.println(sfqn);
+        //if (x.contains("")) System.out.println(sfqn);
+        //System.out.println(x);
         return x;
     }
 
@@ -404,7 +411,7 @@ public class StatesDM extends TransDM {
         return r;
     }
 
-    private List<String> defaults(String sfqn) {
+    public List<String> defaults(String sfqn) {
         assert (!isLeaf(sfqn) || immChildren(sfqn).isEmpty());
         return filterBy(immChildren(sfqn), c -> isDefault(c));
     }

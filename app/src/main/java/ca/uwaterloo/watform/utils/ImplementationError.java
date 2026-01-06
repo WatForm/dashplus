@@ -26,8 +26,8 @@ public class ImplementationError extends DashPlusError {
         return new ImplementationError("Failed Dynamic Cast: " + s);
     }
 
-    public static ImplementationError methodShouldNotBeCalled() {
-        return new ImplementationError("This method should not be called");
+    public static ImplementationError methodShouldNotBeCalled(String methodName) {
+        return new ImplementationError(methodName + " should not be called");
     }
 
     public static ImplementationError methodShouldNotBeCalled(Pos pos, String methodName) {

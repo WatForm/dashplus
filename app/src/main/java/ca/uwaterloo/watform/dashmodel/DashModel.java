@@ -80,32 +80,4 @@ public class DashModel extends ResolveDM {
         return;
     }
 
-    public void debug() {
-        System.out.println(stToString());
-        System.out.println(ttToString());
-        System.out.println(etToString());
-        System.out.println(vtToString());
-        System.out.println(btToString());
-        System.out.println(ptToString());
-    }
-
-    public void debug(String tfqn) {
-        if (tfqn != null) {
-            System.out.println("src " + fromR(tfqn));
-            System.out.println("dest " + gotoR(tfqn));
-            System.out.println("pre " + whenR(tfqn));
-            System.out.println("post " + doR(tfqn));
-            System.out.println("getScope " + scope(tfqn));
-            System.out.println("getClosestParamAnces: " + closestParamAnces(fromR(tfqn).name));
-            // System.out.println("getAllNonParamDesc: "
-            // +getAllNonParamDesc(getClosestConcAnces(getTransSrc(tfqn).getName())));
-            System.out.println("getRegion:" + "Root/S1/S2: " + region(fromR(tfqn).name));
-            System.out.println("exited: " + exited(tfqn));
-            System.out.println("entered" + leafStatesEntered(gotoR(tfqn)));
-            System.out.println("enteredInScope" + entered(tfqn));
-            System.out.println("allPrefixDashRefs of scope: " + prefixDashRefs(scope(tfqn)));
-            System.out.println("scopesUsed: " + scopesUsed(tfqn));
-            System.out.println("nonOrthogonalScopes: " + nonOrthogonalScopesOf(tfqn));
-        }
-    }
 }

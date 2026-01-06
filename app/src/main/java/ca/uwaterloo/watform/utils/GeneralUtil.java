@@ -70,6 +70,8 @@ public class GeneralUtil {
 
     public static void myprint(String s) {
         // debugging output
+        // this won't work unless a string is passed to myprint
+        // so myprint(2) won't work
         System.out.println(s);
     }
 
@@ -197,4 +199,13 @@ public class GeneralUtil {
             throw new Reporter.ErrorUser(pos, "Multiple " + errorName + "s");
         }
     }
+
+    public static void printStackTrace() {
+        try {
+            throw new RuntimeException("Something went wrong!");
+        } catch (RuntimeException e) {
+            e.printStackTrace(); 
+        }
+    }
+
 }

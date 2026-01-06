@@ -30,6 +30,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
@@ -43,7 +44,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr> {
+public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExpr> {
 
     // these bits of state are used throughout the
     // visit functions with the same values
@@ -79,7 +80,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         this.primeOk = false;
         this.primeOkInPrmExprs = false;
         this.thisOk = true;
-        return visit(expr);
+        return this.visit(expr);
     }
 
     protected AlloyExpr resolveVarPrimesOkAnywhere(AlloyExpr expr, String sfqn) {
@@ -91,7 +92,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         this.primeOk = true;
         this.primeOkInPrmExprs = true;
         this.thisOk = true;
-        return visit(expr);
+        return this.visit(expr);
     }
 
     protected DashRef resolveState(AlloyExpr expr, String sfqn) {
@@ -104,13 +105,13 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         this.primeOk = false;
         this.primeOkInPrmExprs = false;
         this.thisOk = true;
-        System.out.println(expr.getClass());
+        //System.out.println(expr.getClass());
         // expr is a DashRef
         // visit is a function that expects an AlloyExpr
         // calling this with a DashRef is fine because Liskov substitution
         // However, this leads to a methodShouldNotBeCalled error
         // return (DashRef) visit(expr); - this is wrong
-        return (DashRef) visit(expr); // this is right
+        return (DashRef) this.visit(expr); // this is right
     }
 
     protected DashRef resolveEvent(AlloyExpr expr, String sfqn) {
@@ -122,7 +123,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         this.primeOk = false;
         this.primeOkInPrmExprs = false;
         this.thisOk = true;
-        return (DashRef) ((DashRef) expr).accept(this);
+        return (DashRef) visit(expr);
     }
 
     protected DashRef resolveEventPrimesOkInPrmExprs(AlloyExpr expr, String sfqn) {
@@ -134,7 +135,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         this.primeOk = true;
         this.primeOkInPrmExprs = true;
         this.thisOk = true;
-        return (DashRef) ((DashRef) expr).accept(this);
+        return (DashRef) this.visit(expr);
     }
 
     // private functions
@@ -149,8 +150,9 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
 
             References to the parameter values of the current context (whether from a thisState or from lack of parameters) become DashParam(statename, parameter sig) within the expression.
         */
-        // v is the name, v_params as the possibly empty set
-        // of resolved param expr (which could include DashParams)
+        // v is the name, 
+        // v_params as the possibly empty set
+        // of _resolved_ param expr (which could include DashParams)
         // but it could still need to be added to
 
         String v = varExpr.label;
@@ -308,11 +310,21 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
 
     // visitor instance
 
+    /*
+    @Override
+    public AlloyExpr visit(AlloyExpr expr) {
+        if (DashRef.class.isInstance(expr))
+            return this.visitDashRef((DashRef)expr);
+        else 
+            return expr.accept((ResolverVisDM)this);
+    }
+    */
+
     @Override
     public AlloyExpr visit(AlloyBinaryExpr binExpr) {
         // can't use a withLeft, withRight here
         // because this is a parent class
-        return binExpr.rebuild(visit(binExpr.left), visit(binExpr.right));
+        return binExpr.rebuild(this.visit(binExpr.left), this.visit(binExpr.right));
     }
     ;
 
@@ -327,7 +339,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
             }
         }
 
-        AlloyExpr newExpr = visit(unaryExpr.sub);
+        AlloyExpr newExpr = this.visit(unaryExpr.sub);
 
         if (unaryExpr.op == AlloyStrings.PRIME) {
             // if it is primed, the returned value
@@ -374,29 +386,29 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         }
         /* else we carry on with it as a regular var name with no params yet */
         // v_params is empty
-        List<AlloyExpr> v_params = new ArrayList<AlloyExpr>();
+        List<? extends AlloyExpr> v_params = new ArrayList<AlloyExpr>();
         return resolve(varExpr, v_params);
     }
     ;
 
     @Override
     public AlloyExpr visit(AlloyBlock block) {
-        return new AlloyBlock(block.pos, mapBy(block.exprs, i -> visit(i)));
+        return new AlloyBlock(block.pos, mapBy(block.exprs, i -> this.visit(i)));
     }
     ;
 
     @Override
     public AlloyExpr visit(AlloyBracketExpr bracketExpr) {
         AlloyExpr y = visit(bracketExpr.expr);
-        List<AlloyExpr> x = mapBy(bracketExpr.exprs, i -> visit(i));
+        List<AlloyExpr> x = mapBy(bracketExpr.exprs, i -> this.visit(i));
         return new AlloyBracketExpr(bracketExpr.pos, y, x);
     }
     ;
 
     @Override
     public AlloyExpr visit(AlloyCphExpr comprehensionExpr) {
-        List<AlloyDecl> decls = mapBy(comprehensionExpr.decls, i -> (AlloyDecl) visit(i));
-        AlloyExpr body = comprehensionExpr.body.map(value -> visit(value)).orElse(null);
+        List<AlloyDecl> decls = mapBy(comprehensionExpr.decls, i -> (AlloyDecl) this.visit(i));
+        AlloyExpr body = comprehensionExpr.body.map(value -> this.visit(value)).orElse(null);
 
         return new AlloyCphExpr(comprehensionExpr.pos, decls, body);
     }
@@ -405,7 +417,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
     @Override
     public AlloyExpr visit(AlloyIteExpr iteExpr) {
         return new AlloyIteExpr(
-                iteExpr.pos, visit(iteExpr.cond), visit(iteExpr.conseq), visit(iteExpr.alt));
+                iteExpr.pos, this.visit(iteExpr.cond), this.visit(iteExpr.conseq), this.visit(iteExpr.alt));
     }
     ;
 
@@ -414,8 +426,8 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         // NADTODO: rule out var names that are bound
         List<AlloyLetExpr.AlloyLetAsn> asns = letExpr.asns;
         List<AlloyLetExpr.AlloyLetAsn> newAsns =
-                mapBy(asns, i -> new AlloyLetExpr.AlloyLetAsn(i.pos, i.qname, visit(i.expr)));
-        return new AlloyLetExpr(letExpr.pos, newAsns, visit(letExpr.body));
+                mapBy(asns, i -> new AlloyLetExpr.AlloyLetAsn(i.pos, i.qname, this.visit(i.expr)));
+        return new AlloyLetExpr(letExpr.pos, newAsns, this.visit(letExpr.body));
     }
     ;
 
@@ -425,17 +437,17 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         return new AlloyQuantificationExpr(
                 quantificationExpr.pos,
                 quantificationExpr.quant,
-                mapBy(quantificationExpr.decls, i -> (AlloyDecl) visit(i)),
-                visit(quantificationExpr.body));
+                mapBy(quantificationExpr.decls, i -> (AlloyDecl) this.visit(i)),
+                this.visit(quantificationExpr.body));
     }
 
     @Override
     public AlloyExpr visit(AlloyDecl decl) {
-        return decl.withExpr(visit(decl.expr));
+        return decl.withExpr(this.visit(decl.expr));
     }
 
     public AlloyExpr visit(AlloyParenExpr parenExpr) {
-        return new AlloyParenExpr(parenExpr.pos, visit(parenExpr.sub));
+        return new AlloyParenExpr(parenExpr.pos, this.visit(parenExpr.sub));
     }
     ;
 
@@ -444,11 +456,18 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
         // can exist in parsing from x[a,b] or x[a,b]/v
         // name might not be fully resolved
         DashStrings.DashRefKind tempKind = kind;
+        List<AlloyExpr> resolvedParamValues = new ArrayList<AlloyExpr>();
+        for (AlloyExpr p:dashRef.paramValues) {
+            // anything in a param value is a variable
+            this.kind = DashStrings.DashRefKind.VAR;
+            resolvedParamValues.add(this.visit(p));
+            this.kind = tempKind;
+        }
         this.kind = dashRef.kind;
         AlloyExpr newExpr =
                 resolve(
                         new AlloyQnameExpr(dashRef.pos, dashRef.name),
-                        mapBy(dashRef.paramValues, i -> visit(i)));
+                        resolvedParamValues);
         assert (newExpr instanceof DashRef);
         this.kind = tempKind;
         return newExpr;
@@ -457,7 +476,7 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
 
     @Override
     public AlloyExpr visit(DashParam dashParam) {
-        return dashParam;
+        return (AlloyExpr)dashParam;
     }
 
     // errors methods cannot be grouped in a subclass

@@ -15,11 +15,12 @@
 package ca.uwaterloo.watform.dashast;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
 
-public class DashParam extends DashExpr {
+public class DashParam extends AlloyExpr {
 
     public final String stateName;
     public final String paramSig;
@@ -64,10 +65,13 @@ public class DashParam extends DashExpr {
 
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
-        throw ImplementationError.methodShouldNotBeCalled();
+        return visitor.visit(this);
+        //throw ImplementationError.methodShouldNotBeCalled("DashParam/accept for AlloyExprVis "+this.getClass());
     }
 
+    /*
     public <T> T accept(DashExprVis<T> visitor) {
         return visitor.visit(this);
     }
+    */
 }

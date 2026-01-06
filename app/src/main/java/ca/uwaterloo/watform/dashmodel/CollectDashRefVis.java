@@ -15,6 +15,7 @@ package ca.uwaterloo.watform.dashmodel;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
@@ -24,7 +25,7 @@ import ca.uwaterloo.watform.dashast.dashref.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectDashRefVis implements DashExprVis<List<DashRef>> {
+public class CollectDashRefVis implements AlloyExprVis<List<DashRef>> {
 
     List<DashRef> x = new ArrayList<DashRef>();
 
@@ -111,13 +112,13 @@ public class CollectDashRefVis implements DashExprVis<List<DashRef>> {
     }
     ;
 
-    @Override
+
     public List<DashRef> visit(DashRef d) {
         x.add(d);
         return x;
     }
+    
 
-    @Override
     public List<DashRef> visit(DashParam dashParam) {
         return x;
     }

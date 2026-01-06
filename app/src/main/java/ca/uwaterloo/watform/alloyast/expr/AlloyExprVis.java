@@ -4,11 +4,18 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.dashast.DashParam;
 
 public interface AlloyExprVis<T> {
     public default T visit(AlloyExpr expr) {
         return expr.accept(this);
     }
+
+    // ones from Dash
+    T visit(DashRef dashRef);
+
+    T visit(DashParam dashParam);
 
     // Abstract ones that need implementation in extensions
     T visit(AlloyBinaryExpr binExpr);

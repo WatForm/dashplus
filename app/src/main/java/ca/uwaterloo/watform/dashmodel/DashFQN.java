@@ -22,22 +22,31 @@ public class DashFQN {
 
     // creating FQNs from inputs --------------------------
 
-    public static String fqn(String s1, String s2) {
+    public static String fqn(String parent, String child) {
+        assert(child != null && !child.isEmpty());
         String q;
-        if (s1 != null) q = new String(s1);
-        else q = "";
-        q += DashStrings.internalQualChar;
-        q += s2;
+        if (parent != null && !parent.isEmpty()) {
+            // in case the parent is empty
+            q = new String(parent);
+            q += DashStrings.internalQualChar;
+            q += child;
+        } else {
+            q = child;
+        }
         return q;
     }
 
     // not really needed unless we change it so that
     // inputQualChar != internal QualChar
     public static String fqn(String n) {
+        assert(n != null && !n.isEmpty());
         return n.replace(DashStrings.inputQualChar, DashStrings.internalQualChar);
     }
 
     public static String fqn(List<String> pth) {
+        assert(pth != null);
+        for (String n:pth)
+            assert(n != null && !n.isEmpty());
         if (pth.isEmpty()) return null; // for root
         StringJoiner sj = new StringJoiner(DashStrings.internalQualChar);
         pth.forEach(n -> sj.add(fqn(n)));
@@ -45,6 +54,8 @@ public class DashFQN {
     }
 
     public static String fqn(List<String> pth, String name) {
+        assert(pth != null);
+        assert(name != null && name.isEmpty());
         if (isFQN(name)) return fqn(name);
         else {
             StringJoiner sj = new StringJoiner(DashStrings.internalQualChar);
@@ -54,7 +65,13 @@ public class DashFQN {
         }
     }
 
+    /* NAD not sure about this one 2026-01-05
     public static String fqn(List<String> pth, String parent, String child) {
+        assert(pth != null);
+        assert(child != null && !child.isEmpty());
+        assert(parent != null && !parent.isEmpty());
+        for (String n:pth) 
+            assert(n != null & !n.isEmpty());
         if (isFQN(child))
             // return child.replace(inputQualChar,outputQualChar);
             return fqn(child);
@@ -66,7 +83,7 @@ public class DashFQN {
             return sj.toString();
         }
     }
-
+    */
     // operations on FQNs
     public static List<String> splitFQN(String fqn) {
         return Arrays.asList(fqn.split(DashStrings.internalQualChar));
@@ -120,6 +137,7 @@ public class DashFQN {
     public static String chopPrefixFromFQN(String fqn) {
         List<String> s = splitFQN(fqn);
         if (s.size() < 2) {
+            printStackTrace();
             DashModelErrors.chopPrefixFromFQNwithNoPrefix(fqn);
             return null;
         } else return fqn(allButLast(splitFQN(fqn)));
@@ -216,12 +234,16 @@ public class DashFQN {
 
      */
     public static boolean prefix(String sfqn, String fqn) {
+        // blank is a prefix of anything
+        if (sfqn.isEmpty()) return true;
         if (fqn.startsWith(sfqn)) {
-            int x = sfqn.length() - 1;
-            if (x == 0) return true;
+            // prefix must break on a slash
+            int x = sfqn.length();
             // A/B/C/ev
             // A/B
-            if (fqn.charAt(x) + 1 == DashStrings.internalQualChar.charAt(0)) return true;
+            if (fqn.charAt(x)  == DashStrings.internalQualChar.charAt(0)) {
+                return true;
+            }
         }
         return false;
     }

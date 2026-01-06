@@ -89,6 +89,7 @@ public final class ParserUtil {
         }
     }
 
+    // Use this function for parsing both dash and alloy files
     public static AlloyModel parseToModel(Path filePath) {
         AlloyFile file = ParserUtil.parse(filePath);
         if (null == file) {
@@ -100,6 +101,7 @@ public final class ParserUtil {
         }
         AlloyModel model = null;
         if (file instanceof DashFile) {
+            System.out.println(file);
             model = new DashModel((DashFile) file);
             Reporter.INSTANCE.exitIfHasErrors();
             return model;

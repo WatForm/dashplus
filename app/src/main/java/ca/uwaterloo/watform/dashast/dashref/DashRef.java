@@ -31,8 +31,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.dashast.DashExpr;
-import ca.uwaterloo.watform.dashast.DashExprVis;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
@@ -40,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DashRef extends DashExpr {
+public class DashRef extends AlloyExpr {
 
     public final DashStrings.DashRefKind kind;
     public final String name;
@@ -51,7 +49,7 @@ public class DashRef extends DashExpr {
         this(Pos.UNKNOWN, k, n, prmValues);
     }
 
-    // for uses when parsed
+    // for use when parsed
     public DashRef(
             Pos p, DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
         super(p);
@@ -65,12 +63,14 @@ public class DashRef extends DashExpr {
             DashStrings.DashRefKind k,
             List<AlloyNameExpr> names,
             List<? extends AlloyExpr> prmValues) {
+
+        String n = names.stream()
+                        .map(AlloyNameExpr::toString)
+                        .collect(Collectors.joining(DashStrings.internalQualChar));
         this(
                 p,
                 k,
-                names.stream()
-                        .map(AlloyNameExpr::toString)
-                        .collect(Collectors.joining(DashStrings.internalQualChar)),
+                n,
                 prmValues);
     }
 
@@ -83,26 +83,24 @@ public class DashRef extends DashExpr {
         // STATE: Root/A/B[a1,b1]
         // other: Root/A/B[a1,b1]/var1
         String s = "";
-        if (kind == DashStrings.DashRefKind.STATE) {
-            s += name;
-        } else {
-            s += chopPrefixFromFQN(name);
-        }
-
+        // may or may not be resolved
         if (!paramValues.isEmpty()) {
+            // then it has to be at least partially resolved already
+            if (kind == DashStrings.DashRefKind.STATE) {
+                s += name;
+            } else {
+                s += chopPrefixFromFQN(name);
+            } 
             s += "[";
-            // TODO: why is pValues written? is it an implementation bug? Is pValues meant to be
-            // used?
-            // List<String> pValues = mapBy(paramValues, i -> i.toString());
-            // Collections.reverse(paramValues);
             s += GeneralUtil.strCommaList(paramValues);
             s += "]";
+            if (kind != DashStrings.DashRefKind.STATE) {
+                s += "/";
+                s += chopNameFromFQN(name);
+            }
+        } else {
+            s += name;
         }
-        if (kind != DashStrings.DashRefKind.STATE) {
-            s += "/";
-            s += chopNameFromFQN(name);
-        }
-        // System.out.println(s + "\n");
         sb.append(s);
     }
 
@@ -111,26 +109,23 @@ public class DashRef extends DashExpr {
         // STATE: Root/A/B[a1,b1]
         // other: Root/A/B[a1,b1]/var1
         String s = "";
-        if (kind == DashStrings.DashRefKind.STATE) {
-            s += name;
-        } else {
-            s += chopPrefixFromFQN(name);
-        }
-
         if (!paramValues.isEmpty()) {
+            // then it has to be at least partially resolved already
+            if (kind == DashStrings.DashRefKind.STATE) {
+                s += name;
+            } else {
+                s += chopPrefixFromFQN(name);
+            }
             s += "[";
-            // TODO: why is pValues written? is it an implementation bug? Is pValues meant to be
-            // used?
-            // List<String> pValues = mapBy(paramValues, i -> i.toString());
-            // Collections.reverse(paramValues);
             s += GeneralUtil.strCommaList(paramValues);
             s += "]";
+            if (kind != DashStrings.DashRefKind.STATE) {
+                s += "/";
+                s += chopNameFromFQN(name);
+            }
+        } else {
+            s += name;
         }
-        if (kind != DashStrings.DashRefKind.STATE) {
-            s += "/";
-            s += chopNameFromFQN(name);
-        }
-        // System.out.println(s + "\n");
         pCtx.append(s);
     }
 
@@ -142,12 +137,10 @@ public class DashRef extends DashExpr {
         return o;
     }
 
+    
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
-        throw ImplementationError.methodShouldNotBeCalled();
-    }
-
-    public <T> T accept(DashExprVis<T> visitor) {
         return visitor.visit(this);
     }
+
 }

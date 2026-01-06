@@ -1,4 +1,7 @@
+sig Asig {}
+
 state Root {
+	x,y: Asig
 	conc A [APID] {
 		conc B [BPID] {
 			default state S1 {

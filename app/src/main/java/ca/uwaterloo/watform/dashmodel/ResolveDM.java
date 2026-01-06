@@ -28,6 +28,8 @@ public class ResolveDM extends ResolverVisDM {
 
     public ResolveDM(DashFile d) {
         super(d);
+        myprint("==== BEFORE RESOLUTION ====");
+        this.debug();
         resolveVarTable();
         stateRecurseForTransInitsInvs(d.stateRoot, null);
         // buffer table does not need resolving
@@ -38,6 +40,8 @@ public class ResolveDM extends ResolverVisDM {
 
         // TODO: pred table needs resolving????
         extraChecks();
+        myprint("==== AFTER RESOLUTION ====");
+        this.debug();
     }
 
     public ResolveDM() {
@@ -60,6 +64,7 @@ public class ResolveDM extends ResolverVisDM {
 
         // have to calculate the sfqn again
         // but we can look up the params for the sfqn
+        // parentFQN could be empty string
         String sfqn = DashFQN.fqn(parentFQN, s.name);
         // the params are also deduced in the resolvers
         // so they are not passed as an additional arg to
@@ -127,7 +132,8 @@ public class ResolveDM extends ResolverVisDM {
         // we check that every state is either a default state
         // or the destination of some transition
         // or an AND state
-        // this is VERY conservative
+        // this is VERY conservative estimate of what states are not entered
+        // some states might not be entered and might not make it on this list
 
         List<String> statesNotEntered =
                 filterBy(
@@ -175,6 +181,36 @@ public class ResolveDM extends ResolverVisDM {
             List<String> x = alist;
             x.retainAll(blist);
             Error.nameOverlap(x);
+        }
+    }
+
+
+    public void debug() {
+        System.out.println(stToString());
+        System.out.println(ttToString());
+        System.out.println(etToString());
+        System.out.println(vtToString());
+        System.out.println(btToString());
+        System.out.println(ptToString());
+    }
+
+    public void debug(String tfqn) {
+        if (tfqn != null) {
+            System.out.println("src " + fromR(tfqn));
+            System.out.println("dest " + gotoR(tfqn));
+            System.out.println("pre " + whenR(tfqn));
+            System.out.println("post " + doR(tfqn));
+            System.out.println("getScope " + scope(tfqn));
+            System.out.println("getClosestParamAnces: " + closestParamAnces(fromR(tfqn).name));
+            // System.out.println("getAllNonParamDesc: "
+            // +getAllNonParamDesc(getClosestConcAnces(getTransSrc(tfqn).getName())));
+            System.out.println("getRegion:" + "Root/S1/S2: " + region(fromR(tfqn).name));
+            System.out.println("exited: " + exited(tfqn));
+            System.out.println("entered" + leafStatesEntered(gotoR(tfqn)));
+            System.out.println("enteredInScope" + entered(tfqn));
+            System.out.println("allPrefixDashRefs of scope: " + prefixDashRefs(scope(tfqn)));
+            System.out.println("scopesUsed: " + scopesUsed(tfqn));
+            System.out.println("nonOrthogonalScopes: " + nonOrthogonalScopesOf(tfqn));
         }
     }
 
