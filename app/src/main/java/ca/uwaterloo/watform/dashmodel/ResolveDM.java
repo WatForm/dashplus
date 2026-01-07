@@ -15,12 +15,12 @@
 package ca.uwaterloo.watform.dashmodel;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.Reporter.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.utils.*;
-import static ca.uwaterloo.watform.utils.Reporter.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -148,9 +148,10 @@ public class ResolveDM extends ResolverVisDM {
         // this issues a comment and execution continues
         // NADTODO: make a warning
         if (!statesNotEntered.isEmpty()) {
-            for (String s: statesNotEntered) {
-                    Reporter.INSTANCE.addComment(
-                        new Reporter.CommentUser(this.statePos(s), "The state '"+s+"' is not entered"));
+            for (String s : statesNotEntered) {
+                Reporter.INSTANCE.addComment(
+                        new Reporter.CommentUser(
+                                this.statePos(s), "The state '" + s + "' is not entered"));
             }
         }
 
@@ -242,8 +243,6 @@ public class ResolveDM extends ResolverVisDM {
                             + strCommaList(envEventsNotUsed));
         }
 
-        
-
         public static void cantSendAnEnvEvent(Pos pos, String expString) {
             throw new Reporter.ErrorUser(pos + " can't send an environmental event: " + expString);
         }
@@ -252,5 +251,4 @@ public class ResolveDM extends ResolverVisDM {
             throw new Reporter.ErrorUser("Same name used for multiple purposes: " + s);
         }
     }
-
 }

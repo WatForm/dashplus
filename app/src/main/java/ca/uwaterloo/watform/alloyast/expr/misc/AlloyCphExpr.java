@@ -6,12 +6,12 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 
 // AlloyComprehensionExpr
 public final class AlloyCphExpr extends AlloyExpr {

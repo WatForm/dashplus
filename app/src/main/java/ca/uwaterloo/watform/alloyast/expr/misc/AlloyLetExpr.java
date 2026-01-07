@@ -3,11 +3,11 @@ package ca.uwaterloo.watform.alloyast.expr.misc;
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.*;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;

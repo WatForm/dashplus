@@ -25,6 +25,7 @@ package ca.uwaterloo.watform.dashmodel;
 
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.*;
 import ca.uwaterloo.watform.dashast.*;
@@ -111,7 +112,6 @@ public class InitializeDM extends PredsDM {
             // check and set the default state(s)
             List<String> defList = new ArrayList<String>();
 
-            
             if (substatesList.size() == 1) {
                 // if there's only one child it is
                 // automatically the default
@@ -150,7 +150,7 @@ public class InitializeDM extends PredsDM {
                         defList.add(givenDefaultsList.get(0).name);
                     }
                 }
-                assert(!defList.isEmpty());
+                assert (!defList.isEmpty());
             }
 
             // add all substates to the table
@@ -161,8 +161,8 @@ public class InitializeDM extends PredsDM {
                 // will be caught when children are
                 // added to the state table
                 defk = null;
-                //System.out.println(sub.name);
-                //System.out.println(defList);
+                // System.out.println(sub.name);
+                // System.out.println(defList);
                 if (defList.contains(DashFQN.fqn(sfqn, sub.name))) defk = DefKind.DEFAULT;
                 else defk = DefKind.NOTDEFAULT;
                 System.out.println(defk);
@@ -201,7 +201,7 @@ public class InitializeDM extends PredsDM {
                     // if already a sig in Alloy part of model
                     // can't declare it again
                     // replace this when jack writes a method in AlloyModel for this
-                    for (AlloySigPara sig:this.getParas(AlloySigPara.class)) {
+                    for (AlloySigPara sig : this.getParas(AlloySigPara.class)) {
                         if (sig.qnames.contains(x))
                             // raises an exception
                             DashModelErrors.duplicateName(v.pos, "var", x);

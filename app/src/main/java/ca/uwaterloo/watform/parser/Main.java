@@ -69,9 +69,9 @@ public class Main implements Callable<Integer> {
             // Main logic
             Reporter.INSTANCE.setDebugMode(debug);
             parseToModel(filePath);
-            //Solution solution =
+            // Solution solution =
             //        AlloyInterface.executeCommand(parseToModel(filePath), this.commandIndex);
-            //System.out.println(solution.toString());
+            // System.out.println(solution.toString());
             Reporter.INSTANCE.print();
             return 0;
 

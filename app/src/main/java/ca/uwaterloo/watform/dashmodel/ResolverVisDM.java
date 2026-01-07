@@ -30,17 +30,17 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashast.DashStrings.DashRefKind;
 import ca.uwaterloo.watform.dashast.dashref.*;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +70,9 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
     private void setDeclaredSigs() {
         declared_sig_names = new ArrayList<String>();
-        for (AlloySigPara p: this.getParas(AlloySigPara.class)) {
-            for (AlloyQnameExpr q: p.qnames) {
-                for (AlloyVarExpr v: q.vars) {
+        for (AlloySigPara p : this.getParas(AlloySigPara.class)) {
+            for (AlloyQnameExpr q : p.qnames) {
+                for (AlloyVarExpr v : q.vars) {
                     declared_sig_names.add(v.label);
                 }
             }
@@ -177,7 +177,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         // name v (could be state/event/var/buffer)
         List<String> matches;
         if (v_params.isEmpty()) {
-            
+
             // if no param expr, then must be within region
             // that has same params
 

@@ -2,8 +2,8 @@ package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.utils.*;
 
 // Part of the comparison grammar rule in .g4, but made a distinct class b/c it's used frequently
 public final class AlloyEqualsExpr extends AlloyBinaryExpr {

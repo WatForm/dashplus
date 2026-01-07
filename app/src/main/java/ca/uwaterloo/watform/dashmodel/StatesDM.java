@@ -67,7 +67,7 @@ public class StatesDM extends TransDM {
     public Pos statePos(String s) {
         return (this.getStateEntry(s).pos);
     }
-    
+
     public boolean isLeaf(String s) {
         return (this.getStateEntry(s).immChildren.isEmpty());
     }

@@ -2,8 +2,9 @@ package ca.uwaterloo.watform.alloyast.expr.unary;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.utils.*;
+
 public final class AlloyReflTransClosExpr extends AlloyUnaryExpr {
     public AlloyReflTransClosExpr(Pos pos, AlloyExpr sub) {
         super(pos, sub, AlloyStrings.REFL_TRANS_CLOS);

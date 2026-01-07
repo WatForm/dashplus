@@ -3,9 +3,10 @@ package ca.uwaterloo.watform.alloyast.expr.binary;
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 // AlloyComparisonExpr
