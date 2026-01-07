@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import java.util.Optional;
 
 public final class AlloyArrowExpr extends AlloyBinaryExpr {

@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr.unary;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
-
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 public final class AlloyCardExpr extends AlloyUnaryExpr {
     public AlloyCardExpr(Pos pos, AlloyExpr sub) {
         super(pos, sub, AlloyStrings.CARDINALITY);

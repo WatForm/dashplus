@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 
 public final class AlloyDecl extends AlloyExpr {
     public final boolean isVar;

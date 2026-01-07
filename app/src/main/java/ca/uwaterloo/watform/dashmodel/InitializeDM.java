@@ -111,8 +111,7 @@ public class InitializeDM extends PredsDM {
             // check and set the default state(s)
             List<String> defList = new ArrayList<String>();
 
-            System.out.println("HERE");
-            System.out.println(substatesList);
+            
             if (substatesList.size() == 1) {
                 // if there's only one child it is
                 // automatically the default
@@ -129,7 +128,7 @@ public class InitializeDM extends PredsDM {
 
                 if (andList.equals(substatesList)) {
                     // all substates are AND
-                    if (!(givenDefaultsList.equals(andList))) {
+                    if (!givenDefaultsList.isEmpty() && !(givenDefaultsList.equals(andList))) {
                         // only some were called default
                         Error.allAndDefaults(andList.get(0).pos, sfqn);
                     } else {
@@ -151,6 +150,7 @@ public class InitializeDM extends PredsDM {
                         defList.add(givenDefaultsList.get(0).name);
                     }
                 }
+                assert(!defList.isEmpty());
             }
 
             // add all substates to the table
@@ -161,8 +161,11 @@ public class InitializeDM extends PredsDM {
                 // will be caught when children are
                 // added to the state table
                 defk = null;
-                if (defList.contains(sub.name)) defk = DefKind.DEFAULT;
+                //System.out.println(sub.name);
+                //System.out.println(defList);
+                if (defList.contains(DashFQN.fqn(sfqn, sub.name))) defk = DefKind.DEFAULT;
                 else defk = DefKind.NOTDEFAULT;
+                System.out.println(defk);
                 // want to keep only one place
                 // where we call stateRecurse
                 // to make sure all args are correct

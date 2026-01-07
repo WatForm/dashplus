@@ -474,7 +474,9 @@ public class StatesDM extends TransDM {
 
     public String stToString() {
         String s = new String("STATE TABLE\n");
-        for (String k : st.keySet()) {
+        List<String> allStateNames = allStateNames();
+        Collections.sort(allStateNames);
+        for (String k : allStateNames) {
             s += " ----- \n";
             s += k + "\n";
             s += this.st.get(k).toString();

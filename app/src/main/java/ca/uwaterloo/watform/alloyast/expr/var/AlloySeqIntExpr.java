@@ -1,9 +1,9 @@
 package ca.uwaterloo.watform.alloyast.expr.var;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
-import ca.uwaterloo.watform.utils.*;
 
+import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 public final class AlloySeqIntExpr extends AlloyVarExpr implements AlloySigRefExpr {
     public AlloySeqIntExpr(Pos pos) {
         super(pos, AlloyStrings.SEQ_INT);

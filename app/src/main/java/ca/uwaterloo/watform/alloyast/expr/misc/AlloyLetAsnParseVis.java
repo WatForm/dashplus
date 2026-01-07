@@ -5,6 +5,7 @@ import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyLetExpr.AlloyLetAsn;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 
 public final class AlloyLetAsnParseVis extends DashBaseVisitor<AlloyLetAsn> {
     @Override

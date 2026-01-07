@@ -2,8 +2,8 @@ package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
 import ca.uwaterloo.watform.utils.Pos;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 
 public final class AlloyDomRestrExpr extends AlloyBinaryExpr {
     public AlloyDomRestrExpr(Pos pos, AlloyExpr left, AlloyExpr right) {

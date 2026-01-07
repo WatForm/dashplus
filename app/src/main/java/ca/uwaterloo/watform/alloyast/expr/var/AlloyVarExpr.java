@@ -2,7 +2,8 @@ package ca.uwaterloo.watform.alloyast.expr.var;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
-
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Objects;

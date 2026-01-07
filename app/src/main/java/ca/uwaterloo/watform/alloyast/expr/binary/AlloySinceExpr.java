@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloyast.expr.binary;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 
 public final class AlloySinceExpr extends AlloyBinaryExpr {
     public AlloySinceExpr(Pos pos, AlloyExpr left, AlloyExpr right) {

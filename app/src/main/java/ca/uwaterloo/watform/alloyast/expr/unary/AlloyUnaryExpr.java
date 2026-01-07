@@ -2,11 +2,11 @@ package ca.uwaterloo.watform.alloyast.expr.unary;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
-
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Objects;
-
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 public abstract class AlloyUnaryExpr extends AlloyExpr {
     public final AlloyExpr sub;
     public final String op;

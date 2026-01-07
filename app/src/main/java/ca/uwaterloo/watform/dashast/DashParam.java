@@ -15,7 +15,7 @@
 package ca.uwaterloo.watform.dashast;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExprVis;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
@@ -38,12 +38,14 @@ public class DashParam extends AlloyExpr {
     @Override
     public void toString(StringBuilder sb, int indent) {
         // seems like a reasonable thing to return for the toString of this Expr
-        sb.append(stateName.toString());
+        //sb.append(stateName.toString());
+        sb.append(paramSig);
     }
 
     @Override
     public void pp(PrintContext pCtx) {
-        pCtx.append(stateName);
+        //pCtx.append(stateName);
+        pCtx.append(paramSig);
     }
 
     // it's convenient to include these translation methods here
