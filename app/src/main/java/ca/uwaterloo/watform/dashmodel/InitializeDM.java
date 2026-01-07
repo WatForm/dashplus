@@ -25,7 +25,7 @@ package ca.uwaterloo.watform.dashmodel;
 
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
-
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.*;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
@@ -193,6 +193,14 @@ public class InitializeDM extends PredsDM {
                 if (DashFQN.isFQN(x)) {
                     Error.nameCantBeFQN(v.pos, x);
                 } else {
+                    // if already a sig in Alloy part of model
+                    // can't declare it again
+                    // replace this when jack writes a method in AlloyModel for this
+                    for (AlloySigPara sig:this.getParas(AlloySigPara.class)) {
+                        if (sig.qnames.contains(x))
+                            // raises an exception
+                            DashModelErrors.duplicateName(v.pos, "var", x);
+                    }
                     String vfqn = DashFQN.fqn(sfqn, x);
                     // v.typ will have to be resolved later
                     this.addVar(v.pos, vfqn, v.kind, newParams, v.typ);
