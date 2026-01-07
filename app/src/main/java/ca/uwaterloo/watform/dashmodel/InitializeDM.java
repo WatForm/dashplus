@@ -111,6 +111,8 @@ public class InitializeDM extends PredsDM {
             // check and set the default state(s)
             List<String> defList = new ArrayList<String>();
 
+            System.out.println("HERE");
+            System.out.println(substatesList);
             if (substatesList.size() == 1) {
                 // if there's only one child it is
                 // automatically the default
