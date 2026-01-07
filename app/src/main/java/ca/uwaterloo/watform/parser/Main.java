@@ -72,6 +72,7 @@ public class Main implements Callable<Integer> {
             //Solution solution =
             //        AlloyInterface.executeCommand(parseToModel(filePath), this.commandIndex);
             //System.out.println(solution.toString());
+            Reporter.INSTANCE.print();
             return 0;
 
             // User error exit code: 1
