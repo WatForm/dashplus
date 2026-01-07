@@ -7,6 +7,7 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 
 public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
     @Override
