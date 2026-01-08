@@ -111,7 +111,7 @@ public class InitializeDM extends PredsDM {
         if (!substatesList.isEmpty()) {
 
             // check and set the default state(s)
-            
+            // only looking at size of these sets
             List<DashState> givenDefaultsList =
                     filterBy(substatesList, i -> (i.def == DefKind.DEFAULT));
 
@@ -143,15 +143,14 @@ public class InitializeDM extends PredsDM {
             if (givenDefaultsList.size() == 0) {
                 // no defaults were given so choose appropriate ones
                 if (orList.size()==1)
-                    defList.add(orList.get(0).name);
+                    defList.add(DashFQN.fqn(sfqn,orList.get(0).name));
                 else {
                     assert(substatesList.size() == andList.size());
                     defList.addAll(childFQNs);
                 }
             } else
                 // givenDefaultList is correct
-                defList = mapBy(givenDefaultsList, i -> i.name);
-
+                defList = mapBy(givenDefaultsList, i -> DashFQN.fqn(sfqn,i.name));
             assert (!defList.isEmpty());
             
 
@@ -163,11 +162,11 @@ public class InitializeDM extends PredsDM {
                 // will be caught when children are
                 // added to the state table
                 defk = null;
-                // System.out.println(sub.name);
-                // System.out.println(defList);
-                if (defList.contains(DashFQN.fqn(sfqn, sub.name))) defk = DefKind.DEFAULT;
-                else defk = DefKind.NOTDEFAULT;
-                System.out.println(defk);
+                if (defList.contains(DashFQN.fqn(sfqn, sub.name))) 
+                    defk = DefKind.DEFAULT;
+                else 
+                    defk = DefKind.NOTDEFAULT;
+                
                 // want to keep only one place
                 // where we call stateRecurse
                 // to make sure all args are correct

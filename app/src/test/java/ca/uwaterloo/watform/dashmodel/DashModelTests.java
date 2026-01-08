@@ -311,8 +311,11 @@ public class DashModelTests {
     }
 
     // leafStatesEntered -----------------
+
     public List<String> entered(DashModel d, String tfqn) {
-        return d.leafStatesEntered(d.gotoR(tfqn)).stream()
+        // helper function to turn function result into a list 
+        // of strings for comparison
+        return d.entered(tfqn).stream()
                 .map(i -> i.toString())
                 .collect(Collectors.toList());
     }

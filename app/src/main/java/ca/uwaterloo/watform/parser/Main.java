@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.parser;
 import static ca.uwaterloo.watform.utils.ParserUtil.*;
 
 import ca.uwaterloo.watform.alloyinterface.*;
+import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.*;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
@@ -68,7 +69,10 @@ public class Main implements Callable<Integer> {
         try {
             // Main logic
             Reporter.INSTANCE.setDebugMode(debug);
-            parseToModel(filePath);
+            DashModel d = (DashModel)parseToModel(filePath);
+            // tmp debugging start
+            //
+            // tmp debugging end
             // Solution solution =
             //        AlloyInterface.executeCommand(parseToModel(filePath), this.commandIndex);
             // System.out.println(solution.toString());

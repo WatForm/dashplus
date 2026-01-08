@@ -84,12 +84,17 @@ public class StatesDM extends TransDM {
         return this.st.get(sfqn).param;
     }
 
-    public boolean stateHasParams(String sfqn) {
-        return !this.st.get(sfqn).params.isEmpty();
+    public boolean stateHasParam(String sfqn) {
+        // an state was declared with a parameter
+        return stateParam(sfqn) != null;
     }
-
+    
     public List<DashParam> stateParams(String sfqn) {
         return this.st.get(sfqn).params;
+    }
+
+    public boolean stateHasParams(String sfqn) {
+        return !stateParams(sfqn).isEmpty();
     }
 
     public boolean isDefault(String s) {
@@ -247,10 +252,17 @@ public class StatesDM extends TransDM {
         // this is not necessarily an AND scope
         DashRef src = fromR(tfqn);
         DashRef dest = gotoR(tfqn);
+        //myprint("src");
+        //System.out.println(src);
+        //myprint("dest");
+        //System.out.println(dest);
         String sc = DashFQN.longestCommonFQN(src.name, dest.name);
         // maxCommonParams is max number of params that could have in common
         // but they don't necessarily have the same values
         Integer maxCommonParams = stateParams(sc).size();
+        myprint("scope");
+        //System.out.println("maxCommonParams");
+        //System.out.println(maxCommonParams);
         List<AlloyExpr> scopeParams = new ArrayList<AlloyExpr>();
         AlloyExpr equals = null;
         AlloyExpr s = null;
@@ -268,6 +280,7 @@ public class StatesDM extends TransDM {
                                 equals,
                                 s,
                                 ((DashParam) stateParams(sc).get(i)).paramVar())); // whole set
+
                 for (int j = i + 1; j < maxCommonParams; j++) {
                     s = src.paramValues.get(j);
                     d = dest.paramValues.get(j);
@@ -287,7 +300,10 @@ public class StatesDM extends TransDM {
                 break;
             }
         }
-        return new StateDashRef(sc, scopeParams); // no pos possible
+        StateDashRef x = new StateDashRef(sc, scopeParams); // no pos possible
+        //System.out.println("scope");
+        //System.out.println(x);
+        return x;
     }
 
     public DashRef concScope(String tfqn) {
@@ -376,16 +392,17 @@ public class StatesDM extends TransDM {
     }
 
     public String closestParamAnces(String sfqn) {
+        // get the closest ancestor that has a parameter declared
+
         // allAnces returns list from Root, ..., parentFQN on path
         // could also just walk back through parents
         List<String> allAnces = allAnces(sfqn);
-        // allAnces.add(s);
         Collections.reverse(allAnces);
 
         String concAnces = null;
         // allAnces cannot be empty b/c must have Root in it
         for (String a : allAnces) {
-            if (stateHasParams(a) || isRoot(a)) {
+            if (stateHasParam(a) || isRoot(a)) {
                 concAnces = a;
                 break;
             }
