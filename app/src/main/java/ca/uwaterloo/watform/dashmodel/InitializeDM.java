@@ -109,60 +109,51 @@ public class InitializeDM extends PredsDM {
 
         // process the children
         if (!substatesList.isEmpty()) {
+
             // check and set the default state(s)
+            
+            List<DashState> givenDefaultsList =
+                    filterBy(substatesList, i -> (i.def == DefKind.DEFAULT));
+
+            // invariant: andList.size() >= andListDefaults.size()
+            List<DashState> andList = filterBy(substatesList, i -> (i.kind == StateKind.AND));
+            List<DashState> andListDefaults = 
+                filterBy(substatesList, i -> (i.kind == StateKind.AND && i.def == DefKind.DEFAULT));
+
+            // invariant: orList.size() >= orListDefaults.size()
+            List<DashState> orList = filterBy(substatesList, i -> (i.kind == StateKind.OR));
+            List<DashState> orListDefaults = 
+                filterBy(substatesList, i -> (i.kind == StateKind.OR && i.def == DefKind.DEFAULT));
+
+            // see DefaultStates.md for docm on this logic
+
+            // first throw any errors
+            if (orListDefaults.size()> 1) 
+                Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
+            else if (orListDefaults.size() >= 1 && andListDefaults.size() > 0)
+                Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
+            else if (andList.size() > 1 && andListDefaults.size()!=0 && andList.size() != andListDefaults.size())
+                Error.allAndDefaults(andList.get(0).pos, sfqn);
+            else if (givenDefaultsList.size() == 0 && (orList.size()>1 || (orList.size()==1 && andList.size()>=1)))
+                Error.missingDefault(substatesList.get(0).pos, sfqn);
+
+            // defaults on the list are correct (but might be none)
             List<String> defList = new ArrayList<String>();
 
-            if (substatesList.size() == 1) {
-                // if there's only one child it is
-                // automatically the default
-                // whether the user set it is a default
-                // or not
-                defList.add(childFQNs.get(0));
+            if (givenDefaultsList.size() == 0) {
+                // no defaults were given so choose appropriate ones
+                if (orList.size()==1)
+                    defList.add(orList.get(0).name);
+                else {
+                    assert(substatesList.size() == andList.size());
+                    defList.addAll(childFQNs);
+                }
+            } else
+                // givenDefaultList is correct
+                defList = mapBy(givenDefaultsList, i -> i.name);
 
-            } else {
-
-                List<DashState> givenDefaultsList =
-                        filterBy(substatesList, i -> (i.def == DefKind.DEFAULT));
-
-                // invariant: andList.size() >= andListDefaults.size()
-                List<DashState> andList = filterBy(substatesList, i -> (i.kind == StateKind.AND));
-                List<DashState> andListDefaults = 
-                    filterBy(substatesList, i -> (i.kind == StateKind.AND && i.def == DefKind.DEFAULT));
-
-                // invariant: orList.size() >= orListDefaults.size()
-                List<DashState> orList = filterBy(substatesList, i -> (i.kind == StateKind.OR));
-                List<DashState> orListDefaults = 
-                    filterBy(substatesList, i -> (i.kind == StateKind.OR && i.def == DefKind.DEFAULT));
-
-                // see DefaultStates.md for docm on this logic
-
-                // first throw any errors
-                if (orListDefaults.size()> 1) 
-                    Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
-                else if (orListDefaults.size() >= 1 && andListDefaults.size() > 0)
-                    Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
-                else if (andList.size() > 1 && andListDefaults.size()!=0 && andList.size() != andListDefaults.size())
-                    Error.allAndDefaults(andList.get(0).pos, sfqn);
-                else if (givenDefaultsList.size() == 0 && (orList.size()>1 || (orList.size()==1 && andList.size()>=1)))
-                    Error.missingDefault(substatesList.get(0).pos, sfqn);
-
-                // defaults on the list are correct
-                // might be none
-                
-                if (givenDefaultsList.size() == 0) {
-                    // no defaults were given so choose appropriate ones
-                    if (orList.size()==1)
-                        defList.add(orList.get(0).name);
-                    else {
-                        assert(substatesList.size() == andList.size());
-                        defList.addAll(childFQNs);
-                    }
-                } else
-                    // givenDefaultList is correct
-                    defList = mapBy(givenDefaultsList, i -> i.name);
-
-                assert (!defList.isEmpty());
-            }
+            assert (!defList.isEmpty());
+            
 
             // add all substates to the table
             DefKind defk;
