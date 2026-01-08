@@ -253,12 +253,12 @@ public class StatesDM extends TransDM {
         Integer maxCommonParams = stateParams(sc).size();
         List<AlloyExpr> scopeParams = new ArrayList<AlloyExpr>();
         AlloyExpr equals = null;
-        DashRef s = null;
-        DashRef d = null;
+        AlloyExpr s = null;
+        AlloyExpr d = null;
         for (int i = 0; i < maxCommonParams; i++) {
-            s = (DashRef) src.paramValues.get(i);
-            d = (DashRef) dest.paramValues.get(i);
-            if (s.name == d.name) {
+            s = src.paramValues.get(i);
+            d = dest.paramValues.get(i);
+            if (s.equals(d)) {
                 // syntactically equal
                 scopeParams.add(s);
             } else {
@@ -271,7 +271,7 @@ public class StatesDM extends TransDM {
                 for (int j = i + 1; j < maxCommonParams; j++) {
                     s = (DashRef) src.paramValues.get(j);
                     d = (DashRef) dest.paramValues.get(j);
-                    if (s.name == d.name) {
+                    if (s.equals(d)) {
                         // syntactically equal
                         scopeParams.add(s);
                     } else {
@@ -453,7 +453,8 @@ public class StatesDM extends TransDM {
                 // enter all copies of the param if a parameterized state
                 List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.paramValues);
                 if (stateHasParams(ch))
-                    newParamValues.add(new AlloyNameExpr(s.pos, stateParam(ch).stateName));
+                    for (DashParam p:stateParams(ch))
+                        newParamValues.add(new AlloyNameExpr(s.pos, p.paramSig));
                 r.addAll(leafStatesEntered(new StateDashRef(ch, newParamValues)));
             }
         }

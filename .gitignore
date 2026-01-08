@@ -24,3 +24,5 @@ app/src/main/java/ca/uwaterloo/watform/test/catalyst/catalyst-corpus
 app/src/main/java/ca/uwaterloo/watform/test/catalyst/timeout
 app/src/main/java/ca/uwaterloo/watform/test/catalyst/problemFiles
 
+# personal lists
+app/src/main/java/ca/uwaterloo/watform/nancy-list.md

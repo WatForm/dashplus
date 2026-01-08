@@ -1,3 +1,6 @@
+sig BID {}
+one sig p0_BID, b1 extends BID {}
+
 state Root {
 	default state C {}
 	conc B [BID] {

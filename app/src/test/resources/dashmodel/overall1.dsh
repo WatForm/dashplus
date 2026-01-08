@@ -1,3 +1,5 @@
+sig a1, b1, c1 {}
+
 state Root {
 	env event ev1 {}
 	conc A [AID] {

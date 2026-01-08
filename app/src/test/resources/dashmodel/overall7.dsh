@@ -1,3 +1,6 @@
+sig CID {}
+one sig c1 extends CID {}
+
 state Root {
 	default conc A {
 

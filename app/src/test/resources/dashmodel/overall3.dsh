@@ -1,3 +1,8 @@
+
+sig AID, BID {}
+one sig b1, b2 extends BID {}
+one sig p0_AID, a1 extends AID {}
+
 state Root {
 	conc A [AID] {
 		conc B [BID] {

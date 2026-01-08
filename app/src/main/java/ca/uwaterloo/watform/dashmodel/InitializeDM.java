@@ -123,33 +123,44 @@ public class InitializeDM extends PredsDM {
 
                 List<DashState> givenDefaultsList =
                         filterBy(substatesList, i -> (i.def == DefKind.DEFAULT));
-                List<DashState> andList = filterBy(substatesList, i -> (i.kind == StateKind.AND));
-                List<DashState> orList = filterBy(substatesList, i -> (i.kind == StateKind.OR));
 
-                if (andList.equals(substatesList)) {
-                    // all substates are AND
-                    if (!givenDefaultsList.isEmpty() && !(givenDefaultsList.equals(andList))) {
-                        // only some were called default
-                        Error.allAndDefaults(andList.get(0).pos, sfqn);
-                    } else {
-                        // none or all AND states were called
-                        // defaults
+                // invariant: andList.size() >= andListDefaults.size()
+                List<DashState> andList = filterBy(substatesList, i -> (i.kind == StateKind.AND));
+                List<DashState> andListDefaults = 
+                    filterBy(substatesList, i -> (i.kind == StateKind.AND && i.def == DefKind.DEFAULT));
+
+                // invariant: orList.size() >= orListDefaults.size()
+                List<DashState> orList = filterBy(substatesList, i -> (i.kind == StateKind.OR));
+                List<DashState> orListDefaults = 
+                    filterBy(substatesList, i -> (i.kind == StateKind.OR && i.def == DefKind.DEFAULT));
+
+                // see DefaultStates.md for docm on this logic
+
+                // first throw any errors
+                if (orListDefaults.size()> 1) 
+                    Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
+                else if (orListDefaults.size() >= 1 && andListDefaults.size() > 0)
+                    Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
+                else if (andList.size() > 1 && andListDefaults.size()!=0 && andList.size() != andListDefaults.size())
+                    Error.allAndDefaults(andList.get(0).pos, sfqn);
+                else if (givenDefaultsList.size() == 0 && (orList.size()>1 || (orList.size()==1 && andList.size()>=1)))
+                    Error.missingDefault(substatesList.get(0).pos, sfqn);
+
+                // defaults on the list are correct
+                // might be none
+                
+                if (givenDefaultsList.size() == 0) {
+                    // no defaults were given so choose appropriate ones
+                    if (orList.size()==1)
+                        defList.add(orList.get(0).name);
+                    else {
+                        assert(substatesList.size() == andList.size());
                         defList.addAll(childFQNs);
                     }
-                } else if (givenDefaultsList.size() == 0) {
-                    // we know there is more than one child
-                    // and none were labelled defaults
-                    Error.noDefaultState(s.pos, sfqn);
+                } else
+                    // givenDefaultList is correct
+                    defList = mapBy(givenDefaultsList, i -> i.name);
 
-                } else {
-                    // is a child OR state
-                    if (givenDefaultsList.size() != 1) {
-                        Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
-                    } else {
-                        // one given def state
-                        defList.add(givenDefaultsList.get(0).name);
-                    }
-                }
                 assert (!defList.isEmpty());
             }
 
@@ -254,7 +265,7 @@ public class InitializeDM extends PredsDM {
                     "All conc children of state must be defaults if one is a default: " + sfqn);
         }
 
-        public static void noDefaultState(Pos pos, String fqn) throws Reporter.ErrorUser {
+        public static void missingDefault(Pos pos, String fqn) throws Reporter.ErrorUser {
             throw new Reporter.ErrorUser(pos, "State does not have default state: " + fqn);
         }
 

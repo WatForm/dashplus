@@ -1,3 +1,5 @@
+sig x {}
+
 state Root {
 	conc A [APID] {
 		default state S1 {

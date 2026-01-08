@@ -1,3 +1,8 @@
+sig AID, EID, FID {}
+
+one sig e1, e2 extends EID {}
+one sig f1 extends FID {}
+
 state Root {
 	default conc A [AID] {
 		state S1 {}

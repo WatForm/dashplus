@@ -1,3 +1,7 @@
+sig AID, BID {}
+one sig b1 extends BID {}
+one sig a2, a1 extends AID {}
+
 state Root {
 	conc A [AID] {
 		default conc B [BID] {

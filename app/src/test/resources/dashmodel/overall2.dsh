@@ -1,3 +1,6 @@
+sig a2 {}
+sig AID, BID {}
+
 state Root {
 	conc A [AID] {
 		conc B [BID] {
