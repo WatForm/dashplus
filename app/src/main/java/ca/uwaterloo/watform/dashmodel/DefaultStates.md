@@ -15,5 +15,4 @@ The number of AND states are the labels of the columns.
 | 1; def                   | defList okay as is    | defList okay as is    | ERROR tooManyDefaults     | ERROR tooManyDefaults |
 | >1; no def               | ERROR missingDefault  | ERROR missingDefault  | ERROR tooManyDefaults     | defList okay as is    |
 | >1; 1 def                | defList okay as is    | defList okay as is    | ERROR tooManyDefaults     | ERROR tooManyDefaults |
-| >1; some but not all def | ERROR tooManyDefaults | ERROR tooManyDefaults | ERROR tooManyDefaults     | ERROR tooManyDefaults |
-| >1; all def              | ERROR tooManyDefaults | ERROR tooManyDefaults | ERROR tooManyDefaults     | ERROR tooManyDefaults |
+| >1; some or all def      | ERROR tooManyDefaults | ERROR tooManyDefaults | ERROR tooManyDefaults     | ERROR tooManyDefaults |

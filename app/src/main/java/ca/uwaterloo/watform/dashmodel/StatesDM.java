@@ -269,8 +269,8 @@ public class StatesDM extends TransDM {
                                 s,
                                 ((DashParam) stateParams(sc).get(i)).paramVar())); // whole set
                 for (int j = i + 1; j < maxCommonParams; j++) {
-                    s = (DashRef) src.paramValues.get(j);
-                    d = (DashRef) dest.paramValues.get(j);
+                    s = src.paramValues.get(j);
+                    d = dest.paramValues.get(j);
                     if (s.equals(d)) {
                         // syntactically equal
                         scopeParams.add(s);
