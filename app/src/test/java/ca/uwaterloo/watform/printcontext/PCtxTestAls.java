@@ -118,7 +118,7 @@ public class PCtxTestAls {
                                                                 List.of(
                                                                         and1(), and1(), and1(),
                                                                         ite1())))))));
-        System.out.println(alloyFile.toPrettyString(40, 4));
+        System.out.println(alloyFile.toString(40, 4));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class PCtxTestAls {
                                                                                 longAQname,
                                                                                 longBQname),
                                                                         ite1())))))));
-        System.out.println(alloyFile.toPrettyString(10, 4));
+        System.out.println(alloyFile.toString(10, 4));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class PCtxTestAls {
                                                 List.of(
                                                         new AlloyPrimeExpr(longAQname),
                                                         new AlloyCardExpr(longAQname))))));
-        System.out.println(alloyFile.toPrettyString(10, 4));
+        System.out.println(alloyFile.toString(10, 4));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class PCtxTestAls {
                                                                         longBQname,
                                                                         longCQname,
                                                                         ite1())))))));
-        System.out.println(alloyFile.toPrettyString(20, 4));
+        System.out.println(alloyFile.toString(20, 4));
     }
 
     @Test
@@ -213,7 +213,7 @@ public class PCtxTestAls {
                                                                         longBQname,
                                                                         longCQname)),
                                                         ite1())))));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -267,7 +267,7 @@ public class PCtxTestAls {
                                                                 true,
                                                                 AlloyDecl.Quant.LONE,
                                                                 longDQname))))));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -340,7 +340,7 @@ public class PCtxTestAls {
                                                                         new AlloyAndExpr(
                                                                                 longCQname,
                                                                                 longDQname))))))));
-        System.out.println(alloyFile.toPrettyString(40, 4));
+        System.out.println(alloyFile.toString(40, 4));
     }
 
     @Test
@@ -366,7 +366,7 @@ public class PCtxTestAls {
                                 new AlloyFactPara(
                                         new AlloyQnameExpr("name"),
                                         new AlloyBlock(List.of(let1, let5, let2, let3, let4)))));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -381,7 +381,7 @@ public class PCtxTestAls {
                                 new AlloyFactPara(
                                         new AlloyQnameExpr("name"),
                                         new AlloyBlock(List.of(paren3, paren1, paren2)))));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -399,7 +399,7 @@ public class PCtxTestAls {
                                 new AlloyFactPara(
                                         new AlloyQnameExpr("name"),
                                         new AlloyBlock(List.of(qt1, qt2)))));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -412,7 +412,7 @@ public class PCtxTestAls {
         AlloyCmdPara cmd5 = new AlloyCmdPara(List.of(cmdDecl4()));
         AlloyCmdPara cmd6 = new AlloyCmdPara(List.of(cmdDecl5()));
         AlloyFile alloyFile = new AlloyFile(List.of(cmd1, cmd2, cmd3, cmd4, cmd5, cmd6));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -426,7 +426,7 @@ public class PCtxTestAls {
                                 new AlloyModuleArg(false, shortBQname),
                                 new AlloyModuleArg(false, shortBQname)));
         AlloyFile alloyFile = new AlloyFile(List.of(mod1));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
 
         AlloyModulePara mod2 =
                 new AlloyModulePara(
@@ -436,7 +436,7 @@ public class PCtxTestAls {
                                 new AlloyModuleArg(true, longBQname),
                                 new AlloyModuleArg(true, longBQname)));
         alloyFile = new AlloyFile(List.of(mod2));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -458,7 +458,7 @@ public class PCtxTestAls {
                 new AlloySigPara(
                         List.of(shortAQname), List.of(decl1()), new AlloyBlock(shortBQname));
         AlloyFile alloyFile = new AlloyFile(List.of(sig1, sig2, sig3, sig4, sig5));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -468,7 +468,7 @@ public class PCtxTestAls {
                 new AlloyAssertPara(new AlloyStrLiteralExpr("name"), new AlloyBlock(ite1()));
         AlloyAssertPara assert2 = new AlloyAssertPara(longAQname, new AlloyBlock(ite1()));
         AlloyFile alloyFile = new AlloyFile(List.of(assert1, assert2));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -480,7 +480,7 @@ public class PCtxTestAls {
                 new AlloyEnumPara(
                         true, shortAQname, List.of(shortBQname, shortCQname, shortDQname));
         AlloyFile alloyFile = new AlloyFile(List.of(enum1, enum2));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -505,7 +505,7 @@ public class PCtxTestAls {
                         shortCQname,
                         new AlloyBlock(and1()));
         AlloyFile alloyFile = new AlloyFile(List.of(fun1, fun2));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -521,7 +521,7 @@ public class PCtxTestAls {
                         List.of(shortBQname, shortCQname, shortDQname),
                         shortAQname);
         AlloyFile alloyFile = new AlloyFile(List.of(imp1, imp2));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -546,7 +546,7 @@ public class PCtxTestAls {
                         List.of(shortBQname, shortCQname, shortDQname),
                         new AlloyBlock(ite1()));
         AlloyFile alloyFile = new AlloyFile(List.of(mac1, mac2, mac3, mac4));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 
     @Test
@@ -563,6 +563,6 @@ public class PCtxTestAls {
                 new AlloyPredPara(
                         true, shortAQname, shortBQname, List.of(decl1()), new AlloyBlock(and1()));
         AlloyFile alloyFile = new AlloyFile(List.of(pred1, pred2));
-        System.out.println(alloyFile.toPrettyString(30, 4));
+        System.out.println(alloyFile.toString(30, 4));
     }
 }

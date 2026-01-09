@@ -24,7 +24,6 @@ public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
             try {
                 paragraphs.add(ppv.visit(parCtx));
             } catch (AlloyCtorError alloyCtorError) {
-                alloyCtorError.setFilePath(this.filePath);
                 Reporter.INSTANCE.addError(alloyCtorError);
             }
         }

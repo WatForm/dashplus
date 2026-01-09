@@ -62,7 +62,7 @@ public class ParseVisTest {
                 System.out.println(originalStr);
 
                 AlloyFile af = assertDoesNotThrow(() -> (parse(filePath)));
-                String parsedStr = assertDoesNotThrow(() -> af.toPrettyString());
+                String parsedStr = assertDoesNotThrow(() -> af.toString());
 
                 System.out.println("--- Parse & toString ---");
                 System.out.println(parsedStr);
@@ -96,7 +96,7 @@ public class ParseVisTest {
                 System.out.println(filePath);
                 String originalStr = Files.readString(filePath);
                 AlloyFile af = assertDoesNotThrow(() -> (parse(filePath)));
-                String parsedStr = assertDoesNotThrow(() -> af.toPrettyString());
+                String parsedStr = assertDoesNotThrow(() -> af.toString());
 
                 assertEquals(originalStr.replaceAll("\\s", ""), parsedStr.replaceAll("\\s", ""));
 

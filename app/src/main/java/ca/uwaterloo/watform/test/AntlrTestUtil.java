@@ -114,7 +114,6 @@ public class AntlrTestUtil {
             if (jarPassed) {
                 alloyResults.get("jarPassedAntlrFailed").add(filePath);
                 if (stopOnFirstFail) {
-                    errorUser.setFilePath(filePath);
                     Reporter.INSTANCE.addError(errorUser);
                     Reporter.INSTANCE.exitIfHasErrors();
                 }
@@ -162,7 +161,6 @@ public class AntlrTestUtil {
         } catch (ErrorUser errorUser) {
             this.dashResults.get("dashFailed").add(filePath);
             if (stopOnFirstFail) {
-                errorUser.setFilePath(filePath);
                 Reporter.INSTANCE.addError(errorUser);
                 Reporter.INSTANCE.exitIfHasErrors();
             }

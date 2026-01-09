@@ -14,7 +14,7 @@ public class AlloyCtorError extends DashPlusError {
     }
 
     private AlloyCtorError(List<Pos> posList, String msg) {
-        super(posList, null, msg);
+        super(posList, msg);
     }
 
     // ====================================================================================

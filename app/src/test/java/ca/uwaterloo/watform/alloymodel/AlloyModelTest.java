@@ -83,8 +83,8 @@ public class AlloyModelTest {
         AlloyModel alloyModel = new AlloyModel(alloyFile);
         AlloySigPara s2 = TestUtil.createSig("s2");
         alloyModel.addPara(s2);
-        assertTrue(alloyModel.toString().contains(s1.toPrettyString()));
-        assertTrue(alloyModel.toString().contains(s2.toPrettyString()));
+        assertTrue(alloyModel.toString().contains(s1.toString()));
+        assertTrue(alloyModel.toString().contains(s2.toString()));
     }
 
     @Test

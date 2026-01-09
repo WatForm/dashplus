@@ -13,7 +13,7 @@ public class ImplementationError extends DashPlusError {
     }
 
     public ImplementationError(DashPlusError other) {
-        super(other.posList, other.filePath.orElseGet(null), other.getMessage());
+        super(other.posList, other.getMessage());
     }
 
     // missing cases in the code

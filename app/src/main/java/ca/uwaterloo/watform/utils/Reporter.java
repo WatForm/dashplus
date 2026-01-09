@@ -7,10 +7,15 @@ import java.util.List;
 
 public final class Reporter {
     public static final Reporter INSTANCE = new Reporter();
+    private Path filePath;
 
     private final List<DashPlusError> errors = new ArrayList<>();
     private final List<CommentUser> comments = new ArrayList<>();
     private boolean debugMode = false;
+
+    public void setFilePath(Path filePath) {
+        this.filePath = filePath;
+    }
 
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
@@ -27,6 +32,7 @@ public final class Reporter {
     public void reset() {
         this.errors.clear();
         this.comments.clear();
+        this.filePath = null;
     }
 
     public List<DashPlusError> getErrors() {
@@ -48,7 +54,7 @@ public final class Reporter {
     public void print() {
         if (!this.comments.isEmpty()) {
             for (CommentUser comment : this.comments) {
-                System.err.println(comment.toString());
+                System.err.println(comment.toString(filePath));
                 if (this.debugMode) {
                     comment.printStackTrace();
                 }
@@ -57,7 +63,7 @@ public final class Reporter {
 
         if (!this.errors.isEmpty()) {
             for (DashPlusError error : this.errors) {
-                System.err.println(error.toString());
+                System.err.println(error.toString(filePath));
                 if (this.debugMode) {
                     error.printStackTrace();
                 }
@@ -75,7 +81,7 @@ public final class Reporter {
 
     public abstract static class DiagnosticException extends DashPlusError {
         public DiagnosticException(List<Pos> posList, Path filePath, String msg) {
-            super(posList, filePath, msg);
+            super(posList, msg);
         }
     }
 

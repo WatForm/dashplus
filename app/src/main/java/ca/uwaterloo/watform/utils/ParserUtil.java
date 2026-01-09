@@ -68,7 +68,6 @@ public final class ParserUtil {
                 alloyFile = afpv.visit(antlrAST);
                 alloyFile.filename = filePath.toString();
             } catch (AlloyCtorError alloyCtorError) {
-                alloyCtorError.setFilePath(filePath);
                 Reporter.INSTANCE.addError(alloyCtorError);
             }
             Reporter.INSTANCE.exitIfHasErrors();
@@ -81,7 +80,6 @@ public final class ParserUtil {
                 dashFile = dfpv.visit(antlrAST);
                 dashFile.filename = filePath.toString();
             } catch (AlloyCtorError alloyCtorError) {
-                alloyCtorError.setFilePath(filePath);
                 Reporter.INSTANCE.addError(alloyCtorError);
             }
             Reporter.INSTANCE.exitIfHasErrors();
@@ -109,7 +107,6 @@ public final class ParserUtil {
             try {
                 model = new AlloyModel(file);
             } catch (AlloyModelError alloyModelError) {
-                alloyModelError.setFilePath(filePath);
                 Reporter.INSTANCE.addError(alloyModelError);
             }
             Reporter.INSTANCE.exitIfHasErrors();

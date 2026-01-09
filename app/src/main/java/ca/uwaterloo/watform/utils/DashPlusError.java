@@ -3,7 +3,6 @@ package ca.uwaterloo.watform.utils;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 // Extensions of this class are errors that can either be Reporter.Error or
 // Implementation Error, depending on where these errors occur. See
@@ -11,32 +10,21 @@ import java.util.Optional;
 // keeping a List<Pos>
 public abstract class DashPlusError extends RuntimeException {
     public final List<Pos> posList;
-    public Optional<Path> filePath;
 
-    public void setFilePath(Path filePath) {
-        this.filePath = Optional.ofNullable(filePath);
-    }
-
-    public DashPlusError(List<Pos> posList, Path filePath, String msg) {
+    public DashPlusError(List<Pos> posList, String msg) {
         super(msg);
-        this.filePath = Optional.ofNullable(filePath);
         this.posList = posList;
     }
 
-    public DashPlusError(List<Pos> posList, String msg) {
-        this(posList, null, msg);
-    }
-
     public DashPlusError(Pos pos, String msg) {
-        this(Collections.singletonList(pos), null, msg);
+        this(Collections.singletonList(pos), msg);
     }
 
     public DashPlusError(String msg) {
-        this(Collections.unmodifiableList(Collections.emptyList()), null, msg);
+        this(Collections.unmodifiableList(Collections.emptyList()), msg);
     }
 
-    @Override
-    public String toString() {
+    public String toString(Path filePath) {
         StringBuilder sb = new StringBuilder();
         sb.append(
                 this.getClass().getSimpleName() + ": " + this.getMessage() + CommonStrings.NEWLINE);
@@ -45,7 +33,7 @@ public abstract class DashPlusError extends RuntimeException {
             sb.append(
                     CommonStrings.TAB
                             + "--> "
-                            + (this.filePath.isPresent() ? this.filePath.get().toString() : "line")
+                            + (null != filePath ? filePath.toString() : "line")
                             + ":"
                             + pos.rowStart
                             + ":"

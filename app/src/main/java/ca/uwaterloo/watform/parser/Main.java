@@ -81,6 +81,7 @@ public class Main implements Callable<Integer> {
             }
             for (Path filePath : filePaths) {
                 Reporter.INSTANCE.reset();
+                Reporter.INSTANCE.setFilePath(filePath);
                 DashModel d = (DashModel) parseToModel(filePath);
                 // tmp debugging start
                 //
@@ -94,7 +95,6 @@ public class Main implements Callable<Integer> {
 
             // User error exit code: 1
         } catch (Reporter.ErrorUser errorUser) {
-            errorUser.setFilePath(inputPath);
             Reporter.INSTANCE.addError(errorUser);
             Reporter.INSTANCE.print();
             return 1;
