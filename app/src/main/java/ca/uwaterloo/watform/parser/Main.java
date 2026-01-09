@@ -69,7 +69,7 @@ public class Main implements Callable<Integer> {
         try {
             // Main logic
             Reporter.INSTANCE.setDebugMode(debug);
-            DashModel d = (DashModel)parseToModel(filePath);
+            DashModel d = (DashModel) parseToModel(filePath);
             // tmp debugging start
             //
             // tmp debugging end

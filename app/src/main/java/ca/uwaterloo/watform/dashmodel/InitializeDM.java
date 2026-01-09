@@ -117,24 +117,31 @@ public class InitializeDM extends PredsDM {
 
             // invariant: andList.size() >= andListDefaults.size()
             List<DashState> andList = filterBy(substatesList, i -> (i.kind == StateKind.AND));
-            List<DashState> andListDefaults = 
-                filterBy(substatesList, i -> (i.kind == StateKind.AND && i.def == DefKind.DEFAULT));
+            List<DashState> andListDefaults =
+                    filterBy(
+                            substatesList,
+                            i -> (i.kind == StateKind.AND && i.def == DefKind.DEFAULT));
 
             // invariant: orList.size() >= orListDefaults.size()
             List<DashState> orList = filterBy(substatesList, i -> (i.kind == StateKind.OR));
-            List<DashState> orListDefaults = 
-                filterBy(substatesList, i -> (i.kind == StateKind.OR && i.def == DefKind.DEFAULT));
+            List<DashState> orListDefaults =
+                    filterBy(
+                            substatesList,
+                            i -> (i.kind == StateKind.OR && i.def == DefKind.DEFAULT));
 
             // see DefaultStates.md for docm on this logic
 
             // first throw any errors
-            if (orListDefaults.size()> 1) 
+            if (orListDefaults.size() > 1)
                 Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
             else if (orListDefaults.size() >= 1 && andListDefaults.size() > 0)
                 Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
-            else if (andList.size() > 1 && andListDefaults.size()!=0 && andList.size() != andListDefaults.size())
+            else if (andList.size() > 1
+                    && andListDefaults.size() != 0
+                    && andList.size() != andListDefaults.size())
                 Error.allAndDefaults(andList.get(0).pos, sfqn);
-            else if (givenDefaultsList.size() == 0 && (orList.size()>1 || (orList.size()==1 && andList.size()>=1)))
+            else if (givenDefaultsList.size() == 0
+                    && (orList.size() > 1 || (orList.size() == 1 && andList.size() >= 1)))
                 Error.missingDefault(substatesList.get(0).pos, sfqn);
 
             // defaults on the list are correct (but might be none)
@@ -142,17 +149,15 @@ public class InitializeDM extends PredsDM {
 
             if (givenDefaultsList.size() == 0) {
                 // no defaults were given so choose appropriate ones
-                if (orList.size()==1)
-                    defList.add(DashFQN.fqn(sfqn,orList.get(0).name));
+                if (orList.size() == 1) defList.add(DashFQN.fqn(sfqn, orList.get(0).name));
                 else {
-                    assert(substatesList.size() == andList.size());
+                    assert (substatesList.size() == andList.size());
                     defList.addAll(childFQNs);
                 }
             } else
                 // givenDefaultList is correct
-                defList = mapBy(givenDefaultsList, i -> DashFQN.fqn(sfqn,i.name));
+                defList = mapBy(givenDefaultsList, i -> DashFQN.fqn(sfqn, i.name));
             assert (!defList.isEmpty());
-            
 
             // add all substates to the table
             DefKind defk;
@@ -162,11 +167,9 @@ public class InitializeDM extends PredsDM {
                 // will be caught when children are
                 // added to the state table
                 defk = null;
-                if (defList.contains(DashFQN.fqn(sfqn, sub.name))) 
-                    defk = DefKind.DEFAULT;
-                else 
-                    defk = DefKind.NOTDEFAULT;
-                
+                if (defList.contains(DashFQN.fqn(sfqn, sub.name))) defk = DefKind.DEFAULT;
+                else defk = DefKind.NOTDEFAULT;
+
                 // want to keep only one place
                 // where we call stateRecurse
                 // to make sure all args are correct

@@ -88,7 +88,7 @@ public class StatesDM extends TransDM {
         // an state was declared with a parameter
         return stateParam(sfqn) != null;
     }
-    
+
     public List<DashParam> stateParams(String sfqn) {
         return this.st.get(sfqn).params;
     }
@@ -252,17 +252,17 @@ public class StatesDM extends TransDM {
         // this is not necessarily an AND scope
         DashRef src = fromR(tfqn);
         DashRef dest = gotoR(tfqn);
-        //myprint("src");
-        //System.out.println(src);
-        //myprint("dest");
-        //System.out.println(dest);
+        // myprint("src");
+        // System.out.println(src);
+        // myprint("dest");
+        // System.out.println(dest);
         String sc = DashFQN.longestCommonFQN(src.name, dest.name);
         // maxCommonParams is max number of params that could have in common
         // but they don't necessarily have the same values
         Integer maxCommonParams = stateParams(sc).size();
         myprint("scope");
-        //System.out.println("maxCommonParams");
-        //System.out.println(maxCommonParams);
+        // System.out.println("maxCommonParams");
+        // System.out.println(maxCommonParams);
         List<AlloyExpr> scopeParams = new ArrayList<AlloyExpr>();
         AlloyExpr equals = null;
         AlloyExpr s = null;
@@ -301,8 +301,8 @@ public class StatesDM extends TransDM {
             }
         }
         StateDashRef x = new StateDashRef(sc, scopeParams); // no pos possible
-        //System.out.println("scope");
-        //System.out.println(x);
+        // System.out.println("scope");
+        // System.out.println(x);
         return x;
     }
 
@@ -470,7 +470,7 @@ public class StatesDM extends TransDM {
                 // enter all copies of the param if a parameterized state
                 List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.paramValues);
                 if (stateHasParams(ch))
-                    for (DashParam p:stateParams(ch))
+                    for (DashParam p : stateParams(ch))
                         newParamValues.add(new AlloyNameExpr(s.pos, p.paramSig));
                 r.addAll(leafStatesEntered(new StateDashRef(ch, newParamValues)));
             }
