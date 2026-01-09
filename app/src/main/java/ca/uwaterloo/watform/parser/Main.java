@@ -5,7 +5,10 @@ import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import ca.uwaterloo.watform.alloyinterface.*;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -49,7 +52,7 @@ import picocli.CommandLine.Parameters;
 public class Main implements Callable<Integer> {
     // Picocli automatically converts the input String to a Path object
     @Parameters(index = "0", description = "The file path to the Dash/Alloy model.")
-    private Path filePath;
+    private Path inputPath;
 
     @Parameters(
             index = "1",
@@ -69,19 +72,29 @@ public class Main implements Callable<Integer> {
         try {
             // Main logic
             Reporter.INSTANCE.setDebugMode(debug);
-            DashModel d = (DashModel) parseToModel(filePath);
-            // tmp debugging start
-            //
-            // tmp debugging end
-            // Solution solution =
-            //        AlloyInterface.executeCommand(parseToModel(filePath), this.commandIndex);
-            // System.out.println(solution.toString());
-            Reporter.INSTANCE.print();
+            List<Path> filePaths;
+            if (Files.isDirectory(inputPath)) {
+                filePaths = recurGetFiles(inputPath, ".als");
+                filePaths.addAll(recurGetFiles(inputPath, ".dsh"));
+            } else {
+                filePaths = Collections.singletonList(inputPath);
+            }
+            for (Path filePath : filePaths) {
+                Reporter.INSTANCE.reset();
+                DashModel d = (DashModel) parseToModel(filePath);
+                // tmp debugging start
+                //
+                // tmp debugging end
+                // Solution solution =
+                //        AlloyInterface.executeCommand(parseToModel(path), this.commandIndex);
+                // System.out.println(solution.toString());
+                Reporter.INSTANCE.print();
+            }
             return 0;
 
             // User error exit code: 1
         } catch (Reporter.ErrorUser errorUser) {
-            errorUser.setFilePath(filePath);
+            errorUser.setFilePath(inputPath);
             Reporter.INSTANCE.addError(errorUser);
             Reporter.INSTANCE.print();
             return 1;
