@@ -76,7 +76,9 @@ public class DashState extends DashPara implements DashStateItem {
             // map type of item to an integer (in function above)
             List<Object> itemsCopy = new ArrayList<>(items);
             Collections.sort(itemsCopy, (i1, i2) -> Integer.compare(itemToInt(i1), itemToInt(i2)));
-            itemsCopy.forEach(k -> j.add(((ASTNode) k).toString(indent + 1)));
+            itemsCopy.forEach(
+                    k -> j.add(((ASTNode) k).toString(PrintContext.lineWidth, indent + 1)));
+            // the toStrong call above ends up at a pp method
             s += j.toString() + ind + "}\n";
         }
         sb.append(s);

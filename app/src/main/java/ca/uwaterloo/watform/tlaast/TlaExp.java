@@ -29,6 +29,12 @@ public abstract class TlaExp extends ASTNode {
         return;
     }
 
+    @Override
+    public void pp(PrintContext pCtx) {
+        // I added this here so my change that makes pp a mandatory
+        // method can build successfully. - Jack
+    }
+
     // convenience in writing
     /*
     public Tla (TlaExp op)

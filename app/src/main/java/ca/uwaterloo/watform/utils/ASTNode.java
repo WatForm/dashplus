@@ -16,25 +16,10 @@ public abstract class ASTNode {
         return this.pos;
     }
 
+    public abstract void pp(PrintContext pCtx);
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        toString(sb, 0);
-        return sb.toString();
-    }
-
-    public String toString(int indent) {
-        StringBuilder sb = new StringBuilder();
-        toString(sb, indent);
-        return sb.toString();
-    }
-
-    public void pp(PrintContext pCtx) {}
-
-    // this is to replace toString later,
-    // but for the sake of getting changes compiling,
-    // it's its separate method for now
-    public String toPrettyString() {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw);
         this.ppNewBlock(pCtx);
@@ -42,7 +27,7 @@ public abstract class ASTNode {
         return sw.toString();
     }
 
-    public String toPrettyString(int lineWidth, int indentSize) {
+    public String toString(int lineWidth, int indentSize) {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw, lineWidth, indentSize);
         this.ppNewBlock(pCtx);
@@ -56,7 +41,7 @@ public abstract class ASTNode {
         pCtx.end();
     }
 
-    public abstract void toString(StringBuilder sb, int indent);
+    public void toString(StringBuilder sb, int indent) {}
 
     // There's a similar method in GeneralUtil.java, but ASTNodes need to take
     // in an indent param

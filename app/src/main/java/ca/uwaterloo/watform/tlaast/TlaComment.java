@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.tlaast;
 
-import ca.uwaterloo.watform.utils.ASTNode;
+import ca.uwaterloo.watform.utils.*;
 
 public class TlaComment extends ASTNode {
 
@@ -8,6 +8,12 @@ public class TlaComment extends ASTNode {
 
     public TlaComment(String contents) {
         this.contents = contents;
+    }
+
+    @Override
+    public void pp(PrintContext pCtx) {
+        // I added this here so my change that makes pp a mandatory
+        // method can build successfully. - Jack
     }
 
     @Override
