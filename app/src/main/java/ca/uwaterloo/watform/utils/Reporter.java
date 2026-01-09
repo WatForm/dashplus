@@ -9,7 +9,8 @@ public final class Reporter {
     public static final Reporter INSTANCE = new Reporter();
     private Path filePath;
 
-    private final List<DashPlusError> errors = new ArrayList<>();
+    private final List<DashPlusException> errors = new ArrayList<>();
+    private final List<WarningUser> warnings = new ArrayList<>();
     private final List<CommentUser> comments = new ArrayList<>();
     private boolean debugMode = false;
 
@@ -21,8 +22,12 @@ public final class Reporter {
         this.debugMode = debugMode;
     }
 
-    public void addError(DashPlusError error) {
+    public void addError(DashPlusException error) {
         errors.add(error);
+    }
+
+    public void addWarning(WarningUser warning) {
+        warnings.add(warning);
     }
 
     public void addComment(CommentUser comment) {
@@ -31,12 +36,17 @@ public final class Reporter {
 
     public void reset() {
         this.errors.clear();
+        this.warnings.clear();
         this.comments.clear();
         this.filePath = null;
     }
 
-    public List<DashPlusError> getErrors() {
+    public List<DashPlusException> getErrors() {
         return Collections.unmodifiableList(errors);
+    }
+
+    public List<WarningUser> getWarnings() {
+        return Collections.unmodifiableList(warnings);
     }
 
     public List<CommentUser> getComments() {
@@ -44,27 +54,40 @@ public final class Reporter {
     }
 
     public boolean hasErrors() {
-        return !this.errors.isEmpty();
+        return !errors.isEmpty();
+    }
+
+    public boolean hasWarnings() {
+        return !warnings.isEmpty();
     }
 
     public boolean hasComments() {
-        return !this.comments.isEmpty();
+        return !comments.isEmpty();
     }
 
     public void print() {
-        if (!this.comments.isEmpty()) {
-            for (CommentUser comment : this.comments) {
+        if (!comments.isEmpty()) {
+            for (CommentUser comment : comments) {
                 System.err.println(comment.toString(filePath));
-                if (this.debugMode) {
+                if (debugMode) {
                     comment.printStackTrace();
                 }
             }
         }
 
-        if (!this.errors.isEmpty()) {
-            for (DashPlusError error : this.errors) {
+        if (!warnings.isEmpty()) {
+            for (WarningUser warning : warnings) {
+                System.err.println(warning.toString(filePath));
+                if (debugMode) {
+                    warning.printStackTrace();
+                }
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            for (DashPlusException error : errors) {
                 System.err.println(error.toString(filePath));
-                if (this.debugMode) {
+                if (debugMode) {
                     error.printStackTrace();
                 }
             }
@@ -79,37 +102,43 @@ public final class Reporter {
         throw new AbortSignal();
     }
 
-    public abstract static class DiagnosticException extends DashPlusError {
-        public DiagnosticException(List<Pos> posList, Path filePath, String msg) {
+    public abstract static class DiagnosticException extends DashPlusException {
+        public DiagnosticException(List<Pos> posList, String msg) {
             super(posList, msg);
         }
     }
 
     public static class CommentUser extends DiagnosticException {
-        public CommentUser(List<Pos> posList, Path filePath, String msg) {
-            super(posList, filePath, msg);
+        public CommentUser(List<Pos> posList, String msg) {
+            super(posList, msg);
         }
 
         public CommentUser(Pos pos, String msg) {
-            super(Collections.singletonList(pos), null, msg);
+            super(Collections.singletonList(pos), msg);
+        }
+    }
+
+    public static class WarningUser extends DiagnosticException {
+        public WarningUser(List<Pos> posList, String msg) {
+            super(posList, msg);
+        }
+
+        public WarningUser(Pos pos, String msg) {
+            super(Collections.singletonList(pos), msg);
         }
     }
 
     public static class ErrorUser extends DiagnosticException {
-        public ErrorUser(List<Pos> posList, Path filePath, String msg) {
-            super(posList, filePath, msg);
-        }
-
         public ErrorUser(List<Pos> posList, String msg) {
-            this(posList, null, msg);
+            super(posList, msg);
         }
 
         public ErrorUser(Pos pos, String msg) {
-            this(Collections.singletonList(pos), null, msg);
+            this(Collections.singletonList(pos), msg);
         }
 
         public ErrorUser(String msg) {
-            this(Collections.emptyList(), null, msg);
+            this(Collections.emptyList(), msg);
         }
     }
 

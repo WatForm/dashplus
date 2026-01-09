@@ -8,19 +8,19 @@ import java.util.List;
 // Implementation Error, depending on where these errors occur. See
 // ErrorHandling.md for more This class is primarily for the convenience of
 // keeping a List<Pos>
-public abstract class DashPlusError extends RuntimeException {
+public abstract class DashPlusException extends RuntimeException {
     public final List<Pos> posList;
 
-    public DashPlusError(List<Pos> posList, String msg) {
+    public DashPlusException(List<Pos> posList, String msg) {
         super(msg);
         this.posList = posList;
     }
 
-    public DashPlusError(Pos pos, String msg) {
+    public DashPlusException(Pos pos, String msg) {
         this(Collections.singletonList(pos), msg);
     }
 
-    public DashPlusError(String msg) {
+    public DashPlusException(String msg) {
         this(Collections.unmodifiableList(Collections.emptyList()), msg);
     }
 

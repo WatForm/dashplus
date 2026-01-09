@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.utils;
 // borrowed from Alloy
 // NADTODO fix up pos and error messages
 
-public class ImplementationError extends DashPlusError {
+public class ImplementationError extends DashPlusException {
     public ImplementationError(String msg) {
         super(msg);
     }
@@ -12,7 +12,7 @@ public class ImplementationError extends DashPlusError {
         super(pos, msg);
     }
 
-    public ImplementationError(DashPlusError other) {
+    public ImplementationError(DashPlusException other) {
         super(other.posList, other.getMessage());
     }
 

@@ -3,7 +3,7 @@ package ca.uwaterloo.watform.alloymodel;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
-public final class AlloyModelError extends DashPlusError {
+public final class AlloyModelError extends DashPlusException {
     private AlloyModelError(List<Pos> posList, String msg) {
         super(posList, msg);
     }

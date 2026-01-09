@@ -2,12 +2,9 @@ package ca.uwaterloo.watform.parser;
 
 import static ca.uwaterloo.watform.utils.ParserUtil.*;
 
-import ca.uwaterloo.watform.alloyinterface.*;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
@@ -29,7 +26,7 @@ import picocli.CommandLine.Parameters;
             ""
         },
         description = {
-            "Parses a Dash/Alloy model file and execute command.",
+            "Parse Dash/Alloy model files and execute command.",
         },
         footer = {
             "",
@@ -50,17 +47,16 @@ import picocli.CommandLine.Parameters;
         optionListHeading = "%n@|bold Options:|@%n",
         parameterListHeading = "%n@|bold Parameters:|@%n")
 public class Main implements Callable<Integer> {
-    // Picocli automatically converts the input String to a Path object
-    @Parameters(index = "0", description = "The file path to the Dash/Alloy model.")
-    private Path inputPath;
-
-    @Parameters(
-            index = "1",
+    @Option(
+            names = "-cmd",
             arity = "0..1", // Makes it optional (0 or 1 occurrence)
             defaultValue = "0",
-            paramLabel = "<cmdIdx>", // Makes the usage string shorter/cleaner
-            description = "The command index to execute (Default: ${DEFAULT-VALUE}).")
+            paramLabel = "<cmdIdx>",
+            description = "Index of the command to execute (Default: ${DEFAULT-VALUE}).")
     private int commandIndex;
+
+    @Parameters(index = "0", arity = "1..*", description = "Paths to Alloy/Dash files")
+    private List<Path> inputPaths;
 
     @Option(
             names = {"-d", "--debug"},
@@ -72,14 +68,7 @@ public class Main implements Callable<Integer> {
         try {
             // Main logic
             Reporter.INSTANCE.setDebugMode(debug);
-            List<Path> filePaths;
-            if (Files.isDirectory(inputPath)) {
-                filePaths = recurGetFiles(inputPath, ".als");
-                filePaths.addAll(recurGetFiles(inputPath, ".dsh"));
-            } else {
-                filePaths = Collections.singletonList(inputPath);
-            }
-            for (Path filePath : filePaths) {
+            for (Path filePath : inputPaths) {
                 Reporter.INSTANCE.reset();
                 Reporter.INSTANCE.setFilePath(filePath);
                 DashModel d = (DashModel) parseToModel(filePath);
@@ -106,9 +95,9 @@ public class Main implements Callable<Integer> {
             System.err.println(implementationError);
             if (debug) implementationError.printStackTrace();
             return 2;
-            // DashPlusError bubbled up here are treated ImplementationError
+            // DashPlusException bubbled up here are treated ImplementationError
             // see ErrorHandling.md
-        } catch (DashPlusError dashPlusError) {
+        } catch (DashPlusException dashPlusError) {
             System.err.println(dashPlusError);
             if (debug) dashPlusError.printStackTrace();
             return 2;

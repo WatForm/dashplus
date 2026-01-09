@@ -52,7 +52,7 @@ public class ReporterTest {
         Reporter.ErrorUser error = new Reporter.ErrorUser(Pos.UNKNOWN, "Test error message");
         reporter.addError(error);
 
-        List<DashPlusError> errors = reporter.getErrors();
+        List<DashPlusException> errors = reporter.getErrors();
         assertEquals(1, errors.size(), "Errors list should contain one error.");
         assertSame(error, errors.get(0), "The added error should be in the list.");
         assertTrue(reporter.getComments().isEmpty(), "Comments list should still be empty.");
@@ -84,7 +84,7 @@ public class ReporterTest {
         reporter.addComment(comment1);
         reporter.addError(error2);
 
-        List<DashPlusError> errors = reporter.getErrors();
+        List<DashPlusException> errors = reporter.getErrors();
         List<Reporter.CommentUser> comments = reporter.getComments();
 
         assertEquals(2, errors.size(), "Should have 2 errors.");
@@ -99,7 +99,7 @@ public class ReporterTest {
     @DisplayName("Returned error list should be unmodifiable")
     public void errorsUnmodifiable() {
         Reporter.ErrorUser error = new Reporter.ErrorUser(Pos.UNKNOWN, "Temporary error");
-        List<DashPlusError> errors = reporter.getErrors();
+        List<DashPlusException> errors = reporter.getErrors();
 
         assertThrows(
                 UnsupportedOperationException.class,

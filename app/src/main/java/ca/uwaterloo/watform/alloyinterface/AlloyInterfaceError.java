@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.alloyinterface;
 
 import ca.uwaterloo.watform.utils.*;
 
-public class AlloyInterfaceError extends DashPlusError {
+public class AlloyInterfaceError extends DashPlusException {
     private AlloyInterfaceError(Pos pos, String msg) {
         super(pos, msg);
     }

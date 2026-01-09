@@ -2,8 +2,8 @@
 * Try to group dir specific exceptions together (could be in class)
 * Use Pos whenever possible to make error messages more informative
 
-### [DashPlusError](/app/src/main/java/ca/uwaterloo/watform/utils/DashPlusError.java)
-- an instance of DashPlusError is either an error caused by user input or an implementation error
+### [DashPlusException](/app/src/main/java/ca/uwaterloo/watform/utils/DashPlusException.java)
+- an instance of DashPlusException is either an error caused by user input or an implementation error
 - ex: [AlloyCtorError](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyCtorError.java)
 
 ### [ImplementationError](/app/src/main/java/ca/uwaterloo/watform/utils/ImplementationError.java)
@@ -27,7 +27,7 @@
 - AST construction can also occur during Dash to Alloy translation
     - AlloyCtorError are not caught and allowed to propagate to crash the program in Main
     - Because this reflects erroneous implementation, not bad user input
-- This is an example of a DashPlusError that is treated as UserError (if generated during parsing) or as ImplementationError (if generated during translation)
+- This is an example of a DashPlusException that is treated as UserError (if generated during parsing) or as ImplementationError (if generated during translation)
 
 #### AlloyCtorError generated during parsing
 - Throw AlloyCtorError.redundantExactly(pos) [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/paragraph/command/AlloyCmdPara.java)
