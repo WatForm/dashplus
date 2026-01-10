@@ -75,6 +75,16 @@ public final class AlloySigPara extends AlloyPara {
         this(Pos.UNKNOWN, Collections.emptyList(), qnames, null, fields, block);
     }
 
+    public AlloySigPara(String s, List<AlloyDecl> fields, AlloyBlock block) {
+        this(
+                Pos.UNKNOWN,
+                Collections.emptyList(),
+                Collections.singletonList(new AlloyQnameExpr(s)),
+                null,
+                fields,
+                block);
+    }
+
     public AlloySigPara(AlloyQnameExpr qname, List<AlloyDecl> fields, AlloyBlock block) {
         this(
                 Pos.UNKNOWN,

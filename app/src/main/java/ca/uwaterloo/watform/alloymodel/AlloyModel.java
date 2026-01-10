@@ -1,6 +1,9 @@
 package ca.uwaterloo.watform.alloymodel;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
@@ -10,7 +13,9 @@ import ca.uwaterloo.watform.utils.ImplementationError;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AlloyModel {
     private final AlloyFile alloyFile;
@@ -26,9 +31,25 @@ public class AlloyModel {
     private final AlloyModelTable<AlloyCmdPara> commands;
 
     private final List<AlloyPara> additionalParas;
+    private final Set<String> declaredIds = new HashSet<>();
 
     public AlloyModel() {
         this(new AlloyFile(Collections.emptyList()));
+    }
+
+    private void addId(AlloySigPara sig) {
+        for (AlloyQnameExpr qname : sig.qnames) {
+            for (AlloyVarExpr var : qname.vars) {
+                declaredIds.add(var.label);
+            }
+        }
+        for (AlloyDecl decl : sig.fields) {
+            for (AlloyQnameExpr qname : decl.qnames) {
+                for (AlloyVarExpr var : qname.vars) {
+                    declaredIds.add(var.label);
+                }
+            }
+        }
     }
 
     public AlloyModel(AlloyFile alloyFile) {
@@ -45,6 +66,8 @@ public class AlloyModel {
         this.commands = new AlloyModelTable<>(alloyFile, AlloyCmdPara.class);
 
         this.additionalParas = new ArrayList<>();
+
+        sigs.getAllParas().stream().forEach(sig -> addId(sig));
     }
 
     /**
@@ -60,6 +83,15 @@ public class AlloyModel {
         @SuppressWarnings("unchecked")
         AlloyModelTable<AlloyPara> castedTable = (AlloyModelTable<AlloyPara>) table;
         castedTable.addPara(alloyPara, this.additionalParas);
+
+        // add to declaredIds
+        if (AlloySigPara.class.isInstance(alloyPara)) {
+            addId((AlloySigPara) alloyPara);
+        }
+    }
+
+    public boolean containsId(String id) {
+        return this.declaredIds.contains(id);
     }
 
     public <T extends AlloyPara> List<T> getParas(Class<T> typeToken) {
@@ -70,18 +102,14 @@ public class AlloyModel {
         return this.patternMatch(typeToken).getPara(name);
     }
 
-    private void toPrettyString(PrintContext pCtx) {
-        this.alloyFile.ppNewBlock(pCtx);
-        // create a new AlloyFile, so I can reuse the AlloyFile.toString
-        AlloyFile newAlloyFile = new AlloyFile(this.additionalParas);
-        newAlloyFile.ppNewBlock(pCtx);
-    }
-
     @Override
     public String toString() {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw);
-        toPrettyString(pCtx);
+        this.alloyFile.ppNewBlock(pCtx);
+        // create a new AlloyFile, so I can reuse AlloyFile.toString
+        AlloyFile newAlloyFile = new AlloyFile(this.additionalParas);
+        newAlloyFile.ppNewBlock(pCtx);
         return sw.toString();
     }
 

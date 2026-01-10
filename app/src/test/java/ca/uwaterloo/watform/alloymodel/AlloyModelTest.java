@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -184,5 +187,66 @@ public class AlloyModelTest {
 
         assertEquals(pred1, alloyModel.getPara(AlloyPredPara.class, "pred1"));
         assertEquals(pred2, alloyModel.getPara(AlloyPredPara.class, "pred2"));
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("AlloyModel.declaredIds")
+    public void test9() {
+        String s1 = "s1";
+        String s2 = "s2";
+        String s3 = "s3";
+        String s4p1 = "s4p1";
+        String s4p2 = "s4p2";
+        String s5 = "s5";
+        String f1 = "f1";
+        String f2 = "f2";
+
+        AlloyDecl decl1 = new AlloyDecl(new AlloyQnameExpr(f1), new AlloyQnameExpr("F1"));
+        AlloyDecl decl2 = new AlloyDecl(new AlloyQnameExpr(f2), new AlloyQnameExpr("F2"));
+        AlloySigPara sig1 = new AlloySigPara(s1, List.of(decl1), new AlloyBlock());
+        AlloySigPara sig2 = new AlloySigPara(s2);
+        AlloyFile alloyFile = new AlloyFile(List.of(sig1, sig2));
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+
+        assertTrue(alloyModel.containsId(s1));
+        assertTrue(alloyModel.containsId(s2));
+        assertFalse(alloyModel.containsId(s3));
+        assertFalse(alloyModel.containsId(s4p1));
+        assertFalse(alloyModel.containsId(s4p2));
+        assertFalse(alloyModel.containsId(s5));
+        assertTrue(alloyModel.containsId(f1));
+        assertFalse(alloyModel.containsId(f2));
+
+        AlloySigPara sig3 = new AlloySigPara(s3, List.of(decl2), new AlloyBlock());
+        alloyModel.addPara(sig3);
+
+        assertTrue(alloyModel.containsId(s1));
+        assertTrue(alloyModel.containsId(s2));
+        assertTrue(alloyModel.containsId(s3));
+        assertFalse(alloyModel.containsId(s4p1));
+        assertFalse(alloyModel.containsId(s4p2));
+        assertFalse(alloyModel.containsId(s5));
+        assertTrue(alloyModel.containsId(f1));
+        assertTrue(alloyModel.containsId(f2));
+
+        AlloySigPara sig4and5 =
+                new AlloySigPara(
+                        List.of(
+                                new AlloyQnameExpr(
+                                        List.of(new AlloyNameExpr(s4p1), new AlloyNameExpr(s4p2))),
+                                new AlloyQnameExpr(s5)),
+                        Collections.emptyList(),
+                        new AlloyBlock());
+        alloyModel.addPara(sig4and5);
+
+        assertTrue(alloyModel.containsId(s1));
+        assertTrue(alloyModel.containsId(s2));
+        assertTrue(alloyModel.containsId(s3));
+        assertTrue(alloyModel.containsId(s4p1));
+        assertTrue(alloyModel.containsId(s4p2));
+        assertTrue(alloyModel.containsId(s5));
+        assertTrue(alloyModel.containsId(f1));
+        assertTrue(alloyModel.containsId(f2));
     }
 }
