@@ -32,6 +32,6 @@ public class DashModelErrors {
 
     public static void unsupportedExpr(Pos pos, String cls, String n) throws Reporter.ErrorUser {
         throw new Reporter.ErrorUser(
-                pos, "Expression not supported in Dash: " + n + " which is "+cls);
+                pos, "Expression not supported in Dash: " + n + " which is " + cls);
     }
 }

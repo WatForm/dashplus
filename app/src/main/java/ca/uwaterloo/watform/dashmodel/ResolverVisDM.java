@@ -41,10 +41,10 @@ import ca.uwaterloo.watform.dashast.DashStrings.DashRefKind;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 
 public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExpr> {
 
@@ -61,7 +61,6 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     // bound variables of quantifiers
     private Deque<List<String>> scope = new ArrayDeque<>();
 
-
     public ResolverVisDM() {
         super();
     }
@@ -76,9 +75,9 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     }
 
     private boolean isBoundVar(String s) {
-        return scope.stream()
-            .anyMatch(list -> list.contains(s));
+        return scope.stream().anyMatch(list -> list.contains(s));
     }
+
     // top-level calls
 
     protected AlloyExpr resolveVar(AlloyExpr expr, String sfqn) {
@@ -162,10 +161,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         */
         // v is the name,
         // v_params as the possibly empty set
-        // of _resolved_ param expr 
+        // of _resolved_ param expr
         // but it could still need to be added to
 
-        assert(varExpr instanceof AlloyQnameExpr);
+        assert (varExpr instanceof AlloyQnameExpr);
 
         String v = varExpr.label;
         // HERE
@@ -196,10 +195,8 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         }
 
         if (matches.isEmpty()) {
-            if (!v_param_vals.isEmpty()) 
-                unknownElementWithParamsError(varExpr);
-            else 
-                unknownError(varExpr);
+            if (!v_param_vals.isEmpty()) unknownElementWithParamsError(varExpr);
+            else unknownError(varExpr);
             return null;
         }
 
@@ -348,10 +345,9 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         // can't use a withLeft, withRight here
         // because this is a parent class
         if (!this.supportedBinaryExpr(binExpr))
-            DashModelErrors.unsupportedExpr(binExpr.pos, binExpr.getClass().getSimpleName(), binExpr.toString());
+            DashModelErrors.unsupportedExpr(
+                    binExpr.pos, binExpr.getClass().getSimpleName(), binExpr.toString());
         return binExpr.rebuild(this.visit(binExpr.left), this.visit(binExpr.right));
-
-
     }
     ;
 
@@ -367,7 +363,8 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         }
 
         if (!this.supportedUnaryExpr(unaryExpr))
-            DashModelErrors.unsupportedExpr(unaryExpr.pos, unaryExpr.getClass().getSimpleName(), unaryExpr.toString());
+            DashModelErrors.unsupportedExpr(
+                    unaryExpr.pos, unaryExpr.getClass().getSimpleName(), unaryExpr.toString());
 
         // otherwise we visit the sub expression
         AlloyExpr newExpr = this.visit(unaryExpr.sub);
@@ -389,16 +386,16 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     public AlloyExpr visit(AlloyVarExpr varExpr) {
 
         if (!(varExpr instanceof AlloyQnameExpr)) {
-            if (this.supportedBuiltinVarExpr(varExpr)) 
-                return varExpr;
-            if (! (varExpr instanceof AlloyQnameExpr))
+            if (this.supportedBuiltinVarExpr(varExpr)) return varExpr;
+            if (!(varExpr instanceof AlloyQnameExpr))
                 // throws exception
-                DashModelErrors.unsupportedExpr(varExpr.pos, varExpr.getClass().getSimpleName(), varExpr.toString());
+                DashModelErrors.unsupportedExpr(
+                        varExpr.pos, varExpr.getClass().getSimpleName(), varExpr.toString());
         }
 
         // var that came with no param values
         String v = varExpr.label;
-        
+
         if (thisOk && v.startsWith(AlloyStrings.THIS)) {
             // thisSname gets replaced with var of DashParam (sfqn, param)
             String thisstate = v.substring(AlloyStrings.THIS.length(), v.length());
@@ -477,15 +474,15 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     public AlloyExpr visit(AlloyQuantificationExpr quantificationExpr) {
         // rule out var names that are bound
         List<String> boundVars = new ArrayList<>();
-        for (AlloyDecl d:quantificationExpr.decls) 
-            for (AlloyQnameExpr q: d.qnames) 
-                boundVars.add(q.label);
+        for (AlloyDecl d : quantificationExpr.decls)
+            for (AlloyQnameExpr q : d.qnames) boundVars.add(q.label);
         scope.push(boundVars);
-        AlloyQuantificationExpr x =  new AlloyQuantificationExpr(
-                quantificationExpr.pos,
-                quantificationExpr.quant,
-                mapBy(quantificationExpr.decls, i -> (AlloyDecl) this.visit(i)),
-                this.visit(quantificationExpr.body));
+        AlloyQuantificationExpr x =
+                new AlloyQuantificationExpr(
+                        quantificationExpr.pos,
+                        quantificationExpr.quant,
+                        mapBy(quantificationExpr.decls, i -> (AlloyDecl) this.visit(i)),
+                        this.visit(quantificationExpr.body));
         scope.pop();
         return x;
     }
@@ -523,8 +520,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
     @Override
     public AlloyExpr visit(DashParam dashParam) {
-        throw ImplementationError.methodShouldNotBeCalled("there should not be any DashParams in the parsed input");
+        throw ImplementationError.methodShouldNotBeCalled(
+                "there should not be any DashParams in the parsed input");
     }
+
     // errors methods cannot be grouped in a subclass
     // or be static because they reference attributes
     // of the class

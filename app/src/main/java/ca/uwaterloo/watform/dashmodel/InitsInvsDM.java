@@ -1,8 +1,6 @@
 package ca.uwaterloo.watform.dashmodel;
 
-import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashFile;
 import java.util.ArrayList;
 import java.util.List;
