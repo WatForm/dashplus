@@ -43,6 +43,8 @@ import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExpr> {
 
@@ -55,6 +57,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     // of state Expr itself or is parent of Expr
     // needed for context of expr being resolved
     private String sfqn;
+
+    // bound variables of quantifiers
+    private Deque<List<String>> scope = new ArrayDeque<>();
+
 
     public ResolverVisDM() {
         super();
@@ -69,6 +75,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         assert (expr != null);
     }
 
+    private boolean isBoundVar(String s) {
+        return scope.stream()
+            .anyMatch(list -> list.contains(s));
+    }
     // top-level calls
 
     protected AlloyExpr resolveVar(AlloyExpr expr, String sfqn) {
@@ -169,7 +179,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // if already a sig in Alloy part of model
             // can't declare it again
             // replace this when jack writes a method in AlloyModel for this
-            if (this.containsId(v)) {
+            if (this.containsId(v) || this.isBoundVar(v)) {
                 return varExpr;
             }
             // otherwise, look for matches in Dash model var decls
@@ -445,12 +455,19 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
     @Override
     public AlloyExpr visit(AlloyQuantificationExpr quantificationExpr) {
-        // NADTODO: rule out var names that are bound
-        return new AlloyQuantificationExpr(
+        // rule out var names that are bound
+        List<String> boundVars = new ArrayList<>();
+        for (AlloyDecl d:quantificationExpr.decls) 
+            for (AlloyQnameExpr q: d.qnames) 
+                boundVars.add(q.label);
+        scope.push(boundVars);
+        AlloyQuantificationExpr x =  new AlloyQuantificationExpr(
                 quantificationExpr.pos,
                 quantificationExpr.quant,
                 mapBy(quantificationExpr.decls, i -> (AlloyDecl) this.visit(i)),
                 this.visit(quantificationExpr.body));
+        scope.pop();
+        return x;
     }
 
     @Override
