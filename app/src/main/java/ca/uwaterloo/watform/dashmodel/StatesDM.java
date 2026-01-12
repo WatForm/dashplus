@@ -279,7 +279,7 @@ public class StatesDM extends TransDM {
                         new AlloyIteExpr(
                                 equals,
                                 s,
-                                ((DashParam) stateParams(sc).get(i)).paramVar())); // whole set
+                                ((DashParam) stateParams(sc).get(i)).asAlloyVar())); // whole set
 
                 for (int j = i + 1; j < maxCommonParams; j++) {
                     s = src.paramValues.get(j);
@@ -294,7 +294,7 @@ public class StatesDM extends TransDM {
                                         equals,
                                         s,
                                         ((DashParam) stateParams(sc).get(j))
-                                                .paramVar())); // whole set
+                                                .asAlloyVar())); // whole set
                     }
                 }
                 break;

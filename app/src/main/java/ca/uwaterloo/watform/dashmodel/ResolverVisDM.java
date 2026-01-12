@@ -1,6 +1,6 @@
 /*
     This visitor over expressions takes an AlloyExpr
-    (which include DashParams and DashRefs)
+    (which include DashRefs but not DashParam)
     and figures out the full Dash reference to
     variable names that are Dash dynamic variables. It
     does this by:
@@ -12,7 +12,7 @@
 
     2) adding in all the parameter values or checking that there are an appropriate number of parameter values if they already exist
 
-    3) replacing "thisState" with a DashParam
+    3) replacing "thisState" with a var expression of single parameter
 
     It leaves a primed variable as PRIME(DashRef ...).
 
@@ -150,28 +150,28 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
     // private functions
 
-    private AlloyExpr resolve(AlloyVarExpr varExpr, List<? extends AlloyExpr> v_params) {
+    private AlloyExpr resolve(AlloyVarExpr varExpr, List<? extends AlloyExpr> v_param_vals) {
         // NADTODO buffers
         // NADTODO check on predicates
         /*
-            This purpose of this function is to take a varExpr and possibly empty list of parameter values, and flesh out the reference to a FQN with all parameters values.
+            This purpose of this function is to take a varExpr (name) and possibly empty list of parameter values, and flesh out the reference to a FQN with all parameters values.
 
             Parameter values have to be determined from context, which is why sfqn is an argument to resolving.
 
-            References to the parameter values of the current context (whether from a thisState or from lack of parameters) become DashParam(statename, parameter sig) within the expression.
+            References to the parameter values of the current context (whether from a thisState or from lack of parameters) become AlloyQnameExpr (see DashParam.asAlloyVar()).
         */
         // v is the name,
         // v_params as the possibly empty set
-        // of _resolved_ param expr (which could include DashParams)
+        // of _resolved_ param expr 
         // but it could still need to be added to
 
         String v = varExpr.label;
-        List<? extends AlloyExpr> full_v_params = new ArrayList<AlloyExpr>();
+        
 
         // first find the possible matches in the table for this
         // name v (could be state/event/var/buffer)
         List<String> matches;
-        if (v_params.isEmpty()) {
+        if (v_param_vals.isEmpty()) {
 
             // if no param expr, then must be within region
             // that has same params
@@ -191,8 +191,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         }
 
         if (matches.isEmpty()) {
-            if (!v_params.isEmpty()) unknownElementWithParamsError(varExpr);
-            else unknownError(varExpr);
+            if (!v_param_vals.isEmpty()) 
+                unknownElementWithParamsError(varExpr);
+            else 
+                unknownError(varExpr);
             return null;
         }
 
@@ -217,29 +219,36 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         }
 
         // now m is one match from var/state/event table
-        List<DashParam> mParams;
-        if (kind == DashRefKind.STATE) mParams = stateParams(m);
-        else if (kind == DashRefKind.EVENT) mParams = eventParams(m);
-        else mParams = varParams(m);
+        List<DashParam> m_params;
+        if (kind == DashRefKind.STATE) m_params = stateParams(m);
+        else if (kind == DashRefKind.EVENT) m_params = eventParams(m);
+        else m_params = varParams(m);
 
         // parameters from enclosing state of this element
-        List<DashParam> sfqn_params = stateParams(sfqn);
-        if (v_params.isEmpty()) {
+        List<AlloyExpr> sfqn_param_vals = mapBy(stateParams(sfqn), i -> i.asAlloyVar());
+        List<AlloyExpr> m_param_vals = mapBy(m_params, i -> i.asAlloyVar());
+        List<? extends AlloyExpr> final_param_vals = new ArrayList<AlloyExpr>();
+
+        // v_param_vals is the parameter expressions (as Expr) provided
+        // sfqn_param_vals is the parameter expressions (as Vars) for everything within this sfqn
+        // m_param_vals is the parameter expressions (as Vars) for one possible name match, m
+        // final_param_vals is the final set of parameter expressions for this var
+
+        if (v_param_vals.isEmpty()) {
             // did not have any parameter values in use
             // must have same param values as sfqn b/c in same region
-            if (mParams.size() > sfqn_params.size()) {
+            if (m_param_vals.size() > sfqn_param_vals.size()) {
                 // thing found by getRegion as match does
                 // not have the same parameter values
                 wrongNumberParamsError(varExpr);
                 return null;
             } else {
                 // this element might only use a subset of the
-                // parameters of sfqn
+                // parameters of sfqn b/c it actually is from somewhere else
                 // could be a subset of param values
-                // TODO: don't understand this case
-                full_v_params = sfqn_params.subList(0, mParams.size());
+                final_param_vals = sfqn_param_vals.subList(0, m_param_vals.size());
             }
-        } else if (mParams.size() != v_params.size()) {
+        } else if (m_param_vals.size() != v_param_vals.size()) {
             // came with parameters so must be right number
             // TODO could paramValues b less than mParams????
             // and paramValues be a suffix of mParams???
@@ -248,14 +257,14 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             return null;
         } else {
             // it was used with the right number of parameters
-            full_v_params = v_params;
+            final_param_vals = v_param_vals;
         }
 
         if (kind == DashStrings.DashRefKind.STATE)
-            return new StateDashRef(varExpr.pos, m, full_v_params);
+            return new StateDashRef(varExpr.pos, m, final_param_vals);
         else if (kind == DashStrings.DashRefKind.EVENT)
-            return new EventDashRef(varExpr.pos, m, full_v_params);
-        else return new VarDashRef(varExpr.pos, m, full_v_params);
+            return new EventDashRef(varExpr.pos, m, final_param_vals);
+        else return new VarDashRef(varExpr.pos, m, final_param_vals);
     }
 
     private List<String> findMatches(String name) {
@@ -377,10 +386,9 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     public AlloyExpr visit(AlloyVarExpr varExpr) {
         // var that came with no param values
         String v = varExpr.label;
-        // these should only be DashParams in this function
-
+        
         if (thisOk && v.startsWith(AlloyStrings.THIS)) {
-            // thisSname gets replaced with DashParam (sfqn, param)
+            // thisSname gets replaced with var of DashParam (sfqn, param)
             String thisstate = v.substring(AlloyStrings.THIS.length(), v.length());
 
             // have to change kind to search for to STATE
@@ -397,7 +405,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
                 if (ps.size() == 1)
                     // any "thisState" use must be for a state with only one param
                     // this is already an Expr
-                    return ps.get(0);
+                    return ps.get(0).asAlloyVar();
                 else ambiguousUseOfThisError(varExpr);
             } else if (matches.size() == 1 && !stateHasParams(firstMatch))
                 nonParamUseOfThisError(varExpr);
@@ -500,11 +508,6 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         return newExpr;
     }
     ;
-
-    @Override
-    public AlloyExpr visit(DashParam dashParam) {
-        return (AlloyExpr) dashParam;
-    }
 
     // errors methods cannot be grouped in a subclass
     // or be static because they reference attributes
