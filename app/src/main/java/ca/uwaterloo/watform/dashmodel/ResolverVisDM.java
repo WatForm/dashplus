@@ -355,7 +355,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // must be a DashRef (no other kind of
             // value can be primed)
             if (!(newExpr instanceof DashRef)) cantPrimeNonDynamicVarError(unaryExpr);
-            else if (isIntVar(((DashRef) newExpr).name)) cantPrimeExternalVarError(newExpr);
+            else if (isEnvVar(((DashRef) newExpr).name)) cantPrimeExternalVarError(newExpr);
         }
         // can't use a withSub here
         // because this is a parent class
