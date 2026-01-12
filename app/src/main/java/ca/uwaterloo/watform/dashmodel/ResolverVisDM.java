@@ -35,7 +35,6 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashast.DashStrings.DashRefKind;
@@ -56,27 +55,13 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     // of state Expr itself or is parent of Expr
     // needed for context of expr being resolved
     private String sfqn;
-    private List<String> declared_sig_names;
 
     public ResolverVisDM() {
         super();
-        setDeclaredSigs();
     }
 
     public ResolverVisDM(DashFile d) {
         super(d);
-        setDeclaredSigs();
-    }
-
-    private void setDeclaredSigs() {
-        declared_sig_names = new ArrayList<String>();
-        for (AlloySigPara p : this.getParas(AlloySigPara.class)) {
-            for (AlloyQnameExpr q : p.qnames) {
-                for (AlloyVarExpr v : q.vars) {
-                    declared_sig_names.add(v.label);
-                }
-            }
-        }
     }
 
     private void inputChecks(AlloyExpr expr, String sfqn) {
@@ -184,7 +169,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // if already a sig in Alloy part of model
             // can't declare it again
             // replace this when jack writes a method in AlloyModel for this
-            if (declared_sig_names.contains(v)) {
+            if (this.containsId(v)) {
                 return varExpr;
             }
             // otherwise, look for matches in Dash model var decls
