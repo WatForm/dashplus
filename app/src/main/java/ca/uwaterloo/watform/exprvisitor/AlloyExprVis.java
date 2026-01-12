@@ -16,6 +16,9 @@ public interface AlloyExprVis<T> {
     // ones from Dash
     T visit(DashRef dashRef);
 
+    // ones from Dash
+    T visit(DashParam dashParam);
+
     // Abstract ones that need implementation in extensions
     T visit(AlloyBinaryExpr binExpr);
 

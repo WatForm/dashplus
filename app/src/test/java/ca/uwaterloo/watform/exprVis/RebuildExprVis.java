@@ -81,4 +81,9 @@ public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
         return null;
     }
 
+    @Override
+    public AlloyExpr visit(DashParam dashParam) {
+        return null;
+    }
+
 }

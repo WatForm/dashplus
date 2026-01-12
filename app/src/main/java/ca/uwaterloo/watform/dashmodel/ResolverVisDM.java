@@ -225,8 +225,8 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         else m_params = varParams(m);
 
         // parameters from enclosing state of this element
-        List<AlloyExpr> sfqn_param_vals = mapBy(stateParams(sfqn), i -> i.asAlloyVar());
-        List<AlloyExpr> m_param_vals = mapBy(m_params, i -> i.asAlloyVar());
+        List<? extends AlloyExpr> sfqn_param_vals = stateParams(sfqn);
+        List<? extends AlloyExpr> m_param_vals = m_params;
         List<? extends AlloyExpr> final_param_vals = new ArrayList<AlloyExpr>();
 
         // v_param_vals is the parameter expressions (as Expr) provided
@@ -337,16 +337,6 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     }
 
     // visitor instance
-
-    /*
-    @Override
-    public AlloyExpr visit(AlloyExpr expr) {
-        if (DashRef.class.isInstance(expr))
-            return this.visitDashRef((DashRef)expr);
-        else
-            return expr.accept((ResolverVisDM)this);
-    }
-    */
 
     @Override
     public AlloyExpr visit(AlloyBinaryExpr binExpr) {
@@ -509,6 +499,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     }
     ;
 
+    @Override
+    public AlloyExpr visit(DashParam dashParam) {
+        throw ImplementationError.methodShouldNotBeCalled("there should not be any DashParams in the parsed input");
+    }
     // errors methods cannot be grouped in a subclass
     // or be static because they reference attributes
     // of the class

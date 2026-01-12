@@ -72,9 +72,4 @@ public class DashParam extends AlloyExpr {
         // "+this.getClass());
     }
 
-    /*
-    public <T> T accept(DashExprVis<T> visitor) {
-        return visitor.visit(this);
-    }
-    */
 }
