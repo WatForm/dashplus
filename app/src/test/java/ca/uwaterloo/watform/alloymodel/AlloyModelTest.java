@@ -191,7 +191,7 @@ public class AlloyModelTest {
 
     @Test
     @Order(9)
-    @DisplayName("AlloyModel.declaredIds")
+    @DisplayName("AlloyModel.declaredIds (1)")
     public void test9() {
         String s1 = "s1";
         String s2 = "s2";
@@ -248,5 +248,22 @@ public class AlloyModelTest {
         assertTrue(alloyModel.containsId(s5));
         assertTrue(alloyModel.containsId(f1));
         assertTrue(alloyModel.containsId(f2));
+    }
+
+    @Test
+    @Order(10)
+    @DisplayName("AlloyModel.declaredIds (2)")
+    public void test10() {
+        String s1 = "Chairs";
+        String s2 = "Players";
+
+        AlloySigPara sig1 =
+                new AlloySigPara(
+                        List.of(new AlloyQnameExpr(s1), new AlloyQnameExpr(s2)), new AlloyBlock());
+        AlloyFile alloyFile = new AlloyFile(sig1);
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+
+        assertTrue(alloyModel.containsId(s1));
+        assertTrue(alloyModel.containsId(s2));
     }
 }
