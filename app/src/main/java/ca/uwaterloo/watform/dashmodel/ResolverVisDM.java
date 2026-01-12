@@ -32,7 +32,7 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
+import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.dashast.*;
@@ -165,8 +165,13 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         // of _resolved_ param expr 
         // but it could still need to be added to
 
+        assert(varExpr instanceof AlloyQnameExpr);
+
         String v = varExpr.label;
-        
+        // HERE
+        System.out.println(varExpr);
+        System.out.println(v_param_vals);
+        System.out.println(this.containsId(v));
 
         // first find the possible matches in the table for this
         // name v (could be state/event/var/buffer)
@@ -342,7 +347,11 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     public AlloyExpr visit(AlloyBinaryExpr binExpr) {
         // can't use a withLeft, withRight here
         // because this is a parent class
+        if (!this.supportedBinaryExpr(binExpr))
+            DashModelErrors.unsupportedExpr(binExpr.pos, binExpr.getClass().getSimpleName(), binExpr.toString());
         return binExpr.rebuild(this.visit(binExpr.left), this.visit(binExpr.right));
+
+
     }
     ;
 
@@ -357,6 +366,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             }
         }
 
+        if (!this.supportedUnaryExpr(unaryExpr))
+            DashModelErrors.unsupportedExpr(unaryExpr.pos, unaryExpr.getClass().getSimpleName(), unaryExpr.toString());
+
+        // otherwise we visit the sub expression
         AlloyExpr newExpr = this.visit(unaryExpr.sub);
 
         if (unaryExpr.op == AlloyStrings.PRIME) {
@@ -374,6 +387,15 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
     @Override
     public AlloyExpr visit(AlloyVarExpr varExpr) {
+
+        if (!(varExpr instanceof AlloyQnameExpr)) {
+            if (this.supportedBuiltinVarExpr(varExpr)) 
+                return varExpr;
+            if (! (varExpr instanceof AlloyQnameExpr))
+                // throws exception
+                DashModelErrors.unsupportedExpr(varExpr.pos, varExpr.getClass().getSimpleName(), varExpr.toString());
+        }
+
         // var that came with no param values
         String v = varExpr.label;
         

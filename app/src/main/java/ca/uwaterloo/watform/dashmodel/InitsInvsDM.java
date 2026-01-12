@@ -7,7 +7,7 @@ import ca.uwaterloo.watform.dashast.DashFile;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InitsInvsDM extends AlloyModel {
+public class InitsInvsDM extends BaseDM {
 
     protected List<AlloyExpr> initsR = new ArrayList<AlloyExpr>();
     protected List<AlloyExpr> invsR = new ArrayList<AlloyExpr>();
@@ -17,7 +17,7 @@ public class InitsInvsDM extends AlloyModel {
     }
 
     protected InitsInvsDM(DashFile d) {
-        super((AlloyFile) d);
+        super(d);
     }
 
     public List<AlloyExpr> initsR() {

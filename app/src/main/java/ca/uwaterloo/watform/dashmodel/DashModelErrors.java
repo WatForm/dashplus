@@ -29,4 +29,9 @@ public class DashModelErrors {
     public static void chopPrefixFromFQNwithNoPrefix(String s) throws ImplementationError {
         throw new ImplementationError(chopPrefixFromFQNwithNoPrefixMsg + s);
     }
+
+    public static void unsupportedExpr(Pos pos, String cls, String n) throws Reporter.ErrorUser {
+        throw new Reporter.ErrorUser(
+                pos, "Expression not supported in Dash: " + n + " which is "+cls);
+    }
 }
