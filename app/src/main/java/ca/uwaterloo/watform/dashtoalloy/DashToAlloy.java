@@ -1,4 +1,4 @@
-// usage: AlloyModel am = new DashToAlloy(dm).translate()
+// usage: AlloyModel am = new DashToAlloy(dm, isElectrum).translate()
 
 package ca.uwaterloo.watform.dashtoalloy;
 
@@ -7,8 +7,11 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 
 public class DashToAlloy extends SpaceSignatures {
 
+    public DashToAlloy(DashModel dm, boolean isElectrum) {
+        super(dm, isElectrum);
+    }
     public DashToAlloy(DashModel dm) {
-        super(dm);
+        super(dm, false);
     }
 
     public AlloyModel translate() {

@@ -61,6 +61,10 @@ public final class AlloyLetExpr extends AlloyExpr {
         return visitor.visit(this);
     }
 
+    public AlloyLetExpr rebuild(AlloyExpr body) {
+        return new AlloyLetExpr(this.pos, this.asns, body);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(this.asns, this.body);

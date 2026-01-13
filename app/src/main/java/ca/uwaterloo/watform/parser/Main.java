@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.parser;
 
 import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.*;
@@ -71,7 +72,7 @@ public class Main implements Callable<Integer> {
             for (Path filePath : inputPaths) {
                 Reporter.INSTANCE.reset();
                 Reporter.INSTANCE.setFilePath(filePath);
-                DashModel d = (DashModel) parseToModel(filePath);
+                DashModel dm = (DashModel) parseToModel(filePath);
                 // tmp debugging start
                 //
                 // tmp debugging end
@@ -79,6 +80,7 @@ public class Main implements Callable<Integer> {
                 //        AlloyInterface.executeCommand(parseToModel(path), this.commandIndex);
                 // System.out.println(solution.toString());
                 Reporter.INSTANCE.print();
+                System.out.println(new DashToAlloy(dm).translate());
             }
             return 0;
 

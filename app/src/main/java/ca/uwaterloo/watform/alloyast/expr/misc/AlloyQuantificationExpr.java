@@ -96,6 +96,10 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
         return Objects.hash(this.quant, this.decls, this.body);
     }
 
+    public AlloyQuantificationExpr rebuild(AlloyExpr body) {
+        return new AlloyQuantificationExpr(this.quant, this.decls, body);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

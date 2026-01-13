@@ -167,10 +167,6 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         assert (varExpr instanceof AlloyQnameExpr);
 
         String v = varExpr.label;
-        // HERE
-        System.out.println(varExpr);
-        System.out.println(v_param_vals);
-        System.out.println(this.containsId(v));
 
         // first find the possible matches in the table for this
         // name v (could be state/event/var/buffer)
@@ -378,6 +374,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         }
         // can't use a withSub here
         // because this is a parent class
+        // puts the PRIME possibly on the outside of a DashRef
         return unaryExpr.rebuild(newExpr);
     }
     ;

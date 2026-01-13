@@ -75,7 +75,7 @@ public class GeneralUtil {
         System.out.println(s);
     }
 
-    public static <T> List<T> newListWith(List<T> ll, T s) {
+    public static <T> List<T> newListWithOneMore(List<T> ll, T s) {
         List<T> x = new ArrayList<T>(ll);
         x.add(s);
         return x;
