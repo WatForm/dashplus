@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.tlaunops.TlaSubsetUnary;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +64,8 @@ public class TypeOKDefn {
 
         if (vars.contains(CONF))
             exps.add(
-                    // _conf \subseteq _all_conf
-                    CONF().SUBSETEQ(TlaAppl(typeDefn(CONF))));
+                    // _conf \in SUBSET _all_conf
+                    CONF().IN(new TlaSubsetUnary(TlaAppl(typeDefn(CONF)))));
 
         if (vars.contains(STABLE))
             exps.add(
