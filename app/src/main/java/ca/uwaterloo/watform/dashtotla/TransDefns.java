@@ -38,7 +38,7 @@ public class TransDefns {
 
             tlaModel.addComment("parameterized formulae to check if transitions are enabled");
             // _enabled_<transFQN> == <body>
-            transFQNs.forEach(x -> TransenabledDefn(x, vars, dashModel, tlaModel));
+            transFQNs.forEach(x -> TransEnabledDefn(x, vars, dashModel, tlaModel));
 
             tlaModel.addComment("negation of disjunction of enabled-formulae");
             NextIsStableDefn(vars, dashModel, tlaModel);
@@ -112,8 +112,11 @@ public class TransDefns {
             List<TlaAppl> exited =
                     mapBy(dashModel.exited(transFQN), s -> TlaAppl(tlaFQN(s.toString())));
             exps.add(
-                    // _conf' = conf \ {<exited>} union {<entered>}
-                    CONF().PRIME().EQUALS(CONF().DIFF(TlaSet(exited)).UNION(TlaSet(entered))));
+                    // _conf' = conf \ (union <exited>...) union {<entered>}
+                    CONF().PRIME()
+                            .EQUALS(
+                                    CONF().DIFF(repeatedUnion(exited))
+                                            .UNION(repeatedUnion(entered))));
         }
 
         if (vars.contains(SCOPES_USED))
@@ -131,7 +134,7 @@ public class TransDefns {
         // TODO add stuff
     }
 
-    public static void TransenabledDefn(
+    public static void TransEnabledDefn(
             String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
         tlaModel.addDefn(
                 TlaDefn(

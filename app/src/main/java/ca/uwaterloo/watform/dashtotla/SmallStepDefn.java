@@ -19,7 +19,7 @@ public class SmallStepDefn {
 
         List<String> transFQNs = AuxDashAccessors.getTransitionNames(dashModel);
         List<TlaAppl> preTransitions = mapBy(transFQNs, tFQN -> TlaAppl(preTransTlaFQN(tFQN)));
-        List<TlaAppl> transitions = mapBy(transFQNs, tFQN -> TlaAppl(preTransTlaFQN(tFQN)));
+        List<TlaAppl> transitions = mapBy(transFQNs, tFQN -> TlaAppl(tlaFQN(tFQN)));
 
         tlaModel.addDefn(
                 // _some_transition == \/ <ti> ...
