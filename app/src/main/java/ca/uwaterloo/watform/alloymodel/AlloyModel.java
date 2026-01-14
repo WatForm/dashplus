@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloymodel;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -8,6 +10,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
+import ca.uwaterloo.watform.dashast.DashPara;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.io.StringWriter;
@@ -38,7 +41,12 @@ public class AlloyModel {
     }
 
     private AlloyModel(AlloyModel other) {
-        this.alloyFile = other.alloyFile;
+        this.alloyFile =
+                new AlloyFile(
+                        other.alloyFile.pos,
+                        filterBy(
+                                other.alloyFile.paras,
+                                alloyPara -> !(alloyPara instanceof DashPara)));
         this.modules = other.modules.copy();
         this.imports = other.imports;
         this.macros = other.macros.copy();

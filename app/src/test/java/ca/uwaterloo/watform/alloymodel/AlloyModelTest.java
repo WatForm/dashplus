@@ -11,6 +11,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
+import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -310,5 +311,15 @@ public class AlloyModelTest {
 
         System.out.println(alloyModel);
         System.out.println(alloyModel2);
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("AlloyModel.copy(2)")
+    public void test12() {
+        Path p = Paths.get("src/test/resources/dashmodel/entered5.dsh");
+        DashModel dm = (DashModel) parseToModel(p);
+        assertTrue(!dm.toString().strip().isEmpty());
+        assertTrue(dm.copy().toString().strip().isEmpty());
     }
 }
