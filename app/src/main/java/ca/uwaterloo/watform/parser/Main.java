@@ -80,6 +80,7 @@ public class Main implements Callable<Integer> {
                 //        AlloyInterface.executeCommand(parseToModel(path), this.commandIndex);
                 // System.out.println(solution.toString());
                 Reporter.INSTANCE.print();
+                System.out.println("translation to Alloy ----");
                 System.out.println(new DashToAlloy(dm).translate());
             }
             return 0;

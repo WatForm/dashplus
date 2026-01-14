@@ -16,8 +16,8 @@ public class DashToAlloy extends SpaceSignatures {
     }
 
     public AlloyModel translate() {
-        this.am = new AlloyModel();
-        // TODO: copy all Alloy stuff from dm into am
+        // copy all Alloy stuff from dm into am
+        this.am = dm.copy();
         this.addSpaceSignatures();
         return this.am;
     }
