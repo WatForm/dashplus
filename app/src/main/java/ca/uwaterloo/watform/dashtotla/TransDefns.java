@@ -82,7 +82,7 @@ public class TransDefns {
     public static void PreTransDefn(
             String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
-        TlaAppl fromState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).toString()));
+        TlaAppl fromState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).name));
 
         List<TlaExp> exps = new ArrayList<>();
 
