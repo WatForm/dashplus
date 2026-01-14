@@ -10,6 +10,7 @@ public class DashToAlloy extends SpaceSignatures {
     public DashToAlloy(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
     }
+
     public DashToAlloy(DashModel dm) {
         super(dm, false);
     }

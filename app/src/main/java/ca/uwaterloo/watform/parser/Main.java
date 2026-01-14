@@ -1,9 +1,9 @@
 package ca.uwaterloo.watform.parser;
 
 import static ca.uwaterloo.watform.utils.ParserUtil.*;
-import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.utils.*;
 import java.nio.file.Path;
 import java.util.List;

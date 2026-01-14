@@ -266,4 +266,49 @@ public class AlloyModelTest {
         assertTrue(alloyModel.containsId(s1));
         assertTrue(alloyModel.containsId(s2));
     }
+
+    @Test
+    @Order(11)
+    @DisplayName("AlloyModel.copy")
+    public void test11() {
+        String s1 = "s1";
+        String f1 = "f1";
+        String s2 = "s2";
+
+        AlloyDecl decl1 = new AlloyDecl(new AlloyQnameExpr(f1), new AlloyQnameExpr("F1"));
+        AlloySigPara sig1 = new AlloySigPara(s1, List.of(decl1), new AlloyBlock());
+        AlloySigPara sig2 = new AlloySigPara(s2);
+        AlloyFile alloyFile = new AlloyFile(List.of(sig1, sig2));
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+
+        assertTrue(alloyModel.containsId(s1));
+        assertTrue(alloyModel.containsId(f1));
+        assertTrue(alloyModel.containsId(s2));
+        assertTrue(alloyModel.getPara(AlloySigPara.class, s1) != null);
+        assertTrue(alloyModel.getPara(AlloySigPara.class, s2) != null);
+
+        AlloyModel alloyModel2 = alloyModel.copy();
+        assertTrue(alloyModel2.containsId(s1));
+        assertTrue(alloyModel2.containsId(f1));
+        assertTrue(alloyModel2.containsId(s2));
+        assertTrue(alloyModel2.getPara(AlloySigPara.class, s1) != null);
+        assertTrue(alloyModel2.getPara(AlloySigPara.class, s2) != null);
+
+        String f2 = "f2";
+        String s3 = "s3";
+
+        AlloyDecl decl2 = new AlloyDecl(new AlloyQnameExpr(f2), new AlloyQnameExpr("F2"));
+        AlloySigPara sig3 = new AlloySigPara(new AlloyQnameExpr(s3), List.of(decl2));
+        alloyModel2.addPara(sig3);
+
+        assertTrue(alloyModel2.containsId(s3));
+        assertTrue(alloyModel2.containsId(f2));
+        assertTrue(alloyModel2.getPara(AlloySigPara.class, s3) != null);
+        assertFalse(alloyModel.containsId(s3));
+        assertFalse(alloyModel.containsId(f2));
+        assertThrows(AlloyModelError.class, () -> alloyModel.getPara(AlloySigPara.class, s3));
+
+        System.out.println(alloyModel);
+        System.out.println(alloyModel2);
+    }
 }

@@ -39,6 +39,15 @@ public final class AlloyModelTable<T extends AlloyPara> {
         this.addParas(extractItemsOfClass(alloyFile.paras, typeToken), new ArrayList<>());
     }
 
+    private AlloyModelTable(AlloyModelTable<T> other) {
+        this.mp = new HashMap<String, T>(other.mp);
+        this.li = new ArrayList<>(other.li);
+    }
+
+    public AlloyModelTable<T> copy() {
+        return new AlloyModelTable<>(this);
+    }
+
     /**
      * @param para
      * @param additionalParas: need to keep a list of paras added to AlloyModel, so they can be

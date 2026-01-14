@@ -31,10 +31,30 @@ public class AlloyModel {
     private final AlloyModelTable<AlloyCmdPara> commands;
 
     private final List<AlloyPara> additionalParas;
-    private final Set<String> declaredIds = new HashSet<>();
+    private final Set<String> declaredIds;
 
     public AlloyModel() {
         this(new AlloyFile(Collections.emptyList()));
+    }
+
+    private AlloyModel(AlloyModel other) {
+        this.alloyFile = other.alloyFile;
+        this.modules = other.modules.copy();
+        this.imports = other.imports;
+        this.macros = other.macros.copy();
+        this.sigs = other.sigs.copy();
+        this.enums = other.enums.copy();
+        this.facts = other.facts.copy();
+        this.funs = other.funs.copy();
+        this.preds = other.preds.copy();
+        this.asserts = other.asserts.copy();
+        this.commands = other.commands.copy();
+        this.additionalParas = new ArrayList<>(other.additionalParas);
+        this.declaredIds = new HashSet<>(other.declaredIds);
+    }
+
+    public AlloyModel copy() {
+        return new AlloyModel(this);
     }
 
     private void addId(AlloySigPara sig) {
@@ -66,6 +86,7 @@ public class AlloyModel {
         this.commands = new AlloyModelTable<>(alloyFile, AlloyCmdPara.class);
 
         this.additionalParas = new ArrayList<>();
+        this.declaredIds = new HashSet<>();
 
         sigs.getAllParas().stream().forEach(sig -> addId(sig));
     }
