@@ -75,7 +75,7 @@ public class TypeOKDefn {
         if (vars.contains(SCOPES_USED))
             exps.add(
                     // _scope_used \subseteq _all_scope_used
-                    SCOPES_USED().SUBSETEQ(TlaAppl(typeDefn(SCOPES_USED))));
+                    SCOPES_USED().IN(new TlaSubsetUnary(TlaAppl(typeDefn(SCOPES_USED)))));
 
         if (vars.contains(TRANS_TAKEN))
             exps.add(
