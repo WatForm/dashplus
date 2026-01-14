@@ -204,9 +204,9 @@ public class InitializeDM extends PredsDM {
                     // if already a sig in Alloy part of model
                     // can't declare it again
                     // TODO: add this back?????
-                    //if (this.containsId(x))
-                        // raises an exception
-                        //DashModelErrors.duplicateName(v.pos, "var", x);
+                    // if (this.containsId(x))
+                    // raises an exception
+                    // DashModelErrors.duplicateName(v.pos, "var", x);
                     String vfqn = DashFQN.fqn(sfqn, x);
                     // v.typ will have to be resolved later
                     this.addVar(v.pos, vfqn, v.kind, newParams, v.typ);
