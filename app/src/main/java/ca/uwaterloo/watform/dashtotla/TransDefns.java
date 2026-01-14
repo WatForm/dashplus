@@ -44,13 +44,17 @@ public class TransDefns {
             NextIsStableDefn(vars, dashModel, tlaModel);
         }
 
+        System.out.println("translated enabled definitions");
+
         transFQNs.forEach(
                 transFQN -> {
                     // pre, post, and body
+
                     tlaModel.addComment("Translation of transition " + transFQN);
                     PreTransDefn(transFQN, vars, dashModel, tlaModel);
                     PostTransDefn(transFQN, vars, dashModel, tlaModel);
                     TransDefn(transFQN, tlaModel);
+                    System.out.println("translated transition " + transFQN);
                 });
     }
 
@@ -78,7 +82,7 @@ public class TransDefns {
     public static void PreTransDefn(
             String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
-        TlaAppl fromState = TlaAppl(dashModel.entered(transFQN).toString());
+        TlaAppl fromState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).toString()));
 
         List<TlaExp> exps = new ArrayList<>();
 
@@ -103,8 +107,10 @@ public class TransDefns {
                     TRANS_TAKEN().PRIME().EQUALS(TlaAppl(takenTransTlaFQN(transFQN))));
 
         if (vars.contains(CONF)) {
-            List<TlaAppl> entered = mapBy(dashModel.entered(transFQN), s -> TlaAppl(s.toString()));
-            List<TlaAppl> exited = mapBy(dashModel.exited(transFQN), s -> TlaAppl(s.toString()));
+            List<TlaAppl> entered =
+                    mapBy(dashModel.entered(transFQN), s -> TlaAppl(tlaFQN(s.toString())));
+            List<TlaAppl> exited =
+                    mapBy(dashModel.exited(transFQN), s -> TlaAppl(tlaFQN(s.toString())));
             exps.add(
                     // _conf' = conf \ {<exited>} union {<entered>}
                     CONF().PRIME().EQUALS(CONF().DIFF(TlaSet(exited)).UNION(TlaSet(entered))));

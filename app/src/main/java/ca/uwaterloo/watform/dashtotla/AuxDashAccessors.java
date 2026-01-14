@@ -1,9 +1,8 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import static ca.uwaterloo.watform.utils.GeneralUtil.filterBy;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AuxDashAccessors {
@@ -36,11 +35,13 @@ public class AuxDashAccessors {
     }
 
     public static String getSourceOfTrans(String transFQN, DashModel dm) {
-        return ""; // dm.tt.get(transFQN).fromP.toString();
+        return dm.fromR(transFQN).toString();
     }
 
     public static List<String> initialEntered(DashModel dm) {
-        return new ArrayList<>(); // mapBy(dashModel.st.getRootLeafStatesEntered(), x ->
+        return mapBy(
+                dm.rootLeafStatesEntered(),
+                x -> x.toString()); // mapBy(dashModel.st.getRootLeafStatesEntered(), x ->
         // x.toString());
     }
 

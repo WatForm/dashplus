@@ -13,23 +13,29 @@ public class DashToTla {
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
         StdLibDefns.translate(dashModel, tlaModel);
+        System.out.println("translated libraries");
+
         List<String> vars = StandardVars.translate(dashModel, tlaModel, optimize);
+        System.out.println("translated variables");
 
         tlaModel.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants");
         StateDefns.translate(vars, dashModel, tlaModel);
+        System.out.println("translated states");
 
         tlaModel.addComment(
                 "string literal representations of transitions taken, which are the values taken by the "
                         + EVENTS
                         + " variable");
         EventDefns.translate(vars, dashModel, tlaModel);
+        System.out.println("translated events");
 
         tlaModel.addComment(
                 "string literal representations of transitions taken, which are the values taken by the "
                         + TRANS_TAKEN
                         + " variable");
         TransDefns.translate(vars, dashModel, tlaModel);
+        System.out.println("translated transitions");
 
         tlaModel.addComment("Small step definition");
         SmallStepDefn.translate(vars, dashModel, tlaModel);

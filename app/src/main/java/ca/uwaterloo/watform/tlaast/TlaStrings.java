@@ -35,7 +35,7 @@ public final class TlaStrings extends CommonStrings {
     public static final String SET_END = "}";
     public static final String SET_IN = "\\in";
     public static final String SET_NOT_IN = "\\notin";
-    public static final String SET_INTERSECTION = "\\intersect";
+    public static final String SET_INTERSECTION = "\\intersection";
     public static final String SET_UNION = "\\union";
     public static final String SET_SUBSET_EQ = "\\subseteq";
     public static final String SET_DIFFERENCE = "\\";
