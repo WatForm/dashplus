@@ -99,7 +99,15 @@ public class TransDefns {
                     // _conf \intersection <fromState> \= {}
                     CONF().INTERSECTION(fromState).NOT_EQUALS(NULL_SET()));
 
-        // TODO add events and scope
+        if (vars.contains(SCOPES_USED)) {
+            // has a scope orthogonal to the scopes used
+            List<TlaAppl> nonOrthogonal =
+                    mapBy(
+                            dashModel.nonOrthogonalScopesOf(transFQN),
+                            dashRef -> TlaAppl(tlaFQN(dashRef.name)));
+            // ~ (<non-orthogonal-scope-i> \in _scopes_used)
+            nonOrthogonal.forEach(scope -> exps.add(TlaNot(scope.IN(SCOPES_USED()))));
+        }
 
         tlaModel.addDefn(TlaDefn(preTransTlaFQN(transFQN), repeatedAnd(exps)));
     }
