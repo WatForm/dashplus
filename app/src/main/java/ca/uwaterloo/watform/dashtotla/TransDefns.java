@@ -108,11 +108,10 @@ public class TransDefns {
 
         if (vars.contains(CONF)) {
             List<TlaAppl> entered =
-                    mapBy(dashModel.entered(transFQN), s -> TlaAppl(tlaFQN(s.toString())));
-            List<TlaAppl> exited =
-                    mapBy(dashModel.exited(transFQN), s -> TlaAppl(tlaFQN(s.toString())));
+                    mapBy(dashModel.entered(transFQN), s -> TlaAppl(tlaFQN(s.name)));
+            List<TlaAppl> exited = mapBy(dashModel.exited(transFQN), s -> TlaAppl(tlaFQN(s.name)));
             exps.add(
-                    // _conf' = conf \ (union <exited>...) union {<entered>}
+                    // _conf' = conf \ (union <exited>...) union (union <entered>...)
                     CONF().PRIME()
                             .EQUALS(
                                     CONF().DIFF(repeatedUnion(exited))
@@ -128,6 +127,11 @@ public class TransDefns {
             exps.add(
                     // todo fix this
                     TlaUnchanged(STABLE()));
+
+        if (vars.contains(EVENTS))
+            exps.add(
+                    // todo fix this
+                    TlaUnchanged(EVENTS()));
 
         tlaModel.addDefn(TlaDefn(postTransTlaFQN(transFQN), repeatedAnd(exps)));
 

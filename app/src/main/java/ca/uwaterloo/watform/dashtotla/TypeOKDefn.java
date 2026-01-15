@@ -85,7 +85,9 @@ public class TypeOKDefn {
         if (vars.contains(EVENTS))
             exps.add(
                     // _events \in _environmental_events union _internal_events
-                    EVENTS().IN(ENVIRONMENTAL_EVENTS().UNION(INTERNAL_EVENTS())));
+                    EVENTS().IN(
+                                    new TlaSubsetUnary(
+                                            ENVIRONMENTAL_EVENTS().UNION(INTERNAL_EVENTS()))));
 
         tlaModel.addDefn(TlaDefn(TYPE_OK, repeatedAnd(exps)));
     }
