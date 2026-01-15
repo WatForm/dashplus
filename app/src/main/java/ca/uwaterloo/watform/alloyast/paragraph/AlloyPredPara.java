@@ -110,21 +110,10 @@ public final class AlloyPredPara extends AlloyPara {
     }
 
     @Override
-    public Optional<String> getName() {
-        assert (null != this.qname
-                && !this.qname.toString().isBlank()); // this check is done already in ctor
-        StringBuilder sb = new StringBuilder();
-        if (!this.sigRef.isEmpty()) {
-            ((AlloyVarExpr) this.sigRef.get()).toString(sb, 0);
-            sb.append(AlloyStrings.DOT);
-        }
-        this.qname.toString(sb, 0);
-        if (!this.arguments.isEmpty()) {
-            sb.append(AlloyStrings.LBRACK);
-            ASTNode.join(sb, 0, this.arguments, AlloyStrings.COMMA + AlloyStrings.SPACE);
-            sb.append(AlloyStrings.RBRACK);
-        }
-        return Optional.of(sb.toString());
+    public AlloyId getId() {
+        return new AlloyId(
+                (sigRef.isPresent() ? sigRef.get().toString() + DOT : "") + qname,
+                arguments.stream().map(decl -> decl.expr.toString()).toList());
     }
 
     @Override

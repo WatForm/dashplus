@@ -4,13 +4,13 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.AlloyId;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * @param <T> The specific type of AlloyPara being stored, e.g., AlloySigPara, AlloyFactPara.
  */
 public final class AlloyModelTable<T extends AlloyPara> {
-    private final Map<String, T> mp;
+    private final Map<AlloyId, T> mp;
     private final List<T> li; // list for holding paras with no name
 
     // final here means the reference cannot change
@@ -40,7 +40,7 @@ public final class AlloyModelTable<T extends AlloyPara> {
     }
 
     private AlloyModelTable(AlloyModelTable<T> other) {
-        this.mp = new HashMap<String, T>(other.mp);
+        this.mp = new HashMap<AlloyId, T>(other.mp);
         this.li = new ArrayList<>(other.li);
     }
 
@@ -67,17 +67,17 @@ public final class AlloyModelTable<T extends AlloyPara> {
             para = castedExpandedSig;
         }
 
-        Optional<String> name = para.getName();
-        if (name == null || name.isEmpty() || name.get().isBlank()) {
-            // relying on short-circuiting to not throw NoSuchElementException
+        AlloyId alloyId = para.getId();
+        if (alloyId.name == null || alloyId.name.isBlank()) {
             this.li.add(para);
         } else {
             // AlloyFactPara names are allowed to overlap
-            if (!(para instanceof AlloyFactPara) && this.mp.containsKey(name.get())) {
-                throw AlloyModelError.duplicateName(this.mp.get(name.get()).pos, para.pos);
+            if (!(para instanceof AlloyFactPara) && this.mp.containsKey(alloyId)) {
+                throw AlloyModelError.duplicateName(this.mp.get(alloyId).pos, para.pos);
             }
-            this.mp.put(name.get(), para);
+            this.mp.put(alloyId, para);
         }
+
         additionalParas.add(para);
     }
 
@@ -97,13 +97,17 @@ public final class AlloyModelTable<T extends AlloyPara> {
      * @return An Optional containing the para if found, or Optional.empty() if not.
      */
     public T getPara(String name) {
-        if (name == null || name.isEmpty() || name.isBlank()) {
+        return getPara(new AlloyId(name));
+    }
+
+    public T getPara(AlloyId alloyId) {
+        if (alloyId == null || alloyId.name == null || alloyId.name.isBlank()) {
             throw AlloyModelImplError.lookUpWithNoName();
         }
-        if (!this.mp.containsKey(name)) {
-            throw AlloyModelError.paraDNE(name);
+        if (!this.mp.containsKey(alloyId)) {
+            throw AlloyModelError.paraDNE(alloyId.name);
         }
-        return this.mp.get(name);
+        return this.mp.get(alloyId);
     }
 
     /**
@@ -131,7 +135,7 @@ public final class AlloyModelTable<T extends AlloyPara> {
      *
      * @return An immutable Set of all string keys from the map.
      */
-    public Set<String> getNames() {
+    public Set<AlloyId> getIds() {
         // Return an unmodifiable view of the key set
         return Collections.unmodifiableSet(this.mp.keySet());
     }
@@ -142,10 +146,14 @@ public final class AlloyModelTable<T extends AlloyPara> {
      * @param name The name to check.
      * @return true if the name is a key in the map, false otherwise.
      */
-    public boolean containsName(String name) {
-        if (name == null || name.isEmpty() || name.isBlank()) {
+    public boolean contains(String name) {
+        return contains(new AlloyId(name));
+    }
+
+    public boolean contains(AlloyId alloyId) {
+        if (alloyId == null || alloyId.name == null || alloyId.name.isBlank()) {
             throw AlloyModelImplError.lookUpWithNoName();
         }
-        return this.mp.containsKey(name);
+        return this.mp.containsKey(alloyId);
     }
 }

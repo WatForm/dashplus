@@ -50,9 +50,9 @@ public class AlloySigParaTest {
         assertEquals(sigABC.fields, expanded.get(2).fields);
         assertEquals(sigABC.block, expanded.get(2).block);
 
-        assertDoesNotThrow(() -> expanded.get(0).getName());
-        assertDoesNotThrow(() -> expanded.get(1).getName());
-        assertDoesNotThrow(() -> expanded.get(2).getName());
+        assertDoesNotThrow(() -> expanded.get(0).getId());
+        assertDoesNotThrow(() -> expanded.get(1).getId());
+        assertDoesNotThrow(() -> expanded.get(2).getId());
     }
 
     @Test
@@ -125,9 +125,9 @@ public class AlloySigParaTest {
         assertEquals(new AlloyQnameExpr("F34"), expanded.get(2).fields.get(2).expr);
         assertEquals(new AlloyQnameExpr("F34"), expanded.get(2).fields.get(3).expr);
 
-        assertDoesNotThrow(() -> expanded.get(0).getName());
-        assertDoesNotThrow(() -> expanded.get(1).getName());
-        assertDoesNotThrow(() -> expanded.get(2).getName());
+        assertDoesNotThrow(() -> expanded.get(0).getId());
+        assertDoesNotThrow(() -> expanded.get(1).getId());
+        assertDoesNotThrow(() -> expanded.get(2).getId());
     }
 
     @Test

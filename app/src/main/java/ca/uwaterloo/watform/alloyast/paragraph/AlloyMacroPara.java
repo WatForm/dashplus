@@ -131,8 +131,8 @@ public final class AlloyMacroPara extends AlloyPara {
     }
 
     @Override
-    public Optional<String> getName() {
-        return Optional.of(this.qname.toString());
+    public AlloyId getId() {
+        return new AlloyId(qname.toString());
     }
 
     @Override

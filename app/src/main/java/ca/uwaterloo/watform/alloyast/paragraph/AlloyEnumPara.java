@@ -9,10 +9,10 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.ASTNode;
 import ca.uwaterloo.watform.utils.Pos;
 import ca.uwaterloo.watform.utils.PrintContext;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public final class AlloyEnumPara extends AlloyPara {
     public final boolean isPrivate;
@@ -61,8 +61,17 @@ public final class AlloyEnumPara extends AlloyPara {
     }
 
     @Override
-    public Optional<String> getName() {
-        return Optional.of(this.qname.toString());
+    public AlloyId getId() {
+        return new AlloyId(qname.toString());
+    }
+
+    public List<AlloyId> getAllIds() {
+        List<AlloyId> li = new ArrayList<>();
+        li.add(getId());
+        for (AlloyQnameExpr qname : qnames) {
+            li.add(new AlloyId(qname.toString()));
+        }
+        return li;
     }
 
     @Override

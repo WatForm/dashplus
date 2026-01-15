@@ -169,7 +169,7 @@ public class DashState extends DashPara implements DashStateItem {
     }
 
     @Override
-    public Optional<String> getName() {
-        return Optional.of(name);
+    public AlloyId getId() {
+        return new AlloyId(name);
     }
 }
