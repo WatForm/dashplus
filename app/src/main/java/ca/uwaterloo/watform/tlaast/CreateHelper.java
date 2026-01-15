@@ -98,6 +98,14 @@ public class CreateHelper {
     	return new Tla(op);
     }
     */
+    public static TlaSubsetUnary TlaSubsetUnary(TlaExp op) {
+        return new TlaSubsetUnary(op);
+    }
+
+    public static TlaUnionUnary TlaUnionUnary(TlaExp op) {
+        return new TlaUnionUnary(op);
+    }
+
     public static TlaFuncDomain TlaFuncDomain(TlaExp op) {
         return new TlaFuncDomain(op);
     }
@@ -282,4 +290,6 @@ public class CreateHelper {
     public static TlaUnchanged TlaUnchanged(TlaVar... children) {
         return new TlaUnchanged(Arrays.asList(children));
     }
+
+    // misc
 }

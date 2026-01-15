@@ -8,6 +8,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.TlaIfThenElse;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
@@ -65,6 +66,13 @@ public class TransDefns {
         return mapBy(parameters, v -> TlaVar(paramVar(v)));
     }
 
+    public static List<TlaVar> enabledArgs(List<String> vars) {
+
+        // list of arguments for enabledTransition formulae, using the current variables
+        List<String> parameters = filterBy(Arrays.asList(SCOPES_USED, EVENTS), vars::contains);
+        return mapBy(parameters, v -> TlaVar(v));
+    }
+
     public static void NextIsStableDefn(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
         List<TlaAppl> enabledTrans =
@@ -120,13 +128,21 @@ public class TransDefns {
 
         if (vars.contains(SCOPES_USED))
             exps.add(
-                    // TODO fix this
-                    TlaUnchanged(SCOPES_USED()));
+                    // todo fix this
+                    // if next_is_stable, _scopes_used'  = x
+                    // else: if stable then _scopes_used' = y else scopes_used' = z
+                    SCOPES_USED()
+                            .PRIME()
+                            .EQUALS(
+                                    new TlaIfThenElse(
+                                            TlaDecl(NEXT_IS_STABLE, enabledArgs(vars)),
+                                            NULL_SET(),
+                                            new TlaIfThenElse(STABLE(), NULL_SET(), NULL_SET()))));
 
         if (vars.contains(STABLE))
             exps.add(
-                    // todo fix this
-                    TlaUnchanged(STABLE()));
+                    // _stable' = next_is_stable(args)
+                    STABLE().PRIME().EQUALS(TlaDecl(NEXT_IS_STABLE, enabledArgs(vars))));
 
         if (vars.contains(EVENTS))
             exps.add(

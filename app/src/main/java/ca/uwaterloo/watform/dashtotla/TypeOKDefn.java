@@ -75,7 +75,7 @@ public class TypeOKDefn {
         if (vars.contains(SCOPES_USED))
             exps.add(
                     // _scope_used \subseteq _all_scope_used
-                    SCOPES_USED().IN(new TlaSubsetUnary(TlaAppl(typeDefn(SCOPES_USED)))));
+                    SCOPES_USED().IN(TlaSubsetUnary(TlaAppl(typeDefn(SCOPES_USED)))));
 
         if (vars.contains(TRANS_TAKEN))
             exps.add(
@@ -84,10 +84,8 @@ public class TypeOKDefn {
 
         if (vars.contains(EVENTS))
             exps.add(
-                    // _events \in _environmental_events union _internal_events
-                    EVENTS().IN(
-                                    new TlaSubsetUnary(
-                                            ENVIRONMENTAL_EVENTS().UNION(INTERNAL_EVENTS()))));
+                    // _events \in SUBSET (_environmental_events union _internal_events)
+                    EVENTS().IN(TlaSubsetUnary(ENVIRONMENTAL_EVENTS().UNION(INTERNAL_EVENTS()))));
 
         tlaModel.addDefn(TlaDefn(TYPE_OK, repeatedAnd(exps)));
     }
