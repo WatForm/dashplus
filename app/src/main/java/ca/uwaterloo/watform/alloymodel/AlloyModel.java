@@ -1,11 +1,9 @@
 package ca.uwaterloo.watform.alloymodel;
 
+import static ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
@@ -16,16 +14,14 @@ import ca.uwaterloo.watform.utils.ImplementationError;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class AlloyModel {
     private final AlloyFile alloyFile;
     private final AlloyModelTable<AlloyModulePara> modules;
     private final AlloyModelTable<AlloyImportPara> imports;
     private final AlloyModelTable<AlloyMacroPara> macros;
-    private final AlloyModelTable<AlloySigPara> sigs;
+    private final AlloyModelSigTable sigs;
     private final AlloyModelTable<AlloyEnumPara> enums;
     private final AlloyModelTable<AlloyFactPara> facts;
     private final AlloyModelTable<AlloyFunPara> funs;
@@ -34,7 +30,6 @@ public class AlloyModel {
     private final AlloyModelTable<AlloyCmdPara> commands;
 
     private final List<AlloyPara> additionalParas;
-    private final Set<String> declaredIds;
 
     public AlloyModel() {
         this(new AlloyFile(Collections.emptyList()));
@@ -58,26 +53,10 @@ public class AlloyModel {
         this.asserts = other.asserts.copy();
         this.commands = other.commands.copy();
         this.additionalParas = new ArrayList<>(other.additionalParas);
-        this.declaredIds = new HashSet<>(other.declaredIds);
     }
 
     public AlloyModel copy() {
         return new AlloyModel(this);
-    }
-
-    private void addId(AlloySigPara sig) {
-        for (AlloyQnameExpr qname : sig.qnames) {
-            for (AlloyVarExpr var : qname.vars) {
-                declaredIds.add(var.label);
-            }
-        }
-        for (AlloyDecl decl : sig.fields) {
-            for (AlloyQnameExpr qname : decl.qnames) {
-                for (AlloyVarExpr var : qname.vars) {
-                    declaredIds.add(var.label);
-                }
-            }
-        }
     }
 
     public AlloyModel(AlloyFile alloyFile) {
@@ -85,7 +64,7 @@ public class AlloyModel {
         this.modules = new AlloyModelTable<>(alloyFile, AlloyModulePara.class);
         this.imports = new AlloyModelTable<>(alloyFile, AlloyImportPara.class);
         this.macros = new AlloyModelTable<>(alloyFile, AlloyMacroPara.class);
-        this.sigs = new AlloyModelTable<>(alloyFile, AlloySigPara.class);
+        this.sigs = new AlloyModelSigTable(alloyFile);
         this.enums = new AlloyModelTable<>(alloyFile, AlloyEnumPara.class);
         this.facts = new AlloyModelTable<>(alloyFile, AlloyFactPara.class);
         this.funs = new AlloyModelTable<>(alloyFile, AlloyFunPara.class);
@@ -94,9 +73,6 @@ public class AlloyModel {
         this.commands = new AlloyModelTable<>(alloyFile, AlloyCmdPara.class);
 
         this.additionalParas = new ArrayList<>();
-        this.declaredIds = new HashSet<>();
-
-        sigs.getAllParas().stream().forEach(sig -> addId(sig));
     }
 
     /**
@@ -112,15 +88,24 @@ public class AlloyModel {
         @SuppressWarnings("unchecked")
         AlloyModelTable<AlloyPara> castedTable = (AlloyModelTable<AlloyPara>) table;
         castedTable.addPara(alloyPara, this.additionalParas);
-
-        // add to declaredIds
-        if (AlloySigPara.class.isInstance(alloyPara)) {
-            addId((AlloySigPara) alloyPara);
-        }
     }
 
-    public boolean containsId(String id) {
-        return this.declaredIds.contains(id);
+    public boolean containsId(String name) {
+        return containsId(new AlloyId(name));
+    }
+
+    public boolean containsId(AlloyId alloyId) {
+        return modules.contains(alloyId)
+                || imports.contains(alloyId)
+                || macros.contains(alloyId)
+                || sigs.contains(alloyId)
+                || sigs.containsField(alloyId.name)
+                || enums.contains(alloyId)
+                || facts.contains(alloyId)
+                || funs.contains(alloyId)
+                || preds.contains(alloyId)
+                || asserts.contains(alloyId)
+                || commands.contains(alloyId);
     }
 
     public <T extends AlloyPara> List<T> getParas(Class<T> typeToken) {

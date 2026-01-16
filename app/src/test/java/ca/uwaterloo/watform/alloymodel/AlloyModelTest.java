@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloymodel;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.*;
 import static ca.uwaterloo.watform.utils.ParserUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -244,8 +246,7 @@ public class AlloyModelTest {
         assertTrue(alloyModel.containsId(s1));
         assertTrue(alloyModel.containsId(s2));
         assertTrue(alloyModel.containsId(s3));
-        assertTrue(alloyModel.containsId(s4p1));
-        assertTrue(alloyModel.containsId(s4p2));
+        assertTrue(alloyModel.containsId(s4p1 + SLASH + s4p2));
         assertTrue(alloyModel.containsId(s5));
         assertTrue(alloyModel.containsId(f1));
         assertTrue(alloyModel.containsId(f2));
@@ -270,8 +271,35 @@ public class AlloyModelTest {
 
     @Test
     @Order(11)
-    @DisplayName("AlloyModel.copy")
+    @DisplayName("AlloyModel.declaredIds (3)")
     public void test11() {
+        String s1 = "p";
+        String s2 = "2";
+        String p1 = "p";
+        String p2 = "p2";
+
+        AlloySigPara sig1 = new AlloySigPara(new AlloyQnameExpr(s1), new AlloyBlock());
+        AlloyPredPara pred1 = new AlloyPredPara(new AlloyQnameExpr(p1), new AlloyBlock());
+        AlloyPredPara pred2 =
+                new AlloyPredPara(
+                        new AlloyQnameExpr(p2),
+                        List.of(
+                                new AlloyDecl(new AlloyQnameExpr("decl1"), new AlloyQnameExpr(s1)),
+                                new AlloyDecl(new AlloyQnameExpr("decl2"), new AlloyQnameExpr(s2))),
+                        new AlloyBlock());
+
+        AlloyFile alloyFile = new AlloyFile(List.of(sig1, pred1, pred2));
+        AlloyModel alloyModel = new AlloyModel(alloyFile);
+
+        assertTrue(alloyModel.containsId(s1));
+        assertTrue(alloyModel.containsId(p1));
+        assertTrue(alloyModel.containsId(new AlloyId(p2, List.of(s1, s2))));
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("AlloyModel.copy")
+    public void test12() {
         String s1 = "s1";
         String f1 = "f1";
         String s2 = "s2";
@@ -314,9 +342,9 @@ public class AlloyModelTest {
     }
 
     @Test
-    @Order(12)
+    @Order(13)
     @DisplayName("AlloyModel.copy(2)")
-    public void test12() {
+    public void test13() {
         Path p = Paths.get("src/test/resources/dashmodel/entered5.dsh");
         DashModel dm = (DashModel) parseToModel(p);
         assertTrue(!dm.toString().strip().isEmpty());

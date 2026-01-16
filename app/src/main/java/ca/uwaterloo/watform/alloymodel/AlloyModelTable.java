@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.AlloyId;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,9 +20,9 @@ import java.util.stream.Stream;
  *
  * @param <T> The specific type of AlloyPara being stored, e.g., AlloySigPara, AlloyFactPara.
  */
-public final class AlloyModelTable<T extends AlloyPara> {
-    private final Map<AlloyId, T> mp;
-    private final List<T> li; // list for holding paras with no name
+public class AlloyModelTable<T extends AlloyPara> {
+    protected final Map<AlloyId, T> mp;
+    protected final List<T> li; // list for holding paras with no name
 
     // final here means the reference cannot change
     // but the data structure is mutable
@@ -39,7 +38,7 @@ public final class AlloyModelTable<T extends AlloyPara> {
         this.addParas(extractItemsOfClass(alloyFile.paras, typeToken), new ArrayList<>());
     }
 
-    private AlloyModelTable(AlloyModelTable<T> other) {
+    protected AlloyModelTable(AlloyModelTable<T> other) {
         this.mp = new HashMap<AlloyId, T>(other.mp);
         this.li = new ArrayList<>(other.li);
     }
@@ -54,19 +53,6 @@ public final class AlloyModelTable<T extends AlloyPara> {
      *     printed after AlloyFile in AlloyModel
      */
     public void addPara(T para, List<AlloyPara> additionalParas) {
-        if (para instanceof AlloySigPara) {
-            List<AlloySigPara> expandedSigs = ((AlloySigPara) para).expand();
-            if (expandedSigs.size() > 1) {
-                @SuppressWarnings("unchecked")
-                List<T> castedExpandedSigs = (List<T>) expandedSigs;
-                this.addParas(castedExpandedSigs, additionalParas);
-                return;
-            }
-            @SuppressWarnings("unchecked")
-            T castedExpandedSig = (T) expandedSigs.get(0);
-            para = castedExpandedSig;
-        }
-
         AlloyId alloyId = para.getId();
         if (alloyId.name == null || alloyId.name.isBlank()) {
             this.li.add(para);
