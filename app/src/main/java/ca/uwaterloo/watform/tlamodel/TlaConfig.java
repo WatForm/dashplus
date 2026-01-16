@@ -20,11 +20,11 @@ public class TlaConfig {
     }
 
     private String initString() {
-        return TlaStrings.INIT + TlaStrings.SPACE + init.toString();
+        return TlaStrings.INIT + TlaStrings.SPACE + init.toTLAPlusSnippetCore();
     }
 
     private String nextString() {
-        return TlaStrings.NEXT + TlaStrings.SPACE + next.toString();
+        return TlaStrings.NEXT + TlaStrings.SPACE + next.toTLAPlusSnippetCore();
     }
 
     private String constantsString() {

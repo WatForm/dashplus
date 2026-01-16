@@ -64,13 +64,13 @@ public final class AlloyFactPara extends AlloyPara {
     }
 
     @Override
-    public Optional<String> getName() {
-        if (this.qname.isPresent()) {
-            return Optional.of(this.qname.get().toString());
-        } else if (this.strLit.isPresent()) {
-            return Optional.of(this.strLit.get().toString());
+    public AlloyId getId() {
+        if (qname.isPresent()) {
+            return new AlloyId(qname.get().toString());
+        } else if (strLit.isPresent()) {
+            return new AlloyId(strLit.get().toString());
         } else {
-            return Optional.empty();
+            return new AlloyId();
         }
     }
 

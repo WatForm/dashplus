@@ -260,7 +260,7 @@ public class StatesDM extends TransDM {
         // maxCommonParams is max number of params that could have in common
         // but they don't necessarily have the same values
         Integer maxCommonParams = stateParams(sc).size();
-        myprint("scope");
+        // myprint("scope");
         // System.out.println("maxCommonParams");
         // System.out.println(maxCommonParams);
         List<AlloyExpr> scopeParams = new ArrayList<AlloyExpr>();

@@ -11,7 +11,6 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /*
 * this the following to import to avoid long names
@@ -110,8 +109,8 @@ public final class AlloyModulePara extends AlloyPara {
     }
 
     @Override
-    public Optional<String> getName() {
-        return Optional.of(this.qname.toString());
+    public AlloyId getId() {
+        return new AlloyId(qname.toString());
     }
 
     @Override

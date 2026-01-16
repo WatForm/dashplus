@@ -40,11 +40,14 @@ public class Main {
             System.out.println("Dash File generated");
             DashModel dm = new DashModel(df);
 
+            System.out.println("TRANSLATION DEBUG:");
+
             TlaModel model = DashToTla.translate(dm, moduleName, true);
-            Files.writeString(outPath.resolve(moduleName + ".tla"), model.moduleCode());
-            Files.writeString(outPath.resolve(moduleName + ".cfg"), model.configCode());
 
             System.out.println("translation complete");
+
+            Files.writeString(outPath.resolve(moduleName + ".tla"), model.moduleCode());
+            Files.writeString(outPath.resolve(moduleName + ".cfg"), model.configCode());
 
         } catch (IOException e) {
             e.printStackTrace();

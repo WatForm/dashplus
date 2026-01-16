@@ -208,15 +208,15 @@ public final class AlloySigPara extends AlloyPara {
     }
 
     @Override
-    public Optional<String> getName() {
-        if (this.qnames.size() > 1) {
+    public AlloyId getId() {
+        if (qnames.size() > 1) {
             throw ImplementationError.methodShouldNotBeCalled(
                     this.pos,
                     "AlloySigPara.getName. This should not be called because the "
                             + "signature doesn't have a single name, but multiple. "
-                            + "See AlloySigPara.expand(). ");
+                            + "Do AlloySigPara.expand() first. ");
         }
-        return Optional.of(this.qnames.get(0).toString());
+        return new AlloyId(qnames.get(0).toString());
     }
 
     /**

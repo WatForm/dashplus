@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.tlaunops.TlaSubsetUnary;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +64,8 @@ public class TypeOKDefn {
 
         if (vars.contains(CONF))
             exps.add(
-                    // _conf \subseteq _all_conf
-                    CONF().SUBSETEQ(TlaAppl(typeDefn(CONF))));
+                    // _conf \in SUBSET _all_conf
+                    CONF().IN(new TlaSubsetUnary(TlaAppl(typeDefn(CONF)))));
 
         if (vars.contains(STABLE))
             exps.add(
@@ -74,7 +75,7 @@ public class TypeOKDefn {
         if (vars.contains(SCOPES_USED))
             exps.add(
                     // _scope_used \subseteq _all_scope_used
-                    SCOPES_USED().SUBSETEQ(TlaAppl(typeDefn(SCOPES_USED))));
+                    SCOPES_USED().IN(TlaSubsetUnary(TlaAppl(typeDefn(SCOPES_USED)))));
 
         if (vars.contains(TRANS_TAKEN))
             exps.add(
@@ -83,8 +84,8 @@ public class TypeOKDefn {
 
         if (vars.contains(EVENTS))
             exps.add(
-                    // _events \in _environmental_events union _internal_events
-                    EVENTS().IN(ENVIRONMENTAL_EVENTS().UNION(INTERNAL_EVENTS())));
+                    // _events \in SUBSET (_environmental_events union _internal_events)
+                    EVENTS().IN(TlaSubsetUnary(ENVIRONMENTAL_EVENTS().UNION(INTERNAL_EVENTS()))));
 
         tlaModel.addDefn(TlaDefn(TYPE_OK, repeatedAnd(exps)));
     }

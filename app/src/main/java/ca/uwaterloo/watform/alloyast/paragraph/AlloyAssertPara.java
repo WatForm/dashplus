@@ -77,13 +77,13 @@ public final class AlloyAssertPara extends AlloyPara {
     }
 
     @Override
-    public Optional<String> getName() {
+    public AlloyId getId() {
         if (this.qname.isPresent()) {
-            return Optional.of(this.qname.get().toString());
+            return new AlloyId(qname.get().toString());
         } else if (this.strLit.isPresent()) {
-            return Optional.of(this.strLit.get().toString());
+            return new AlloyId(this.strLit.get().toString());
         } else {
-            return Optional.empty();
+            return new AlloyId();
         }
     }
 

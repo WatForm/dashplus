@@ -83,7 +83,7 @@ public final class Solution {
     }
 
     public Set<List<String>> eval(AlloySigPara sigPara) {
-        String sigName = AlloyStrings.THIS + AlloyStrings.SLASH + sigPara.getName().get();
+        String sigName = AlloyStrings.THIS + AlloyStrings.SLASH + sigPara.getId().name;
         if (!this.contains(sigName)) {
             return Collections.emptySet();
         }
@@ -96,7 +96,7 @@ public final class Solution {
     }
 
     public Set<List<String>> eval(AlloySigPara sigPara, AlloyDecl fieldDecl) {
-        String sigName = AlloyStrings.THIS + AlloyStrings.SLASH + sigPara.getName().get();
+        String sigName = AlloyStrings.THIS + AlloyStrings.SLASH + sigPara.getId().name;
         String fieldName = fieldDecl.getName().get();
         if (!this.contains(sigName)) {
             return Collections.emptySet();

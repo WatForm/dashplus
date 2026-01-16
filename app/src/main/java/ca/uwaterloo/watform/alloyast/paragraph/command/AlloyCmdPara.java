@@ -55,12 +55,12 @@ public final class AlloyCmdPara extends AlloyPara {
 
     /*
      * This is used to uniquely identity paragraphs,
-     * but AlloyCmdPara are allowed to have the same name.
+     * but AlloyCmdPara are allowed to have the same name in Alloy Analyzer.
      * So return nothing here
      */
     @Override
-    public Optional<String> getName() {
-        return Optional.empty();
+    public AlloyId getId() {
+        return new AlloyId();
     }
 
     @Override

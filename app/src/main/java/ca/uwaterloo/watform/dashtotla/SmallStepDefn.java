@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
+import ca.uwaterloo.watform.tlaast.tlaunops.TlaSubsetUnary;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ public class SmallStepDefn {
 
         List<String> transFQNs = AuxDashAccessors.getTransitionNames(dashModel);
         List<TlaAppl> preTransitions = mapBy(transFQNs, tFQN -> TlaAppl(preTransTlaFQN(tFQN)));
-        List<TlaAppl> transitions = mapBy(transFQNs, tFQN -> TlaAppl(preTransTlaFQN(tFQN)));
+        List<TlaAppl> transitions = mapBy(transFQNs, tFQN -> TlaAppl(tlaFQN(tFQN)));
 
         tlaModel.addDefn(
                 // _some_transition == \/ <ti> ...
@@ -56,6 +57,11 @@ public class SmallStepDefn {
             expressions.add(
                     // _trans_taken' = _none_transition
                     TRANS_TAKEN().PRIME().EQUALS(NONE_TRANSITION()));
+
+        if (vars.contains(EVENTS))
+            expressions.add(
+                    // _events' \in SUBSET _all_internal_events
+                    EVENTS().PRIME().IN(new TlaSubsetUnary(INTERNAL_EVENTS())));
 
         List<TlaVar> unchangedVars =
                 mapBy(

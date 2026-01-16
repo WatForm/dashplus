@@ -87,23 +87,9 @@ public final class AlloyImportPara extends AlloyPara {
         }
     }
 
-    /*
-     * The name of a import should include the arguments;
-     * open util/ordering[Time] as to
-     * open util/ordering[Key] as ko
-     * are not the same
-     */
     @Override
-    public Optional<String> getName() {
-        StringBuilder sb = new StringBuilder();
-        this.qname.toString(sb, 0);
-        if (!sigRefs.isEmpty()) {
-            sb.append(AlloyStrings.LBRACK);
-            ASTNode.join(sb, 0, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);
-            sb.append(AlloyStrings.RBRACK);
-        }
-
-        return Optional.of(sb.toString());
+    public AlloyId getId() {
+        return new AlloyId(asQname.isPresent() ? asQname.toString() : "");
     }
 
     @Override

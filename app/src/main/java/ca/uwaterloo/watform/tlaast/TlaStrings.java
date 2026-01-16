@@ -41,6 +41,10 @@ public final class TlaStrings extends CommonStrings {
     public static final String SET_DIFFERENCE = "\\";
     public static final String SET_PRODUCT = "\\X";
 
+    // unary set ops
+    public static final String SET_UNION_UNARY = "UNION";
+    public static final String SET_SUBSET_UNARY = "SUBSET";
+
     // functions
     public static final String EXISTS = "\\E";
     public static final String FOR_ALL = "\\A";
