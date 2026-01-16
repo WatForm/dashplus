@@ -66,7 +66,7 @@ public final class DashStrings extends CommonStrings {
     // user must be aware of this name
     public static final String bufferIndexName = "bufIdx";
 
-    public static final String dsh_prefix = "dsh_";
+    public static final String dsh_prefix = "__";
     // init is a reserved word in Dash
     public static final String initFactName = dsh_prefix + "initial";
     public static final String electrumInitName = dsh_prefix + "init";

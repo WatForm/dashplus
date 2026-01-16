@@ -5,7 +5,7 @@ package ca.uwaterloo.watform.dashtoalloy;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 
-public class DashToAlloy extends SpaceSignatures {
+public class DashToAlloy extends SnapshotSignatures {
 
     public DashToAlloy(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
@@ -19,6 +19,7 @@ public class DashToAlloy extends SpaceSignatures {
         // copy all Alloy stuff from dm into am
         this.am = dm.copy();
         this.addSpaceSignatures();
+        this.addSnapshotSignatures();
         return this.am;
     }
 }

@@ -179,7 +179,8 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // if already a sig in Alloy part of model
             // can't declare it again
             // replace this when jack writes a method in AlloyModel for this
-            if (/* TODO: add this back? this.containsId(v) || */this.isBoundVar(v)) {
+            if (
+            /* TODO: add this back? this.containsId(v) || */ this.isBoundVar(v)) {
                 return varExpr;
             }
             // otherwise, look for matches in Dash model var decls

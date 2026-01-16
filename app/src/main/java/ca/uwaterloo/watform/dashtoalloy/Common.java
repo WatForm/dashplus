@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
@@ -115,5 +116,54 @@ public class Common extends Base {
             retList.add(AlloyVar(v));
         }
         return retList;
+    }
+
+    // adding: sig "n" {}
+    public void addSig(String n) {
+        this.am.addPara(new AlloySigPara(n));
+    }
+
+    // adding: abstract sig "n" {}
+    public void addAbstractSig(String n) {
+        this.am.addPara(
+                new AlloySigPara(
+                        List.of(AlloySigPara.Qual.ABSTRACT),
+                        List.of(new AlloyQnameExpr(n)),
+                        null,
+                        Collections.emptyList(),
+                        null));
+    }
+
+    // adding: abstract sig "child" extends "parent" {}
+    public void addAbstractExtendsSig(String child, String parent) {
+        this.am.addPara(
+                new AlloySigPara(
+                        List.of(AlloySigPara.Qual.ABSTRACT),
+                        List.of(new AlloyQnameExpr(child)),
+                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
+                        Collections.emptyList(),
+                        null));
+    }
+
+    // adding: one sig child extends parent {}
+    public void addOneExtendsSig(String child, String parent) {
+        this.am.addPara(
+                new AlloySigPara(
+                        List.of(AlloySigPara.Qual.ONE),
+                        List.of(new AlloyQnameExpr(child)),
+                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
+                        Collections.emptyList(),
+                        null));
+    }
+
+    // adding: sig child extends parent {}
+    public void addExtendsSig(String child, String parent) {
+        this.am.addPara(
+                new AlloySigPara(
+                        Collections.emptyList(),
+                        List.of(new AlloyQnameExpr(child)),
+                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
+                        Collections.emptyList(),
+                        null));
     }
 }

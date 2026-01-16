@@ -28,6 +28,7 @@ public final class AlloySigPara extends AlloyPara {
     public final List<AlloyDecl> fields; // sig's fields
     public final Optional<AlloyBlock> block;
 
+    // pos: [one] sig qnames extends/in { fields } block
     public AlloySigPara(
             Pos pos,
             List<Qual> quals,
@@ -57,6 +58,7 @@ public final class AlloySigPara extends AlloyPara {
                 nullField(pos, this), this.quals, this.qnames, this.rel, this.fields, this.block);
     }
 
+    // [one] qnames extends/in { fields } block (no pos)
     public AlloySigPara(
             List<Qual> quals,
             List<AlloyQnameExpr> qnames,
@@ -66,15 +68,18 @@ public final class AlloySigPara extends AlloyPara {
         this(Pos.UNKNOWN, quals, qnames, rel, fields, block);
     }
 
+    // sig qname extends/in { fields } block (no pos)
     public AlloySigPara(
             List<AlloyQnameExpr> qnames, Rel rel, List<AlloyDecl> fields, AlloyBlock block) {
         this(Pos.UNKNOWN, Collections.emptyList(), qnames, rel, fields, block);
     }
 
+    // sig qnames  { fields } block (no pos)
     public AlloySigPara(List<AlloyQnameExpr> qnames, List<AlloyDecl> fields, AlloyBlock block) {
         this(Pos.UNKNOWN, Collections.emptyList(), qnames, null, fields, block);
     }
 
+    // sig "A" { fields } block (no pos)
     public AlloySigPara(String s, List<AlloyDecl> fields, AlloyBlock block) {
         this(
                 Pos.UNKNOWN,
@@ -85,6 +90,7 @@ public final class AlloySigPara extends AlloyPara {
                 block);
     }
 
+    // sig qname { fields } block (no pos)
     public AlloySigPara(AlloyQnameExpr qname, List<AlloyDecl> fields, AlloyBlock block) {
         this(
                 Pos.UNKNOWN,
@@ -95,6 +101,7 @@ public final class AlloySigPara extends AlloyPara {
                 block);
     }
 
+    // sig qname { fields } (no pos)
     public AlloySigPara(AlloyQnameExpr qname, List<AlloyDecl> fields) {
         this(
                 Pos.UNKNOWN,
@@ -105,10 +112,12 @@ public final class AlloySigPara extends AlloyPara {
                 null);
     }
 
+    // sig qnames { } block (no pos)
     public AlloySigPara(List<AlloyQnameExpr> qnames, AlloyBlock block) {
         this(Pos.UNKNOWN, Collections.emptyList(), qnames, null, Collections.emptyList(), block);
     }
 
+    // sig qname { } block (no pos)
     public AlloySigPara(AlloyQnameExpr qname, AlloyBlock block) {
         this(
                 Pos.UNKNOWN,
@@ -119,6 +128,7 @@ public final class AlloySigPara extends AlloyPara {
                 block);
     }
 
+    // sig qname { }  (no pos)
     public AlloySigPara(AlloyQnameExpr qname) {
         this(
                 Pos.UNKNOWN,
@@ -129,6 +139,7 @@ public final class AlloySigPara extends AlloyPara {
                 null);
     }
 
+    // sig "A" { }  (no pos)
     public AlloySigPara(String label) {
         this(
                 Pos.UNKNOWN,
