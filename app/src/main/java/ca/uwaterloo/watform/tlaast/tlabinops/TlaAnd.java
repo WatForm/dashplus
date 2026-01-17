@@ -10,6 +10,6 @@ public class TlaAnd extends TlaInfixBinOp {
                 operandOne,
                 operandTwo,
                 TlaOperator.Associativity.IRRELEVANT,
-                TlaOperator.PrecedenceGroup.AND);
+                TlaOperator.PrecedenceGroup.AND_OR);
     }
 }

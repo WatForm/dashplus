@@ -47,8 +47,8 @@ public class InitDefn {
 
         if (vars.contains(EVENTS))
             exps.add(
-                    // _events intersection _internal_events = {}
-                    EVENTS().INTERSECTION(INTERNAL_EVENTS()).EQUALS(NULL_SET()));
+                    // _events \in SUBSET _environmental_events
+                    EVENTS().IN(TlaSubsetUnary(ENVIRONMENTAL_EVENTS())));
 
         tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
     }

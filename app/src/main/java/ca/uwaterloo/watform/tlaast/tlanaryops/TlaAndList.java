@@ -10,7 +10,7 @@ public class TlaAndList extends TlaNaryOp {
         super(
                 "",
                 "",
-                TlaStrings.SPACE + TlaStrings.AND + TlaStrings.SPACE,
+                TlaStrings.SPACE + "\n" + TlaStrings.AND + TlaStrings.SPACE,
                 children,
                 TlaOperator.PrecedenceGroup.UNSAFE);
     }

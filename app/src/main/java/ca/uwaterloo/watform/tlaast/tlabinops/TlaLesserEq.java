@@ -10,6 +10,6 @@ public class TlaLesserEq extends TlaInfixBinOp {
                 operandOne,
                 operandTwo,
                 TlaOperator.Associativity.LEFT,
-                TlaOperator.PrecedenceGroup.COMAPRISON);
+                TlaOperator.PrecedenceGroup.COMPARISON);
     }
 }

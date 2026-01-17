@@ -10,6 +10,6 @@ public class TlaGreater extends TlaInfixBinOp {
                 operandOne,
                 operandTwo,
                 TlaOperator.Associativity.LEFT,
-                TlaOperator.PrecedenceGroup.COMAPRISON);
+                TlaOperator.PrecedenceGroup.COMPARISON);
     }
 }

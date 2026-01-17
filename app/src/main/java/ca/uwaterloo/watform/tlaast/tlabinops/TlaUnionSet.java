@@ -10,6 +10,6 @@ public class TlaUnionSet extends TlaInfixBinOp {
                 operandOne,
                 operandTwo,
                 TlaOperator.Associativity.IRRELEVANT,
-                PrecedenceGroup.SET_UNION);
+                PrecedenceGroup.SET_OPERATORS);
     }
 }

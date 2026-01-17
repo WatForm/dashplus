@@ -18,23 +18,18 @@ public abstract class TlaOperator extends TlaExp {
         MULT,
 
         // logical
-        OR,
-        AND,
-        NOT,
-        IMPLICATION, // => and <=>
+        AND_OR, // 3
+        NOT, // 4
+        IMPLICATION, // => and <=> 2
         PREDICATE, // Exists and For-all
-        AND_LIST,
-        OR_LIST,
+        AND_OR_LIST,
 
         // set
-        SET_UNION,
-        SET_INTERSECTION,
-        SET_DIFFERENCE,
-        SET_PRODUCT,
+        SET_OPERATORS,
 
-        SET_MEMBERSHIP,
+        SET_MEMBERSHIP, // 5
 
-        COMAPRISON,
+        COMPARISON, // 5
 
         RANGE,
         CONCAT
@@ -44,8 +39,12 @@ public abstract class TlaOperator extends TlaExp {
             new PrecedenceGroup[] {
 
                 // lowest goes here
-
-                PrecedenceGroup.ADD_SUB, PrecedenceGroup.MULT,
+                PrecedenceGroup.AND_OR,
+                PrecedenceGroup.AND_OR_LIST,
+                PrecedenceGroup.NOT,
+                PrecedenceGroup.COMPARISON,
+                PrecedenceGroup.SET_MEMBERSHIP,
+                PrecedenceGroup.SET_OPERATORS,
                 // highest goes here
             };
 
@@ -79,11 +78,18 @@ public abstract class TlaOperator extends TlaExp {
         if (childPrecedenceGroup == TlaOperator.PrecedenceGroup.UNSAFE) return true;
 
         // if parent and child are the same operator and associativity is irrelevant, then no need
-        // brackets
+        // brackets - however, if they are different operators, then brackets needed
         if (parent.getClass() == child.getClass()
                 && parentAssociativity == Associativity.IRRELEVANT) return false;
 
         // if the priority of the parent is less than that of the child, no brackets are needed
+        int parentPriority = PRECEDENCE_ORDER.length;
+        int childPriority = -1;
+        for (int i = 0; i < PRECEDENCE_ORDER.length; i++) {
+            if (PRECEDENCE_ORDER[i] == parentPrecedenceGroup) parentPriority = i;
+            if (PRECEDENCE_ORDER[i] == childPrecedenceGroup) childPriority = i;
+        }
+        if (parentPriority < childPriority) return false;
 
         // if the priority of the parent is the same as that of the child and the parent is a binary
         // operator:

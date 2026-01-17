@@ -10,6 +10,6 @@ public class TlaIntersectionSet extends TlaInfixBinOp {
                 operandOne,
                 operandTwo,
                 TlaOperator.Associativity.IRRELEVANT,
-                PrecedenceGroup.SET_INTERSECTION);
+                PrecedenceGroup.SET_OPERATORS);
     }
 }

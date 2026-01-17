@@ -32,31 +32,32 @@
 |transition literals|values for trans_taken|✅|✅|❕|
 |pre-trans|defining pre-tans|✅|✅|❕|
 |pre-trans|pre-trans from states|✅|✅|❕|
-|pre-trans|events clause|❌|❕|❕|
-|pre-trans|scopes clause|❌|❕|❕|
+|pre-trans|scopes clause|✅|✅|❕|
+|pre-trans|events clause|❌|❌|❕|
 |post-trans|defining post-trans|✅|✅|❕|
-|post-trans|scopes update|✅|✅|❕|
-|post-trans|handling stability|❌|❕|❕|
-|post-trans|sending events|❌|❕|❕|
-|enabled-trans|defining enabled-trans|✅|❕|❕|
-|enabled-trans|logic|❌|❕|❕|
-|transition|combining pre and post|✅|❕|❕|
-|nextIsStable|combining enabled|✅|❕|❕|
-|Init|Defining initial values (except conf)|✅|❕|❕|
-|Init sync|Syncing config and module|✅|❕|❕|
-|Init conf|defining initial value of conf|✅|❕|❕|
-|Small step|combine trans, pre-trans and stutter|✅|❕|❕|
-|Stutter|Defining stutter in TLA+|✅|❕|❕|
+|post-trans|handling stability|✅|✅|❕|
+|post-trans|scopes update|❌|❌|❕|
+|post-trans|sending events|❌|❌|❕|
+|enabled-trans|defining enabled-trans|✅|✅|❕|
+|enabled-trans|conf|❌|❌|❕|
+|enabled-trans|scope|❌|❌|❕|
+|transition|combining pre and post|✅|✅|❕|
+|nextIsStable|combining enabled|✅|✅|❕|
+|Init|Defining initial values (except conf)|✅|✅|❕|
+|Init sync|Syncing config and module|✅|✅|❕|
+|Init conf|defining initial value of conf|✅|✅|❕|
+|Small step|combine trans, pre-trans and stutter|✅|✅|❕|
+|Stutter|Defining stutter in TLA+|✅|✅|❕|
+|stable|type definition|✅|✅|❕|
+|conf|type definition|✅|✅|❕|
+|scopes_used|type definition|✅|✅|❕|
+|trans_taken|type definition (none included)|✅|✅|❕|
+|TypeOK|combining types|❔|❔|❕|
+|Next|Defining Next|✅|✅|❕|
+|Next sync|Syncing config and module|✅|✅|❕|
 |Implementing stutter|implementing a stutter framework|❔|❔|❔|
-|stable|type definition|✅|❕|❕|
-|conf|type definition|✅|❕|❕|
-|scopes_used|type definition|✅|❕|❕|
-|trans_taken|type definition (none included)|✅|❕|❕|
-|TypeOK|combining types|✅|❕|❕|
-|Next|Defining Next|✅|❕|❕|
-|Next sync|Syncing config and module|✅|❕|❕|
-|User-defined vars|declaration|❕|❕|❕|
-|User-defined vars|type definition|❕|❕|❕|
+|User-defined vars|declaration|❔|❔|❕|
+|User-defined vars|type definition|❔|❔|❕|
 |User-defined vars|sync with config|❔|❔|❔|
 
 ## Core Alloy

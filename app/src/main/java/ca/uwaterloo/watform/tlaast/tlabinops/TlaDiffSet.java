@@ -10,6 +10,6 @@ public class TlaDiffSet extends TlaInfixBinOp {
                 operandOne,
                 operandTwo,
                 TlaOperator.Associativity.LEFT,
-                TlaOperator.PrecedenceGroup.SET_DIFFERENCE);
+                TlaOperator.PrecedenceGroup.SET_OPERATORS);
     }
 }

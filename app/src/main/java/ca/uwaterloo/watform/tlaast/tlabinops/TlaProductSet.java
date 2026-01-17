@@ -10,6 +10,6 @@ public class TlaProductSet extends TlaInfixBinOp {
                 operandOne,
                 operandTwo,
                 TlaOperator.Associativity.IRRELEVANT,
-                PrecedenceGroup.SET_PRODUCT);
+                PrecedenceGroup.SET_OPERATORS);
     }
 }

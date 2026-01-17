@@ -101,12 +101,25 @@ public class TransDefns {
 
         if (vars.contains(SCOPES_USED)) {
             // has a scope orthogonal to the scopes used
-            List<TlaAppl> nonOrthogonal =
+            List<TlaAppl> nonOrthogonalScopes =
                     mapBy(
                             dashModel.nonOrthogonalScopesOf(transFQN),
                             dashRef -> TlaAppl(tlaFQN(dashRef.name)));
-            // ~ (<non-orthogonal-scope-i> \in _scopes_used)
-            nonOrthogonal.forEach(scope -> exps.add(TlaNot(scope.IN(SCOPES_USED()))));
+
+            nonOrthogonalScopes.forEach(
+                    scope ->
+                            exps.add(
+                                    // ~ (<non-orthogonal-scope-i> \in _scopes_used)
+                                    TlaNot(scope.IN(SCOPES_USED()))));
+        }
+
+        if (vars.contains(EVENTS)) {
+            if (dashModel.onR(transFQN) != null) {
+                TlaAppl onEvent = TlaAppl(tlaFQN(dashModel.onR(transFQN).name));
+                exps.add(
+                        // <on-event> \in _events
+                        onEvent.IN(EVENTS()));
+            }
         }
 
         tlaModel.addDefn(TlaDefn(preTransTlaFQN(transFQN), repeatedAnd(exps)));
