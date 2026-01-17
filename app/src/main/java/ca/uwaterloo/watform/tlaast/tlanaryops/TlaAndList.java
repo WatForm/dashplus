@@ -12,6 +12,6 @@ public class TlaAndList extends TlaNaryOp {
                 "",
                 TlaStrings.SPACE + "\n" + TlaStrings.AND + TlaStrings.SPACE,
                 children,
-                TlaOperator.PrecedenceGroup.UNSAFE);
+                TlaOperator.PrecedenceGroup.AND_OR_LIST);
     }
 }

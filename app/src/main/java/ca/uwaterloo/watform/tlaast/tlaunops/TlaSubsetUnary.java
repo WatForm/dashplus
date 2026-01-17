@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaSubsetUnary extends TlaUnaryOp {
     public TlaSubsetUnary(TlaExp operand) {
-        super(operand, TlaOperator.PrecedenceGroup.UNSAFE);
+        super(operand, TlaOperator.PrecedenceGroup.SET_OPERATORS);
     }
 
     @Override

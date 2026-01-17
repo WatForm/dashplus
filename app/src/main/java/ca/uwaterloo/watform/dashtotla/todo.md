@@ -33,10 +33,10 @@
 |pre-trans|defining pre-tans|✅|✅|❕|
 |pre-trans|pre-trans from states|✅|✅|❕|
 |pre-trans|scopes clause|✅|✅|❕|
-|pre-trans|events clause|❌|❌|❕|
+|pre-trans|events clause|✅|✅|❕|
 |post-trans|defining post-trans|✅|✅|❕|
 |post-trans|handling stability|✅|✅|❕|
-|post-trans|scopes update|❌|❌|❕|
+|post-trans|scopes update|✅|✅|❕|
 |post-trans|sending events|❌|❌|❕|
 |enabled-trans|defining enabled-trans|✅|✅|❕|
 |enabled-trans|conf|❌|❌|❕|

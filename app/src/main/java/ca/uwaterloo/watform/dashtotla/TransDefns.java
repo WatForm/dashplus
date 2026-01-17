@@ -75,16 +75,16 @@ public class TransDefns {
 
     public static void NextIsStableDefn(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
 
-        List<TlaAppl> enabledTrans =
+        List<TlaExp> notEnabledTrans =
                 mapBy(
                         AuxDashAccessors.getTransitionNames(dashModel),
-                        tFQN -> TlaAppl(enabledTransTlaFQN(tFQN), enabledParams(vars)));
+                        tFQN -> TlaNot(TlaAppl(enabledTransTlaFQN(tFQN), enabledParams(vars))));
 
         tlaModel.addDefn(
-                // _next_is_stable(args) = ~ (\/ enabled_after_step_ti(args) ...)
+                // _next_is_stable(args) = /\ (~ enabled_after_step_ti(args) ...)
                 TlaDefn(
                         TlaDecl(NEXT_IS_STABLE, enabledParams(vars)),
-                        TlaNot(repeatedOr(enabledTrans))));
+                        repeatedAnd(notEnabledTrans)));
     }
 
     public static void PreTransDefn(
@@ -109,8 +109,8 @@ public class TransDefns {
             nonOrthogonalScopes.forEach(
                     scope ->
                             exps.add(
-                                    // ~ (<non-orthogonal-scope-i> \in _scopes_used)
-                                    TlaNot(scope.IN(SCOPES_USED()))));
+                                    // (<non-orthogonal-scope-i> \notin _scopes_used)
+                                    scope.NOTIN(SCOPES_USED())));
         }
 
         if (vars.contains(EVENTS)) {
@@ -147,18 +147,28 @@ public class TransDefns {
                                             .UNION(repeatedUnion(entered))));
         }
 
-        if (vars.contains(SCOPES_USED))
+        if (vars.contains(SCOPES_USED)) {
+            TlaExp nextStable = NULL_SET();
+            TlaExp scopesUsed =
+                    repeatedUnion(
+                            mapBy(dashModel.scopesUsed(transFQN), d -> TlaAppl(tlaFQN(d.name))));
+            TlaExp notNextStableAndStable = scopesUsed;
+            TlaExp notNextStableAndNotStable = SCOPES_USED().UNION(scopesUsed);
+            TlaExp body =
+                    new TlaIfThenElse(
+                            TlaDecl(NEXT_IS_STABLE, enabledArgs(vars)),
+                            nextStable,
+                            new TlaIfThenElse(
+                                    STABLE(), notNextStableAndStable, notNextStableAndNotStable));
             exps.add(
-                    // todo fix this
-                    // if next_is_stable, _scopes_used'  = x
-                    // else: if stable then _scopes_used' = y else scopes_used' = z
-                    SCOPES_USED()
-                            .PRIME()
-                            .EQUALS(
-                                    new TlaIfThenElse(
-                                            TlaDecl(NEXT_IS_STABLE, enabledArgs(vars)),
-                                            NULL_SET(),
-                                            new TlaIfThenElse(STABLE(), NULL_SET(), NULL_SET()))));
+                    // if next_is_stable,
+                    // then _scopes_used'  = none
+                    // else
+                    //          if stable
+                    //          then _scopes_used' = <scopes-used>
+                    //          else scopes_used' = scopes_used \\union <scopes-used>
+                    SCOPES_USED().PRIME().EQUALS(body));
+        }
 
         if (vars.contains(STABLE))
             exps.add(

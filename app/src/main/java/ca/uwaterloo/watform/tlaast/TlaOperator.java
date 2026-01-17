@@ -14,8 +14,8 @@ public abstract class TlaOperator extends TlaExp {
         UNSAFE, // this is for operators that do need brackets for both them and their children
 
         // arithmetic
-        ADD_SUB,
-        MULT,
+        ADD_SUB, // 10 for +, 11 for -
+        MULT, // 13
 
         // logical
         AND_OR, // 3
@@ -25,7 +25,7 @@ public abstract class TlaOperator extends TlaExp {
         AND_OR_LIST,
 
         // set
-        SET_OPERATORS,
+        SET_OPERATORS, // 8
 
         SET_MEMBERSHIP, // 5
 
@@ -39,12 +39,14 @@ public abstract class TlaOperator extends TlaExp {
             new PrecedenceGroup[] {
 
                 // lowest goes here
-                PrecedenceGroup.AND_OR,
                 PrecedenceGroup.AND_OR_LIST,
+                PrecedenceGroup.AND_OR,
                 PrecedenceGroup.NOT,
                 PrecedenceGroup.COMPARISON,
                 PrecedenceGroup.SET_MEMBERSHIP,
                 PrecedenceGroup.SET_OPERATORS,
+                PrecedenceGroup.ADD_SUB,
+                PrecedenceGroup.MULT
                 // highest goes here
             };
 

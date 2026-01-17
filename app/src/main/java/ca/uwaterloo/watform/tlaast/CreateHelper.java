@@ -196,6 +196,10 @@ public class CreateHelper {
         return new TlaInSet(op1, op2);
     }
 
+    public static TlaNotInSet TlaNotInSet(TlaExp op1, TlaExp op2) {
+        return new TlaNotInSet(op1, op2);
+    }
+
     public static TlaIntersectionSet TlaIntersectionSet(TlaExp op1, TlaExp op2) {
         return new TlaIntersectionSet(op1, op2);
     }
@@ -214,10 +218,6 @@ public class CreateHelper {
 
     public static TlaNotEq TlaNotEq(TlaExp op1, TlaExp op2) {
         return new TlaNotEq(op1, op2);
-    }
-
-    public static TlaNotInSet TlaNotInSet(TlaExp op1, TlaExp op2) {
-        return new TlaNotInSet(op1, op2);
     }
 
     public static TlaOr TlaOr(TlaExp op1, TlaExp op2) {
