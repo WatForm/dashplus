@@ -7,9 +7,11 @@ import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.List;
 
-public class SpaceSignatures extends TranslateExprVis {
+import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
 
-    protected SpaceSignatures(DashModel dm, boolean isElectrum) {
+public class SpaceSignaturesD2A extends AlloyInterfaceD2A {
+
+    protected SpaceSignaturesD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
     }
 

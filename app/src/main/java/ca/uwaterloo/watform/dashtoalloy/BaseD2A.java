@@ -11,14 +11,18 @@ package ca.uwaterloo.watform.dashtoalloy;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 
-public class Base {
+public class BaseD2A {
 
-    DashModel dm; // input
-    AlloyModel am = new AlloyModel(); // output
-    boolean isElectrum = false;
+    protected DashModel dm; // input
+    protected AlloyModel am = new AlloyModel(); // output
+    protected boolean isElectrum = false;
+    protected DSL dsl;
+    protected  ExprTranslatorVis exprTranslator;
 
-    protected Base(DashModel dm, boolean isElectrum) {
+    protected BaseD2A(DashModel dm, boolean isElectrum) {
         this.dm = dm;
         this.isElectrum = isElectrum;
+        DSL dsl = new DSL(dm, isElectrum);
+        this.exprTranslator = new ExprTranslatorVis(dm, isElectrum);
     }
 }

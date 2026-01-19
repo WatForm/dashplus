@@ -12,10 +12,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SnapshotSignatures extends SpaceSignatures {
+import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
 
-    protected SnapshotSignatures(DashModel dm, boolean isElectrum) {
+public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
+
+    protected SnapshotSignaturesD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
+        
+    }
+
+    private AlloyExpr translateExpr(AlloyExpr expr) {
+        return this.exprTranslator.translateExpr(expr);
     }
 
     protected void addSnapshotSignatures() {
@@ -76,7 +83,7 @@ public class SnapshotSignatures extends SpaceSignatures {
         // add vars to snapshot
         for (String vfqn : dm.allVarNames()) {
             List<AlloyExpr> arrow_list = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
-            arrow_list.add(this.translateExpr(dm.varTyp(vfqn), true));
+            arrow_list.add(this.translateExpr(dm.varTyp(vfqn)));
 
             // TOCHECK
             // var could be declared in Dash model with type "one X",
@@ -94,7 +101,7 @@ public class SnapshotSignatures extends SpaceSignatures {
         for (String bfqn : dm.allBufferNames()) {
             List<AlloyExpr> arrow_list = mapBy(dm.bufferParams(bfqn), i -> AlloyVar(i.paramSig));
 
-            arrow_list.add(bufferIndexVar(dm.bufferIndex(bfqn)));
+            arrow_list.add(this.dsl.bufferIndexVar(dm.bufferIndex(bfqn)));
             arrow_list.add(AlloyVar(dm.bufferElement(bfqn)));
 
             decls.add(AlloyDecl(DashFQN.translateFQN(bfqn), ArrowExprFromExprList(arrow_list)));

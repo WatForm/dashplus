@@ -1,3 +1,9 @@
+/*
+    This is NOT part of D2A
+    so that it can be called by places other than the translator
+    just to create expressions.
+*/
+
 package ca.uwaterloo.watform.dashtoalloy;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
@@ -16,13 +22,25 @@ import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TranslateExprVis extends Common implements AlloyExprVis<AlloyExpr> {
+import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
+
+public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
     private boolean isPrimed = false;
     private boolean onlyGetName = false;
+    private boolean isElectrum;
+    private DashModel dm;
+    protected DSL dsl;
+    
+    public ExprTranslatorVis(DashModel dm, boolean isElectrum) {
+        this.dm = dm;
+        this.isElectrum = isElectrum;
+        this.dsl = new DSL(dm, isElectrum);
+    }
 
-    public TranslateExprVis(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    public ExprTranslatorVis(DashModel dm) {
+        this.dm = dm;
+        this.isElectrum = false;
     }
 
     public AlloyExpr translateExpr(AlloyExpr e, boolean onlyGetName) {
@@ -65,10 +83,10 @@ public class TranslateExprVis extends Common implements AlloyExprVis<AlloyExpr> 
             // tcmc, traces
             if (this.isPrimed)
                 // p1.p2.(sn.v)
-                join_list.add(nextJoinExpr((AlloyQnameExpr) v_expr));
+                join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
             else
                 // p1.p2.(s.v)
-                join_list.add(curJoinExpr((AlloyQnameExpr) v_expr));
+                join_list.add(this.dsl.curJoinExpr((AlloyQnameExpr) v_expr));
             return AlloyJoinFromExprList(join_list);
         } else {
             // Electrum
