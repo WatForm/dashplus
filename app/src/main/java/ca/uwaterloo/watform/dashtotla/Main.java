@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashmodel.DashModel;

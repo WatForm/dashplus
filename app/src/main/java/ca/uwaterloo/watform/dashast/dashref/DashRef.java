@@ -26,6 +26,7 @@
 package ca.uwaterloo.watform.dashast.dashref;
 
 import static ca.uwaterloo.watform.dashmodel.DashFQN.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;

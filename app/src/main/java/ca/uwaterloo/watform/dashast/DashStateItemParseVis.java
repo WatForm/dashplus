@@ -1,9 +1,9 @@
 package ca.uwaterloo.watform.dashast;
 
+import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.emptyList;
 import static ca.uwaterloo.watform.utils.GeneralUtil.extractItemsOfClass;
 import static ca.uwaterloo.watform.utils.GeneralUtil.extractOneFromList;
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
 
 import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;

@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.*;
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;

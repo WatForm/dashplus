@@ -50,7 +50,7 @@ java {
 }
 
 application {
-    mainClass = 'ca.uwaterloo.watform.parser.Main'
+    mainClass = 'ca.uwaterloo.watform.cli.Main'
 	applicationName = 'parser'
 }
 

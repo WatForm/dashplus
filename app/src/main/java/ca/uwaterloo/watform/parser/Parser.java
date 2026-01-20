@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.utils;
+package ca.uwaterloo.watform.parser;
 
 import antlr.generated.DashBaseVisitor;
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
@@ -9,7 +9,7 @@ import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashFileParseVis;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.parser.*;
+import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
-public final class ParserUtil {
+public class Parser {
     public static List<Path> recurGetFiles(Path dir, String filter) {
         List<Path> filePaths = new ArrayList<>();
         try (Stream<Path> stream = Files.walk(dir)) {
@@ -89,11 +89,11 @@ public final class ParserUtil {
 
     // Use this function for parsing both dash and alloy files
     public static AlloyModel parseToModel(Path filePath) {
-        AlloyFile file = ParserUtil.parse(filePath);
+        AlloyFile file = Parser.parse(filePath);
         if (null == file) {
             // This happens when
-            //  1) ParserUtil.parse found UserError
-            //  2) Reporter.INSTANCE.exitFunction has been swapped for test
+            // 1) Parser.parse found UserError
+            // 2) Reporter.INSTANCE.exitFunction has been swapped for test
             // We don't want to continue
             return null;
         }

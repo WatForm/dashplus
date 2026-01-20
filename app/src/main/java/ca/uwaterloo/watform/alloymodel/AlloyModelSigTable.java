@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;

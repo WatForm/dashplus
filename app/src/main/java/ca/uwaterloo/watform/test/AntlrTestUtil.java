@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.test;
 
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;

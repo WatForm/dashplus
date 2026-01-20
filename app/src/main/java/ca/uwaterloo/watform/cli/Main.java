@@ -1,6 +1,6 @@
-package ca.uwaterloo.watform.parser;
+package ca.uwaterloo.watform.cli;
 
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;

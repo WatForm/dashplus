@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.predabstraction;
 
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 
 import ca.uwaterloo.watform.alloyinterface.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;

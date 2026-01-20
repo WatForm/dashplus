@@ -10,16 +10,16 @@
 - ImplementationError reflect an error in code (not user input)
 - Throw ImplementationError directly
 - These should not be caught and it should propagate directly to Main to exit with the corresponding exit code
-    - ex: [parser.Main](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java)
+    - ex: [cli.Main](/app/src/main/java/ca/uwaterloo/watform/cli/Main.java)
 
 ### [Reporter.ErrorUser](/app/src/main/java/ca/uwaterloo/watform/utils/Reporter.java)
 - There are a few places where UserErrors can be thrown: AST construction, AlloyModel, DashModel, and maybe more in the future
 - These should all be caught and added to Reporter; see the example below
 - If they are not caught earlier, they should be at least caught in Main
-    - ex: [parser.Main](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java)
+    - ex: [cli.Main](/app/src/main/java/ca/uwaterloo/watform/cli/Main.java)
 - Reporter.exitIfHasError will throw AbortSignal if the Reporter has collected Errors
     - the AbortSignal should only be caught in Main, and we can exit with the corresponding exit code
-    - ex: [parser.Main](/app/src/main/java/ca/uwaterloo/watform/parser/Main.java)
+    - ex: [cli.Main](/app/src/main/java/ca/uwaterloo/watform/cli/Main.java)
 
 ### Example: Handling [AlloyCtorError](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyCtorError.java)
 - These are well-formedness errors that are thrown at construction time of ASTs

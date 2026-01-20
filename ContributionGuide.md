@@ -10,13 +10,13 @@ This document explains the working and organization of the code in this reposito
 
 ## Getting started
 
-- The entry-point for the code is in `parser/Main.java`, by default. When adding a new package, a separate Main class needs to be created and 
+- The entry-point for the code is in `cli/Main.java`, by default. When adding a new package, a separate Main class needs to be created and 
 - The Pico-cli library is used to parse arguments everywhere
 - Use the following code to produce a fully resolved DashModel object:
 
 ```
 DashFile dashFile = (DashFile) parse(inPath);
-DashModel dashModel = (DashModel) ParserUtils.parseToModel(inPath);
+DashModel dashModel = (DashModel) Parser.parseToModel(inPath);
 ```
 
 - The available accessor functions are listed in `DashAccessors.java`. Individual accessors are also listed in the various Table files. 

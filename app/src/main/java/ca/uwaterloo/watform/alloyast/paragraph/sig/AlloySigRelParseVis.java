@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.alloyast.paragraph.sig;
 
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 
 import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;

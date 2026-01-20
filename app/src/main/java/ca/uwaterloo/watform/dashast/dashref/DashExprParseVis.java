@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.dashast.dashref;
 
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 
 import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.expr.*;

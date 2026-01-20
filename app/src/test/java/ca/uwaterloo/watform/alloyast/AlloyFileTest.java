@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.alloyast;
 
-import static ca.uwaterloo.watform.utils.ParserUtil.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;
