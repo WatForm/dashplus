@@ -23,8 +23,8 @@ public final class DashStrings extends CommonStrings {
     public static final String pName = "p";
     public static final String SLASH = "/";
     public static final String PRIME = "'";
-        
-   // Dash input keywords
+
+    // Dash input keywords
     // used for printing: parts of Dash syntax
     // must be in sync with Dash-cup-symbols.txt
     public static final String stateName = "state";
@@ -79,7 +79,7 @@ public final class DashStrings extends CommonStrings {
         return (s.substring(s.length() - 1, s.length()).equals(PRIME));
     }
 
-   public static final String indent(Integer i) {
+    public static final String indent(Integer i) {
         return String.join("", Collections.nCopies(i, CommonStrings.TAB));
     }
 }

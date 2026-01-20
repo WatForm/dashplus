@@ -6,6 +6,7 @@
 
 package ca.uwaterloo.watform.dashtoalloy;
 
+import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.*;
@@ -14,15 +15,13 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashParam;
-//import ca.uwaterloo.watform.dashast.D2AStrings;
+// import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
 
 public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
@@ -31,7 +30,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
     private boolean isElectrum;
     private DashModel dm;
     protected DSL dsl;
-    
+
     public ExprTranslatorVis(DashModel dm, boolean isElectrum) {
         this.dm = dm;
         this.isElectrum = isElectrum;

@@ -1,24 +1,22 @@
 package ca.uwaterloo.watform.dashtoalloy;
 
+import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-//import ca.uwaterloo.watform.dashast.D2AStrings;
+// import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
-
 public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
 
     protected SnapshotSignaturesD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
-        
     }
 
     private AlloyExpr translateExpr(AlloyExpr expr) {

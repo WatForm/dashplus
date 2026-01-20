@@ -5,13 +5,9 @@
 
 package ca.uwaterloo.watform.dashtoalloy;
 
-import ca.uwaterloo.watform.utils.CommonStrings;
-import java.util.Collections;
-
 public final class D2AStrings {
 
     // used for translation to Alloy
-
 
     // standard modules
     public static final String utilBooleanName = "util/boolean";
@@ -33,8 +29,6 @@ public final class D2AStrings {
     public static final String utilTcmcPathName = "util/tcmc";
     public static final String tcmcInitialStateName = "tcmc/ks_s0";
     public static final String tcmcSigmaName = "tcmc/ks_sigma";
-
- 
 
     // user must be aware of this name
     public static final String bufferIndexName = "bufIdx";
@@ -101,18 +95,14 @@ public final class D2AStrings {
     // strings used internally
     public static final String processRef = "$$PROCESSREF$$";
 
-
     public static final String prime(final String a) {
         return a + "'";
     }
     ;
 
-
-
-    //public static final String removePrime(final String s) {
+    // public static final String removePrime(final String s) {
     //    if (hasPrime(s)) return s.substring(0, s.length() - 1);
     //    else return s;
-    //}
+    // }
 
- 
 }

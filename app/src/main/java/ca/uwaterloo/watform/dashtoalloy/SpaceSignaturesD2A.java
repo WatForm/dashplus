@@ -1,13 +1,13 @@
 package ca.uwaterloo.watform.dashtoalloy;
 
+import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-//import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.List;
 
-import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
+// import ca.uwaterloo.watform.dashast.D2AStrings;
 
 public class SpaceSignaturesD2A extends AlloyInterfaceD2A {
 

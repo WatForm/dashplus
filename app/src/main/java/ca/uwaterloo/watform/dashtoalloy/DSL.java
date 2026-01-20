@@ -6,19 +6,17 @@
 
 package ca.uwaterloo.watform.dashtoalloy;
 
+import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
+
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-//import ca.uwaterloo.watform.dashast.DashStrings;
+// import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
 
 public class DSL {
 
@@ -40,14 +38,14 @@ public class DSL {
         return AlloyVar(D2AStrings.nextName);
     }
 
-    //[s,s']
+    // [s,s']
     public List<AlloyExpr> curNextVars() {
         List<AlloyExpr> o = new ArrayList<AlloyExpr>();
         if (!this.isElectrum) {
             o.add(curVar());
             o.add(nextVar());
         }
-        return o;        
+        return o;
     }
 
     // bufIdex0
@@ -93,7 +91,7 @@ public class DSL {
     }
 
     // s.stable == boolean/True
-   /* public AlloyExpr curStableTrue() {
+    /* public AlloyExpr curStableTrue() {
         return createIsTrue(curJoinExpr(stable()));
     }
 
@@ -118,34 +116,29 @@ public class DSL {
     // decls ---------------------------
     // s:Snapshot
     public AlloyDecl curDecl() {
-        return new AlloyDecl(
-            D2AStrings.curName, 
-            D2AStrings.snapshotName);
-    }
-    
-    // s':Snapshot
-    public AlloyDecl nextDecl() {
-        return (AlloyDecl) new AlloyDecl(
-            D2AStrings.nextName, 
-            D2AStrings.snapshotName);
+        return new AlloyDecl(D2AStrings.curName, D2AStrings.snapshotName);
     }
 
-    // [s:Snapshot] 
+    // s':Snapshot
+    public AlloyDecl nextDecl() {
+        return (AlloyDecl) new AlloyDecl(D2AStrings.nextName, D2AStrings.snapshotName);
+    }
+
+    // [s:Snapshot]
     public List<AlloyDecl> curDecls() {
         List<AlloyDecl> o = new ArrayList<AlloyDecl>();
-        if (!this.isElectrum)
-            o.add(curDecl());
+        if (!this.isElectrum) o.add(curDecl());
         return o;
     }
+
     // [snext:Snapshot]
     public List<AlloyDecl> nextDecls() {
         List<AlloyDecl> o = new ArrayList<AlloyDecl>();
-        if (!this.isElectrum)
-            o.add(nextDecl());
+        if (!this.isElectrum) o.add(nextDecl());
         return o;
     }
 
-    // [s:Snapshot, s':Snapshot] 
+    // [s:Snapshot, s':Snapshot]
     public List<AlloyDecl> curNextDecls() {
         List<AlloyDecl> o = new ArrayList<AlloyDecl>();
         if (!this.isElectrum) {
@@ -154,8 +147,4 @@ public class DSL {
         }
         return o;
     }
-
- 
-
-
 }

@@ -70,14 +70,15 @@ public final class AlloyDecl extends AlloyExpr {
     }
 
     public AlloyDecl(String qname, String expr) {
-        this(Pos.UNKNOWN, 
-            false, 
-            false, 
-            false, 
-            Collections.singletonList(new AlloyQnameExpr(qname)), 
-            false, 
-            null, 
-            new AlloyQnameExpr(expr));
+        this(
+                Pos.UNKNOWN,
+                false,
+                false,
+                false,
+                Collections.singletonList(new AlloyQnameExpr(qname)),
+                false,
+                null,
+                new AlloyQnameExpr(expr));
     }
 
     public Optional<String> getName() {

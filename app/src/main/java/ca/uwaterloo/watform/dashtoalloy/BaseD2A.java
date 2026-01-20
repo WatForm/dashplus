@@ -17,7 +17,7 @@ public class BaseD2A {
     protected AlloyModel am = new AlloyModel(); // output
     protected boolean isElectrum = false;
     protected DSL dsl;
-    protected  ExprTranslatorVis exprTranslator;
+    protected ExprTranslatorVis exprTranslator;
 
     protected BaseD2A(DashModel dm, boolean isElectrum) {
         this.dm = dm;
