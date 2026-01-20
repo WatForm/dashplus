@@ -12,7 +12,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-import ca.uwaterloo.watform.dashast.DashStrings;
+//import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,12 +32,12 @@ public class DSL {
 
     // s
     public AlloyQnameExpr curVar() {
-        return AlloyVar(DashStrings.curName);
+        return AlloyVar(D2AStrings.curName);
     }
 
     // snext
     public AlloyQnameExpr nextVar() {
-        return AlloyVar(DashStrings.nextName);
+        return AlloyVar(D2AStrings.nextName);
     }
 
     //[s,s']
@@ -52,7 +52,7 @@ public class DSL {
 
     // bufIdex0
     public AlloyQnameExpr bufferIndexVar(int i) {
-        return AlloyVar(DashStrings.bufferIndexName + i);
+        return AlloyVar(D2AStrings.bufferIndexName + i);
     }
 
     // Electrum only
@@ -79,7 +79,7 @@ public class DSL {
 
     // stable ------------------------------------------
     public AlloyQnameExpr stable() {
-        return AlloyVar(DashStrings.stableName);
+        return AlloyVar(D2AStrings.stableName);
     }
 
     // s.stable
@@ -119,15 +119,15 @@ public class DSL {
     // s:Snapshot
     public AlloyDecl curDecl() {
         return new AlloyDecl(
-            DashStrings.curName, 
-            DashStrings.snapshotName);
+            D2AStrings.curName, 
+            D2AStrings.snapshotName);
     }
     
     // s':Snapshot
     public AlloyDecl nextDecl() {
         return (AlloyDecl) new AlloyDecl(
-            DashStrings.nextName, 
-            DashStrings.snapshotName);
+            D2AStrings.nextName, 
+            D2AStrings.snapshotName);
     }
 
     // [s:Snapshot] 

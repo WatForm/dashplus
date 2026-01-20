@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.dashtoalloy;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.dashast.DashStrings;
+//import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.List;
@@ -44,34 +44,34 @@ public class SpaceSignaturesD2A extends AlloyInterfaceD2A {
 
         if (!this.dm.hasOnlyOneState()) {
             // abstract sig Statelabel {}
-            this.addAbstractSig(DashStrings.stateLabelName);
+            this.addAbstractSig(D2AStrings.stateLabelName);
             // abstract sig Root extends StateLabel {}
-            this.addAbstractExtendsSig(this.dm.rootName(), DashStrings.stateLabelName);
+            this.addAbstractExtendsSig(this.dm.rootName(), D2AStrings.stateLabelName);
         }
         if (this.dm.hasConcurrency()) {
             // abstract sig Scopes {}
-            this.addAbstractSig(DashStrings.scopeLabelName);
+            this.addAbstractSig(D2AStrings.scopeLabelName);
             // one sig Root extends Scopes {}
             this.addOneExtendsSig(
-                    this.dm.rootName() + DashStrings.scopeSuffix, DashStrings.scopeLabelName);
+                    this.dm.rootName() + D2AStrings.scopeSuffix, D2AStrings.scopeLabelName);
         }
         recurseCreateStateSpaceSigs(this.dm.rootName());
 
         // abstract sig TransLabel {}
-        this.addAbstractSig(DashStrings.transitionLabelName);
+        this.addAbstractSig(D2AStrings.transitionLabelName);
         // add all transitions as one sig extensions of TransLabel
         for (String t : this.dm.allTransNames()) {
             // one sig tfqn extends TransLabel {}
-            this.addOneExtendsSig(DashFQN.translateFQN(t), DashStrings.transitionLabelName);
+            this.addOneExtendsSig(DashFQN.translateFQN(t), D2AStrings.transitionLabelName);
         }
 
         if (!this.isElectrum && this.dm.maxDepthParams() != 0) {
             // if this model has parametrized components
             // abstract sig Identifiers {}
-            this.addAbstractSig(DashStrings.identifierName);
+            this.addAbstractSig(D2AStrings.identifierName);
             for (String s : mapBy(this.dm.allParamsInOrder(), i -> i.paramSig))
                 // sig param extends Identifiers {}
-                this.addExtendsSig(s, DashStrings.identifierName);
+                this.addExtendsSig(s, D2AStrings.identifierName);
             // the alternative would be for conf1, etc to be fields in
             // sig Identifiers, but the creation of conf1, etc is in
             // SnapshotSignatures
@@ -80,25 +80,25 @@ public class SpaceSignaturesD2A extends AlloyInterfaceD2A {
         // events ----------------------
         if (this.dm.hasEvents()) {
             // abstract sig Events {}
-            this.addAbstractSig(DashStrings.allEventsName);
+            this.addAbstractSig(D2AStrings.allEventsName);
             if (this.dm.hasIntEvents()) {
                 // abstract sig IntEvents extends Events {}
                 this.addAbstractExtendsSig(
-                        DashStrings.allInternalEventsName, DashStrings.allEventsName);
+                        D2AStrings.allInternalEventsName, D2AStrings.allEventsName);
                 for (String e : this.dm.allIntEvents()) {
                     // sig e extends IntEvents {}
                     this.addOneExtendsSig(
-                            DashFQN.translateFQN(e), DashStrings.allInternalEventsName);
+                            DashFQN.translateFQN(e), D2AStrings.allInternalEventsName);
                 }
             }
             if (this.dm.hasEnvEvents()) {
                 // abstract sig EnvEvents extends Events {}
                 this.addAbstractExtendsSig(
-                        DashStrings.allEnvironmentalEventsName, DashStrings.allEventsName);
+                        D2AStrings.allEnvironmentalEventsName, D2AStrings.allEventsName);
                 for (String e : this.dm.allEnvEvents()) {
                     // sig e extends EnvEvents {}
                     this.addOneExtendsSig(
-                            DashFQN.translateFQN(e), DashStrings.allEnvironmentalEventsName);
+                            DashFQN.translateFQN(e), D2AStrings.allEnvironmentalEventsName);
                 }
             }
         }
@@ -122,10 +122,10 @@ public class SpaceSignaturesD2A extends AlloyInterfaceD2A {
                         // because buffer is declared under param
                         // o/w declared with buffer index in Snapshot stuff
                         // sig BufIdx0 {}
-                        this.addSig(DashStrings.bufferIndexName + this.dm.bufferIndex(b));
+                        this.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
                 } else
                     // sig BufIndex5 {}
-                    this.addSig(DashStrings.bufferIndexName + this.dm.bufferIndex(b));
+                    this.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
             }
         }
     }
@@ -139,8 +139,8 @@ public class SpaceSignaturesD2A extends AlloyInterfaceD2A {
             if (this.dm.hasConcurrency() && this.dm.isAnd(child))
                 // one sig childScope extends Scopes {}
                 this.addOneExtendsSig(
-                        DashFQN.translateFQN(child) + DashStrings.scopeSuffix,
-                        DashStrings.scopeLabelName);
+                        DashFQN.translateFQN(child) + D2AStrings.scopeSuffix,
+                        D2AStrings.scopeLabelName);
             // for conf
             if (!this.dm.hasOnlyOneState()) {
                 if (this.dm.isLeaf(child))

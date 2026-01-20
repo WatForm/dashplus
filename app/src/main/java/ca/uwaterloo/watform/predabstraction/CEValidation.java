@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.dashtoalloy.D2AStrings;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,7 @@ public final class CEValidation {
     public static void initAndNext(AlloyModel alloyModel, Solution solution) {
         // Get the next relation on the Snapshots
         Set<List<String>> nextRelSnapSet =
-                solution.get(DashStrings.snapshotName + DashStrings.SLASH + "Ord.Next");
+                solution.get(D2AStrings.snapshotName + DashStrings.SLASH + "Ord.Next");
         Map<String, String> nextRelSnapMap = new HashMap<>();
         for (List<String> pair : nextRelSnapSet) {
             nextRelSnapMap.put(pair.getFirst(), pair.getLast());
@@ -31,7 +32,7 @@ public final class CEValidation {
 
         // Get the first Snapshot
         Set<List<String>> firstSnapSet =
-                solution.get(DashStrings.snapshotName + DashStrings.SLASH + "Ord.First");
+                solution.get(D2AStrings.snapshotName + DashStrings.SLASH + "Ord.First");
         String firstSnap = Iterables.getOnlyElement(firstSnapSet).getFirst();
 
         // Rename snapshots; DshSnapshot$0 may not be the first snapshot and
@@ -60,7 +61,7 @@ public final class CEValidation {
                     new AlloySigPara(
                             List.of(AlloySigPara.Qual.ONE),
                             List.of(new AlloyQnameExpr(renamedSnap)),
-                            new AlloySigPara.Extends(new AlloyQnameExpr(DashStrings.snapshotName)),
+                            new AlloySigPara.Extends(new AlloyQnameExpr(D2AStrings.snapshotName)),
                             Collections.emptyList(),
                             new AlloyBlock()));
         }
@@ -71,7 +72,7 @@ public final class CEValidation {
                         new AlloyBlock(
                                 List.of(
                                         new AlloyBracketExpr(
-                                                new AlloyQnameExpr(DashStrings.initFactName),
+                                                new AlloyQnameExpr(D2AStrings.initFactName),
                                                 List.of(
                                                         new AlloyQnameExpr(
                                                                 renamedSnaps.getFirst())))))));
@@ -84,9 +85,9 @@ public final class CEValidation {
                                     new AlloyEqualsExpr(
                                             new AlloyBracketExpr(
                                                     new AlloyQnameExpr(
-                                                            DashStrings.snapshotName
+                                                            D2AStrings.snapshotName
                                                                     + DashStrings.SLASH
-                                                                    + DashStrings.tracesNextName),
+                                                                    + D2AStrings.tracesNextName),
                                                     List.of(
                                                             new AlloyQnameExpr(
                                                                     renamedSnaps.get(i - 1)))),

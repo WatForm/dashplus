@@ -6,7 +6,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-import ca.uwaterloo.watform.dashast.DashStrings;
+//import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,18 +27,18 @@ public class AlloyHelper {
     /*public static AlloyExpr createIsTrue(AlloyExpr e) {
         List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
         elist.add(e);
-        return createPredCall(DashStrings.isTrue,elist);
+        return createPredCall(D2AStrings.isTrue,elist);
     }
     public static AlloyExpr createIsFalse(AlloyExpr e) {
         List<Expr> elist = new ArrayList<Expr>();
         elist.add(e);
-        return createPredCall(DashStrings.isFalse,elist);
+        return createPredCall(D2AStrings.isFalse,elist);
     }*/
 
     // common vars
 
     public static AlloyExpr AlloyOneBool() {
-        return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(DashStrings.boolName));
+        return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(D2AStrings.boolName));
     }
 
        // --------------------------------

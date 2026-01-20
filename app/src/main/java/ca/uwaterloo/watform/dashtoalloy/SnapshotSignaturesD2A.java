@@ -5,7 +5,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-import ca.uwaterloo.watform.dashast.DashStrings;
+//import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
@@ -41,43 +41,43 @@ public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
         // scopesUsed0, scopesUsed1, etc, (need if have parameters)
         List<String> cop;
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            cop = Collections.nCopies(i, DashStrings.identifierName);
+            cop = Collections.nCopies(i, D2AStrings.identifierName);
 
             // scopesUsed0, scopeUsed1, etc
             if (dm.hasConcurrency())
                 decls.add(
                         AlloyDecl(
-                                DashStrings.scopesUsedName + Integer.toString(i),
+                                D2AStrings.scopesUsedName + Integer.toString(i),
                                 ArrowExprFromStringList(
-                                        newListWithOneMore(cop, DashStrings.scopeLabelName))));
+                                        newListWithOneMore(cop, D2AStrings.scopeLabelName))));
 
             // conf0, conf1, etc.
             if (!dm.hasOnlyOneState())
                 decls.add(
                         AlloyDecl(
-                                DashStrings.confName + Integer.toString(i),
+                                D2AStrings.confName + Integer.toString(i),
                                 ArrowExprFromStringList(
-                                        newListWithOneMore(cop, DashStrings.stateLabelName))));
+                                        newListWithOneMore(cop, D2AStrings.stateLabelName))));
 
             // transTaken1, etc.
             decls.add(
                     AlloyDecl(
-                            DashStrings.transTakenName + Integer.toString(i),
+                            D2AStrings.transTakenName + Integer.toString(i),
                             ArrowExprFromStringList(
-                                    newListWithOneMore(cop, DashStrings.transitionLabelName))));
+                                    newListWithOneMore(cop, D2AStrings.transitionLabelName))));
 
             // events0, event1, etc.
             if (dm.hasEvents() && dm.hasEventsAti(i))
                 decls.add(
                         AlloyDecl(
-                                DashStrings.eventsName + Integer.toString(i),
+                                D2AStrings.eventsName + Integer.toString(i),
                                 ArrowExprFromStringList(
-                                        newListWithOneMore(cop, DashStrings.allEventsName))));
+                                        newListWithOneMore(cop, D2AStrings.allEventsName))));
         }
 
         // stable: one boolean;
         if (dm.hasConcurrency()) {
-            decls.add(AlloyDecl(DashStrings.stableName, AlloyOneBool()));
+            decls.add(AlloyDecl(D2AStrings.stableName, AlloyOneBool()));
         }
 
         // add vars to snapshot
@@ -108,7 +108,7 @@ public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
         }
 
         // add the snapshot signature
-        this.am.addPara(new AlloySigPara(AlloyVar(DashStrings.snapshotName), decls));
+        this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
     }
 
     private void addSnapshotSignaturesElectrum() {
@@ -217,7 +217,7 @@ public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
                 decls = new ArrayList<Decl>();
                 for (String v: allvfqnsNoParamsArrowTyp)
                     decls.add(DeclExt.newVarDeclExt(translateFQN(v), translateExpr(d.getVarType(v),d, true)));
-                dm.addOneSigWithDeclsSimple(DashStrings.variablesName, decls);
+                dm.addOneSigWithDeclsSimple(D2AStrings.variablesName, decls);
             }
 
             // vfqns with parameters P1, P2, P3

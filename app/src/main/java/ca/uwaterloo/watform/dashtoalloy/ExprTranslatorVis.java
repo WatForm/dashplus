@@ -14,7 +14,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashParam;
-import ca.uwaterloo.watform.dashast.DashStrings;
+//import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -101,7 +101,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
                 // is a non-var, non-one var, non-lone var, non-set var, non-parametrized
                 // type (i.e., an arrow type), we have to handle it specially
                 // Variables.v or Variables.v'
-                return AlloyJoin(AlloyVar(DashStrings.variablesName), v_expr);
+                return AlloyJoin(AlloyVar(D2AStrings.variablesName), v_expr);
             } else {
                 // p2.p1.v or p2.p1.v'
                 join_list.add(v_expr);
