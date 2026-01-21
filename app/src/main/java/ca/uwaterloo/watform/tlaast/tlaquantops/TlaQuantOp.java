@@ -31,7 +31,7 @@ public abstract class TlaQuantOp extends TlaOperator {
                 + TlaStrings.SPACE
                 + o.getTLASnippetOfChild(o.variable)
                 + TlaStrings.SPACE
-                + TlaStrings.IN
+                + TlaStrings.SET_IN
                 + TlaStrings.SPACE
                 + o.getTLASnippetOfChild(o.set)
                 + TlaStrings.SPACE

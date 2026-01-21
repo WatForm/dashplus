@@ -49,6 +49,9 @@ public class DashToTla {
         tlaModel.addComment("Next relation");
         NextDefn.translate(dashModel, tlaModel);
 
+        tlaModel.addComment("single environmental event assumption");
+        SingleEnvEvent.translate(vars, dashModel, tlaModel);
+
         return tlaModel;
     }
 }

@@ -40,6 +40,8 @@ class DashToTlaStrings {
             SPECIAL + "environmental" + SPECIAL + "events";
     public static final String VALID_PRIMED = SPECIAL + "valid" + SPECIAL + "primed";
     public static final String VALID_UNPRIMED = SPECIAL + "valid" + SPECIAL + "unprimed";
+    public static final String SINGLE_ENV_INPUT =
+            SPECIAL + "single" + SPECIAL + "environmental" + SPECIAL + "event";
 
     // common formulae with arguments
     public static final String NEXT_IS_STABLE =
