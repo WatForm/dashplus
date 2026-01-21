@@ -1,17 +1,20 @@
 package ca.uwaterloo.watform.cli;
 
+import static ca.uwaterloo.watform.alloyinterface.AlloyInterface.*;
+import static ca.uwaterloo.watform.cli.CliError.*;
 import static ca.uwaterloo.watform.parser.Parser.*;
 
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloyinterface.Solution;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.utils.*;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+import picocli.CommandLine.Mixin;
 
 @Command(
         usageHelpWidth = 120,
@@ -65,77 +68,72 @@ import picocli.CommandLine.Parameters;
         optionListHeading = "%n@|bold Options:|@%n",
         parameterListHeading = "%n@|bold Parameters:|@%n")
 public class Main implements Callable<Integer> {
-    public enum AlloyMode {
-        traces,
-        tcmc,
-        electrum
-    }
 
-    @Parameters(index = "0", arity = "1..*", description = "Paths to Alloy/Dash files")
-    private List<Path> inputPaths;
-
-    @Option(
-            names = "-alloy",
-            description = "Translation mode: ${COMPLETION-CANDIDATES}.",
-            defaultValue = "traces")
-    private AlloyMode alloyMode;
-
-    // 0 indexed
-    //
-    @Option(
-            names = "-cmd",
-            arity = "0..1", // Makes it optional (0 or 1 occurrence)
-            defaultValue = "-1",
-            paramLabel = "<cmdIdx>",
-            description = "Index of the command to execute (Default: execute all).")
-    private int commandIndex;
-
-    @Option(
-            names = {"-noCmd"},
-            description = "Check satisfiability without commands")
-    private boolean noCmd = false;
-
-    @Option(
-            names = {"-write"},
-            description = "Write translated Alloy into file")
-    private boolean write = false;
-
-    @Option(
-            names = {"-s", "--single"},
-            description = "Single environmental input")
-    private boolean single = false;
-
-    @Option(
-            names = {"-v", "--verbose"},
-            description = "Verbose output and see comments")
-    private boolean verbose = false;
-
-    @Option(
-            names = {"-d", "--debug"},
-            description = "Enable debug output.")
-    private boolean debug = false;
+    @Mixin CliConf cliConf = CliConf.INSTANCE;
 
     @Override
     public Integer call() {
         try {
             // Main logic
-            Reporter.INSTANCE.setDebugMode(debug);
-            for (Path filePath : inputPaths) {
-                Reporter.INSTANCE.reset();
-                Reporter.INSTANCE.setFilePath(filePath);
-                DashModel dm = (DashModel) parseToModel(filePath);
-                // tmp debugging start
-                //
-                // tmp debugging end
-                // Solution solution =
-                // AlloyInterface.executeCommand(parseToModel(path),
-                // this.commandIndex);
-                // System.out.println(solution.toString());
-                Reporter.INSTANCE.print();
-                // System.out.println("translation to Alloy ----");
-                // need to output this to a file
-                System.out.println(new DashToAlloy(dm).translate());
+
+            if (!cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
+
+                for (Path filePath : cliConf.inputPaths) {
+                    Reporter.INSTANCE.reset();
+                    Reporter.INSTANCE.setFilePath(filePath);
+
+                    String fileName = filePath.getFileName().toString().toLowerCase();
+
+                    if (fileName.endsWith(".als")) {
+                        AlloyModel alloyModel = parseToModel(filePath);
+                        if (cliConf.cmdIdx >= 1) {
+                            Solution solution = executeCommand(alloyModel, cliConf.cmdIdx);
+                            System.out.println(solution.toString());
+                        } else if (cliConf.cmdIdx == -1) {
+                            for (int i = 1;
+                                    i <= alloyModel.getParas(AlloyCmdPara.class).size();
+                                    i++) {
+                                Solution solution = executeCommand(alloyModel, i);
+                                System.out.println(solution.toString());
+                            }
+                        } else {
+                            Reporter.INSTANCE.addError(invalidParams());
+                        }
+
+                    } else if (fileName.endsWith(".dsh")) {
+                        // Dash Mode
+                        DashModel dm = (DashModel) parseToModel(filePath);
+                        // tmp debugging start
+                        //
+                        // tmp debugging end
+                        // Solution solution =
+                        // AlloyInterface.executeCommand(parseToModel(path),
+                        // this.commandIndex);
+                        // System.out.println(solution.toString());
+                        Reporter.INSTANCE.print();
+                        // System.out.println("translation to Alloy ----");
+                        // need to output this to a file
+                        System.out.println(new DashToAlloy(dm).translate());
+                    } else {
+                        Reporter.INSTANCE.addError(invalidFile(fileName));
+                    }
+                }
+
+            } else if (cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
+                // TLA Mode
+
+            } else if (!cliConf.tla && cliConf.predAbs && !cliConf.xml) {
+                // Pred Abs Mode
+
+            } else if (!cliConf.tla && !cliConf.predAbs && cliConf.xml) {
+                // XML Mode
+
+            } else {
+                Reporter.INSTANCE.addError(invalidParams());
             }
+
+            Reporter.INSTANCE.exitIfHasErrors();
+
             return 0;
 
             // User error exit code: 1
@@ -146,22 +144,22 @@ public class Main implements Callable<Integer> {
         } catch (Reporter.AbortSignal abortSignal) {
             return 1;
 
-            // Implementation Error exit code: 2
         } catch (ImplementationError implementationError) {
+            // Implementation Error exit code: 2
             System.err.println(implementationError);
-            if (debug) implementationError.printStackTrace();
+            if (cliConf.debug) implementationError.printStackTrace();
             return 2;
+        } catch (DashPlusException dashPlusError) {
             // DashPlusException bubbled up here are treated ImplementationError
             // see ErrorHandling.md
-        } catch (DashPlusException dashPlusError) {
             System.err.println(dashPlusError);
-            if (debug) dashPlusError.printStackTrace();
+            if (cliConf.debug) dashPlusError.printStackTrace();
             return 2;
 
-            // Unexpected Error exit code: 3
         } catch (Exception e) {
+            // Unexpected Error exit code: 3
             System.err.println("Unexpected error: " + e.getMessage());
-            if (debug) e.printStackTrace();
+            if (cliConf.debug) e.printStackTrace();
             return 3;
         }
     }

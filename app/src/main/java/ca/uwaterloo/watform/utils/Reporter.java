@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.utils;
 
+import ca.uwaterloo.watform.cli.CliConf;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,14 +13,9 @@ public final class Reporter {
     private final List<DashPlusException> errors = new ArrayList<>();
     private final List<WarningUser> warnings = new ArrayList<>();
     private final List<CommentUser> comments = new ArrayList<>();
-    private boolean debugMode = false;
 
     public void setFilePath(Path filePath) {
         this.filePath = filePath;
-    }
-
-    public void setDebugMode(boolean debugMode) {
-        this.debugMode = debugMode;
     }
 
     public void addError(DashPlusException error) {
@@ -69,7 +65,7 @@ public final class Reporter {
         if (!comments.isEmpty()) {
             for (CommentUser comment : comments) {
                 System.err.println(comment.toString(filePath));
-                if (debugMode) {
+                if (CliConf.INSTANCE.debug) {
                     comment.printStackTrace();
                 }
             }
@@ -78,7 +74,7 @@ public final class Reporter {
         if (!warnings.isEmpty()) {
             for (WarningUser warning : warnings) {
                 System.err.println(warning.toString(filePath));
-                if (debugMode) {
+                if (CliConf.INSTANCE.debug) {
                     warning.printStackTrace();
                 }
             }
@@ -87,7 +83,7 @@ public final class Reporter {
         if (!errors.isEmpty()) {
             for (DashPlusException error : errors) {
                 System.err.println(error.toString(filePath));
-                if (debugMode) {
+                if (CliConf.INSTANCE.debug) {
                     error.printStackTrace();
                 }
             }

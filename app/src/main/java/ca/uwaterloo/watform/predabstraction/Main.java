@@ -45,7 +45,6 @@ public class Main implements Callable<Integer> {
     public Integer call() {
         try {
             // Main logic
-            Reporter.INSTANCE.setDebugMode(debug);
             Solution solution =
                     AlloyInterface.executeCommand(parseToModel(filePath), this.commandIndex);
             System.out.println(solution.toString());
