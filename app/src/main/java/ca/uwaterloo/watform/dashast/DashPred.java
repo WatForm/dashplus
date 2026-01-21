@@ -21,17 +21,6 @@ public class DashPred extends ASTNode implements DashStateItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        String s = new String();
-        s += DashStrings.indent(indent) + AlloyStrings.PRED + " ";
-        if (name != null) s += name;
-        s += " {\n";
-        s += DashStrings.indent(indent) + exp.toString() + "\n";
-        s += DashStrings.indent(indent) + "}\n";
-        sb.append(s);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(PRED + SPACE);
         if (name != null && !name.isBlank()) pCtx.append(name + SPACE);

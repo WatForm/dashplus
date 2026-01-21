@@ -12,11 +12,6 @@ public class DashFrom extends DashNamedExpr implements DashTransItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        super.toString(fromName, sb, indent);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         super.pp(pCtx, fromName);
     }

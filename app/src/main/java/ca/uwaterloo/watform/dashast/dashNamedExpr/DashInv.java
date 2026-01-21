@@ -23,19 +23,6 @@ public final class DashInv extends DashNamedExpr implements DashStateItem {
         this.name = n;
     }
 
-    // NADTODO we should print the name if it has one
-    @Override
-    public void toString(StringBuilder sb, int indent) {
-        sb.append(indent(indent) + invName);
-        if (!this.name.isEmpty()) {
-            sb.append(SPACE + this.name);
-        }
-        sb.append(" {\n");
-        sb.append(indent(indent + 1));
-        this.exp.toString(sb, indent + 1);
-        sb.append("\n" + indent(indent) + "}\n");
-    }
-
     @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(invName + SPACE);

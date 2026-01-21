@@ -13,11 +13,6 @@ public class DashGoto extends DashNamedExpr implements DashTransItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        super.toString(gotoName, sb, indent);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         super.pp(pCtx, gotoName);
     }

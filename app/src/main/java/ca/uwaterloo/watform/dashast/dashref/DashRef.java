@@ -77,32 +77,6 @@ public class DashRef extends AlloyExpr {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        // STATE: Root/A/B[a1,b1]
-        // other: Root/A/B[a1,b1]/var1
-        String s = "";
-        // may or may not be resolved
-        if (!paramValues.isEmpty()) {
-            // then it has to be at least partially resolved already
-            if (kind == DashStrings.DashRefKind.STATE) {
-                s += name;
-            } else {
-                s += chopPrefixFromFQN(name);
-            }
-            s += "[";
-            s += GeneralUtil.strCommaList(paramValues);
-            s += "]";
-            if (kind != DashStrings.DashRefKind.STATE) {
-                s += "/";
-                s += chopNameFromFQN(name);
-            }
-        } else {
-            s += name;
-        }
-        sb.append(s);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         // STATE: Root/A/B[a1,b1]
         // other: Root/A/B[a1,b1]/var1

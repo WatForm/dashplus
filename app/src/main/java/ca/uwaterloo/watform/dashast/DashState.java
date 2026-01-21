@@ -56,35 +56,6 @@ public class DashState extends DashPara implements DashStateItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        String ind = DashStrings.indent(indent);
-        String s = new String(ind);
-        if (def == DashStrings.DefKind.DEFAULT) {
-            s += DashStrings.defaultName + " ";
-        }
-        if (kind == DashStrings.StateKind.AND) {
-            s += DashStrings.concName + " ";
-        }
-        if (items.isEmpty()) {
-            s += DashStrings.stateName + " " + name + " {}\n";
-        } else {
-            s += DashStrings.stateName + " " + name;
-            if (param == null) s += " {\n";
-            else s += " [" + param + "] {\n";
-            StringJoiner j = new StringJoiner("");
-            // sorting items for display order
-            // map type of item to an integer (in function above)
-            List<Object> itemsCopy = new ArrayList<>(items);
-            Collections.sort(itemsCopy, (i1, i2) -> Integer.compare(itemToInt(i1), itemToInt(i2)));
-            itemsCopy.forEach(
-                    k -> j.add(((ASTNode) k).toString(PrintContext.lineWidth, indent + 1)));
-            // the toStrong call above ends up at a pp method
-            s += j.toString() + ind + "}\n";
-        }
-        sb.append(s);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         if (def == DefKind.DEFAULT) {
             pCtx.append(defaultName + SPACE);

@@ -29,12 +29,6 @@ public final class DashFile extends AlloyFile {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        super.toString(sb, indent);
-        this.stateRoot.toString(sb, indent);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         super.pp(pCtx);
         stateRoot.pp(pCtx);

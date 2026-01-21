@@ -17,11 +17,6 @@ public class DashSend extends DashNamedExpr implements DashTransItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        super.toString(sendName, sb, indent);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         super.pp(pCtx, sendName);
     }

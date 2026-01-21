@@ -36,13 +36,6 @@ public class DashParam extends AlloyExpr {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        // seems like a reasonable thing to return for the toString of this Expr
-        // sb.append(stateName.toString());
-        sb.append(paramSig);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         // pCtx.append(stateName);
         pCtx.append(paramSig);

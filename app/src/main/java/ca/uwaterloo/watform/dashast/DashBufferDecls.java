@@ -23,19 +23,6 @@ public final class DashBufferDecls extends ASTNode implements DashStateItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        // indices are hidden
-        String s = new String("");
-        if (kind == IntEnvKind.ENV) {
-            s += envName + " ";
-        }
-        StringJoiner sj = new StringJoiner(",\n");
-        names.forEach(n -> sj.add(n));
-        s += sj.toString() + ":" + bufName + "[" + element + "]\n";
-        sb.append(DashStrings.indent(indent) + s);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         // indices are hidden
         if (kind == IntEnvKind.ENV) {

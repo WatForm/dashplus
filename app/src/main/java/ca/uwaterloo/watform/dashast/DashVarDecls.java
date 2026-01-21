@@ -25,17 +25,6 @@ public final class DashVarDecls extends ASTNode implements DashStateItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        String s = DashStrings.indent(indent);
-        if (kind == DashStrings.IntEnvKind.ENV) {
-            s += DashStrings.envName + " ";
-        }
-        StringJoiner sj = new StringJoiner(",\n");
-        names.forEach(n -> sj.add(n));
-        sb.append(s + sj.toString() + ":" + typ.toString() + "\n");
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         if (kind == IntEnvKind.ENV) {
             pCtx.append(envName + SPACE);

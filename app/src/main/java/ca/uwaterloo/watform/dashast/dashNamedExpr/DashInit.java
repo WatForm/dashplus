@@ -13,11 +13,6 @@ public final class DashInit extends DashNamedExpr implements DashStateItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        super.toString(initName, sb, indent);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         super.pp(pCtx, initName);
     }

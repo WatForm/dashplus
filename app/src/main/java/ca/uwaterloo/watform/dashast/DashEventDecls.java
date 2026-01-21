@@ -20,18 +20,6 @@ public final class DashEventDecls extends ASTNode implements DashStateItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        String s = new String("");
-        if (kind == DashStrings.IntEnvKind.ENV) {
-            s += DashStrings.envName + " ";
-        }
-        StringJoiner sj = new StringJoiner(",\n");
-        names.forEach(n -> sj.add(n));
-        s += DashStrings.eventName + " " + sj.toString() + " {}\n";
-        sb.append(DashStrings.indent(indent) + s);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         if (kind == IntEnvKind.ENV) {
             pCtx.append(envName + SPACE);

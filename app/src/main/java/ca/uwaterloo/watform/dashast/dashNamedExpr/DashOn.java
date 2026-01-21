@@ -13,11 +13,6 @@ public class DashOn extends DashNamedExpr implements DashTransItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        super.toString(onName, sb, indent);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         super.pp(pCtx, onName);
     }

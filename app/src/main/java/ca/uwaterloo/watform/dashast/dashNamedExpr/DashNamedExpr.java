@@ -27,18 +27,6 @@ public abstract class DashNamedExpr extends ASTNode {
         this.exp = null;
     }
 
-    // Special toString for when expression has a name
-    public void toString(String name, StringBuilder sb, int indent) {
-        sb.append(DashStrings.indent(indent) + name + SPACE);
-        if (AlloyBlock.class.isInstance(this.exp)) {
-            sb.append("{\n");
-            sb.append(DashStrings.indent(indent + 1));
-        }
-        this.exp.toString(sb, indent + 1);
-        sb.append("\n");
-        if (AlloyBlock.class.isInstance(this.exp)) sb.append(DashStrings.indent(indent) + "}\n");
-    }
-
     public final void pp(PrintContext pCtx, String name) {
         pCtx.append(name);
         pCtx.append(SPACE);

@@ -50,25 +50,6 @@ public final class DashTrans extends ASTNode implements DashStateItem {
     }
 
     @Override
-    public void toString(StringBuilder sb, int indent) {
-        String s = new String("");
-        String ind = DashStrings.indent(indent);
-        if (emptyTrans()) {
-            sb.append(ind + DashStrings.transName + " " + name + " { }\n");
-        } else {
-            sb.append(ind + DashStrings.transName + " " + name + " {\n");
-            passIfNull(sb, indent + 1, this.fromP);
-            passIfNull(sb, indent + 1, this.gotoP);
-            passIfNull(sb, indent + 1, this.onP);
-            passIfNull(sb, indent + 1, this.sendP);
-            passIfNull(sb, indent + 1, this.whenP);
-            passIfNull(sb, indent + 1, this.doP);
-            sb.append(ind + "}\n");
-        }
-        sb.append(s);
-    }
-
-    @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(transName + SPACE + name + SPACE + LBRACE);
         if (!emptyTrans()) {
