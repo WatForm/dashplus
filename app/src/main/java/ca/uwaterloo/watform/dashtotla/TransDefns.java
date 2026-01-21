@@ -184,7 +184,7 @@ public class TransDefns {
                                         dashModel.scopesUsed(transFQN),
                                         dr -> TlaAppl(tlaFQN(dr.name))));
 
-                stableExps.add(TlaUnchanged(SCOPES_USED()));
+                stableExps.add(SCOPES_USED().PRIME().EQUALS(scopesUsed));
 
                 unstableExps.add(SCOPES_USED().PRIME().EQUALS(SCOPES_USED().UNION(scopesUsed)));
             }
@@ -232,6 +232,53 @@ public class TransDefns {
             TlaAppl sourceState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).name));
             exps.add(sourceState.INTERSECTION(CONF().PRIME()).NOT_EQUALS(NULL_SET()));
         }
+
+        List<TlaExp> stableExps = new ArrayList<>();
+        List<TlaExp> unstableExps = new ArrayList<>();
+
+        if (vars.contains(SCOPES_USED)) {
+            List<TlaAppl> nonOrthogonalScopes =
+                    mapBy(
+                            dashModel.nonOrthogonalScopesOf(transFQN),
+                            dashRef -> TlaAppl(tlaFQN(dashRef.name)));
+
+            nonOrthogonalScopes.forEach(
+                    s ->
+                            stableExps.add(
+                                    s.INTERSECTION(TlaVar(paramVar(SCOPES_USED)))
+                                            .EQUALS(NULL_SET())));
+
+            nonOrthogonalScopes.forEach(
+                    s ->
+                            unstableExps.add(
+                                    s.INTERSECTION(
+                                                    SCOPES_USED()
+                                                            .UNION(TlaVar(paramVar(SCOPES_USED))))
+                                            .EQUALS(NULL_SET())));
+        }
+
+        if (vars.contains(EVENTS) && dashModel.onR(transFQN) != null) {
+
+            TlaExp sentEvents = TlaSet(TlaAppl((tlaFQN(dashModel.onR(transFQN).name))));
+
+            stableExps.add(
+                    sentEvents
+                            .INTERSECTION(
+                                    EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS())
+                                            .UNION(TlaVar(paramVar(EVENTS))))
+                            .NOT_EQUALS(NULL_SET()));
+
+            unstableExps.add(
+                    sentEvents
+                            .INTERSECTION(EVENTS().UNION(TlaVar(paramVar(EVENTS))))
+                            .NOT_EQUALS(NULL_SET()));
+        }
+
+        if (vars.contains(STABLE))
+            exps.add(
+                    new TlaIfThenElse(
+                            STABLE(), repeatedAnd(stableExps), repeatedAnd(unstableExps)));
+        else exps.addAll(stableExps);
 
         tlaModel.addDefn(
                 TlaDefn(
