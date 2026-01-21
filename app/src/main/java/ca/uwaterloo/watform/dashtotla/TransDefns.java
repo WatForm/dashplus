@@ -225,10 +225,18 @@ public class TransDefns {
 
     public static void TransEnabledDefn(
             String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+
+        List<TlaExp> exps = new ArrayList<>();
+
+        if (vars.contains(CONF)) {
+            TlaAppl sourceState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).name));
+            exps.add(sourceState.INTERSECTION(CONF().PRIME()).NOT_EQUALS(NULL_SET()));
+        }
+
         tlaModel.addDefn(
                 TlaDefn(
                         TlaDecl(enabledTransTlaFQN(transFQN), enabledParams(vars)),
-                        repeatedAnd(Arrays.asList())));
+                        repeatedAnd(exps)));
     }
 
     public static void TransDefn(String transFQN, TlaModel tlaModel) {

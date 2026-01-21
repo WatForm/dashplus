@@ -39,8 +39,9 @@
 |post-trans|scopes update|✅|✅|❕|
 |post-trans|sending events|✅|✅|❕|
 |enabled-trans|defining enabled-trans|✅|✅|❕|
-|enabled-trans|conf|❌|❌|❕|
+|enabled-trans|conf|✅|❌|❕|
 |enabled-trans|scope|❌|❌|❕|
+|enabled-trans|events|❌|❌|❕|
 |transition|combining pre and post|✅|✅|❕|
 |nextIsStable|combining enabled|✅|✅|❕|
 |Init|Defining initial values (except conf)|✅|✅|❕|
