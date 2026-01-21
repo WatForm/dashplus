@@ -17,7 +17,7 @@ import java.util.List;
 
 public class EventsDM extends BuffersDM {
 
-    private HashMap<String, EventEntry> et = new HashMap<String, EventEntry>();
+    protected HashMap<String, EventEntry> et = new HashMap<String, EventEntry>();
 
     protected EventsDM() {
         super();

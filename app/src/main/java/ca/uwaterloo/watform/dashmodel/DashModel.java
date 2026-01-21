@@ -18,8 +18,8 @@ package ca.uwaterloo.watform.dashmodel;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 public class DashModel extends ResolveDM {
 
@@ -81,8 +81,13 @@ public class DashModel extends ResolveDM {
         return;
     }
 
+    public void cloneEventTableIn(DashModel dm) {
+        // this will overwrite any existing StateTable in dm
+        dm.et = new HashMap<>(this.et);
+    }
+
     public void cloneStateTableIn(DashModel dm) {
         // this will overwrite any existing StateTable in dm
-        dm.st = new HashMap<>(st);
+        dm.st = new HashMap<>(this.st);
     }
 }

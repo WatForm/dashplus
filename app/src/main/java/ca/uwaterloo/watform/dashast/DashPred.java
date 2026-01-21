@@ -3,7 +3,6 @@ package ca.uwaterloo.watform.dashast;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.utils.*;
 

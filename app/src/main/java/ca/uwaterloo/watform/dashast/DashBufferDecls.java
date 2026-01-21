@@ -6,7 +6,6 @@ import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringJoiner;
 
 public final class DashBufferDecls extends ASTNode implements DashStateItem {
 
