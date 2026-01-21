@@ -38,13 +38,15 @@ class DashToTlaStrings {
     public static final String INTERNAL_EVENTS = SPECIAL + "internal" + SPECIAL + "events";
     public static final String ENVIRONMENTAL_EVENTS =
             SPECIAL + "environmental" + SPECIAL + "events";
+    public static final String VALID_PRIMED = SPECIAL + "valid" + SPECIAL + "primed";
+    public static final String VALID_UNPRIMED = SPECIAL + "valid" + SPECIAL + "unprimed";
 
     // common formulae with arguments
     public static final String NEXT_IS_STABLE =
             SPECIAL + "next" + SPECIAL + "is" + SPECIAL + "stable";
 
     public static final String ARG = SPECIAL + "arg"; // used as a prefix for parameter variables
-    public static final String ALL = SPECIAL + "all"; // used as a prefix for type formulae
+    public static final String VALID = SPECIAL + "valid"; // used as a prefix for type formulae
 
     public static final String NONE_TRANSITION_LITERAL = "[none]";
 }

@@ -39,8 +39,9 @@ public abstract class TlaOperator extends TlaExp {
             new PrecedenceGroup[] {
 
                 // lowest goes here
-                PrecedenceGroup.AND_OR_LIST,
+
                 PrecedenceGroup.AND_OR,
+                PrecedenceGroup.AND_OR_LIST,
                 PrecedenceGroup.NOT,
                 PrecedenceGroup.COMPARISON,
                 PrecedenceGroup.SET_MEMBERSHIP,

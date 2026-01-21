@@ -13,10 +13,10 @@ public class NextDefn {
 
         tlaModel.addDefn(
                 // _Next = _type_OK /\ _small_step
-                TlaDefn(NEXT, TYPE_OK().AND(SMALL_STEP())));
+                TlaDefn(NEXT, VALID_PRIMED().AND(SMALL_STEP())));
 
         /*
-        Note: due to a quirk of TLC, the TYPE_OK must appear before SMALL_STEP, since the membership of the variable in a set has to be the first clause in a list, despite the order supposed to be semantically irrelevant
+        Note: due to a quirk of TLC, the valid_primed must appear before SMALL_STEP, since the membership of the variable in a set has to be the first clause in a list, despite the order supposed to be semantically irrelevant
         */
     }
 }

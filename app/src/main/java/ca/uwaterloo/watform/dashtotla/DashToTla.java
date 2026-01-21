@@ -41,7 +41,7 @@ public class DashToTla {
         SmallStepDefn.translate(vars, dashModel, tlaModel);
 
         tlaModel.addComment("type restrictions on variables");
-        TypeOKDefn.translate(vars, dashModel, tlaModel);
+        ValidDefns.translate(vars, dashModel, tlaModel);
 
         tlaModel.addComment("initial values for variables");
         InitDefn.translate(vars, dashModel, tlaModel);

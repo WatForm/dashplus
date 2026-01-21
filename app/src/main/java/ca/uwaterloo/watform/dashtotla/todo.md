@@ -37,7 +37,7 @@
 |post-trans|defining post-trans|✅|✅|❕|
 |post-trans|handling stability|✅|✅|❕|
 |post-trans|scopes update|✅|✅|❕|
-|post-trans|sending events|❌|❌|❕|
+|post-trans|sending events|✅|✅|❕|
 |enabled-trans|defining enabled-trans|✅|✅|❕|
 |enabled-trans|conf|❌|❌|❕|
 |enabled-trans|scope|❌|❌|❕|
@@ -52,7 +52,8 @@
 |conf|type definition|✅|✅|❕|
 |scopes_used|type definition|✅|✅|❕|
 |trans_taken|type definition (none included)|✅|✅|❕|
-|TypeOK|combining types|❔|❔|❕|
+|valid|formulae|✅|✅||❕|
+|valid|primed and unprimed|✅|✅||❕|
 |Next|Defining Next|✅|✅|❕|
 |Next sync|Syncing config and module|✅|✅|❕|
 |Implementing stutter|implementing a stutter framework|❔|❔|❔|

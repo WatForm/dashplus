@@ -6,14 +6,9 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaIfThenElse;
-import ca.uwaterloo.watform.tlaast.TlaVar;
+import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class TransDefns {
     public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
@@ -25,7 +20,7 @@ public class TransDefns {
             transFQNs.forEach(
                     transFQN ->
                             tlaModel.addDefn(
-                                    // taken_<trans-name> == "taken_<transFQN>"
+                                    // taken_<trans-name> == "<transFQN>"
                                     TlaDefn(
                                             takenTransTlaFQN(transFQN),
                                             TlaStringLiteral(transFQN))));
@@ -35,7 +30,7 @@ public class TransDefns {
                     TlaDefn(NONE_TRANSITION, NONE_TRANSITION_LITERAL()));
         }
 
-        if (vars.contains(STABLE) && vars.contains(SCOPES_USED)) {
+        if (vars.contains(STABLE)) {
 
             tlaModel.addComment("parameterized formulae to check if transitions are enabled");
             // _enabled_<transFQN> == <body>
@@ -110,15 +105,23 @@ public class TransDefns {
                     scope ->
                             exps.add(
                                     // (<non-orthogonal-scope-i> \notin _scopes_used)
-                                    scope.NOTIN(SCOPES_USED())));
+                                    scope.INTERSECTION(SCOPES_USED()).EQUALS(NULL_SET())));
         }
 
         if (vars.contains(EVENTS)) {
             if (dashModel.onR(transFQN) != null) {
                 TlaAppl onEvent = TlaAppl(tlaFQN(dashModel.onR(transFQN).name));
-                exps.add(
-                        // <on-event> \in _events
-                        onEvent.IN(EVENTS()));
+
+                TlaExp stableCase = onEvent.IN(EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS()));
+                TlaExp unstableCase = onEvent.IN(EVENTS());
+
+                // IF stable
+                // THEN <on-event> \in  _events \intersect _all_env_events
+                // ELSE <on-event> \in _events
+
+                if (vars.contains(STABLE))
+                    exps.add(new TlaIfThenElse(STABLE(), stableCase, unstableCase));
+                else exps.add(stableCase);
             }
         }
 
@@ -147,38 +150,73 @@ public class TransDefns {
                                             .UNION(repeatedUnion(entered))));
         }
 
-        if (vars.contains(SCOPES_USED)) {
-            TlaExp nextStable = NULL_SET();
-            TlaExp scopesUsed =
-                    repeatedUnion(
-                            mapBy(dashModel.scopesUsed(transFQN), d -> TlaAppl(tlaFQN(d.name))));
-            TlaExp notNextStableAndStable = scopesUsed;
-            TlaExp notNextStableAndNotStable = SCOPES_USED().UNION(scopesUsed);
-            TlaExp body =
+        TlaExp sentEvents = NULL_SET();
+        if (dashModel.onR(transFQN) != null)
+            sentEvents = TlaSet(TlaAppl((tlaFQN(dashModel.onR(transFQN).name))));
+
+        if (vars.contains(STABLE)) {
+
+            List<TlaExp> nextStableExps = new ArrayList<>();
+            nextStableExps.add(STABLE().PRIME().EQUALS(TlaTrue()));
+            if (vars.contains(SCOPES_USED))
+                nextStableExps.add(SCOPES_USED().PRIME().EQUALS(NULL_SET()));
+
+            if (vars.contains(EVENTS)) {
+                TlaExp stableCase =
+                        EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents);
+                TlaExp unstableCase =
+                        EVENTS().PRIME()
+                                .INTERSECTION(INTERNAL_EVENTS())
+                                .EQUALS(sentEvents.UNION(EVENTS().INTERSECTION(INTERNAL_EVENTS())));
+
+                nextStableExps.add(new TlaIfThenElse(STABLE(), stableCase, unstableCase));
+            }
+
+            List<TlaExp> nextUnstableExps = new ArrayList<>();
+            nextUnstableExps.add(STABLE().PRIME().EQUALS(TlaFalse()));
+
+            List<TlaExp> stableExps = new ArrayList<>();
+            List<TlaExp> unstableExps = new ArrayList<>();
+            if (vars.contains(SCOPES_USED)) {
+                TlaExp scopesUsed =
+                        repeatedUnion(
+                                mapBy(
+                                        dashModel.scopesUsed(transFQN),
+                                        dr -> TlaAppl(tlaFQN(dr.name))));
+
+                stableExps.add(TlaUnchanged(SCOPES_USED()));
+
+                unstableExps.add(SCOPES_USED().PRIME().EQUALS(SCOPES_USED().UNION(scopesUsed)));
+            }
+            if (vars.contains(EVENTS)) {
+                stableExps.add(EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents));
+
+                stableExps.add(
+                        EVENTS().PRIME()
+                                .INTERSECTION(ENVIRONMENTAL_EVENTS())
+                                .EQUALS(EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS())));
+
+                unstableExps.add(EVENTS().PRIME().EQUALS(EVENTS().UNION(sentEvents)));
+            }
+
+            nextUnstableExps.add(
+                    new TlaIfThenElse(
+                            STABLE(), repeatedAnd(stableExps), repeatedAnd(unstableExps)));
+
+            exps.add(
                     new TlaIfThenElse(
                             TlaDecl(NEXT_IS_STABLE, enabledArgs(vars)),
-                            nextStable,
-                            new TlaIfThenElse(
-                                    STABLE(), notNextStableAndStable, notNextStableAndNotStable));
-            exps.add(
-                    // if next_is_stable,
-                    // then _scopes_used'  = none
-                    // else
-                    //          if stable
-                    //          then _scopes_used' = <scopes-used>
-                    //          else scopes_used' = scopes_used \\union <scopes-used>
-                    SCOPES_USED().PRIME().EQUALS(body));
+                            repeatedAnd(nextStableExps),
+                            repeatedAnd(nextUnstableExps)));
+
+        } else {
+
+            // every snapshot is stable
+            if (vars.contains(SCOPES_USED)) exps.add(TlaUnchanged(SCOPES_USED()));
+
+            if (vars.contains(EVENTS))
+                exps.add(EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents));
         }
-
-        if (vars.contains(STABLE))
-            exps.add(
-                    // _stable' = next_is_stable(args)
-                    STABLE().PRIME().EQUALS(TlaDecl(NEXT_IS_STABLE, enabledArgs(vars))));
-
-        if (vars.contains(EVENTS))
-            exps.add(
-                    // todo fix this
-                    TlaUnchanged(EVENTS()));
 
         tlaModel.addDefn(TlaDefn(postTransTlaFQN(transFQN), repeatedAnd(exps)));
 

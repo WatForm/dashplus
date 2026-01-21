@@ -17,7 +17,7 @@ public class InitDefn {
 
         List<TlaExp> exps = new ArrayList<>();
 
-        exps.add(TYPE_OK());
+        exps.add(VALID_UNPRIMED());
 
         if (vars.contains(CONF)) {
             List<TlaAppl> initialStates =
@@ -47,8 +47,8 @@ public class InitDefn {
 
         if (vars.contains(EVENTS))
             exps.add(
-                    // _events \in SUBSET _environmental_events
-                    EVENTS().IN(TlaSubsetUnary(ENVIRONMENTAL_EVENTS())));
+                    // _events \intersect _internal_events = {}
+                    EVENTS().INTERSECTION(INTERNAL_EVENTS()).EQUALS(NULL_SET()));
 
         tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
     }

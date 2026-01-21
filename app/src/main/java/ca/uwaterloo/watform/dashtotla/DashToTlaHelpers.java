@@ -87,6 +87,14 @@ public class DashToTlaHelpers {
         return TlaAppl(NONE_TRANSITION);
     }
 
+    public static TlaAppl VALID_PRIMED() {
+        return TlaAppl(VALID_PRIMED);
+    }
+
+    public static TlaAppl VALID_UNPRIMED() {
+        return TlaAppl(VALID_UNPRIMED);
+    }
+
     public static TlaAppl INTERNAL_EVENTS() {
         return TlaAppl(INTERNAL_EVENTS);
     }
@@ -103,8 +111,12 @@ public class DashToTlaHelpers {
         return ARG + varName;
     }
 
-    public static final String typeDefn(String varName) {
-        return ALL + varName;
+    public static final String validDefn(String varName) {
+        return VALID + varName;
+    }
+
+    public static final TlaVar ARGUMENT() {
+        return TlaVar(ARG);
     }
 
     public static String tlaFQN(String dashFQN) {

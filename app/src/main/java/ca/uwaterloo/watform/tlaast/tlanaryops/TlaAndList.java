@@ -8,7 +8,7 @@ import java.util.List;
 public class TlaAndList extends TlaNaryOp {
     public TlaAndList(List<? extends TlaExp> children) {
         super(
-                "",
+                "\n",
                 "",
                 TlaStrings.SPACE + "\n" + TlaStrings.AND + TlaStrings.SPACE,
                 children,

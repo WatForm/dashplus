@@ -33,11 +33,11 @@ public final class TlaStrings extends CommonStrings {
     // sets
     public static final String SET_START = "{";
     public static final String SET_END = "}";
-    public static final String SET_IN = "∈";
-    public static final String SET_NOT_IN = "∉";
-    public static final String SET_INTERSECTION = "∩";
-    public static final String SET_UNION = "∪";
-    public static final String SET_SUBSET_EQ = "⊆";
+    public static final String SET_IN = "\\in";
+    public static final String SET_NOT_IN = "\\notin";
+    public static final String SET_INTERSECTION = "\\intersect";
+    public static final String SET_UNION = "\\union";
+    public static final String SET_SUBSET_EQ = "\\subseteq";
     public static final String SET_DIFFERENCE = "\\";
     public static final String SET_PRODUCT = "\\X";
 
@@ -46,19 +46,19 @@ public final class TlaStrings extends CommonStrings {
     public static final String SET_SUBSET_UNARY = "SUBSET";
 
     // functions
-    public static final String EXISTS = "∃";
-    public static final String FOR_ALL = "∀";
-    public static final String MAP = "↦";
+    public static final String EXISTS = "\\E";
+    public static final String FOR_ALL = "\\A";
+    public static final String MAP = "|->";
 
     // booleans
     public static final String BOOLEAN = "BOOLEAN";
     public static final String TRUE = "TRUE";
     public static final String FALSE = "FALSE";
-    public static final String AND = "∧";
-    public static final String OR = "∨";
-    public static final String NOT = "¬";
-    public static final String IMPLICATION = "⇒";
-    public static final String EQUIVALENCE = "⇔";
+    public static final String AND = "/\\";
+    public static final String OR = "\\/";
+    public static final String NOT = "~";
+    public static final String IMPLICATION = "=>";
+    public static final String EQUIVALENCE = "<=>";
 
     // integers
     public static final String RANGE = "..";
@@ -66,14 +66,14 @@ public final class TlaStrings extends CommonStrings {
     public static final String MINUS = "-";
     public static final String TIMES = "*";
     public static final String LESSER_THAN = "<";
-    public static final String LESSER_THAN_EQUALS = "≤";
+    public static final String LESSER_THAN_EQUALS = "<=";
     public static final String GREATER_THAN = ">";
-    public static final String GREATER_THAN_EQUALS = "≥";
+    public static final String GREATER_THAN_EQUALS = ">=";
     public static final String EQUALS = "=";
-    public static final String NOT_EQUALS = "≠";
+    public static final String NOT_EQUALS = "/=";
 
-    public static final String SEQUENCE_OPEN = "⟨";
-    public static final String SEQUENCE_CLOSE = "⟩";
+    public static final String SEQUENCE_OPEN = "<<";
+    public static final String SEQUENCE_CLOSE = ">>";
     public static final String TUPLE_OPEN = SEQUENCE_OPEN;
     public static final String TUPLE_CLOSE = SEQUENCE_CLOSE;
 
@@ -91,9 +91,9 @@ public final class TlaStrings extends CommonStrings {
     public static final String LET = "LET";
     public static final String IN = "IN";
     public static final String IF = "IF";
-    public static final String THEN = "THEN";
-    public static final String ELSE = "ELSE";
-    public static final String DEFINITION = "≜";
+    public static final String THEN = "\nTHEN";
+    public static final String ELSE = "\nELSE";
+    public static final String DEFINITION = "==";
 
     // inbuilt functions
     public static final String HEAD = "Head";
