@@ -19,6 +19,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import java.util.List;
+import java.util.HashMap;
 
 public class DashModel extends ResolveDM {
 
@@ -78,5 +79,10 @@ public class DashModel extends ResolveDM {
     public void addInit(AlloyExpr init) {
         initsR.add(init);
         return;
+    }
+
+    public void cloneStateTableIn(DashModel dm) {
+        // this will overwrite any existing StateTable in dm
+        dm.st = new HashMap<>(st);
     }
 }
