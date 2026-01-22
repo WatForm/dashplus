@@ -99,7 +99,7 @@ public class Parser {
         }
         AlloyModel model = null;
         if (file instanceof DashFile) {
-            System.out.println(file);
+            //System.out.println(file);
             model = new DashModel((DashFile) file);
             Reporter.INSTANCE.exitIfHasErrors();
             return model;

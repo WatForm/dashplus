@@ -45,7 +45,6 @@ public class InitializeDM extends PredsDM {
 
     public InitializeDM(DashFile d) {
         super(d);
-
         // we have to go through the paragraphs in
         // the entire model and do this for the one
         // root state

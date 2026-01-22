@@ -17,8 +17,8 @@ public class CliConf {
         electrum
     }
 
-    @Parameters(index = "0", arity = "1..*", description = "Paths to Alloy/Dash files")
-    public List<Path> inputPaths;
+    @Parameters(index = "0", arity = "1..*", description = "Alloy/Dash file names")
+    public List<String> fileNames;
 
     @Option(
             names = "-alloy",

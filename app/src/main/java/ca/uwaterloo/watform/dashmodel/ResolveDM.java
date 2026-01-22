@@ -29,8 +29,8 @@ public class ResolveDM extends ResolverVisDM {
 
     public ResolveDM(DashFile d) {
         super(d);
-        myprint("==== BEFORE RESOLUTION ====");
-        this.debug();
+        //myprint("==== BEFORE RESOLUTION ====");
+        //this.debug();
         resolveVarTable();
         stateRecurseForTransInitsInvs(d.stateRoot, null);
         // buffer table does not need resolving
@@ -41,8 +41,8 @@ public class ResolveDM extends ResolverVisDM {
 
         // TODO: pred table needs resolving????
         extraChecks();
-        myprint("==== AFTER RESOLUTION ====");
-        this.debug();
+        //myprint("==== AFTER RESOLUTION ====");
+        //this.debug();
     }
 
     public ResolveDM() {

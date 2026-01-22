@@ -12,6 +12,10 @@ import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.utils.*;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.File; 
+import java.io.IOException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -34,13 +38,13 @@ import picocli.CommandLine.Mixin;
             "@|bold,underline USAGE MODES|@",
             "",
             // 1) Alloy Files
-            "  @|bold 1) dashplus f.als < -cmd | -cmd n > < -v > < -d > |@",
+            "  @|bold 1) dashplus f.als < -cmd | -cmd=n > < -v > < -d > |@",
             "     (execute cmd on alloy file)",
             "     @|italic DEFAULT:|@ dashplus f.als means dashplus f.als -cmd (execute all cmds)",
             "",
             // 2) Dash -> Alloy
-            "  @|bold 2) dashplus f.dsh -alloy < traces | tcmc | electrum >|@",
-            "              @|bold < -cmd | -cmd n | -write | -noCmd > < -s > < -v > < -d >|@",
+            "  @|bold 2) dashplus f.dsh -alloy=< traces | tcmc | electrum >|@",
+            "              @|bold < -cmd | -cmd=n | -write | -noCmd > < -s > < -v > < -d >|@",
             "     (parse/translate to alloy/execute cmd(s) or write .als file in same dir)",
             "     @|italic DEFAULT:|@ dashplus f.dsh means dashplus f.dsh -alloy traces -write",
             "",
@@ -49,11 +53,11 @@ import picocli.CommandLine.Mixin;
             "     (parse/translate to tla/outputs .tla file in same dir as input file)",
             "",
             // 4) Predicate Abstraction
-            "  @|bold 4) dashplus f.dsh -predAbs < -cmd | -cmd n > < -s > < -v > < -d >|@",
+            "  @|bold 4) dashplus f.dsh -predAbs < -cmd | -cmd=n > < -s > < -v > < -d >|@",
             "     (parse/pred abstraction)",
             "",
             // 5) XML Instance Check
-            "  @|bold 5) dashplus f.dsh -xml instance.xml < -s > < -v > < -d >|@",
+            "  @|bold 5) dashplus f.dsh -xml=instance.xml < -s > < -v > < -d >|@",
             "     (parse/translate to Alloy/check if instance is instance of translated Alloy)",
             "",
             // General Flags
@@ -73,19 +77,25 @@ public class Main implements Callable<Integer> {
 
     @Override
     public Integer call() {
+        
         try {
-            // Main logic
+            for (String fileName : cliConf.fileNames) {
+                // Main logic executed per file
 
-            if (!cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
+                Path path = Paths.get(fileName);
+                Path absolutePath = path.toAbsolutePath();
 
-                for (Path filePath : cliConf.inputPaths) {
+                if (!cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
+
+                    // default case
+                    // translate Dash to Alloy given options
+                    // or execute cmds of .als file
+                
                     Reporter.INSTANCE.reset();
-                    Reporter.INSTANCE.setFilePath(filePath);
-
-                    String fileName = filePath.getFileName().toString().toLowerCase();
+                    Reporter.INSTANCE.setFilePath(absolutePath);
 
                     if (fileName.endsWith(".als")) {
-                        AlloyModel alloyModel = parseToModel(filePath);
+                        AlloyModel alloyModel = parseToModel(absolutePath);
                         if (cliConf.cmdIdx >= 1) {
                             Solution solution = executeCommand(alloyModel, cliConf.cmdIdx);
                             System.out.println(solution.toString());
@@ -99,41 +109,48 @@ public class Main implements Callable<Integer> {
                         } else {
                             Reporter.INSTANCE.addError(invalidParams());
                         }
-
                     } else if (fileName.endsWith(".dsh")) {
                         // Dash Mode
-                        DashModel dm = (DashModel) parseToModel(filePath);
-                        // tmp debugging start
-                        //
-                        // tmp debugging end
-                        // Solution solution =
-                        // AlloyInterface.executeCommand(parseToModel(path),
-                        // this.commandIndex);
-                        // System.out.println(solution.toString());
+                        DashModel dm = (DashModel) parseToModel(absolutePath);
+                        AlloyModel am = new DashToAlloy(dm).translate();
+                        try {
+                            // change the filename from .dsh to .als for output
+                            String fullFileName = absolutePath.toString();
+                            System.out.println("Input: " + fullFileName);
+                            int lastDotIndex = fullFileName.lastIndexOf('.');
+                            String nameWithoutExtension = (lastDotIndex == -1) ? fullFileName : fullFileName.substring(0, lastDotIndex);
+                            String newFullFileName = nameWithoutExtension + ".als";
+
+                            // write the .als file
+                            Files.writeString(
+                                new File(newFullFileName).toPath(), 
+                                am.toString());
+                            System.out.println("Output: " + newFullFileName);
+                        } catch (IOException e) {
+                            System.out.println("An error occurred: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                        // later add stuff about executing cmds
                         Reporter.INSTANCE.print();
-                        // System.out.println("translation to Alloy ----");
-                        // need to output this to a file
-                        System.out.println(new DashToAlloy(dm).translate());
                     } else {
                         Reporter.INSTANCE.addError(invalidFile(fileName));
                     }
+
+                } else if (cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
+                    // TLA Mode
+
+                } else if (!cliConf.tla && cliConf.predAbs && !cliConf.xml) {
+                    // Pred Abs Mode
+
+                } else if (!cliConf.tla && !cliConf.predAbs && cliConf.xml) {
+                    // XML Mode
+
+                } else {
+                    Reporter.INSTANCE.addError(invalidParams());
                 }
 
-            } else if (cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
-                // TLA Mode
-
-            } else if (!cliConf.tla && cliConf.predAbs && !cliConf.xml) {
-                // Pred Abs Mode
-
-            } else if (!cliConf.tla && !cliConf.predAbs && cliConf.xml) {
-                // XML Mode
-
-            } else {
-                Reporter.INSTANCE.addError(invalidParams());
+                Reporter.INSTANCE.exitIfHasErrors();
             }
-
-            Reporter.INSTANCE.exitIfHasErrors();
-
             return 0;
 
             // User error exit code: 1
