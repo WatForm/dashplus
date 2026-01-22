@@ -9,7 +9,7 @@ import java.util.List;
 
 // import ca.uwaterloo.watform.dashast.D2AStrings;
 
-public class SpaceSignaturesD2A extends AlloyInterfaceD2A {
+public class SpaceSignaturesD2A extends AlloyModelInterfaceD2A {
 
     protected SpaceSignaturesD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
