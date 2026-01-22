@@ -97,11 +97,11 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
 
     private void addTransSpaceSigs() {
         // abstract sig TransLabel {}
-        this.addAbstractSig(D2AStrings.transitionLabelName);
+        this.addAbstractSig(D2AStrings.transLabelName);
         // add all transitions as one sig extensions of TransLabel
         for (String t : this.dm.allTransNames()) {
             // one sig tfqn extends TransLabel {}
-            this.addOneExtendsSig(DashFQN.translateFQN(t), D2AStrings.transitionLabelName);
+            this.addOneExtendsSig(DashFQN.translateFQN(t), D2AStrings.transLabelName);
         }
     }
 
@@ -126,21 +126,21 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
             if (this.dm.hasIntEvents()) {
                 // abstract sig IntEvents extends Events {}
                 this.addAbstractExtendsSig(
-                        D2AStrings.allInternalEventsName, D2AStrings.allEventsName);
+                        D2AStrings.allIntEventsName, D2AStrings.allEventsName);
                 for (String e : this.dm.allIntEvents()) {
                     // sig e extends IntEvents {}
                     this.addOneExtendsSig(
-                            DashFQN.translateFQN(e), D2AStrings.allInternalEventsName);
+                            DashFQN.translateFQN(e), D2AStrings.allIntEventsName);
                 }
             }
             if (this.dm.hasEnvEvents()) {
                 // abstract sig EnvEvents extends Events {}
                 this.addAbstractExtendsSig(
-                        D2AStrings.allEnvironmentalEventsName, D2AStrings.allEventsName);
+                        D2AStrings.allEnvEventsName, D2AStrings.allEventsName);
                 for (String e : this.dm.allEnvEvents()) {
                     // sig e extends EnvEvents {}
                     this.addOneExtendsSig(
-                            DashFQN.translateFQN(e), D2AStrings.allEnvironmentalEventsName);
+                            DashFQN.translateFQN(e), D2AStrings.allEnvEventsName);
                 }
             }
         }

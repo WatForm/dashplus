@@ -57,13 +57,13 @@ public final class D2AStrings {
     public static final String DshPrefix = "Dsh";
     public static final String snapshotName = DshPrefix + "Snapshot";
     public static final String allEventsName = DshPrefix + "Events";
-    public static final String allEnvironmentalEventsName = DshPrefix + "EnvEvents";
-    public static final String allInternalEventsName = DshPrefix + "IntEvents";
+    public static final String allEnvEventsName = DshPrefix + "EnvEvents";
+    public static final String allIntEventsName = DshPrefix + "IntEvents";
     public static final String variablesName = DshPrefix + "Vars";
     public static final String stateLabelName = DshPrefix + "States";
     public static final String scopeLabelName = DshPrefix + "Scopes";
     // public static final String systemStateName = "SystemState";
-    public static final String transitionLabelName = "Transitions";
+    public static final String transLabelName = "Transitions";
     // 2024-02-21 NAD we can just set the set of transitions to empty
     // public static final String noTransName = "NO_TRANS";
     public static final String identifierName = DshPrefix + "Ids";

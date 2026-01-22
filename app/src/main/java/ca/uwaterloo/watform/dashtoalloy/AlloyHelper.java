@@ -1,3 +1,9 @@
+/*
+    No functions here are specific to the translation.
+    All functions here start with 'Alloy' to mimic new AlloyX
+    All functions here are static.
+*/
+
 package ca.uwaterloo.watform.dashtoalloy;
 
 import ca.uwaterloo.watform.alloyast.expr.*;
@@ -12,13 +18,24 @@ import java.util.List;
 
 public class AlloyHelper {
 
+    private static Boolean optimizationsOn = true;
+
     public static AlloyQnameExpr AlloyVar(String s) {
         return new AlloyQnameExpr(s);
+    }
+
+    public static AlloyNoneExpr AlloyNone() {
+        return new AlloyNoneExpr();
+    }
+
+    public static boolean isVar(AlloyExpr expr) {
+        return expr instanceof AlloyQnameExpr;
     }
 
     public static AlloyDecl AlloyDecl(String s, AlloyExpr expr) {
         return new AlloyDecl(AlloyVar(s), expr);
     }
+
 
     // use the library functions isTrue/isFalse to say
     // a value must be true/false
@@ -41,7 +58,7 @@ public class AlloyHelper {
 
     // --------------------------------
     // AlloyVar(sl(0)) -> (AlloyVar(sl(1)) -> AlloyVar(sl(2)))
-    public static AlloyExpr ArrowExprFromStringList(List<String> sl) {
+    public static AlloyExpr AlloyArrowStringList(List<String> sl) {
         assert (sl != null && !sl.isEmpty());
         Collections.reverse(sl);
         AlloyExpr o = AlloyVar(sl.get(0));
@@ -52,7 +69,7 @@ public class AlloyHelper {
     }
 
     // eList(0) -> (eList(1) -> eList(2))
-    public static AlloyExpr ArrowExprFromExprList(List<AlloyExpr> eList) {
+    public static AlloyExpr AlloyArrowExprList(List<AlloyExpr> eList) {
         assert (eList != null);
         Collections.reverse(eList);
         AlloyExpr o = eList.get(0);
@@ -67,12 +84,28 @@ public class AlloyHelper {
     }
 
     // elist(0).elist(1).elist(2)
-    public static AlloyExpr AlloyJoinFromExprList(List<AlloyExpr> elist) {
+    public static AlloyExpr AlloyJoinList(List<AlloyExpr> elist) {
         assert (elist != null);
         Collections.reverse(elist);
         AlloyExpr ret = elist.get(0);
         for (AlloyExpr el : elist.subList(1, elist.size())) {
             ret = new AlloyDotExpr(el, ret);
+        }
+        return ret;
+    }
+
+    public static AlloyExpr AlloyAnd(AlloyExpr left, AlloyExpr right) {
+        return new AlloyAndExpr(left, right);
+    }
+
+    public static AlloyExpr AlloyAndList(List<AlloyExpr> elist) {
+        // does simplifications
+        // how get back a real true expr rather than just boolean value at the e3nd??
+        if (elist.isEmpty()) 
+            return AlloyTrue();
+        AlloyExpr ret = elist.get(0);
+        for (AlloyExpr el: elist.subList(1,elist.size())) {
+            ret = AlloyAnd(ret,el);
         }
         return ret;
     }
@@ -85,4 +118,58 @@ public class AlloyHelper {
         }
         return retList;
     }
+
+    public static AlloyExpr AlloyEqual(AlloyExpr left, AlloyExpr right) {
+        if (optimizationsOn && sEquals(left,right)) 
+            return AlloyTrueCond();
+        else 
+            return new AlloyEqualsExpr(left, right);
+    }
+
+    // a condition that is always true (rather than a value True)
+    // can't call createEquals here because that causes an infinite loop
+    // as createEquals has an optimization that calls createTrueCond
+    public static AlloyExpr AlloyTrueCond() {
+        return new AlloyEqualsExpr(AlloyTrue(), AlloyTrue());
+    }
+
+    // the value true
+    public static AlloyQnameExpr AlloyTrue() {
+        return AlloyVar(D2AStrings.trueName);
+    } 
+
+    // the value false
+    public static AlloyQnameExpr AlloyFalse() {
+        return AlloyVar(D2AStrings.falseName);
+    } 
+
+    // simple equality: two var names are equal -----------------------
+    public static boolean sEquals(AlloyExpr e1, AlloyExpr e2) {
+        return (
+            // pointer equality 
+            (e1 == e2) ||
+            // both vars of the same name
+            (isVar(e1) && isVar(e2) && 
+                (((AlloyVarExpr)e1).label.equals(((AlloyVarExpr) e2).label)))) ;
+    }
+
+    public static AlloyExpr AlloyUnionList(List<AlloyExpr> elist) {
+        AlloyExpr ret = null;
+        assert(elist!=null);
+        ret = elist.get(0);
+        for (AlloyExpr el: elist.subList(1,elist.size())) {
+            ret = new AlloyUnionExpr(ret,el);
+        }
+        return ret;
+    }
+
+    public static AlloyExpr AlloyRangeRes(AlloyExpr left, AlloyExpr right) {
+        return new AlloyRngRestrExpr(left,right);
+    }
+
+    public static AlloyExpr AlloyAll(List<AlloyDecl> decls, AlloyExpr sub) {
+        return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ONE, decls, sub);
+    }
+
+
 }

@@ -6,6 +6,13 @@ Is built in a Decorator design pattern where each class extension adds more func
 
 All of the classes in the sequences are named D2A
 
+BaseD2A
+AlloyModelInterfaceD2A
+SpaceSigsD2A
+SnapshotSigD2A
+InitsD2A
+
+DashToAlloy
 # TranslateExprVis
 
 Is its own class to translated DashExpr to AlloyExpr so it can be used by other parts of dashplus than just the Dash to Alloy translation.

@@ -5,7 +5,7 @@ package ca.uwaterloo.watform.dashtoalloy;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 
-public class DashToAlloy extends SnapshotSigD2A {
+public class DashToAlloy extends InitsD2A {
 
     public DashToAlloy(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
@@ -20,6 +20,7 @@ public class DashToAlloy extends SnapshotSigD2A {
         this.am = dm.copy();
         this.addSpaceSigs();
         this.addSnapshotSig();
+        this.addInit();
         return this.am;
     }
 

@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 // import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -68,5 +69,14 @@ public class AlloyModelInterfaceD2A extends BaseD2A {
                         new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
                         Collections.emptyList(),
                         null));
+    }
+
+    public void addPred(String name, List<AlloyDecl> decls, List<AlloyExpr> eList) {
+        this.am.addPara(
+            new AlloyPredPara(
+                new AlloyQnameExpr(name),
+                decls,
+                new AlloyBlock(eList))
+            );
     }
 }

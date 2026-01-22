@@ -8,6 +8,7 @@
 
 package ca.uwaterloo.watform.dashtoalloy;
 
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 
@@ -22,7 +23,11 @@ public class BaseD2A {
     protected BaseD2A(DashModel dm, boolean isElectrum) {
         this.dm = dm;
         this.isElectrum = isElectrum;
-        DSL dsl = new DSL(dm, isElectrum);
+        this.dsl = new DSL(dm, isElectrum);
         this.exprTranslator = new ExprTranslatorVis(dm, isElectrum);
+    }
+
+    protected AlloyExpr translateExpr(AlloyExpr expr) {
+        return this.exprTranslator.translateExpr(expr);
     }
 }

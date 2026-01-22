@@ -103,10 +103,15 @@ public class DashRef extends AlloyExpr {
 
     // referencing a for loop variable in a filter does not work
     // so do this as a loop
+    /*
     public static List<DashRef> hasNumParams(List<DashRef> dr, int i) {
         // filter to ones that have this number of params
         List<DashRef> o = filterBy(dr, x -> x.paramValues.size() == i);
         return o;
+    }
+    */
+    public boolean hasNumParams(int i) {
+        return this.paramValues.size() == i;
     }
 
     @Override

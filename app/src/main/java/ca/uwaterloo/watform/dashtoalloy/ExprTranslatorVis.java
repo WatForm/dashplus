@@ -86,7 +86,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
             else
                 // p1.p2.(s.v)
                 join_list.add(this.dsl.curJoinExpr((AlloyQnameExpr) v_expr));
-            return AlloyJoinFromExprList(join_list);
+            return AlloyJoinList(join_list);
         } else {
             // Electrum
             if (this.isPrimed)
@@ -104,7 +104,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
             } else {
                 // p2.p1.v or p2.p1.v'
                 join_list.add(v_expr);
-                return AlloyJoinFromExprList(join_list);
+                return AlloyJoinList(join_list);
             }
         }
     }

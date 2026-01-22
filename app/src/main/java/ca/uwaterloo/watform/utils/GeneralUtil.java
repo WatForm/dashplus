@@ -194,6 +194,13 @@ public class GeneralUtil {
         return true;
     }
 
+    public static boolean allTrue(List<Boolean> blist) {
+        return !blist.contains(false);
+    }
+    public static boolean allFalse(List<Boolean> blist) {
+        return !blist.contains(true);
+    }
+
     private class Error {
         public static void tooMany(Pos pos, String errorName) throws Reporter.ErrorUser {
             throw new Reporter.ErrorUser(pos, "Multiple " + errorName + "s");
