@@ -9,9 +9,9 @@ import java.util.List;
 
 // import ca.uwaterloo.watform.dashast.D2AStrings;
 
-public class SpaceSignaturesD2A extends AlloyModelInterfaceD2A {
+public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
 
-    protected SpaceSignaturesD2A(DashModel dm, boolean isElectrum) {
+    protected SpaceSigsD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
     }
 
@@ -40,7 +40,17 @@ public class SpaceSignaturesD2A extends AlloyModelInterfaceD2A {
         TODO: something about buffers
     */
 
-    protected void addSpaceSignatures() {
+    protected void addSpaceSigs() {
+
+        this.addConfSpaceSigs();
+        this.addTransSpaceSigs();
+        this.addParamSpaceSigs();
+        this.addEventSpaceSigs();
+        // no space sigs needs to be added for variables
+        
+    }
+
+    private void addConfSpaceSigs() {
 
         if (!this.dm.hasOnlyOneState()) {
             // abstract sig Statelabel {}
@@ -56,78 +66,6 @@ public class SpaceSignaturesD2A extends AlloyModelInterfaceD2A {
                     this.dm.rootName() + D2AStrings.scopeSuffix, D2AStrings.scopeLabelName);
         }
         recurseCreateStateSpaceSigs(this.dm.rootName());
-
-        // abstract sig TransLabel {}
-        this.addAbstractSig(D2AStrings.transitionLabelName);
-        // add all transitions as one sig extensions of TransLabel
-        for (String t : this.dm.allTransNames()) {
-            // one sig tfqn extends TransLabel {}
-            this.addOneExtendsSig(DashFQN.translateFQN(t), D2AStrings.transitionLabelName);
-        }
-
-        if (!this.isElectrum && this.dm.maxDepthParams() != 0) {
-            // if this model has parametrized components
-            // abstract sig Identifiers {}
-            this.addAbstractSig(D2AStrings.identifierName);
-            for (String s : mapBy(this.dm.allParamsInOrder(), i -> i.paramSig))
-                // sig param extends Identifiers {}
-                this.addExtendsSig(s, D2AStrings.identifierName);
-            // the alternative would be for conf1, etc to be fields in
-            // sig Identifiers, but the creation of conf1, etc is in
-            // SnapshotSignatures
-        }
-
-        // events ----------------------
-        if (this.dm.hasEvents()) {
-            // abstract sig Events {}
-            this.addAbstractSig(D2AStrings.allEventsName);
-            if (this.dm.hasIntEvents()) {
-                // abstract sig IntEvents extends Events {}
-                this.addAbstractExtendsSig(
-                        D2AStrings.allInternalEventsName, D2AStrings.allEventsName);
-                for (String e : this.dm.allIntEvents()) {
-                    // sig e extends IntEvents {}
-                    this.addOneExtendsSig(
-                            DashFQN.translateFQN(e), D2AStrings.allInternalEventsName);
-                }
-            }
-            if (this.dm.hasEnvEvents()) {
-                // abstract sig EnvEvents extends Events {}
-                this.addAbstractExtendsSig(
-                        D2AStrings.allEnvironmentalEventsName, D2AStrings.allEventsName);
-                for (String e : this.dm.allEnvEvents()) {
-                    // sig e extends EnvEvents {}
-                    this.addOneExtendsSig(
-                            DashFQN.translateFQN(e), D2AStrings.allEnvironmentalEventsName);
-                }
-            }
-        }
-
-        // don't understand this comment???
-        // abstract sig BufIdx {} if this model has buffers
-        // if not Electrum or if this buffer would be grouped under a parameter in Electrum
-        // declaration
-        // o/w buffers have to be fields in sig BufIdx
-        // and this functionality is within AddSnapshotSignatures
-
-        // this code does not seem correct
-        if (this.dm.hasBuffers()) {
-            // buffers with parameters
-            // every buffer has a different index
-            // so just one decl per sig
-            List<String> allbfqns = this.dm.allBufferNames();
-            for (String b : allbfqns) {
-                if (this.isElectrum) {
-                    if (this.dm.bufferParams(b).size() != 0)
-                        // because buffer is declared under param
-                        // o/w declared with buffer index in Snapshot stuff
-                        // sig BufIdx0 {}
-                        this.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
-                } else
-                    // sig BufIndex5 {}
-                    this.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
-            }
-        }
     }
 
     private void recurseCreateStateSpaceSigs(String parent) {
@@ -156,4 +94,84 @@ public class SpaceSignaturesD2A extends AlloyModelInterfaceD2A {
             if (!this.dm.isLeaf(child)) recurseCreateStateSpaceSigs(child);
         }
     }
+
+    private void addTransSpaceSigs() {
+        // abstract sig TransLabel {}
+        this.addAbstractSig(D2AStrings.transitionLabelName);
+        // add all transitions as one sig extensions of TransLabel
+        for (String t : this.dm.allTransNames()) {
+            // one sig tfqn extends TransLabel {}
+            this.addOneExtendsSig(DashFQN.translateFQN(t), D2AStrings.transitionLabelName);
+        }
+    }
+
+    public void addParamSpaceSigs() {
+        if (!this.isElectrum && this.dm.maxDepthParams() != 0) {
+            // if this model has parametrized components
+            // abstract sig Identifiers {}
+            this.addAbstractSig(D2AStrings.identifierName);
+            for (String s : mapBy(this.dm.allParamsInOrder(), i -> i.paramSig))
+                // sig param extends Identifiers {}
+                this.addExtendsSig(s, D2AStrings.identifierName);
+            // the alternative would be for conf1, etc to be fields in
+            // sig Identifiers, but the creation of conf1, etc is in
+            // SnapshotSignatures
+        }
+    }
+
+    private void addEventSpaceSigs() {
+        if (this.dm.hasEvents()) {
+            // abstract sig Events {}
+            this.addAbstractSig(D2AStrings.allEventsName);
+            if (this.dm.hasIntEvents()) {
+                // abstract sig IntEvents extends Events {}
+                this.addAbstractExtendsSig(
+                        D2AStrings.allInternalEventsName, D2AStrings.allEventsName);
+                for (String e : this.dm.allIntEvents()) {
+                    // sig e extends IntEvents {}
+                    this.addOneExtendsSig(
+                            DashFQN.translateFQN(e), D2AStrings.allInternalEventsName);
+                }
+            }
+            if (this.dm.hasEnvEvents()) {
+                // abstract sig EnvEvents extends Events {}
+                this.addAbstractExtendsSig(
+                        D2AStrings.allEnvironmentalEventsName, D2AStrings.allEventsName);
+                for (String e : this.dm.allEnvEvents()) {
+                    // sig e extends EnvEvents {}
+                    this.addOneExtendsSig(
+                            DashFQN.translateFQN(e), D2AStrings.allEnvironmentalEventsName);
+                }
+            }
+        }
+    }
+
+    private void addBufferSpaceSigs() {
+       // don't understand this comment???
+        // abstract sig BufIdx {} if this model has buffers
+        // if not Electrum or if this buffer would be grouped under a parameter in Electrum
+        // declaration
+        // o/w buffers have to be fields in sig BufIdx
+        // and this functionality is within AddSnapshotSignatures
+
+        // this code does not seem correct
+        if (this.dm.hasBuffers()) {
+            // buffers with parameters
+            // every buffer has a different index
+            // so just one decl per sig
+            List<String> allbfqns = this.dm.allBufferNames();
+            for (String b : allbfqns) {
+                if (this.isElectrum) {
+                    if (this.dm.bufferParams(b).size() != 0)
+                        // because buffer is declared under param
+                        // o/w declared with buffer index in Snapshot stuff
+                        // sig BufIdx0 {}
+                        this.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
+                } else
+                    // sig BufIndex5 {}
+                    this.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
+            }
+        }
+    }
+
 }

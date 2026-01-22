@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
+public class SnapshotSigD2A extends SpaceSigsD2A {
 
-    protected SnapshotSignaturesD2A(DashModel dm, boolean isElectrum) {
+    protected SnapshotSigD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
     }
 
@@ -23,15 +23,15 @@ public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
         return this.exprTranslator.translateExpr(expr);
     }
 
-    protected void addSnapshotSignatures() {
+    protected void addSnapshotSig() {
         if (this.isElectrum) {
-            this.addSnapshotSignaturesElectrum();
+            this.addSnapshotSigElectrum();
         } else {
-            this.addSnapshotSignaturesTracesTcmc();
+            this.addSnapshotSigTracesTcmc();
         }
     }
 
-    private void addSnapshotSignaturesTracesTcmc() {
+    private void addSnapshotSigTracesTcmc() {
         // traces/tcmc use sig Snapshot {} with fields
 
         List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
@@ -78,7 +78,28 @@ public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
             decls.add(AlloyDecl(D2AStrings.stableName, AlloyOneBool()));
         }
 
-        // add vars to snapshot
+        decls.addAll(this.varFieldsTraces());
+        decls.addAll(this.bufferFieldsTraces());
+
+        // add the snapshot signature
+        this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+        
+    }
+
+    public void varsBuffersOnlySnapshotSig() {
+        if (!this.isElectrum) {
+            List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
+            decls.addAll(varFieldsTraces());
+            decls.addAll(bufferFieldsTraces());
+            // add the snapshot signature
+            this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+        }
+        // TODO add case for Electrum
+    }
+
+    private List<AlloyDecl> varFieldsTraces() {
+        
+        List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
         for (String vfqn : dm.allVarNames()) {
             List<AlloyExpr> arrow_list = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
             arrow_list.add(this.translateExpr(dm.varTyp(vfqn)));
@@ -94,8 +115,12 @@ public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
             // Id1 -> Id2 -> Id3 -> varType
             decls.add(AlloyDecl(DashFQN.translateFQN(vfqn), ArrowExprFromExprList(arrow_list)));
         }
+        return decls;
+    }
 
-        // add buffers to snapshot
+    private List<AlloyDecl> bufferFieldsTraces() {
+        
+        List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
         for (String bfqn : dm.allBufferNames()) {
             List<AlloyExpr> arrow_list = mapBy(dm.bufferParams(bfqn), i -> AlloyVar(i.paramSig));
 
@@ -104,12 +129,10 @@ public class SnapshotSignaturesD2A extends SpaceSignaturesD2A {
 
             decls.add(AlloyDecl(DashFQN.translateFQN(bfqn), ArrowExprFromExprList(arrow_list)));
         }
-
-        // add the snapshot signature
-        this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+        return decls;
     }
 
-    private void addSnapshotSignaturesElectrum() {
+    private void addSnapshotSigElectrum() {
         /* TODO
                 // if Electrum add var sigs
             // scopesUsed0, conf0, event0
