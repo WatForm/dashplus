@@ -29,6 +29,8 @@ import static ca.uwaterloo.watform.dashmodel.DashFQN.*;
 import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
@@ -76,6 +78,12 @@ public class DashRef extends AlloyExpr {
         return new ArrayList<AlloyExpr>();
     }
 
+    public AlloyExpr asAlloyArrow() {
+        List<AlloyExpr> ll = new ArrayList<AlloyExpr>(this.paramValues);
+        Collections.reverse(ll);
+        ll.add(AlloyVar(translateFQN(this.name)));
+        return AlloyArrowExprList(ll);
+    }
     @Override
     public void pp(PrintContext pCtx) {
         // STATE: Root/A/B[a1,b1]

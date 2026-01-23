@@ -5,7 +5,9 @@
 
 package ca.uwaterloo.watform.dashtoalloy;
 
-import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
+// Factory method
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -205,12 +207,12 @@ public class DSL {
     public AlloyExpr AlloyIsTrue(AlloyExpr e) {
         List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
         elist.add(e);
-        return AlloyPredCall(D2AStrings.isTrue,elist);
+        return AlloyPredCall(AlloyStrings.isTrue,elist);
     }
     public AlloyExpr AlloyIsFalse(AlloyExpr e) {
         List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
         elist.add(e);
-        return AlloyPredCall(D2AStrings.isFalse,elist);
+        return AlloyPredCall(AlloyStrings.isFalse,elist);
     }
 
     // decls ---------------------------
@@ -248,6 +250,33 @@ public class DSL {
         return o;
     }
 
+    // [p0:P0, p1:P1, ...]
+    public static List<AlloyDecl> paramDecls(List<Integer> prsIdx , List<String> prs) {
+        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+        for (int i=0;i<prsIdx.size();i++) 
+            // fix here
+            //o.add(paramDecl(prsIdx.get(i),  prs.get(i)));
+            continue;
+        return o;
+    }
+
+    // s:Snapshot, p0:P0, p1:P1, ...]
+    public List<AlloyDecl> curParamsDecls(List<Integer> prsIdx, List<String> prs) {
+        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+        o.addAll(this.curDecls());
+        o.addAll(this.paramDecls(prsIdx,  prs));
+        return o;
+    }
+    // s:Snapshot, s':Snapshot, p0:P0, p1:P1, ...]
+    public List<AlloyDecl> curNextParamsDecls(List<Integer> prsIdx, List<String> prs) {
+        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+        o.addAll(this.curNextDecls()); 
+        o.addAll(this.paramDecls(prsIdx,  prs));
+        return o;
+    }
+
+    // -----------------------------------------------
+
     public AlloyExpr DashRefToArrow(DashRef e) {
         List<AlloyExpr> ll = new ArrayList<AlloyExpr>(e.paramValues);
         Collections.reverse(ll);
@@ -277,6 +306,9 @@ public class DSL {
         return new AlloyBracketExpr(AlloyVar(predName), exprList);
     }
 
+    public static AlloyExpr AlloyOneBool() {
+        return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(AlloyStrings.boolName));
+    }
 
 
 }

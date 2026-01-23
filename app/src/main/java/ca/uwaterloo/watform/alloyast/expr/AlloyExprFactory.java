@@ -1,62 +1,36 @@
 /*
-    No functions here are specific to the translation.
-    All functions here start with 'Alloy' to mimic new AlloyX
-    All functions here are static.
+    All functions here are static
 */
 
-package ca.uwaterloo.watform.dashtoalloy;
+package ca.uwaterloo.watform.alloyast.expr;
 
 import ca.uwaterloo.watform.alloyast.expr.*;
+
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-// import ca.uwaterloo.watform.dashast.D2AStrings;
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class AlloyHelper {
+
+public class AlloyExprFactory {
 
     private static Boolean optimizationsOn = true;
 
-    public static AlloyQnameExpr AlloyVar(String s) {
-        return new AlloyQnameExpr(s);
+    // simple equality: two var names are equal -----------------------
+    // for optimizations
+    private static boolean sEquals(AlloyExpr e1, AlloyExpr e2) {
+        return (
+            // pointer equality 
+            (e1 == e2) ||
+            // both vars of the same name
+            (isVar(e1) && isVar(e2) && 
+                (((AlloyVarExpr)e1).label.equals(((AlloyVarExpr) e2).label)))) ;
     }
 
-    public static AlloyNoneExpr AlloyNone() {
-        return new AlloyNoneExpr();
-    }
-
-    public static boolean isVar(AlloyExpr expr) {
-        return expr instanceof AlloyQnameExpr;
-    }
-
-    public static AlloyDecl AlloyDecl(String s, AlloyExpr expr) {
-        return new AlloyDecl(AlloyVar(s), expr);
-    }
-
-
-    // use the library functions isTrue/isFalse to say
-    // a value must be true/false
-    /*public static AlloyExpr createIsTrue(AlloyExpr e) {
-        List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
-        elist.add(e);
-        return createPredCall(D2AStrings.isTrue,elist);
-    }
-    public static AlloyExpr createIsFalse(AlloyExpr e) {
-        List<Expr> elist = new ArrayList<Expr>();
-        elist.add(e);
-        return createPredCall(D2AStrings.isFalse,elist);
-    }*/
-
-    // common vars
-
-    public static AlloyExpr AlloyOneBool() {
-        return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(D2AStrings.boolName));
-    }
-
-    // --------------------------------
     // AlloyVar(sl(0)) -> (AlloyVar(sl(1)) -> AlloyVar(sl(2)))
     public static AlloyExpr AlloyArrowStringList(List<String> sl) {
         assert (sl != null && !sl.isEmpty());
@@ -133,26 +107,9 @@ public class AlloyHelper {
         return new AlloyEqualsExpr(AlloyTrue(), AlloyTrue());
     }
 
-    // the value true
-    public static AlloyQnameExpr AlloyTrue() {
-        return AlloyVar(D2AStrings.trueName);
-    } 
 
-    // the value false
-    public static AlloyQnameExpr AlloyFalse() {
-        return AlloyVar(D2AStrings.falseName);
-    } 
 
-    // simple equality: two var names are equal -----------------------
-    public static boolean sEquals(AlloyExpr e1, AlloyExpr e2) {
-        return (
-            // pointer equality 
-            (e1 == e2) ||
-            // both vars of the same name
-            (isVar(e1) && isVar(e2) && 
-                (((AlloyVarExpr)e1).label.equals(((AlloyVarExpr) e2).label)))) ;
-    }
-
+    // e0 + e1 + e2
     public static AlloyExpr AlloyUnionList(List<AlloyExpr> elist) {
         AlloyExpr ret = null;
         assert(elist!=null);
@@ -163,13 +120,47 @@ public class AlloyHelper {
         return ret;
     }
 
+    // left :> right
     public static AlloyExpr AlloyRangeRes(AlloyExpr left, AlloyExpr right) {
         return new AlloyRngRestrExpr(left,right);
     }
 
+    // all decls sub
     public static AlloyExpr AlloyAll(List<AlloyDecl> decls, AlloyExpr sub) {
         return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ONE, decls, sub);
     }
+
+    // vars ----------------------------
+
+    public static AlloyQnameExpr AlloyVar(String s) {
+        return new AlloyQnameExpr(s);
+    }
+
+    // none
+    public static AlloyNoneExpr AlloyNone() {
+        return new AlloyNoneExpr();
+    }
+
+    // the value true
+    public static AlloyQnameExpr AlloyTrue() {
+        return AlloyVar(AlloyStrings.trueName);
+    } 
+
+    // the value false
+    public static AlloyQnameExpr AlloyFalse() {
+        return AlloyVar(AlloyStrings.falseName);
+    } 
+
+    public static boolean isVar(AlloyExpr expr) {
+        return expr instanceof AlloyQnameExpr;
+    }
+
+    // decls -----------
+    
+    public static AlloyDecl AlloyDecl(String s, AlloyExpr expr) {
+        return new AlloyDecl(AlloyVar(s), expr);
+    }
+
 
 
 }

@@ -109,4 +109,13 @@ public final class AlloyStrings extends CommonStrings {
     public static final String FUNMAX = "fun/max";
     public static final String FUNNEXT = "fun/next";
     public static final String RARROW = "->";
+
+    // standard modules
+    public static final String utilBooleanName = "util/boolean";
+    public static final String boolName = "boolean/Bool";
+    public static final String trueName = "boolean/True";
+    public static final String falseName = "boolean/False";
+    public static final String isTrue = "boolean/isTrue";
+    public static final String isFalse = "boolean/isFalse";
+
 }

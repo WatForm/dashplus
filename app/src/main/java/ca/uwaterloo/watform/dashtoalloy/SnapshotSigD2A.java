@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.dashtoalloy;
 
-import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
@@ -72,7 +72,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         // stable: one boolean;
         if (dm.hasConcurrency()) {
-            decls.add(AlloyDecl(D2AStrings.stableName, AlloyOneBool()));
+            decls.add(AlloyDecl(D2AStrings.stableName, this.dsl.AlloyOneBool()));
         }
 
         decls.addAll(this.varFieldsTraces());

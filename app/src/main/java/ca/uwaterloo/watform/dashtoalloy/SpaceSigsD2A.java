@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.dashtoalloy;
 
-import static ca.uwaterloo.watform.dashtoalloy.AlloyHelper.*;
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashFQN;
