@@ -83,11 +83,6 @@ public final class AlloyFunPara extends AlloyPara {
                 block);
     }
 
-   public AlloyFunPara(
-            AlloyQnameExpr qname,
-            AlloyBlock block) {
-        this(Pos.UNKNOWN, false, null, qname, emptyList(), Mul.DEFAULTSET, null, block);
-    }
 
     /*
      * always print square brackets around args
