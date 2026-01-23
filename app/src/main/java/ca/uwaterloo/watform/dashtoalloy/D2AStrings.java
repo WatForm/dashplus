@@ -35,7 +35,8 @@ public final class D2AStrings {
 
     public static final String dsh_prefix = "__";
     // init is a reserved word in Dash
-    public static final String initFactName = dsh_prefix + "initial";
+    public static final String initPredName = dsh_prefix + "initial";
+    public static final String invFactName = dsh_prefix + "inv";
     public static final String electrumInitName = dsh_prefix + "init";
     // predicate names
 

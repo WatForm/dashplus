@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+import static ca.uwaterloo.watform.utils.GeneralUtil.emptyList;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
@@ -80,6 +81,12 @@ public final class AlloyFunPara extends AlloyPara {
                 Mul.DEFAULTSET,
                 sub,
                 block);
+    }
+
+   public AlloyFunPara(
+            AlloyQnameExpr qname,
+            AlloyBlock block) {
+        this(Pos.UNKNOWN, false, null, qname, emptyList(), Mul.DEFAULTSET, null, block);
     }
 
     /*

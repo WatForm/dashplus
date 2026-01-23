@@ -86,10 +86,11 @@ public class InitsD2A extends SnapshotSigD2A {
                         decls.add(prs.get(i).asAlloyDecl());
                     }
                 }
-                if (!decls.isEmpty()) 
+                if (!decls.isEmpty()) {
                     e = AlloyAll(decls,e);
-                body = new ArrayList<AlloyExpr>();
-                body.add(e);
+                    body = new ArrayList<AlloyExpr>();
+                    body.add(e);
+                }
             }
         }
         if (this.dm.hasConcurrency()) 
@@ -99,14 +100,14 @@ public class InitsD2A extends SnapshotSigD2A {
         if (this.isElectrum) {
             List<AlloyDecl> emptyDecls = new ArrayList<AlloyDecl>();
             this.addPred(
-            	D2AStrings.initFactName, 
+            	D2AStrings.initPredName, 
             	emptyDecls, 
             	body);
         } else {
             // snapshot will always be needed as a parameter
             // because it is used in conf (every model has at least one state)
             this.addPred(
-                D2AStrings.initFactName, 
+                D2AStrings.initPredName, 
                 this.dsl.curDecls(),
                 body);
         }

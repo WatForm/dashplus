@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Collections;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 public class DSL {
 
@@ -265,6 +266,11 @@ public class DSL {
 
     public boolean containsVar(AlloyExpr expr, AlloyQnameExpr varToFind) {
         return new ContainsVarExprVis(varToFind).visit(expr);
+    }
+
+    public boolean containsVar(List<AlloyExpr> exprs, AlloyQnameExpr varToFind) {
+        ContainsVarExprVis cvis = new ContainsVarExprVis(varToFind);
+        return allFalse(mapBy(exprs, e -> cvis.visit(e)));
     }
 
     public AlloyExpr AlloyPredCall(String predName, List<AlloyExpr> exprList) {

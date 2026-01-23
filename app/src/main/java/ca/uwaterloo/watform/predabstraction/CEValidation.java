@@ -72,7 +72,7 @@ public final class CEValidation {
                         new AlloyBlock(
                                 List.of(
                                         new AlloyBracketExpr(
-                                                new AlloyQnameExpr(D2AStrings.initFactName),
+                                                new AlloyQnameExpr(D2AStrings.initPredName),
                                                 List.of(
                                                         new AlloyQnameExpr(
                                                                 renamedSnaps.getFirst())))))));
