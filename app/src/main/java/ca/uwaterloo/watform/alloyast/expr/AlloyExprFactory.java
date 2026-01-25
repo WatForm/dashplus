@@ -181,6 +181,16 @@ public class AlloyExprFactory {
         return new AlloyQtExpr(AlloyQtExpr.Quant.SOME, sub);
     }
 
+    // lone sub
+    public static AlloyExpr AlloyLone(AlloyExpr sub) {
+        return new AlloyQtExpr(AlloyQtExpr.Quant.LONE, sub);
+    }
+
+    // no sub
+    public static AlloyExpr AlloyNo(AlloyExpr sub) {
+        return new AlloyQtExpr(AlloyQtExpr.Quant.NO, sub);
+    }
+    
     // vars ----------------------------
 
     public static AlloyQnameExpr AlloyVar(String s) {
