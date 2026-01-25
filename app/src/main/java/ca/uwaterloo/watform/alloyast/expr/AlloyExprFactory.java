@@ -114,6 +114,11 @@ public class AlloyExprFactory {
         return new AlloyNegExpr(expr);
     }
 
+    // left + right
+    public static AlloyExpr AlloyUnion(AlloyExpr left, AlloyExpr right) {
+        return new AlloyUnionExpr(left,right);
+    }
+
     // e0 + e1 + e2
     public static AlloyExpr AlloyUnionList(List<AlloyExpr> elist) {
         AlloyExpr ret = null;

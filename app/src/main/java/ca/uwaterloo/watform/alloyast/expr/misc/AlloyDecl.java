@@ -81,6 +81,19 @@ public final class AlloyDecl extends AlloyExpr {
                 new AlloyQnameExpr(expr));
     }
 
+    public AlloyDecl(String qname, AlloyExpr expr) {
+        this(
+                Pos.UNKNOWN,
+                false,
+                false,
+                false,
+                Collections.singletonList(new AlloyQnameExpr(qname)),
+                false,
+                null,
+                expr);
+    }
+
+
     public Optional<String> getName() {
         if (this.qnames.size() > 1) {
             throw ImplementationError.methodShouldNotBeCalled(

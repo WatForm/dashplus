@@ -130,6 +130,11 @@ public class DSL {
         return AlloyVar(D2AStrings.stableName);
     }
 
+    // events
+    public AlloyExpr allEventsVar() {
+        return AlloyVar(D2AStrings.allEventsName);
+    }
+
     // intEvents
     public AlloyExpr allIntEventsVar() {
         return AlloyVar(D2AStrings.allIntEventsName);
@@ -260,7 +265,7 @@ public class DSL {
 
     // snext:Snapshot
     public AlloyDecl nextDecl() {
-        return (AlloyDecl) new AlloyDecl(D2AStrings.nextName, D2AStrings.snapshotName);
+        return new AlloyDecl(D2AStrings.nextName, D2AStrings.snapshotName);
     }
 
     // [s:Snapshot]
@@ -310,6 +315,28 @@ public class DSL {
         return o;
     }
 
+    public AlloyDecl scopeDecl(int i) {
+        List<String>cop = Collections.nCopies(i,D2AStrings.identifierName);
+        return new AlloyDecl(
+                        D2AStrings.scopeName + i,
+                        AlloyArrowStringList(
+                            newListWithOneMore(cop, D2AStrings.scopeLabelName)));
+    }
+
+    public AlloyDecl genEventDecl(int i) {
+        if (i==0) 
+            return new AlloyDecl(
+                        D2AStrings.genEventName + i,
+                        allEventsVar());
+        else {
+            List<String>cop = Collections.nCopies(i,D2AStrings.identifierName);
+            return new AlloyDecl(
+                        D2AStrings.genEventName + i,
+                        AlloyArrowStringList(
+                            newListWithOneMore(cop, D2AStrings.allEventsName)));
+        }
+    }
+
     // -----------------------------------------------
 
     public AlloyExpr DashRefToArrow(DashRef e) {
@@ -341,12 +368,12 @@ public class DSL {
         return new AlloyBracketExpr(AlloyVar(predName), exprList);
     }
 
-    public static AlloyExpr AlloyOneBool() {
+    public AlloyExpr AlloyOneBool() {
         return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(AlloyStrings.boolName));
     }
 
 
-    public static DashRef asScope(DashRef e) {
+    public DashRef asScope(DashRef e) {
         assert(e instanceof StateDashRef);
         return new StateDashRef(e.name+D2AStrings.scopeSuffix, e.paramValues);
     }
