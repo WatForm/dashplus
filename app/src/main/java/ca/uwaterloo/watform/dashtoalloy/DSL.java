@@ -156,15 +156,15 @@ public class DSL {
     // ----------------------------
 
     // (s.name).e
-    public AlloyExpr curJoinExpr(AlloyQnameExpr e) {
+    public AlloyExpr curJoinExpr(AlloyExpr e) {
         if (this.isElectrum) return e;
         else return new AlloyDotExpr(curVar(), e);
     }
 
    // snext.name
-    public AlloyExpr nextJoinExpr(AlloyQnameExpr e) {
-        if (this.isElectrum) {
-            return primedVarExpr(e);
+    public AlloyExpr nextJoinExpr(AlloyExpr e) {
+        if (this.isElectrum && e instanceof AlloyQnameExpr) {
+            return primedVarExpr((AlloyQnameExpr)e);
         } else {
             return new AlloyDotExpr(nextVar(), e);
         }

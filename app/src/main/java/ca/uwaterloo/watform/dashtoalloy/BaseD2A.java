@@ -17,6 +17,7 @@ public class BaseD2A {
     protected DashModel dm; // input
     protected AlloyModel am = new AlloyModel(); // output
     protected boolean isElectrum = false;
+    protected boolean isTraces = true;
     protected DSL dsl;
     protected ExprTranslatorVis exprTranslator;
 
