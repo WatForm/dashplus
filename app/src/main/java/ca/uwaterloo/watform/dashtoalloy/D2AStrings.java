@@ -77,7 +77,7 @@ public final class D2AStrings {
     // public static final String semanticsName = "_semantics";
     public static final String testIfNextStableName = "_nextIsStable";
     public static final String enabledAfterStepName = "_enabledAfterStep";
-    public static final String allSnapshotsDifferentName = "allSnapshotsDifferent";
+    public static final String allSnapshotsDiffName = "allSnapshotsDiff";
     // variable/parameter names
     // how to name parameter variables
     public static final String curName = "s";

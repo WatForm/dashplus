@@ -76,6 +76,10 @@ public class AlloyExprFactory {
         return new AlloyOrExpr(left, right);
     }
 
+    public static AlloyExpr AlloyImplies(AlloyExpr left, AlloyExpr right) {
+        return new AlloyImpliesExpr(left, right);
+    }
+
     public static AlloyExpr AlloyAndList(List<AlloyExpr> elist) {
         // does simplifications
         // how get back a real true expr rather than just boolean value at the e3nd??
