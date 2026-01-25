@@ -51,7 +51,7 @@ public class InvsD2A extends InitsD2A {
                 }
                 if (!decls.isEmpty()) {
                     // all universally quantified
-                    e = AlloyAll(decls,e);
+                    e = AlloyAllQt(decls,e);
                     body = new ArrayList<AlloyExpr>();
                     body.add(e);
                 }      
@@ -63,7 +63,7 @@ public class InvsD2A extends InitsD2A {
             if (!this.isElectrum && this.dsl.containsVar(body, this.dsl.curVar())) {
                 decls = new ArrayList<AlloyDecl>();
                 decls.add(this.dsl.curDecl());
-                e = AlloyAll(decls, AlloyAndList(body));
+                e = AlloyAllQt(decls, AlloyAndList(body));
                 body = new ArrayList<AlloyExpr>();
                 body.add(e);
             } 

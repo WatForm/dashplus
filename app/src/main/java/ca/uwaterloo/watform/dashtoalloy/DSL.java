@@ -14,7 +14,8 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.dashast.dashref.*;
+import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.exprvisitor.ContainsVarExprVis;
@@ -47,6 +48,8 @@ public class DSL {
         return AlloyVar(D2AStrings.nextName);
     }
 
+
+
     // [s,snext]
     public List<AlloyExpr> curNextVars() {
         List<AlloyExpr> o = new ArrayList<AlloyExpr>();
@@ -54,6 +57,35 @@ public class DSL {
             o.add(curVar());
             o.add(nextVar());
         }
+        return o;
+    }
+
+    // [p0_AID,p1_AID,...]
+    public static List<AlloyExpr> paramVars(List<DashParam> prs) {
+        List<AlloyExpr> o = new ArrayList<AlloyExpr>();
+        for (DashParam p:prs) 
+            o.add(p.asAlloyVar());
+        return o;
+    }
+
+    // [s, p1, p2, ...]
+    public List<AlloyExpr> curParamVars(List<DashParam> prs) {
+        List<AlloyExpr> o = new ArrayList<AlloyExpr>();
+        o.add(curVar());
+        o.addAll(paramVars(prs));
+        return o;
+    }
+    // [s', p1, p2, ...]
+    public List<AlloyExpr> nextParamVars(List<DashParam> prs) {
+        List<AlloyExpr> o = new ArrayList<AlloyExpr>();
+        o.add(nextVar());
+        o.addAll(paramVars(prs));
+        return o;
+    }
+    // [s,s',  p1,p2,...]
+    public List<AlloyExpr> curNextParamVars(List<DashParam> prs) {
+        List<AlloyExpr> o = new ArrayList<AlloyExpr>(curNextVars());
+        o.addAll(paramVars(prs));
         return o;
     }
 
@@ -101,6 +133,11 @@ public class DSL {
     // intEvents
     public AlloyExpr allIntEventsVar() {
         return AlloyVar(D2AStrings.allIntEventsName);
+    }
+
+    // intEvents
+    public AlloyExpr allEnvEventsVar() {
+        return AlloyVar(D2AStrings.allEnvEventsName);
     }
 
     // Electrum only
@@ -251,27 +288,25 @@ public class DSL {
     }
 
     // [p0:P0, p1:P1, ...]
-    public static List<AlloyDecl> paramDecls(List<Integer> prsIdx , List<String> prs) {
+    public static List<AlloyDecl> paramDecls(List<DashParam> prs) {
         List<AlloyDecl> o = new ArrayList<AlloyDecl>();
-        for (int i=0;i<prsIdx.size();i++) 
-            // fix here
-            //o.add(paramDecl(prsIdx.get(i),  prs.get(i)));
-            continue;
+        for (DashParam p:prs)
+            o.add(p.asAlloyDecl());
         return o;
     }
 
     // s:Snapshot, p0:P0, p1:P1, ...]
-    public List<AlloyDecl> curParamsDecls(List<Integer> prsIdx, List<String> prs) {
+    public List<AlloyDecl> curParamsDecls(List<DashParam> prs) {
         List<AlloyDecl> o = new ArrayList<AlloyDecl>();
         o.addAll(this.curDecls());
-        o.addAll(this.paramDecls(prsIdx,  prs));
+        o.addAll(this.paramDecls(prs));
         return o;
     }
     // s:Snapshot, s':Snapshot, p0:P0, p1:P1, ...]
-    public List<AlloyDecl> curNextParamsDecls(List<Integer> prsIdx, List<String> prs) {
+    public List<AlloyDecl> curNextParamsDecls(List<DashParam> prs) {
         List<AlloyDecl> o = new ArrayList<AlloyDecl>();
         o.addAll(this.curNextDecls()); 
-        o.addAll(this.paramDecls(prsIdx,  prs));
+        o.addAll(this.paramDecls(prs));
         return o;
     }
 
@@ -310,5 +345,10 @@ public class DSL {
         return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(AlloyStrings.boolName));
     }
 
+
+    public static DashRef asScope(DashRef e) {
+        assert(e instanceof StateDashRef);
+        return new StateDashRef(e.name+D2AStrings.scopeSuffix, e.paramValues);
+    }
 
 }

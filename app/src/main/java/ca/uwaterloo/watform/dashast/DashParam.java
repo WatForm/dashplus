@@ -44,9 +44,10 @@ public class DashParam extends AlloyExpr {
     // it's convenient to include these translation methods here
 
     // p_stateName
-
     public AlloyQnameExpr asAlloyVar() {
-        return new AlloyQnameExpr(DashStrings.pName + DashStrings.alloySep + this.stateName);
+        return 
+            new AlloyQnameExpr(
+                    DashStrings.pName + DashStrings.alloySep + this.stateName);
     }
 
     // p_stateName:paramSig

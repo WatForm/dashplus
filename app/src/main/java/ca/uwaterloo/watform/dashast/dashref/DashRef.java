@@ -84,6 +84,7 @@ public class DashRef extends AlloyExpr {
         ll.add(AlloyVar(translateFQN(this.name)));
         return AlloyArrowExprList(ll);
     }
+    
     @Override
     public void pp(PrintContext pCtx) {
         // STATE: Root/A/B[a1,b1]

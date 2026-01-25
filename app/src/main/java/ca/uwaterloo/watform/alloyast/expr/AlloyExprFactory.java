@@ -106,8 +106,13 @@ public class AlloyExprFactory {
     public static AlloyExpr AlloyTrueCond() {
         return new AlloyEqualsExpr(AlloyTrue(), AlloyTrue());
     }
+    public static AlloyExpr AlloyFalseCond() {
+        return new AlloyEqualsExpr(AlloyTrue(), AlloyFalse());
+    }
 
-
+    public static AlloyExpr AlloyNot(AlloyExpr expr) {
+        return new AlloyNegExpr(expr);
+    }
 
     // e0 + e1 + e2
     public static AlloyExpr AlloyUnionList(List<AlloyExpr> elist) {
@@ -121,13 +126,23 @@ public class AlloyExprFactory {
     }
 
     // left :> right
+    public static AlloyExpr AlloyInter(AlloyExpr left, AlloyExpr right) {
+        return new AlloyIntersExpr(left,right);
+    }
+
+    // left :> right
     public static AlloyExpr AlloyRangeRes(AlloyExpr left, AlloyExpr right) {
         return new AlloyRngRestrExpr(left,right);
     }
 
     // all decls sub
-    public static AlloyExpr AlloyAll(List<AlloyDecl> decls, AlloyExpr sub) {
+    public static AlloyExpr AlloyAllQt(List<AlloyDecl> decls, AlloyExpr sub) {
         return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ONE, decls, sub);
+    }
+
+    // all decls sub
+    public static AlloyExpr AlloySome(AlloyExpr sub) {
+        return new AlloyQtExpr(AlloyQtExpr.Quant.SOME, sub);
     }
 
     // vars ----------------------------
@@ -161,6 +176,18 @@ public class AlloyExprFactory {
         return new AlloyDecl(AlloyVar(s), expr);
     }
 
+    public static AlloyExpr AlloyPredCall(String name, List<AlloyExpr> elist) {
+        return new AlloyBracketExpr(
+                new AlloyQnameExpr(name),
+                elist); 
+    }
 
+    public static AlloyExpr AlloyIn(AlloyExpr left, AlloyExpr right) {
+        return new AlloyCmpExpr(left,false,AlloyCmpExpr.Comp.IN,right);
+    }
+    
+    public static AlloyExpr AlloyIte(AlloyExpr cond, AlloyExpr conseq, AlloyExpr alt) {
+        return new AlloyIteExpr(cond,conseq,alt);
+    }
 
 }
