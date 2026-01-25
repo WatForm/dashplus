@@ -87,7 +87,7 @@ public class InitsD2A extends SnapshotSigD2A {
                     }
                 }
                 if (!decls.isEmpty()) {
-                    e = AlloyAllQt(decls,e);
+                    e = AlloyAllVars(decls,e);
                     body = new ArrayList<AlloyExpr>();
                     body.add(e);
                 }

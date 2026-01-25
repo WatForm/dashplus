@@ -72,6 +72,10 @@ public class AlloyExprFactory {
         return new AlloyAndExpr(left, right);
     }
 
+    public static AlloyExpr AlloyOr(AlloyExpr left, AlloyExpr right) {
+        return new AlloyOrExpr(left, right);
+    }
+
     public static AlloyExpr AlloyAndList(List<AlloyExpr> elist) {
         // does simplifications
         // how get back a real true expr rather than just boolean value at the e3nd??
@@ -80,6 +84,18 @@ public class AlloyExprFactory {
         AlloyExpr ret = elist.get(0);
         for (AlloyExpr el: elist.subList(1,elist.size())) {
             ret = AlloyAnd(ret,el);
+        }
+        return ret;
+    }
+
+    public static AlloyExpr AlloyOrList(List<AlloyExpr> elist) {
+        // does simplifications
+        // how get back a real true expr rather than just boolean value at the e3nd??
+        if (elist.isEmpty()) 
+            return AlloyFalse();
+        AlloyExpr ret = elist.get(0);
+        for (AlloyExpr el: elist.subList(1,elist.size())) {
+            ret = AlloyOr(ret,el);
         }
         return ret;
     }
@@ -141,11 +157,16 @@ public class AlloyExprFactory {
     }
 
     // all decls sub
-    public static AlloyExpr AlloyAllQt(List<AlloyDecl> decls, AlloyExpr sub) {
-        return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ONE, decls, sub);
+    public static AlloyExpr AlloyAllVars(List<AlloyDecl> decls, AlloyExpr sub) {
+        return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ALL, decls, sub);
     }
 
-    // all decls sub
+   // some decls sub
+    public static AlloyExpr AlloySomeVars(List<AlloyDecl> decls, AlloyExpr sub) {
+        return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.SOME, decls, sub);
+    }
+
+    // all sub
     public static AlloyExpr AlloySome(AlloyExpr sub) {
         return new AlloyQtExpr(AlloyQtExpr.Quant.SOME, sub);
     }
