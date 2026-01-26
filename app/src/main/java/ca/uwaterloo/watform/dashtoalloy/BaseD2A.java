@@ -29,7 +29,7 @@ public class BaseD2A {
     protected boolean isTcmc = false;
     protected DSL dsl;
     protected ExprTranslatorVis exprTranslator;
-    protected CollectDashRefVis collectDashRef;
+
 
     protected BaseD2A(DashModel dm, TranslateOutput opt) {
         this.dm = dm;
@@ -56,6 +56,8 @@ public class BaseD2A {
     }
 
     protected List<DashRef> collectDashRefs(AlloyExpr expr) {
-        return this.collectDashRef.visit(expr);
+        // has to be a new one every time
+        // to empty out collector variable inside object
+        return new CollectDashRefVis().visit(expr);
     }
 }

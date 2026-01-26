@@ -33,6 +33,7 @@ public class DashToAlloy extends StutterD2A {
         this.addInit();
         this.addInvs();
 
+        
         for (String tfqn:this.dm.allTransNames()) {
             this.addTransPre(tfqn);
             if (this.dm.hasConcurrency()) {
@@ -41,6 +42,7 @@ public class DashToAlloy extends StutterD2A {
             this.addTransPost(tfqn);
             this.addTrans(tfqn);
         }
+
         // one of these for the whole model
         if (this.dm.hasConcurrency()) 
             this.addTestIfNextStable();
@@ -60,8 +62,6 @@ public class DashToAlloy extends StutterD2A {
             // only useful for Tcmc
             this.addReachability();
 
-            
-
         } else if (this.isTraces) {
             // next two are required
             this.addTracesFact();
@@ -69,9 +69,6 @@ public class DashToAlloy extends StutterD2A {
             // everything in traces is reachable b/c it
             // starts from initial state and only takes steps
             // it can reach
-
-            // optional predicate for use in property checking
-            this.addStrongNoStutter();
 
         } else if (this.isElectrum) {
             // this one is required
@@ -84,6 +81,7 @@ public class DashToAlloy extends StutterD2A {
         this.addSingleEventInput();
         this.addCompleteBigSteps();
         this.addEnoughOps(); 
+        
         return this.am;
     }
 

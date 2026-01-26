@@ -107,7 +107,6 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                 body.add(AlloyEqual(this.dsl.nextConf(i),e));
             }
         }
-
         // forall i : takeni' = {t1} 
         AlloyExpr ex;
         DashRef dr;
@@ -135,6 +134,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // it doesn't -- there is no need
         // to reference the buffer index argument.
 
+
         // remove variable/buffers mentioned in invariants
         // old code had something about primed vars here
         // but I don't think invs can have primed vars? (NAD 2026-01-25)
@@ -150,7 +150,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // that we can't put any constraints on (remove these from intVarsThatDontChange)
         // and those that we constrain the sister value os (sistersDontChange)
         Set<String> sistersDontChange = new HashSet<String>();
-        if (this.dm.doR(tfqn) != null) {
+        if (this.dm.doR(tfqn) != null) { 
             for (DashRef r: this.collectDashRefs(this.dm.doR(tfqn))) {
                 if (r.paramValues.isEmpty()) 
                 	intVarsBuffersThatDontChange.remove(r.name);
@@ -164,8 +164,9 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                     intVarsBuffersThatDontChange.remove(r.name);
                 }
             }
+            
         }
-  
+
         List<AlloyDecl> decls;
         List<AlloyExpr> args;
 
@@ -480,6 +481,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             }
         }
         return AlloyPredCall(D2AStrings.testIfNextStableName,args);
+
     }
 
     private boolean hasSpecificParamValues(DashRef r) {
@@ -497,4 +499,5 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         }
         return ret;
     }
+
 }
