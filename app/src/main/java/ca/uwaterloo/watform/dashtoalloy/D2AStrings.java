@@ -45,7 +45,7 @@ public final class D2AStrings {
     public static final String tcmcFactName = dsh_prefix + "tcmc_fact";
     public static final String singleEventName = dsh_prefix + "single_event";
     public static final String reachabilityName = dsh_prefix + "reachability";
-    public static final String enoughOperationsName = dsh_prefix + "enough_operations";
+    public static final String enoughOpsName = dsh_prefix + "enough_ops";
     public static final String completeBigStepsName = dsh_prefix + "complete_big_steps";
     /* names used in Dash translation */
     // sig names
