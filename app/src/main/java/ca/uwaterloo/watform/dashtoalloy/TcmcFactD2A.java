@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TcmcFactD2A extends InitsD2A {    
+public class TcmcFactD2A extends TracesFactD2A {    
 
     protected TcmcFactD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

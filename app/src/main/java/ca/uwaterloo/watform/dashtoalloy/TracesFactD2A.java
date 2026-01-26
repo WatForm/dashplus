@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TracesFactD2A extends InitsD2A {    
+public class TracesFactD2A extends SmallStepD2A {    
 
     protected TracesFactD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

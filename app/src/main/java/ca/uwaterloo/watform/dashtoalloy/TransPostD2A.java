@@ -68,7 +68,7 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TransPostD2A extends InitsD2A {    
+public class TransPostD2A extends TransTestIfNextStableD2A {    
 
     protected TransPostD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

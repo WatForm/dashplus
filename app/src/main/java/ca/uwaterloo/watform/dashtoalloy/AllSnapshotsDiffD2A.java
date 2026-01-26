@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class AllSnapshotsDiffD2A extends InitsD2A {    
+public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {    
 
     protected AllSnapshotsDiffD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

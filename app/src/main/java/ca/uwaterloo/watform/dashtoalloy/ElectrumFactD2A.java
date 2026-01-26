@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ElectrumFactD2A extends InitsD2A {    
+public class ElectrumFactD2A extends TcmcFactD2A {    
 
     protected ElectrumFactD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SingleEventD2A extends InitsD2A {    
+public class SingleEventInputD2A extends EnoughOpsD2A {    
 
-    protected SingleEventD2A(DashModel dm, boolean isElectrum) {
+    protected SingleEventInputD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
     }
 

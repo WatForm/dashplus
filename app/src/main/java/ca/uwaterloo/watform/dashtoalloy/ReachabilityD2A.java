@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ReachabilityD2A extends InitsD2A {    
+public class ReachabilityD2A extends ElectrumFactD2A {    
 
     protected ReachabilityD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

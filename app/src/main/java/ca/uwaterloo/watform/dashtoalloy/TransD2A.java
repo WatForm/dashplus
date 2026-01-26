@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.List;
 
-public class TransD2A extends TransPreD2A {
+public class TransD2A extends TransPostD2A {
 
     protected TransD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

@@ -15,9 +15,9 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.List;
 
-public class TestIfNextStableD2A extends TransPreD2A {
+public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
 
-    protected TestIfNextStableD2A(DashModel dm, boolean isElectrum) {
+    protected TransTestIfNextStableD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
     }
 

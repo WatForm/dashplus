@@ -15,7 +15,7 @@ InvsD2A
 
 TransPreD2A
 TransIsEnabledAfterStep
-TODO: TransTestIfNextStable
+TransTestIfNextStable
 TransPostD2A
 Trans
 SmallStep
@@ -26,11 +26,10 @@ ElectrumFactD2A
 
 ReachabilityD2A
 CompleteBigStepsD2A
-AlloySnapshotDiffD2A
+AllSnapshotDiffD2A
 EnoughOpsD2A
 SingleEventD2A
-TOCOMBINE: StrongNoStutterD2A
-  StutterD2A
+StutterD2A
 
 DashToAlloy
 

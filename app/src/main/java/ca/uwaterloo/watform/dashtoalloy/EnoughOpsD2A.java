@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EnoughOpsD2A extends InitsD2A {    
+public class EnoughOpsD2A extends AllSnapshotsDiffD2A {    
 
     protected EnoughOpsD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

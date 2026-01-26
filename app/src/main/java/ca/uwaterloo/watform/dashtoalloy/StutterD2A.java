@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
-public class StutterD2A extends InitsD2A {    
+public class StutterD2A extends SingleEventInputD2A {    
 
     protected StutterD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);

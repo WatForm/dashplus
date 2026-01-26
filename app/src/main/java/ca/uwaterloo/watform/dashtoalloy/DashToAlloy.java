@@ -5,7 +5,7 @@ package ca.uwaterloo.watform.dashtoalloy;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 
-public class DashToAlloy extends InvsD2A {
+public class DashToAlloy extends StutterD2A {
 
     public DashToAlloy(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
