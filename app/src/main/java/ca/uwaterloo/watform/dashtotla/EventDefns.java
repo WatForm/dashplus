@@ -2,8 +2,6 @@ package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
-import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.ENVIRONMENTAL_EVENTS;
-import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.INTERNAL_EVENTS;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 

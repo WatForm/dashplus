@@ -2,12 +2,8 @@ package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.ENVIRONMENTAL_EVENTS;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.EVENTS;
-import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.EVENTS;
-import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.SINGLE_ENV_INPUT;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaDefn;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaForAll;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaTrue;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaVar;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;

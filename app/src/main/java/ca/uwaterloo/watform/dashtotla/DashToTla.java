@@ -38,7 +38,7 @@ public class DashToTla {
         System.out.println("translated transitions");
 
         tlaModel.addComment("Small step definition");
-        SmallStepDefn.translate(vars, dashModel, tlaModel);
+        SmallStepDefn.translate(dashModel, tlaModel);
 
         tlaModel.addComment("type restrictions on variables");
         ValidDefns.translate(dashModel, tlaModel);

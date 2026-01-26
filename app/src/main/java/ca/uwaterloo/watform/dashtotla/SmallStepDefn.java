@@ -12,11 +12,10 @@ import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaSubsetUnary;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SmallStepDefn {
-    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         List<String> transFQNs = AuxDashAccessors.getTransitionNames(dashModel);
         List<TlaAppl> preTransitions = mapBy(transFQNs, tFQN -> TlaAppl(preTransTlaFQN(tFQN)));
@@ -30,7 +29,7 @@ public class SmallStepDefn {
                 // _some_pre_transition == \/ <pre_ti> ...
                 TlaDefn(SOME_PRE_TRANSITION, repeatedOr(preTransitions)));
 
-        StutterDefn(vars, tlaModel, dashModel);
+        StutterDefn(tlaModel, dashModel);
 
         tlaModel.addDefn(
                 // _small_step == _some_transition \/ (_stutter /\ ~_some_pre_transition)
@@ -50,23 +49,25 @@ public class SmallStepDefn {
         */
     }
 
-    public static void StutterDefn(List<String> vars, TlaModel tlaModel, DashModel dashModel) {
+    public static void StutterDefn(TlaModel tlaModel, DashModel dashModel) {
         List<TlaExp> expressions = new ArrayList<>();
 
-        if (vars.contains(TRANS_TAKEN))
-            expressions.add(
-                    // _trans_taken' = _none_transition
-                    TRANS_TAKEN().PRIME().EQUALS(NONE_TRANSITION()));
+        expressions.add(
+                // _trans_taken' = _none_transition
+                TRANS_TAKEN().PRIME().EQUALS(NONE_TRANSITION()));            
 
-        if (vars.contains(EVENTS))
+        if (dashModel.hasEvents())
             expressions.add(
                     // _events' \in SUBSET _all_internal_events
                     EVENTS().PRIME().IN(new TlaSubsetUnary(INTERNAL_EVENTS())));
-
-        List<TlaVar> unchangedVars =
-                mapBy(
-                        filterBy(Arrays.asList(CONF, STABLE, SCOPES_USED), vars::contains),
-                        TlaVar::new);
+        
+        List<TlaVar> unchangedVars = new ArrayList<>();
+        if(dashModel.hasConcurrency())
+        {
+                unchangedVars.add(TlaVar(STABLE));
+                unchangedVars.add(TlaVar(SCOPES_USED));
+        }
+        if(!dashModel.hasOnlyOneState())unchangedVars.add(TlaVar(CONF));
 
         if (unchangedVars.size() != 0)
             expressions.add(
