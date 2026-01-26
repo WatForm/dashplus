@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SingleEventPredD2A extends InitsD2A {    
+public class SingleEventD2A extends InitsD2A {    
 
-    protected SingleEventPredD2A(DashModel dm, boolean isElectrum) {
+    protected SingleEventD2A(DashModel dm, boolean isElectrum) {
         super(dm, isElectrum);
     }
 
-    public void addSingleEventPred() {
+    public void addSingleEvent() {
         if (this.dm.hasEnvEvents()) {
             AlloyExpr e;
             AlloyExpr b = AlloyFalseCond();

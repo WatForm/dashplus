@@ -11,8 +11,30 @@ AlloyModelInterfaceD2A
 SpaceSigsD2A
 SnapshotSigD2A
 InitsD2A
+InvsD2A
+
+TransPreD2A
+TransIsEnabledAfterStep
+TODO: TransTestIfNextStable
+TransPostD2A
+Trans
+SmallStep
+
+TracesFactD2A
+TcmcFactD2A
+ElectrumFactD2A
+
+ReachabilityD2A
+CompleteBigStepsD2A
+AlloySnapshotDiffD2A
+EnoughOpsD2A
+SingleEventD2A
+TOCOMBINE: StrongNoStutterD2A
+  StutterD2A
 
 DashToAlloy
+
+Note that the methods in these class are not all used depending on the translation option chosen.
 
 Everything adds an Alloy predicate to the Alloy model unless it is labelled Fact in the class name.
 

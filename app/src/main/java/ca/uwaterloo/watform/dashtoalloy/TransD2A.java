@@ -1,8 +1,7 @@
 /*
     pred t1[s:Snapshot,s':Snapshot,pparam0:param0,pparam1:param1,pparam2:param2,...] =
         pparam2.pparam1.pparam0.s.pre_1 and
-        pparam2.pparam1.pparam0.s'.s.post_1 and
-        pparam2.pparam1.pparam0.s'.s'.semantics_t1
+        pparam2.pparam1.pparam0.s'.s.post_1 
 */ 
 
 package ca.uwaterloo.watform.dashtoalloy;
