@@ -31,6 +31,10 @@ public class AlloyExprFactory {
                 (((AlloyVarExpr)e1).label.equals(((AlloyVarExpr) e2).label)))) ;
     }
 
+    public static AlloyExpr AlloyArrow(AlloyExpr left, AlloyExpr right) {
+        return new AlloyArrowExpr(left,right);
+    }
+    
     // AlloyVar(sl(0)) -> (AlloyVar(sl(1)) -> AlloyVar(sl(2)))
     public static AlloyExpr AlloyArrowStringList(List<String> sl) {
         assert (sl != null && !sl.isEmpty());
@@ -90,6 +94,10 @@ public class AlloyExprFactory {
 
     public static AlloyExpr AlloyImplies(AlloyExpr left, AlloyExpr right) {
         return new AlloyImpliesExpr(left, right);
+    }
+
+    public static AlloyExpr AlloyIff(AlloyExpr left, AlloyExpr right) {
+        return new AlloyIffExpr(left, right);
     }
 
     public static AlloyExpr AlloyAndList(List<AlloyExpr> elist) {

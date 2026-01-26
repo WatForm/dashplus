@@ -20,6 +20,7 @@ public class BaseD2A {
     protected AlloyModel am = new AlloyModel(); // output
     protected boolean isElectrum = false;
     protected boolean isTraces = true;
+    protected boolean isTcmc = false;
     protected DSL dsl;
     protected ExprTranslatorVis exprTranslator;
     protected CollectDashRefVis collectDashRef;

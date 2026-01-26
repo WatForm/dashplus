@@ -19,3 +19,7 @@ Everything adds an Alloy predicate to the Alloy model unless it is labelled Fact
 # TranslateExprVis
 
 Is its own class to translated DashExpr to AlloyExpr so it can be used by other parts of dashplus than just the Dash to Alloy translation.
+
+# Notes
+
+Depends almost completely on AlloyExprFactory to avoid "new X" extra text.

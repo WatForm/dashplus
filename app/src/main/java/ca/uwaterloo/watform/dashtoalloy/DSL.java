@@ -381,4 +381,8 @@ public class DSL {
     public List<AlloyDecl> emptyDecls() {
         return new ArrayList<AlloyDecl>();
     }
+
+     public List<AlloyExpr> emptyExprList() {
+        return new ArrayList<AlloyExpr>();
+    }
 }
