@@ -11,6 +11,8 @@ package ca.uwaterloo.watform.dashtoalloy;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import java.util.*;
 
 public class BaseD2A {
 
@@ -20,6 +22,7 @@ public class BaseD2A {
     protected boolean isTraces = true;
     protected DSL dsl;
     protected ExprTranslatorVis exprTranslator;
+    protected CollectDashRefVis collectDashRef;
 
     protected BaseD2A(DashModel dm, boolean isElectrum) {
         this.dm = dm;
@@ -30,5 +33,9 @@ public class BaseD2A {
 
     protected AlloyExpr translateExpr(AlloyExpr expr) {
         return this.exprTranslator.translateExpr(expr);
+    }
+
+    protected List<DashRef> collectDashRefs(AlloyExpr expr) {
+        return this.collectDashRef.visit(expr);
     }
 }

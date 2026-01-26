@@ -61,6 +61,12 @@ public class VarsDM extends StatesDM {
         return new ArrayList<String>(this.vt.keySet());
     }
 
+    public List<String> allIntVarNames() {
+        List<String> ret = new ArrayList<String>();
+        ret = filterBy(setToList(this.vt.keySet()), x -> this.isIntVar(x));
+        return ret;
+    }
+
     public boolean hasVars() {
         return this.vt.isEmpty();
     }

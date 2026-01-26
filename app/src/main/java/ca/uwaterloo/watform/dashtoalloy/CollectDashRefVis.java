@@ -10,7 +10,7 @@
     Can only be called after refs are resolved.
 */
 
-package ca.uwaterloo.watform.dashmodel;
+package ca.uwaterloo.watform.dashtoalloy;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 

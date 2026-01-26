@@ -22,7 +22,7 @@ public class AlloyExprFactory {
 
     // simple equality: two var names are equal -----------------------
     // for optimizations
-    private static boolean sEquals(AlloyExpr e1, AlloyExpr e2) {
+    public static boolean syntacticEqual(AlloyExpr e1, AlloyExpr e2) {
         return (
             // pointer equality 
             (e1 == e2) ||
@@ -65,6 +65,18 @@ public class AlloyExprFactory {
         for (AlloyExpr el : elist.subList(1, elist.size())) {
             ret = new AlloyDotExpr(el, ret);
         }
+        return ret;
+    }
+
+    // elist(0).elist(1).expr
+    public static AlloyExpr AlloyJoinList(List<AlloyExpr> elist, AlloyExpr expr) {
+        assert (elist != null);
+        Collections.reverse(elist);
+        AlloyExpr ret = elist.get(0);
+        for (AlloyExpr el : elist.subList(1, elist.size())) {
+            ret = new AlloyDotExpr(el, ret);
+        }
+        ret = new AlloyDotExpr(ret, expr);
         return ret;
     }
 
@@ -114,7 +126,7 @@ public class AlloyExprFactory {
     }
 
     public static AlloyExpr AlloyEqual(AlloyExpr left, AlloyExpr right) {
-        if (optimizationsOn && sEquals(left,right)) 
+        if (optimizationsOn && syntacticEqual(left,right)) 
             return AlloyTrueCond();
         else 
             return new AlloyEqualsExpr(left, right);
