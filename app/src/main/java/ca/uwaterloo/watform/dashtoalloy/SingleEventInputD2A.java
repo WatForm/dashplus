@@ -35,7 +35,7 @@ public class SingleEventInputD2A extends EnoughOpsD2A {
         super(dm, isElectrum);
     }
 
-    public void addSingleEvent() {
+    public void addSingleEventInput() {
         if (this.dm.hasEnvEvents()) {
             AlloyExpr e;
             AlloyExpr b = AlloyFalseCond();
