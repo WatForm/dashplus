@@ -30,14 +30,14 @@ import java.util.List;
 
 public class SmallStepD2A extends TransD2A {  
 
-    protected SmallStepD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected SmallStepD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addSmallStep() {
 
         ArrayList<AlloyExpr> e = new ArrayList<AlloyExpr>();
-        List<DashParam> prs = this.dm.allParamsInOrder();
+        List<DashParam> prs = this.dm.allParams();
 
         // trans is taken
         for (String tfqn: this.dm.allTransNames()) {
@@ -54,7 +54,7 @@ public class SmallStepD2A extends TransD2A {
                         this.dsl.curNextParamVars(this.dm.transParams(tfqn))));
         }
         AlloyExpr transIsTaken;
-        if (this.dm.allParamsInOrder().isEmpty()) 
+        if (this.dm.allParams().isEmpty()) 
             transIsTaken = AlloyOrList(e);
         else 
             transIsTaken = 
@@ -78,7 +78,7 @@ public class SmallStepD2A extends TransD2A {
                     this.dsl.curParamVars(this.dm.transParams(tfqn))));
         }
         AlloyExpr transIsNotEnabled;
-        if (this.dm.allParamsInOrder().isEmpty()) 
+        if (this.dm.allParams().isEmpty()) 
             transIsNotEnabled = AlloyOrList(e);
         else 
             transIsNotEnabled = 

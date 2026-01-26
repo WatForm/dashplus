@@ -20,13 +20,13 @@ public class InvsD2A extends InitsD2A {
         TODO add Electrum
     */      
 
-    protected InvsD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected InvsD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addInvs() {
 
-        List<DashParam> prs = this.dm.allParamsInOrder();
+        List<DashParam> prs = this.dm.allParams();
         List<AlloyExpr> body = new ArrayList<AlloyExpr>();
        
         // since this is a fact, we don't need it if there are no invariants 

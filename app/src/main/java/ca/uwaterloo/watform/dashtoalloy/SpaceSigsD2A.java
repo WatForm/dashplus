@@ -12,8 +12,8 @@ import java.util.List;
 
 public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
 
-    protected SpaceSigsD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected SpaceSigsD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     /*
@@ -111,7 +111,7 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
             // if this model has parametrized components
             // abstract sig Identifiers {}
             this.addAbstractSig(D2AStrings.identifierName);
-            for (String s : mapBy(this.dm.allParamsInOrder(), i -> i.paramSig))
+            for (String s : mapBy(this.dm.allParams(), i -> i.paramSig))
                 // sig param extends Identifiers {}
                 this.addExtendsSig(s, D2AStrings.identifierName);
             // the alternative would be for conf1, etc to be fields in

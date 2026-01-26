@@ -27,8 +27,8 @@ import java.util.List;
 
 public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {    
 
-    protected AllSnapshotsDiffD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected AllSnapshotsDiffD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     private List<AlloyExpr> addAllSnapshotsDiffBody() {

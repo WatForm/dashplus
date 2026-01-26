@@ -23,8 +23,8 @@ import java.util.List;
 
 public class TransD2A extends TransPostD2A {
 
-    protected TransD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected TransD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addTrans(String tfqn) {

@@ -17,8 +17,8 @@ import java.util.List;
 
 public class SnapshotSigD2A extends SpaceSigsD2A {
 
-    protected SnapshotSigD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected SnapshotSigD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     protected void addSnapshotSig() {

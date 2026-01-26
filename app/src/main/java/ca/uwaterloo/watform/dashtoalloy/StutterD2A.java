@@ -29,8 +29,8 @@ import java.util.Set;
 
 public class StutterD2A extends SingleEventInputD2A {    
 
-    protected StutterD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected StutterD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addStutter() {

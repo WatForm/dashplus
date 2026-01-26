@@ -46,8 +46,8 @@ import java.util.List;
 
 public class TracesFactD2A extends SmallStepD2A {    
 
-    protected TracesFactD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected TracesFactD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addTracesFact() {

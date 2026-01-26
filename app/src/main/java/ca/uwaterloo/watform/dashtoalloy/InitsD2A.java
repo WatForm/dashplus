@@ -20,13 +20,13 @@ public class InitsD2A extends SnapshotSigD2A {
         TODO add Electrum
     */      
 
-    protected InitsD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected InitsD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
  
     public void addInit() {
 
-        List<DashParam> prs = this.dm.allParamsInOrder();
+        List<DashParam> prs = this.dm.allParams();
         List<AlloyExpr> body = new ArrayList<AlloyExpr>();
         
         if (!this.dm.hasOnlyOneState()) {

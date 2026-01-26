@@ -38,7 +38,7 @@ public class StatesDM extends TransDM {
     // this is in order of depth-first traversal of the tree
     // these parameters can be from different branches
     // of the state hierarchy
-    protected List<DashParam> allParamsInOrder = new ArrayList<DashParam>();
+    protected List<DashParam> allParams = new ArrayList<DashParam>();
 
     public StatesDM() {
         super();
@@ -124,8 +124,8 @@ public class StatesDM extends TransDM {
         return this.maxDepthParams;
     }
 
-    public List<DashParam> allParamsInOrder() {
-        return this.allParamsInOrder;
+    public List<DashParam> allParams() {
+        return this.allParams;
     }
 
     protected Boolean containsState(String sfqn) {

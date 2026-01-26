@@ -32,8 +32,8 @@ import java.util.Set;
 
 public class EnoughOpsD2A extends AllSnapshotsDiffD2A {    
 
-    protected EnoughOpsD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected EnoughOpsD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addEnoughOps() {

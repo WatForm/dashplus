@@ -30,8 +30,8 @@ import java.util.Set;
 
 public class ReachabilityD2A extends ElectrumFactD2A {    
 
-    protected ReachabilityD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected ReachabilityD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addReachability() {

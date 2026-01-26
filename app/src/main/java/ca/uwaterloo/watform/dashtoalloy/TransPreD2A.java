@@ -39,8 +39,8 @@ public class TransPreD2A extends InvsD2A {
         Assumption: prs for src state and trig events are a subset of prs for trans
     */
 
-    protected TransPreD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected TransPreD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
     
     public void addTransPre(String tfqn) {

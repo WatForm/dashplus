@@ -19,8 +19,8 @@ import java.util.List;
 
 public class AlloyModelInterfaceD2A extends BaseD2A {
 
-    protected AlloyModelInterfaceD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected AlloyModelInterfaceD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     // adding: sig "n" {}

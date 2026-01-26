@@ -23,8 +23,8 @@ import java.util.List;
 
 public class ElectrumFactD2A extends TcmcFactD2A {    
 
-    protected ElectrumFactD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected ElectrumFactD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addElectrumFact() {

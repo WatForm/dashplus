@@ -31,8 +31,8 @@ import java.util.List;
 
 public class SingleEventInputD2A extends EnoughOpsD2A {    
 
-    protected SingleEventInputD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected SingleEventInputD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addSingleEventInput() {

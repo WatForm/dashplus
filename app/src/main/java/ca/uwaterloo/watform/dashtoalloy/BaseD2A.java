@@ -16,17 +16,36 @@ import java.util.*;
 
 public class BaseD2A {
 
+    public enum TranslateOutput {
+        ELECTRUM,
+        TRACES,
+        TCMC
+    }
+
     protected DashModel dm; // input
     protected AlloyModel am = new AlloyModel(); // output
     protected boolean isElectrum = false;
-    protected boolean isTraces = true;
+    protected boolean isTraces = false;
     protected boolean isTcmc = false;
     protected DSL dsl;
     protected ExprTranslatorVis exprTranslator;
     protected CollectDashRefVis collectDashRef;
 
-    protected BaseD2A(DashModel dm, boolean isElectrum) {
+    protected BaseD2A(DashModel dm, TranslateOutput opt) {
         this.dm = dm;
+
+        switch (opt) {
+            case TranslateOutput.ELECTRUM:
+                this.isElectrum = true;
+                break;
+            case TranslateOutput.TRACES:
+                this.isTraces = true;
+                break;
+            case TranslateOutput.TCMC:
+                this.isTcmc = true;
+                break;
+        }
+
         this.isElectrum = isElectrum;
         this.dsl = new DSL(dm, isElectrum);
         this.exprTranslator = new ExprTranslatorVis(dm, isElectrum);

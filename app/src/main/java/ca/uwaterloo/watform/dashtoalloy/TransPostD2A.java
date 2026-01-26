@@ -70,8 +70,8 @@ import java.util.Set;
 
 public class TransPostD2A extends TransTestIfNextStableD2A {    
 
-    protected TransPostD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected TransPostD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
 
@@ -422,7 +422,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             return e;
         else 
             return AlloyAllVars(
-                this.dsl.paramDecls(this.dm.allParamsInOrder()),
+                this.dsl.paramDecls(this.dm.allParams()),
                 e);
     }
 
@@ -437,7 +437,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // add args for parameters; has to be something or 
         // none for every possible parameter in the system
         List<DashParam> paramsUsed = this.dm.transParams(tfqn);
-        for (DashParam p: this.dm.allParamsInOrder()) {
+        for (DashParam p: this.dm.allParams()) {
             if (paramsUsed.contains(p)) 
                 args.add(p.asAlloyVar());
             else 

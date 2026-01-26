@@ -33,8 +33,8 @@ import java.util.Set;
 
 public class TcmcFactD2A extends TracesFactD2A {    
 
-    protected TcmcFactD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected TcmcFactD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public void addTcmcFact() {

@@ -11,12 +11,14 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 
 public class DashToAlloy extends StutterD2A {
 
-    public DashToAlloy(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+
+
+    public DashToAlloy(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     public DashToAlloy(DashModel dm) {
-        super(dm, false);
+        super(dm, TranslateOutput.TRACES);
     }
 
     public AlloyModel translate() {

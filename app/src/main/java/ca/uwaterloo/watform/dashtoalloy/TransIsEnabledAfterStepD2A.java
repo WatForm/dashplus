@@ -50,8 +50,8 @@ import java.util.List;
 
 public class TransIsEnabledAfterStepD2A extends TransPreD2A {
 
-	protected TransIsEnabledAfterStepD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+	protected TransIsEnabledAfterStepD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
 	public void addTransIsEnabledAfterStep(String tfqn) {

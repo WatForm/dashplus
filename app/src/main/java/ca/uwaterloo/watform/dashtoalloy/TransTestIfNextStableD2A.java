@@ -17,8 +17,8 @@ import java.util.List;
 
 public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
 
-    protected TransTestIfNextStableD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected TransTestIfNextStableD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
     // only one of these predicates per model
@@ -32,7 +32,7 @@ public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
             decls.addAll(this.dsl.curNextDecls());
         }
 
-        for (DashParam p: this.dm.allParamsInOrder()) {
+        for (DashParam p: this.dm.allParams()) {
             decls.add(p.asAlloyDecl());
         }
 

@@ -37,9 +37,14 @@ Note that the methods in these class are not all used depending on the translati
 
 Everything adds an Alloy predicate to the Alloy model unless it is labelled Fact in the class name.
 
+# DSL
+Depends on isElectrum so cannot be a static object.
+
 # TranslateExprVis
 
 Is its own class to translated DashExpr to AlloyExpr so it can be used by other parts of dashplus than just the Dash to Alloy translation.
+
+Depends on dm and dsl
 
 # Notes
 

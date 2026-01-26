@@ -29,8 +29,8 @@ import java.util.List;
 
 public class CompleteBigStepsD2A extends ReachabilityD2A {
 
-    protected CompleteBigStepsD2A(DashModel dm, boolean isElectrum) {
-        super(dm, isElectrum);
+    protected CompleteBigStepsD2A(DashModel dm, TranslateOutput opt) {
+        super(dm, opt);
     }
 
 	public void addCompleteBigSteps() {
