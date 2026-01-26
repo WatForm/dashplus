@@ -2,29 +2,24 @@ package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.ENVIRONMENTAL_EVENTS;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.EVENTS;
-import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.EVENTS;
-import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.SINGLE_ENV_INPUT;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaDefn;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaForAll;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaTrue;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaVar;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.List;
 
 public class SingleEnvEvent {
 
-    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
         // add a formula:
         // _single_environmental_event == \A x \in S : \A y \in S : x = y
         // where S = _events \intersect _environmental_events
         // if events don't exist, then it's just TRUE
         TlaExp body = TlaTrue();
 
-        if (vars.contains(EVENTS)) body = TlaForAll(x(), S(), TlaForAll(y(), S(), x().EQUALS(y())));
+        if (dashModel.hasEvents()) body = TlaForAll(x(), S(), TlaForAll(y(), S(), x().EQUALS(y())));
 
         tlaModel.addDefn(TlaDefn(SINGLE_ENV_INPUT, body));
     }

@@ -20,14 +20,14 @@ public class DashToTla {
 
         tlaModel.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants");
-        StateDefns.translate(vars, dashModel, tlaModel);
+        StateDefns.translate(dashModel, tlaModel);
         System.out.println("translated states");
 
         tlaModel.addComment(
                 "string literal representations of transitions taken, which are the values taken by the "
                         + EVENTS
                         + " variable");
-        EventDefns.translate(vars, dashModel, tlaModel);
+        EventDefns.translate(dashModel, tlaModel);
         System.out.println("translated events");
 
         tlaModel.addComment(
@@ -38,19 +38,19 @@ public class DashToTla {
         System.out.println("translated transitions");
 
         tlaModel.addComment("Small step definition");
-        SmallStepDefn.translate(vars, dashModel, tlaModel);
+        SmallStepDefn.translate(dashModel, tlaModel);
 
         tlaModel.addComment("type restrictions on variables");
-        ValidDefns.translate(vars, dashModel, tlaModel);
+        ValidDefns.translate(dashModel, tlaModel);
 
         tlaModel.addComment("initial values for variables");
-        InitDefn.translate(vars, dashModel, tlaModel);
+        InitDefn.translate(dashModel, tlaModel);
 
         tlaModel.addComment("Next relation");
         NextDefn.translate(dashModel, tlaModel);
 
         tlaModel.addComment("single environmental event assumption");
-        SingleEnvEvent.translate(vars, dashModel, tlaModel);
+        SingleEnvEvent.translate(dashModel, tlaModel);
 
         return tlaModel;
     }
