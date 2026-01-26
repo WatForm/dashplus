@@ -1,4 +1,5 @@
- /*
+ /* 
+ 
     open util/tcmc[Snapshot] as snapshot
 
     fact tcmc { 
