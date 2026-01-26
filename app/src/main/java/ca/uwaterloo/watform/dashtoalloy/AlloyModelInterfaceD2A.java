@@ -11,8 +11,10 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyImportPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 // import ca.uwaterloo.watform.dashast.D2AStrings;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.Collections;
 import java.util.List;
@@ -87,5 +89,14 @@ public class AlloyModelInterfaceD2A extends BaseD2A {
                 new AlloyQnameExpr(name),
                 new AlloyBlock(eList))
             );
+    }
+
+    public void addImport(List<String> names, String sigName, String asName) {
+        this.am.addPara(
+            new AlloyImportPara(
+                false,
+                new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
+                List.of(new AlloyQnameExpr(sigName)),
+                new AlloyQnameExpr(asName)));
     }
 }

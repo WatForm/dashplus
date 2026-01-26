@@ -12,7 +12,9 @@ public final class D2AStrings {
 
 
     // public static final String utilOrderingName = "util/ordering";
-    public static final String utilTracesName = "util/traces";
+    public static final String utilName = "util";
+    public static final String tracesName = "traces"; 
+    //public static final String utilTracesName = "util/traces";
     public static final String tracesFirstName = "first";
     public static final String tracesNextName = "next";
     public static final String tracesLastName = "last";
@@ -20,6 +22,7 @@ public final class D2AStrings {
 
     public static final String utilBufferName = "util/buffer";
 
+    public static final String tcmcName = "tcmc"; 
     public static final String utilTcmcPathName = "util/tcmc";
     public static final String tcmcInitialStateName = "tcmc/ks_s0";
     public static final String tcmcSigmaName = "tcmc/ks_sigma";

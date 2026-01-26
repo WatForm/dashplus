@@ -52,7 +52,14 @@ public class TracesFactD2A extends SmallStepD2A {
 
     public void addTracesFact() {
         assert(this.isTraces);
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+
+        // open util/traces[Snapshot] as Snapshot
+        this.addImport(
+            List.of(D2AStrings.utilName, D2AStrings.tracesName), 
+            D2AStrings.snapshotName, 
+            D2AStrings.snapshotName);
+
+        List<AlloyExpr> body = this.dsl.emptyExprList();
  
         AlloyExpr snapShotFirst = 
             AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesFirstName);
@@ -63,18 +70,18 @@ public class TracesFactD2A extends SmallStepD2A {
         AlloyExpr snapshotBack = 
             AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesBackName);
         
-        List<AlloyExpr> args = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> args = this.dsl.emptyExprList();
         args.add(snapShotFirst);
         body.add(AlloyPredCall(D2AStrings.initFactName,args));
         
-        args = new ArrayList<AlloyExpr>();
+        args = this.dsl.emptyExprList();
         args.add(this.dsl.curVar());
         args.add(this.dsl.curJoinExpr(snapShotNext));
 
-        List<AlloyDecl> decls1 = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> decls1 = this.dsl.emptyDecls();
         decls1.add(this.dsl.curDecl());
 
-        List<AlloyDecl> decls2 = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> decls2 = this.dsl.emptyDecls();
         decls2.add(AlloyDecl(
             D2AStrings.curName, 
             AlloyDiff(AlloyVar(D2AStrings.snapshotName), snapShotLast)));
@@ -95,10 +102,10 @@ public class TracesFactD2A extends SmallStepD2A {
         assert(this.isTraces);
         AlloyExpr snapShotFirst = 
             AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesFirstName);
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
-        List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
+        List<AlloyDecl> decls = this.dsl.emptyDecls();
  
-        List<AlloyExpr> bigOr = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> bigOr = this.dsl.emptyExprList();
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             // don't need to make this stronger than an Or
             // b/c other parts of semantics will make sure only
