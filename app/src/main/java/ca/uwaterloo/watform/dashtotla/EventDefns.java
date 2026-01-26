@@ -2,6 +2,8 @@ package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.ENVIRONMENTAL_EVENTS;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.INTERNAL_EVENTS;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -11,9 +13,9 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.List;
 
 public class EventDefns {
-    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        if (!vars.contains(EVENTS)) return;
+        if (!dashModel.hasEvents()) return;
 
         List<String> eventFQNs = dashModel.allEventNames();
 

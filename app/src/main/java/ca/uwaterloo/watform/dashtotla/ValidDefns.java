@@ -9,17 +9,21 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ValidDefns {
 
-    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         // these are separate functions since the presence of the variables themselves are subject
         // to optimization
 
-        if (vars.contains(CONF)) {
+        List<String> vars = new ArrayList<>();
+
+        if (!dashModel.hasOnlyOneState()) {
+            vars.add(CONF);
             List<String> leafStateFQNs = AuxDashAccessors.getLeafStateNames(dashModel);
             tlaModel.addDefn(
                     generateValid(
@@ -28,30 +32,37 @@ public class ValidDefns {
                                     repeatedUnion(mapBy(leafStateFQNs, x -> TlaAppl(tlaFQN(x)))))));
         }
 
-        if (vars.contains(SCOPES_USED)) {
+        if (dashModel.hasConcurrency()) {
+
+            vars.add(SCOPES_USED);
+            vars.add(STABLE);
+
+            // scopes used
             List<String> leafStateFQNs = AuxDashAccessors.getLeafStateNames(dashModel);
             tlaModel.addDefn(
                     generateValid(
                             SCOPES_USED,
                             TlaSubsetUnary(
                                     repeatedUnion(mapBy(leafStateFQNs, x -> TlaAppl(tlaFQN(x)))))));
+
+            // stable
+            tlaModel.addDefn(generateValid(STABLE, TlaBoolean()));
         }
 
-        if (vars.contains(TRANS_TAKEN)) {
-            List<String> transTakenNames =
-                    mapBy(AuxDashAccessors.getTransitionNames(dashModel), x -> takenTransTlaFQN(x));
-            transTakenNames.add((NONE_TRANSITION));
-            tlaModel.addDefn(
-                    generateValid(TRANS_TAKEN, TlaSet(mapBy(transTakenNames, t -> TlaAppl(t)))));
-        }
+        vars.add(TRANS_TAKEN);
+        List<String> transTakenNames =
+                mapBy(AuxDashAccessors.getTransitionNames(dashModel), x -> takenTransTlaFQN(x));
+        transTakenNames.add((NONE_TRANSITION));
+        tlaModel.addDefn(
+                generateValid(TRANS_TAKEN, TlaSet(mapBy(transTakenNames, t -> TlaAppl(t)))));
 
-        if (vars.contains(EVENTS))
+        if (dashModel.hasEvents()) {
+            vars.add(EVENTS);
             tlaModel.addDefn(
                     generateValid(
                             EVENTS,
                             TlaSubsetUnary(INTERNAL_EVENTS().UNION(ENVIRONMENTAL_EVENTS()))));
-
-        if (vars.contains(STABLE)) tlaModel.addDefn(generateValid(STABLE, TlaBoolean()));
+        }
 
         // valid_unprimed
         tlaModel.addDefn(

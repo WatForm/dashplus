@@ -13,13 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InitDefn {
-    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         List<TlaExp> exps = new ArrayList<>();
 
         exps.add(VALID_UNPRIMED());
 
-        if (vars.contains(CONF)) {
+        exps.add(
+                // _trans_taken = _none_transition
+                TRANS_TAKEN().EQUALS(NONE_TRANSITION()));
+
+        if (!dashModel.hasOnlyOneState()) {
             List<TlaAppl> initialStates =
                     mapBy(
                             AuxDashAccessors.initialEntered(dashModel),
@@ -30,22 +34,16 @@ public class InitDefn {
                     CONF().EQUALS(repeatedUnion(initialStates)));
         }
 
-        if (vars.contains(STABLE))
+        if (dashModel.hasConcurrency()) {
             exps.add(
                     // stable = TRUE
                     STABLE().EQUALS(TRUE()));
-
-        if (vars.contains(SCOPES_USED))
             exps.add(
                     // scopes_used = {}
                     SCOPES_USED().EQUALS(NULL_SET()));
+        }
 
-        if (vars.contains(TRANS_TAKEN))
-            exps.add(
-                    // _trans_taken = _none_transition
-                    TRANS_TAKEN().EQUALS(NONE_TRANSITION()));
-
-        if (vars.contains(EVENTS))
+        if (dashModel.hasEvents())
             exps.add(
                     // _events \intersect _internal_events = {}
                     EVENTS().INTERSECTION(INTERNAL_EVENTS()).EQUALS(NULL_SET()));

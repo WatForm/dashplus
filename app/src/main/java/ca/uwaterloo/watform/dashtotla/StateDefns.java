@@ -15,9 +15,9 @@ public class StateDefns {
     // this class adds in formulae for every state in the dash model
     // leaf states are singleton sets that contain the fully qualified names as strings
     // non-leaf states are the union of the leaf states they contain
-    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        if (!vars.contains(CONF)) return;
+        if (dashModel.hasOnlyOneState()) return;
         List<String> stateFQNs =
                 AuxDashAccessors.getAllStateNames(dashModel); // dashModel.st.getAllNames();
 
