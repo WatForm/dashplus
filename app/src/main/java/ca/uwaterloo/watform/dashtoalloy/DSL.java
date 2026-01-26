@@ -378,4 +378,7 @@ public class DSL {
         return new StateDashRef(e.name+D2AStrings.scopeSuffix, e.paramValues);
     }
 
+    public List<AlloyDecl> emptyDecls() {
+        return new ArrayList<AlloyDecl>();
+    }
 }

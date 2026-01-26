@@ -36,7 +36,7 @@ public class EnoughOpsD2A extends InitsD2A {
         super(dm, isElectrum);
     }
 
-    public void addEnoughOperationsPred() {
+    public void addEnoughOps() {
 
         ArrayList<AlloyExpr> body = new ArrayList<AlloyExpr>();
 

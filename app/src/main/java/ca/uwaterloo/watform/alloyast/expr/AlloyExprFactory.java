@@ -178,6 +178,11 @@ public class AlloyExprFactory {
         return new AlloyRngRestrExpr(left,right);
     }
 
+    // left <: right
+    public static AlloyExpr AlloyDomainRes(AlloyExpr left, AlloyExpr right) {
+        return new AlloyDomRestrExpr(left,right);
+    }
+
     // all decls sub
     public static AlloyExpr AlloyAllVars(List<AlloyDecl> decls, AlloyExpr sub) {
         return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ALL, decls, sub);

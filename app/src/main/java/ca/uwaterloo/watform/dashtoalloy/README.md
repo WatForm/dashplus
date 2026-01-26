@@ -13,6 +13,9 @@ SnapshotSigD2A
 InitsD2A
 
 DashToAlloy
+
+Everything adds an Alloy predicate to the Alloy model unless it is labelled Fact in the class name.
+
 # TranslateExprVis
 
 Is its own class to translated DashExpr to AlloyExpr so it can be used by other parts of dashplus than just the Dash to Alloy translation.
