@@ -64,6 +64,7 @@ jar {
 
 
 task releaseJar(type: Jar) {
+	dependsOn 'spotlessCheck' 
     archiveBaseName.set('watform-dashplus') // Name of the output file
     
     manifest {
