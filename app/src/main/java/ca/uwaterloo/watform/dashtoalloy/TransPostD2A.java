@@ -53,27 +53,24 @@ package ca.uwaterloo.watform.dashtoalloy;
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.unary.AlloyAlwaysExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashast.dashref.TransDashRef;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-public class TransPostD2A extends TransTestIfNextStableD2A {    
+public class TransPostD2A extends TransTestIfNextStableD2A {
 
     protected TransPostD2A(DashModel dm, TranslateOutput opt) {
         super(dm, opt);
     }
-
 
     public void addTransPost(String tfqn) {
         String tout = DashFQN.translateFQN(tfqn);
@@ -84,64 +81,53 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             // forall i. confi' = confi - exitedi + enteredi
             List<DashRef> entered = this.dm.entered(tfqn);
             List<DashRef> exited = this.dm.exited(tfqn);
-            for (int i=0;i <= this.dm.maxDepthParams(); i++) {
+            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
                 final int j = i;
                 // states entered at level j
-                List<AlloyExpr> ent = 
-                    mapBy(
-                        filterBy(entered, x -> x.hasNumParams(j)),
-                        y -> y.asAlloyArrow());
+                List<AlloyExpr> ent =
+                        mapBy(filterBy(entered, x -> x.hasNumParams(j)), y -> y.asAlloyArrow());
                 // states exited at level j
-                List<AlloyExpr> exi = 
-                    mapBy(
-                        filterBy(exited, x -> x.hasNumParams(j)),
-                        y -> y.asAlloyArrow());
+                List<AlloyExpr> exi =
+                        mapBy(filterBy(exited, x -> x.hasNumParams(j)), y -> y.asAlloyArrow());
                 // both ent and exi could be empty at this level
                 AlloyExpr e;
-                if (!exi.isEmpty()) 
-                    e = AlloyDiff(this.dsl.curConf(i),AlloyUnionList(exi));
-                else 
-                    e = this.dsl.curConf(i);
-                if (!ent.isEmpty()) 
-                	e = AlloyUnion(e,AlloyUnionList(ent));
-                body.add(AlloyEqual(this.dsl.nextConf(i),e));
+                if (!exi.isEmpty()) e = AlloyDiff(this.dsl.curConf(i), AlloyUnionList(exi));
+                else e = this.dsl.curConf(i);
+                if (!ent.isEmpty()) e = AlloyUnion(e, AlloyUnionList(ent));
+                body.add(AlloyEqual(this.dsl.nextConf(i), e));
             }
         }
-        // forall i : takeni' = {t1} 
+        // forall i : takeni' = {t1}
         AlloyExpr ex;
         DashRef dr;
-        for (int i=0;i <= this.dm.maxDepthParams(); i++) {
+        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (prs.size() == i) {
                 // for convenience of methods, make it a DashRef first
                 dr = new TransDashRef(tout, mapBy(prs, x -> x.asAlloyVar()));
                 ex = dr.asAlloyArrow();
-            } else 
-                ex = this.dsl.noneArrow(i);
+            } else ex = this.dsl.noneArrow(i);
             body.add(AlloyEqual(this.dsl.nextTransTaken(i), ex));
         }
 
         // action_t1[s,s']
-        if (this.dm.doR(tfqn) != null)
-            body.add(this.translateExpr(this.dm.doR(tfqn)));
+        if (this.dm.doR(tfqn) != null) body.add(this.translateExpr(this.dm.doR(tfqn)));
 
         // vars not mentioned in action do not change
         // includes entered/exited
-        Set<String> intVarsBuffersThatDontChange = 
-            listToSet(this.dm.allIntVarNames());
+        Set<String> intVarsBuffersThatDontChange = listToSet(this.dm.allIntVarNames());
         intVarsBuffersThatDontChange.addAll(this.dm.allBufferNames());
         // we treat buffers the same as variables because their index is the closest arg and
-        // either the entire buffer within a sister component stays the same or 
+        // either the entire buffer within a sister component stays the same or
         // it doesn't -- there is no need
         // to reference the buffer index argument.
-
 
         // remove variable/buffers mentioned in invariants
         // old code had something about primed vars here
         // but I don't think invs can have primed vars? (NAD 2026-01-25)
         // TODO: what if these are focussed one sister?
-        for (AlloyExpr i:this.dm.invsR()) {
+        for (AlloyExpr i : this.dm.invsR()) {
             List<DashRef> drs = this.collectDashRefs(i);
-            for (DashRef r:drs) {
+            for (DashRef r : drs) {
                 intVarsBuffersThatDontChange.remove(r.name);
             }
         }
@@ -150,10 +136,9 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // that we can't put any constraints on (remove these from intVarsThatDontChange)
         // and those that we constrain the sister value os (sistersDontChange)
         Set<String> sistersDontChange = new HashSet<String>();
-        if (this.dm.doR(tfqn) != null) { 
-            for (DashRef r: this.collectDashRefs(this.dm.doR(tfqn))) {
-                if (r.paramValues.isEmpty()) 
-                	intVarsBuffersThatDontChange.remove(r.name);
+        if (this.dm.doR(tfqn) != null) {
+            for (DashRef r : this.collectDashRefs(this.dm.doR(tfqn))) {
+                if (r.paramValues.isEmpty()) intVarsBuffersThatDontChange.remove(r.name);
                 else if (this.hasSpecificParamValues(r)) {
                     intVarsBuffersThatDontChange.remove(r.name);
                     // might not be in sistersDontChange
@@ -164,102 +149,105 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                     intVarsBuffersThatDontChange.remove(r.name);
                 }
             }
-            
         }
 
         List<AlloyDecl> decls;
         List<AlloyExpr> args;
 
         // constraints on sister elements
-        for (String x: sistersDontChange) {
+        for (String x : sistersDontChange) {
             decls = new ArrayList<AlloyDecl>();
             args = new ArrayList<AlloyExpr>();
             List<DashParam> params = this.dm.varParams(x);
             // buffer params?
-            for (DashParam p:params) {
+            for (DashParam p : params) {
                 decls.add(p.asAlloyDecl());
                 args.add(p.asAlloyVar());
             }
-            assert(!decls.isEmpty()); 
+            assert (!decls.isEmpty());
             body.add(
-                AlloyAllVars(decls,
-                    AlloyEqual(
-                        AlloyJoinList(
-                            newListWithOneMore(
-                                args, 
-                                this.dsl.curJoinExpr(AlloyVar(DashFQN.translateFQN(x))))),
-                        AlloyJoinList(
-                            newListWithOneMore(
-                                args, 
-                                this.dsl.nextJoinExpr(AlloyVar(DashFQN.translateFQN(x))))))));
+                    AlloyAllVars(
+                            decls,
+                            AlloyEqual(
+                                    AlloyJoinList(
+                                            newListWithOneMore(
+                                                    args,
+                                                    this.dsl.curJoinExpr(
+                                                            AlloyVar(DashFQN.translateFQN(x))))),
+                                    AlloyJoinList(
+                                            newListWithOneMore(
+                                                    args,
+                                                    this.dsl.nextJoinExpr(
+                                                            AlloyVar(DashFQN.translateFQN(x))))))));
         }
-        
 
         // constraint on untouched vars
-        // need to add params 
-        for (String x:intVarsBuffersThatDontChange) {
+        // need to add params
+        for (String x : intVarsBuffersThatDontChange) {
             decls = new ArrayList<AlloyDecl>();
             args = new ArrayList<AlloyExpr>();
-            for (DashParam p: this.dm.varParams(x)) {
+            for (DashParam p : this.dm.varParams(x)) {
                 decls.add(p.asAlloyDecl());
                 args.add(p.asAlloyVar());
             }
-            if (decls.isEmpty()) 
+            if (decls.isEmpty())
                 // s.vfqn = sn.vfqn
-                body.add(AlloyEqual(
-                    this.dsl.curJoinExpr(AlloyVar(DashFQN.translateFQN(x))), 
-                    this.dsl.nextJoinExpr(AlloyVar(DashFQN.translateFQN(x)))));
+                body.add(
+                        AlloyEqual(
+                                this.dsl.curJoinExpr(AlloyVar(DashFQN.translateFQN(x))),
+                                this.dsl.nextJoinExpr(AlloyVar(DashFQN.translateFQN(x)))));
             else
-                // all p1:PID1, p2:PID2 | p2.p1.s.vfqn = p2.p1.sn.vfqn 
-                body.add(AlloyAllVars(decls, 
-                    AlloyEqual(
-                        AlloyJoinList(args, this.dsl.curJoinExpr(AlloyVar(DashFQN.translateFQN(x)))),
-                        AlloyJoinList(args, this.dsl.nextJoinExpr(AlloyVar(DashFQN.translateFQN(x)))))));
+                // all p1:PID1, p2:PID2 | p2.p1.s.vfqn = p2.p1.sn.vfqn
+                body.add(
+                        AlloyAllVars(
+                                decls,
+                                AlloyEqual(
+                                        AlloyJoinList(
+                                                args,
+                                                this.dsl.curJoinExpr(
+                                                        AlloyVar(DashFQN.translateFQN(x)))),
+                                        AlloyJoinList(
+                                                args,
+                                                this.dsl.nextJoinExpr(
+                                                        AlloyVar(DashFQN.translateFQN(x)))))));
         }
-
 
         DashRef ev = this.dm.sendR(tfqn);
         AlloyExpr rhs, rhs1, q;
 
         // case 1
         // forall i. eventsi' :> InternalEvents = t1_send (if i)
-        //           eventsi' :> InternalEvents = none (if not i)  
-        List<AlloyExpr> case1 = new ArrayList<AlloyExpr>();    
-        AlloyExpr c1; 
-        for (int i=0;i <= this.dm.maxDepthParams(); i++) {
+        //           eventsi' :> InternalEvents = none (if not i)
+        List<AlloyExpr> case1 = new ArrayList<AlloyExpr>();
+        AlloyExpr c1;
+        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (this.dm.hasIntEventsAti(i)) {
-                if (ev != null && ev.paramValues.size() == i) 
-                	rhs = ev.asAlloyArrow();
-                else 
-                	rhs = this.dsl.noneArrow(i);
+                if (ev != null && ev.paramValues.size() == i) rhs = ev.asAlloyArrow();
+                else rhs = this.dsl.noneArrow(i);
                 case1.add(
-                	AlloyEqual(
-                    	AlloyRangeRes(
-                    		this.dsl.nextEvents(i),
-                    		this.dsl.allIntEventsVar()),
-                    	rhs));
+                        AlloyEqual(
+                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allIntEventsVar()),
+                                rhs));
             }
         }
 
         c1 = AlloyAndList(case1);
 
         // case 2
-        // forall i. eventsi' :> InternalEvents = t1_send_ev (if i) + eventsi 
-        //           eventsi' :> InternalEvents = eventsi (if not i)       
-        List<AlloyExpr> case2 = new ArrayList<AlloyExpr>();   
+        // forall i. eventsi' :> InternalEvents = t1_send_ev (if i) + eventsi
+        //           eventsi' :> InternalEvents = eventsi (if not i)
+        List<AlloyExpr> case2 = new ArrayList<AlloyExpr>();
         AlloyExpr c2;
-        for (int i=0;i <= this.dm.maxDepthParams(); i++) {
+        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (this.dm.hasIntEventsAti(i)) {
                 q = AlloyRangeRes(this.dsl.curEvents(i), this.dsl.allIntEventsVar());
-                if (ev != null && ev.paramValues.size() == i) 
-                	rhs = AlloyUnion(q, ev.asAlloyArrow());
-                else 
-                    rhs = q;
-                case2.add(AlloyEqual(
-                            AlloyRangeRes(
-                            	this.dsl.nextEvents(i),
-                            	this.dsl.allIntEventsVar()),
-                            rhs));
+                if (ev != null && ev.paramValues.size() == i)
+                    rhs = AlloyUnion(q, ev.asAlloyArrow());
+                else rhs = q;
+                case2.add(
+                        AlloyEqual(
+                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allIntEventsVar()),
+                                rhs));
             }
         }
 
@@ -268,15 +256,12 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         AlloyExpr stableTrueAndScopesUsedEmpty;
         if (this.dm.hasConcurrency()) {
             List<AlloyExpr> scopesUsedEmpty = new ArrayList<AlloyExpr>();
-            
-            for (int i=0;i <= this.dm.maxDepthParams(); i++) {
-                scopesUsedEmpty.add(
-                	AlloyEqual(
-                		this.dsl.nextScopesUsed(i),
-                		this.dsl.noneArrow(i)));
+
+            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+                scopesUsedEmpty.add(AlloyEqual(this.dsl.nextScopesUsed(i), this.dsl.noneArrow(i)));
             }
-            stableTrueAndScopesUsedEmpty = 
-                AlloyAnd(this.dsl.nextStableTrue(), AlloyAndList(scopesUsedEmpty));
+            stableTrueAndScopesUsedEmpty =
+                    AlloyAnd(this.dsl.nextStableTrue(), AlloyAndList(scopesUsedEmpty));
         } else {
             stableTrueAndScopesUsedEmpty = this.dsl.nextStableTrue();
         }
@@ -285,219 +270,190 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // forall i: (eventsi' :> InternalEvent = t1_send_ev (if i))
         //           (eventsi' :> InternalEvent = none) (if not i)
         //       and (eventsi' :> EnvironmentalEvent = eventsi :> EnvironmentalEvent)
-        List<AlloyExpr> case3 = new ArrayList<AlloyExpr>();  
+        List<AlloyExpr> case3 = new ArrayList<AlloyExpr>();
         AlloyExpr c3;
         List<DashRef> sU = this.dm.scopesUsed(tfqn);
         List<AlloyExpr> u;
         // have to be initialized to something
         AlloyExpr intEvExpr = AlloyNone();
-        AlloyExpr envEvExpr = AlloyNone(); 
-        for (int i=0;i <= this.dm.maxDepthParams(); i++) {
+        AlloyExpr envEvExpr = AlloyNone();
+        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             final Integer j = i;
             if (this.dm.hasIntEventsAti(i)) {
-                if (ev != null && ev.paramValues.size() == i) 
-                	rhs1 = ev.asAlloyArrow();
-                else 
-                	rhs1 = this.dsl.noneArrow(i);
-                intEvExpr = AlloyEqual(
-                                    AlloyRangeRes(
-                                        this.dsl.nextEvents(i),
-                                        this.dsl.allIntEventsVar()), 
-                                    rhs1);
+                if (ev != null && ev.paramValues.size() == i) rhs1 = ev.asAlloyArrow();
+                else rhs1 = this.dsl.noneArrow(i);
+                intEvExpr =
+                        AlloyEqual(
+                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allIntEventsVar()),
+                                rhs1);
             }
             if (this.dm.hasEnvEventsAti(i)) {
-                envEvExpr = AlloyEqual(
-                                    AlloyRangeRes(
-                                        this.dsl.nextEvents(i),
-                                        this.dsl.allEnvEventsVar()),
-                                    AlloyRangeRes(
-                                        this.dsl.curEvents(i),
-                                        this.dsl.allEnvEventsVar()) );
+                envEvExpr =
+                        AlloyEqual(
+                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allEnvEventsVar()),
+                                AlloyRangeRes(this.dsl.curEvents(i), this.dsl.allEnvEventsVar()));
             }
             if (this.dm.hasIntEventsAti(i)) {
-                if (this.dm.hasEnvEventsAti(i)) 
-                    case3.add(AlloyAnd(intEvExpr, envEvExpr));
-                else 
-                    case3.add(intEvExpr);
+                if (this.dm.hasEnvEventsAti(i)) case3.add(AlloyAnd(intEvExpr, envEvExpr));
+                else case3.add(intEvExpr);
             } else {
-                if (this.dm.hasEnvEventsAti(i)) 
-                    case3.add(envEvExpr);
+                if (this.dm.hasEnvEventsAti(i)) case3.add(envEvExpr);
             }
             if (this.dm.hasConcurrency()) {
                 // scopesUsedi' = scopesUsed
-                u = mapBy(
-                    filterBy(sU, x -> x.hasNumParams(j)),
-                    y -> this.dsl.asScope(y).asAlloyArrow());
-                if (!u.isEmpty()) 
-                    case3.add(AlloyEqual(
-                        this.dsl.nextScopesUsed(i),
-                        AlloyUnionList(u)));
+                u =
+                        mapBy(
+                                filterBy(sU, x -> x.hasNumParams(j)),
+                                y -> this.dsl.asScope(y).asAlloyArrow());
+                if (!u.isEmpty())
+                    case3.add(AlloyEqual(this.dsl.nextScopesUsed(i), AlloyUnionList(u)));
             }
         }
         c3 = AlloyAndList(case3);
- 
+
         // case 4
         // intermediate small step
-        List<AlloyExpr> case4 = new ArrayList<AlloyExpr>();  
+        List<AlloyExpr> case4 = new ArrayList<AlloyExpr>();
         AlloyExpr e;
 
         // forall i .
-        for (int i=0;i <= this.dm.maxDepthParams(); i++) {
+        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             final Integer j = i;
             // add t1's gen event to the events
             // env events don't change
             if (this.dm.hasEventsAti(i)) {
-                if (ev != null && ev.paramValues.size() == i) 
+                if (ev != null && ev.paramValues.size() == i)
                     // eventsi' = eventsi + t1_send (if i)
                     case4.add(
-                        AlloyEqual(
-                            this.dsl.nextEvents(i),
-                            AlloyUnion(
-                                this.dsl.curEvents(i), 
-                                ev.asAlloyArrow())));
-                else 
+                            AlloyEqual(
+                                    this.dsl.nextEvents(i),
+                                    AlloyUnion(this.dsl.curEvents(i), ev.asAlloyArrow())));
+                else
                     // eventsi' = eventsi (if not i)
                     // no events are generated so no change in events
-                    case4.add(
-                        AlloyEqual(
-                            this.dsl.nextEvents(i),
-                            this.dsl.curEvents(i)));
+                    case4.add(AlloyEqual(this.dsl.nextEvents(i), this.dsl.curEvents(i)));
             }
             if (this.dm.hasConcurrency()) {
                 // scopesUsedi' = scopesUsedi + scopesUsed
-                u = mapBy(
-                    filterBy(sU, x -> x.hasNumParams(j)),
-                    y -> this.dsl.asScope(y).asAlloyArrow());
+                u =
+                        mapBy(
+                                filterBy(sU, x -> x.hasNumParams(j)),
+                                y -> this.dsl.asScope(y).asAlloyArrow());
                 e = this.dsl.curScopesUsed(i);
-                if (!u.isEmpty()) 
-                    e = AlloyUnion(e,AlloyUnionList(u));
-                case4.add(
-                    AlloyEqual(this.dsl.nextScopesUsed(i),e));
+                if (!u.isEmpty()) e = AlloyUnion(e, AlloyUnionList(u));
+                case4.add(AlloyEqual(this.dsl.nextScopesUsed(i), e));
             }
         }
         AlloyExpr c4 = AlloyAndList(case4);
 
-        // env_vars_unchanged[s,s']     
+        // env_vars_unchanged[s,s']
         List<String> allVarBuffers = this.dm.allVarNames();
         allVarBuffers.addAll(this.dm.allBufferNames());
         // might just return true if allVarBuffers is empty
-        AlloyExpr envNoChange = 
-            AlloyAndList(
-                mapBy(
-                    filterBy(allVarBuffers, x -> !this.dm.isIntVar(x)),
-                    y -> this.AlloyVarDoesNotChange(y)));
-        AlloyExpr stableFalseAndEnvNoChange = 
-            AlloyAnd(this.dsl.nextStableFalse(), envNoChange);
+        AlloyExpr envNoChange =
+                AlloyAndList(
+                        mapBy(
+                                filterBy(allVarBuffers, x -> !this.dm.isIntVar(x)),
+                                y -> this.AlloyVarDoesNotChange(y)));
+        AlloyExpr stableFalseAndEnvNoChange = AlloyAnd(this.dsl.nextStableFalse(), envNoChange);
 
         // big ITE is simplified for boolean/True, boolean/False
         // b/c Alloy does not allow those as "formulas"
         if (this.dm.hasConcurrency())
             body.add(
-            AlloyIte(this.testIfNextStableCall(tfqn),
-                AlloyAnd(
-                    stableTrueAndScopesUsedEmpty,
-                    AlloyIte (this.dsl.curStableTrue(),c1,c2)),
-                AlloyAnd(
-                    stableFalseAndEnvNoChange,
-                    AlloyIte(this.dsl.curStableTrue(),c3,c4))));
-        
+                    AlloyIte(
+                            this.testIfNextStableCall(tfqn),
+                            AlloyAnd(
+                                    stableTrueAndScopesUsedEmpty,
+                                    AlloyIte(this.dsl.curStableTrue(), c1, c2)),
+                            AlloyAnd(
+                                    stableFalseAndEnvNoChange,
+                                    AlloyIte(this.dsl.curStableTrue(), c3, c4))));
 
-        this.addPred(
-            tout+D2AStrings.postName,
-            this.dsl.curNextParamsDecls(prs),body);
+        this.addPred(tout + D2AStrings.postName, this.dsl.curNextParamsDecls(prs), body);
     }
 
     public AlloyExpr AlloyVarDoesNotChange(String x) {
-        AlloyExpr e = 
-            // p2.p1.s.vfqn = p2.p1.sn.vfqn
-            AlloyEqual(
-                AlloyJoinList(
-                    newListWithOneMore(
-                        this.dsl.curParamVars(this.dm.varParams(x)),
-                        AlloyVar(DashFQN.translateFQN(x)))),
-                AlloyJoinList(
-                    newListWithOneMore(
-                        this.dsl.nextParamVars(this.dm.varParams(x)),
-                        AlloyVar(DashFQN.translateFQN(x)))));
-        if (this.dm.varParams(x).isEmpty()) 
-            return e;
-        else 
-            return AlloyAllVars(
-                this.dsl.paramDecls(this.dm.allParams()),
-                e);
+        AlloyExpr e =
+                // p2.p1.s.vfqn = p2.p1.sn.vfqn
+                AlloyEqual(
+                        AlloyJoinList(
+                                newListWithOneMore(
+                                        this.dsl.curParamVars(this.dm.varParams(x)),
+                                        AlloyVar(DashFQN.translateFQN(x)))),
+                        AlloyJoinList(
+                                newListWithOneMore(
+                                        this.dsl.nextParamVars(this.dm.varParams(x)),
+                                        AlloyVar(DashFQN.translateFQN(x)))));
+        if (this.dm.varParams(x).isEmpty()) return e;
+        else return AlloyAllVars(this.dsl.paramDecls(this.dm.allParams()), e);
     }
 
-    // pred call: testIfNextStable[s,s',scope1, scope2, ... , send1, send2, ...] 
-    // where scopei, evi is "none" if this transition's scope and send event 
+    // pred call: testIfNextStable[s,s',scope1, scope2, ... , send1, send2, ...]
+    // where scopei, evi is "none" if this transition's scope and send event
     private AlloyExpr testIfNextStableCall(String tfqn) {
         List<AlloyExpr> args = new ArrayList<AlloyExpr>();
         if (!this.isElectrum) {
             args.add(this.dsl.curVar());
             args.add(this.dsl.nextVar());
         }
-        // add args for parameters; has to be something or 
+        // add args for parameters; has to be something or
         // none for every possible parameter in the system
         List<DashParam> paramsUsed = this.dm.transParams(tfqn);
-        for (DashParam p: this.dm.allParams()) {
-            if (paramsUsed.contains(p)) 
-                args.add(p.asAlloyVar());
-            else 
-                args.add(AlloyNone());
+        for (DashParam p : this.dm.allParams()) {
+            if (paramsUsed.contains(p)) args.add(p.asAlloyVar());
+            else args.add(AlloyNone());
         }
         // add scopesUsed and events parameters
-        // need scopesUsed and events because the values for both depend on whether next is stable or not
+        // need scopesUsed and events because the values for both depend on whether next is stable
+        // or not
         List<DashRef> sU = this.dm.scopesUsed(tfqn);
         DashRef ev = this.dm.sendR(tfqn);
-        for (int i=0; i <= this.dm.maxDepthParams(); i++) {
+        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             final Integer j = i;
-            //TODO optimization: could only have scopesUsedi for i that has scopesUsed
-            //TODO not putting in replaceScope here caused bugs
+            // TODO optimization: could only have scopesUsedi for i that has scopesUsed
+            // TODO not putting in replaceScope here caused bugs
             //     this should probably be wrapped up and used many places
-            List<AlloyExpr> u = 
-                mapBy(
-                    filterBy(sU,x -> x.hasNumParams(j)),
-                    x -> this.dsl.asScope(x).asAlloyArrow());
+            List<AlloyExpr> u =
+                    mapBy(
+                            filterBy(sU, x -> x.hasNumParams(j)),
+                            x -> this.dsl.asScope(x).asAlloyArrow());
 
-            if (u.size() ==0 ) 
-                args.add(this.dsl.noneArrow(i));
+            if (u.size() == 0) args.add(this.dsl.noneArrow(i));
             else {
                 // 2024-02-21 NAD: these need to be all in one set that goes in one argument!!
-                // sc1 + sc2 + sc3 
-                AlloyExpr e = u.get(0); 
-                for (int k=1; k < u.size(); k++) {
-                   e = AlloyUnion(e, u.get(k));  
+                // sc1 + sc2 + sc3
+                AlloyExpr e = u.get(0);
+                for (int k = 1; k < u.size(); k++) {
+                    e = AlloyUnion(e, u.get(k));
                 }
                 args.add(e);
             }
-            // 2024-02-20 NAD there can be multiple scopes that are used with the same number or args
+            // 2024-02-20 NAD there can be multiple scopes that are used with the same number or
+            // args
             // this is common in models with no parameters
             // if (u.size() == 1) args.add(u.get(0));
-            // else { DashErrors.createTestIfNextStableCallMultipleScopesAtSameLevel(); return null; }
+            // else { DashErrors.createTestIfNextStableCallMultipleScopesAtSameLevel(); return null;
+            // }
             if (this.dm.hasEventsAti(i)) {
-                if (ev != null && ev.paramValues.size() == i) 
-                    args.add(ev.asAlloyArrow());
-                else 
-                    args.add(this.dsl.noneArrow(i));
+                if (ev != null && ev.paramValues.size() == i) args.add(ev.asAlloyArrow());
+                else args.add(this.dsl.noneArrow(i));
             }
         }
-        return AlloyPredCall(D2AStrings.testIfNextStableName,args);
-
+        return AlloyPredCall(D2AStrings.testIfNextStableName, args);
     }
 
     private boolean hasSpecificParamValues(DashRef r) {
         // only for variables for now
         List<? extends AlloyExpr> actualPValues = r.paramValues;
-        List<AlloyExpr> genericPValues = 
-            this.dsl.paramVars(this.dm.varParams(r.name));
-        
-        assert(genericPValues.size() == actualPValues.size());
+        List<AlloyExpr> genericPValues = this.dsl.paramVars(this.dm.varParams(r.name));
+
+        assert (genericPValues.size() == actualPValues.size());
 
         Boolean ret = false;
-        for (int i=0; i < genericPValues.size(); i++) {
-            if (!syntacticEqual(genericPValues.get(i), actualPValues.get(i))) 
-                ret = ret || true;
+        for (int i = 0; i < genericPValues.size(); i++) {
+            if (!syntacticEqual(genericPValues.get(i), actualPValues.get(i))) ret = ret || true;
         }
         return ret;
     }
-
 }

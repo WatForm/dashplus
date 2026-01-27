@@ -197,6 +197,7 @@ public class GeneralUtil {
     public static boolean allTrue(List<Boolean> blist) {
         return !blist.contains(false);
     }
+
     public static boolean allFalse(List<Boolean> blist) {
         return !blist.contains(true);
     }

@@ -4,17 +4,14 @@
 
 package ca.uwaterloo.watform.alloyast.expr;
 
-import ca.uwaterloo.watform.alloyast.expr.*;
-
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 
 public class AlloyExprFactory {
 
@@ -24,17 +21,19 @@ public class AlloyExprFactory {
     // for optimizations
     public static boolean syntacticEqual(AlloyExpr e1, AlloyExpr e2) {
         return (
-            // pointer equality 
-            (e1 == e2) ||
-            // both vars of the same name
-            (isVar(e1) && isVar(e2) && 
-                (((AlloyVarExpr)e1).label.equals(((AlloyVarExpr) e2).label)))) ;
+        // pointer equality
+        (e1 == e2)
+                ||
+                // both vars of the same name
+                (isVar(e1)
+                        && isVar(e2)
+                        && (((AlloyVarExpr) e1).label.equals(((AlloyVarExpr) e2).label))));
     }
 
     public static AlloyExpr AlloyArrow(AlloyExpr left, AlloyExpr right) {
-        return new AlloyArrowExpr(left,right);
+        return new AlloyArrowExpr(left, right);
     }
-    
+
     // AlloyVar(sl(0)) -> (AlloyVar(sl(1)) -> AlloyVar(sl(2)))
     public static AlloyExpr AlloyArrowStringList(List<String> sl) {
         assert (sl != null && !sl.isEmpty());
@@ -103,11 +102,10 @@ public class AlloyExprFactory {
     public static AlloyExpr AlloyAndList(List<AlloyExpr> elist) {
         // does simplifications
         // how get back a real true expr rather than just boolean value at the e3nd??
-        if (elist.isEmpty()) 
-            return AlloyTrue();
+        if (elist.isEmpty()) return AlloyTrue();
         AlloyExpr ret = elist.get(0);
-        for (AlloyExpr el: elist.subList(1,elist.size())) {
-            ret = AlloyAnd(ret,el);
+        for (AlloyExpr el : elist.subList(1, elist.size())) {
+            ret = AlloyAnd(ret, el);
         }
         return ret;
     }
@@ -115,11 +113,10 @@ public class AlloyExprFactory {
     public static AlloyExpr AlloyOrList(List<AlloyExpr> elist) {
         // does simplifications
         // how get back a real true expr rather than just boolean value at the e3nd??
-        if (elist.isEmpty()) 
-            return AlloyFalse();
+        if (elist.isEmpty()) return AlloyFalse();
         AlloyExpr ret = elist.get(0);
-        for (AlloyExpr el: elist.subList(1,elist.size())) {
-            ret = AlloyOr(ret,el);
+        for (AlloyExpr el : elist.subList(1, elist.size())) {
+            ret = AlloyOr(ret, el);
         }
         return ret;
     }
@@ -134,10 +131,8 @@ public class AlloyExprFactory {
     }
 
     public static AlloyExpr AlloyEqual(AlloyExpr left, AlloyExpr right) {
-        if (optimizationsOn && syntacticEqual(left,right)) 
-            return AlloyTrueCond();
-        else 
-            return new AlloyEqualsExpr(left, right);
+        if (optimizationsOn && syntacticEqual(left, right)) return AlloyTrueCond();
+        else return new AlloyEqualsExpr(left, right);
     }
 
     // a condition that is always true (rather than a value True)
@@ -146,6 +141,7 @@ public class AlloyExprFactory {
     public static AlloyExpr AlloyTrueCond() {
         return new AlloyEqualsExpr(AlloyTrue(), AlloyTrue());
     }
+
     public static AlloyExpr AlloyFalseCond() {
         return new AlloyEqualsExpr(AlloyTrue(), AlloyFalse());
     }
@@ -156,39 +152,38 @@ public class AlloyExprFactory {
 
     // left + right
     public static AlloyExpr AlloyUnion(AlloyExpr left, AlloyExpr right) {
-        return new AlloyUnionExpr(left,right);
+        return new AlloyUnionExpr(left, right);
     }
 
     // left - right
     public static AlloyExpr AlloyDiff(AlloyExpr left, AlloyExpr right) {
-        return new AlloyDiffExpr(left,right);
+        return new AlloyDiffExpr(left, right);
     }
-
 
     // e0 + e1 + e2
     public static AlloyExpr AlloyUnionList(List<AlloyExpr> elist) {
         AlloyExpr ret = null;
-        assert(elist!=null);
+        assert (elist != null);
         ret = elist.get(0);
-        for (AlloyExpr el: elist.subList(1,elist.size())) {
-            ret = new AlloyUnionExpr(ret,el);
+        for (AlloyExpr el : elist.subList(1, elist.size())) {
+            ret = new AlloyUnionExpr(ret, el);
         }
         return ret;
     }
 
     // left :> right
     public static AlloyExpr AlloyInter(AlloyExpr left, AlloyExpr right) {
-        return new AlloyIntersExpr(left,right);
+        return new AlloyIntersExpr(left, right);
     }
 
     // left :> right
     public static AlloyExpr AlloyRangeRes(AlloyExpr left, AlloyExpr right) {
-        return new AlloyRngRestrExpr(left,right);
+        return new AlloyRngRestrExpr(left, right);
     }
 
     // left <: right
     public static AlloyExpr AlloyDomainRes(AlloyExpr left, AlloyExpr right) {
-        return new AlloyDomRestrExpr(left,right);
+        return new AlloyDomRestrExpr(left, right);
     }
 
     // all decls sub
@@ -196,7 +191,7 @@ public class AlloyExprFactory {
         return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ALL, decls, sub);
     }
 
-   // some decls sub
+    // some decls sub
     public static AlloyExpr AlloySomeVars(List<AlloyDecl> decls, AlloyExpr sub) {
         return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.SOME, decls, sub);
     }
@@ -215,7 +210,7 @@ public class AlloyExprFactory {
     public static AlloyExpr AlloyNo(AlloyExpr sub) {
         return new AlloyQtExpr(AlloyQtExpr.Quant.NO, sub);
     }
-    
+
     // vars ----------------------------
 
     public static AlloyQnameExpr AlloyVar(String s) {
@@ -230,35 +225,32 @@ public class AlloyExprFactory {
     // the value true
     public static AlloyQnameExpr AlloyTrue() {
         return AlloyVar(AlloyStrings.trueName);
-    } 
+    }
 
     // the value false
     public static AlloyQnameExpr AlloyFalse() {
         return AlloyVar(AlloyStrings.falseName);
-    } 
+    }
 
     public static boolean isVar(AlloyExpr expr) {
         return expr instanceof AlloyQnameExpr;
     }
 
     // decls -----------
-    
+
     public static AlloyDecl AlloyDecl(String s, AlloyExpr expr) {
         return new AlloyDecl(AlloyVar(s), expr);
     }
 
     public static AlloyExpr AlloyPredCall(String name, List<AlloyExpr> elist) {
-        return new AlloyBracketExpr(
-                new AlloyQnameExpr(name),
-                elist); 
+        return new AlloyBracketExpr(new AlloyQnameExpr(name), elist);
     }
 
     public static AlloyExpr AlloyIn(AlloyExpr left, AlloyExpr right) {
-        return new AlloyCmpExpr(left,false,AlloyCmpExpr.Comp.IN,right);
-    }
-    
-    public static AlloyExpr AlloyIte(AlloyExpr cond, AlloyExpr conseq, AlloyExpr alt) {
-        return new AlloyIteExpr(cond,conseq,alt);
+        return new AlloyCmpExpr(left, false, AlloyCmpExpr.Comp.IN, right);
     }
 
+    public static AlloyExpr AlloyIte(AlloyExpr cond, AlloyExpr conseq, AlloyExpr alt) {
+        return new AlloyIteExpr(cond, conseq, alt);
+    }
 }

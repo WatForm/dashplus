@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
-
 public class SnapshotSigD2A extends SpaceSigsD2A {
 
     protected SnapshotSigD2A(DashModel dm, TranslateOutput opt) {
@@ -42,7 +40,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             if (dm.hasConcurrency()) {
                 decls.add(
                         AlloyDecl(
-                                this.dsl.nameNum(D2AStrings.scopesUsedName,i),
+                                this.dsl.nameNum(D2AStrings.scopesUsedName, i),
                                 AlloyArrowStringList(
                                         newListWithOneMore(cop, D2AStrings.scopeLabelName))));
             }
@@ -50,14 +48,14 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             if (!dm.hasOnlyOneState())
                 decls.add(
                         AlloyDecl(
-                                this.dsl.nameNum(D2AStrings.confName,i),
+                                this.dsl.nameNum(D2AStrings.confName, i),
                                 AlloyArrowStringList(
                                         newListWithOneMore(cop, D2AStrings.stateLabelName))));
 
             // transTaken1, etc.
             decls.add(
                     AlloyDecl(
-                            this.dsl.nameNum(D2AStrings.transTakenName,i),
+                            this.dsl.nameNum(D2AStrings.transTakenName, i),
                             AlloyArrowStringList(
                                     newListWithOneMore(cop, D2AStrings.transLabelName))));
 
@@ -65,7 +63,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             if (dm.hasEvents() && dm.hasEventsAti(i))
                 decls.add(
                         AlloyDecl(
-                                this.dsl.nameNum(D2AStrings.eventsName,i),
+                                this.dsl.nameNum(D2AStrings.eventsName, i),
                                 AlloyArrowStringList(
                                         newListWithOneMore(cop, D2AStrings.allEventsName))));
         }
@@ -80,7 +78,6 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         // add the snapshot signature
         this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
-        
     }
 
     public void varsBuffersOnlySnapshotSig() {
@@ -95,7 +92,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
     }
 
     private List<AlloyDecl> varFieldsTraces() {
-        
+
         List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
         for (String vfqn : dm.allVarNames()) {
             List<AlloyExpr> arrow_list = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
@@ -116,7 +113,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
     }
 
     private List<AlloyDecl> bufferFieldsTraces() {
-        
+
         List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
         for (String bfqn : dm.allBufferNames()) {
             List<AlloyExpr> arrow_list = mapBy(dm.bufferParams(bfqn), i -> AlloyVar(i.paramSig));

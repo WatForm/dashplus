@@ -117,5 +117,4 @@ public final class AlloyStrings extends CommonStrings {
     public static final String falseName = "boolean/False";
     public static final String isTrue = "boolean/isTrue";
     public static final String isFalse = "boolean/isFalse";
-
 }

@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.alloyast.paragraph;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
-import static ca.uwaterloo.watform.utils.GeneralUtil.emptyList;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
@@ -82,7 +81,6 @@ public final class AlloyFunPara extends AlloyPara {
                 sub,
                 block);
     }
-
 
     /*
      * always print square brackets around args

@@ -17,19 +17,14 @@ package ca.uwaterloo.watform.dashtoalloy;
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.unary.AlloyAlwaysExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-import ca.uwaterloo.watform.dashast.DashParam;
-import ca.uwaterloo.watform.dashast.dashref.DashRef;
-import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class SingleEventInputD2A extends EnoughOpsD2A {    
+public class SingleEventInputD2A extends EnoughOpsD2A {
 
     protected SingleEventInputD2A(DashModel dm, TranslateOutput opt) {
         super(dm, opt);
@@ -39,37 +34,37 @@ public class SingleEventInputD2A extends EnoughOpsD2A {
         if (this.dm.hasEnvEvents()) {
             AlloyExpr e;
             AlloyExpr b = AlloyFalseCond();
-            for (int i=0;i <= this.dm.maxDepthParams(); i++) {
+            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
                 if (this.dm.hasEventsAti(i)) {
                     e = AlloyTrueCond();
-                    for (int j=0;j <= this.dm.maxDepthParams(); j++) {
+                    for (int j = 0; j <= this.dm.maxDepthParams(); j++) {
                         if (this.dm.hasEventsAti(j) & this.dm.hasEnvEvents()) {
-                            if (i==j) {
-                                e = AlloyAnd(
-                                        e,
-                                        AlloyLone(
-                                            AlloyRangeRes(
-                                                this.dsl.curEvents(i), 
-                                                this.dsl.allEnvEventsVar())));
+                            if (i == j) {
+                                e =
+                                        AlloyAnd(
+                                                e,
+                                                AlloyLone(
+                                                        AlloyRangeRes(
+                                                                this.dsl.curEvents(i),
+                                                                this.dsl.allEnvEventsVar())));
                             } else {
-                                e = AlloyAnd(
-                                        e,
-                                        AlloyNo(
-                                            AlloyRangeRes(
-                                                this.dsl.curEvents(i),
-                                                this.dsl.allEnvEventsVar())));
+                                e =
+                                        AlloyAnd(
+                                                e,
+                                                AlloyNo(
+                                                        AlloyRangeRes(
+                                                                this.dsl.curEvents(i),
+                                                                this.dsl.allEnvEventsVar())));
                             }
                         }
                     }
-                    b = AlloyOr(b,e);
+                    b = AlloyOr(b, e);
                 }
-            } 
+            }
             List<AlloyExpr> body = new ArrayList<AlloyExpr>();
-            if (this.isElectrum) 
-                body.add(b);    
-            else 
-                body.add(AlloyAllVars(this.dsl.curDecls(),b));  
-            List<AlloyDecl> emptyDecls = new ArrayList<AlloyDecl>();  
+            if (this.isElectrum) body.add(b);
+            else body.add(AlloyAllVars(this.dsl.curDecls(), b));
+            List<AlloyDecl> emptyDecls = new ArrayList<AlloyDecl>();
             this.addPred(D2AStrings.singleEventName, emptyDecls, body);
         }
     }

@@ -3,7 +3,6 @@ package ca.uwaterloo.watform.cli;
 import static ca.uwaterloo.watform.parser.Parser.*;
 
 import ca.uwaterloo.watform.utils.*;
-import java.nio.file.Path;
 import java.util.List;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;

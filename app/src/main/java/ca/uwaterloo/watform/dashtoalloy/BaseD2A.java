@@ -10,8 +10,8 @@ package ca.uwaterloo.watform.dashtoalloy;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.*;
 
 public class BaseD2A {
@@ -29,7 +29,6 @@ public class BaseD2A {
     protected boolean isTcmc = false;
     protected DSL dsl;
     protected ExprTranslatorVis exprTranslator;
-
 
     protected BaseD2A(DashModel dm, TranslateOutput opt) {
         this.dm = dm;

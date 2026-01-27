@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.dashtoalloy;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
-
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashmodel.DashFQN;
@@ -48,7 +47,7 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
         this.addParamSpaceSigs();
         this.addEventSpaceSigs();
         // no space sigs needs to be added for variables
-        
+
     }
 
     private void addConfSpaceSigs() {
@@ -126,29 +125,25 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
             this.addAbstractSig(D2AStrings.allEventsName);
             if (this.dm.hasIntEvents()) {
                 // abstract sig IntEvents extends Events {}
-                this.addAbstractExtendsSig(
-                        D2AStrings.allIntEventsName, D2AStrings.allEventsName);
+                this.addAbstractExtendsSig(D2AStrings.allIntEventsName, D2AStrings.allEventsName);
                 for (String e : this.dm.allIntEvents()) {
                     // sig e extends IntEvents {}
-                    this.addOneExtendsSig(
-                            DashFQN.translateFQN(e), D2AStrings.allIntEventsName);
+                    this.addOneExtendsSig(DashFQN.translateFQN(e), D2AStrings.allIntEventsName);
                 }
             }
             if (this.dm.hasEnvEvents()) {
                 // abstract sig EnvEvents extends Events {}
-                this.addAbstractExtendsSig(
-                        D2AStrings.allEnvEventsName, D2AStrings.allEventsName);
+                this.addAbstractExtendsSig(D2AStrings.allEnvEventsName, D2AStrings.allEventsName);
                 for (String e : this.dm.allEnvEvents()) {
                     // sig e extends EnvEvents {}
-                    this.addOneExtendsSig(
-                            DashFQN.translateFQN(e), D2AStrings.allEnvEventsName);
+                    this.addOneExtendsSig(DashFQN.translateFQN(e), D2AStrings.allEnvEventsName);
                 }
             }
         }
     }
 
     private void addBufferSpaceSigs() {
-       // don't understand this comment???
+        // don't understand this comment???
         // abstract sig BufIdx {} if this model has buffers
         // if not Electrum or if this buffer would be grouped under a parameter in Electrum
         // declaration
@@ -174,5 +169,4 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
             }
         }
     }
-
 }

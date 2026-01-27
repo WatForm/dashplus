@@ -1,5 +1,5 @@
 /*
-    This is a DSL (common subexpressions) 
+    This is a DSL (common subexpressions)
     for the Dash to Alloy translator.
 */
 
@@ -7,23 +7,22 @@ package ca.uwaterloo.watform.dashtoalloy;
 
 // Factory method
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.dashast.DashParam;
-import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
+import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.exprvisitor.ContainsVarExprVis;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Collections;
-import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import java.util.List;
 
 public class DSL {
 
@@ -38,6 +37,7 @@ public class DSL {
     public String nameNum(String s, Integer i) {
         return s + Integer.toString(i);
     }
+
     // s
     public AlloyQnameExpr curVar() {
         return AlloyVar(D2AStrings.curName);
@@ -47,8 +47,6 @@ public class DSL {
     public AlloyQnameExpr nextVar() {
         return AlloyVar(D2AStrings.nextName);
     }
-
-
 
     // [s,snext]
     public List<AlloyExpr> curNextVars() {
@@ -63,8 +61,7 @@ public class DSL {
     // [p0_AID,p1_AID,...]
     public static List<AlloyExpr> paramVars(List<DashParam> prs) {
         List<AlloyExpr> o = new ArrayList<AlloyExpr>();
-        for (DashParam p:prs) 
-            o.add(p.asAlloyVar());
+        for (DashParam p : prs) o.add(p.asAlloyVar());
         return o;
     }
 
@@ -75,6 +72,7 @@ public class DSL {
         o.addAll(paramVars(prs));
         return o;
     }
+
     // [s', p1, p2, ...]
     public List<AlloyExpr> nextParamVars(List<DashParam> prs) {
         List<AlloyExpr> o = new ArrayList<AlloyExpr>();
@@ -82,6 +80,7 @@ public class DSL {
         o.addAll(paramVars(prs));
         return o;
     }
+
     // [s,s',  p1,p2,...]
     public List<AlloyExpr> curNextParamVars(List<DashParam> prs) {
         List<AlloyExpr> o = new ArrayList<AlloyExpr>(curNextVars());
@@ -98,7 +97,6 @@ public class DSL {
     public AlloyQnameExpr scopeVar(int size) {
         return AlloyVar(D2AStrings.scopeName + size);
     }
-
 
     public AlloyQnameExpr genEventVar(int size) {
         return AlloyVar(D2AStrings.genEventName + size);
@@ -124,8 +122,7 @@ public class DSL {
         return AlloyVar(D2AStrings.bufferIndexName + i);
     }
 
-
-    // stable 
+    // stable
     public AlloyQnameExpr stable() {
         return AlloyVar(D2AStrings.stableName);
     }
@@ -152,7 +149,6 @@ public class DSL {
         return new AlloyPrimeExpr(e);
     }
 
-
     // ----------------------------
 
     // (s.name).e
@@ -161,10 +157,10 @@ public class DSL {
         else return new AlloyDotExpr(curVar(), e);
     }
 
-   // snext.name
+    // snext.name
     public AlloyExpr nextJoinExpr(AlloyExpr e) {
         if (this.isElectrum && e instanceof AlloyQnameExpr) {
-            return primedVarExpr((AlloyQnameExpr)e);
+            return primedVarExpr((AlloyQnameExpr) e);
         } else {
             return new AlloyDotExpr(nextVar(), e);
         }
@@ -174,7 +170,7 @@ public class DSL {
     public AlloyExpr curConf(int size) {
         return curJoinExpr(confVar(size));
     }
-    
+
     // snext.conf1
     public AlloyExpr nextConf(int size) {
         return nextJoinExpr(confVar(size));
@@ -190,7 +186,7 @@ public class DSL {
         return nextJoinExpr(eventsVar(size));
     }
 
-    //s.scopeUsed1
+    // s.scopeUsed1
     public AlloyExpr curScopesUsed(int size) {
         return curJoinExpr(scopesUsedVar(size));
     }
@@ -230,7 +226,7 @@ public class DSL {
     // s.stable == boolean/False
     public AlloyExpr curStableFalse() {
         return AlloyIsFalse(curJoinExpr(stable()));
-        //return createEquals(curJoinExpr(stable()),createFalse());
+        // return createEquals(curJoinExpr(stable()),createFalse());
     }
 
     // snext.stable == boolean/True
@@ -249,12 +245,13 @@ public class DSL {
     public AlloyExpr AlloyIsTrue(AlloyExpr e) {
         List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
         elist.add(e);
-        return AlloyPredCall(AlloyStrings.isTrue,elist);
+        return AlloyPredCall(AlloyStrings.isTrue, elist);
     }
+
     public AlloyExpr AlloyIsFalse(AlloyExpr e) {
         List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
         elist.add(e);
-        return AlloyPredCall(AlloyStrings.isFalse,elist);
+        return AlloyPredCall(AlloyStrings.isFalse, elist);
     }
 
     // decls ---------------------------
@@ -295,8 +292,7 @@ public class DSL {
     // [p0:P0, p1:P1, ...]
     public static List<AlloyDecl> paramDecls(List<DashParam> prs) {
         List<AlloyDecl> o = new ArrayList<AlloyDecl>();
-        for (DashParam p:prs)
-            o.add(p.asAlloyDecl());
+        for (DashParam p : prs) o.add(p.asAlloyDecl());
         return o;
     }
 
@@ -307,33 +303,29 @@ public class DSL {
         o.addAll(this.paramDecls(prs));
         return o;
     }
+
     // s:Snapshot, s':Snapshot, p0:P0, p1:P1, ...]
     public List<AlloyDecl> curNextParamsDecls(List<DashParam> prs) {
         List<AlloyDecl> o = new ArrayList<AlloyDecl>();
-        o.addAll(this.curNextDecls()); 
+        o.addAll(this.curNextDecls());
         o.addAll(this.paramDecls(prs));
         return o;
     }
 
     public AlloyDecl scopeDecl(int i) {
-        List<String>cop = Collections.nCopies(i,D2AStrings.identifierName);
+        List<String> cop = Collections.nCopies(i, D2AStrings.identifierName);
         return new AlloyDecl(
-                        D2AStrings.scopeName + i,
-                        AlloyArrowStringList(
-                            newListWithOneMore(cop, D2AStrings.scopeLabelName)));
+                D2AStrings.scopeName + i,
+                AlloyArrowStringList(newListWithOneMore(cop, D2AStrings.scopeLabelName)));
     }
 
     public AlloyDecl genEventDecl(int i) {
-        if (i==0) 
-            return new AlloyDecl(
-                        D2AStrings.genEventName + i,
-                        allEventsVar());
+        if (i == 0) return new AlloyDecl(D2AStrings.genEventName + i, allEventsVar());
         else {
-            List<String>cop = Collections.nCopies(i,D2AStrings.identifierName);
+            List<String> cop = Collections.nCopies(i, D2AStrings.identifierName);
             return new AlloyDecl(
-                        D2AStrings.genEventName + i,
-                        AlloyArrowStringList(
-                            newListWithOneMore(cop, D2AStrings.allEventsName)));
+                    D2AStrings.genEventName + i,
+                    AlloyArrowStringList(newListWithOneMore(cop, D2AStrings.allEventsName)));
         }
     }
 
@@ -348,10 +340,9 @@ public class DSL {
 
     // none -> none -> none
     public AlloyExpr noneArrow(int i) {
-        if (i==0) 
-            return AlloyNone();
+        if (i == 0) return AlloyNone();
         else {
-            return AlloyArrowExprList(Collections.nCopies(i+1,AlloyNone()));
+            return AlloyArrowExprList(Collections.nCopies(i + 1, AlloyNone()));
         }
     }
 
@@ -372,17 +363,16 @@ public class DSL {
         return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(AlloyStrings.boolName));
     }
 
-
     public DashRef asScope(DashRef e) {
-        assert(e instanceof StateDashRef);
-        return new StateDashRef(e.name+D2AStrings.scopeSuffix, e.paramValues);
+        assert (e instanceof StateDashRef);
+        return new StateDashRef(e.name + D2AStrings.scopeSuffix, e.paramValues);
     }
 
     public List<AlloyDecl> emptyDecls() {
         return new ArrayList<AlloyDecl>();
     }
 
-     public List<AlloyExpr> emptyExprList() {
+    public List<AlloyExpr> emptyExprList() {
         return new ArrayList<AlloyExpr>();
     }
 }

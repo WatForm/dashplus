@@ -93,7 +93,6 @@ public final class AlloyDecl extends AlloyExpr {
                 expr);
     }
 
-
     public Optional<String> getName() {
         if (this.qnames.size() > 1) {
             throw ImplementationError.methodShouldNotBeCalled(

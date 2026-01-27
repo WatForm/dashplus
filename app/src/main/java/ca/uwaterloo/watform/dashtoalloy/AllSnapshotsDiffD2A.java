@@ -1,4 +1,4 @@
-/* 
+/*
     fact/pred allSnapshotsDifferent {
         all s:DshSnapshot, sn:DshSnapshot |
             s.dsh_confi = sn.dsh_confi, etc forall i, and
@@ -14,18 +14,15 @@ package ca.uwaterloo.watform.dashtoalloy;
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-import ca.uwaterloo.watform.dashast.DashParam;
-import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {    
+public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
 
     protected AllSnapshotsDiffD2A(DashModel dm, TranslateOutput opt) {
         super(dm, opt);
@@ -37,63 +34,46 @@ public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (!this.dm.hasOnlyOneState())
                 // s.confi = sn.confi
-                body.add(AlloyEqual(
-                            this.dsl.curConf(i),
-                            this.dsl.nextConf(i)));
+                body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.nextConf(i)));
             // s.scopesUsedi = sn.scopesUsedi
             if (this.dm.hasConcurrency())
-                body.add(AlloyEqual(
-                    this.dsl.curScopesUsed(i),
-                    this.dsl.nextScopesUsed(i)));
-            body.add(
-                AlloyEqual(
-                    this.dsl.curTransTaken(i),
-                    this.dsl.nextTransTaken(i)));
+                body.add(AlloyEqual(this.dsl.curScopesUsed(i), this.dsl.nextScopesUsed(i)));
+            body.add(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.nextTransTaken(i)));
             if (this.dm.hasIntEventsAti(i))
-                body.add(
-                    AlloyEqual(
-                        this.dsl.curEvents(i),
-                        this.dsl.nextEvents(i)));
+                body.add(AlloyEqual(this.dsl.curEvents(i), this.dsl.nextEvents(i)));
         }
         if (this.dm.hasConcurrency())
-            body.add(
-                AlloyEqual(
-                    this.dsl.curStable(),
-                    this.dsl.nextStable()));
+            body.add(AlloyEqual(this.dsl.curStable(), this.dsl.nextStable()));
 
         // variables and buffers
         List<String> allVarsAndBuffers = this.dm.allVarNames();
         allVarsAndBuffers.addAll(this.dm.allBufferNames());
-        for (String v: allVarsAndBuffers) {
-            body.add(AlloyEqual(
-                this.dsl.curJoinExpr(AlloyVar(DashFQN.translateFQN(v))), 
-                this.dsl.nextJoinExpr(AlloyVar(DashFQN.translateFQN(v)))));
+        for (String v : allVarsAndBuffers) {
+            body.add(
+                    AlloyEqual(
+                            this.dsl.curJoinExpr(AlloyVar(DashFQN.translateFQN(v))),
+                            this.dsl.nextJoinExpr(AlloyVar(DashFQN.translateFQN(v)))));
         }
 
-    
-        e = AlloyAllVars(
-                this.dsl.curNextDecls(), 
-                AlloyImplies(
-                    AlloyAndList(body), 
-                    AlloyEqual(this.dsl.curVar(), this.dsl.nextVar())));
+        e =
+                AlloyAllVars(
+                        this.dsl.curNextDecls(),
+                        AlloyImplies(
+                                AlloyAndList(body),
+                                AlloyEqual(this.dsl.curVar(), this.dsl.nextVar())));
 
         body = new ArrayList<AlloyExpr>();
         body.add(e);
-        return body; 
+        return body;
     }
 
     public void addAllSnapshotsDiffPred() {
         ArrayList<AlloyDecl> nodecls = new ArrayList<AlloyDecl>();
-        this.addPred(
-            D2AStrings.allSnapshotsDiffName,
-            nodecls, 
-            addAllSnapshotsDiffBody());
+        this.addPred(D2AStrings.allSnapshotsDiffName, nodecls, addAllSnapshotsDiffBody());
     }
 
     public void addAllSnapshotsDiffFact() {
         ArrayList<AlloyDecl> nodecls = new ArrayList<AlloyDecl>();
-        this.addFact(
-            D2AStrings.allSnapshotsDiffName, 
-            addAllSnapshotsDiffBody());
+        this.addFact(D2AStrings.allSnapshotsDiffName, addAllSnapshotsDiffBody());
     }
 }

@@ -22,15 +22,17 @@ public class ImplementationError extends DashPlusException {
     }
 
     // failed dynamic cast; incorrect assumption about object's runtime type
-    public static ImplementationError failedCast(String s) throws ImplementationError{
+    public static ImplementationError failedCast(String s) throws ImplementationError {
         return new ImplementationError("Failed Dynamic Cast: " + s);
     }
 
-    public static ImplementationError methodShouldNotBeCalled(String methodName) throws ImplementationError{
+    public static ImplementationError methodShouldNotBeCalled(String methodName)
+            throws ImplementationError {
         return new ImplementationError(methodName + " should not be called");
     }
 
-    public static ImplementationError methodShouldNotBeCalled(Pos pos, String methodName) throws ImplementationError{
+    public static ImplementationError methodShouldNotBeCalled(Pos pos, String methodName)
+            throws ImplementationError {
         return new ImplementationError(pos, methodName + " should not be called. ");
     }
 

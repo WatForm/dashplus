@@ -10,12 +10,12 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.utils.*;
-import java.nio.file.Path;
-import java.util.concurrent.Callable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.File; 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -77,7 +77,7 @@ public class Main implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        
+
         try {
             for (String fileName : cliConf.fileNames) {
                 // Main logic executed per file
@@ -90,7 +90,7 @@ public class Main implements Callable<Integer> {
                     // default case
                     // translate Dash to Alloy given options
                     // or execute cmds of .als file
-                
+
                     Reporter.INSTANCE.reset();
                     Reporter.INSTANCE.setFilePath(absolutePath);
 
@@ -118,13 +118,14 @@ public class Main implements Callable<Integer> {
                             String fullFileName = absolutePath.toString();
                             System.out.println("Input: " + fullFileName);
                             int lastDotIndex = fullFileName.lastIndexOf('.');
-                            String nameWithoutExtension = (lastDotIndex == -1) ? fullFileName : fullFileName.substring(0, lastDotIndex);
+                            String nameWithoutExtension =
+                                    (lastDotIndex == -1)
+                                            ? fullFileName
+                                            : fullFileName.substring(0, lastDotIndex);
                             String newFullFileName = nameWithoutExtension + ".als";
 
                             // write the .als file
-                            Files.writeString(
-                                new File(newFullFileName).toPath(), 
-                                am.toString());
+                            Files.writeString(new File(newFullFileName).toPath(), am.toString());
                             System.out.println("Output: " + newFullFileName);
                         } catch (IOException e) {
                             System.out.println("An error occurred: " + e.getMessage());

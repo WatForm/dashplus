@@ -54,20 +54,19 @@ public class SmallStepDefn {
 
         expressions.add(
                 // _trans_taken' = _none_transition
-                TRANS_TAKEN().PRIME().EQUALS(NONE_TRANSITION()));            
+                TRANS_TAKEN().PRIME().EQUALS(NONE_TRANSITION()));
 
         if (dashModel.hasEvents())
             expressions.add(
                     // _events' \in SUBSET _all_internal_events
                     EVENTS().PRIME().IN(new TlaSubsetUnary(INTERNAL_EVENTS())));
-        
+
         List<TlaVar> unchangedVars = new ArrayList<>();
-        if(dashModel.hasConcurrency())
-        {
-                unchangedVars.add(TlaVar(STABLE));
-                unchangedVars.add(TlaVar(SCOPES_USED));
+        if (dashModel.hasConcurrency()) {
+            unchangedVars.add(TlaVar(STABLE));
+            unchangedVars.add(TlaVar(SCOPES_USED));
         }
-        if(!dashModel.hasOnlyOneState())unchangedVars.add(TlaVar(CONF));
+        if (!dashModel.hasOnlyOneState()) unchangedVars.add(TlaVar(CONF));
 
         if (unchangedVars.size() != 0)
             expressions.add(

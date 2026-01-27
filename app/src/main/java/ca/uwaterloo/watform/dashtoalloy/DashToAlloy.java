@@ -11,8 +11,6 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 
 public class DashToAlloy extends StutterD2A {
 
-
-
     public DashToAlloy(DashModel dm, TranslateOutput opt) {
         super(dm, opt);
     }
@@ -33,8 +31,7 @@ public class DashToAlloy extends StutterD2A {
         this.addInit();
         this.addInvs();
 
-        
-        for (String tfqn:this.dm.allTransNames()) {
+        for (String tfqn : this.dm.allTransNames()) {
             this.addTransPre(tfqn);
             if (this.dm.hasConcurrency()) {
                 this.addTransIsEnabledAfterStep(tfqn);
@@ -44,8 +41,7 @@ public class DashToAlloy extends StutterD2A {
         }
 
         // one of these for the whole model
-        if (this.dm.hasConcurrency()) 
-            this.addTestIfNextStable();
+        if (this.dm.hasConcurrency()) this.addTestIfNextStable();
 
         this.addSmallStep();
 
@@ -74,14 +70,13 @@ public class DashToAlloy extends StutterD2A {
             // this one is required
             // all snapshots are automatically different in electrum
             this.addElectrumFact();
-
         }
-        
+
         // these predicates may be useful in any of the above
         this.addSingleEventInput();
         this.addCompleteBigSteps();
-        this.addEnoughOps(); 
-        
+        this.addEnoughOps();
+
         return this.am;
     }
 
