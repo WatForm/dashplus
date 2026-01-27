@@ -20,7 +20,6 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EnoughOpsD2A extends AllSnapshotsDiffD2A {
@@ -31,14 +30,14 @@ public class EnoughOpsD2A extends AllSnapshotsDiffD2A {
 
     public void addEnoughOps() {
 
-        ArrayList<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
 
         for (String tfqn : this.dm.allTransNames()) {
             String tout = DashFQN.translateFQN(tfqn);
             List<DashParam> prms = this.dm.transParams(tfqn);
             if (prms.size() == 0) {
                 if (this.isElectrum) {
-                    List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
+                    List<AlloyExpr> elist = this.dsl.emptyExprList();
                     body.add(AlloyPredCall(tout, elist));
                 } else
                     body.add(
@@ -52,7 +51,7 @@ public class EnoughOpsD2A extends AllSnapshotsDiffD2A {
                                 AlloyPredCall(tout, this.dsl.curNextParamVars(prms))));
             }
         }
-        ArrayList<AlloyDecl> nodecls = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> nodecls = this.dsl.emptyDeclList();
         this.addPred(D2AStrings.enoughOpsName, nodecls, body);
     }
 }

@@ -21,7 +21,7 @@ public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
     public void addTestIfNextStable() {
 
         List<AlloyExpr> body = this.dsl.emptyExprList();
-        List<AlloyDecl> decls = this.dsl.emptyDecls();
+        List<AlloyDecl> decls = this.dsl.emptyDeclList();
 
         if (!this.isElectrum) {
             decls.addAll(this.dsl.curNextDecls());

@@ -41,7 +41,6 @@ import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransIsEnabledAfterStepD2A extends TransPreD2A {
@@ -54,8 +53,8 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
 
         String tout = DashFQN.translateFQN(tfqn);
         List<DashParam> prs = this.dm.transParams(tfqn);
-        List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyDecl> decls = this.dsl.emptyDeclList();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
 
         if (this.isElectrum) {
             decls.addAll(this.dsl.paramDecls(prs));
@@ -85,7 +84,7 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
 
         // if first step of the big step
         // tfqn's non-orthogonal scope are not in any scopes used in the parameters
-        List<AlloyExpr> orth1 = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> orth1 = this.dsl.emptyExprList();
         List<DashRef> nonO = this.dm.nonOrthogonalScopesOf(tfqn);
 
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
@@ -102,7 +101,7 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
         // if not the first of the big step
         // tfqn's non-orthogonal scope are not in any scopes used in the parameters + the cur scopes
         // used
-        List<AlloyExpr> orth2 = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> orth2 = this.dsl.emptyExprList();
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             final int j = i;
             List<AlloyExpr> u =

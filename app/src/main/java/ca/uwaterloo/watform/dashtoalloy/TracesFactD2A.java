@@ -36,7 +36,6 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TracesFactD2A extends SmallStepD2A {
@@ -73,10 +72,10 @@ public class TracesFactD2A extends SmallStepD2A {
         args.add(this.dsl.curVar());
         args.add(this.dsl.curJoinExpr(snapShotNext));
 
-        List<AlloyDecl> decls1 = this.dsl.emptyDecls();
+        List<AlloyDecl> decls1 = this.dsl.emptyDeclList();
         decls1.add(this.dsl.curDecl());
 
-        List<AlloyDecl> decls2 = this.dsl.emptyDecls();
+        List<AlloyDecl> decls2 = this.dsl.emptyDeclList();
         decls2.add(
                 AlloyDecl(
                         D2AStrings.curName,
@@ -97,7 +96,7 @@ public class TracesFactD2A extends SmallStepD2A {
         AlloyExpr snapShotFirst =
                 AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesFirstName);
         List<AlloyExpr> body = this.dsl.emptyExprList();
-        List<AlloyDecl> decls = this.dsl.emptyDecls();
+        List<AlloyDecl> decls = this.dsl.emptyDeclList();
 
         List<AlloyExpr> bigOr = this.dsl.emptyExprList();
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
@@ -111,7 +110,7 @@ public class TracesFactD2A extends SmallStepD2A {
         decls.add(AlloyDecl(D2AStrings.curName, AlloyVar(D2AStrings.snapshotName)));
         body.add(AlloyAllVars(decls, ex));
 
-        List<AlloyDecl> emptyDecls = new ArrayList<AlloyDecl>();
-        this.addPred(D2AStrings.strongNoStutterName, emptyDecls, body);
+        List<AlloyDecl> emptyDeclList = this.dsl.emptyDeclList();
+        this.addPred(D2AStrings.strongNoStutterName, emptyDeclList, body);
     }
 }

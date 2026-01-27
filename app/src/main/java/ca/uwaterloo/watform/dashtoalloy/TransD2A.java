@@ -14,7 +14,6 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransD2A extends TransPostD2A {
@@ -27,7 +26,7 @@ public class TransD2A extends TransPostD2A {
 
         // e.g. [ClientId,ServerId.,,,]
         List<DashParam> prs = this.dm.transParams(tfqn);
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
         String tout = DashFQN.translateFQN(tfqn); // output FQN
 
         if (this.isElectrum) {

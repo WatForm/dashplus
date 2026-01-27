@@ -40,7 +40,7 @@ public class TcmcFactD2A extends TracesFactD2A {
 
         List<AlloyExpr> body = this.dsl.emptyExprList();
 
-        List<AlloyDecl> decls = this.dsl.emptyDecls();
+        List<AlloyDecl> decls = this.dsl.emptyDeclList();
         decls.add(this.dsl.curDecl());
 
         List<AlloyExpr> args = this.dsl.emptyExprList();

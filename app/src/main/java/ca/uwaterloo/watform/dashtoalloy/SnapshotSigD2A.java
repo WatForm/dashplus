@@ -9,7 +9,6 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 // import ca.uwaterloo.watform.dashast.D2AStrings;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
     private void addSnapshotSigTracesTcmc() {
         // traces/tcmc use sig Snapshot {} with fields
 
-        List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> decls = this.dsl.emptyDeclList();
 
         // scopesUsed0, scopesUsed1, etc, (need if have parameters)
         List<String> cop;
@@ -82,7 +81,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
     public void varsBuffersOnlySnapshotSig() {
         if (!this.isElectrum) {
-            List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
+            List<AlloyDecl> decls = this.dsl.emptyDeclList();
             decls.addAll(varFieldsTraces());
             decls.addAll(bufferFieldsTraces());
             // add the snapshot signature
@@ -93,7 +92,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
     private List<AlloyDecl> varFieldsTraces() {
 
-        List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> decls = this.dsl.emptyDeclList();
         for (String vfqn : dm.allVarNames()) {
             List<AlloyExpr> arrow_list = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
             arrow_list.add(this.translateExpr(dm.varTyp(vfqn)));
@@ -114,7 +113,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
     private List<AlloyDecl> bufferFieldsTraces() {
 
-        List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> decls = this.dsl.emptyDeclList();
         for (String bfqn : dm.allBufferNames()) {
             List<AlloyExpr> arrow_list = mapBy(dm.bufferParams(bfqn), i -> AlloyVar(i.paramSig));
 

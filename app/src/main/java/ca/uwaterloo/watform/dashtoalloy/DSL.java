@@ -50,7 +50,7 @@ public class DSL {
 
     // [s,snext]
     public List<AlloyExpr> curNextVars() {
-        List<AlloyExpr> o = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> o = this.emptyExprList();
         if (!this.isElectrum) {
             o.add(curVar());
             o.add(nextVar());
@@ -59,15 +59,15 @@ public class DSL {
     }
 
     // [p0_AID,p1_AID,...]
-    public static List<AlloyExpr> paramVars(List<DashParam> prs) {
-        List<AlloyExpr> o = new ArrayList<AlloyExpr>();
+    public List<AlloyExpr> paramVars(List<DashParam> prs) {
+        List<AlloyExpr> o = this.emptyExprList();
         for (DashParam p : prs) o.add(p.asAlloyVar());
         return o;
     }
 
     // [s, p1, p2, ...]
     public List<AlloyExpr> curParamVars(List<DashParam> prs) {
-        List<AlloyExpr> o = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> o = this.emptyExprList();
         o.add(curVar());
         o.addAll(paramVars(prs));
         return o;
@@ -75,7 +75,7 @@ public class DSL {
 
     // [s', p1, p2, ...]
     public List<AlloyExpr> nextParamVars(List<DashParam> prs) {
-        List<AlloyExpr> o = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> o = this.emptyExprList();
         o.add(nextVar());
         o.addAll(paramVars(prs));
         return o;
@@ -243,13 +243,13 @@ public class DSL {
     // use the library functions isTrue/isFalse to say
     // a value must be true/false
     public AlloyExpr AlloyIsTrue(AlloyExpr e) {
-        List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> elist = this.emptyExprList();
         elist.add(e);
         return AlloyPredCall(AlloyStrings.isTrue, elist);
     }
 
     public AlloyExpr AlloyIsFalse(AlloyExpr e) {
-        List<AlloyExpr> elist = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> elist = this.emptyExprList();
         elist.add(e);
         return AlloyPredCall(AlloyStrings.isFalse, elist);
     }
@@ -267,21 +267,21 @@ public class DSL {
 
     // [s:Snapshot]
     public List<AlloyDecl> curDecls() {
-        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> o = this.emptyDeclList();
         if (!this.isElectrum) o.add(curDecl());
         return o;
     }
 
     // [snext:Snapshot]
     public List<AlloyDecl> nextDecls() {
-        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> o = this.emptyDeclList();
         if (!this.isElectrum) o.add(nextDecl());
         return o;
     }
 
     // [s:Snapshot, snext:Snapshot]
     public List<AlloyDecl> curNextDecls() {
-        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> o = this.emptyDeclList();
         if (!this.isElectrum) {
             o.add(curDecl());
             o.add(nextDecl());
@@ -290,15 +290,15 @@ public class DSL {
     }
 
     // [p0:P0, p1:P1, ...]
-    public static List<AlloyDecl> paramDecls(List<DashParam> prs) {
-        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+    public List<AlloyDecl> paramDecls(List<DashParam> prs) {
+        List<AlloyDecl> o = this.emptyDeclList();
         for (DashParam p : prs) o.add(p.asAlloyDecl());
         return o;
     }
 
     // s:Snapshot, p0:P0, p1:P1, ...]
     public List<AlloyDecl> curParamsDecls(List<DashParam> prs) {
-        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> o = this.emptyDeclList();
         o.addAll(this.curDecls());
         o.addAll(this.paramDecls(prs));
         return o;
@@ -306,7 +306,7 @@ public class DSL {
 
     // s:Snapshot, s':Snapshot, p0:P0, p1:P1, ...]
     public List<AlloyDecl> curNextParamsDecls(List<DashParam> prs) {
-        List<AlloyDecl> o = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> o = this.emptyDeclList();
         o.addAll(this.curNextDecls());
         o.addAll(this.paramDecls(prs));
         return o;
@@ -368,7 +368,7 @@ public class DSL {
         return new StateDashRef(e.name + D2AStrings.scopeSuffix, e.paramValues);
     }
 
-    public List<AlloyDecl> emptyDecls() {
+    public List<AlloyDecl> emptyDeclList() {
         return new ArrayList<AlloyDecl>();
     }
 

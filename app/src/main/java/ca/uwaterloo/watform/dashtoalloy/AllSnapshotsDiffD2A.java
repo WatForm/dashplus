@@ -19,7 +19,6 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
@@ -29,7 +28,7 @@ public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
     }
 
     private List<AlloyExpr> addAllSnapshotsDiffBody() {
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
         AlloyExpr e;
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (!this.dm.hasOnlyOneState())
@@ -62,18 +61,18 @@ public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
                                 AlloyAndList(body),
                                 AlloyEqual(this.dsl.curVar(), this.dsl.nextVar())));
 
-        body = new ArrayList<AlloyExpr>();
+        body = this.dsl.emptyExprList();
         body.add(e);
         return body;
     }
 
     public void addAllSnapshotsDiffPred() {
-        ArrayList<AlloyDecl> nodecls = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> nodecls = this.dsl.emptyDeclList();
         this.addPred(D2AStrings.allSnapshotsDiffName, nodecls, addAllSnapshotsDiffBody());
     }
 
     public void addAllSnapshotsDiffFact() {
-        ArrayList<AlloyDecl> nodecls = new ArrayList<AlloyDecl>();
+        List<AlloyDecl> nodecls = this.dsl.emptyDeclList();
         this.addFact(D2AStrings.allSnapshotsDiffName, addAllSnapshotsDiffBody());
     }
 }

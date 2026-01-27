@@ -8,7 +8,6 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class InvsD2A extends InitsD2A {
@@ -24,7 +23,7 @@ public class InvsD2A extends InitsD2A {
     public void addInvs() {
 
         List<DashParam> prs = this.dm.allParams();
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
 
         // since this is a fact, we don't need it if there are no invariants
         if (!this.dm.invsR().isEmpty()) {
@@ -36,7 +35,7 @@ public class InvsD2A extends InitsD2A {
             // so don't try to combine these steps
 
             AlloyExpr e;
-            List<AlloyDecl> decls = new ArrayList<AlloyDecl>();
+            List<AlloyDecl> decls = this.dsl.emptyDeclList();
 
             if (!prs.isEmpty()) {
                 // all parameters are not used in inv
@@ -49,7 +48,7 @@ public class InvsD2A extends InitsD2A {
                 if (!decls.isEmpty()) {
                     // all universally quantified
                     e = AlloyAllVars(decls, e);
-                    body = new ArrayList<AlloyExpr>();
+                    body = this.dsl.emptyExprList();
                     body.add(e);
                 }
             }
@@ -58,10 +57,10 @@ public class InvsD2A extends InitsD2A {
 
             // remember invs is a fact, not a pred
             if (!this.isElectrum && this.dsl.containsVar(body, this.dsl.curVar())) {
-                decls = new ArrayList<AlloyDecl>();
+                decls = this.dsl.emptyDeclList();
                 decls.add(this.dsl.curDecl());
                 e = AlloyAllVars(decls, AlloyAndList(body));
-                body = new ArrayList<AlloyExpr>();
+                body = this.dsl.emptyExprList();
                 body.add(e);
             }
             this.addFact(D2AStrings.invFactName, body);

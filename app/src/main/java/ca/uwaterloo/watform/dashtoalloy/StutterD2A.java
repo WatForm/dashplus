@@ -17,7 +17,6 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class StutterD2A extends SingleEventInputD2A {
@@ -28,7 +27,7 @@ public class StutterD2A extends SingleEventInputD2A {
 
     public void addStutter() {
 
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
 
         // all the dsh defined parts of the snapshot stay the same
         if (this.dm.hasConcurrency()) body.add(this.noChange(D2AStrings.stableName));
@@ -80,7 +79,7 @@ public class StutterD2A extends SingleEventInputD2A {
         assert (this.isTcmc);
         AlloyExpr snapShotFirst = AlloyVar(D2AStrings.tcmcInitialStateName);
         List<AlloyExpr> body = this.dsl.emptyExprList();
-        List<AlloyDecl> decls = this.dsl.emptyDecls();
+        List<AlloyDecl> decls = this.dsl.emptyDeclList();
 
         List<AlloyExpr> bigOr = this.dsl.emptyExprList();
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
@@ -94,6 +93,6 @@ public class StutterD2A extends SingleEventInputD2A {
         decls.add(this.dsl.curDecl());
         body.add(AlloyAllVars(decls, AlloyOrList(bigOr)));
 
-        this.addPred(D2AStrings.strongNoStutterName, this.dsl.emptyDecls(), body);
+        this.addPred(D2AStrings.strongNoStutterName, this.dsl.emptyDeclList(), body);
     }
 }

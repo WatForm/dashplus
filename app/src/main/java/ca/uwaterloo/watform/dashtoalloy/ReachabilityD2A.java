@@ -16,7 +16,6 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyReflTransClosExpr;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReachabilityD2A extends ElectrumFactD2A {
@@ -39,8 +38,8 @@ public class ReachabilityD2A extends ElectrumFactD2A {
                                                 new AlloyReflTransClosExpr(
                                                         AlloyVar(D2AStrings.tcmcSigmaName))))));
 
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
         body.add(b);
-        this.addPred(D2AStrings.reachabilityName, this.dsl.emptyDecls(), body);
+        this.addPred(D2AStrings.reachabilityName, this.dsl.emptyDeclList(), body);
     }
 }

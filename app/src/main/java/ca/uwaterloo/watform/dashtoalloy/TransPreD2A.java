@@ -9,7 +9,6 @@ import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransPreD2A extends InvsD2A {
@@ -42,7 +41,7 @@ public class TransPreD2A extends InvsD2A {
 
     public void addTransPre(String tfqn) {
         List<DashParam> params = this.dm.transParams(tfqn);
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
         String tout = DashFQN.translateFQN(tfqn);
 
         if (!this.dm.hasOnlyOneState())
@@ -94,7 +93,7 @@ public class TransPreD2A extends InvsD2A {
 
         // not a higher priority transition enabled
         List<String> priTrans = this.dm.higherPriTrans(tfqn);
-        List<AlloyExpr> args = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> args = this.dsl.emptyExprList();
         for (String t : priTrans) {
             // src must directly above this trans in the hierarchy
             // so its parameters must be a subset of the current parameters

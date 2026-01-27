@@ -9,7 +9,6 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class InitsD2A extends SnapshotSigD2A {
@@ -25,7 +24,7 @@ public class InitsD2A extends SnapshotSigD2A {
     public void addInit() {
 
         List<DashParam> prs = this.dm.allParams();
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
 
         if (!this.dm.hasOnlyOneState()) {
             // forall i. confi = default entries
@@ -76,7 +75,7 @@ public class InitsD2A extends SnapshotSigD2A {
             if (!prs.isEmpty()) {
                 // all param1. all param3. ... body
                 // but all the parameters are not used in init
-                decls = new ArrayList<AlloyDecl>();
+                decls = this.dsl.emptyDeclList();
                 e = AlloyAndList(body);
                 for (int i = 0; i < prs.size(); i++) {
                     if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
@@ -85,7 +84,7 @@ public class InitsD2A extends SnapshotSigD2A {
                 }
                 if (!decls.isEmpty()) {
                     e = AlloyAllVars(decls, e);
-                    body = new ArrayList<AlloyExpr>();
+                    body = this.dsl.emptyExprList();
                     body.add(e);
                 }
             }
@@ -94,8 +93,7 @@ public class InitsD2A extends SnapshotSigD2A {
 
         // init is a reserved word in Electrum
         if (this.isElectrum) {
-            List<AlloyDecl> emptyDecls = new ArrayList<AlloyDecl>();
-            this.addPred(D2AStrings.initPredName, emptyDecls, body);
+            this.addPred(D2AStrings.initPredName, this.dsl.emptyDeclList(), body);
         } else {
             // snapshot will always be needed as a parameter
             // because it is used in conf (every model has at least one state)

@@ -61,7 +61,6 @@ import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashast.dashref.TransDashRef;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +74,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
     public void addTransPost(String tfqn) {
         String tout = DashFQN.translateFQN(tfqn);
         List<DashParam> prs = this.dm.transParams(tfqn);
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
 
         if (!this.dm.hasOnlyOneState()) {
             // forall i. confi' = confi - exitedi + enteredi
@@ -156,8 +155,8 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
 
         // constraints on sister elements
         for (String x : sistersDontChange) {
-            decls = new ArrayList<AlloyDecl>();
-            args = new ArrayList<AlloyExpr>();
+            decls = this.dsl.emptyDeclList();
+            args = this.dsl.emptyExprList();
             List<DashParam> params = this.dm.varParams(x);
             // buffer params?
             for (DashParam p : params) {
@@ -184,8 +183,8 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // constraint on untouched vars
         // need to add params
         for (String x : intVarsBuffersThatDontChange) {
-            decls = new ArrayList<AlloyDecl>();
-            args = new ArrayList<AlloyExpr>();
+            decls = this.dsl.emptyDeclList();
+            args = this.dsl.emptyExprList();
             for (DashParam p : this.dm.varParams(x)) {
                 decls.add(p.asAlloyDecl());
                 args.add(p.asAlloyVar());
@@ -218,7 +217,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // case 1
         // forall i. eventsi' :> InternalEvents = t1_send (if i)
         //           eventsi' :> InternalEvents = none (if not i)
-        List<AlloyExpr> case1 = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> case1 = this.dsl.emptyExprList();
         AlloyExpr c1;
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (this.dm.hasIntEventsAti(i)) {
@@ -236,7 +235,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // case 2
         // forall i. eventsi' :> InternalEvents = t1_send_ev (if i) + eventsi
         //           eventsi' :> InternalEvents = eventsi (if not i)
-        List<AlloyExpr> case2 = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> case2 = this.dsl.emptyExprList();
         AlloyExpr c2;
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (this.dm.hasIntEventsAti(i)) {
@@ -255,7 +254,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
 
         AlloyExpr stableTrueAndScopesUsedEmpty;
         if (this.dm.hasConcurrency()) {
-            List<AlloyExpr> scopesUsedEmpty = new ArrayList<AlloyExpr>();
+            List<AlloyExpr> scopesUsedEmpty = this.dsl.emptyExprList();
 
             for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
                 scopesUsedEmpty.add(AlloyEqual(this.dsl.nextScopesUsed(i), this.dsl.noneArrow(i)));
@@ -270,7 +269,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // forall i: (eventsi' :> InternalEvent = t1_send_ev (if i))
         //           (eventsi' :> InternalEvent = none) (if not i)
         //       and (eventsi' :> EnvironmentalEvent = eventsi :> EnvironmentalEvent)
-        List<AlloyExpr> case3 = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> case3 = this.dsl.emptyExprList();
         AlloyExpr c3;
         List<DashRef> sU = this.dm.scopesUsed(tfqn);
         List<AlloyExpr> u;
@@ -313,7 +312,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
 
         // case 4
         // intermediate small step
-        List<AlloyExpr> case4 = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> case4 = this.dsl.emptyExprList();
         AlloyExpr e;
 
         // forall i .
@@ -392,7 +391,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
     // pred call: testIfNextStable[s,s',scope1, scope2, ... , send1, send2, ...]
     // where scopei, evi is "none" if this transition's scope and send event
     private AlloyExpr testIfNextStableCall(String tfqn) {
-        List<AlloyExpr> args = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> args = this.dsl.emptyExprList();
         if (!this.isElectrum) {
             args.add(this.dsl.curVar());
             args.add(this.dsl.nextVar());

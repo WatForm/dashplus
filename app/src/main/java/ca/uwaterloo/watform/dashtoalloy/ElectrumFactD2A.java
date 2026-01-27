@@ -13,7 +13,6 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyAlwaysExpr;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ElectrumFactD2A extends TcmcFactD2A {
@@ -25,7 +24,7 @@ public class ElectrumFactD2A extends TcmcFactD2A {
     public void addElectrumFact() {
 
         assert (this.isElectrum);
-        List<AlloyExpr> body = new ArrayList<AlloyExpr>();
+        List<AlloyExpr> body = this.dsl.emptyExprList();
 
         body.add(AlloyVar(D2AStrings.initFactName));
         body.add(new AlloyAlwaysExpr(AlloyVar(D2AStrings.smallStepName)));
