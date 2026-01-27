@@ -96,12 +96,12 @@ public class Main implements Callable<Integer> {
 
                     if (fileName.endsWith(".als")) {
                         AlloyModel alloyModel = parseToModel(absolutePath);
-                        if (cliConf.cmdIdx >= 1) {
+                        if (cliConf.cmdIdx >= cliConf.firstCmdIdx) {
                             Solution solution = executeCommand(alloyModel, cliConf.cmdIdx);
                             System.out.println(solution.toString());
                         } else if (cliConf.cmdIdx == -1) {
-                            for (int i = 1;
-                                    i <= alloyModel.getParas(AlloyCmdPara.class).size();
+                            for (int i = cliConf.firstCmdIdx;
+                                    i < alloyModel.getParas(AlloyCmdPara.class).size();
                                     i++) {
                                 Solution solution = executeCommand(alloyModel, i);
                                 System.out.println(solution.toString());

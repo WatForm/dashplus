@@ -35,6 +35,8 @@ public class CliConf {
             description = "Index of the command to execute (Default: execute all).")
     public int cmdIdx;
 
+    public final int firstCmdIdx = 0;
+
     @Option(
             names = {"-noCmd"},
             description = "Check satisfiability without commands")
