@@ -38,26 +38,26 @@ import picocli.CommandLine.Mixin;
             "@|bold,underline USAGE MODES|@",
             "",
             // 1) Alloy Files
-            "  @|bold 1) dashplus f.als < -cmd | -cmd=n > < -v > < -d > |@",
+            "  @|bold 1) dashplus f.als < -cmd | -cmd=n > < -v > < -d > < -vis > |@",
             "     (execute cmd on alloy file)",
             "     @|italic DEFAULT:|@ dashplus f.als means dashplus f.als -cmd (execute all cmds)",
             "",
             // 2) Dash -> Alloy
             "  @|bold 2) dashplus f.dsh -alloy=< traces | tcmc | electrum >|@",
-            "              @|bold < -cmd | -cmd=n | -write | -noCmd > < -s > < -v > < -d >|@",
+            "              @|bold < -cmd | -cmd=n | -write | -noCmd > < -s > < -v > < -d > < -vis > |@",
             "     (parse/translate to alloy/execute cmd(s) or write .als file in same dir)",
             "     @|italic DEFAULT:|@ dashplus f.dsh means dashplus f.dsh -alloy traces -write",
             "",
             // 3) Dash -> TLA
-            "  @|bold 3) dashplus f.dsh -tla < -s > < -v > < -d > < -p >|@",
+            "  @|bold 3) dashplus f.dsh -tla < -s > < -v > < -d > < -p > < -vis > |@",
             "     (parse/translate to tla/outputs .tla file in same dir as input file)",
             "",
             // 4) Predicate Abstraction
-            "  @|bold 4) dashplus f.dsh -predAbs < -cmd | -cmd=n > < -s > < -v > < -d >|@",
+            "  @|bold 4) dashplus f.dsh -predAbs < -cmd | -cmd=n > < -s > < -v > < -d > < -vis > |@",
             "     (parse/pred abstraction)",
             "",
             // 5) XML Instance Check
-            "  @|bold 5) dashplus f.dsh -xml=instance.xml < -s > < -v > < -d >|@",
+            "  @|bold 5) dashplus f.dsh -xml=instance.xml < -s > < -v > < -d > < -vis > |@",
             "     (parse/translate to Alloy/check if instance is instance of translated Alloy)",
             "",
             // General Flags

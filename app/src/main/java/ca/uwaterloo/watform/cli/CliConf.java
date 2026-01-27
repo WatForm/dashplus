@@ -77,4 +77,9 @@ public class CliConf {
             description =
                     "translate to Alloy & check if instance is " + "instance of translated Alloy")
     public boolean xml = false;
+
+    @Option(
+            names = {"-vis"},
+            description = "use visualization tool")
+    public boolean vis = false;
 }
