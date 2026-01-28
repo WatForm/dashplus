@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.List;
 
 public class DashToTla {
     public static TlaModel translate(
@@ -20,7 +19,7 @@ public class DashToTla {
         StdLibDefns.translate(dashModel, tlaModel);
         if (debug) System.out.println("translated libraries");
 
-        List<String> vars = StandardVars.translate(dashModel, tlaModel);
+        StandardVars.translate(dashModel, tlaModel);
         if (debug) System.out.println("translated variables");
 
         tlaModel.addComment(

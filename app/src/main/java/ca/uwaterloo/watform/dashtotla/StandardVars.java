@@ -12,7 +12,7 @@ class StandardVars {
 
     // this class adds standard variables that are part of every translation
 
-    public static List<String> translate(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         // this is subject to optimizations, and should remain its own function
 
@@ -35,7 +35,5 @@ class StandardVars {
 
         // VARIABLES _conf, _trans_taken, _scopes_used, _stable
         vars.forEach(v -> tlaModel.addVar(TlaVar(v)));
-
-        return vars;
     }
 }
