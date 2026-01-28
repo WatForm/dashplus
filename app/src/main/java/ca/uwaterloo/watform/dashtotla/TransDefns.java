@@ -60,18 +60,26 @@ public class TransDefns {
                 });
     }
 
-    public static List<TlaVar> enabledParams(List<String> vars) {
-
-        // list of parameters for enabledTransition formulae
-        List<String> parameters = filterBy(Arrays.asList(SCOPES_USED, EVENTS), vars::contains);
-        return mapBy(parameters, v -> TlaVar(paramVar(v)));
+    private static List<String> varNames(DashModel dashModel) {
+        // names of variables that are parameterized
+        List<String> names = new ArrayList<>();
+        if (dashModel.hasConcurrency()) names.add(SCOPES_USED);
+        if (dashModel.hasEvents()) names.add(EVENTS);
+        return names;
     }
 
-    public static List<TlaVar> enabledArgs(List<String> vars) {
+    public static List<TlaVar> enabledParams(DashModel dashModel) {
+
+        // list of parameters for enabledTransition formulae
+
+        return mapBy(varNames(dashModel), v -> TlaVar(paramVar(v)));
+    }
+
+    public static List<TlaVar> enabledArgs(DashModel dashModel) {
 
         // list of arguments for enabledTransition formulae, using the current variables
-        List<String> parameters = filterBy(Arrays.asList(SCOPES_USED, EVENTS), vars::contains);
-        return mapBy(parameters, v -> TlaVar(v));
+
+        return mapBy(varNames(dashModel), v -> TlaVar(v));
     }
 
     public static void NextIsStableDefn(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
@@ -79,12 +87,16 @@ public class TransDefns {
         List<TlaExp> notEnabledTrans =
                 mapBy(
                         AuxDashAccessors.getTransitionNames(dashModel),
-                        tFQN -> TlaNot(TlaAppl(enabledTransTlaFQN(tFQN), enabledParams(vars))));
+                        tFQN ->
+                                TlaNot(
+                                        TlaAppl(
+                                                enabledTransTlaFQN(tFQN),
+                                                enabledParams(dashModel))));
 
         tlaModel.addDefn(
                 // _next_is_stable(args) = /\ (~ enabled_after_step_ti(args) ...)
                 TlaDefn(
-                        TlaDecl(NEXT_IS_STABLE, enabledParams(vars)),
+                        TlaDecl(NEXT_IS_STABLE, enabledParams(dashModel)),
                         repeatedAnd(notEnabledTrans)));
     }
 
@@ -211,7 +223,7 @@ public class TransDefns {
 
             exps.add(
                     new TlaIfThenElse(
-                            TlaDecl(NEXT_IS_STABLE, enabledArgs(vars)),
+                            TlaDecl(NEXT_IS_STABLE, enabledArgs(dashModel)),
                             repeatedAnd(nextStableExps),
                             repeatedAnd(nextUnstableExps)));
 
@@ -288,7 +300,7 @@ public class TransDefns {
 
         tlaModel.addDefn(
                 TlaDefn(
-                        TlaDecl(enabledTransTlaFQN(transFQN), enabledParams(vars)),
+                        TlaDecl(enabledTransTlaFQN(transFQN), enabledParams(dashModel)),
                         repeatedAnd(exps)));
     }
 
