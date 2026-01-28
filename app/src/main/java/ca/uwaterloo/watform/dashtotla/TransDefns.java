@@ -12,38 +12,29 @@ import java.util.*;
 
 public class TransDefns {
     public static void translate(
-            List<String> vars,
-            DashModel dashModel,
-            TlaModel tlaModel,
-            boolean verbose,
-            boolean debug) {
+            DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
 
         List<String> transFQNs = AuxDashAccessors.getTransitionNames(dashModel);
 
-        if (vars.contains(TRANS_TAKEN)) {
+        transFQNs.forEach(
+                transFQN ->
+                        tlaModel.addDefn(
+                                // taken_<trans-name> == "<transFQN>"
+                                TlaDefn(takenTransTlaFQN(transFQN), TlaStringLiteral(transFQN))));
 
-            transFQNs.forEach(
-                    transFQN ->
-                            tlaModel.addDefn(
-                                    // taken_<trans-name> == "<transFQN>"
-                                    TlaDefn(
-                                            takenTransTlaFQN(transFQN),
-                                            TlaStringLiteral(transFQN))));
+        tlaModel.addDefn(
+                // _none_transition == "[none]"
+                TlaDefn(NONE_TRANSITION, NONE_TRANSITION_LITERAL()));
 
-            tlaModel.addDefn(
-                    // _none_transition == "[none]"
-                    TlaDefn(NONE_TRANSITION, NONE_TRANSITION_LITERAL()));
-        }
-
-        if (vars.contains(STABLE)) {
+        if (!dashModel.hasOnlyOneState()) {
 
             tlaModel.addComment(
                     "parameterized formulae to check if transitions are enabled", verbose);
             // _enabled_<transFQN> == <body>
-            transFQNs.forEach(x -> TransEnabledDefn(x, vars, dashModel, tlaModel));
+            transFQNs.forEach(x -> TransEnabledDefn(x, dashModel, tlaModel));
 
             tlaModel.addComment("negation of disjunction of enabled-formulae", verbose);
-            NextIsStableDefn(vars, dashModel, tlaModel);
+            NextIsStableDefn(dashModel, tlaModel);
         }
 
         if (debug) System.out.println("translated enabled definitions");
@@ -53,8 +44,8 @@ public class TransDefns {
                     // pre, post, and body
 
                     tlaModel.addComment("Translation of transition " + transFQN, verbose);
-                    PreTransDefn(transFQN, vars, dashModel, tlaModel);
-                    PostTransDefn(transFQN, vars, dashModel, tlaModel);
+                    PreTransDefn(transFQN, dashModel, tlaModel);
+                    PostTransDefn(transFQN, dashModel, tlaModel);
                     TransDefn(transFQN, tlaModel);
                     if (debug) System.out.println("translated transition " + transFQN);
                 });
@@ -82,7 +73,7 @@ public class TransDefns {
         return mapBy(varNames(dashModel), v -> TlaVar(v));
     }
 
-    public static void NextIsStableDefn(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void NextIsStableDefn(DashModel dashModel, TlaModel tlaModel) {
 
         List<TlaExp> notEnabledTrans =
                 mapBy(
@@ -100,19 +91,18 @@ public class TransDefns {
                         repeatedAnd(notEnabledTrans)));
     }
 
-    public static void PreTransDefn(
-            String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void PreTransDefn(String transFQN, DashModel dashModel, TlaModel tlaModel) {
 
         TlaAppl fromState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).name));
 
         List<TlaExp> exps = new ArrayList<>();
 
-        if (vars.contains(CONF))
+        if (!dashModel.hasOnlyOneState())
             exps.add(
                     // _conf \intersection <fromState> \= {}
                     CONF().INTERSECTION(fromState).NOT_EQUALS(NULL_SET()));
 
-        if (vars.contains(SCOPES_USED)) {
+        if (dashModel.hasConcurrency()) {
             // has a scope orthogonal to the scopes used
             List<TlaAppl> nonOrthogonalScopes =
                     mapBy(
@@ -126,7 +116,7 @@ public class TransDefns {
                                     scope.INTERSECTION(SCOPES_USED()).EQUALS(NULL_SET())));
         }
 
-        if (vars.contains(EVENTS)) {
+        if (dashModel.hasEvents()) {
             if (dashModel.onR(transFQN) != null) {
                 TlaAppl onEvent = TlaAppl(tlaFQN(dashModel.onR(transFQN).name));
 
@@ -137,7 +127,7 @@ public class TransDefns {
                 // THEN <on-event> \in  _events \intersect _all_env_events
                 // ELSE <on-event> \in _events
 
-                if (vars.contains(STABLE))
+                if (!dashModel.hasOnlyOneState())
                     exps.add(new TlaIfThenElse(STABLE(), stableCase, unstableCase));
                 else exps.add(stableCase);
             }
@@ -146,17 +136,15 @@ public class TransDefns {
         tlaModel.addDefn(TlaDefn(preTransTlaFQN(transFQN), repeatedAnd(exps)));
     }
 
-    public static void PostTransDefn(
-            String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void PostTransDefn(String transFQN, DashModel dashModel, TlaModel tlaModel) {
 
         List<TlaExp> exps = new ArrayList<>();
 
-        if (vars.contains(TRANS_TAKEN))
-            exps.add(
-                    // _trans_taken' = <taken-trans-formula>
-                    TRANS_TAKEN().PRIME().EQUALS(TlaAppl(takenTransTlaFQN(transFQN))));
+        exps.add(
+                // _trans_taken' = <taken-trans-formula>
+                TRANS_TAKEN().PRIME().EQUALS(TlaAppl(takenTransTlaFQN(transFQN))));
 
-        if (vars.contains(CONF)) {
+        if (!dashModel.hasOnlyOneState()) {
             List<TlaAppl> entered =
                     mapBy(dashModel.entered(transFQN), s -> TlaAppl(tlaFQN(s.name)));
             List<TlaAppl> exited = mapBy(dashModel.exited(transFQN), s -> TlaAppl(tlaFQN(s.name)));
@@ -172,14 +160,14 @@ public class TransDefns {
         if (dashModel.onR(transFQN) != null)
             sentEvents = TlaSet(TlaAppl((tlaFQN(dashModel.onR(transFQN).name))));
 
-        if (vars.contains(STABLE)) {
+        if (!dashModel.hasOnlyOneState()) {
 
             List<TlaExp> nextStableExps = new ArrayList<>();
             nextStableExps.add(STABLE().PRIME().EQUALS(TlaTrue()));
-            if (vars.contains(SCOPES_USED))
+            if (dashModel.hasConcurrency())
                 nextStableExps.add(SCOPES_USED().PRIME().EQUALS(NULL_SET()));
 
-            if (vars.contains(EVENTS)) {
+            if (dashModel.hasEvents()) {
                 TlaExp stableCase =
                         EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents);
                 TlaExp unstableCase =
@@ -195,7 +183,7 @@ public class TransDefns {
 
             List<TlaExp> stableExps = new ArrayList<>();
             List<TlaExp> unstableExps = new ArrayList<>();
-            if (vars.contains(SCOPES_USED)) {
+            if (dashModel.hasConcurrency()) {
                 TlaExp scopesUsed =
                         repeatedUnion(
                                 mapBy(
@@ -206,7 +194,7 @@ public class TransDefns {
 
                 unstableExps.add(SCOPES_USED().PRIME().EQUALS(SCOPES_USED().UNION(scopesUsed)));
             }
-            if (vars.contains(EVENTS)) {
+            if (dashModel.hasEvents()) {
                 stableExps.add(EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents));
 
                 stableExps.add(
@@ -230,9 +218,9 @@ public class TransDefns {
         } else {
 
             // every snapshot is stable
-            if (vars.contains(SCOPES_USED)) exps.add(TlaUnchanged(SCOPES_USED()));
+            if (dashModel.hasConcurrency()) exps.add(TlaUnchanged(SCOPES_USED()));
 
-            if (vars.contains(EVENTS))
+            if (dashModel.hasEvents())
                 exps.add(EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents));
         }
 
@@ -241,12 +229,11 @@ public class TransDefns {
         // TODO add stuff
     }
 
-    public static void TransEnabledDefn(
-            String transFQN, List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void TransEnabledDefn(String transFQN, DashModel dashModel, TlaModel tlaModel) {
 
         List<TlaExp> exps = new ArrayList<>();
 
-        if (vars.contains(CONF)) {
+        if (!dashModel.hasOnlyOneState()) {
             TlaAppl sourceState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).name));
             exps.add(sourceState.INTERSECTION(CONF().PRIME()).NOT_EQUALS(NULL_SET()));
         }
@@ -254,7 +241,7 @@ public class TransDefns {
         List<TlaExp> stableExps = new ArrayList<>();
         List<TlaExp> unstableExps = new ArrayList<>();
 
-        if (vars.contains(SCOPES_USED)) {
+        if (dashModel.hasConcurrency()) {
             List<TlaAppl> nonOrthogonalScopes =
                     mapBy(
                             dashModel.nonOrthogonalScopesOf(transFQN),
@@ -275,7 +262,7 @@ public class TransDefns {
                                             .EQUALS(NULL_SET())));
         }
 
-        if (vars.contains(EVENTS) && dashModel.onR(transFQN) != null) {
+        if (dashModel.hasEvents() && dashModel.onR(transFQN) != null) {
 
             TlaExp sentEvents = TlaSet(TlaAppl((tlaFQN(dashModel.onR(transFQN).name))));
 
@@ -292,7 +279,7 @@ public class TransDefns {
                             .NOT_EQUALS(NULL_SET()));
         }
 
-        if (vars.contains(STABLE))
+        if (!dashModel.hasOnlyOneState())
             exps.add(
                     new TlaIfThenElse(
                             STABLE(), repeatedAnd(stableExps), repeatedAnd(unstableExps)));

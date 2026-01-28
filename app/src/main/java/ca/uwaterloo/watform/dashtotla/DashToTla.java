@@ -42,7 +42,7 @@ public class DashToTla {
                         + TRANS_TAKEN
                         + " variable",
                 verbose);
-        TransDefns.translate(vars, dashModel, tlaModel, verbose, debug);
+        TransDefns.translate(dashModel, tlaModel, verbose, debug);
         if (debug) System.out.println("translated transitions");
 
         tlaModel.addComment("Small step definition", verbose);
