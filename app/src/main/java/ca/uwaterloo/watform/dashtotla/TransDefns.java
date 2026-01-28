@@ -11,7 +11,12 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.*;
 
 public class TransDefns {
-    public static void translate(List<String> vars, DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(
+            List<String> vars,
+            DashModel dashModel,
+            TlaModel tlaModel,
+            boolean verbose,
+            boolean debug) {
 
         List<String> transFQNs = AuxDashAccessors.getTransitionNames(dashModel);
 
@@ -32,25 +37,26 @@ public class TransDefns {
 
         if (vars.contains(STABLE)) {
 
-            tlaModel.addComment("parameterized formulae to check if transitions are enabled");
+            tlaModel.addComment(
+                    "parameterized formulae to check if transitions are enabled", verbose);
             // _enabled_<transFQN> == <body>
             transFQNs.forEach(x -> TransEnabledDefn(x, vars, dashModel, tlaModel));
 
-            tlaModel.addComment("negation of disjunction of enabled-formulae");
+            tlaModel.addComment("negation of disjunction of enabled-formulae", verbose);
             NextIsStableDefn(vars, dashModel, tlaModel);
         }
 
-        System.out.println("translated enabled definitions");
+        if (debug) System.out.println("translated enabled definitions");
 
         transFQNs.forEach(
                 transFQN -> {
                     // pre, post, and body
 
-                    tlaModel.addComment("Translation of transition " + transFQN);
+                    tlaModel.addComment("Translation of transition " + transFQN, verbose);
                     PreTransDefn(transFQN, vars, dashModel, tlaModel);
                     PostTransDefn(transFQN, vars, dashModel, tlaModel);
                     TransDefn(transFQN, tlaModel);
-                    System.out.println("translated transition " + transFQN);
+                    if (debug) System.out.println("translated transition " + transFQN);
                 });
     }
 

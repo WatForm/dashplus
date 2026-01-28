@@ -42,7 +42,7 @@ public class Main {
 
             System.out.println("TRANSLATION DEBUG:");
 
-            TlaModel model = DashToTla.translate(dm, moduleName, true, true, true);
+            TlaModel model = DashToTla.translate(dm, moduleName, true, true, false);
 
             System.out.println("translation complete");
 
