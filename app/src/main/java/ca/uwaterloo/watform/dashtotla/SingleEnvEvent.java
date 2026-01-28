@@ -14,17 +14,17 @@ public class SingleEnvEvent {
 
     public static void translate(DashModel dashModel, TlaModel tlaModel, boolean singleEnvInput) {
 
-        if (!singleEnvInput || !dashModel.hasEvents()) return;
+        if (!singleEnvInput) return;
 
         // add a formula:
         // _single_environmental_event == \A x \in S : \A y \in S : x = y
         // where S = _events \intersect _environmental_events
         // this formula is added only if relevant
 
-        tlaModel.addDefn(
-                TlaDefn(
-                        SINGLE_ENV_INPUT,
-                        TlaForAll(x(), S(), TlaForAll(y(), S(), x().EQUALS(y())))));
+        TlaExp body = TlaTrue();
+        if (dashModel.hasEvents()) body = TlaForAll(x(), S(), TlaForAll(y(), S(), x().EQUALS(y())));
+
+        tlaModel.addDefn(TlaDefn(SINGLE_ENV_INPUT, body));
     }
 
     private static TlaVar x() {

@@ -9,6 +9,8 @@ import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
+import ca.uwaterloo.watform.dashtotla.*;
+import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.*;
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +51,7 @@ import picocli.CommandLine.Mixin;
             "     @|italic DEFAULT:|@ dashplus f.dsh means dashplus f.dsh -alloy traces -write",
             "",
             // 3) Dash -> TLA
-            "  @|bold 3) dashplus f.dsh -tla < -s > < -v > < -d > < -p > < -vis > |@",
+            "  @|bold 3) dashplus f.dsh -tla < -s > < -v > < -d > |@",
             "     (parse/translate to tla/outputs .tla file in same dir as input file)",
             "",
             // 4) Predicate Abstraction
@@ -139,7 +141,45 @@ public class Main implements Callable<Integer> {
                     }
 
                 } else if (cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
-                    // TLA Mode
+                    if (fileName.endsWith(".dsh")) {
+
+                        try {
+
+                            DashModel dashModel = (DashModel) parseToModel(absolutePath);
+
+                            String onlyFileName = path.getFileName().toString();
+                            String moduleName =
+                                    onlyFileName.substring(0, onlyFileName.lastIndexOf("."));
+
+                            System.out.println(cliConf.single);
+
+                            TlaModel tlaModel =
+                                    DashToTla.translate(
+                                            dashModel,
+                                            moduleName,
+                                            cliConf.single,
+                                            cliConf.verbose,
+                                            cliConf.debug);
+
+                            Path tlaOutPath = path.getParent().resolve(moduleName + ".tla");
+                            Path cfgOutPath = path.getParent().resolve(moduleName + ".cfg");
+                            // write the .tla and .cfg file
+                            Files.writeString(tlaOutPath, tlaModel.moduleCode());
+                            Files.writeString(cfgOutPath, tlaModel.configCode());
+
+                            System.out.println(
+                                    "Output:\n"
+                                            + tlaOutPath.toString()
+                                            + "\n"
+                                            + cfgOutPath.toString());
+                        } catch (IOException e) {
+                            System.out.println("An error occurred: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        Reporter.INSTANCE.addError(invalidFile(fileName));
+                    }
 
                 } else if (!cliConf.tla && cliConf.predAbs && !cliConf.xml) {
                     // Pred Abs Mode

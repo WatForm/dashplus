@@ -50,7 +50,9 @@ public class DashToTla {
         tlaModel.addComment("type restrictions on variables", verbose);
         ValidDefns.translate(dashModel, tlaModel);
 
-        tlaModel.addComment("single environmental event assumption", verbose);
+        tlaModel.addComment(
+                "Single environmental event constraint, vacuously true if there are no events",
+                verbose && singleEnvInput);
         SingleEnvEvent.translate(dashModel, tlaModel, singleEnvInput);
 
         tlaModel.addComment("initial values for variables", verbose);
