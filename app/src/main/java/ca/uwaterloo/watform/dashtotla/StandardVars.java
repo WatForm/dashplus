@@ -6,14 +6,13 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 class StandardVars {
 
     // this class adds standard variables that are part of every translation
 
-    public static List<String> translate(DashModel dashModel, TlaModel tlaModel, boolean optimize) {
+    public static List<String> translate(DashModel dashModel, TlaModel tlaModel) {
 
         // this is subject to optimizations, and should remain its own function
 
@@ -25,15 +24,14 @@ class StandardVars {
         // _stable - boolean variable, true if the current snapshot is stable
 
         List<String> vars = new ArrayList<>();
-        if (optimize) {
-            vars.add(TRANS_TAKEN);
-            if (!dashModel.hasOnlyOneState()) vars.add(CONF);
-            if (dashModel.hasConcurrency()) {
-                vars.add(SCOPES_USED);
-                vars.add(STABLE);
-            }
-            if (dashModel.hasEvents()) vars.add(EVENTS);
-        } else vars = Arrays.asList(CONF, TRANS_TAKEN, SCOPES_USED, STABLE, EVENTS);
+
+        vars.add(TRANS_TAKEN);
+        if (!dashModel.hasOnlyOneState()) vars.add(CONF);
+        if (dashModel.hasConcurrency()) {
+            vars.add(SCOPES_USED);
+            vars.add(STABLE);
+        }
+        if (dashModel.hasEvents()) vars.add(EVENTS);
 
         // VARIABLES _conf, _trans_taken, _scopes_used, _stable
         vars.forEach(v -> tlaModel.addVar(TlaVar(v)));

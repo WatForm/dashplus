@@ -8,14 +8,19 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.List;
 
 public class DashToTla {
-    public static TlaModel translate(DashModel dashModel, String moduleName, boolean optimize) {
+    public static TlaModel translate(
+            DashModel dashModel,
+            String moduleName,
+            boolean singleEnvInput,
+            boolean verbose,
+            boolean debug) {
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
         StdLibDefns.translate(dashModel, tlaModel);
         System.out.println("translated libraries");
 
-        List<String> vars = StandardVars.translate(dashModel, tlaModel, optimize);
+        List<String> vars = StandardVars.translate(dashModel, tlaModel);
         System.out.println("translated variables");
 
         tlaModel.addComment(
