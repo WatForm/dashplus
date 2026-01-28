@@ -92,7 +92,8 @@ public class Main implements Callable<Integer> {
                     // or execute cmds of .als file
 
                     Reporter.INSTANCE.reset();
-                    Reporter.INSTANCE.setFilePath(absolutePath);
+                    Reporter.INSTANCE.popPath();
+                    Reporter.INSTANCE.pushPath(absolutePath);
 
                     if (fileName.endsWith(".als")) {
                         AlloyModel alloyModel = parseToModel(absolutePath);

@@ -93,7 +93,7 @@ public class Parser {
         if (null == file) {
             // This happens when
             // 1) Parser.parse found UserError
-            // 2) Reporter.INSTANCE.exitFunction has been swapped for test
+            // 2) Reporter.INSTANCE.exitFunction has been swapped for testing
             // We don't want to continue
             return null;
         }

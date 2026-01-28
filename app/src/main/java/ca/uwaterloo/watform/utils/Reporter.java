@@ -5,17 +5,24 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 public final class Reporter {
     public static final Reporter INSTANCE = new Reporter();
-    private Path filePath;
 
     private final List<DashPlusException> errors = new ArrayList<>();
     private final List<WarningUser> warnings = new ArrayList<>();
     private final List<CommentUser> comments = new ArrayList<>();
 
-    public void setFilePath(Path filePath) {
-        this.filePath = filePath;
+    private final Stack<Path> paths = new Stack<>();
+
+    public void pushPath(Path filePath) {
+        paths.push(filePath);
+    }
+
+    public void popPath() {
+        if (paths.empty()) return;
+        paths.pop();
     }
 
     public void addError(DashPlusException error) {
@@ -34,7 +41,6 @@ public final class Reporter {
         this.errors.clear();
         this.warnings.clear();
         this.comments.clear();
-        this.filePath = null;
     }
 
     public List<DashPlusException> getErrors() {
@@ -64,7 +70,7 @@ public final class Reporter {
     public void print() {
         if (!comments.isEmpty()) {
             for (CommentUser comment : comments) {
-                System.err.println(comment.toString(filePath));
+                System.err.println(comment.toString(paths.peek()));
                 if (CliConf.INSTANCE.debug) {
                     comment.printStackTrace();
                 }
@@ -73,7 +79,7 @@ public final class Reporter {
 
         if (!warnings.isEmpty()) {
             for (WarningUser warning : warnings) {
-                System.err.println(warning.toString(filePath));
+                System.err.println(warning.toString(paths.peek()));
                 if (CliConf.INSTANCE.debug) {
                     warning.printStackTrace();
                 }
@@ -82,7 +88,7 @@ public final class Reporter {
 
         if (!errors.isEmpty()) {
             for (DashPlusException error : errors) {
-                System.err.println(error.toString(filePath));
+                System.err.println(error.toString(paths.peek()));
                 if (CliConf.INSTANCE.debug) {
                     error.printStackTrace();
                 }
