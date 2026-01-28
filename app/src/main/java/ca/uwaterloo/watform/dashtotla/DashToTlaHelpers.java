@@ -95,6 +95,10 @@ public class DashToTlaHelpers {
         return TlaAppl(VALID_UNPRIMED);
     }
 
+    public static TlaAppl SINGLE_ENV_INPUT() {
+        return TlaAppl(SINGLE_ENV_INPUT);
+    }
+
     public static TlaAppl INTERNAL_EVENTS() {
         return TlaAppl(INTERNAL_EVENTS);
     }

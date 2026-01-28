@@ -12,16 +12,19 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class SingleEnvEvent {
 
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel, boolean singleEnvInput) {
+
+        if (!singleEnvInput || !dashModel.hasEvents()) return;
+
         // add a formula:
         // _single_environmental_event == \A x \in S : \A y \in S : x = y
         // where S = _events \intersect _environmental_events
-        // if events don't exist, then it's just TRUE
-        TlaExp body = TlaTrue();
+        // this formula is added only if relevant
 
-        if (dashModel.hasEvents()) body = TlaForAll(x(), S(), TlaForAll(y(), S(), x().EQUALS(y())));
-
-        tlaModel.addDefn(TlaDefn(SINGLE_ENV_INPUT, body));
+        tlaModel.addDefn(
+                TlaDefn(
+                        SINGLE_ENV_INPUT,
+                        TlaForAll(x(), S(), TlaForAll(y(), S(), x().EQUALS(y())))));
     }
 
     private static TlaVar x() {

@@ -50,14 +50,14 @@ public class DashToTla {
         tlaModel.addComment("type restrictions on variables", verbose);
         ValidDefns.translate(dashModel, tlaModel);
 
+        tlaModel.addComment("single environmental event assumption", verbose);
+        SingleEnvEvent.translate(dashModel, tlaModel, singleEnvInput);
+
         tlaModel.addComment("initial values for variables", verbose);
-        InitDefn.translate(dashModel, tlaModel);
+        InitDefn.translate(dashModel, tlaModel, singleEnvInput);
 
         tlaModel.addComment("Next relation", verbose);
-        NextDefn.translate(dashModel, tlaModel);
-
-        tlaModel.addComment("single environmental event assumption", verbose);
-        SingleEnvEvent.translate(dashModel, tlaModel);
+        NextDefn.translate(dashModel, tlaModel, singleEnvInput);
 
         return tlaModel;
     }

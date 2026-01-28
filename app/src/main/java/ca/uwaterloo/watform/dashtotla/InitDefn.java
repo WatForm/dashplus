@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InitDefn {
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+    public static void translate(DashModel dashModel, TlaModel tlaModel, boolean singleEnvInput) {
 
         List<TlaExp> exps = new ArrayList<>();
 
@@ -43,10 +43,12 @@ public class InitDefn {
                     SCOPES_USED().EQUALS(NULL_SET()));
         }
 
-        if (dashModel.hasEvents())
+        if (dashModel.hasEvents()) {
             exps.add(
                     // _events \intersect _internal_events = {}
                     EVENTS().INTERSECTION(INTERNAL_EVENTS()).EQUALS(NULL_SET()));
+            if (singleEnvInput) exps.add(SINGLE_ENV_INPUT());
+        }
 
         tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
     }
