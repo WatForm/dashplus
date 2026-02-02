@@ -375,4 +375,14 @@ public class DSL {
     public List<AlloyExpr> emptyExprList() {
         return new ArrayList<AlloyExpr>();
     }
+
+    public AlloyExpr RangeResLevel(AlloyExpr e1, AlloyExpr e2, Integer level) {
+        // e1 has arity = level
+        if (level == 0)
+            // e1 inter e2
+            return AlloyInter(e1, e2);
+        else
+            // e1 :> e2
+            return AlloyRangeRes(e1, e2);
+    }
 }

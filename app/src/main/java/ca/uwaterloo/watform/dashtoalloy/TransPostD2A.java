@@ -223,9 +223,14 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             if (this.dm.hasIntEventsAti(i)) {
                 if (ev != null && ev.paramValues.size() == i) rhs = ev.asAlloyArrow();
                 else rhs = this.dsl.noneArrow(i);
+
+                // sn.events0 inter IntEvents = rhs
+                // or
+                // sn.events0 :> IntEvents = rhs
                 case1.add(
                         AlloyEqual(
-                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allIntEventsVar()),
+                                this.dsl.RangeResLevel(
+                                        this.dsl.nextEvents(i), this.dsl.allIntEventsVar(), i),
                                 rhs));
             }
         }
@@ -233,20 +238,22 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         c1 = AlloyAndList(case1);
 
         // case 2
-        // forall i. eventsi' :> InternalEvents = t1_send_ev (if i) + eventsi
-        //           eventsi' :> InternalEvents = eventsi (if not i)
+        // forall i. eventsi' :> InternalEvents = t1_send_ev (if i) + eventsi :> IntEvents
+        //           eventsi' :> InternalEvents = eventsi :> IntEvents (if not i or no t1_send_ev)
         List<AlloyExpr> case2 = this.dsl.emptyExprList();
         AlloyExpr c2;
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (this.dm.hasIntEventsAti(i)) {
-                q = AlloyRangeRes(this.dsl.curEvents(i), this.dsl.allIntEventsVar());
+                // lhs: eventsi' :> InternalEvents
+                AlloyExpr lhs =
+                        this.dsl.RangeResLevel(
+                                this.dsl.nextEvents(i), this.dsl.allIntEventsVar(), i);
+                // part of rhs: eventsi :> IntEvents or events0 inter IntEvents
+                q = this.dsl.RangeResLevel(this.dsl.curEvents(i), this.dsl.allIntEventsVar(), i);
                 if (ev != null && ev.paramValues.size() == i)
                     rhs = AlloyUnion(q, ev.asAlloyArrow());
                 else rhs = q;
-                case2.add(
-                        AlloyEqual(
-                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allIntEventsVar()),
-                                rhs));
+                case2.add(AlloyEqual(lhs, rhs));
             }
         }
 
@@ -283,14 +290,17 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                 else rhs1 = this.dsl.noneArrow(i);
                 intEvExpr =
                         AlloyEqual(
-                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allIntEventsVar()),
+                                this.dsl.RangeResLevel(
+                                        this.dsl.nextEvents(i), this.dsl.allIntEventsVar(), i),
                                 rhs1);
             }
             if (this.dm.hasEnvEventsAti(i)) {
                 envEvExpr =
                         AlloyEqual(
-                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allEnvEventsVar()),
-                                AlloyRangeRes(this.dsl.curEvents(i), this.dsl.allEnvEventsVar()));
+                                this.dsl.RangeResLevel(
+                                        this.dsl.nextEvents(i), this.dsl.allEnvEventsVar(), i),
+                                this.dsl.RangeResLevel(
+                                        this.dsl.curEvents(i), this.dsl.allEnvEventsVar(), i));
             }
             if (this.dm.hasIntEventsAti(i)) {
                 if (this.dm.hasEnvEventsAti(i)) case3.add(AlloyAnd(intEvExpr, envEvExpr));
@@ -451,7 +461,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
 
         Boolean ret = false;
         for (int i = 0; i < genericPValues.size(); i++) {
-            if (!syntacticEqual(genericPValues.get(i), actualPValues.get(i))) ret = ret || true;
+            if (!genericPValues.get(i).equals(actualPValues.get(i))) ret = ret || true;
         }
         return ret;
     }

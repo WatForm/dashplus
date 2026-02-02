@@ -81,7 +81,8 @@ public class TransPreD2A extends InvsD2A {
                 ifBranch =
                         AlloyIn(
                                 ev.asAlloyArrow(),
-                                AlloyRangeRes(this.dsl.curEvents(sz), this.dsl.allEnvEventsVar()));
+                                this.dsl.RangeResLevel(
+                                        this.dsl.curEvents(sz), this.dsl.allEnvEventsVar(), sz));
             }
             AlloyExpr elseBranch = AlloyIn(ev.asAlloyArrow(), this.dsl.curEvents(sz));
             body.add(AlloyIte(this.dsl.curStableTrue(), ifBranch, elseBranch));

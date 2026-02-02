@@ -17,19 +17,6 @@ public class AlloyExprFactory {
 
     private static Boolean optimizationsOn = true;
 
-    // simple equality: two var names are equal -----------------------
-    // for optimizations
-    public static boolean syntacticEqual(AlloyExpr e1, AlloyExpr e2) {
-        return (
-        // pointer equality
-        (e1 == e2)
-                ||
-                // both vars of the same name
-                (isVar(e1)
-                        && isVar(e2)
-                        && (((AlloyVarExpr) e1).label.equals(((AlloyVarExpr) e2).label))));
-    }
-
     public static AlloyExpr AlloyArrow(AlloyExpr left, AlloyExpr right) {
         return new AlloyArrowExpr(left, right);
     }
@@ -131,7 +118,7 @@ public class AlloyExprFactory {
     }
 
     public static AlloyExpr AlloyEqual(AlloyExpr left, AlloyExpr right) {
-        if (optimizationsOn && syntacticEqual(left, right)) return AlloyTrueCond();
+        if (optimizationsOn && left.equals(right)) return AlloyTrueCond();
         else return new AlloyEqualsExpr(left, right);
     }
 

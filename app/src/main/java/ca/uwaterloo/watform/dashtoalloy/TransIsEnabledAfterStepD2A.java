@@ -124,16 +124,20 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
         DashRef ev = this.dm.onR(tfqn);
         AlloyExpr ev1, ev2;
         if (ev != null) {
-            // ev1: t1_on  in (s.eventsi :> EnvEvents) + genEventsi
+            Integer level = ev.paramValues.size();
             if (this.dm.hasEnvEvents()) {
+                // ev1: t1_on  in (s.events0 inter EnvEvents) + genEvents0
+                // or
+                // ev1: t1_on  in (s.eventsi :> EnvEvents) + genEventsi
                 ev1 =
                         AlloyIn(
                                 ev.asAlloyArrow(),
                                 AlloyUnion(
-                                        AlloyRangeRes(
-                                                this.dsl.curEvents(ev.paramValues.size()),
-                                                this.dsl.allEnvEventsVar()),
-                                        this.dsl.genEventVar(ev.paramValues.size())));
+                                        this.dsl.RangeResLevel(
+                                                this.dsl.curEvents(level),
+                                                this.dsl.allEnvEventsVar(),
+                                                level),
+                                        this.dsl.genEventVar(level)));
             } else {
                 // no env events so just
                 // ev1: t1_on  in genEventsi

@@ -37,23 +37,14 @@ public class SingleEventInputD2A extends EnoughOpsD2A {
                     e = AlloyTrueCond();
                     for (int j = 0; j <= this.dm.maxDepthParams(); j++) {
                         if (this.dm.hasEventsAti(j) & this.dm.hasEnvEvents()) {
-                            if (i == j) {
-                                e =
-                                        AlloyAnd(
-                                                e,
-                                                AlloyLone(
-                                                        AlloyRangeRes(
-                                                                this.dsl.curEvents(i),
-                                                                this.dsl.allEnvEventsVar())));
-                            } else {
-                                e =
-                                        AlloyAnd(
-                                                e,
-                                                AlloyNo(
-                                                        AlloyRangeRes(
-                                                                this.dsl.curEvents(i),
-                                                                this.dsl.allEnvEventsVar())));
-                            }
+                            e =
+                                    AlloyAnd(
+                                            e,
+                                            AlloyLone(
+                                                    this.dsl.RangeResLevel(
+                                                            this.dsl.curEvents(i),
+                                                            this.dsl.allEnvEventsVar(),
+                                                            i)));
                         }
                     }
                     b = AlloyOr(b, e);

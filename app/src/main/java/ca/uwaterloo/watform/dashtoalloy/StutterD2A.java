@@ -42,10 +42,15 @@ public class StutterD2A extends SingleEventInputD2A {
             if (this.dm.hasEvents() && this.dm.hasIntEventsAti(i))
                 // internal events go away
                 // external events can be added
-                body.add(
-                        AlloyEqual(
-                                AlloyRangeRes(this.dsl.nextEvents(i), this.dsl.allIntEventsVar()),
-                                this.dsl.noneArrow(i)));
+                if (i == 0)
+                    // sn.events0 inter IntEvents = none
+                    // or
+                    // sn.events1 :> IntEvents = none -> none
+                    body.add(
+                            AlloyEqual(
+                                    this.dsl.RangeResLevel(
+                                            this.dsl.nextEvents(i), this.dsl.allIntEventsVar(), i),
+                                    this.dsl.noneArrow(i)));
         }
 
         // internal vars

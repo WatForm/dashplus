@@ -55,9 +55,13 @@ public class InitsD2A extends SnapshotSigD2A {
             // no limits on initial set of events except that they must be environmental
             // s.events1 :> internalEvents = none -> none
             if (this.dm.hasIntEventsAti(i))
+                // s.events0 inter IntEvents = none
+                // or
+                // s.event1 :> IntEvents = none -> none
                 body.add(
                         AlloyEqual(
-                                AlloyRangeRes(this.dsl.curEvents(i), this.dsl.allIntEventsVar()),
+                                this.dsl.RangeResLevel(
+                                        this.dsl.curEvents(i), this.dsl.allIntEventsVar(), i),
                                 this.dsl.noneArrow(i)));
         }
 
