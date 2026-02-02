@@ -68,11 +68,11 @@ public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
 
     public void addAllSnapshotsDiffPred() {
         List<AlloyDecl> nodecls = this.dsl.emptyDeclList();
-        this.addPred(D2AStrings.allSnapshotsDiffName, nodecls, addAllSnapshotsDiffBody());
+        this.am.addPred(D2AStrings.allSnapshotsDiffName, nodecls, addAllSnapshotsDiffBody());
     }
 
     public void addAllSnapshotsDiffFact() {
         List<AlloyDecl> nodecls = this.dsl.emptyDeclList();
-        this.addFact(D2AStrings.allSnapshotsDiffName, addAllSnapshotsDiffBody());
+        this.am.addFact(D2AStrings.allSnapshotsDiffName, addAllSnapshotsDiffBody());
     }
 }

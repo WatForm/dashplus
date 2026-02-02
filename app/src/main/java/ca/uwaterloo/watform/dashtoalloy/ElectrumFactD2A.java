@@ -28,6 +28,6 @@ public class ElectrumFactD2A extends TcmcFactD2A {
 
         body.add(AlloyVar(D2AStrings.initFactName));
         body.add(new AlloyAlwaysExpr(AlloyVar(D2AStrings.smallStepName)));
-        this.addFact(D2AStrings.initFactName, body);
+        this.am.addFact(D2AStrings.initFactName, body);
     }
 }

@@ -29,7 +29,7 @@ public class DSL {
     DashModel dm; // input
     boolean isElectrum = false;
 
-    protected DSL(DashModel dm, boolean isElectrum) {
+    public DSL(DashModel dm, boolean isElectrum) {
         this.dm = dm;
         this.isElectrum = isElectrum;
     }

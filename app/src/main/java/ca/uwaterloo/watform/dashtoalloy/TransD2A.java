@@ -40,6 +40,6 @@ public class TransD2A extends TransPostD2A {
             // p2.p1.p0.s'.s.post_transName
             body.add(AlloyPredCall(tout + D2AStrings.postName, this.dsl.curNextParamVars(prs)));
         }
-        this.addPred(tout, this.dsl.curNextParamsDecls(prs), body);
+        this.am.addPred(tout, this.dsl.curNextParamsDecls(prs), body);
     }
 }

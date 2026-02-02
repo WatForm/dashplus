@@ -62,7 +62,7 @@ public class SingleEventInputD2A extends EnoughOpsD2A {
             List<AlloyExpr> body = this.dsl.emptyExprList();
             if (this.isElectrum) body.add(b);
             else body.add(AlloyAllVars(this.dsl.curDecls(), b));
-            this.addPred(D2AStrings.singleEventName, this.dsl.emptyDeclList(), body);
+            this.am.addPred(D2AStrings.singleEventName, this.dsl.emptyDeclList(), body);
         }
     }
 }

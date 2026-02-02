@@ -155,6 +155,6 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
             body.add(AlloyIte(this.dsl.curStableTrue(), AlloyAnd(o1, ev1), AlloyAnd(o2, ev2)));
         else body.add(AlloyAnd(o1, ev1));
 
-        this.addPred(tout + D2AStrings.enabledAfterStepName, decls, body);
+        this.am.addPred(tout + D2AStrings.enabledAfterStepName, decls, body);
     }
 }

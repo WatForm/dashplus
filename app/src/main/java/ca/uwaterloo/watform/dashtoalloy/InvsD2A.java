@@ -63,7 +63,7 @@ public class InvsD2A extends InitsD2A {
                 body = this.dsl.emptyExprList();
                 body.add(e);
             }
-            this.addFact(D2AStrings.invFactName, body);
+            this.am.addFact(D2AStrings.invFactName, body);
         }
     }
 }

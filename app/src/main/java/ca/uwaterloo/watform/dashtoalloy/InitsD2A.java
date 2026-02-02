@@ -93,11 +93,11 @@ public class InitsD2A extends SnapshotSigD2A {
 
         // init is a reserved word in Electrum
         if (this.isElectrum) {
-            this.addPred(D2AStrings.initPredName, this.dsl.emptyDeclList(), body);
+            this.am.addPred(D2AStrings.initPredName, this.dsl.emptyDeclList(), body);
         } else {
             // snapshot will always be needed as a parameter
             // because it is used in conf (every model has at least one state)
-            this.addPred(D2AStrings.initPredName, this.dsl.curDecls(), body);
+            this.am.addPred(D2AStrings.initPredName, this.dsl.curDecls(), body);
         }
     }
 }

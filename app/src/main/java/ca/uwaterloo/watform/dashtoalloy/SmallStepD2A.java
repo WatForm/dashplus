@@ -72,6 +72,6 @@ public class SmallStepD2A extends TransD2A {
 
         e = this.dsl.emptyExprList();
         e.add(AlloyOr(transIsTaken, transIsNotEnabled));
-        this.addPred(D2AStrings.smallStepName, this.dsl.curNextDecls(), e);
+        this.am.addPred(D2AStrings.smallStepName, this.dsl.curNextDecls(), e);
     }
 }

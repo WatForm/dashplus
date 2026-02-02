@@ -42,7 +42,7 @@ public class CompleteBigStepsD2A extends ReachabilityD2A {
 
             List<AlloyExpr> body = this.dsl.emptyExprList();
             body.add(b);
-            this.addFact(D2AStrings.completeBigStepsName, body);
+            this.am.addFact(D2AStrings.completeBigStepsName, body);
         }
     }
 }

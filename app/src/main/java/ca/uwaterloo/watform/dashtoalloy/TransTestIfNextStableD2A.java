@@ -60,6 +60,6 @@ public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
             String tout = DashFQN.translateFQN(tfqn);
             body.add(AlloyNot(AlloyPredCall(tout + D2AStrings.enabledAfterStepName, args)));
         }
-        this.addPred(D2AStrings.testIfNextStableName, decls, body);
+        this.am.addPred(D2AStrings.testIfNextStableName, decls, body);
     }
 }

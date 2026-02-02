@@ -102,6 +102,6 @@ public class TransPreD2A extends InvsD2A {
             body.add(AlloyNot(AlloyPredCall(DashFQN.translateFQN(t) + D2AStrings.preName, args)));
         }
 
-        this.addPred(tout + D2AStrings.preName, this.dsl.curParamsDecls(params), body);
+        this.am.addPred(tout + D2AStrings.preName, this.dsl.curParamsDecls(params), body);
     }
 }

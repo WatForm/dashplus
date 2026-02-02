@@ -4,6 +4,11 @@ import static ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.*;
+import ca.uwaterloo.watform.alloyast.expr.binary.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.unary.*;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
@@ -151,5 +156,71 @@ public class AlloyModel {
             return (AlloyModelTable<T>) commands;
         }
         throw ImplementationError.missingCase("AlloyModel.patternMatch");
+    }
+
+    // adding: sig "n" {}
+    public void addSig(String n) {
+        this.addPara(new AlloySigPara(n));
+    }
+
+    // adding: abstract sig "n" {}
+    public void addAbstractSig(String n) {
+        this.addPara(
+                new AlloySigPara(
+                        List.of(AlloySigPara.Qual.ABSTRACT),
+                        List.of(new AlloyQnameExpr(n)),
+                        null,
+                        Collections.emptyList(),
+                        null));
+    }
+
+    // adding: abstract sig "child" extends "parent" {}
+    public void addAbstractExtendsSig(String child, String parent) {
+        this.addPara(
+                new AlloySigPara(
+                        List.of(AlloySigPara.Qual.ABSTRACT),
+                        List.of(new AlloyQnameExpr(child)),
+                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
+                        Collections.emptyList(),
+                        null));
+    }
+
+    // adding: one sig child extends parent {}
+    public void addOneExtendsSig(String child, String parent) {
+        this.addPara(
+                new AlloySigPara(
+                        List.of(AlloySigPara.Qual.ONE),
+                        List.of(new AlloyQnameExpr(child)),
+                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
+                        Collections.emptyList(),
+                        null));
+    }
+
+    // adding: sig child extends parent {}
+    public void addExtendsSig(String child, String parent) {
+        this.addPara(
+                new AlloySigPara(
+                        Collections.emptyList(),
+                        List.of(new AlloyQnameExpr(child)),
+                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
+                        Collections.emptyList(),
+                        null));
+    }
+
+    public void addPred(String name, List<AlloyDecl> decls, List<AlloyExpr> eList) {
+        this.addPara(new AlloyPredPara(new AlloyQnameExpr(name), decls, new AlloyBlock(eList)));
+    }
+
+    public void addFact(String name, List<AlloyExpr> eList) {
+        this.addPara(new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(eList)));
+    }
+
+    public void addImport(List<String> names, String sigName, String asName) {
+        this.addPara(
+                new AlloyImportPara(
+                        false,
+                        new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
+                        List.of(new AlloyQnameExpr(sigName)),
+                        new AlloyQnameExpr(asName)));
     }
 }

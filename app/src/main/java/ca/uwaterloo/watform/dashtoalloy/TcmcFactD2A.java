@@ -33,7 +33,7 @@ public class TcmcFactD2A extends TracesFactD2A {
         assert (this.isTcmc);
 
         // open util/tcmc[Snapshot] as snapshot
-        this.addImport(
+        this.am.addImport(
                 List.of(D2AStrings.utilName, D2AStrings.tcmcName),
                 D2AStrings.snapshotName,
                 D2AStrings.snapshotName);
@@ -63,6 +63,6 @@ public class TcmcFactD2A extends TracesFactD2A {
                                         AlloyVar(D2AStrings.tcmcSigmaName)),
                                 AlloyPredCall(D2AStrings.smallStepName, this.dsl.curNextVars()))));
 
-        this.addFact(D2AStrings.tcmcFactName, body);
+        this.am.addFact(D2AStrings.tcmcFactName, body);
     }
 }

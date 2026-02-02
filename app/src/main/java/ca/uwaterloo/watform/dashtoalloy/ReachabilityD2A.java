@@ -40,6 +40,6 @@ public class ReachabilityD2A extends ElectrumFactD2A {
 
         List<AlloyExpr> body = this.dsl.emptyExprList();
         body.add(b);
-        this.addPred(D2AStrings.reachabilityName, this.dsl.emptyDeclList(), body);
+        this.am.addPred(D2AStrings.reachabilityName, this.dsl.emptyDeclList(), body);
     }
 }

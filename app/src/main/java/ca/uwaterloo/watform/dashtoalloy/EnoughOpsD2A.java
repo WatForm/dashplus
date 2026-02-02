@@ -52,6 +52,6 @@ public class EnoughOpsD2A extends AllSnapshotsDiffD2A {
             }
         }
         List<AlloyDecl> nodecls = this.dsl.emptyDeclList();
-        this.addPred(D2AStrings.enoughOpsName, nodecls, body);
+        this.am.addPred(D2AStrings.enoughOpsName, nodecls, body);
     }
 }

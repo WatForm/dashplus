@@ -48,7 +48,7 @@ public class TracesFactD2A extends SmallStepD2A {
         assert (this.isTraces);
 
         // open util/traces[Snapshot] as Snapshot
-        this.addImport(
+        this.am.addImport(
                 List.of(D2AStrings.utilName, D2AStrings.tracesName),
                 D2AStrings.snapshotName,
                 D2AStrings.snapshotName);
@@ -87,7 +87,7 @@ public class TracesFactD2A extends SmallStepD2A {
                         AlloyAllVars(decls1, AlloyPredCall(D2AStrings.smallStepName, args)),
                         AlloyAllVars(decls2, AlloyPredCall(D2AStrings.smallStepName, args))));
 
-        this.addFact(D2AStrings.tracesFactName, body);
+        this.am.addFact(D2AStrings.tracesFactName, body);
     }
 
     public void addStrongNoStutterPred() {
@@ -111,6 +111,6 @@ public class TracesFactD2A extends SmallStepD2A {
         body.add(AlloyAllVars(decls, ex));
 
         List<AlloyDecl> emptyDeclList = this.dsl.emptyDeclList();
-        this.addPred(D2AStrings.strongNoStutterName, emptyDeclList, body);
+        this.am.addPred(D2AStrings.strongNoStutterName, emptyDeclList, body);
     }
 }

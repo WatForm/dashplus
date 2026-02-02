@@ -369,7 +369,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                                     stableFalseAndEnvNoChange,
                                     AlloyIte(this.dsl.curStableTrue(), c3, c4))));
 
-        this.addPred(tout + D2AStrings.postName, this.dsl.curNextParamsDecls(prs), body);
+        this.am.addPred(tout + D2AStrings.postName, this.dsl.curNextParamsDecls(prs), body);
     }
 
     public AlloyExpr AlloyVarDoesNotChange(String x) {

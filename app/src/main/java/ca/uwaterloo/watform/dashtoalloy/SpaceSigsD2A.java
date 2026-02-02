@@ -9,7 +9,7 @@ import java.util.List;
 
 // import ca.uwaterloo.watform.dashast.D2AStrings;
 
-public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
+public class SpaceSigsD2A extends BaseD2A {
 
     protected SpaceSigsD2A(DashModel dm, TranslateOutput opt) {
         super(dm, opt);
@@ -54,15 +54,15 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
 
         if (!this.dm.hasOnlyOneState()) {
             // abstract sig Statelabel {}
-            this.addAbstractSig(D2AStrings.stateLabelName);
+            this.am.addAbstractSig(D2AStrings.stateLabelName);
             // abstract sig Root extends StateLabel {}
-            this.addAbstractExtendsSig(this.dm.rootName(), D2AStrings.stateLabelName);
+            this.am.addAbstractExtendsSig(this.dm.rootName(), D2AStrings.stateLabelName);
         }
         if (this.dm.hasConcurrency()) {
             // abstract sig Scopes {}
-            this.addAbstractSig(D2AStrings.scopeLabelName);
+            this.am.addAbstractSig(D2AStrings.scopeLabelName);
             // one sig Root extends Scopes {}
-            this.addOneExtendsSig(
+            this.am.addOneExtendsSig(
                     this.dm.rootName() + D2AStrings.scopeSuffix, D2AStrings.scopeLabelName);
         }
         recurseCreateStateSpaceSigs(this.dm.rootName());
@@ -76,18 +76,18 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
             // and one sigs for scopesUsed
             if (this.dm.hasConcurrency() && this.dm.isAnd(child))
                 // one sig childScope extends Scopes {}
-                this.addOneExtendsSig(
+                this.am.addOneExtendsSig(
                         DashFQN.translateFQN(child) + D2AStrings.scopeSuffix,
                         D2AStrings.scopeLabelName);
             // for conf
             if (!this.dm.hasOnlyOneState()) {
                 if (this.dm.isLeaf(child))
                     // one child extends parent {}
-                    this.addOneExtendsSig(
+                    this.am.addOneExtendsSig(
                             DashFQN.translateFQN(child), DashFQN.translateFQN(parent));
                 else {
                     // abstract child extends parent {}
-                    this.addAbstractExtendsSig(
+                    this.am.addAbstractExtendsSig(
                             DashFQN.translateFQN(child), DashFQN.translateFQN(parent));
                 }
             }
@@ -97,11 +97,11 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
 
     private void addTransSpaceSigs() {
         // abstract sig TransLabel {}
-        this.addAbstractSig(D2AStrings.transLabelName);
+        this.am.addAbstractSig(D2AStrings.transLabelName);
         // add all transitions as one sig extensions of TransLabel
         for (String t : this.dm.allTransNames()) {
             // one sig tfqn extends TransLabel {}
-            this.addOneExtendsSig(DashFQN.translateFQN(t), D2AStrings.transLabelName);
+            this.am.addOneExtendsSig(DashFQN.translateFQN(t), D2AStrings.transLabelName);
         }
     }
 
@@ -109,10 +109,10 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
         if (!this.isElectrum && this.dm.maxDepthParams() != 0) {
             // if this model has parametrized components
             // abstract sig Identifiers {}
-            this.addAbstractSig(D2AStrings.identifierName);
+            this.am.addAbstractSig(D2AStrings.identifierName);
             for (String s : mapBy(this.dm.allParams(), i -> i.paramSig))
                 // sig param extends Identifiers {}
-                this.addExtendsSig(s, D2AStrings.identifierName);
+                this.am.addExtendsSig(s, D2AStrings.identifierName);
             // the alternative would be for conf1, etc to be fields in
             // sig Identifiers, but the creation of conf1, etc is in
             // SnapshotSignatures
@@ -122,21 +122,23 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
     private void addEventSpaceSigs() {
         if (this.dm.hasEvents()) {
             // abstract sig Events {}
-            this.addAbstractSig(D2AStrings.allEventsName);
+            this.am.addAbstractSig(D2AStrings.allEventsName);
             if (this.dm.hasIntEvents()) {
                 // abstract sig IntEvents extends Events {}
-                this.addAbstractExtendsSig(D2AStrings.allIntEventsName, D2AStrings.allEventsName);
+                this.am.addAbstractExtendsSig(
+                        D2AStrings.allIntEventsName, D2AStrings.allEventsName);
                 for (String e : this.dm.allIntEvents()) {
                     // sig e extends IntEvents {}
-                    this.addOneExtendsSig(DashFQN.translateFQN(e), D2AStrings.allIntEventsName);
+                    this.am.addOneExtendsSig(DashFQN.translateFQN(e), D2AStrings.allIntEventsName);
                 }
             }
             if (this.dm.hasEnvEvents()) {
                 // abstract sig EnvEvents extends Events {}
-                this.addAbstractExtendsSig(D2AStrings.allEnvEventsName, D2AStrings.allEventsName);
+                this.am.addAbstractExtendsSig(
+                        D2AStrings.allEnvEventsName, D2AStrings.allEventsName);
                 for (String e : this.dm.allEnvEvents()) {
                     // sig e extends EnvEvents {}
-                    this.addOneExtendsSig(DashFQN.translateFQN(e), D2AStrings.allEnvEventsName);
+                    this.am.addOneExtendsSig(DashFQN.translateFQN(e), D2AStrings.allEnvEventsName);
                 }
             }
         }
@@ -162,10 +164,10 @@ public class SpaceSigsD2A extends AlloyModelInterfaceD2A {
                         // because buffer is declared under param
                         // o/w declared with buffer index in Snapshot stuff
                         // sig BufIdx0 {}
-                        this.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
+                        this.am.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
                 } else
                     // sig BufIndex5 {}
-                    this.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
+                    this.am.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
             }
         }
     }

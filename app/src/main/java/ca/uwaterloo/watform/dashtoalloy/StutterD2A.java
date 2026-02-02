@@ -56,7 +56,7 @@ public class StutterD2A extends SingleEventInputD2A {
         // buffers are all internal
         for (String bfqn : this.dm.allBufferNames()) body.add(this.noChange(bfqn));
 
-        this.addPred(D2AStrings.stutterName, this.dsl.curNextDecls(), body);
+        this.am.addPred(D2AStrings.stutterName, this.dsl.curNextDecls(), body);
     }
 
     private AlloyExpr noChange(String n) {
@@ -93,6 +93,6 @@ public class StutterD2A extends SingleEventInputD2A {
         decls.add(this.dsl.curDecl());
         body.add(AlloyAllVars(decls, AlloyOrList(bigOr)));
 
-        this.addPred(D2AStrings.strongNoStutterName, this.dsl.emptyDeclList(), body);
+        this.am.addPred(D2AStrings.strongNoStutterName, this.dsl.emptyDeclList(), body);
     }
 }
