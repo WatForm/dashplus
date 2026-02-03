@@ -46,4 +46,30 @@ public class AlloyInterface {
     public static Solution executeCommand(AlloyModel am) {
         return AlloyInterface.executeCommand(am, 0);
     }
+
+    /*
+        write up to maxInstances of satisfying solutions of
+        AlloyModel am (run {} cmd) to files called
+        instanceFileName1, instanceFilename2, etc.
+        Returns how many solutions are written (0 if unsat)
+    */
+    public Integer writeInstancesToXML(
+            String instanceFileName, // should not include .xml at end
+            AlloyModel am,
+            Integer cmdNum,
+            Integer maxInstances) {
+
+        assert (cmdNum >= 0);
+        assert (!instanceFileName.contains(".xml"));
+        // at this point we don't know if it is satisfiable
+        Solution soln = this.executeCommand(am, 0);
+        int c;
+        for (c = 0; c < maxInstances; c++) {
+            if (!(soln.isSat() && c <= maxInstances)) break;
+            int j = c + 1;
+            soln.writeXML(instanceFileName + String.valueOf(j) + ".xml");
+            soln.next();
+        }
+        return c;
+    }
 }

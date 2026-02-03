@@ -40,6 +40,11 @@ public final class Solution {
         populateMap();
     }
 
+    public boolean isSat() {
+        return this.a4Solution.satisfiable();
+    }
+
+    // if neither of the above are true then it is unknown
     public boolean contains(String name) {
         return this.map.containsKey(name);
     }
