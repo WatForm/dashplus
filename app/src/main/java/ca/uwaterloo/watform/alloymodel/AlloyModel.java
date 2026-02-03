@@ -1,3 +1,17 @@
+/*
+    AlloyModel has paragraphs from an AlloyFile
+    and "additional paragraphs"
+
+    Printing is done by printing the original AlloyFile
+    and then adding the additional paragraphs to a
+    new AlloyFile and printing it.
+
+    TODO: we probably need to make AlloyModel just print
+    its own paragraphs directly with no difference between
+    original and additional ones.
+
+*/
+
 package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.*;
@@ -34,6 +48,9 @@ public class AlloyModel {
     private final AlloyModelTable<AlloyAssertPara> asserts;
     private final AlloyModelTable<AlloyCmdPara> commands;
 
+    // added NAD 2026-02-03
+    private final List<AlloyPara> allParas;
+
     private final List<AlloyPara> additionalParas;
 
     public AlloyModel() {
@@ -58,6 +75,10 @@ public class AlloyModel {
         this.asserts = other.asserts.copy();
         this.commands = other.commands.copy();
         this.additionalParas = new ArrayList<>(other.additionalParas);
+
+        // added NAD 2026-02-03
+        // shallow copy of list
+        this.allParas = new ArrayList<>(other.allParas);
     }
 
     public AlloyModel copy() {
@@ -76,8 +97,33 @@ public class AlloyModel {
         this.preds = new AlloyModelTable<>(alloyFile, AlloyPredPara.class);
         this.asserts = new AlloyModelTable<>(alloyFile, AlloyAssertPara.class);
         this.commands = new AlloyModelTable<>(alloyFile, AlloyCmdPara.class);
-
         this.additionalParas = new ArrayList<>();
+
+        // added NAD 2026-02-03
+        // this may result in printing in a different order than input
+        this.allParas = new ArrayList<>();
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyModulePara.class));
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyImportPara.class));
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyEnumPara.class));
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloySigPara.class));
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyMacroPara.class));
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyFactPara.class));
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyFunPara.class));
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyPredPara.class));
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyAssertPara.class));
+        // put the run_cmd right at the beginning of the command
+        // this is always the 0th command
+        /// used to check model for satisfiability
+        // run {}
+        AlloyCmdPara run_cmd =
+                new AlloyCmdPara(
+                        new AlloyCmdPara.CommandDecl(
+                                AlloyCmdPara.CommandDecl.CmdType.RUN,
+                                new AlloyBlock(), // empty AlloyBlock
+                                null // provide no scopes -- will use default scopes
+                                ));
+        this.allParas.add(run_cmd);
+        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyCmdPara.class));
     }
 
     /**
@@ -93,6 +139,9 @@ public class AlloyModel {
         @SuppressWarnings("unchecked")
         AlloyModelTable<AlloyPara> castedTable = (AlloyModelTable<AlloyPara>) table;
         castedTable.addPara(alloyPara, this.additionalParas);
+
+        // added NAD 2026-02-03
+        this.allParas.add(alloyPara);
     }
 
     public boolean containsId(String name) {
@@ -125,9 +174,12 @@ public class AlloyModel {
     public String toString() {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw);
-        this.alloyFile.ppNewBlock(pCtx);
+        // NAD commented out 2026-02-03: this.alloyFile.ppNewBlock(pCtx);
         // create a new AlloyFile, so I can reuse AlloyFile.toString
-        AlloyFile newAlloyFile = new AlloyFile(this.additionalParas);
+        // NAD commented out 2026-02-03:  AlloyFile newAlloyFile = new
+        // AlloyFile(this.additionalParas);
+        // NAD added 2026-02-03
+        AlloyFile newAlloyFile = new AlloyFile(this.allParas);
         newAlloyFile.ppNewBlock(pCtx);
         return sw.toString();
     }
