@@ -46,6 +46,8 @@ public class DashRef extends AlloyExpr {
     public final String name;
     public final List<? extends AlloyExpr> paramValues;
 
+    // private final boolean isNext;
+
     // for internal uses during translation
     public DashRef(DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
         this(Pos.UNKNOWN, k, n, prmValues);
@@ -58,6 +60,7 @@ public class DashRef extends AlloyExpr {
         this.kind = k;
         this.name = n;
         this.paramValues = Collections.unmodifiableList(prmValues);
+        // this.isNext = isNext;
     }
 
     public DashRef(
@@ -78,6 +81,7 @@ public class DashRef extends AlloyExpr {
     }
 
     public AlloyExpr asAlloyArrow() {
+        // this would depend on s or sn ...
         List<AlloyExpr> ll = new ArrayList<AlloyExpr>(this.paramValues);
         Collections.reverse(ll);
         ll.add(AlloyVar(translateFQN(this.name)));
@@ -86,6 +90,7 @@ public class DashRef extends AlloyExpr {
 
     @Override
     public void pp(PrintContext pCtx) {
+        // pp within Dash state (not in AlloyModel, where it should not exist)
         // STATE: Root/A/B[a1,b1]
         // other: Root/A/B[a1,b1]/var1
         String s = "";

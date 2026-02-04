@@ -22,7 +22,6 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.*;
-import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.exprvisitor.ContainsVarExprVis;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -332,13 +331,6 @@ public class DSL {
     }
 
     // -----------------------------------------------
-
-    public AlloyExpr DashRefToArrow(DashRef e) {
-        List<AlloyExpr> ll = new ArrayList<AlloyExpr>(e.paramValues);
-        Collections.reverse(ll);
-        ll.add(AlloyVar(DashFQN.translateFQN(e.name)));
-        return AlloyArrowExprList(ll);
-    }
 
     // none -> none -> none
     public AlloyExpr noneArrow(int i) {

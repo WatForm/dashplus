@@ -39,7 +39,7 @@ public class InitsD2A extends SnapshotSigD2A {
                 List<AlloyExpr> ent =
                         mapBy(
                                 filterBy(entered, x -> x.hasNumParams(numParams)),
-                                y -> this.dsl.DashRefToArrow(y));
+                                y -> y.asAlloyArrow());
                 if (!ent.isEmpty()) body.add(AlloyEqual(this.dsl.curConf(i), AlloyUnionList(ent)));
                 else body.add(AlloyEqual(this.dsl.curConf(i), AlloyNone()));
             }
