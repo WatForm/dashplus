@@ -49,6 +49,14 @@ public class AlloyInterface {
         return AlloyInterface.executeCommand(alloyCode, cmdnum);
     }
 
+    public static Solution executeModelSatisfiability(AlloyModel am) {
+        // translate to Alloy without any commands ("false" arg to toString below)
+        // and ask it to execute cmd 0
+        // in converting Alloy to Kodkod, it will add a run {}
+        String alloyCode = am.toString(false);
+        return AlloyInterface.executeCommand(alloyCode, 0);
+    }
+
     // returns a String
     public static String executeCommandToString(AlloyModel am, int cmdnum) {
         Solution soln = executeCommand(am, cmdnum);
@@ -84,7 +92,7 @@ public class AlloyInterface {
         assert (cmdNum >= 0);
         assert (!instanceFileName.contains(".xml"));
         // at this point we don't know if it is satisfiable
-        Solution soln = executeCommand(am, 0);
+        Solution soln = executeModelSatisfiability(am);
         int c;
         for (c = 0; c < maxInstances; c++) {
             if (!(soln.isSat() && c <= maxInstances)) break;

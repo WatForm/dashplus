@@ -180,6 +180,10 @@ public class AlloyModel {
 
     @Override
     public String toString() {
+        return this.toString(true);
+    }
+
+    public String toString(boolean withCmds) {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw);
 
@@ -200,7 +204,7 @@ public class AlloyModel {
         allParas.addAll(this.preds.getAllParas());
         allParas.addAll(this.facts.getAllParas());
         allParas.addAll(this.asserts.getAllParas());
-        allParas.addAll(this.commands.getAllParas());
+        if (withCmds) allParas.addAll(this.commands.getAllParas());
 
         AlloyFile newAlloyFile = new AlloyFile(allParas);
         newAlloyFile.ppNewBlock(pCtx);
