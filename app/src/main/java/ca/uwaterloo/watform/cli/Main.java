@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtotla.*;
+import ca.uwaterloo.watform.predabstraction.PredicateAbstraction;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.*;
 import java.io.File;
@@ -188,6 +189,22 @@ public class Main implements Callable<Integer> {
 
                 } else if (!cliConf.tla && cliConf.predAbs && !cliConf.xml) {
                     // Pred Abs Mode
+                    if (fileName.endsWith(".dsh")) {
+                        try {
+                            DashModel dm = (DashModel) parseToModel(absolutePath);
+                            PredicateAbstraction pa;
+                            if (cliConf.noCmd) {
+                                pa = new PredicateAbstraction(dm);
+                            } else {
+                                pa = new PredicateAbstraction(dm, cliConf.cmdIdx);
+                            }
+                            DashModel absModel = pa.createAbstractModel();
+                            System.out.println("Abstract model created.");
+                        } catch (Exception e) {
+                            System.out.println("An error occurred: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
 
                 } else if (!cliConf.tla && !cliConf.predAbs && cliConf.xml) {
                     // XML Mode

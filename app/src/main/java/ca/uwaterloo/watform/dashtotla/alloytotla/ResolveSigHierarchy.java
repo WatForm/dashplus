@@ -1,5 +1,3 @@
 package ca.uwaterloo.watform.dashtotla.alloytotla;
 
-public class ResolveSigHierarchy {
-	
-}
+public class ResolveSigHierarchy {}

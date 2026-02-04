@@ -5,7 +5,7 @@
     A few of these expressions depend on whether
     we are translating to Electrum or not, thus
     a bit of state is needed.
-    
+
 */
 
 package ca.uwaterloo.watform.dashtoalloy;
@@ -23,7 +23,6 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.dashmodel.DashFQN;
-import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.exprvisitor.ContainsVarExprVis;
 import java.util.ArrayList;
 import java.util.Collections;

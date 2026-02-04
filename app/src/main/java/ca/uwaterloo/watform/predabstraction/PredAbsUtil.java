@@ -58,7 +58,7 @@ public class PredAbsUtil {
             return cached;
         } else {
             String pname = "query_" + Integer.toString(cache.size());
-            DSL dsl = new DSL(dm, false);
+            DSL dsl = new DSL(false);
             if (snReqd) {
                 am.addPred(pname, dsl.curNextDecls(), GeneralUtil.setToList(exprs));
             } else {

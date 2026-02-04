@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.predabstraction;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory;
+// import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
@@ -22,8 +23,8 @@ public class PredicateAbstraction {
     public int cmdnum;
     public String abvNamePre = "B";
     public String cafDepPredPre = "caf_dep_";
-    protected AlloyModel concModelTrunc;
-    protected AlloyModel origModelD2A;
+    protected AlloyModel concModelTrunc; // queryModel
+    protected AlloyModel origModelD2A; // not reqd, should not be used
     protected ExprTranslatorVis exprTranslator;
     protected DSL dsl;
 
@@ -34,14 +35,14 @@ public class PredicateAbstraction {
     public PredicateAbstraction(DashModel concreteModel) {
         this.origModel = concreteModel;
         this.exprTranslator = new ExprTranslatorVis(concreteModel);
-        this.dsl = new DSL(concreteModel, false);
+        this.dsl = new DSL(false);
         this.cmdnum = 0;
     }
 
     public PredicateAbstraction(DashModel concreteModel, int n) {
         this.origModel = concreteModel;
         this.exprTranslator = new ExprTranslatorVis(concreteModel);
-        this.dsl = new DSL(concreteModel, false);
+        this.dsl = new DSL(false);
         this.cmdnum = n;
     }
 
@@ -105,9 +106,15 @@ public class PredicateAbstraction {
         }
     }
 
-    public AlloyExpr abstractAlloyExpr(AlloyExpr expr) {
+    public AlloyExpr abstractAlloyExpr(AlloyExpr expr) { // createAbsAlloyExpr
         // Used to abstract inits, invs, and guards (AlloyExprs in the model that do not have primed
         // vars)
+        /*
+            pred query_i [s: __Snapshot] {
+                expr
+                caf_i / ! caf_i
+            }
+        */
         List<AlloyExpr> exprABVs = new ArrayList<>();
         Set<AlloyExpr> cmdBody = new HashSet<AlloyExpr>();
         cmdBody.add(expr);
@@ -115,8 +122,10 @@ public class PredicateAbstraction {
             AlloyExpr caf = ABVNameExprMap.get(vname);
             String vfqn = DashFQN.fqn(origModel.rootName, vname);
             AlloyExpr v = new DashRef(DashStrings.DashRefKind.VAR, vfqn, GeneralUtil.emptyList());
+            // DashRef.asAlloyVar ??;; new VarDashRef -- subclass of DashRef
             cmdBody.add(caf);
-            if (!PredAbsUtil.checkSAT(cmdBody, origModelD2A, origModel, false)) {
+            if (!PredAbsUtil.checkSAT(
+                    cmdBody, origModelD2A, origModel, false)) { // queryModel, no need for origmodel
                 exprABVs.add(dsl.AlloyIsFalse(v));
             } else {
                 cmdBody.remove(caf);
@@ -187,27 +196,27 @@ public class PredicateAbstraction {
         absModel = new DashModel();
         absModel.cloneStateTableOf(origModel);
         absModel.cloneEventTableOf(origModel);
-        addCAFDepInvs();
 
         for (String vname : ABVNameExprMap.keySet()) {
             String vfqn = DashFQN.fqn(origModel.rootName, vname);
             if (envABVs.contains(vname)) {
-                origModel.addVar(
+                absModel.addVar(
                         vfqn,
                         DashStrings.IntEnvKind.ENV,
                         GeneralUtil.emptyList(),
                         AlloyExprFactory.AlloyVar(AlloyStrings.boolName));
             } else {
-                origModel.addVar(
+                absModel.addVar(
                         vfqn,
                         DashStrings.IntEnvKind.INT,
                         GeneralUtil.emptyList(),
                         AlloyExprFactory.AlloyVar(AlloyStrings.boolName));
             }
         }
+        addCAFDepInvs();
 
         // full Alloy translation of origModel reqd for abstracting guards, actions, inits, and invs
-        origModelD2A = d2a.translate();
+        // origModelD2A = d2a.translate();
 
         for (AlloyExpr init : origModel.initsR()) {
             absModel.addInit(abstractAlloyExpr(init));
