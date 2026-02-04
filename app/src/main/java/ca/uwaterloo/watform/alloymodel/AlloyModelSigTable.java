@@ -51,10 +51,10 @@ public final class AlloyModelSigTable extends AlloyModelTable<AlloySigPara> {
     }
 
     @Override
-    public void addPara(AlloySigPara sig, List<AlloyPara> additionalParas) {
+    public void addPara(AlloySigPara sig) {
         List<AlloySigPara> expandedSigs = sig.expand();
         if (expandedSigs.size() > 1) {
-            this.addParas(expandedSigs, additionalParas);
+            this.addParas(expandedSigs);
             return;
         }
         sig = expandedSigs.getFirst();
@@ -76,7 +76,7 @@ public final class AlloyModelSigTable extends AlloyModelTable<AlloySigPara> {
             throw AlloyModelError.duplicateName(sig.pos, fields.get(sig.getId().name).pos);
         }
 
-        super.addPara(sig, additionalParas);
+        super.addPara(sig);
 
         // add these fields
         addFields(sig);

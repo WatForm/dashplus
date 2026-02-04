@@ -49,16 +49,8 @@ public class AlloyModel {
     private final AlloyModelTable<AlloyAssertPara> asserts;
     private final AlloyModelTable<AlloyCmdPara> commands;
 
-    // is this still needed?
-    private final List<AlloyPara> additionalParas;
-
     public AlloyModel() {
         this(new AlloyFile(Collections.emptyList()));
-    }
-
-    public AlloyModel(boolean addModelSatCmd) {
-        this(new AlloyFile(Collections.emptyList()));
-        if (addModelSatCmd) this.addModelSatCmd();
     }
 
     private AlloyModel(AlloyModel other) {
@@ -78,8 +70,6 @@ public class AlloyModel {
         this.preds = other.preds.copy();
         this.asserts = other.asserts.copy();
         this.commands = other.commands.copy();
-
-        this.additionalParas = new ArrayList<>(other.additionalParas);
     }
 
     public AlloyModel copy() {
@@ -102,38 +92,12 @@ public class AlloyModel {
         this.funs = new AlloyModelTable<>(alloyFile, AlloyFunPara.class);
         this.preds = new AlloyModelTable<>(alloyFile, AlloyPredPara.class);
         this.asserts = new AlloyModelTable<>(alloyFile, AlloyAssertPara.class);
-        // this.commands = new AlloyModelTable<>(alloyFile, AlloyCmdPara.class);
-        this.additionalParas = new ArrayList<>();
-
-        // need this to get the type of the AlloyModelTable correct
-        this.commands = new AlloyModelTable<>(null, AlloyCmdPara.class);
-        // put the run_cmd right at the beginning of the command
-        // this is always the 0th command
-        /// used to check model for satisfiability
-        // run {}
-
-        if (addModelSatCmd) {
-            this.addModelSatCmd();
-        }
-        this.commands.addParas(
-                extractItemsOfClass(alloyFile.paras, AlloyCmdPara.class), additionalParas);
-    }
-
-    public void addModelSatCmd() {
-        AlloyCmdPara run_cmd =
-                new AlloyCmdPara(
-                        new AlloyCmdPara.CommandDecl(
-                                AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                new AlloyBlock(), // empty AlloyBlock
-                                null // provide no scopes -- will use default scopes
-                                ));
-        this.commands.addPara(run_cmd, additionalParas);
+        this.commands = new AlloyModelTable<>(alloyFile, AlloyCmdPara.class);
     }
 
     /**
      * Adds a new paragraph to the model *after* initial construction. This method sorts the
-     * paragraph into the correct type-safe table. The table's 'addParagraph' method is responsible
-     * for handling the 'additionalParas' list as a side-effect.
+     * paragraph into the correct type-safe table.
      *
      * @param alloyPara The paragraph to add.
      */
@@ -142,7 +106,7 @@ public class AlloyModel {
         AlloyModelTable<?> table = this.patternMatch(alloyPara.getClass());
         @SuppressWarnings("unchecked")
         AlloyModelTable<AlloyPara> castedTable = (AlloyModelTable<AlloyPara>) table;
-        castedTable.addPara(alloyPara, this.additionalParas);
+        castedTable.addPara(alloyPara);
     }
 
     public boolean containsId(String name) {
@@ -187,16 +151,12 @@ public class AlloyModel {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw);
 
-        // NAD commented out 2026-02-03: this.alloyFile.ppNewBlock(pCtx);
-        // create a new AlloyFile, so I can reuse AlloyFile.toString
-        // NAD commented out 2026-02-03:  AlloyFile newAlloyFile = new
-        // AlloyFile(this.additionalParas);
-
         List<AlloyPara> allParas = new ArrayList<AlloyPara>();
 
+        // first two must come before the rest
         allParas.addAll(this.modules.getAllParas());
-        // must come before the rest
         allParas.addAll(this.imports.getAllParas());
+
         allParas.addAll(this.enums.getAllParas());
         allParas.addAll(this.sigs.getAllParas());
         allParas.addAll(this.macros.getAllParas());

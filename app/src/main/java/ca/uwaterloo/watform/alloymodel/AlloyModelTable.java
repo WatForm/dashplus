@@ -36,7 +36,7 @@ public class AlloyModelTable<T extends AlloyPara> {
         this.mp = new LinkedHashMap<>();
         this.li = new ArrayList<>();
         if (null == alloyFile) return;
-        this.addParas(extractItemsOfClass(alloyFile.paras, typeToken), new ArrayList<>());
+        this.addParas(extractItemsOfClass(alloyFile.paras, typeToken));
     }
 
     protected AlloyModelTable(AlloyModelTable<T> other) {
@@ -50,10 +50,8 @@ public class AlloyModelTable<T extends AlloyPara> {
 
     /**
      * @param para
-     * @param additionalParas: need to keep a list of paras added to AlloyModel, so they can be
-     *     printed after AlloyFile in AlloyModel
      */
-    public void addPara(T para, List<AlloyPara> additionalParas) {
+    public void addPara(T para) {
         AlloyId alloyId = para.getId();
         if (alloyId.name == null || alloyId.name.isBlank()) {
             this.li.add(para);
@@ -64,17 +62,13 @@ public class AlloyModelTable<T extends AlloyPara> {
             }
             this.mp.put(alloyId, para);
         }
-
-        additionalParas.add(para);
     }
 
     /**
      * @param paras
-     * @param additionalParas: need to keep a list of paras added to AlloyModel, so they can be
-     *     printed after AlloyFile in AlloyModel
      */
-    public void addParas(List<T> paras, List<AlloyPara> additionalParas) {
-        paras.forEach(p -> this.addPara(p, additionalParas));
+    public void addParas(List<T> paras) {
+        paras.forEach(p -> this.addPara(p));
     }
 
     /**
