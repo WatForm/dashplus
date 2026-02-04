@@ -18,6 +18,7 @@ import java.util.*;
 public class PredicateAbstraction {
 
     public DashModel origModel;
+    public DashModel absModel;
     public int cmdnum;
     public String abvNamePre = "B";
     public String cafDepPredPre = "caf_dep_";
@@ -26,7 +27,7 @@ public class PredicateAbstraction {
     protected ExprTranslatorVis exprTranslator;
     protected DSL dsl;
 
-    // ABV: Abstract Boolean Variable
+    // ABV: Abstract Boolean Variable, CAF: Concrete Atomic Formula
     public HashMap<String, AlloyExpr> ABVNameExprMap = new HashMap<String, AlloyExpr>();
     public List<String> envABVs = new ArrayList<>();
 
@@ -34,7 +35,7 @@ public class PredicateAbstraction {
         this.origModel = concreteModel;
         this.exprTranslator = new ExprTranslatorVis(concreteModel);
         this.dsl = new DSL(concreteModel, false);
-        this.cmdnum = -1;
+        this.cmdnum = 0;
     }
 
     public PredicateAbstraction(DashModel concreteModel, int n) {
@@ -67,9 +68,8 @@ public class PredicateAbstraction {
         }
     }
 
-    public void addCAFDepQueries() {
-        // adds CAF Dependency queries that are run commands that checks whether one CAF subsumes
-        // the other
+    public void addCAFDepInvs() {
+        // adds CAF Dependency invariants to the abstract model
         int ctr = 0;
         List<List<AlloyExpr>> cafPowSet =
                 GeneralUtil.getNonEmptySubsets(Set.copyOf(ABVNameExprMap.values()));
@@ -94,9 +94,20 @@ public class PredicateAbstraction {
                 }
             }
         }
+        HashMap<AlloyExpr, String> ABVReverseMap = new HashMap<>();
+        ABVNameExprMap.forEach((k, v) -> ABVReverseMap.put(v, k));
+
+        for (List<AlloyExpr> u : unsatList) {
+            List<AlloyExpr> uVars =
+                    GeneralUtil.mapBy(u, e -> AlloyExprFactory.AlloyVar(ABVReverseMap.get(e)));
+            AlloyExpr invBody = AlloyExprFactory.AlloyNot(AlloyExprFactory.AlloyAndList(uVars));
+            absModel.addInv(invBody);
+        }
     }
 
     public AlloyExpr abstractAlloyExpr(AlloyExpr expr) {
+        // Used to abstract inits, invs, and guards (AlloyExprs in the model that do not have primed
+        // vars)
         List<AlloyExpr> exprABVs = new ArrayList<>();
         Set<AlloyExpr> cmdBody = new HashSet<AlloyExpr>();
         cmdBody.add(expr);
@@ -123,6 +134,7 @@ public class PredicateAbstraction {
     }
 
     public AlloyExpr abstractTransDo(String tfqn) {
+        // used to abstract transition actions that may have primed vars in them
         AlloyExpr guard = exprTranslator.translateExpr(origModel.whenR(tfqn));
         AlloyExpr action = exprTranslator.translateExpr(origModel.doR(tfqn));
         Set<AlloyExpr> cmdBody = new HashSet<AlloyExpr>();
@@ -162,19 +174,20 @@ public class PredicateAbstraction {
     Assumptions:
           - All commands in the .dsh file that refer to a property for m/c must be in ACTL*, meaning `check`
           - All property commands must be of the form `check propName for ___` or `check {propName} for ___` (but not `check {x > 5} for ___`)
-          -
+          - origModel is not parameterized
       */
 
     public DashModel createAbstractModel() {
         createABVmap();
         DashToAlloy d2a = new DashToAlloy(origModel);
-        concModelTrunc = d2a.translateVarBufferSigsOnly(); // taking out the dash model to not check
-        // reachability
-        // addCAFDepQueries();
 
-        DashModel absModel = new DashModel();
+        // taking out the dash model to not check reachability
+        concModelTrunc = d2a.translateVarBufferSigsOnly();
+
+        absModel = new DashModel();
         absModel.cloneStateTableOf(origModel);
         absModel.cloneEventTableOf(origModel);
+        addCAFDepInvs();
 
         for (String vname : ABVNameExprMap.keySet()) {
             String vfqn = DashFQN.fqn(origModel.rootName, vname);
@@ -193,6 +206,7 @@ public class PredicateAbstraction {
             }
         }
 
+        // full Alloy translation of origModel reqd for abstracting guards, actions, inits, and invs
         origModelD2A = d2a.translate();
 
         for (AlloyExpr init : origModel.initsR()) {
