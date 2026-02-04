@@ -1,6 +1,11 @@
 /*
     This is a DSL (common subexpressions)
     for the Dash to Alloy translator.
+
+    A few of these expressions depend on whether
+    we are translating to Electrum or not, thus
+    a bit of state is needed.
+    
 */
 
 package ca.uwaterloo.watform.dashtoalloy;
@@ -26,11 +31,9 @@ import java.util.List;
 
 public class DSL {
 
-    DashModel dm; // input
     boolean isElectrum = false;
 
-    public DSL(DashModel dm, boolean isElectrum) {
-        this.dm = dm;
+    public DSL(boolean isElectrum) {
         this.isElectrum = isElectrum;
     }
 

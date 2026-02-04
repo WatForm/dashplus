@@ -46,7 +46,7 @@ public class BaseD2A {
         }
 
         this.isElectrum = isElectrum;
-        this.dsl = new DSL(dm, isElectrum);
+        this.dsl = new DSL(isElectrum);
         this.exprTranslator = new ExprTranslatorVis(dm, isElectrum);
     }
 
