@@ -6,6 +6,7 @@ package ca.uwaterloo.watform.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -214,5 +215,28 @@ public class GeneralUtil {
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
+    }
+
+    public static <T> List<List<T>> getNonEmptySubsets(Set<T> set) {
+        List<T> elements = new ArrayList<>(set);
+        List<List<T>> result = new ArrayList<>();
+
+        int n = elements.size();
+        int total = 1 << n; // 2^n
+
+        for (int k = 1; k < total; k++) {
+            List<T> subset = new ArrayList<>();
+
+            for (int i = 0; i < n; i++) {
+                if ((k & (1 << i)) != 0) {
+                    subset.add(elements.get(i));
+                }
+            }
+            result.add(subset);
+        }
+
+        result.sort(Comparator.comparingInt(List::size));
+
+        return result;
     }
 }
