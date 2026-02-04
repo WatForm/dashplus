@@ -7,6 +7,12 @@
 - Dash+ (parameters, buffers)
 - Properties (safety, liveness)
 
+## Temp list:
+
+- Use pretty printer
+- Make list for parameterized dash
+- Visitor for Alloy
+
 
 ## Key:
 
@@ -113,37 +119,37 @@
 |feature|description|translation|running|tests|
 |--|--|--|--|--|
 |param|identifying param depth||||
-|conf|enumeration adding variable|✅|✅|❕|
-|scopes_used|enumeration adding variable|✅|✅|❕|
-|stable|enumeration adding variable|✅|✅|❕|
-|events|enumeration adding variable|✅|✅|❕|
-|state literals|constructing state hierarchy using sets of strings|✅|✅|❕|
-|transition literals|values for trans_taken|✅|✅|❕|
-|pre-trans|defining pre-tans|✅|✅|❕|
-|pre-trans|pre-trans from states|✅|✅|❕|
-|pre-trans|scopes clause|✅|✅|❕|
-|pre-trans|events clause|✅|✅|❕|
-|post-trans|defining post-trans|✅|✅|❕|
-|post-trans|handling stability|✅|✅|❕|
-|post-trans|scopes update|✅|✅|❕|
-|post-trans|sending events|✅|✅|❕|
-|enabled-trans|defining enabled-trans|✅|✅|❕|
-|enabled-trans|conf|✅|✅|❕|
-|enabled-trans|scope|❔|✅|❕|
-|enabled-trans|events|✅|✅|❕|
-|transition|combining pre and post|✅|✅|❕|
-|nextIsStable|combining enabled|✅|✅|❕|
-|Init|Defining initial values (except conf)|✅|✅|❕|
-|Init sync|Syncing config and module|✅|✅|❕|
-|Init conf|defining initial value of all conf|✅|✅|❕|
-|Stutter|Defining stutter in TLA+|✅|✅|❕|
-|stable|type definition|✅|✅|❕|
-|conf|type definition|✅|✅|❕|
-|scopes_used|type definition|✅|✅|❕|
-|trans_taken|type definition (none included)|✅|✅|❕|
-|valid|formulae|✅|✅||❕|
-|valid|primed and unprimed|✅|✅||❕|
-|Next|Defining Next|✅|✅|❕|
+|conf|enumeration adding variable|||❕|
+|scopes_used|enumeration adding variable|||❕|
+|stable|enumeration adding variable|||❕|
+|events|enumeration adding variable|||❕|
+|state literals|constructing state hierarchy using sets of strings|||❕|
+|transition literals|values for trans_taken|||❕|
+|pre-trans|defining pre-tans|||❕|
+|pre-trans|pre-trans from states|||❕|
+|pre-trans|scopes clause|||❕|
+|pre-trans|events clause|||❕|
+|post-trans|defining post-trans|||❕|
+|post-trans|handling stability|||❕|
+|post-trans|scopes update|||❕|
+|post-trans|sending events|||❕|
+|enabled-trans|defining enabled-trans|||❕|
+|enabled-trans|conf|||❕|
+|enabled-trans|scope|❔||❕|
+|enabled-trans|events|||❕|
+|transition|combining pre and post|||❕|
+|nextIsStable|combining enabled|||❕|
+|Init|Defining initial values (except conf)|||❕|
+|Init sync|Syncing config and module|||❕|
+|Init conf|defining initial value of all conf|||❕|
+|Stutter|Defining stutter in TLA+|||❕|
+|stable|type definition|||❕|
+|conf|type definition|||❕|
+|scopes_used|type definition|||❕|
+|trans_taken|type definition (none included)|||❕|
+|valid|formulae||||❕|
+|valid|primed and unprimed||||❕|
+|Next|Defining Next|||❕|
 |User-defined vars|declaration|❔|❔|❕|
 |User-defined vars|type definition|❔|❔|❕|
 |User-defined vars|sync with config|❔|❔|❔|
