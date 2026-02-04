@@ -46,7 +46,7 @@ public class DashToAlloy extends StutterD2A {
         this.addSmallStep();
 
         // add stutter?
-        // this.addStutter();
+        //
 
         if (this.isTcmc) {
             // next two are required
@@ -60,6 +60,7 @@ public class DashToAlloy extends StutterD2A {
 
         } else if (this.isTraces) {
             // next two are required
+            this.addStutter();
             this.addTracesFact();
             this.addAllSnapshotsDiffFact();
             // everything in traces is reachable b/c it

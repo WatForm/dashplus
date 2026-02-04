@@ -188,6 +188,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
     @Override
     public AlloyExpr visit(AlloyQuantificationExpr quantificationExpr) {
-        return quantificationExpr.rebuild(this.visit(quantificationExpr.body));
+        List<AlloyDecl> decls = mapBy(quantificationExpr.decls, i -> ((AlloyDecl) this.visit(i)));
+        return quantificationExpr.rebuild(decls, this.visit(quantificationExpr.body));
     }
 }

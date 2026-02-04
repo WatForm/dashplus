@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.cli.CliError.*;
 import static ca.uwaterloo.watform.parser.Parser.*;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
-import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
@@ -100,14 +99,13 @@ public class Main implements Callable<Integer> {
                     if (fileName.endsWith(".als")) {
                         AlloyModel alloyModel = parseToModel(absolutePath);
                         if (cliConf.cmdIdx >= cliConf.firstCmdIdx) {
-                            Solution solution = executeCommand(alloyModel, cliConf.cmdIdx);
-                            System.out.println(solution.toString());
+                            System.out.println(executeCommandToString(alloyModel, cliConf.cmdIdx));
                         } else if (cliConf.cmdIdx == -1) {
+
                             for (int i = cliConf.firstCmdIdx;
                                     i < alloyModel.getParas(AlloyCmdPara.class).size();
                                     i++) {
-                                Solution solution = executeCommand(alloyModel, i);
-                                System.out.println(solution.toString());
+                                System.out.println(executeCommandToString(alloyModel, i));
                             }
                         } else {
                             Reporter.INSTANCE.addError(invalidParams());
@@ -116,25 +114,32 @@ public class Main implements Callable<Integer> {
                         // Dash Mode
                         DashModel dm = (DashModel) parseToModel(absolutePath);
                         AlloyModel am = new DashToAlloy(dm).translate();
-                        try {
-                            // change the filename from .dsh to .als for output
-                            String fullFileName = absolutePath.toString();
-                            System.out.println("Input: " + fullFileName);
-                            int lastDotIndex = fullFileName.lastIndexOf('.');
-                            String nameWithoutExtension =
-                                    (lastDotIndex == -1)
-                                            ? fullFileName
-                                            : fullFileName.substring(0, lastDotIndex);
-                            String newFullFileName = nameWithoutExtension + ".als";
 
+                        // change the filename from .dsh to .als for output
+                        String fullFileName = absolutePath.toString();
+                        System.out.println("Input: " + fullFileName);
+                        int lastDotIndex = fullFileName.lastIndexOf('.');
+                        String nameWithoutExtension =
+                                (lastDotIndex == -1)
+                                        ? fullFileName
+                                        : fullFileName.substring(0, lastDotIndex);
+                        String nameWithoutExtensionWithMethod =
+                                nameWithoutExtension + "-" + cliConf.alloyMode;
+                        String newFullFileName = nameWithoutExtensionWithMethod + ".als";
+                        try {
                             // write the .als file
                             Files.writeString(new File(newFullFileName).toPath(), am.toString());
                             System.out.println("Output: " + newFullFileName);
+
                         } catch (IOException e) {
                             System.out.println("An error occurred: " + e.getMessage());
                             e.printStackTrace();
                         }
-                        // later add stuff about executing cmds
+                        // executes and writes 5 instances of model with cmd run {}
+                        int count = writeInstancesToXML(am, 0, nameWithoutExtensionWithMethod, 5);
+                        System.out.println("Wrote " + String.valueOf(count) + " instances.");
+
+                        // later add output about executing cmds
                         Reporter.INSTANCE.print();
                     } else {
                         Reporter.INSTANCE.addError(invalidFile(fileName));

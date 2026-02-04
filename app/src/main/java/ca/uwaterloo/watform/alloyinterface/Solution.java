@@ -37,7 +37,7 @@ public final class Solution {
         this.a4Solution = a4Solution;
         this.map = new HashMap<>();
         this.alloyModule = alloyModule;
-        populateMap();
+        if (this.a4Solution.satisfiable()) populateMap();
     }
 
     public boolean isSat() {

@@ -29,10 +29,10 @@ public final class D2AStrings {
     public static final String bufferIndexName = "bufIdx";
 
     public static final String dsh_prefix = "__";
-    // init is a reserved word in Dash
+    // init is a reserved word in Dash and Alloy 6
     public static final String initPredName = dsh_prefix + "initial";
     public static final String invFactName = dsh_prefix + "inv";
-    public static final String initFactName = dsh_prefix + "init";
+    public static final String initFactName = initPredName;
     // predicate names
 
     public static final String smallStepName = dsh_prefix + "small_step";
@@ -50,7 +50,7 @@ public final class D2AStrings {
     public static final String completeBigStepsName = dsh_prefix + "complete_big_steps";
     /* names used in Dash translation */
     // sig names
-    public static final String DshPrefix = "Dsh";
+    public static final String DshPrefix = dsh_prefix; // clean this up later
     public static final String snapshotName = DshPrefix + "Snapshot";
     public static final String allEventsName = DshPrefix + "Events";
     public static final String allEnvEventsName = DshPrefix + "EnvEvents";

@@ -7,9 +7,8 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.AlloyId;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,7 +20,9 @@ import java.util.stream.Stream;
  * @param <T> The specific type of AlloyPara being stored, e.g., AlloySigPara, AlloyFactPara.
  */
 public class AlloyModelTable<T extends AlloyPara> {
-    protected final Map<AlloyId, T> mp;
+    // this has to be a LinkedHashMap so that
+    // items are extracted in order
+    protected final LinkedHashMap<AlloyId, T> mp;
     protected final List<T> li; // list for holding paras with no name
 
     // final here means the reference cannot change
@@ -32,14 +33,14 @@ public class AlloyModelTable<T extends AlloyPara> {
      * @param typeToken(problem with Java type erasure; cannot use the generic T)
      */
     public AlloyModelTable(AlloyFile alloyFile, Class<T> typeToken) {
-        this.mp = new HashMap<>();
+        this.mp = new LinkedHashMap<>();
         this.li = new ArrayList<>();
         if (null == alloyFile) return;
         this.addParas(extractItemsOfClass(alloyFile.paras, typeToken), new ArrayList<>());
     }
 
     protected AlloyModelTable(AlloyModelTable<T> other) {
-        this.mp = new HashMap<AlloyId, T>(other.mp);
+        this.mp = new LinkedHashMap<AlloyId, T>(other.mp);
         this.li = new ArrayList<>(other.li);
     }
 

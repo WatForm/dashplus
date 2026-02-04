@@ -17,11 +17,12 @@ import ca.uwaterloo.watform.dashast.DashFile;
 public class BaseDM extends AlloyModel {
 
     public BaseDM() {
-        super();
+        super(null, true);
     }
 
     public BaseDM(DashFile d) {
-        super((AlloyFile) d);
+        // addModelSatCmd
+        super((AlloyFile) d, true);
     }
 
     public static boolean supportedBuiltinVarExpr(AlloyVarExpr varExpr) {

@@ -43,6 +43,7 @@ public final class DashStrings extends CommonStrings {
     public static final String invName = "inv";
     public static final String enterName = "enter";
     public static final String exitName = "exit";
+    // this is also used as a reserved word in Alloy 6??
     public static final String initName = "init";
 
     public static enum IntEnvKind {

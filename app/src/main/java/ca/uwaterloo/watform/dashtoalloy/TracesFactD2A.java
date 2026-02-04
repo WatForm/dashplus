@@ -66,6 +66,7 @@ public class TracesFactD2A extends SmallStepD2A {
 
         List<AlloyExpr> args = this.dsl.emptyExprList();
         args.add(snapShotFirst);
+        // __initial[__Snapshot/first]
         body.add(AlloyPredCall(D2AStrings.initFactName, args));
 
         args = this.dsl.emptyExprList();
@@ -83,8 +84,11 @@ public class TracesFactD2A extends SmallStepD2A {
 
         body.add(
                 AlloyIte(
+                        // some __Snapshot/back
                         AlloySome(snapshotBack),
+                        // all s : __Snapshot | __small_step[s, s.__Snapshot/next]
                         AlloyAllVars(decls1, AlloyPredCall(D2AStrings.smallStepName, args)),
+                        // all s : __Snapshot - __Snapshot/last | __small_step[s, s.__Snapshot/next]
                         AlloyAllVars(decls2, AlloyPredCall(D2AStrings.smallStepName, args))));
 
         this.am.addFact(D2AStrings.tracesFactName, body);

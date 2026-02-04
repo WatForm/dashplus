@@ -34,6 +34,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class AlloyModel {
     private final AlloyFile alloyFile;
@@ -48,13 +49,16 @@ public class AlloyModel {
     private final AlloyModelTable<AlloyAssertPara> asserts;
     private final AlloyModelTable<AlloyCmdPara> commands;
 
-    // added NAD 2026-02-03
-    private final List<AlloyPara> allParas;
-
+    // is this still needed?
     private final List<AlloyPara> additionalParas;
 
     public AlloyModel() {
         this(new AlloyFile(Collections.emptyList()));
+    }
+
+    public AlloyModel(boolean addModelSatCmd) {
+        this(new AlloyFile(Collections.emptyList()));
+        if (addModelSatCmd) this.addModelSatCmd();
     }
 
     private AlloyModel(AlloyModel other) {
@@ -74,11 +78,8 @@ public class AlloyModel {
         this.preds = other.preds.copy();
         this.asserts = other.asserts.copy();
         this.commands = other.commands.copy();
-        this.additionalParas = new ArrayList<>(other.additionalParas);
 
-        // added NAD 2026-02-03
-        // shallow copy of list
-        this.allParas = new ArrayList<>(other.allParas);
+        this.additionalParas = new ArrayList<>(other.additionalParas);
     }
 
     public AlloyModel copy() {
@@ -86,6 +87,11 @@ public class AlloyModel {
     }
 
     public AlloyModel(AlloyFile alloyFile) {
+        this(alloyFile, false);
+    }
+
+    public AlloyModel(AlloyFile alloyFile, boolean addModelSatCmd) {
+
         this.alloyFile = alloyFile;
         this.modules = new AlloyModelTable<>(alloyFile, AlloyModulePara.class);
         this.imports = new AlloyModelTable<>(alloyFile, AlloyImportPara.class);
@@ -96,25 +102,24 @@ public class AlloyModel {
         this.funs = new AlloyModelTable<>(alloyFile, AlloyFunPara.class);
         this.preds = new AlloyModelTable<>(alloyFile, AlloyPredPara.class);
         this.asserts = new AlloyModelTable<>(alloyFile, AlloyAssertPara.class);
-        this.commands = new AlloyModelTable<>(alloyFile, AlloyCmdPara.class);
+        // this.commands = new AlloyModelTable<>(alloyFile, AlloyCmdPara.class);
         this.additionalParas = new ArrayList<>();
 
-        // added NAD 2026-02-03
-        // this may result in printing in a different order than input
-        this.allParas = new ArrayList<>();
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyModulePara.class));
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyImportPara.class));
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyEnumPara.class));
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloySigPara.class));
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyMacroPara.class));
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyFactPara.class));
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyFunPara.class));
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyPredPara.class));
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyAssertPara.class));
+        // need this to get the type of the AlloyModelTable correct
+        this.commands = new AlloyModelTable<>(null, AlloyCmdPara.class);
         // put the run_cmd right at the beginning of the command
         // this is always the 0th command
         /// used to check model for satisfiability
         // run {}
+
+        if (addModelSatCmd) {
+            this.addModelSatCmd();
+        }
+        this.commands.addParas(
+                extractItemsOfClass(alloyFile.paras, AlloyCmdPara.class), additionalParas);
+    }
+
+    public void addModelSatCmd() {
         AlloyCmdPara run_cmd =
                 new AlloyCmdPara(
                         new AlloyCmdPara.CommandDecl(
@@ -122,8 +127,7 @@ public class AlloyModel {
                                 new AlloyBlock(), // empty AlloyBlock
                                 null // provide no scopes -- will use default scopes
                                 ));
-        this.allParas.add(run_cmd);
-        this.allParas.addAll(extractItemsOfClass(alloyFile.paras, AlloyCmdPara.class));
+        this.commands.addPara(run_cmd, additionalParas);
     }
 
     /**
@@ -139,9 +143,6 @@ public class AlloyModel {
         @SuppressWarnings("unchecked")
         AlloyModelTable<AlloyPara> castedTable = (AlloyModelTable<AlloyPara>) table;
         castedTable.addPara(alloyPara, this.additionalParas);
-
-        // added NAD 2026-02-03
-        this.allParas.add(alloyPara);
     }
 
     public boolean containsId(String name) {
@@ -170,16 +171,38 @@ public class AlloyModel {
         return this.patternMatch(typeToken).getPara(name);
     }
 
+    /** Retrieve the nth para of in this table useful for commands */
+    public Optional<AlloyCmdPara> getCmdNum(int n) {
+        List<AlloyCmdPara> cmdParas = this.getParas(AlloyCmdPara.class);
+        if (n < 0 || n >= cmdParas.size()) return Optional.empty();
+        else return Optional.of(cmdParas.get(n));
+    }
+
     @Override
     public String toString() {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw);
+
         // NAD commented out 2026-02-03: this.alloyFile.ppNewBlock(pCtx);
         // create a new AlloyFile, so I can reuse AlloyFile.toString
         // NAD commented out 2026-02-03:  AlloyFile newAlloyFile = new
         // AlloyFile(this.additionalParas);
-        // NAD added 2026-02-03
-        AlloyFile newAlloyFile = new AlloyFile(this.allParas);
+
+        List<AlloyPara> allParas = new ArrayList<AlloyPara>();
+
+        allParas.addAll(this.modules.getAllParas());
+        // must come before the rest
+        allParas.addAll(this.imports.getAllParas());
+        allParas.addAll(this.enums.getAllParas());
+        allParas.addAll(this.sigs.getAllParas());
+        allParas.addAll(this.macros.getAllParas());
+        allParas.addAll(this.funs.getAllParas());
+        allParas.addAll(this.preds.getAllParas());
+        allParas.addAll(this.facts.getAllParas());
+        allParas.addAll(this.asserts.getAllParas());
+        allParas.addAll(this.commands.getAllParas());
+
+        AlloyFile newAlloyFile = new AlloyFile(allParas);
         newAlloyFile.ppNewBlock(pCtx);
         return sw.toString();
     }
