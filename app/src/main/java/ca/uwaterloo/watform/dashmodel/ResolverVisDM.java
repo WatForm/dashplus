@@ -14,12 +14,14 @@
 
     3) replacing "thisState" with a var expression of single parameter
 
-    It leaves a primed variable as PRIME(DashRef ...).
+    It leaves a primed variable as DashRef(... isNext=true)
 
     This exprRefResolver is called for the:
     - stateTable resolving for inits and invariants
     - varTable for resolving type of dynamic variables (where it resolves only the name, not the parameters )
     - transTable to resolve all parts of transitions.
+
+    Note that "Next" in this file means "primed".
 
     NADTODO: check flags !
 */
@@ -51,8 +53,8 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     // these bits of state are used throughout the
     // visit functions with the same values
     private DashStrings.DashRefKind kind;
-    private boolean primeOk;
-    private boolean primeOkInPrmExprs;
+    private boolean nextOk;
+    private boolean nextOkInPrmExprs;
     private boolean thisOk;
     // of state Expr itself or is parent of Expr
     // needed for context of expr being resolved
@@ -86,20 +88,20 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         this.kind = DashStrings.DashRefKind.VAR;
-        this.primeOk = false;
-        this.primeOkInPrmExprs = false;
+        this.nextOk = false;
+        this.nextOkInPrmExprs = false;
         this.thisOk = true;
         return this.visit(expr);
     }
 
-    protected AlloyExpr resolveVarPrimesOkAnywhere(AlloyExpr expr, String sfqn) {
+    protected AlloyExpr resolveVarNextsOkAnywhere(AlloyExpr expr, String sfqn) {
         // resolving something that is a reference in an expression
         // means we are looking for variables
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         this.kind = DashStrings.DashRefKind.VAR;
-        this.primeOk = true;
-        this.primeOkInPrmExprs = true;
+        this.nextOk = true;
+        this.nextOkInPrmExprs = true;
         this.thisOk = true;
         return this.visit(expr);
     }
@@ -111,8 +113,8 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         this.kind = DashRefKind.STATE;
-        this.primeOk = false;
-        this.primeOkInPrmExprs = false;
+        this.nextOk = false;
+        this.nextOkInPrmExprs = false;
         this.thisOk = true;
         // System.out.println(expr.getClass());
         // expr is a DashRef
@@ -129,20 +131,20 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         this.kind = DashRefKind.EVENT;
-        this.primeOk = false;
-        this.primeOkInPrmExprs = false;
+        this.nextOk = false;
+        this.nextOkInPrmExprs = false;
         this.thisOk = true;
         return (DashRef) visit(expr);
     }
 
-    protected DashRef resolveEventPrimesOkInPrmExprs(AlloyExpr expr, String sfqn) {
+    protected DashRef resolveEventNextsOkInPrmExprs(AlloyExpr expr, String sfqn) {
         // resolving something that is a reference to an event
         // we know this returns a DashRef rather than a more general AlloyExpr
         inputChecks(expr, sfqn);
         this.sfqn = sfqn;
         this.kind = DashRefKind.EVENT;
-        this.primeOk = true;
-        this.primeOkInPrmExprs = true;
+        this.nextOk = true;
+        this.nextOkInPrmExprs = true;
         this.thisOk = true;
         return (DashRef) this.visit(expr);
     }
@@ -354,31 +356,30 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // can only apply a prime to a var
             // this should be not allowed in parsing
             assert (unaryExpr.sub instanceof AlloyVarExpr);
-            if (!primeOk) {
-                noPrimedVarsError(unaryExpr);
+            if (!this.nextOk) {
+                noNextVarsError(unaryExpr);
             }
-        }
+            AlloyExpr newExpr = this.visit(unaryExpr.sub);
 
+            // if it is primed, the returned value
+            // must be an internal VarDashRef (no other kind of
+            // value can be primed)
+            if (!(newExpr instanceof DashRef)) cantNextNonDynamicVarError(unaryExpr);
+            else if (isEnvVar(((DashRef) newExpr).name)) cantNextExternalVarError(newExpr);
+            // return DashRef(..., isNext)
+            return ((DashRef) newExpr).makeNext();
+        }
         if (!this.supportedUnaryExpr(unaryExpr))
+            // throw exception
             DashModelErrors.unsupportedExpr(
                     unaryExpr.pos, unaryExpr.getClass().getSimpleName(), unaryExpr.toString());
 
         // otherwise we visit the sub expression
-        AlloyExpr newExpr = this.visit(unaryExpr.sub);
-
-        if (unaryExpr.op == AlloyStrings.PRIME) {
-            // if it is primed, the returned value
-            // must be a DashRef (no other kind of
-            // value can be primed)
-            if (!(newExpr instanceof DashRef)) cantPrimeNonDynamicVarError(unaryExpr);
-            else if (isEnvVar(((DashRef) newExpr).name)) cantPrimeExternalVarError(newExpr);
-        }
         // can't use a withSub here
         // because this is a parent class
-        // puts the PRIME possibly on the outside of a DashRef
+        AlloyExpr newExpr = this.visit(unaryExpr.sub);
         return unaryExpr.rebuild(newExpr);
     }
-    ;
 
     @Override
     public AlloyExpr visit(AlloyVarExpr varExpr) {
@@ -548,7 +549,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
                 expr.pos, " " + "Unknown Dash element with params: " + expr.toString());
     }
 
-    public void cantPrimeNonVarError(AlloyExpr expr) {
+    public void cantNextNonVarError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, " " + " Non-var/buffer cannot be primed: " + expr.toString());
     }
@@ -558,17 +559,17 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
                 "Src/Dest of trans is unknown: " + "trans " + tfqn + " " + t + " " + x);
     }
 
-    public void cantPrimeExternalVarError(AlloyExpr expr) {
+    public void cantNextExternalVarError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, " Internal var/buffer cannot be primed: " + expr.toString());
     }
 
-    public void noPrimedVarsError(AlloyExpr expr) {
+    public void noNextVarsError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, "Primed variables are not allowed in: " + expr.toString());
     }
 
-    public void cantPrimeNonDynamicVarError(AlloyExpr expr) {
+    public void cantNextNonDynamicVarError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos,
                 "Cannot prime something that is not a dynamic variable: " + expr.toString());

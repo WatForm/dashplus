@@ -95,14 +95,14 @@ public class ResolveDM extends ResolverVisDM {
             DashRef sendR = null;
             if (t.sendP == null) sendR = null;
             else {
-                DashRef x = resolveEventPrimesOkInPrmExprs(t.sendP.exp, sfqn);
+                DashRef x = resolveEventNextsOkInPrmExprs(t.sendP.exp, sfqn);
                 if (isEnvEvent(x.name)) Error.cantSendAnEnvEvent(t.sendP.pos, x.toString());
                 else sendR = x;
             }
 
             AlloyExpr whenR = (t.whenP == null) ? null : resolveVar(t.whenP.exp, sfqn);
 
-            AlloyExpr doR = (t.doP == null) ? null : resolveVarPrimesOkAnywhere(t.doP.exp, sfqn);
+            AlloyExpr doR = (t.doP == null) ? null : resolveVarNextsOkAnywhere(t.doP.exp, sfqn);
 
             this.addTrans(t.pos, tfqn, sparams, fromR, onR, whenR, gotoR, sendR, doR);
         }

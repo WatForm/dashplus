@@ -45,24 +45,33 @@ public class DashRef extends AlloyExpr {
     public final DashStrings.DashRefKind kind;
     public final String name;
     public final List<? extends AlloyExpr> paramValues;
-
-    // private final boolean isNext;
+    public final boolean isNext;
 
     // for internal uses during translation
     public DashRef(DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
         this(Pos.UNKNOWN, k, n, prmValues);
     }
 
-    // for use when parsed
-    public DashRef(
-            Pos p, DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
+    private DashRef(
+            Pos p,
+            DashStrings.DashRefKind k,
+            String n,
+            List<? extends AlloyExpr> prmValues,
+            boolean isNext) {
         super(p);
         this.kind = k;
         this.name = n;
         this.paramValues = Collections.unmodifiableList(prmValues);
-        // this.isNext = isNext;
+        this.isNext = isNext;
     }
 
+    // used in parsing
+    public DashRef(
+            Pos p, DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
+        this(p, k, n, prmValues, false);
+    }
+
+    // used in parsing??
     public DashRef(
             Pos p,
             DashStrings.DashRefKind k,
@@ -73,15 +82,25 @@ public class DashRef extends AlloyExpr {
                 names.stream()
                         .map(AlloyNameExpr::toString)
                         .collect(Collectors.joining(DashStrings.internalQualChar));
-        this(p, k, n, prmValues);
+        this(p, k, n, prmValues, false);
     }
 
     public static List<AlloyExpr> emptyParamValuesList() {
         return new ArrayList<AlloyExpr>();
     }
 
+    // only way to make a "next" DashRef (which happens in resolving)
+    public DashRef makeNext() {
+        assert (!this.isNext);
+        return new DashRef(this.pos, this.kind, this.name, this.paramValues, true);
+    }
+
     public AlloyExpr asAlloyArrow() {
-        // this would depend on s or sn ...
+        // p1 -> p2 -> fqn
+        // used for initialization and
+        // checking elements in conf/events
+        // TODO: require this DashRef to never have isNext true
+        assert (!this.isNext);
         List<AlloyExpr> ll = new ArrayList<AlloyExpr>(this.paramValues);
         Collections.reverse(ll);
         ll.add(AlloyVar(translateFQN(this.name)));

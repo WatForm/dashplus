@@ -21,11 +21,9 @@ import ca.uwaterloo.watform.dashmodel.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
-    private boolean isPrimed = false;
     private boolean onlyGetName = false;
     private boolean isElectrum;
     private DashModel dm;
@@ -57,9 +55,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
     @Override
     public AlloyExpr visit(DashRef dashRef) {
 
-        // DashRef var does not contain a primed variable
-        // it could be within a PRIME unary op
-        // in which case, object attribute isPrimed has been set
+        // DashRef var has an attribute that means isCur or isNext
 
         // onlyGetName = true is ONLY used for the case when
         // translating type expressions of snapshot signatures
@@ -72,15 +68,14 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
         // translate paramvalues
         // may be empty
-        List<AlloyExpr> join_list =
-                dashRef.paramValues.stream().map(i -> visit(i)).collect(Collectors.toList());
+        List<AlloyExpr> join_list = mapBy(dashRef.paramValues, i -> visit(i));
 
         String vfqn = dashRef.name;
         AlloyExpr v_expr = AlloyVar(DashFQN.translateFQN(vfqn));
 
         if (!this.isElectrum) {
             // tcmc, traces
-            if (this.isPrimed)
+            if (dashRef.isNext)
                 // p1.p2.(sn.v)
                 join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
             else
@@ -89,7 +84,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
             return AlloyJoinList(join_list);
         } else {
             // Electrum
-            if (this.isPrimed)
+            if (dashRef.isNext)
                 // have to put the prime in the var name
                 v_expr = new AlloyPrimeExpr(v_expr);
             if (this.dm.containsVar(vfqn)
@@ -107,17 +102,6 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
                 return AlloyJoinList(join_list);
             }
         }
-    }
-
-    @Override
-    public AlloyExpr visit(AlloyPrimeExpr expr) {
-        assert (expr.sub instanceof DashRef);
-        this.isPrimed = true;
-        // note that it does not put the PRIME on the outside
-        // this is done within the DashRef
-        AlloyExpr x = visit(expr.sub);
-        this.isPrimed = false;
-        return x;
     }
 
     // ones from Dash
@@ -141,6 +125,8 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
     @Override
     public AlloyExpr visit(AlloyUnaryExpr unaryExpr) {
+        // there should be no expressions that are primed with Dash
+        assert (!(unaryExpr instanceof AlloyPrimeExpr));
         return unaryExpr.rebuild(this.visit(unaryExpr.sub));
     }
 
