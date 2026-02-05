@@ -77,6 +77,7 @@ public class GeneralUtil {
     }
 
     public static <T> List<T> newListWithOneMore(List<T> ll, T s) {
+        // ll could be empty
         List<T> x = new ArrayList<T>(ll);
         x.add(s);
         return x;

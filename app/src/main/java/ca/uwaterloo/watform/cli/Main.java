@@ -148,7 +148,7 @@ public class Main implements Callable<Integer> {
                         }
                         // executes and writes 5 instances of model with cmd run {}
                         int count = writeInstancesToXML(am, 0, nameWithoutExtensionWithMethod, 5);
-                        System.out.println("Wrote " + String.valueOf(count) + " instances.");
+                        System.out.println("Wrote " + String.valueOf(count) + " instance(s).");
 
                         // later add output about executing cmds
                         Reporter.INSTANCE.print();

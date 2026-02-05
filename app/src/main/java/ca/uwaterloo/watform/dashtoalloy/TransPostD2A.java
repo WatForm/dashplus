@@ -71,34 +71,34 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         super(dm, opt);
     }
 
-    public void addTransPost(String tfqn) {
-        String tout = DashFQN.translateFQN(tfqn);
-        List<DashParam> prs = this.dm.transParams(tfqn);
-        List<AlloyExpr> body = this.dsl.emptyExprList();
-
-        if (!this.dm.hasOnlyOneState()) {
-            // forall i. confi' = confi - exitedi + enteredi
-            List<DashRef> entered = this.dm.entered(tfqn);
-            List<DashRef> exited = this.dm.exited(tfqn);
-            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-                final int j = i;
-                // states entered at level j
-                List<AlloyExpr> ent =
-                        mapBy(filterBy(entered, x -> x.hasNumParams(j)), y -> y.asAlloyArrow());
-                // states exited at level j
-                List<AlloyExpr> exi =
-                        mapBy(filterBy(exited, x -> x.hasNumParams(j)), y -> y.asAlloyArrow());
-                // both ent and exi could be empty at this level
-                AlloyExpr e;
-                if (!exi.isEmpty()) e = AlloyDiff(this.dsl.curConf(i), AlloyUnionList(exi));
-                else e = this.dsl.curConf(i);
-                if (!ent.isEmpty()) e = AlloyUnion(e, AlloyUnionList(ent));
-                body.add(AlloyEqual(this.dsl.nextConf(i), e));
-            }
+    private void addConfConstraints(String tfqn, List<AlloyExpr> body) {
+        // forall i. confi' = confi - exitedi + enteredi
+        List<DashRef> entered = this.dm.entered(tfqn);
+        List<DashRef> exited = this.dm.exited(tfqn);
+        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+            final int j = i;
+            // states entered at level j
+            List<AlloyExpr> ent =
+                    mapBy(filterBy(entered, x -> x.hasNumParams(j)), y -> y.asAlloyArrow());
+            // states exited at level j
+            List<AlloyExpr> exi =
+                    mapBy(filterBy(exited, x -> x.hasNumParams(j)), y -> y.asAlloyArrow());
+            // both ent and exi could be empty at this level
+            AlloyExpr e;
+            if (!exi.isEmpty()) e = AlloyDiff(this.dsl.curConf(i), AlloyUnionList(exi));
+            else e = this.dsl.curConf(i);
+            if (!ent.isEmpty()) e = AlloyUnion(e, AlloyUnionList(ent));
+            body.add(AlloyEqual(this.dsl.nextConf(i), e));
         }
+    }
+
+    private void addTransTakenConstraints(String tfqn, List<AlloyExpr> body) {
         // forall i : takeni' = {t1}
         AlloyExpr ex;
         DashRef dr;
+        String tout = DashFQN.translateFQN(tfqn);
+        List<DashParam> prs = this.dm.transParams(tfqn);
+
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (prs.size() == i) {
                 // for convenience of methods, make it a DashRef first
@@ -107,19 +107,19 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             } else ex = this.dsl.noneArrow(i);
             body.add(AlloyEqual(this.dsl.nextTransTaken(i), ex));
         }
+    }
 
-        // action_t1[s,s']
-        if (this.dm.doR(tfqn) != null) body.add(this.translateExpr(this.dm.doR(tfqn)));
-
+    private void addVarConstraints(String tfqn, List<AlloyExpr> body) {
         // vars not mentioned in action do not change
         // includes entered/exited
-        Set<String> intVarsBuffersThatDontChange = listToSet(this.dm.allIntVarNames());
-        intVarsBuffersThatDontChange.addAll(this.dm.allBufferNames());
+
+        // start with all vars and buffers
         // we treat buffers the same as variables because their index is the closest arg and
         // either the entire buffer within a sister component stays the same or
         // it doesn't -- there is no need
         // to reference the buffer index argument.
-
+        Set<String> intVarsBuffersThatDontChange = listToSet(this.dm.allIntVarNames());
+        intVarsBuffersThatDontChange.addAll(this.dm.allBufferNames());
         // remove variable/buffers mentioned in invariants
         // old code had something about primed vars here
         // but I don't think invs can have primed vars? (NAD 2026-01-25)
@@ -155,14 +155,17 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
 
         // constraints on sister elements
         for (String x : sistersDontChange) {
+
             decls = this.dsl.emptyDeclList();
             args = this.dsl.emptyExprList();
+
             List<DashParam> params = this.dm.varParams(x);
             // buffer params?
             for (DashParam p : params) {
                 decls.add(p.asAlloyDecl());
                 args.add(p.asAlloyVar());
             }
+
             assert (!decls.isEmpty());
             body.add(
                     AlloyAllVars(
@@ -210,7 +213,9 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                                                 this.dsl.nextJoinExpr(
                                                         AlloyVar(DashFQN.translateFQN(x)))))));
         }
+    }
 
+    private AlloyExpr case1(String tfqn) {
         DashRef ev = this.dm.sendR(tfqn);
         AlloyExpr rhs, rhs1, q;
 
@@ -218,7 +223,6 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // forall i. eventsi' :> InternalEvents = t1_send (if i)
         //           eventsi' :> InternalEvents = none (if not i)
         List<AlloyExpr> case1 = this.dsl.emptyExprList();
-        AlloyExpr c1;
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (this.dm.hasIntEventsAti(i)) {
                 if (ev != null && ev.paramValues.size() == i) rhs = ev.asAlloyArrow();
@@ -234,14 +238,17 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                                 rhs));
             }
         }
+        return AlloyAndList(case1);
+    }
 
-        c1 = AlloyAndList(case1);
-
+    private AlloyExpr case2(String tfqn) {
+        DashRef ev = this.dm.sendR(tfqn);
+        AlloyExpr rhs, rhs1, q;
         // case 2
         // forall i. eventsi' :> InternalEvents = t1_send_ev (if i) + eventsi :> IntEvents
         //           eventsi' :> InternalEvents = eventsi :> IntEvents (if not i or no t1_send_ev)
         List<AlloyExpr> case2 = this.dsl.emptyExprList();
-        AlloyExpr c2;
+
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             if (this.dm.hasIntEventsAti(i)) {
                 // lhs: eventsi' :> InternalEvents
@@ -257,27 +264,17 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             }
         }
 
-        c2 = AlloyAndList(case2);
+        return AlloyAndList(case2);
+    }
 
-        AlloyExpr stableTrueAndScopesUsedEmpty;
-        if (this.dm.hasConcurrency()) {
-            List<AlloyExpr> scopesUsedEmpty = this.dsl.emptyExprList();
-
-            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-                scopesUsedEmpty.add(AlloyEqual(this.dsl.nextScopesUsed(i), this.dsl.noneArrow(i)));
-            }
-            stableTrueAndScopesUsedEmpty =
-                    AlloyAnd(this.dsl.nextStableTrue(), AlloyAndList(scopesUsedEmpty));
-        } else {
-            stableTrueAndScopesUsedEmpty = this.dsl.nextStableTrue();
-        }
-
+    private AlloyExpr case3(String tfqn) {
+        DashRef ev = this.dm.sendR(tfqn);
+        AlloyExpr rhs, rhs1, q;
         // case 3
         // forall i: (eventsi' :> InternalEvent = t1_send_ev (if i))
         //           (eventsi' :> InternalEvent = none) (if not i)
         //       and (eventsi' :> EnvironmentalEvent = eventsi :> EnvironmentalEvent)
         List<AlloyExpr> case3 = this.dsl.emptyExprList();
-        AlloyExpr c3;
         List<DashRef> sU = this.dm.scopesUsed(tfqn);
         List<AlloyExpr> u;
         // have to be initialized to something
@@ -318,10 +315,25 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                     case3.add(AlloyEqual(this.dsl.nextScopesUsed(i), AlloyUnionList(u)));
             }
         }
-        c3 = AlloyAndList(case3);
+        return AlloyAndList(case3);
+    }
 
+    private AlloyExpr case4(String tfqn) {
         // case 4
         // intermediate small step
+
+        // add t1's gen event to the events
+        // env events don't change
+        // forall i: eventsi' = eventsi + t1_send_ev (if i)
+
+        // just add to scopesUsed
+        // forall i : scopesUsedi' = scopesUsedi + scopesUsed
+
+        DashRef ev = this.dm.sendR(tfqn);
+        AlloyExpr rhs, rhs1, q;
+        List<AlloyExpr> u;
+        List<DashRef> sU = this.dm.scopesUsed(tfqn);
+
         List<AlloyExpr> case4 = this.dsl.emptyExprList();
         AlloyExpr e;
 
@@ -353,17 +365,57 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                 case4.add(AlloyEqual(this.dsl.nextScopesUsed(i), e));
             }
         }
-        AlloyExpr c4 = AlloyAndList(case4);
+        return AlloyAndList(case4);
+    }
 
+    private AlloyExpr envNoChange(String tfqn) {
         // env_vars_unchanged[s,s']
         List<String> allVarBuffers = this.dm.allVarNames();
         allVarBuffers.addAll(this.dm.allBufferNames());
         // might just return true if allVarBuffers is empty
-        AlloyExpr envNoChange =
-                AlloyAndList(
-                        mapBy(
-                                filterBy(allVarBuffers, x -> !this.dm.isIntVar(x)),
-                                y -> this.AlloyVarDoesNotChange(y)));
+        return AlloyAndList(
+                mapBy(
+                        filterBy(allVarBuffers, x -> !this.dm.isIntVar(x)),
+                        y -> this.AlloyVarDoesNotChange(y)));
+    }
+
+    public void addTransPost(String tfqn) {
+        String tout = DashFQN.translateFQN(tfqn);
+        List<DashParam> prs = this.dm.transParams(tfqn);
+        List<AlloyExpr> body = this.dsl.emptyExprList();
+
+        if (!this.dm.hasOnlyOneState())
+            // forall i. confi' = confi - exitedi + enteredi
+            this.addConfConstraints(tfqn, body);
+
+        // forall i : takeni' = {t1}
+        this.addTransTakenConstraints(tfqn, body);
+
+        // action_t1[s,s']
+        if (this.dm.doR(tfqn) != null) body.add(this.translateExpr(this.dm.doR(tfqn)));
+
+        this.addVarConstraints(tfqn, body);
+
+        AlloyExpr c1 = this.case1(tfqn);
+        AlloyExpr c2 = this.case2(tfqn);
+        AlloyExpr c3 = this.case3(tfqn);
+        AlloyExpr c4 = this.case4(tfqn);
+
+        AlloyExpr stableTrueAndScopesUsedEmpty;
+        if (this.dm.hasConcurrency()) {
+            List<AlloyExpr> scopesUsedEmpty = this.dsl.emptyExprList();
+
+            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+                scopesUsedEmpty.add(AlloyEqual(this.dsl.nextScopesUsed(i), this.dsl.noneArrow(i)));
+            }
+            stableTrueAndScopesUsedEmpty =
+                    AlloyAnd(this.dsl.nextStableTrue(), AlloyAndList(scopesUsedEmpty));
+        } else {
+            stableTrueAndScopesUsedEmpty = this.dsl.nextStableTrue();
+        }
+
+        AlloyExpr envNoChange = this.envNoChange(tfqn);
+
         AlloyExpr stableFalseAndEnvNoChange = AlloyAnd(this.dsl.nextStableFalse(), envNoChange);
 
         // big ITE is simplified for boolean/True, boolean/False
@@ -378,11 +430,11 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                             AlloyAnd(
                                     stableFalseAndEnvNoChange,
                                     AlloyIte(this.dsl.curStableTrue(), c3, c4))));
-
         this.am.addPred(tout + D2AStrings.postName, this.dsl.curNextParamsDecls(prs), body);
     }
 
     public AlloyExpr AlloyVarDoesNotChange(String x) {
+
         AlloyExpr e =
                 // p2.p1.s.vfqn = p2.p1.sn.vfqn
                 AlloyEqual(

@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyinterface;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
@@ -44,21 +46,34 @@ public final class Solution {
         return this.a4Solution.satisfiable();
     }
 
+    private void throwErrorIfUnsat() {
+        // used in the rest of the methods b/c
+        // they should not be called if Solution is unsat
+        if (!this.isSat()) {
+            printStackTrace();
+            throw ImplementationError.shouldNotReach();
+        }
+    }
+
     // if neither of the above are true then it is unknown
     public boolean contains(String name) {
+        this.throwErrorIfUnsat();
         return this.map.containsKey(name);
     }
 
     public Set<List<String>> get(String name) {
+        this.throwErrorIfUnsat();
         return this.map.getOrDefault(name, Collections.emptySet());
     }
 
     public void next() {
+        this.throwErrorIfUnsat();
         this.a4Solution = this.a4Solution.next();
-        this.populateMap();
+        if (this.isSat()) this.populateMap();
     }
 
     public EvalRes eval(AlloyExpr alloyExpr) {
+        this.throwErrorIfUnsat();
         Object evalResult = null;
         try {
             evalResult =
@@ -88,6 +103,7 @@ public final class Solution {
     }
 
     public Set<List<String>> eval(AlloySigPara sigPara) {
+        this.throwErrorIfUnsat();
         String sigName = AlloyStrings.THIS + AlloyStrings.SLASH + sigPara.getId().name;
         if (!this.contains(sigName)) {
             return Collections.emptySet();
@@ -101,6 +117,7 @@ public final class Solution {
     }
 
     public Set<List<String>> eval(AlloySigPara sigPara, AlloyDecl fieldDecl) {
+        this.throwErrorIfUnsat();
         String sigName = AlloyStrings.THIS + AlloyStrings.SLASH + sigPara.getId().name;
         String fieldName = fieldDecl.getName().get();
         if (!this.contains(sigName)) {
@@ -119,11 +136,13 @@ public final class Solution {
     }
 
     public void writeXML(String filename) {
+        this.throwErrorIfUnsat();
         this.a4Solution.writeXML(filename);
     }
 
     @Override
     public String toString() {
+        this.throwErrorIfUnsat();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(CommonStrings.DIVIDER + CommonStrings.NEWLINE);
         for (Map.Entry<String, Set<List<String>>> entry : this.map.entrySet()) {
@@ -136,11 +155,13 @@ public final class Solution {
 
     @Override
     public int hashCode() {
+        this.throwErrorIfUnsat();
         return Objects.hash(this.a4Solution, this.alloyModule, this.map);
     }
 
     @Override
     public boolean equals(Object obj) {
+        this.throwErrorIfUnsat();
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
@@ -155,6 +176,7 @@ public final class Solution {
     }
 
     private void populateMap() {
+        this.throwErrorIfUnsat();
         this.map.clear();
         Instance instance = this.a4Solution.debugExtractKInstance();
         for (Relation r : instance.relations()) {
@@ -163,6 +185,7 @@ public final class Solution {
     }
 
     private Set<List<String>> convertKKTupleSet(TupleSet tupleSet) {
+        this.throwErrorIfUnsat();
         Set<List<String>> set = new HashSet<>();
         for (Tuple tuple : tupleSet) {
             List<String> li = new ArrayList<>();
@@ -175,6 +198,7 @@ public final class Solution {
     }
 
     private Optional<Sig> findSigInSolution(String sigName) {
+        this.throwErrorIfUnsat();
         for (Sig sig : this.a4Solution.getAllReachableSigs()) {
             if (sig.label.equals(sigName)) {
                 return Optional.of(sig);

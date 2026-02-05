@@ -52,7 +52,7 @@ public class CollectDashRefVis implements AlloyExprVis<List<DashRef>> {
         for (AlloyExpr expr : bracketExpr.exprs) {
             x.addAll(visit(expr));
         }
-        return null;
+        return x;
     }
     ;
 

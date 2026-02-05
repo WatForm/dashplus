@@ -33,9 +33,11 @@ public class AlloyInterface {
     // and DashModel
     // assumption: cmdnum exists
     private static Solution executeCommand(String alloyCode, int cmdnum) {
+        System.out.println("Command: " + String.valueOf(cmdnum));
         CompModule alloy = parse(alloyCode);
         A4Reporter rep = new A4Reporter();
         Command cmd = alloy.getAllCommands().get(cmdnum);
+        System.out.println(cmd);
         A4Solution ans =
                 TranslateAlloyToKodkod.execute_command(
                         rep, alloy.getAllReachableSigs(), cmd, new A4Options());
