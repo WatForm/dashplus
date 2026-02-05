@@ -3,11 +3,10 @@
     for each expression that we need to collect
     DashRef from.
 
-    implementation of DashExprVis
+    implementation of AlloyExprVis
 
-    The DashRef might be primed or unprimed.
+    The DashRef might be "next" or not.
 
-    Can only be called after refs are resolved.
 */
 
 package ca.uwaterloo.watform.dashtoalloy;
@@ -22,102 +21,110 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
-public class CollectDashRefVis implements AlloyExprVis<List<DashRef>> {
+// Void (rather than void) because Void is a class, but then all methods must return null
 
-    List<DashRef> x = new ArrayList<DashRef>();
+public class CollectDashRefVis implements AlloyExprVis<Void> {
+
+    Set<DashRef> x = emptySet();
+
+    public Set<DashRef> collect(AlloyExpr expr) {
+        this.x = emptySet();
+        this.visit(expr);
+        return x;
+    }
 
     @Override
-    public List<DashRef> visit(AlloyBinaryExpr binExpr) {
-        x.addAll(visit(binExpr.left));
-        x.addAll(visit(binExpr.right));
-        return x;
+    public Void visit(AlloyBinaryExpr binExpr) {
+        visit(binExpr.left);
+        visit(binExpr.right);
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyBlock block) {
+    public Void visit(AlloyBlock block) {
         for (AlloyExpr expr : block.exprs) {
-            x.addAll(visit(expr));
+            visit(expr);
         }
-        return x;
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyBracketExpr bracketExpr) {
-        x.addAll(visit(bracketExpr.expr));
+    public Void visit(AlloyBracketExpr bracketExpr) {
+        visit(bracketExpr.expr);
         for (AlloyExpr expr : bracketExpr.exprs) {
-            x.addAll(visit(expr));
+            visit(expr);
         }
-        return x;
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyCphExpr comprehensionExpr) {
-        comprehensionExpr.body.ifPresent(value -> x.addAll(visit(value)));
-        return x;
+    public Void visit(AlloyCphExpr comprehensionExpr) {
+        comprehensionExpr.body.ifPresent(value -> visit(value));
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyIteExpr iteExpr) {
-        x.addAll(visit(iteExpr.cond));
-        x.addAll(visit(iteExpr.conseq));
-        x.addAll(visit(iteExpr.alt));
-        return x;
+    public Void visit(AlloyIteExpr iteExpr) {
+        visit(iteExpr.cond);
+        visit(iteExpr.conseq);
+        visit(iteExpr.alt);
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyLetExpr letExpr) {
-        x.addAll(visit(letExpr.body));
-        return x;
+    public Void visit(AlloyLetExpr letExpr) {
+        visit(letExpr.body);
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyParenExpr parenExpr) {
-        x.addAll(visit(parenExpr.sub));
-        return x;
+    public Void visit(AlloyParenExpr parenExpr) {
+        visit(parenExpr.sub);
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyQuantificationExpr qtExpr) {
-        x.addAll(visit(qtExpr.body));
-        return x;
+    public Void visit(AlloyQuantificationExpr qtExpr) {
+        visit(qtExpr.body);
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyUnaryExpr unaryExpr) {
-        x.addAll(visit(unaryExpr.sub));
-        return x;
+    public Void visit(AlloyUnaryExpr unaryExpr) {
+        visit(unaryExpr.sub);
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyVarExpr varExpr) {
-        return emptyList();
+    public Void visit(AlloyVarExpr varExpr) {
+        return null;
     }
     ;
 
     @Override
-    public List<DashRef> visit(AlloyDecl decl) {
-        return emptyList();
+    public Void visit(AlloyDecl decl) {
+        visit(decl.expr);
+        return null;
     }
     ;
 
-    public List<DashRef> visit(DashRef d) {
+    public Void visit(DashRef d) {
         x.add(d);
-        return x;
+        return null;
     }
 
-    public List<DashRef> visit(DashParam dashParam) {
-        return x;
+    public Void visit(DashParam dashParam) {
+        return null;
     }
 }

@@ -55,6 +55,10 @@ public class GeneralUtil {
         return new ArrayList<T>();
     }
 
+    public static <T> Set<T> emptySet() {
+        return new HashSet<T>();
+    }
+
     public static <T> String strCommaList(List<T> ll) {
         StringJoiner sj = new StringJoiner(", ");
         ll.forEach(n -> sj.add(n.toString()));

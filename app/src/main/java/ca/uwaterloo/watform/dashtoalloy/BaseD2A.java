@@ -28,7 +28,6 @@ public class BaseD2A {
     protected boolean isTraces = false;
     protected boolean isTcmc = false;
     protected DSL dsl;
-    protected ExprTranslatorVis exprTranslator;
 
     protected BaseD2A(DashModel dm, TranslateOutput opt) {
         this.dm = dm;
@@ -47,16 +46,13 @@ public class BaseD2A {
 
         this.isElectrum = isElectrum;
         this.dsl = new DSL(isElectrum);
-        this.exprTranslator = new ExprTranslatorVis(dm, isElectrum);
     }
 
     protected AlloyExpr translateExpr(AlloyExpr expr) {
-        return this.exprTranslator.translateExpr(expr);
+        return new ExprTranslatorVis(dm, isElectrum).translateExpr(expr);
     }
 
-    protected List<DashRef> collectDashRefs(AlloyExpr expr) {
-        // has to be a new one every time
-        // to empty out collector variable inside object
-        return new CollectDashRefVis().visit(expr);
+    protected Set<DashRef> collectDashRefs(AlloyExpr expr) {
+        return new CollectDashRefVis().collect(expr);
     }
 }

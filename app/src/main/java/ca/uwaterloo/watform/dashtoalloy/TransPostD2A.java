@@ -125,8 +125,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // but I don't think invs can have primed vars? (NAD 2026-01-25)
         // TODO: what if these are focussed one sister?
         for (AlloyExpr i : this.dm.invsR()) {
-            List<DashRef> drs = this.collectDashRefs(i);
-            for (DashRef r : drs) {
+            for (DashRef r : this.collectDashRefs(i)) {
                 intVarsBuffersThatDontChange.remove(r.name);
             }
         }
