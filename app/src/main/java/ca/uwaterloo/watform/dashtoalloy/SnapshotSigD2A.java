@@ -38,24 +38,31 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             // scopesUsed0, scopeUsed1, etc
             if (dm.hasConcurrency()) {
                 decls.add(
+                        // scopesUsedi: p0 -> p1 -> p2 -> set Scopes
                         AlloyDecl(
                                 this.dsl.nameNum(D2AStrings.scopesUsedName, i),
-                                AlloyArrowStringList(
-                                        newListWithOneMore(cop, D2AStrings.scopeLabelName))));
+                                // p0 -> p1 -> p2 -> set Scopes
+                                AlloyArrowStringListEndInSet(
+                                        newListWithOneMore(
+                                                // p0, p1, p2
+                                                cop,
+                                                // some Scopes
+                                                // has to be "set", b/c default is "one"
+                                                D2AStrings.scopeLabelName))));
             }
             // conf0, conf1, etc.
             if (!dm.hasOnlyOneState())
                 decls.add(
                         AlloyDecl(
                                 this.dsl.nameNum(D2AStrings.confName, i),
-                                AlloyArrowStringList(
+                                AlloyArrowStringListEndInSet(
                                         newListWithOneMore(cop, D2AStrings.stateLabelName))));
 
             // transTaken1, etc.
             decls.add(
                     AlloyDecl(
                             this.dsl.nameNum(D2AStrings.transTakenName, i),
-                            AlloyArrowStringList(
+                            AlloyArrowStringListEndInSet(
                                     newListWithOneMore(cop, D2AStrings.transLabelName))));
 
             // events0, event1, etc.
@@ -63,7 +70,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                 decls.add(
                         AlloyDecl(
                                 this.dsl.nameNum(D2AStrings.eventsName, i),
-                                AlloyArrowStringList(
+                                AlloyArrowStringListEndInSet(
                                         newListWithOneMore(cop, D2AStrings.allEventsName))));
         }
 

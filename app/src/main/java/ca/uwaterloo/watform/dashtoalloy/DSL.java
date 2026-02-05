@@ -317,7 +317,7 @@ public class DSL {
         List<String> cop = Collections.nCopies(i, D2AStrings.identifierName);
         return new AlloyDecl(
                 D2AStrings.scopeName + i,
-                AlloyArrowStringList(newListWithOneMore(cop, D2AStrings.scopeLabelName)));
+                AlloyArrowStringListEndInSet(newListWithOneMore(cop, D2AStrings.scopeLabelName)));
     }
 
     public AlloyDecl genEventDecl(int i) {
@@ -326,7 +326,8 @@ public class DSL {
             List<String> cop = Collections.nCopies(i, D2AStrings.identifierName);
             return new AlloyDecl(
                     D2AStrings.genEventName + i,
-                    AlloyArrowStringList(newListWithOneMore(cop, D2AStrings.allEventsName)));
+                    AlloyArrowStringListEndInSet(
+                            newListWithOneMore(cop, D2AStrings.allEventsName)));
         }
     }
 

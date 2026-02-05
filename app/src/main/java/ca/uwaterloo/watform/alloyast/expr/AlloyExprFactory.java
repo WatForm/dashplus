@@ -4,6 +4,8 @@
 
 package ca.uwaterloo.watform.alloyast.expr;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -30,6 +32,15 @@ public class AlloyExprFactory {
             o = new AlloyArrowExpr(new AlloyQnameExpr(s), o);
         }
         return o;
+    }
+
+    // AlloyVar(sl(0)) -> (AlloyVar(sl(1)) -> set AlloyVar(sl(2)))
+    public static AlloyExpr AlloyArrowStringListEndInSet(List<String> sl) {
+        assert (sl != null && !sl.isEmpty());
+        return AlloyArrowExprList(
+                newListWithOneMore(
+                        mapBy(sl.subList(0, sl.size() - 1), x -> AlloyVar(x)),
+                        AlloySet(AlloyVar(sl.get(sl.size() - 1)))));
     }
 
     // eList(0) -> (eList(1) -> eList(2))
@@ -200,6 +211,11 @@ public class AlloyExprFactory {
     // no sub
     public static AlloyExpr AlloyNo(AlloyExpr sub) {
         return new AlloyQtExpr(AlloyQtExpr.Quant.NO, sub);
+    }
+
+    // set sub
+    public static AlloyExpr AlloySet(AlloyExpr sub) {
+        return new AlloyQtExpr(AlloyQtExpr.Quant.SET, sub);
     }
 
     // vars ----------------------------

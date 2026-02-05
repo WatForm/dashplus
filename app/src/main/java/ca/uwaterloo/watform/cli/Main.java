@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.cli.CliError.*;
 import static ca.uwaterloo.watform.parser.Parser.*;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
@@ -98,14 +99,23 @@ public class Main implements Callable<Integer> {
                     Reporter.INSTANCE.pushPath(absolutePath);
 
                     if (fileName.endsWith(".als")) {
+                        System.out.println("Parsing model: " + absolutePath);
                         AlloyModel alloyModel = parseToModel(absolutePath);
-                        if (cliConf.cmdIdx >= cliConf.firstCmdIdx) {
+                        int num_cmds_in_file = alloyModel.getParas(AlloyCmdPara.class).size();
+                        if (num_cmds_in_file == 0 && cliConf.cmdIdx == -1) {
+                            // if there are no commands in the file
+                            // and there was no cmd arg
+                            System.out.println("Executing satisfiability check");
+                            Solution soln = checkModelSatisfiability(alloyModel);
+                            System.out.println("Satisfiable: " + String.valueOf(soln.isSat()));
+                        } else if (cliConf.cmdIdx >= cliConf.firstCmdIdx) {
+                            System.out.println(
+                                    "Executing command: " + String.valueOf(cliConf.cmdIdx));
                             System.out.println(executeCommandToString(alloyModel, cliConf.cmdIdx));
                         } else if (cliConf.cmdIdx == -1) {
-
-                            for (int i = cliConf.firstCmdIdx;
-                                    i < alloyModel.getParas(AlloyCmdPara.class).size();
-                                    i++) {
+                            // execute all commands
+                            for (int i = cliConf.firstCmdIdx; i < num_cmds_in_file; i++) {
+                                System.out.println("Executing command: " + String.valueOf(i));
                                 System.out.println(executeCommandToString(alloyModel, i));
                             }
                         } else {

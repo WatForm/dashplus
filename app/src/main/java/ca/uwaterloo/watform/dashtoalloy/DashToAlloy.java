@@ -45,9 +45,6 @@ public class DashToAlloy extends StutterD2A {
 
         this.addSmallStep();
 
-        // add stutter?
-        //
-
         if (this.isTcmc) {
             // next two are required
             this.addTcmcFact();
