@@ -82,10 +82,14 @@ public class AlloyExprFactory {
     }
 
     public static AlloyExpr AlloyAnd(AlloyExpr left, AlloyExpr right) {
+        if (optimizationsOn && left.equals(AlloyTrueCond())) return right;
+        if (optimizationsOn && right.equals(AlloyTrueCond())) return left;
         return new AlloyAndExpr(left, right);
     }
 
     public static AlloyExpr AlloyOr(AlloyExpr left, AlloyExpr right) {
+        if (optimizationsOn && left.equals(AlloyFalseCond())) return right;
+        if (optimizationsOn && right.equals(AlloyFalseCond())) return left;
         return new AlloyOrExpr(left, right);
     }
 
@@ -100,7 +104,7 @@ public class AlloyExprFactory {
     public static AlloyExpr AlloyAndList(List<AlloyExpr> elist) {
         // does simplifications
         // how get back a real true expr rather than just boolean value at the e3nd??
-        if (elist.isEmpty()) return AlloyTrue();
+        if (elist.isEmpty()) return AlloyTrueCond();
         AlloyExpr ret = elist.get(0);
         for (AlloyExpr el : elist.subList(1, elist.size())) {
             ret = AlloyAnd(ret, el);
@@ -111,7 +115,7 @@ public class AlloyExprFactory {
     public static AlloyExpr AlloyOrList(List<AlloyExpr> elist) {
         // does simplifications
         // how get back a real true expr rather than just boolean value at the e3nd??
-        if (elist.isEmpty()) return AlloyFalse();
+        if (elist.isEmpty()) return AlloyFalseCond();
         AlloyExpr ret = elist.get(0);
         for (AlloyExpr el : elist.subList(1, elist.size())) {
             ret = AlloyOr(ret, el);
