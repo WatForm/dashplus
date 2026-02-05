@@ -262,4 +262,13 @@ public class AlloyModel {
                         List.of(new AlloyQnameExpr(sigName)),
                         new AlloyQnameExpr(asName)));
     }
+
+    public void addImport(List<String> names) {
+        this.addPara(
+                new AlloyImportPara(
+                        false,
+                        new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
+                        emptyList(),
+                        null));
+    }
 }

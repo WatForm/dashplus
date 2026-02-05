@@ -6,8 +6,10 @@
 
 package ca.uwaterloo.watform.dashtoalloy;
 
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import java.util.List;
 
 public class DashToAlloy extends StutterD2A {
 
@@ -22,6 +24,10 @@ public class DashToAlloy extends StutterD2A {
     public AlloyModel translate() {
         // copy all Alloy stuff from dm into am
         this.am = dm.copy();
+
+        if (this.dm.hasConcurrency())
+            // open util/boolean
+            this.am.addImport(List.of(AlloyStrings.utilName, AlloyStrings.booleanName));
 
         // state, transition, parameter, buffer spaces
         this.addSpaceSigs();

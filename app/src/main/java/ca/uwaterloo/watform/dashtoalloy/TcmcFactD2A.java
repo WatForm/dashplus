@@ -17,6 +17,7 @@ import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -34,7 +35,7 @@ public class TcmcFactD2A extends TracesFactD2A {
 
         // open util/tcmc[Snapshot] as snapshot
         this.am.addImport(
-                List.of(D2AStrings.utilName, D2AStrings.tcmcName),
+                List.of(AlloyStrings.utilName, D2AStrings.tcmcName),
                 D2AStrings.snapshotName,
                 D2AStrings.snapshotName);
 

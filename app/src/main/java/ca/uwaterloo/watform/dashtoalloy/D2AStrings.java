@@ -10,8 +10,9 @@ public final class D2AStrings {
     // used for translation to Alloy
 
     // public static final String utilOrderingName = "util/ordering";
-    public static final String utilName = "util";
+    // public static final String utilName = "util";
     public static final String tracesName = "traces";
+    // public static final String booleanName = "traces";
     // public static final String utilTracesName = "util/traces";
     public static final String tracesFirstName = "first";
     public static final String tracesNextName = "next";

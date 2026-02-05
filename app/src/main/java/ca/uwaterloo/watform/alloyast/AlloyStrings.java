@@ -111,7 +111,10 @@ public final class AlloyStrings extends CommonStrings {
     public static final String RARROW = "->";
 
     // standard modules
-    public static final String utilBooleanName = "util/boolean";
+    // public static final String utilBooleanName = "util/boolean";
+    public static final String utilName = "util";
+    public static final String booleanName = "boolean";
+
     public static final String boolName = "boolean/Bool";
     public static final String trueName = "boolean/True";
     public static final String falseName = "boolean/False";

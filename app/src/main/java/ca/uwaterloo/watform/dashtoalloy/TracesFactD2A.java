@@ -33,6 +33,7 @@ import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -49,7 +50,7 @@ public class TracesFactD2A extends SmallStepD2A {
 
         // open util/traces[Snapshot] as Snapshot
         this.am.addImport(
-                List.of(D2AStrings.utilName, D2AStrings.tracesName),
+                List.of(AlloyStrings.utilName, D2AStrings.tracesName),
                 D2AStrings.snapshotName,
                 D2AStrings.snapshotName);
 
