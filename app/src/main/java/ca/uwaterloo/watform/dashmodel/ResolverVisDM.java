@@ -355,7 +355,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         if (unaryExpr.op == AlloyStrings.PRIME) {
             // can only apply a prime to a var
             // this should be not allowed in parsing
-            assert (unaryExpr.sub instanceof AlloyVarExpr);
+            assert (unaryExpr.sub instanceof AlloyQnameExpr || unaryExpr.sub instanceof DashRef);
             if (!this.nextOk) {
                 noNextVarsError(unaryExpr);
             }
@@ -365,7 +365,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // must be an internal VarDashRef (no other kind of
             // value can be primed)
             if (!(newExpr instanceof DashRef)) cantNextNonDynamicVarError(unaryExpr);
-            else if (isEnvVar(((DashRef) newExpr).name)) cantNextExternalVarError(newExpr);
+            else if (isEnvVar(((DashRef) newExpr).name)) cantNextEnvVarError(newExpr);
             // return DashRef(..., isNext)
             return ((DashRef) newExpr).makeNext();
         }
@@ -559,9 +559,9 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
                 "Src/Dest of trans is unknown: " + "trans " + tfqn + " " + t + " " + x);
     }
 
-    public void cantNextExternalVarError(AlloyExpr expr) {
+    public void cantNextEnvVarError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
-                expr.pos, " Internal var/buffer cannot be primed: " + expr.toString());
+                expr.pos, " Env var/buffer cannot be primed: " + expr.toString());
     }
 
     public void noNextVarsError(AlloyExpr expr) {
