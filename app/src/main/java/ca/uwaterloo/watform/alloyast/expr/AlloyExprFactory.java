@@ -151,10 +151,6 @@ public class AlloyExprFactory {
         return new AlloyNegExpr(expr);
     }
 
-    public static AlloyExpr AlloyPrime(AlloyExpr expr) {
-        return new AlloyPrimeExpr(expr);
-    }
-
     // left + right
     public static AlloyExpr AlloyUnion(AlloyExpr left, AlloyExpr right) {
         return new AlloyUnionExpr(left, right);

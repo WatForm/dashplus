@@ -1,11 +1,11 @@
 package ca.uwaterloo.watform.predabstraction;
 
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
-import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.*;
 
 public class PredAbsUtil {
@@ -28,7 +28,7 @@ public class PredAbsUtil {
         AlloyExpr e = loe.get(idx);
         if (loe.size() == 1) {
             combos.add(List.of(e));
-            combos.add(List.of(AlloyExprFactory.AlloyNot(e)));
+            combos.add(List.of(AlloyNot(e)));
             return;
         }
         if (idx == loe.size()) {
@@ -40,18 +40,16 @@ public class PredAbsUtil {
         backtrack(loe, idx + 1, path, combos);
         path.remove(path.size() - 1);
 
-        path.add(AlloyExprFactory.AlloyNot(e));
+        path.add(AlloyNot(e));
         backtrack(loe, idx + 1, path, combos);
         path.remove(path.size() - 1);
     }
 
-    public static boolean checkSAT(
-            Set<AlloyExpr> exprs, AlloyModel am, DashModel dm, boolean snReqd) {
-        return INSTANCE.checkSATInternal(exprs, am, dm, snReqd);
+    public static boolean checkSAT(Set<AlloyExpr> exprs, AlloyModel am, boolean snReqd) {
+        return INSTANCE.checkSATInternal(exprs, am, snReqd);
     }
 
-    private boolean checkSATInternal(
-            Set<AlloyExpr> exprs, AlloyModel am, DashModel dm, boolean snReqd) {
+    private boolean checkSATInternal(Set<AlloyExpr> exprs, AlloyModel am, boolean snReqd) {
         Object key = canonicalKey(exprs);
         Boolean cached = cache.get(key);
         if (cached != null) {
@@ -60,9 +58,9 @@ public class PredAbsUtil {
             String pname = "query_" + Integer.toString(cache.size());
             DSL dsl = new DSL(false);
             if (snReqd) {
-                am.addPred(pname, dsl.curNextDecls(), GeneralUtil.setToList(exprs));
+                am.addPred(pname, dsl.curNextDecls(), setToList(exprs));
             } else {
-                am.addPred(pname, dsl.curDecls(), GeneralUtil.setToList(exprs));
+                am.addPred(pname, dsl.curDecls(), setToList(exprs));
             }
         }
         return true;

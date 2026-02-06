@@ -52,6 +52,14 @@ public class DashRef extends AlloyExpr {
         this(Pos.UNKNOWN, k, n, prmValues);
     }
 
+    public DashRef(
+            DashStrings.DashRefKind k,
+            String n,
+            List<? extends AlloyExpr> prmValues,
+            boolean isNext) {
+        this(Pos.UNKNOWN, k, n, prmValues, isNext);
+    }
+
     private DashRef(
             Pos p,
             DashStrings.DashRefKind k,
