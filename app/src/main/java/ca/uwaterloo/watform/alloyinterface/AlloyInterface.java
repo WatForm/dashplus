@@ -13,6 +13,8 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class AlloyInterface {
@@ -82,29 +84,39 @@ public class AlloyInterface {
         instanceFileName1, instanceFilename2, etc.
         Returns how many solutions are written (0 if unsat)
     */
-    public static Integer writeInstancesToXML(
+    public static Integer writeInstanceToXML(
             AlloyModel am, Integer cmdNum, String instanceFileName // should not include .xml at end
             ) {
         return writeInstancesToXML(am, cmdNum, instanceFileName, 1);
     }
 
+    // returns number of instances written to file(s)
     public static Integer writeInstancesToXML(
             AlloyModel am,
             Integer cmdNum,
             String instanceFileName, // should not include .xml at end
             Integer maxInstances) {
+        assert (!instanceFileName.contains(".xml"));
+        List<Solution> solnList = getInstances(am, cmdNum, maxInstances);
+        for (int i = 0; i < solnList.size(); i++) {
+            solnList.get(i).writeXML(instanceFileName + String.valueOf(i) + ".xml");
+        }
+        return solnList.size();
+    }
+
+    public static List<Solution> getInstances(AlloyModel am, Integer cmdNum, Integer maxInstances) {
 
         assert (cmdNum >= 0);
-        assert (!instanceFileName.contains(".xml"));
         // at this point we don't know if it is satisfiable
-        Solution soln = checkModelSatisfiability(am);
+        List<Solution> solnList = new ArrayList<Solution>();
+        Solution soln = executeCommand(am, cmdNum);
         int c;
         for (c = 0; c < maxInstances; c++) {
             if (!(soln.isSat() && c <= maxInstances)) break;
             int j = c + 1;
-            soln.writeXML(instanceFileName + String.valueOf(j) + ".xml");
+            solnList.add(soln);
             soln.next();
         }
-        return c;
+        return solnList;
     }
 }
