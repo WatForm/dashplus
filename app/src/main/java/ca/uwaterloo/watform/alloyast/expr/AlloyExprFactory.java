@@ -12,7 +12,6 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AlloyExprFactory {
@@ -26,9 +25,9 @@ public class AlloyExprFactory {
     // AlloyVar(sl(0)) -> (AlloyVar(sl(1)) -> AlloyVar(sl(2)))
     public static AlloyExpr AlloyArrowStringList(List<String> sl) {
         assert (sl != null && !sl.isEmpty());
-        Collections.reverse(sl);
-        AlloyExpr o = AlloyVar(sl.get(0));
-        for (String s : sl.subList(1, sl.size())) {
+        List<String> reversed = reverse(sl);
+        AlloyExpr o = AlloyVar(reversed.get(0));
+        for (String s : reversed.subList(1, reversed.size())) {
             o = new AlloyArrowExpr(new AlloyQnameExpr(s), o);
         }
         return o;
@@ -46,9 +45,9 @@ public class AlloyExprFactory {
     // eList(0) -> (eList(1) -> eList(2))
     public static AlloyExpr AlloyArrowExprList(List<AlloyExpr> eList) {
         assert (eList != null);
-        Collections.reverse(eList);
-        AlloyExpr o = eList.get(0);
-        for (AlloyExpr e : eList.subList(1, eList.size())) {
+        List<AlloyExpr> reversed = reverse(eList);
+        AlloyExpr o = reversed.get(0);
+        for (AlloyExpr e : reversed.subList(1, reversed.size())) {
             o = new AlloyArrowExpr(e, o);
         }
         return o;
@@ -61,9 +60,9 @@ public class AlloyExprFactory {
     // elist(0).elist(1).elist(2)
     public static AlloyExpr AlloyJoinList(List<AlloyExpr> elist) {
         assert (elist != null);
-        Collections.reverse(elist);
-        AlloyExpr ret = elist.get(0);
-        for (AlloyExpr el : elist.subList(1, elist.size())) {
+        List<AlloyExpr> reversed = reverse(elist);
+        AlloyExpr ret = reversed.get(0);
+        for (AlloyExpr el : reversed.subList(1, reversed.size())) {
             ret = new AlloyDotExpr(el, ret);
         }
         return ret;
@@ -72,9 +71,9 @@ public class AlloyExprFactory {
     // elist(0).elist(1).expr
     public static AlloyExpr AlloyJoinList(List<AlloyExpr> elist, AlloyExpr expr) {
         assert (elist != null);
-        Collections.reverse(elist);
-        AlloyExpr ret = elist.get(0);
-        for (AlloyExpr el : elist.subList(1, elist.size())) {
+        List<AlloyExpr> reversed = reverse(elist);
+        AlloyExpr ret = reversed.get(0);
+        for (AlloyExpr el : reversed.subList(1, reversed.size())) {
             ret = new AlloyDotExpr(el, ret);
         }
         ret = new AlloyDotExpr(ret, expr);

@@ -396,8 +396,7 @@ public class StatesDM extends TransDM {
 
         // allAnces returns list from Root, ..., parentFQN on path
         // could also just walk back through parents
-        List<String> allAnces = allAnces(sfqn);
-        Collections.reverse(allAnces);
+        List<String> allAnces = reverse(allAnces(sfqn));
 
         String concAnces = null;
         // allAnces cannot be empty b/c must have Root in it

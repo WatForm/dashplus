@@ -26,12 +26,12 @@
 package ca.uwaterloo.watform.dashast.dashref;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
-import static ca.uwaterloo.watform.dashmodel.DashFQN.*;
 import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
@@ -44,7 +44,7 @@ public class DashRef extends AlloyExpr {
 
     public final DashStrings.DashRefKind kind;
     public final String name;
-    public final List<? extends AlloyExpr> paramValues;
+    public final List<AlloyExpr> paramValues;
     public final boolean isNext;
 
     // for internal uses during translation
@@ -99,11 +99,9 @@ public class DashRef extends AlloyExpr {
         // p1 -> p2 -> fqn
         // used for initialization and
         // checking elements in conf/events
-        // TODO: require this DashRef to never have isNext true
         assert (!this.isNext);
-        List<AlloyExpr> ll = new ArrayList<AlloyExpr>(this.paramValues);
-        Collections.reverse(ll);
-        ll.add(AlloyVar(translateFQN(this.name)));
+        List<AlloyExpr> ll = reverse(this.paramValues);
+        ll.add(AlloyVar(DashFQN.translateFQN(this.name)));
         return AlloyArrowExprList(ll);
     }
 
@@ -118,14 +116,14 @@ public class DashRef extends AlloyExpr {
             if (kind == DashStrings.DashRefKind.STATE) {
                 s += name;
             } else {
-                s += chopPrefixFromFQN(name);
+                s += DashFQN.chopPrefixFromFQN(name);
             }
             s += "[";
             s += GeneralUtil.strCommaList(paramValues);
             s += "]";
             if (kind != DashStrings.DashRefKind.STATE) {
                 s += "/";
-                s += chopNameFromFQN(name);
+                s += DashFQN.chopNameFromFQN(name);
             }
         } else {
             s += name;

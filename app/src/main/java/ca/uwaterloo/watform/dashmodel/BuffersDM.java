@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.dashmodel;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.utils.Pos;

@@ -6,6 +6,7 @@ package ca.uwaterloo.watform.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -110,17 +111,6 @@ public class GeneralUtil {
         else return ll.subList(0, ll.size() - 1);
     }
 
-    // java's Collection.reverse doesn't work sometimes
-    public static <T> List<T> reverse(List<T> ll) {
-        assert (!ll.isEmpty());
-        List<T> x = new ArrayList<T>();
-        for (int i = ll.size() - 1; i >= 0; i--) {
-            x.add(ll.get(i));
-        }
-        assert (x.size() == ll.size());
-        return x;
-    }
-
     public static <T> List<T> tail(List<T> ll) {
         assert (ll.size() > 1);
         return ll.subList(1, ll.size());
@@ -164,6 +154,14 @@ public class GeneralUtil {
 
     public static <T> List<T> filterBy(List<T> items, Predicate<T> filterFn) {
         return items.stream().filter(filterFn).collect(Collectors.toList());
+    }
+
+    public static <T> List<T> reverse(List<T> ll) {
+        // Collections.reverse reverses in place
+        // so we need a mutable copy of eList
+        List<T> reversed = new ArrayList<T>(ll);
+        Collections.reverse(reversed);
+        return reversed;
     }
 
     public static <T> boolean containsMatch(List<T> items, Predicate<T> matchFn) {

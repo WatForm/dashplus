@@ -31,7 +31,7 @@ public class DashParam extends AlloyExpr {
         // super();
         // does not have a pos of origin
         super(Pos.UNKNOWN);
-        this.stateName = stateName;
+        this.stateName = stateName; // fqn
         this.paramSig = paramSig;
     }
 
@@ -43,9 +43,12 @@ public class DashParam extends AlloyExpr {
 
     // it's convenient to include these translation methods here
 
+    // this is used in Resolve where a parameter is used
+    // as a paramValue of a DashRef
     // p_stateName
     public AlloyQnameExpr asAlloyVar() {
-        return new AlloyQnameExpr(DashStrings.pName + DashStrings.alloySep + this.stateName);
+        return new AlloyQnameExpr(
+                DashStrings.pName + DashStrings.alloySep + DashFQN.translateFQN(this.stateName));
     }
 
     // p_stateName:paramSig

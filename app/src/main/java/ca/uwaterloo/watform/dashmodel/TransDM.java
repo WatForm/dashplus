@@ -9,6 +9,7 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
+import static ca.uwaterloo.watform.dashast.DashFQN.*;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
