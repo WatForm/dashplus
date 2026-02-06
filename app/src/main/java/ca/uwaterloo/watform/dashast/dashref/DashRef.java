@@ -48,19 +48,7 @@ public class DashRef extends AlloyExpr {
     public final boolean isNext;
 
     // for internal uses during translation
-    public DashRef(DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
-        this(Pos.UNKNOWN, k, n, prmValues);
-    }
-
-    public DashRef(
-            DashStrings.DashRefKind k,
-            String n,
-            List<? extends AlloyExpr> prmValues,
-            boolean isNext) {
-        this(Pos.UNKNOWN, k, n, prmValues, isNext);
-    }
-
-    private DashRef(
+    protected DashRef(
             Pos p,
             DashStrings.DashRefKind k,
             String n,
@@ -71,6 +59,10 @@ public class DashRef extends AlloyExpr {
         this.name = n;
         this.paramValues = Collections.unmodifiableList(prmValues);
         this.isNext = isNext;
+    }
+
+    public DashRef(DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
+        this(Pos.UNKNOWN, k, n, prmValues);
     }
 
     // used in parsing
@@ -95,12 +87,6 @@ public class DashRef extends AlloyExpr {
 
     public static List<AlloyExpr> emptyParamValuesList() {
         return new ArrayList<AlloyExpr>();
-    }
-
-    // only way to make a "next" DashRef (which happens in resolving)
-    public DashRef makeNext() {
-        assert (!this.isNext);
-        return new DashRef(this.pos, this.kind, this.name, this.paramValues, true);
     }
 
     public AlloyExpr asAlloyArrow() {

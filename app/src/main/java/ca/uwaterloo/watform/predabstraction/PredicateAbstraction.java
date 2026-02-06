@@ -118,7 +118,7 @@ public class PredicateAbstraction {
         for (String vname : ABVNameCAFMap.keySet()) {
             AlloyExpr caf = ABVNameCAFMap.get(vname);
             String vfqn = DashFQN.fqn(concreteModel.rootName, vname);
-            AlloyExpr v = new VarDashRef(vfqn, emptyList(), false);
+            AlloyExpr v = (new VarDashRef(vfqn, emptyList())).makeNext();
             // DashRef.asAlloyVar ??;; new VarDashRef -- subclass of DashRef
             cmdBody.add(caf);
             if (!PredAbsUtil.checkSAT(
@@ -150,7 +150,7 @@ public class PredicateAbstraction {
         for (String vname : ABVNameCAFMap.keySet()) {
             AlloyExpr caf = ABVNameCAFMap.get(vname);
             String vfqn = DashFQN.fqn(concreteModel.rootName, vname);
-            AlloyExpr v = new VarDashRef(vfqn, emptyList(), true);
+            AlloyExpr v = (new VarDashRef(vfqn, emptyList())).makeNext();
             cmdBody.add(caf);
             if (!PredAbsUtil.checkSAT(cmdBody, queryModel, true)) {
                 exprABVs.add(dsl.AlloyIsFalse(v));

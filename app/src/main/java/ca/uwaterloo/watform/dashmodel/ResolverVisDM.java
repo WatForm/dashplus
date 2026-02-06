@@ -356,7 +356,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         if (unaryExpr.op == AlloyStrings.PRIME) {
             // can only apply a prime to a var
             // this should be not allowed in parsing
-            assert (unaryExpr.sub instanceof AlloyQnameExpr || unaryExpr.sub instanceof DashRef);
+            assert (unaryExpr.sub instanceof AlloyQnameExpr || unaryExpr.sub instanceof VarDashRef);
             if (!this.nextOk) {
                 noNextVarsError(unaryExpr);
             }
@@ -368,7 +368,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             if (!(newExpr instanceof DashRef)) cantNextNonDynamicVarError(unaryExpr);
             else if (isEnvVar(((DashRef) newExpr).name)) cantNextEnvVarError(newExpr);
             // return DashRef(..., isNext)
-            return ((DashRef) newExpr).makeNext();
+            return ((VarDashRef) newExpr).makeNext();
         }
         if (!this.supportedUnaryExpr(unaryExpr))
             // throw exception

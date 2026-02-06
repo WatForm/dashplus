@@ -15,7 +15,9 @@ public class VarDashRef extends DashRef {
         super(DashStrings.DashRefKind.VAR, n, prmValues);
     }
 
-    public VarDashRef(String n, List<? extends AlloyExpr> prmValues, boolean isNext) {
-        super(DashStrings.DashRefKind.VAR, n, prmValues, isNext);
+    // only way to make a "next" DashRef (which happens in resolving)
+    public DashRef makeNext() {
+        assert (!this.isNext);
+        return new DashRef(this.pos, this.kind, this.name, this.paramValues, true);
     }
 }
