@@ -14,7 +14,7 @@ public class TransDefns {
     public static void translate(
             DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
 
-        List<String> transFQNs = AuxDashAccessors.getTransitionNames(dashModel);
+        List<String> transFQNs = dashModel.allTransNames();
 
         transFQNs.forEach(
                 transFQN ->
@@ -77,7 +77,7 @@ public class TransDefns {
 
         List<TlaExp> notEnabledTrans =
                 mapBy(
-                        AuxDashAccessors.getTransitionNames(dashModel),
+                        dashModel.allTransNames(),
                         tFQN ->
                                 TlaNot(
                                         TlaAppl(

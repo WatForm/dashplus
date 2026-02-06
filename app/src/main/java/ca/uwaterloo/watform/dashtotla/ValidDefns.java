@@ -24,7 +24,7 @@ public class ValidDefns {
 
         if (!dashModel.hasOnlyOneState()) {
             vars.add(CONF);
-            List<String> leafStateFQNs = AuxDashAccessors.getLeafStateNames(dashModel);
+            List<String> leafStateFQNs = dashModel.leafStateNames();
             tlaModel.addDefn(
                     generateValid(
                             CONF,
@@ -38,7 +38,7 @@ public class ValidDefns {
             vars.add(STABLE);
 
             // scopes used
-            List<String> leafStateFQNs = AuxDashAccessors.getLeafStateNames(dashModel);
+            List<String> leafStateFQNs = dashModel.leafStateNames();
             tlaModel.addDefn(
                     generateValid(
                             SCOPES_USED,
@@ -50,8 +50,7 @@ public class ValidDefns {
         }
 
         vars.add(TRANS_TAKEN);
-        List<String> transTakenNames =
-                mapBy(AuxDashAccessors.getTransitionNames(dashModel), x -> takenTransTlaFQN(x));
+        List<String> transTakenNames = mapBy(dashModel.allTransNames(), x -> takenTransTlaFQN(x));
         transTakenNames.add((NONE_TRANSITION));
         tlaModel.addDefn(
                 generateValid(TRANS_TAKEN, TlaSet(mapBy(transTakenNames, t -> TlaAppl(t)))));

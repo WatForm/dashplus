@@ -25,9 +25,7 @@ public class InitDefn {
 
         if (!dashModel.hasOnlyOneState()) {
             List<TlaAppl> initialStates =
-                    mapBy(
-                            AuxDashAccessors.initialEntered(dashModel),
-                            sFQN -> TlaAppl(tlaFQN(sFQN)));
+                    mapBy(dashModel.rootLeafStatesEntered(), ref -> TlaAppl(tlaFQN(ref.name)));
 
             exps.add(
                     // conf = union <initial states>...

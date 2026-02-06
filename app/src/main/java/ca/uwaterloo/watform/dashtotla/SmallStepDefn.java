@@ -17,7 +17,7 @@ import java.util.List;
 public class SmallStepDefn {
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        List<String> transFQNs = AuxDashAccessors.getTransitionNames(dashModel);
+        List<String> transFQNs = dashModel.allTransNames();
         List<TlaAppl> preTransitions = mapBy(transFQNs, tFQN -> TlaAppl(preTransTlaFQN(tFQN)));
         List<TlaAppl> transitions = mapBy(transFQNs, tFQN -> TlaAppl(tlaFQN(tFQN)));
 

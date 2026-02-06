@@ -18,8 +18,7 @@ public class StateDefns {
     public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
         if (dashModel.hasOnlyOneState()) return;
-        List<String> stateFQNs =
-                AuxDashAccessors.getAllStateNames(dashModel); // dashModel.st.getAllNames();
+        List<String> stateFQNs = dashModel.allStateNames(); // dashModel.st.getAllNames();
 
         depthSort(stateFQNs);
         /* sorts it based on depth, thus all ancestors lie to the left and all descendants lie to the right, for every state */
@@ -28,8 +27,7 @@ public class StateDefns {
                 .reversed()
                 .forEach(
                         stateFQN -> {
-                            if (AuxDashAccessors.isLeaf(stateFQN, dashModel))
-                                LeafStateDefn(stateFQN, tlaModel);
+                            if (dashModel.isLeaf(stateFQN)) LeafStateDefn(stateFQN, tlaModel);
                             else nonLeafStateDefn(stateFQN, dashModel, tlaModel);
                         });
     }
@@ -48,10 +46,7 @@ public class StateDefns {
 
     public static void nonLeafStateDefn(String stateFQN, DashModel dashModel, TlaModel tlaModel) {
 
-        List<TlaAppl> childStates =
-                mapBy(
-                        AuxDashAccessors.getChildStateNames(stateFQN, dashModel),
-                        s -> TlaAppl(tlaFQN(s)));
+        List<TlaAppl> childStates = mapBy(dashModel.immChildren(stateFQN), s -> TlaAppl(tlaFQN(s)));
 
         tlaModel.addDefn(
                 // <state-formula-name> = union <child_i-formula-name>...

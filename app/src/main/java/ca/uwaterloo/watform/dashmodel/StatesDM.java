@@ -115,6 +115,10 @@ public class StatesDM extends TransDM {
         return new ArrayList<String>(this.st.keySet());
     }
 
+    public List<String> leafStateNames() {
+        return GeneralUtil.filterBy(this.allStateNames(), sFQN -> this.isLeaf(sFQN));
+    }
+
     protected Boolean hasStates() {
         // this would be an error everywhere
         return !this.st.isEmpty();
