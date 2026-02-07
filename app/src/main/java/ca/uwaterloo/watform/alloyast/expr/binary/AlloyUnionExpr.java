@@ -23,4 +23,9 @@ public final class AlloyUnionExpr extends AlloyBinaryExpr {
     public AlloyUnionExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyUnionExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.PLUS_MINUS;
+    }
 }

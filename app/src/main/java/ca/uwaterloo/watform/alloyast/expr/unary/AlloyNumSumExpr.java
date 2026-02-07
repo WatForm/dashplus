@@ -38,4 +38,9 @@ public final class AlloyNumSumExpr extends AlloyUnaryExpr {
     public AlloyNumSumExpr rebuild(AlloyExpr sub) {
         return new AlloyNumSumExpr(this.pos, sub);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NUMERIC;
+    }
 }

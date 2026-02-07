@@ -85,6 +85,11 @@ public final class AlloyLetExpr extends AlloyExpr {
         return true;
     }
 
+    @Override
+    public int getPrec() {
+        return AlloyExpr.LET;
+    }
+
     public static final class AlloyLetAsn extends AlloyASTNode {
         public final AlloyQnameExpr qname;
         public final AlloyExpr expr;

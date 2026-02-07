@@ -66,4 +66,9 @@ public class DashParam extends AlloyExpr {
         // throw ImplementationError.methodShouldNotBeCalled("DashParam/accept for AlloyExprVis
         // "+this.getClass());
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
+    }
 }

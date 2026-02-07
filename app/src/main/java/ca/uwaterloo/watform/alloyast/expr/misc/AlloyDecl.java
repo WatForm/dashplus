@@ -229,4 +229,9 @@ public final class AlloyDecl extends AlloyExpr {
         } else if (!expr.equals(other.expr)) return false;
         return true;
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
+    }
 }

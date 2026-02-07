@@ -67,4 +67,9 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
         return new AlloyArrowExpr(
                 this.pos, left, this.mul1.orElse(null), this.mul2.orElse(null), right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.ARROW;
+    }
 }

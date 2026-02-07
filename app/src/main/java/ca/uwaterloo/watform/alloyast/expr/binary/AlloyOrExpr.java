@@ -23,4 +23,9 @@ public final class AlloyOrExpr extends AlloyBinaryExpr {
     public AlloyOrExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyOrExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.OR;
+    }
 }

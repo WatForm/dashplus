@@ -118,4 +118,9 @@ public abstract class DashRef extends AlloyExpr {
     public boolean isNext() {
         return (this instanceof VarDashRef && ((VarDashRef) this).isNext);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
+    }
 }

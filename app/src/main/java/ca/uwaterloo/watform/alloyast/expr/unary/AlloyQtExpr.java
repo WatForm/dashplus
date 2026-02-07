@@ -69,4 +69,9 @@ public final class AlloyQtExpr extends AlloyUnaryExpr {
     public AlloyQtExpr rebuild(AlloyExpr sub) {
         return new AlloyQtExpr(this.pos, this.qt, sub);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.QUANTIFIED;
+    }
 }

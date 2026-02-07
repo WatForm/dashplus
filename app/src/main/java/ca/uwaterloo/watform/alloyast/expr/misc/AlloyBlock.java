@@ -95,4 +95,9 @@ public final class AlloyBlock extends AlloyExpr {
         }
         pCtx.append(RBRACE);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
+    }
 }

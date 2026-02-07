@@ -42,4 +42,9 @@ public final class AlloyDotExpr extends AlloyBinaryExpr {
         this.right.pp(pCtx);
         pCtx.append(RPAREN);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.DOT;
+    }
 }

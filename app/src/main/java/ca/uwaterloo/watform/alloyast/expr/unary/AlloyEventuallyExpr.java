@@ -38,4 +38,9 @@ public final class AlloyEventuallyExpr extends AlloyUnaryExpr {
     public AlloyEventuallyExpr rebuild(AlloyExpr sub) {
         return new AlloyEventuallyExpr(this.pos, sub);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.UNI_TEMP;
+    }
 }

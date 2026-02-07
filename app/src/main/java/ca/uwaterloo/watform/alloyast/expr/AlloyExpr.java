@@ -50,4 +50,6 @@ public abstract class AlloyExpr extends AlloyASTNode {
     }
 
     public abstract <T> T accept(AlloyExprVis<T> visitor);
+
+    public abstract int getPrec();
 }

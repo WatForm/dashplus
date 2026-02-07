@@ -23,4 +23,9 @@ public final class AlloyFunDivExpr extends AlloyBinaryExpr {
     public AlloyFunDivExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyFunDivExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.MUL_DIV_REM;
+    }
 }

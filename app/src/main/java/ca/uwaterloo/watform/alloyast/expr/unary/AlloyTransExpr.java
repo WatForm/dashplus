@@ -23,4 +23,9 @@ public final class AlloyTransExpr extends AlloyUnaryExpr {
     public AlloyTransExpr rebuild(AlloyExpr sub) {
         return new AlloyTransExpr(this.pos, sub);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.TRANS;
+    }
 }

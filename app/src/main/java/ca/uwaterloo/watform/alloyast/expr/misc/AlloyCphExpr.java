@@ -86,4 +86,9 @@ public final class AlloyCphExpr extends AlloyExpr {
         } else if (!body.equals(other.body)) return false;
         return true;
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
+    }
 }

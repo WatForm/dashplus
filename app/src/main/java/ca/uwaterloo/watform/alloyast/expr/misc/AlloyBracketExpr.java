@@ -70,4 +70,9 @@ public final class AlloyBracketExpr extends AlloyExpr {
         } else if (!exprs.equals(other.exprs)) return false;
         return true;
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.BRACKET;
+    }
 }

@@ -89,4 +89,9 @@ public final class AlloyIteExpr extends AlloyExpr {
         } else if (!alt.equals(other.alt)) return false;
         return true;
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.ITE;
+    }
 }

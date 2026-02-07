@@ -64,4 +64,10 @@ public final class AlloyParenExpr extends AlloyExpr {
         } else if (!sub.equals(other.sub)) return false;
         return true;
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
+        // paren already included in pp
+    }
 }

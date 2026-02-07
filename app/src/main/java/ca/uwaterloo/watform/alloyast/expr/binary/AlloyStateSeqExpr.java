@@ -23,4 +23,9 @@ public final class AlloyStateSeqExpr extends AlloyBinaryExpr {
     public AlloyStateSeqExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyStateSeqExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.STATE_SEQ;
+    }
 }

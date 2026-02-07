@@ -23,4 +23,9 @@ public final class AlloyShLExpr extends AlloyBinaryExpr {
     public AlloyShLExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyShLExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.SHIFT;
+    }
 }

@@ -38,4 +38,9 @@ public final class AlloyNegExpr extends AlloyUnaryExpr {
     public AlloyNegExpr rebuild(AlloyExpr sub) {
         return new AlloyNegExpr(this.pos, sub);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.UNI_TEMP;
+    }
 }

@@ -58,4 +58,9 @@ public abstract class AlloyVarExpr extends AlloyExpr {
         } else if (!label.equals(other.label)) return false;
         return true;
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
+    }
 }

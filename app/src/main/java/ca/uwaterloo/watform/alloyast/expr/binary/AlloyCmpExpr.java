@@ -54,4 +54,9 @@ public final class AlloyCmpExpr extends AlloyBinaryExpr {
     public AlloyCmpExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyCmpExpr(this.pos, left, this.neg, this.comp, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.COMP;
+    }
 }
