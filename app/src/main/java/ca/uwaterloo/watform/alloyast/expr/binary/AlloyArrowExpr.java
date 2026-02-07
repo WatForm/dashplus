@@ -70,7 +70,7 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.ARROW;
+        return AlloyExpr.ARROW_PREC;
     }
 
     @Override

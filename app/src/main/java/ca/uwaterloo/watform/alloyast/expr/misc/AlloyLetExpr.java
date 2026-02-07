@@ -87,7 +87,7 @@ public final class AlloyLetExpr extends AlloyExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.LET;
+        return AlloyExpr.LET_PREC;
     }
 
     public static final class AlloyLetAsn extends AlloyASTNode {

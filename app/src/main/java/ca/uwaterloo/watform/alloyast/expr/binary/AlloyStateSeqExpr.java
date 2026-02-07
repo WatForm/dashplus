@@ -26,7 +26,7 @@ public final class AlloyStateSeqExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.STATE_SEQ;
+        return AlloyExpr.STATE_SEQ_PREC;
     }
 
     @Override

@@ -26,6 +26,6 @@ public final class AlloyOrExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.OR;
+        return AlloyExpr.OR_PREC;
     }
 }

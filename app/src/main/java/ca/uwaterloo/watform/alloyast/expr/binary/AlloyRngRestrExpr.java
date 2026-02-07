@@ -26,6 +26,6 @@ public final class AlloyRngRestrExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.RNG_RESTR;
+        return AlloyExpr.RNG_RESTR_PREC;
     }
 }

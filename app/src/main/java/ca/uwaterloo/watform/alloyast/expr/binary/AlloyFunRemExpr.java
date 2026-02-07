@@ -26,6 +26,6 @@ public final class AlloyFunRemExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.MUL_DIV_REM;
+        return AlloyExpr.MUL_DIV_REM_PREC;
     }
 }

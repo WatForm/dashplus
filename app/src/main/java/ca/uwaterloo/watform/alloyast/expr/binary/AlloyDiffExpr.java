@@ -26,6 +26,6 @@ public final class AlloyDiffExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.PLUS_MINUS;
+        return AlloyExpr.PLUS_MINUS_PREC;
     }
 }

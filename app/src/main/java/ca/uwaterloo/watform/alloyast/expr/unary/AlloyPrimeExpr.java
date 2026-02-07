@@ -38,6 +38,6 @@ public final class AlloyPrimeExpr extends AlloyUnaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.PRIME;
+        return AlloyExpr.PRIME_PREC;
     }
 }

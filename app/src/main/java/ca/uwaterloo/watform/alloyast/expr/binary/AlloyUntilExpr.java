@@ -26,6 +26,6 @@ public final class AlloyUntilExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.BIN_TEMP;
+        return AlloyExpr.BIN_TEMP_PREC;
     }
 }

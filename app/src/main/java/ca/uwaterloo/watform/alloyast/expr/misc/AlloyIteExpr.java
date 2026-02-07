@@ -86,6 +86,6 @@ public final class AlloyIteExpr extends AlloyExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.ITE;
+        return AlloyExpr.ITE_PREC;
     }
 }

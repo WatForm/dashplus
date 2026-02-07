@@ -26,6 +26,6 @@ public final class AlloyDomRestrExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.DOM_RESTR;
+        return AlloyExpr.DOM_RESTR_PREC;
     }
 }

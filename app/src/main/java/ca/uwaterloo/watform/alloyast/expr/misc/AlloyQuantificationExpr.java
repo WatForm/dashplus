@@ -118,6 +118,6 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.QUANTIFICATION;
+        return AlloyExpr.QUANTIFICATION_PREC;
     }
 }

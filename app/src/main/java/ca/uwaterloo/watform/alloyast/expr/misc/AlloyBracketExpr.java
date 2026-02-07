@@ -73,6 +73,6 @@ public final class AlloyBracketExpr extends AlloyExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.BRACKET;
+        return AlloyExpr.BRACKET_PREC;
     }
 }

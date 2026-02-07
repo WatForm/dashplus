@@ -26,6 +26,6 @@ public final class AlloyIffExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.IFF;
+        return AlloyExpr.IFF_PREC;
     }
 }

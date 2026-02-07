@@ -41,6 +41,6 @@ public final class AlloyHistoricallyExpr extends AlloyUnaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.UNI_TEMP;
+        return AlloyExpr.UNI_TEMP_PREC;
     }
 }

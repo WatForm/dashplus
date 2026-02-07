@@ -26,6 +26,6 @@ public final class AlloyCardExpr extends AlloyUnaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.NUMERIC;
+        return AlloyExpr.NUMERIC_PREC;
     }
 }

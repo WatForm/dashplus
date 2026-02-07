@@ -26,6 +26,6 @@ public final class AlloyShRExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.SHIFT;
+        return AlloyExpr.SHIFT_PREC;
     }
 }

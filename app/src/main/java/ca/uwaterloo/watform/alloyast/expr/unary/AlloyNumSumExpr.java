@@ -41,6 +41,6 @@ public final class AlloyNumSumExpr extends AlloyUnaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.NUMERIC;
+        return AlloyExpr.NUMERIC_PREC;
     }
 }

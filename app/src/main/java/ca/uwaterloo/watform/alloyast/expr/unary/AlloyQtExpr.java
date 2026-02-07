@@ -72,6 +72,6 @@ public final class AlloyQtExpr extends AlloyUnaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.QUANTIFIED;
+        return AlloyExpr.QUANTIFIED_PREC;
     }
 }

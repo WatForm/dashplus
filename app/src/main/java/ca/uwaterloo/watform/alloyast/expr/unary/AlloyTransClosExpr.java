@@ -26,6 +26,6 @@ public final class AlloyTransClosExpr extends AlloyUnaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.TRANS;
+        return AlloyExpr.TRANS_PREC;
     }
 }

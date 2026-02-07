@@ -26,6 +26,6 @@ public final class AlloyIntersExpr extends AlloyBinaryExpr {
 
     @Override
     public int getPrec() {
-        return AlloyExpr.INTERSECT;
+        return AlloyExpr.INTERSECT_PREC;
     }
 }
