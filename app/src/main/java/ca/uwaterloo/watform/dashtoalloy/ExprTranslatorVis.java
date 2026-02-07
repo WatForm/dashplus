@@ -75,7 +75,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
         if (!this.isElectrum) {
             // tcmc, traces
-            if (dashRef.isNext)
+            if (dashRef.isNext())
                 // p1.p2.(sn.v)
                 join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
             else
@@ -84,7 +84,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
             return AlloyJoinList(join_list);
         } else {
             // Electrum
-            if (dashRef.isNext)
+            if (dashRef.isNext())
                 // have to put the prime in the var name
                 v_expr = new AlloyPrimeExpr(v_expr);
             if (this.dm.containsVar(vfqn)

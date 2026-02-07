@@ -8,10 +8,14 @@ import java.util.List;
 public class TransDashRef extends DashRef {
 
     public TransDashRef(Pos p, String n, List<AlloyExpr> prmValues) {
-        super(p, DashStrings.DashRefKind.TRANS, n, prmValues);
+        super(p, n, prmValues);
     }
 
     public TransDashRef(String n, List<AlloyExpr> prmValues) {
-        super(DashStrings.DashRefKind.TRANS, n, prmValues);
+        super(n, prmValues);
+    }
+
+    public DashStrings.DashRefKind kind() {
+        return DashStrings.DashRefKind.TRANS;
     }
 }

@@ -356,6 +356,8 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         if (unaryExpr.op == AlloyStrings.PRIME) {
             // can only apply a prime to a var
             // this should be not allowed in parsing
+            System.out.println(unaryExpr.sub.getClass());
+            System.out.println(unaryExpr);
             assert (unaryExpr.sub instanceof AlloyQnameExpr || unaryExpr.sub instanceof VarDashRef);
             if (!this.nextOk) {
                 noNextVarsError(unaryExpr);
@@ -509,7 +511,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             resolvedParamValues.add(this.visit(p));
             this.kind = tempKind;
         }
-        this.kind = dashRef.kind;
+        this.kind = dashRef.kind();
         AlloyExpr newExpr =
                 resolve(new AlloyQnameExpr(dashRef.pos, dashRef.name), resolvedParamValues);
         assert (newExpr instanceof DashRef);

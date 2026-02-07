@@ -40,49 +40,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DashRef extends AlloyExpr {
+public abstract class DashRef extends AlloyExpr {
 
-    public final DashStrings.DashRefKind kind;
     public final String name;
     public final List<AlloyExpr> paramValues;
-    public final boolean isNext;
 
-    // for internal uses during translation
-    protected DashRef(
-            Pos p,
-            DashStrings.DashRefKind k,
-            String n,
-            List<? extends AlloyExpr> prmValues,
-            boolean isNext) {
-        super(p);
-        this.kind = k;
+    protected DashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
+        super(p); // for pos
         this.name = n;
         this.paramValues = Collections.unmodifiableList(prmValues);
-        this.isNext = isNext;
     }
 
-    public DashRef(DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
-        this(Pos.UNKNOWN, k, n, prmValues);
+    protected DashRef(String n, List<? extends AlloyExpr> prmValues) {
+        this(Pos.UNKNOWN, n, prmValues);
     }
 
-    // used in parsing
-    public DashRef(
-            Pos p, DashStrings.DashRefKind k, String n, List<? extends AlloyExpr> prmValues) {
-        this(p, k, n, prmValues, false);
-    }
-
-    // used in parsing??
-    public DashRef(
-            Pos p,
-            DashStrings.DashRefKind k,
-            List<AlloyNameExpr> names,
-            List<? extends AlloyExpr> prmValues) {
+    protected DashRef(Pos p, List<AlloyNameExpr> names, List<? extends AlloyExpr> prmValues) {
 
         String n =
                 names.stream()
                         .map(AlloyNameExpr::toString)
                         .collect(Collectors.joining(DashStrings.internalQualChar));
-        this(p, k, n, prmValues, false);
+        this(p, n, prmValues);
     }
 
     public static List<AlloyExpr> emptyParamValuesList() {
@@ -93,7 +72,7 @@ public class DashRef extends AlloyExpr {
         // p1 -> p2 -> fqn
         // used for initialization and
         // checking elements in conf/events
-        assert (!this.isNext);
+        assert (this instanceof VarDashRef && !((VarDashRef) this).isNext);
         List<AlloyExpr> ll = reverse(this.paramValues);
         ll.add(AlloyVar(DashFQN.translateFQN(this.name)));
         return AlloyArrowExprList(ll);
@@ -107,7 +86,7 @@ public class DashRef extends AlloyExpr {
         String s = "";
         if (!paramValues.isEmpty()) {
             // then it has to be at least partially resolved already
-            if (kind == DashStrings.DashRefKind.STATE) {
+            if (this instanceof StateDashRef) {
                 s += name;
             } else {
                 s += DashFQN.chopPrefixFromFQN(name);
@@ -115,7 +94,7 @@ public class DashRef extends AlloyExpr {
             s += "[";
             s += GeneralUtil.strCommaList(paramValues);
             s += "]";
-            if (kind != DashStrings.DashRefKind.STATE) {
+            if (this instanceof StateDashRef) {
                 s += "/";
                 s += DashFQN.chopNameFromFQN(name);
             }
@@ -125,15 +104,6 @@ public class DashRef extends AlloyExpr {
         pCtx.append(s);
     }
 
-    // referencing a for loop variable in a filter does not work
-    // so do this as a loop
-    /*
-    public static List<DashRef> hasNumParams(List<DashRef> dr, int i) {
-        // filter to ones that have this number of params
-        List<DashRef> o = filterBy(dr, x -> x.paramValues.size() == i);
-        return o;
-    }
-    */
     public boolean hasNumParams(int i) {
         return this.paramValues.size() == i;
     }
@@ -141,5 +111,11 @@ public class DashRef extends AlloyExpr {
     @Override
     public <T> T accept(AlloyExprVis<T> visitor) {
         return visitor.visit(this);
+    }
+
+    public abstract DashStrings.DashRefKind kind();
+
+    public boolean isNext() {
+        return (this instanceof VarDashRef && ((VarDashRef) this).isNext);
     }
 }

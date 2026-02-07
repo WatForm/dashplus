@@ -10,18 +10,12 @@ public final class DashTransItemParseVis extends DashBaseVisitor<DashTransItem> 
 
     @Override
     public DashOn visitDashOnRef(DashParser.DashOnRefContext ctx) {
-        return new DashOn(
-                new Pos(ctx),
-                this.exprParseVis.visitDashRefWithKind(
-                        ctx.dashRef(), DashStrings.DashRefKind.EVENT));
+        return new DashOn(new Pos(ctx), this.exprParseVis.visitEventDashRef(ctx.dashRef()));
     }
 
     @Override
     public DashSend visitDashSendRef(DashParser.DashSendRefContext ctx) {
-        return new DashSend(
-                new Pos(ctx),
-                this.exprParseVis.visitDashRefWithKind(
-                        ctx.dashRef(), DashStrings.DashRefKind.EVENT));
+        return new DashSend(new Pos(ctx), this.exprParseVis.visitEventDashRef(ctx.dashRef()));
     }
 
     @Override
@@ -36,17 +30,11 @@ public final class DashTransItemParseVis extends DashBaseVisitor<DashTransItem> 
 
     @Override
     public DashFrom visitDashFromRef(DashParser.DashFromRefContext ctx) {
-        return new DashFrom(
-                new Pos(ctx),
-                this.exprParseVis.visitDashRefWithKind(
-                        ctx.dashRef(), DashStrings.DashRefKind.STATE));
+        return new DashFrom(new Pos(ctx), this.exprParseVis.visitStateDashRef(ctx.dashRef()));
     }
 
     @Override
     public DashGoto visitDashGotoRef(DashParser.DashGotoRefContext ctx) {
-        return new DashGoto(
-                new Pos(ctx),
-                this.exprParseVis.visitDashRefWithKind(
-                        ctx.dashRef(), DashStrings.DashRefKind.STATE));
+        return new DashGoto(new Pos(ctx), this.exprParseVis.visitStateDashRef(ctx.dashRef()));
     }
 }
