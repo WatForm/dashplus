@@ -147,6 +147,10 @@ public class AlloyModel {
         return this.toString(true);
     }
 
+    public String toStringNoCmds() {
+        return this.toString(false);
+    }
+
     public String toString(boolean withCmds) {
         StringWriter sw = new StringWriter();
         PrintContext pCtx = new PrintContext(sw);

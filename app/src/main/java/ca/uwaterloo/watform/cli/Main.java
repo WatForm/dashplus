@@ -147,8 +147,7 @@ public class Main implements Callable<Integer> {
                             e.printStackTrace();
                         }
                         // executes and writes 5 instances of model with cmd run {}
-                        // eventually we need to do this for an am with no cmds
-                        int count = writeInstancesToXML(am, 0, nameWithoutExtensionWithMethod, 5);
+                        int count = writeInstancesToXML(am, nameWithoutExtensionWithMethod, 5);
                         System.out.println("Wrote " + String.valueOf(count) + " instance(s).");
 
                         // later add output about executing cmds

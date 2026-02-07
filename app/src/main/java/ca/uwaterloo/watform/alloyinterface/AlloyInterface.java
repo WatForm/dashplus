@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class AlloyInterface {
+
+    public static final int NOCMD = -1;
+
     public static CompModule parse(String alloyCode) throws Err {
         return CompUtil.parseEverything_fromString(new A4Reporter(), alloyCode);
     }
@@ -36,6 +39,7 @@ public class AlloyInterface {
     // assumption: cmdnum exists
     private static Solution executeCommand(String alloyCode, int cmdnum) {
         System.out.println("Command: " + String.valueOf(cmdnum));
+        // this will put in a cmd 0: run {} if there are no other cmds
         CompModule alloy = parse(alloyCode);
         A4Reporter rep = new A4Reporter();
         Command cmd = alloy.getAllCommands().get(cmdnum);
@@ -60,7 +64,7 @@ public class AlloyInterface {
         // translate to Alloy without any commands ("false" arg to toString below)
         // and ask it to execute cmd 0
         // in converting Alloy to Kodkod, it will add a run {}
-        String alloyCode = am.toString(false);
+        String alloyCode = am.toStringNoCmds();
         return AlloyInterface.executeCommand(alloyCode, 0);
     }
 
@@ -72,10 +76,6 @@ public class AlloyInterface {
         String result = cmd.map(Object::toString).orElse("");
         // print solution: might be unsat
         return result + "\n" + soln.toString();
-    }
-
-    public static Solution executeCommand(AlloyModel am) {
-        return AlloyInterface.executeCommand(am, 0);
     }
 
     /*
@@ -104,12 +104,25 @@ public class AlloyInterface {
         return solnList.size();
     }
 
-    public static List<Solution> getInstances(AlloyModel am, Integer cmdNum, Integer maxInstances) {
+    // returns number of instances written to file(s)
+    public static Integer writeInstancesToXML(
+            AlloyModel am,
+            String instanceFileName, // should not include .xml at end
+            Integer maxInstances) {
+        return writeInstancesToXML(am, NOCMD, instanceFileName, maxInstances);
+    }
 
-        assert (cmdNum >= 0);
+    public static List<Solution> getInstances(AlloyModel am, Integer maxInstances) {
+        return getInstances(am, NOCMD, maxInstances);
+    }
+
+    public static List<Solution> getInstances(AlloyModel am, Integer cmdNum, Integer maxInstances) {
+        // -1 means ignore commands and just check model satisfiability
+        assert (cmdNum >= NOCMD);
         // at this point we don't know if it is satisfiable
         List<Solution> solnList = new ArrayList<Solution>();
-        Solution soln = executeCommand(am, cmdNum);
+        Solution soln =
+                (cmdNum == NOCMD) ? checkModelSatisfiability(am) : executeCommand(am, cmdNum);
         int c;
         for (c = 0; c < maxInstances; c++) {
             if (!(soln.isSat() && c <= maxInstances)) break;
