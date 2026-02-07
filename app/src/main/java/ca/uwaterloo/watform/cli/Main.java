@@ -88,15 +88,15 @@ public class Main implements Callable<Integer> {
                 Path path = Paths.get(fileName);
                 Path absolutePath = path.toAbsolutePath();
 
+                Reporter.INSTANCE.reset();
+                Reporter.INSTANCE.popPath();
+                Reporter.INSTANCE.pushPath(absolutePath);
+
                 if (!cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
 
                     // default case
                     // translate Dash to Alloy given options
                     // or execute cmds of .als file
-
-                    Reporter.INSTANCE.reset();
-                    Reporter.INSTANCE.popPath();
-                    Reporter.INSTANCE.pushPath(absolutePath);
 
                     if (fileName.endsWith(".als")) {
                         System.out.println("Parsing model: " + absolutePath);

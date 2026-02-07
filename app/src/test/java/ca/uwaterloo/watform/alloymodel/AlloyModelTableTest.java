@@ -56,7 +56,7 @@ public class AlloyModelTableTest {
         AlloyFile alloyFile = new AlloyFile(sigS);
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
-        assertThrows(AlloyModelError.class, () -> alloyModelTable.addPara(sigS, new ArrayList<>()));
+        assertThrows(AlloyModelError.class, () -> alloyModelTable.addPara(sigS));
     }
 
     @Test
@@ -68,8 +68,7 @@ public class AlloyModelTableTest {
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
         AlloySigPara sigS2 = TestUtil.createSig("s");
-        assertThrows(
-                AlloyModelError.class, () -> alloyModelTable.addPara(sigS2, new ArrayList<>()));
+        assertThrows(AlloyModelError.class, () -> alloyModelTable.addPara(sigS2));
     }
 
     @Test
@@ -115,10 +114,7 @@ public class AlloyModelTableTest {
         AlloyModelTable<AlloySigPara> alloyModelTable =
                 new AlloyModelTable<AlloySigPara>(alloyFile, AlloySigPara.class);
         AlloySigPara sigS2 = TestUtil.createSig("s2");
-        List<AlloyPara> additionalParas = new ArrayList<>();
-        assertDoesNotThrow(() -> alloyModelTable.addPara(sigS2, additionalParas));
-        assertEquals(1, additionalParas.size());
-        assertEquals(sigS2, additionalParas.get(0));
+        assertDoesNotThrow(() -> alloyModelTable.addPara(sigS2));
 
         assertTrue(alloyModelTable.contains(sigS1.getId().name));
         assertTrue(alloyModelTable.contains(sigS2.getId().name));
@@ -144,11 +140,7 @@ public class AlloyModelTableTest {
         AlloySigPara sigS1 = TestUtil.createSig("s1");
         AlloySigPara sigS2 = TestUtil.createSig("s2");
         List<AlloySigPara> paras = List.of(sigS1, sigS2);
-        List<AlloyPara> additionalParas = new ArrayList<>();
-        assertDoesNotThrow(() -> alloyModelTable.addParas(paras, additionalParas));
-        assertEquals(2, additionalParas.size());
-        assertEquals(sigS1, additionalParas.get(0));
-        assertEquals(sigS2, additionalParas.get(1));
+        assertDoesNotThrow(() -> alloyModelTable.addParas(paras));
 
         assertTrue(alloyModelTable.contains(sigS1.getId().name));
         assertTrue(alloyModelTable.contains(sigS2.getId().name));

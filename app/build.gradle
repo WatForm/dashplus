@@ -55,6 +55,7 @@ application {
 }
 
 jar {
+	zip64 = true
     manifest {
         attributes(
                 'Main-Class': application.mainClass
