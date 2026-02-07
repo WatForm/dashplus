@@ -41,24 +41,18 @@ public final class AlloyIteExpr extends AlloyExpr {
 
     @Override
     public void pp(PrintContext pCtx) {
-        pCtx.append(LPAREN);
-        this.cond.pp(pCtx);
-        pCtx.append(RPAREN);
+        pCtx.appendChild(this, this.cond);
         pCtx.brk();
 
         pCtx.begin();
         pCtx.append(RFATARROW + SPACE);
-        pCtx.append(LPAREN);
-        this.conseq.pp(pCtx);
-        pCtx.append(RPAREN);
+        pCtx.appendChild(this, this.conseq);
         pCtx.end();
         pCtx.brk();
 
         pCtx.begin();
         pCtx.append(ELSE + SPACE);
-        pCtx.append(LPAREN);
-        this.alt.pp(pCtx);
-        pCtx.append(RPAREN);
+        pCtx.appendChild(this, this.alt);
         pCtx.end();
     }
 

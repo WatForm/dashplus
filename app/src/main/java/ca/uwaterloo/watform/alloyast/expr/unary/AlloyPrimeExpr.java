@@ -22,7 +22,7 @@ public final class AlloyPrimeExpr extends AlloyUnaryExpr {
 
     @Override
     public void pp(PrintContext pCtx) {
-        this.sub.pp(pCtx);
+        pCtx.appendChild(this, this.sub);
         pCtx.append(this.op);
     }
 

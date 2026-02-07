@@ -57,7 +57,7 @@ public final class AlloyQtExpr extends AlloyUnaryExpr {
     @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(this.qt.toString() + SPACE);
-        this.sub.ppNewBlock(pCtx);
+        pCtx.appendChild(this, this.sub, true);
     }
 
     @Override

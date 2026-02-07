@@ -53,7 +53,7 @@ public final class AlloyLetExpr extends AlloyExpr {
         pCtx.appendList(this.asns, COMMA);
         pCtx.append(SPACE + BAR);
         pCtx.brk();
-        this.body.ppNewBlock(pCtx);
+        pCtx.appendChild(this, this.body, true);
     }
 
     @Override

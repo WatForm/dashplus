@@ -38,7 +38,7 @@ public final class AlloyBracketExpr extends AlloyExpr {
 
     @Override
     public void pp(PrintContext pCtx) {
-        this.expr.pp(pCtx);
+        pCtx.appendChild(this, this.expr);
         pCtx.append(LBRACK);
         pCtx.brkNoSpace();
         pCtx.appendList(this.exprs, COMMA);

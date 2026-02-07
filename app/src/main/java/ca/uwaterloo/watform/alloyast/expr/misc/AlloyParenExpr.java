@@ -38,7 +38,7 @@ public final class AlloyParenExpr extends AlloyExpr {
     public void pp(PrintContext pCtx) {
         pCtx.append(LPAREN);
         pCtx.brkNoSpace();
-        this.sub.ppNewBlock(pCtx);
+        this.sub.ppNewBlock(pCtx); // already in paren
         pCtx.brkNoSpaceNoIndent();
         pCtx.append(RPAREN);
     }

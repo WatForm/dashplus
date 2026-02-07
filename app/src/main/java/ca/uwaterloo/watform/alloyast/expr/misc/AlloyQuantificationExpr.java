@@ -83,7 +83,7 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
         }
         pCtx.append(BAR);
         pCtx.brk();
-        this.body.ppNewBlock(pCtx);
+        pCtx.appendChild(this, this.body, true);
     }
 
     @Override
