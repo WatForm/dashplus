@@ -64,7 +64,7 @@ jar {
 
 
 task releaseJar(type: Jar) {
-	dependsOn 'spotlessCheck' 
+	dependsOn 'spotlessApply' 
     archiveBaseName.set('watform-dashplus') // Name of the output file
     
     manifest {
@@ -106,6 +106,7 @@ tasks.named('generateGrammarSource') {
 
 tasks.named('compileJava') {
     dependsOn tasks.named('generateGrammarSource')
+	dependsOn tasks.named('spotlessApply')
 }
 
 tasks.named("processTestResources") {
