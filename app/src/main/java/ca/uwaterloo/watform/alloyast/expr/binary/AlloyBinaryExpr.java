@@ -73,4 +73,12 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
         pCtx.brk();
         this.right.ppNewBlock(pCtx);
     }
+
+    // Assoc right: arrow(->), implies(=>), sequence(;)
+    // Assoc left: everything else
+    // Not using static final boolean, b/c most of them are
+    // left associative
+    public boolean isLeftAssoc() {
+        return true;
+    }
 }

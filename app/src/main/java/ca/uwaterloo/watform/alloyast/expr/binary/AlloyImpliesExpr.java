@@ -28,4 +28,9 @@ public final class AlloyImpliesExpr extends AlloyBinaryExpr {
     public int getPrec() {
         return AlloyExpr.IMPLIES;
     }
+
+    @Override
+    public boolean isLeftAssoc() {
+        return false;
+    }
 }

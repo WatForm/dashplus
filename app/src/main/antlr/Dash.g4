@@ -181,6 +181,11 @@ expr2			: baseExpr																					# baseExprFromExpr2
 				| expr2 DOMRESTR expr2																		# domExpr
 				| expr2 DOMRESTR bind																		# domBindExpr
 				| <assoc=right> expr2 arrow expr2															# arrowExpr
+				// Contrary to Alloy Documentation, arrow has right associativity
+				// RelationExprA ::= DomainExprA:a                         {: RESULT=a;                          :};
+				// RelationExprA ::= DomainExprB:a RelOp:o Bind:b          {: RESULT=o.b.make(o.a, null, a, b);  :};
+ 				// RelationExprB ::= DomainExprB:a                         {: RESULT=a;                          :};
+				// RelationExprB ::= DomainExprB:a RelOp:o RelationExprB:b {: RESULT=o.b.make(o.a, null, a, b);  :};
 				| expr2 arrow bind																			# arrowBindExpr
 				| expr2 INTERSECTION expr2 																	# intersectExpr
 				| expr2 INTERSECTION bind																	# intersectBindExpr

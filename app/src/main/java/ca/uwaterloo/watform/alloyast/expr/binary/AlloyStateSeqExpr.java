@@ -28,4 +28,9 @@ public final class AlloyStateSeqExpr extends AlloyBinaryExpr {
     public int getPrec() {
         return AlloyExpr.STATE_SEQ;
     }
+
+    @Override
+    public boolean isLeftAssoc() {
+        return false;
+    }
 }

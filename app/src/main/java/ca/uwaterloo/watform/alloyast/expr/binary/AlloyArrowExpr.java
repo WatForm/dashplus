@@ -72,4 +72,9 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
     public int getPrec() {
         return AlloyExpr.ARROW;
     }
+
+    @Override
+    public boolean isLeftAssoc() {
+        return false;
+    }
 }
