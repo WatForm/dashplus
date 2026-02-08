@@ -26,7 +26,7 @@ public final class AlloyHistoricallyExpr extends AlloyUnaryExpr {
     @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(op + SPACE);
-        this.sub.pp(pCtx);
+        pCtx.appendChild(this, this.sub);
     }
 
     @Override
@@ -37,5 +37,10 @@ public final class AlloyHistoricallyExpr extends AlloyUnaryExpr {
     @Override
     public AlloyHistoricallyExpr rebuild(AlloyExpr sub) {
         return new AlloyHistoricallyExpr(this.pos, sub);
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.UNI_TEMP_PREC;
     }
 }

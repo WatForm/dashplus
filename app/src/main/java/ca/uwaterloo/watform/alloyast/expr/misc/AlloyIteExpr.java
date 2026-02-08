@@ -41,24 +41,18 @@ public final class AlloyIteExpr extends AlloyExpr {
 
     @Override
     public void pp(PrintContext pCtx) {
-        pCtx.append(LPAREN);
-        this.cond.pp(pCtx);
-        pCtx.append(RPAREN);
+        pCtx.appendChild(this, this.cond);
         pCtx.brk();
 
         pCtx.begin();
         pCtx.append(RFATARROW + SPACE);
-        pCtx.append(LPAREN);
-        this.conseq.pp(pCtx);
-        pCtx.append(RPAREN);
+        pCtx.appendChild(this, this.conseq);
         pCtx.end();
         pCtx.brk();
 
         pCtx.begin();
         pCtx.append(ELSE + SPACE);
-        pCtx.append(LPAREN);
-        this.alt.pp(pCtx);
-        pCtx.append(RPAREN);
+        pCtx.appendChild(this, this.alt);
         pCtx.end();
     }
 
@@ -88,5 +82,10 @@ public final class AlloyIteExpr extends AlloyExpr {
             if (other.alt != null) return false;
         } else if (!alt.equals(other.alt)) return false;
         return true;
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.ITE_PREC;
     }
 }

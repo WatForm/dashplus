@@ -23,4 +23,9 @@ public final class AlloyTriggeredExpr extends AlloyBinaryExpr {
     public AlloyTriggeredExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyTriggeredExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.BIN_TEMP_PREC;
+    }
 }

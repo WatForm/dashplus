@@ -52,7 +52,7 @@ public final class AlloyCphExpr extends AlloyExpr {
             pCtx.append(SPACE);
             pCtx.append(BAR);
             pCtx.brk();
-            this.body.get().ppNewBlock(pCtx);
+            pCtx.appendChild(this, this.body.get(), true);
             pCtx.end(); // end of block
             pCtx.brkNoSpaceNoIndent();
         } else {
@@ -85,5 +85,10 @@ public final class AlloyCphExpr extends AlloyExpr {
             if (other.body != null) return false;
         } else if (!body.equals(other.body)) return false;
         return true;
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
     }
 }

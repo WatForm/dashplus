@@ -38,7 +38,7 @@ public final class AlloyParenExpr extends AlloyExpr {
     public void pp(PrintContext pCtx) {
         pCtx.append(LPAREN);
         pCtx.brkNoSpace();
-        this.sub.ppNewBlock(pCtx);
+        this.sub.ppNewBlock(pCtx); // already in paren
         pCtx.brkNoSpaceNoIndent();
         pCtx.append(RPAREN);
     }
@@ -63,5 +63,11 @@ public final class AlloyParenExpr extends AlloyExpr {
             if (other.sub != null) return false;
         } else if (!sub.equals(other.sub)) return false;
         return true;
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NO_PAREN;
+        // paren already included in pp
     }
 }

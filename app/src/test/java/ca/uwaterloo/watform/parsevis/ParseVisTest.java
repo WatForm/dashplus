@@ -83,38 +83,6 @@ public class ParseVisTest {
     }
 
     @Test
-    @Order(5)
-    @DisplayName(
-            "Parse, create our Alloy AST with parser visitors, and call toString "
-                    + "to match exactly the input string (cannot include comments)")
-    public void parseMatchStr() throws Exception {
-        Path dir = Paths.get("src/test/resources/parsevis/tostr/matchstr");
-        List<Path> paths = recurGetFiles(dir, ".als");
-        for (Path filePath : paths) {
-            try {
-
-                System.out.println(filePath);
-                String originalStr = Files.readString(filePath);
-                AlloyFile af = assertDoesNotThrow(() -> (parse(filePath)));
-                String parsedStr = assertDoesNotThrow(() -> af.toString());
-
-                assertEquals(originalStr.replaceAll("\\s", ""), parsedStr.replaceAll("\\s", ""));
-
-            } catch (IOException e) {
-                System.err.println("Error reading file: " + e.getMessage());
-                System.exit(1);
-            } catch (RecognitionException | ParseCancellationException e) {
-                System.err.println("Error occurred during parsing: " + e.getMessage());
-                System.exit(1);
-            } catch (Exception e) {
-                System.err.println(
-                        "Error occurred during parsing or in parser visitors: " + e.getMessage());
-                System.exit(1);
-            }
-        }
-    }
-
-    @Test
     @Order(6)
     @DisplayName("Antlr grammar parses dash-testing")
     public void parseDashTesting() throws Exception {

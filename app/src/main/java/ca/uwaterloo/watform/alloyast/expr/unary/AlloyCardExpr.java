@@ -23,4 +23,9 @@ public final class AlloyCardExpr extends AlloyUnaryExpr {
     public AlloyCardExpr rebuild(AlloyExpr sub) {
         return new AlloyCardExpr(this.pos, sub);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NUMERIC_PREC;
+    }
 }

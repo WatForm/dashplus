@@ -70,7 +70,7 @@ public final class Reporter {
     public void print() {
         if (!comments.isEmpty()) {
             for (CommentUser comment : comments) {
-                System.err.println(comment.toString(paths.peek()));
+                System.err.println(comment.toString(!paths.empty() ? paths.peek() : null));
                 if (CliConf.INSTANCE.debug) {
                     comment.printStackTrace();
                 }
@@ -79,7 +79,7 @@ public final class Reporter {
 
         if (!warnings.isEmpty()) {
             for (WarningUser warning : warnings) {
-                System.err.println(warning.toString(paths.peek()));
+                System.err.println(warning.toString(!paths.empty() ? paths.peek() : null));
                 if (CliConf.INSTANCE.debug) {
                     warning.printStackTrace();
                 }
@@ -88,7 +88,7 @@ public final class Reporter {
 
         if (!errors.isEmpty()) {
             for (DashPlusException error : errors) {
-                System.err.println(error.toString(paths.peek()));
+                System.err.println(error.toString(!paths.empty() ? paths.peek() : null));
                 if (CliConf.INSTANCE.debug) {
                     error.printStackTrace();
                 }

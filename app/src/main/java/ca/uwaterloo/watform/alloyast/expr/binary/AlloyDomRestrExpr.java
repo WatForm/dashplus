@@ -23,4 +23,9 @@ public final class AlloyDomRestrExpr extends AlloyBinaryExpr {
     public AlloyDomRestrExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyDomRestrExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.DOM_RESTR_PREC;
+    }
 }

@@ -38,7 +38,7 @@ public final class AlloyBracketExpr extends AlloyExpr {
 
     @Override
     public void pp(PrintContext pCtx) {
-        this.expr.pp(pCtx);
+        pCtx.appendChild(this, this.expr);
         pCtx.append(LBRACK);
         pCtx.brkNoSpace();
         pCtx.appendList(this.exprs, COMMA);
@@ -69,5 +69,10 @@ public final class AlloyBracketExpr extends AlloyExpr {
             if (other.exprs != null) return false;
         } else if (!exprs.equals(other.exprs)) return false;
         return true;
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.BRACKET_PREC;
     }
 }

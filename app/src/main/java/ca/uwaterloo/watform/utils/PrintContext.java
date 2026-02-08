@@ -1,5 +1,10 @@
 package ca.uwaterloo.watform.utils;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.LPAREN;
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.RPAREN;
+
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.WriterBackend;
 import java.io.IOException;
@@ -97,8 +102,8 @@ public final class PrintContext {
     }
 
     // public void blankLine() {
-    //     this.nl();
-    //     this.brkNoIndent();
+    // this.nl();
+    // this.brkNoIndent();
     // }
 
     public void flush() {
@@ -135,10 +140,6 @@ public final class PrintContext {
         }
     }
 
-    // public void dedent() {
-    //     begin(-indentSize);
-    // }
-
     /**
      * put break after li's elements; The last break will not be indented put seprator in between
      * li's elements
@@ -168,5 +169,57 @@ public final class PrintContext {
             }
         }
         this.end();
+    }
+
+    public void appendChild(AlloyExpr parent, AlloyExpr child, boolean useNewBlock) {
+        int parentPrec = parent.getPrec();
+        int childPrec = child.getPrec();
+        boolean needsParens = false;
+
+        if (childPrec == AlloyExpr.NO_PAREN) {
+            if (useNewBlock) {
+                child.ppNewBlock(this);
+            } else {
+                child.pp(this);
+            }
+            return;
+        }
+
+        // Vertical Precedence
+        // If child is weaker (lower prec) than parent, it needs protection
+        if (childPrec < parentPrec) {
+            needsParens = true;
+        }
+        // Horizontal Associativity (only for BinOp)
+        // If prec is equal, we check assoc
+        else if (parent instanceof AlloyBinaryExpr && childPrec == parentPrec) {
+            AlloyBinaryExpr binParent = (AlloyBinaryExpr) parent;
+            boolean isRightChild = (binParent.right == child);
+            if (binParent.isLeftAssoc()) {
+                // ex: Dot(A, Dot(B.C))
+                // If is printing right child, need brackets
+                // Otherwise grouped like (A.B).C which is wrong
+                if (isRightChild) needsParens = true;
+            } else {
+                // ex: Arrow(Arrow(A, B), C)
+                // If is printing left child, need brackets
+                // Otherwise grouped like A->(B->), which is wrong
+                if (!isRightChild) needsParens = true;
+            }
+        }
+
+        if (needsParens) this.append(LPAREN);
+
+        if (useNewBlock) {
+            child.ppNewBlock(this);
+        } else {
+            child.pp(this);
+        }
+
+        if (needsParens) this.append(RPAREN);
+    }
+
+    public void appendChild(AlloyExpr parent, AlloyExpr child) {
+        this.appendChild(parent, child, false);
     }
 }

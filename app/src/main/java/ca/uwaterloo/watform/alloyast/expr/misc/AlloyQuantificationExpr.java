@@ -83,7 +83,7 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
         }
         pCtx.append(BAR);
         pCtx.brk();
-        this.body.ppNewBlock(pCtx);
+        pCtx.appendChild(this, this.body, true);
     }
 
     @Override
@@ -114,5 +114,10 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
             if (other.body != null) return false;
         } else if (!body.equals(other.body)) return false;
         return true;
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.QUANTIFICATION_PREC;
     }
 }

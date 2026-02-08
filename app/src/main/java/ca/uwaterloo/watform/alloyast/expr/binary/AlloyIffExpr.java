@@ -23,4 +23,9 @@ public final class AlloyIffExpr extends AlloyBinaryExpr {
     public AlloyIffExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyIffExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.IFF_PREC;
+    }
 }

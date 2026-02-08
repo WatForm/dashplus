@@ -23,4 +23,9 @@ public final class AlloyReflTransClosExpr extends AlloyUnaryExpr {
     public AlloyReflTransClosExpr rebuild(AlloyExpr sub) {
         return new AlloyReflTransClosExpr(this.pos, sub);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.TRANS_PREC;
+    }
 }

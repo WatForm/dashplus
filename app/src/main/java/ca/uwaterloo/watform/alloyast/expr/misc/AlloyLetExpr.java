@@ -53,7 +53,7 @@ public final class AlloyLetExpr extends AlloyExpr {
         pCtx.appendList(this.asns, COMMA);
         pCtx.append(SPACE + BAR);
         pCtx.brk();
-        this.body.ppNewBlock(pCtx);
+        pCtx.appendChild(this, this.body, true);
     }
 
     @Override
@@ -83,6 +83,11 @@ public final class AlloyLetExpr extends AlloyExpr {
             if (other.body != null) return false;
         } else if (!body.equals(other.body)) return false;
         return true;
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.LET_PREC;
     }
 
     public static final class AlloyLetAsn extends AlloyASTNode {

@@ -35,11 +35,14 @@ public final class AlloyDotExpr extends AlloyBinaryExpr {
 
     @Override
     public void pp(PrintContext pCtx) {
-        pCtx.append(LPAREN);
-        this.left.pp(pCtx);
+        pCtx.appendChild(this, this.left, false);
         pCtx.append(op);
         pCtx.brkNoSpace();
-        this.right.pp(pCtx);
-        pCtx.append(RPAREN);
+        pCtx.appendChild(this, this.right, false);
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.DOT_PREC;
     }
 }

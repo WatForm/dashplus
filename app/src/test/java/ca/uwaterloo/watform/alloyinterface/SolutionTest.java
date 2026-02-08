@@ -27,7 +27,8 @@ public class SolutionTest {
         String S1 = "S1";
         AlloyFile alloyFile = new AlloyFile(TestUtil.createSig(S1));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        Solution solution = AlloyInterface.executeCommand(alloyModel);
+        Solution solution = AlloyInterface.checkModelSatisfiability(alloyModel);
+        System.out.println(solution);
         assertTrue(solution.contains(AlloyStrings.THIS + AlloyStrings.SLASH + S1));
         assertTrue(solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1).isEmpty());
     }
@@ -50,7 +51,7 @@ public class SolutionTest {
                                                         new AlloyCmdPara.CommandDecl.Scope
                                                                 .Typescope(false, 2, 2, 1, S1))))));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        Solution solution = AlloyInterface.executeCommand(alloyModel);
+        Solution solution = AlloyInterface.checkModelSatisfiability(alloyModel);
         assertTrue(solution.contains(AlloyStrings.THIS + AlloyStrings.SLASH + S1));
         assertEquals(2, solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1).size());
     }
@@ -62,7 +63,7 @@ public class SolutionTest {
         String S1 = "S1";
         AlloyFile alloyFile = new AlloyFile(TestUtil.createSig(S1));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        Solution solution = AlloyInterface.executeCommand(alloyModel);
+        Solution solution = AlloyInterface.checkModelSatisfiability(alloyModel);
         assertTrue(solution.contains(AlloyStrings.THIS + AlloyStrings.SLASH + S1));
         assertTrue(solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1).isEmpty());
         solution.next();
@@ -88,7 +89,7 @@ public class SolutionTest {
                                                 false, 2, 2, 1, S1))));
         AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        Solution solution = AlloyInterface.executeCommand(alloyModel);
+        Solution solution = AlloyInterface.checkModelSatisfiability(alloyModel);
         assertEquals(2, solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1).size());
         assertEquals(2, solution.eval(S1Sig).size());
         assertEquals(
@@ -117,7 +118,7 @@ public class SolutionTest {
                                                 false, 2, 2, 1, S1))));
         AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        Solution solution = AlloyInterface.executeCommand(alloyModel);
+        Solution solution = AlloyInterface.checkModelSatisfiability(alloyModel);
 
         assertEquals(2, solution.get(AlloyStrings.THIS + AlloyStrings.SLASH + S1).size());
         assertEquals(2, solution.eval(S1Sig).size());
@@ -156,7 +157,7 @@ public class SolutionTest {
                                                 false, 1, 1, 1, S1))));
         AlloyFile alloyFile = new AlloyFile(List.of(S1Sig, cmdPara));
         AlloyModel alloyModel = new AlloyModel(alloyFile);
-        Solution solution = AlloyInterface.executeCommand(alloyModel);
+        Solution solution = AlloyInterface.checkModelSatisfiability(alloyModel);
 
         Solution.EvalRes evalRes =
                 solution.eval(

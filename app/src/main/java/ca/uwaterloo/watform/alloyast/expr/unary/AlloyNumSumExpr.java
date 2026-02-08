@@ -26,7 +26,7 @@ public final class AlloyNumSumExpr extends AlloyUnaryExpr {
     @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(op + SPACE);
-        this.sub.pp(pCtx);
+        pCtx.appendChild(this, this.sub);
     }
 
     @Override
@@ -37,5 +37,10 @@ public final class AlloyNumSumExpr extends AlloyUnaryExpr {
     @Override
     public AlloyNumSumExpr rebuild(AlloyExpr sub) {
         return new AlloyNumSumExpr(this.pos, sub);
+    }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.NUMERIC_PREC;
     }
 }

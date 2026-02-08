@@ -23,4 +23,9 @@ public final class AlloyIntersExpr extends AlloyBinaryExpr {
     public AlloyIntersExpr rebuild(AlloyExpr left, AlloyExpr right) {
         return new AlloyIntersExpr(this.pos, left, right);
     }
+
+    @Override
+    public int getPrec() {
+        return AlloyExpr.INTERSECT_PREC;
+    }
 }
