@@ -1,9 +1,13 @@
 package ca.uwaterloo.watform.predabstraction;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import static ca.uwaterloo.watform.alloyinterface.AlloyInterface.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
 import java.util.*;
@@ -45,11 +49,19 @@ public class PredAbsUtil {
         path.remove(path.size() - 1);
     }
 
-    public static boolean checkSAT(Set<AlloyExpr> exprs, AlloyModel am, boolean snReqd) {
-        return INSTANCE.checkSATInternal(exprs, am, snReqd);
+    public static boolean checkSAT(
+            Set<AlloyExpr> exprs,
+            AlloyModel am,
+            boolean snReqd,
+            AlloyCmdPara.CommandDecl.Scope scope) {
+        return INSTANCE.checkSATInternal(exprs, am, snReqd, scope);
     }
 
-    private boolean checkSATInternal(Set<AlloyExpr> exprs, AlloyModel am, boolean snReqd) {
+    private boolean checkSATInternal(
+            Set<AlloyExpr> exprs,
+            AlloyModel am,
+            boolean snReqd,
+            AlloyCmdPara.CommandDecl.Scope scope) {
         Object key = canonicalKey(exprs);
         Boolean cached = cache.get(key);
         if (cached != null) {
@@ -62,12 +74,24 @@ public class PredAbsUtil {
             } else {
                 am.addPred(pname, dsl.curDecls(), setToList(exprs));
             }
+            int cmdIdx = addRunCmd(pname, am, scope);
+            Solution sol = executeCommand(am, cmdIdx);
+            return sol.isSat();
         }
-        return true;
     }
 
     private static Object canonicalKey(Set<AlloyExpr> exprs) {
         List<String> ids = exprs.stream().map(e -> e.toString()).sorted().toList();
         return ids;
+    }
+
+    public static int addRunCmd(String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
+        am.addPara(
+                new AlloyCmdPara(
+                        new AlloyCmdPara.CommandDecl(
+                                AlloyCmdPara.CommandDecl.CmdType.RUN,
+                                new AlloyQnameExpr(pname),
+                                scope)));
+        return am.getParas(AlloyCmdPara.class).size();
     }
 }
