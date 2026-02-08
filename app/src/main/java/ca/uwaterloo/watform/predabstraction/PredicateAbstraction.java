@@ -5,6 +5,9 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.unary.AlloyNegExpr;
+import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashStrings;
@@ -20,7 +23,9 @@ public class PredicateAbstraction {
 
     public DashModel concreteModel;
     public DashModel absModel;
-    public int cmdnum;
+    // public int cmdnum;
+    public AlloyCmdPara cmd;
+    private AlloyCmdPara.CommandDecl.Scope scope;
     public String abvNamePre = "B";
     public String cafDepPredPre = "caf_dep_";
     protected AlloyModel queryModel; // queryModel
@@ -35,14 +40,16 @@ public class PredicateAbstraction {
         this.concreteModel = concreteModel;
         this.exprTranslator = new ExprTranslatorVis(concreteModel);
         this.dsl = new DSL(false);
-        this.cmdnum = 0;
+        // this.cmdnum = 0;
     }
 
     public PredicateAbstraction(DashModel concreteModel, int n) {
         this.concreteModel = concreteModel;
         this.exprTranslator = new ExprTranslatorVis(concreteModel);
         this.dsl = new DSL(false);
-        this.cmdnum = n;
+        // this.cmdnum = n;
+        this.cmd = concreteModel.getCmdNum(n).orElse(null);
+        this.scope = cmd.cmdDecls.get(0).scope.orElse(null);
     }
 
     public void createABVmap() {
@@ -85,7 +92,7 @@ public class PredicateAbstraction {
                     }
                 }
                 if (!uflag) {
-                    if (!PredAbsUtil.checkSAT(listToSet(combo), queryModel, false)) {
+                    if (!PredAbsUtil.checkSAT(listToSet(combo), queryModel, false, scope)) {
                         unsatList.add(combo);
                     }
                 } else {
@@ -93,11 +100,29 @@ public class PredicateAbstraction {
                 }
             }
         }
+        // Create a conjunction of all the ABVs corresponding to CAFs in unsatList
+        // Negate the conjunction and add to absModel as invariant
+        // {p0, !p2, p4} in unsatList =>
+        // invariant: !(B0.boolean/isTrue && B2.boolean/isFalse && B4.boolean/isTrue)
+
         HashMap<AlloyExpr, String> ABVReverseMap = new HashMap<>();
         ABVNameCAFMap.forEach((k, v) -> ABVReverseMap.put(v, k));
 
         for (List<AlloyExpr> u : unsatList) {
-            List<AlloyExpr> uVars = mapBy(u, e -> AlloyVar(ABVReverseMap.get(e)));
+            // List<AlloyExpr> uVars = mapBy(u, e -> AlloyVar(ABVReverseMap.get(e)));
+            List<AlloyExpr> uVars = new ArrayList<>();
+            for (AlloyExpr e : u) {
+                String vname;
+                // if e is a negated expression, then the subexpr is the CAF and the
+                // corresponding ABV must be false
+                if (e instanceof AlloyNegExpr) {
+                    vname = ABVReverseMap.get(((AlloyUnaryExpr) e).sub);
+                    uVars.add(dsl.AlloyIsFalse(getVarDashRef(vname)));
+                } else {
+                    vname = ABVReverseMap.get(e);
+                    uVars.add(dsl.AlloyIsTrue(getVarDashRef(vname)));
+                }
+            }
             AlloyExpr invBody = AlloyNot(AlloyAndList(uVars));
             absModel.addInv(invBody);
         }
@@ -117,17 +142,16 @@ public class PredicateAbstraction {
         cmdBody.add(expr);
         for (String vname : ABVNameCAFMap.keySet()) {
             AlloyExpr caf = ABVNameCAFMap.get(vname);
-            String vfqn = DashFQN.fqn(concreteModel.rootName, vname);
-            AlloyExpr v = (new VarDashRef(vfqn, emptyList())).makeNext();
+            AlloyExpr v = getVarDashRef(vname);
             // DashRef.asAlloyVar ??;; new VarDashRef -- subclass of DashRef
             cmdBody.add(caf);
             if (!PredAbsUtil.checkSAT(
-                    cmdBody, queryModel, false)) { // queryModel, no need for concreteModel
+                    cmdBody, queryModel, false, scope)) { // queryModel, no need for concreteModel
                 exprABVs.add(dsl.AlloyIsFalse(v));
             } else {
                 cmdBody.remove(caf);
                 cmdBody.add(AlloyNot(caf));
-                if (!PredAbsUtil.checkSAT(cmdBody, queryModel, false)) {
+                if (!PredAbsUtil.checkSAT(cmdBody, queryModel, false, scope)) {
                     exprABVs.add(dsl.AlloyIsTrue(v));
                 }
             }
@@ -149,16 +173,15 @@ public class PredicateAbstraction {
         List<AlloyExpr> exprABVs = new ArrayList<>();
         for (String vname : ABVNameCAFMap.keySet()) {
             AlloyExpr caf = ABVNameCAFMap.get(vname);
-            String vfqn = DashFQN.fqn(concreteModel.rootName, vname);
-            AlloyExpr v = (new VarDashRef(vfqn, emptyList())).makeNext();
+            AlloyExpr v = ((VarDashRef) getVarDashRef(vname)).makeNext();
             cmdBody.add(caf);
-            if (!PredAbsUtil.checkSAT(cmdBody, queryModel, true)) {
+            if (!PredAbsUtil.checkSAT(cmdBody, queryModel, true, scope)) {
                 exprABVs.add(dsl.AlloyIsFalse(v));
                 envABVs.add(vname);
             } else {
                 cmdBody.remove(caf);
                 cmdBody.add(AlloyNot(caf));
-                if (!PredAbsUtil.checkSAT(cmdBody, queryModel, true)) {
+                if (!PredAbsUtil.checkSAT(cmdBody, queryModel, true, scope)) {
                     exprABVs.add(dsl.AlloyIsTrue(v));
                     envABVs.add(vname);
                 } else {
@@ -237,5 +260,10 @@ public class PredicateAbstraction {
         }
 
         return absModel;
+    }
+
+    private AlloyExpr getVarDashRef(String vname) {
+        String vfqn = DashFQN.fqn(concreteModel.rootName, vname);
+        return new VarDashRef(vfqn, emptyList());
     }
 }

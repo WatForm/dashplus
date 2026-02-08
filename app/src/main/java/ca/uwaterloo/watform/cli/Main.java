@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.parser.Parser.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtotla.*;
@@ -157,25 +158,39 @@ public class Main implements Callable<Integer> {
                     }
 
                 } else if (cliConf.tla && !cliConf.predAbs && !cliConf.xml) {
-                    if (fileName.endsWith(".dsh")) {
+
+                    if (fileName.endsWith(".dsh") || fileName.endsWith(".als")) {
 
                         try {
-
-                            DashModel dashModel = (DashModel) parseToModel(absolutePath);
 
                             String onlyFileName = path.getFileName().toString();
                             String moduleName =
                                     onlyFileName.substring(0, onlyFileName.lastIndexOf("."));
 
-                            System.out.println(cliConf.single);
+                            if (fileName.endsWith(".dsh")) {
+                                DashModel dashModel = (DashModel) parseToModel(absolutePath);
+                                TlaModel tlaModel =
+                                        DashToTla.translate(
+                                                dashModel,
+                                                moduleName,
+                                                cliConf.single,
+                                                cliConf.verbose,
+                                                cliConf.debug);
+                            }
 
                             TlaModel tlaModel =
-                                    DashToTla.translate(
-                                            dashModel,
-                                            moduleName,
-                                            cliConf.single,
-                                            cliConf.verbose,
-                                            cliConf.debug);
+                                    fileName.endsWith(".dsh")
+                                            ? DashToTla.translate(
+                                                    (DashModel) parseToModel(absolutePath),
+                                                    moduleName,
+                                                    cliConf.single,
+                                                    cliConf.verbose,
+                                                    cliConf.debug)
+                                            : AlloyToTla.translate(
+                                                    (AlloyModel) parseToModel(absolutePath),
+                                                    moduleName,
+                                                    cliConf.verbose,
+                                                    cliConf.debug);
 
                             Path tlaOutPath = path.getParent().resolve(moduleName + ".tla");
                             Path cfgOutPath = path.getParent().resolve(moduleName + ".cfg");
