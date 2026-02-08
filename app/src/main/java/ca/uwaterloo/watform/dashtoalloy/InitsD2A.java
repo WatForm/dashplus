@@ -41,7 +41,7 @@ public class InitsD2A extends SnapshotSigD2A {
                                 filterBy(entered, x -> x.hasNumParams(numParams)),
                                 y -> y.asAlloyArrow());
                 if (!ent.isEmpty()) body.add(AlloyEqual(this.dsl.curConf(i), AlloyUnionList(ent)));
-                else body.add(AlloyEqual(this.dsl.curConf(i), AlloyNone()));
+                else body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.noneArrow(i)));
             }
         }
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
@@ -81,10 +81,11 @@ public class InitsD2A extends SnapshotSigD2A {
                 // but all the parameters are not used in init
                 decls = this.dsl.emptyDeclList();
                 e = AlloyAndList(body);
+                // FIXING HERE
                 for (int i = 0; i < prs.size(); i++) {
-                    if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
-                        decls.add(prs.get(i).asAlloyDecl());
-                    }
+                    // if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
+                    decls.add(prs.get(i).asAlloyDecl());
+                    // }
                 }
                 if (!decls.isEmpty()) {
                     e = AlloyAllVars(decls, e);

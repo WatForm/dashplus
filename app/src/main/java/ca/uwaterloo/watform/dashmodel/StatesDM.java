@@ -90,7 +90,9 @@ public class StatesDM extends TransDM {
     }
 
     public List<DashParam> stateParams(String sfqn) {
-        return this.st.get(sfqn).params;
+        // to avoid any problems with list copying
+        // make this a shallow copy
+        return new ArrayList<DashParam>(this.st.get(sfqn).params);
     }
 
     public boolean stateHasParams(String sfqn) {
@@ -452,7 +454,7 @@ public class StatesDM extends TransDM {
             for (String ch : immChildren(s.name)) {
                 // exit all copies of the params
                 List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.paramValues);
-                if (stateHasParams(ch)) newParamValues.add(new StateDashRef(ch, stateParams(ch)));
+                if (stateHasParam(ch)) newParamValues.add(stateParam(ch));
                 r.addAll(leafStatesExited(new StateDashRef(ch, newParamValues)));
             }
             return r;
