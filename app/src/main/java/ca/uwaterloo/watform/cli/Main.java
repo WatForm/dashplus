@@ -14,6 +14,7 @@ import ca.uwaterloo.watform.dashtotla.*;
 import ca.uwaterloo.watform.predabstraction.PredicateAbstraction;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.visualization.ControlStateHierarchyVisualizer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,7 +49,7 @@ import picocli.CommandLine.Mixin;
             "",
             // 2) Dash -> Alloy
             "  @|bold 2) dashplus f.dsh -alloy=< traces | tcmc | electrum >|@",
-            "              @|bold < -cmd | -cmd=n | -write | -noCmd > < -s > < -v > < -d > < -vis > |@",
+            "              @|bold < -cmd | -cmd=n | -write | -noCmd | -visualize > < -s > < -v > < -d > < -vis > |@",
             "     (parse/translate to alloy/execute cmd(s) or write .als file in same dir)",
             "     @|italic DEFAULT:|@ dashplus f.dsh means dashplus f.dsh -alloy traces -write",
             "",
@@ -150,6 +151,13 @@ public class Main implements Callable<Integer> {
                         // executes and writes 5 instances of model with cmd run {}
                         int count = writeInstancesToXML(am, nameWithoutExtensionWithMethod, 5);
                         System.out.println("Wrote " + String.valueOf(count) + " instance(s).");
+
+                        if (cliConf.visualize) {
+                            // visualize the control state hierarchy of the Dash model, outputs a .dot file in the same dir as the input file
+                            Path outputDir = path.getParent() == null ? Paths.get(".") : path.getParent();
+                            ControlStateHierarchyVisualizer visualizer = new ControlStateHierarchyVisualizer();
+                            visualizer.visualize(dm,outputDir,nameWithoutExtensionWithMethod+ "-" + ControlStateHierarchyVisualizer.DEFAULT_P+ "-"+ ControlStateHierarchyVisualizer.DEFAULT_PREFIX+ ".dot"));
+                            }
 
                         // later add output about executing cmds
                         Reporter.INSTANCE.print();

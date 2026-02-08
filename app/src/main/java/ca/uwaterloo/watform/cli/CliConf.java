@@ -82,4 +82,9 @@ public class CliConf {
             names = {"-vis"},
             description = "use visualization tool")
     public boolean vis = false;
+
+    @Option(
+            names = {"-visualize", "--visualize"},
+            description = "visualize Dash models")
+    public boolean visualize = false;
 }
