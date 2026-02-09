@@ -29,11 +29,10 @@ public class TlaConfig {
 
     private String constantsString() {
         StringBuilder answer = new StringBuilder(TlaStrings.CONSTANTS);
-        if(this.constants.isEmpty())
-            return answer.toString();
+        if (this.constants.isEmpty()) return answer.toString();
         answer.append(TlaStrings.NEWLINE);
-        for(TlaExp e : this.constants)
-            answer.append(e.toTLAPlusSnippetCore()+TlaStrings.NEWLINE);
+        for (TlaExp e : this.constants)
+            answer.append(e.toTLAPlusSnippetCore() + TlaStrings.NEWLINE);
         return answer.toString();
     }
 
