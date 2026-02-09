@@ -22,7 +22,7 @@ public class AlloyToTla {
         SigVarConf.translate(alloyModel, tlaModel);
 
         InitDefn.translate(alloyModel, tlaModel, t);
-        NextDefn.translate(alloyModel, tlaModel, t);
+        NextDefn.translate(alloyModel, tlaModel);
 
         return tlaModel;
     }
