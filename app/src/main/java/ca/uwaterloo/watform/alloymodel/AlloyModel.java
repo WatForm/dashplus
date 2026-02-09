@@ -77,10 +77,6 @@ public class AlloyModel {
     }
 
     public AlloyModel(AlloyFile alloyFile) {
-        this(alloyFile, false);
-    }
-
-    public AlloyModel(AlloyFile alloyFile, boolean addModelSatCmd) {
 
         this.alloyFile = alloyFile;
         this.modules = new AlloyModelTable<>(alloyFile, AlloyModulePara.class);

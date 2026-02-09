@@ -18,11 +18,12 @@ public class AlloyExprFactory {
 
     private static Boolean optimizationsOn = true;
 
+    // left set -> set right
     public static AlloyExpr AlloyArrow(AlloyExpr left, AlloyExpr right) {
         return new AlloyArrowExpr(left, right);
     }
 
-    // AlloyVar(sl(0)) -> (AlloyVar(sl(1)) -> AlloyVar(sl(2)))
+    // AlloyVar(sl(0)) set -> set (AlloyVar(sl(1)) set -> set AlloyVar(sl(2)))
     public static AlloyExpr AlloyArrowStringList(List<String> sl) {
         assert (sl != null && !sl.isEmpty());
         List<String> reversed = reverse(sl);
@@ -33,16 +34,7 @@ public class AlloyExprFactory {
         return o;
     }
 
-    // AlloyVar(sl(0)) -> (AlloyVar(sl(1)) -> set AlloyVar(sl(2)))
-    public static AlloyExpr AlloyArrowStringListEndInSet(List<String> sl) {
-        assert (sl != null && !sl.isEmpty());
-        return AlloyArrowExprList(
-                newListWithOneMore(
-                        mapBy(sl.subList(0, sl.size() - 1), x -> AlloyVar(x)),
-                        AlloySet(AlloyVar(sl.get(sl.size() - 1)))));
-    }
-
-    // eList(0) -> (eList(1) -> eList(2))
+    // eList(0) set -> set (eList(1) set -> set eList(2))
     public static AlloyExpr AlloyArrowExprList(List<AlloyExpr> eList) {
         assert (eList != null);
         List<AlloyExpr> reversed = reverse(eList);
@@ -53,11 +45,12 @@ public class AlloyExprFactory {
         return o;
     }
 
+    // left.right
     public static AlloyExpr AlloyJoin(AlloyExpr left, AlloyExpr right) {
         return new AlloyDotExpr(left, right);
     }
 
-    // elist(0).elist(1).elist(2)
+    // elist(0).(elist(1).elist(2))
     public static AlloyExpr AlloyJoinList(List<AlloyExpr> elist) {
         assert (elist != null);
         List<AlloyExpr> reversed = reverse(elist);
@@ -68,7 +61,7 @@ public class AlloyExprFactory {
         return ret;
     }
 
-    // elist(0).elist(1).expr
+    // elist(0).(elist(1).expr)
     public static AlloyExpr AlloyJoinList(List<AlloyExpr> elist, AlloyExpr expr) {
         assert (elist != null);
         List<AlloyExpr> reversed = reverse(elist);
@@ -80,18 +73,21 @@ public class AlloyExprFactory {
         return ret;
     }
 
+    // left and right
     public static AlloyExpr AlloyAnd(AlloyExpr left, AlloyExpr right) {
         if (optimizationsOn && left.equals(AlloyTrueCond())) return right;
         if (optimizationsOn && right.equals(AlloyTrueCond())) return left;
         return new AlloyAndExpr(left, right);
     }
 
+    // left or right
     public static AlloyExpr AlloyOr(AlloyExpr left, AlloyExpr right) {
         if (optimizationsOn && left.equals(AlloyFalseCond())) return right;
         if (optimizationsOn && right.equals(AlloyFalseCond())) return left;
         return new AlloyOrExpr(left, right);
     }
 
+    // left implies right
     public static AlloyExpr AlloyImplies(AlloyExpr left, AlloyExpr right) {
         return new AlloyImpliesExpr(left, right);
     }

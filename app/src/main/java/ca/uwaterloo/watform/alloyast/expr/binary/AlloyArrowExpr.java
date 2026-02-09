@@ -8,7 +8,6 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
-import java.util.Optional;
 
 public final class AlloyArrowExpr extends AlloyBinaryExpr {
     public enum Mul {
@@ -33,8 +32,8 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
         }
     }
 
-    public final Optional<Mul> mul1;
-    public final Optional<Mul> mul2;
+    public final Mul mul1;
+    public final Mul mul2;
 
     public AlloyArrowExpr(Pos pos, AlloyExpr left, Mul mul1, Mul mul2, AlloyExpr right) {
         super(
@@ -44,8 +43,9 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
                 ((null != mul1) ? mul1.toString() + SPACE : "")
                         + RARROW
                         + ((null != mul2) ? SPACE + mul2.toString() : ""));
-        this.mul1 = Optional.ofNullable(mul1);
-        this.mul2 = Optional.ofNullable(mul2);
+        // how handle the above if nulls are non longer required?
+        this.mul1 = mul1;
+        this.mul2 = mul2;
         reqNonNull(nullField(pos, this), this.mul1, this.mul2);
     }
 
@@ -54,7 +54,7 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
     }
 
     public AlloyArrowExpr(AlloyExpr left, AlloyExpr right) {
-        this(Pos.UNKNOWN, left, null, null, right);
+        this(Pos.UNKNOWN, left, Mul.SET, Mul.SET, right);
     }
 
     @Override
@@ -64,8 +64,7 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
 
     @Override
     public AlloyArrowExpr rebuild(AlloyExpr left, AlloyExpr right) {
-        return new AlloyArrowExpr(
-                this.pos, left, this.mul1.orElse(null), this.mul2.orElse(null), right);
+        return new AlloyArrowExpr(this.pos, left, this.mul1, this.mul2, right);
     }
 
     @Override

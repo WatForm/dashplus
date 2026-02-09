@@ -81,7 +81,6 @@ public class InitsD2A extends SnapshotSigD2A {
                 // but all the parameters are not used in init
                 decls = this.dsl.emptyDeclList();
                 e = AlloyAndList(body);
-                // FIXING HERE
                 for (int i = 0; i < prs.size(); i++) {
                     if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
                         decls.add(prs.get(i).asAlloyDecl());
