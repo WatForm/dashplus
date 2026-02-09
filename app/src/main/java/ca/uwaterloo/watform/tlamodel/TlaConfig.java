@@ -28,8 +28,13 @@ public class TlaConfig {
     }
 
     private String constantsString() {
-        // TODO do this
-        return TlaStrings.CONSTANTS + TlaStrings.SPACE + "";
+        StringBuilder answer = new StringBuilder(TlaStrings.CONSTANTS);
+        if(this.constants.isEmpty())
+            return answer.toString();
+        answer.append(TlaStrings.NEWLINE);
+        for(TlaExp e : this.constants)
+            answer.append(e.toTLAPlusSnippetCore()+TlaStrings.NEWLINE);
+        return answer.toString();
     }
 
     private String invariantsString() {
