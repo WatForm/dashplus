@@ -12,11 +12,15 @@ public class AlloyToTla {
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
-        SigVars.translate(alloyModel, tlaModel);
-        SigVarConf.translate(alloyModel, tlaModel);
+        TempSigTable t = new TempSigTable();
 
-        InitDefn.translate(alloyModel, tlaModel);
-        NextDefn.translate(alloyModel, tlaModel);
+        SigVars.translate(alloyModel, tlaModel, t);
+        SigVarConf.translate(alloyModel, tlaModel, t);
+
+        
+
+        InitDefn.translate(alloyModel, tlaModel, t);
+        NextDefn.translate(alloyModel, tlaModel, t);
 
         return tlaModel;
     }

@@ -19,6 +19,7 @@ import java.util.Map;
 
 public final class AlloyModelSigTable extends AlloyModelTable<AlloySigPara> {
     private final Map<String, AlloyDecl> fields;
+    // private final Map<String, AlloyDecl> ExtendsChildren
 
     public AlloyModelSigTable(AlloyFile alloyFile) {
         fields = new HashMap<>();
