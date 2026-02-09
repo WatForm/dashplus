@@ -83,9 +83,9 @@ public class InitsD2A extends SnapshotSigD2A {
                 e = AlloyAndList(body);
                 // FIXING HERE
                 for (int i = 0; i < prs.size(); i++) {
-                    // if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
-                    decls.add(prs.get(i).asAlloyDecl());
-                    // }
+                    if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
+                        decls.add(prs.get(i).asAlloyDecl());
+                    }
                 }
                 if (!decls.isEmpty()) {
                     e = AlloyAllVars(decls, e);

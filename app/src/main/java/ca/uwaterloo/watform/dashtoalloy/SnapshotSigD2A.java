@@ -206,8 +206,6 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             for (String v: allvfqnsNoParamsSimpleTyp) {
 
                 Expr typ = d.getVarType(v);
-                //System.out.println(typ.getClass());
-                //System.out.println(((ExprUnary) typ).op);
                 if (isExprVar(typ)) {
                     dm.addVarSigSimple(translateFQN(v), ((ExprVar) translateExpr(typ,d,true)) );
                 } else if (isExprSetOf(typ) && isExprVar(getSub(typ))) {
