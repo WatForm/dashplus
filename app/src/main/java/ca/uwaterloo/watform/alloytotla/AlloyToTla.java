@@ -18,7 +18,7 @@ public class AlloyToTla {
 
         alloyModel.getParas(AlloySigPara.class).forEach(v -> System.out.println(v.isTopLevel()));
 
-        SigVars.translate(alloyModel, tlaModel, t);
+        SigVars.translate(alloyModel, tlaModel);
         SigVarConf.translate(alloyModel, tlaModel);
 
         InitDefn.translate(alloyModel, tlaModel, t);

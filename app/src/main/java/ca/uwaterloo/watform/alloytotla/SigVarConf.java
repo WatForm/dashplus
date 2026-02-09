@@ -1,8 +1,8 @@
 package ca.uwaterloo.watform.alloytotla;
 
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
-import static ca.uwaterloo.watform.utils.GeneralUtil.filterBy;
-import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -34,7 +34,7 @@ public class SigVarConf {
         List<TlaStringLiteral> strings = new ArrayList<>();
         for (int i = 0; i < n; i++) strings.add(TlaStringLiteral(sigSetString(sigName, i)));
 
-        tlaModel.addConst(TlaConst(sigName), TlaSet(strings));
+        tlaModel.addConst(TlaConst(sigSet(sigName)), TlaSet(strings));
     }
 
     public static String sigSetString(String sigName, int i) {
