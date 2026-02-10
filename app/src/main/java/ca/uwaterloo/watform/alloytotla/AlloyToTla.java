@@ -13,15 +13,21 @@ public class AlloyToTla {
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
-        TempSigTable t = new TempSigTable();
-        t.testOne();
-
-        alloyModel.getParas(AlloySigPara.class).forEach(v -> System.out.println(v.isTopLevel()));
+        alloyModel
+                .getParas(AlloySigPara.class)
+                .forEach(
+                        v -> {
+                            System.out.println("qnames" + v.qnames.toString());
+                            System.out.println("rel:" + v.rel.toString());
+                            System.out.println("block:" + v.block.toString());
+                            System.out.println("fields:" + v.fields.toString());
+                            System.out.println("quals:" + v.quals.toString());
+                        });
 
         SigVars.translate(alloyModel, tlaModel);
         SigVarConf.translate(alloyModel, tlaModel);
 
-        InitDefn.translate(alloyModel, tlaModel, t);
+        InitDefn.translate(alloyModel, tlaModel);
         NextDefn.translate(alloyModel, tlaModel);
 
         return tlaModel;

@@ -4,11 +4,8 @@ import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.tlaast.tlaliterals.*;
-import ca.uwaterloo.watform.tlaast.tlanaryops.*;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +14,7 @@ public class SigVarConf {
 
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
-        List<String> names =
-                mapBy(
-                        filterBy(
-                                alloyModel.getParas(AlloySigPara.class),
-                                sigPara -> sigPara.isTopLevel()),
-                        sigPara -> sigPara.qnames.get(0).toString());
-
-        for (String name : names) {
+        for (String name : Auxiliary.getTopLevelSigNames(alloyModel)) {
             makeSigSet(name, alloyModel, tlaModel, 4);
         }
     }
