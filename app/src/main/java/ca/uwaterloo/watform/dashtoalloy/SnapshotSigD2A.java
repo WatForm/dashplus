@@ -104,6 +104,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         List<AlloyDecl> decls = this.dsl.emptyDeclList();
         for (String vfqn : dm.allVarNames()) {
             // [PID1, PID2]
+            // could be empty
             List<AlloyExpr> arrowList = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
 
             AlloyExpr varTyp = this.translateExpr(dm.varTyp(vfqn));
@@ -112,48 +113,50 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                 // in which case we want PID set -> set (X m -> n Y)
                 arrowList.add(this.translateExpr(dm.varTyp(vfqn)));
             } else if (varTyp instanceof AlloyQtExpr) {
-                AlloyQtExpr qtExpr = (AlloyQtExpr) varTyp;
-                // varType is "m X",
-                // in which case we want to create PID set -> set (PID set -> m X)
-                AlloyExpr lastArrow;
-                switch (qtExpr.qt) {
-                    case AlloyQtExpr.Quant.SOME:
-                        lastArrow =
-                                new AlloyArrowExpr(
-                                        lastElement(arrowList),
-                                        AlloyArrowExpr.Mul.SET,
-                                        AlloyArrowExpr.Mul.SOME,
-                                        qtExpr.sub);
-                        break;
-                    case AlloyQtExpr.Quant.LONE:
-                        lastArrow =
-                                new AlloyArrowExpr(
-                                        lastElement(arrowList),
-                                        AlloyArrowExpr.Mul.SET,
-                                        AlloyArrowExpr.Mul.LONE,
-                                        qtExpr.sub);
-                        break;
-                    case AlloyQtExpr.Quant.ONE:
-                        lastArrow =
-                                new AlloyArrowExpr(
-                                        lastElement(arrowList),
-                                        AlloyArrowExpr.Mul.SET,
-                                        AlloyArrowExpr.Mul.ONE,
-                                        qtExpr.sub);
-                        break;
-                    case AlloyQtExpr.Quant.SET:
-                        lastArrow =
-                                new AlloyArrowExpr(
-                                        lastElement(arrowList),
-                                        AlloyArrowExpr.Mul.SET,
-                                        AlloyArrowExpr.Mul.SET,
-                                        qtExpr.sub);
-                        break;
-                    default:
-                        throw ImplementationError.shouldNotReach();
-                }
-                arrowList = allButLast(arrowList);
-                arrowList.add(lastArrow);
+                if (!arrowList.isEmpty()) {
+                    AlloyQtExpr qtExpr = (AlloyQtExpr) varTyp;
+                    // varType is "m X",
+                    // in which case we want to create PID set -> set (PID set -> m X)
+                    AlloyExpr lastArrow;
+                    switch (qtExpr.qt) {
+                        case AlloyQtExpr.Quant.SOME:
+                            lastArrow =
+                                    new AlloyArrowExpr(
+                                            lastElement(arrowList),
+                                            AlloyArrowExpr.Mul.SET,
+                                            AlloyArrowExpr.Mul.SOME,
+                                            qtExpr.sub);
+                            break;
+                        case AlloyQtExpr.Quant.LONE:
+                            lastArrow =
+                                    new AlloyArrowExpr(
+                                            lastElement(arrowList),
+                                            AlloyArrowExpr.Mul.SET,
+                                            AlloyArrowExpr.Mul.LONE,
+                                            qtExpr.sub);
+                            break;
+                        case AlloyQtExpr.Quant.ONE:
+                            lastArrow =
+                                    new AlloyArrowExpr(
+                                            lastElement(arrowList),
+                                            AlloyArrowExpr.Mul.SET,
+                                            AlloyArrowExpr.Mul.ONE,
+                                            qtExpr.sub);
+                            break;
+                        case AlloyQtExpr.Quant.SET:
+                            lastArrow =
+                                    new AlloyArrowExpr(
+                                            lastElement(arrowList),
+                                            AlloyArrowExpr.Mul.SET,
+                                            AlloyArrowExpr.Mul.SET,
+                                            qtExpr.sub);
+                            break;
+                        default:
+                            throw ImplementationError.shouldNotReach();
+                    }
+                    arrowList = allButLast(arrowList);
+                    arrowList.add(lastArrow);
+                } else arrowList.add(varTyp);
             } else {
                 throw ImplementationError.shouldNotReach();
             }

@@ -24,17 +24,22 @@ public class AlloyExprFactory {
     }
 
     // AlloyVar(sl(0)) set -> set (AlloyVar(sl(1)) set -> set AlloyVar(sl(2)))
+    // if eList.size() == 1, give it the quant of "set"
     public static AlloyExpr AlloyArrowStringList(List<String> sl) {
         assert (sl != null && !sl.isEmpty());
         List<String> reversed = reverse(sl);
         AlloyExpr o = AlloyVar(reversed.get(0));
-        for (String s : reversed.subList(1, reversed.size())) {
-            o = new AlloyArrowExpr(new AlloyQnameExpr(s), o);
+        if (sl.size() == 1) return AlloySet(o);
+        else {
+            for (String s : reversed.subList(1, reversed.size())) {
+                o = new AlloyArrowExpr(new AlloyQnameExpr(s), o);
+            }
+            return o;
         }
-        return o;
     }
 
     // eList(0) set -> set (eList(1) set -> set eList(2))
+    // if eList.size() == 1, it will have the quant of eList.get(0)
     public static AlloyExpr AlloyArrowExprList(List<AlloyExpr> eList) {
         assert (eList != null);
         List<AlloyExpr> reversed = reverse(eList);
