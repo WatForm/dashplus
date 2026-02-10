@@ -123,12 +123,12 @@ public class PCtxTestAlsParen {
                 new AlloyArrowExpr(
                         new AlloyArrowExpr(new AlloyQnameExpr("A"), new AlloyQnameExpr("B")),
                         new AlloyQnameExpr("C"));
-        assertEquals(arrow.toString(), "(A -> B) -> C");
+        assertEquals(arrow.toString(), "(A set->set B) set->set C");
         arrow =
                 new AlloyArrowExpr(
                         new AlloyQnameExpr("A"),
                         new AlloyArrowExpr(new AlloyQnameExpr("B"), new AlloyQnameExpr("C")));
-        assertEquals(arrow.toString(), "A -> B -> C");
+        assertEquals(arrow.toString(), "A set->set B set->set C");
     }
 
     @Test

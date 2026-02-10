@@ -36,14 +36,7 @@ public final class AlloyArrowExpr extends AlloyBinaryExpr {
     public final Mul mul2;
 
     public AlloyArrowExpr(Pos pos, AlloyExpr left, Mul mul1, Mul mul2, AlloyExpr right) {
-        super(
-                pos,
-                left,
-                right,
-                ((null != mul1) ? mul1.toString() + SPACE : "")
-                        + RARROW
-                        + ((null != mul2) ? SPACE + mul2.toString() : ""));
-        // how handle the above if nulls are non longer required?
+        super(pos, left, right, (mul1.toString()) + RARROW + (mul2.toString()));
         this.mul1 = mul1;
         this.mul2 = mul2;
         reqNonNull(nullField(pos, this), this.mul1, this.mul2);
