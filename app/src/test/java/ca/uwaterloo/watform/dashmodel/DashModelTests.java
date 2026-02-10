@@ -882,7 +882,11 @@ public class DashModelTests {
         assertTrue(d.transParams(tfqn).equals(Arrays.asList(2)));
         tfqn = "Root/C/D/t4";
         assertTrue(d.transParams(tfqn).equals(Arrays.asList(2, 3)));
-        assertTrue(d.allParamsInOrder().equals(Arrays.asList("AID", "BID", "BID", "AID")));
+        assertTrue(
+                d.allParams()
+                        .equals(
+                                Arrays.asList(
+                                        "Root_A_AID", "Root_B_BID", "Root_C_BID", "Root_D_AID")));
     }
 
     // priority

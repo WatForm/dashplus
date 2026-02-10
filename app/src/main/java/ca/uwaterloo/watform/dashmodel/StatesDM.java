@@ -38,6 +38,8 @@ public class StatesDM extends TransDM {
     // this is in order of depth-first traversal of the tree
     // these parameters can be from different branches
     // of the state hierarchy
+    // the same paramSig used in different places could have different values
+    // so these have to be distinct per paramSig
     protected List<DashParam> allParams = new ArrayList<DashParam>();
 
     public StatesDM() {

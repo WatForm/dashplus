@@ -253,7 +253,7 @@ public class DashFQN {
         return false;
     }
 
-    private class Errors {
+    public class Errors {
         public static String ancesNotPrefixMsg = " must be a prefix of ";
 
         public static void ancesNotPrefix(String a, String d) throws ImplementationError {

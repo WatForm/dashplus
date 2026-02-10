@@ -1,4 +1,4 @@
-package ca.uwaterloo.watform.dashmodel;
+package ca.uwaterloo.watform.dashast;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,7 +67,7 @@ public class DashFQNTest {
                             DashFQN.childOfContextAncesOfDest("A/D/C", "A/B/C");
                         });
         String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(DashModelErrors.ancesNotPrefixMsg));
+        assertTrue(actualMessage.contains(DashFQN.Errors.ancesNotPrefixMsg));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class DashFQNTest {
                             DashFQN.childOfContextAncesOfDest("A/B/C", "A/B");
                         });
         String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(DashModelErrors.ancesNotPrefixMsg));
+        assertTrue(actualMessage.contains(DashFQN.Errors.ancesNotPrefixMsg));
     }
 
     @Test
