@@ -14,7 +14,10 @@ public class InitDefn {
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
         List<TlaAppl> exps =
-                Arrays.asList(TlaAppl(SIG_SETS_UNPRIMED), TlaAppl(ALL_SIG_CONSTRAINTS));
+                Arrays.asList(
+                        TlaAppl(SIG_SETS_UNPRIMED),
+                        TlaAppl(ALL_SIG_CONSTRAINTS),
+                        TlaAppl(ALL_FACTS));
         tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
     }
 }

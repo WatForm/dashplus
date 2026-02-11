@@ -26,6 +26,7 @@ public class ExprTranslate {
         if (exp.qt == AlloyQtExpr.Quant.SOME) return _SOME(translate(exp.sub));
         if (exp.qt == AlloyQtExpr.Quant.LONE) return _SOME(translate(exp.sub));
         if (exp.qt == AlloyQtExpr.Quant.ONE) return _ONE(translate(exp.sub));
+        if (exp.qt == AlloyQtExpr.Quant.NO) return _NO(translate(exp.sub));
         return translate(exp.sub);
     }
 
