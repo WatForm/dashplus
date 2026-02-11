@@ -12,6 +12,12 @@ public class AlloyToTlaStrings {
     public static final String SIG_SETS_PRIMED =
             SPECIAL + "sig" + SPECIAL + "sets" + SPECIAL + "primed";
 
+    // boilerplate macro formulae
+    public static final String SOME = SPECIAL + "some";
+    public static final String ONE = SPECIAL + "one";
+    public static final String LONE = SPECIAL + "lone";
+    public static final String NONE = SPECIAL + "none";
+
     public static final String DOLLAR = "$";
 
     //

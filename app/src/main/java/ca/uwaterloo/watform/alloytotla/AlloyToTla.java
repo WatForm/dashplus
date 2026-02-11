@@ -13,6 +13,9 @@ public class AlloyToTla {
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
+        tlaModel.addComment("Translation macros", verbose);
+        Boilerplate.translate(tlaModel);
+
         alloyModel
                 .getParas(AlloySigPara.class)
                 .forEach(
@@ -49,9 +52,12 @@ public class AlloyToTla {
         SigVars.translate(alloyModel, tlaModel);
         SigVarConf.translate(alloyModel, tlaModel);
 
+        tlaModel.addComment("limitations on sig and field variables", verbose);
         SigSets.translate(alloyModel, tlaModel);
 
+        tlaModel.addComment("INIT relation", verbose);
         InitDefn.translate(alloyModel, tlaModel);
+        tlaModel.addComment("NEXT relation", verbose);
         NextDefn.translate(alloyModel, tlaModel);
 
         return tlaModel;
