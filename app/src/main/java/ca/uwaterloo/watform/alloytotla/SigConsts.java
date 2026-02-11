@@ -10,7 +10,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SigVarConf {
+public class SigConsts {
 
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 

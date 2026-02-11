@@ -50,11 +50,14 @@ public class AlloyToTla {
                         });
 
         SigVars.translate(alloyModel, tlaModel);
-        SigVarConf.translate(alloyModel, tlaModel);
+        SigConsts.translate(alloyModel, tlaModel);
 
         tlaModel.addComment(
-                "topological sort on signatures: " + SigSets.sortedSigs(alloyModel), verbose);
-        SigSets.translate(alloyModel, tlaModel);
+                "topological sort on signatures: " + SigHierarchy.sortedSigs(alloyModel), verbose);
+        SigHierarchy.translate(alloyModel, tlaModel);
+
+        tlaModel.addComment("signature constraints", verbose);
+        Sigs.translate(alloyModel, tlaModel);
 
         tlaModel.addComment("INIT relation", verbose);
         InitDefn.translate(alloyModel, tlaModel);

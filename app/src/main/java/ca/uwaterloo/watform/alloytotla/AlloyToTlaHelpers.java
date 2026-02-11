@@ -20,6 +20,10 @@ public class AlloyToTlaHelpers {
         return sigName + SIG_SET_SUFFIX;
     }
 
+    public static String sigConstraint(String sigName) {
+        return sigName + SIG_CONSTRAINT_SUFFIX;
+    }
+
     public static TlaAppl SIG_SETS_PRIMED() {
         return TlaAppl(SIG_SETS_PRIMED);
     }

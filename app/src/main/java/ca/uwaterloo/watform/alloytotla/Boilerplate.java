@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.NULL_SET;
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaAppl;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaDecl;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaForAll;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaNot;
@@ -22,6 +23,22 @@ public class Boilerplate {
         tlaModel.addDefn(lone());
         tlaModel.addDefn(one());
         tlaModel.addDefn(none());
+    }
+
+    public static TlaAppl _SOME(TlaExp e) {
+        return TlaAppl(SOME, Arrays.asList(e));
+    }
+
+    public static TlaAppl _LONE(TlaExp e) {
+        return TlaAppl(LONE, Arrays.asList(e));
+    }
+
+    public static TlaAppl _ONE(TlaExp e) {
+        return TlaAppl(ONE, Arrays.asList(e));
+    }
+
+    public static TlaAppl _NONE(TlaExp e) {
+        return TlaAppl(NONE, Arrays.asList(e));
     }
 
     private static TlaExp allEqual(String v, String v1, String v2) {

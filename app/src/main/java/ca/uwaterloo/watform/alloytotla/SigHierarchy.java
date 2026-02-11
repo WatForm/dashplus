@@ -10,7 +10,7 @@ import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.List;
 
-public class SigSets {
+public class SigHierarchy {
 
     /*
 

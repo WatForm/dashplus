@@ -92,7 +92,8 @@ public class Auxiliary {
     }
 
     public static List<String> getExtendsChildNames(String signame, AlloyModel am) {
-        return filterBy(getAllSigNames(am), s -> getExtendsParent(s, am).equals(signame));
+        // has to be signame.equals, not the other way around, because the result could be null
+        return filterBy(getAllSigNames(am), s -> signame.equals(getExtendsParent(s, am)));
     }
 
     public static List<String> getAncestorsNames(String sigName, AlloyModel am) {
