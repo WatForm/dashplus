@@ -1,12 +1,8 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.SIG_SETS_UNPRIMED;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.repeatedAnd;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.ALL_SIG_CONSTRAINTS;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.INIT;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.SIG_SETS_UNPRIMED;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaAppl;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaDefn;
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
