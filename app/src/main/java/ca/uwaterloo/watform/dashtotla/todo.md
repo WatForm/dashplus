@@ -72,20 +72,27 @@
 
 |feature|description|translation|running|tests|
 |--|--|--|--|--|
-|sigs|basic|❔|❔|❔|
-|sigs|subtypes|❔|❔|❔|
-|sigs|subsets|❔|❔|❔|
-|sigs|multi-sig declarations|❔|❔|❔|
-|multiplicities|set|❔|❔|❔|
-|multiplicities|none|❔|❔|❔|
-|multiplicities|lone|❔|❔|❔|
-|multiplicities|one|❔|❔|❔|
-|multiplicities|some|❔|❔|❔|
+|sigs|consts|✅|✅|❔|
+|sigs|vars|✅|✅|❔|
+|sigs|types|✅|✅|❔|
+|sigs|subtypes|✅|✅|❔|
+|sigs|subsets|✅|✅|❔|
+|sigs|abstract|✅|✅|❔|
+|sigs|multiplicities|✅|✅|❔|
+|sigs|multi-sig declarations|✅|✅|❔|
+|constants|univ|✅|✅|❔|
+|constants|none|✅|✅|❔|
+|constants|iden|✅|✅|❔|
+|multiplicities|lone|✅|✅|❔|
+|multiplicities|one|✅|✅|❔|
+|multiplicities|some|✅|✅|❔|
+|fields|vars|❔|❔|❔|
+|fields|type|❔|❔|❔|
 |fields|basic (A->B)|❔|❔|❔|
 |fields|with multiplicities (A->lone B)|❔|❔|❔|
 |fields|complex (A->B->C)|❔|❔|❔|
-|dot join||❔|❔|❔|
-|box join||❔|❔|❔|
+|dot join|a.b|❔|❔|❔|
+|box join|a\[b\]|❔|❔|❔|
 |domain restriction|s <; a|❔|❔|❔|
 |range restriction|s :> a|❔|❔|❔|
 |transpose|~r|❔|❔|❔|
