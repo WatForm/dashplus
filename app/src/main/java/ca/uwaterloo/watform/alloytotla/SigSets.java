@@ -29,13 +29,13 @@ public class SigSets {
                                         Auxiliary.getAllSigNames(alloyModel),
                                         sn -> sigSetClause(sn, alloyModel, false)))));
 
-										tlaModel.addDefn(
-											TlaDefn(
-													SIG_SETS_PRIMED,
-													repeatedAnd(
-															mapBy(
-																	Auxiliary.getAllSigNames(alloyModel),
-																	sn -> sigSetClause(sn, alloyModel, true)))));
+        tlaModel.addDefn(
+                TlaDefn(
+                        SIG_SETS_PRIMED,
+                        repeatedAnd(
+                                mapBy(
+                                        Auxiliary.getAllSigNames(alloyModel),
+                                        sn -> sigSetClause(sn, alloyModel, true)))));
     }
 
     private static TlaExp sigSetClause(String sn, AlloyModel alloyModel, boolean primed) {
