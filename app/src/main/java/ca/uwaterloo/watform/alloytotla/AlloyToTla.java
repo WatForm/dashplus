@@ -52,7 +52,8 @@ public class AlloyToTla {
         SigVars.translate(alloyModel, tlaModel);
         SigVarConf.translate(alloyModel, tlaModel);
 
-        tlaModel.addComment("limitations on sig and field variables", verbose);
+        tlaModel.addComment(
+                "topological sort on signatures: " + SigSets.sortedSigs(alloyModel), verbose);
         SigSets.translate(alloyModel, tlaModel);
 
         tlaModel.addComment("INIT relation", verbose);
