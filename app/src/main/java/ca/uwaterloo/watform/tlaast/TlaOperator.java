@@ -42,8 +42,8 @@ public abstract class TlaOperator extends TlaExp {
 
                 PrecedenceGroup.AND_OR,
                 PrecedenceGroup.AND_OR_LIST,
-                PrecedenceGroup.NOT,
                 PrecedenceGroup.COMPARISON,
+                PrecedenceGroup.NOT,
                 PrecedenceGroup.SET_MEMBERSHIP,
                 PrecedenceGroup.SET_OPERATORS,
                 PrecedenceGroup.ADD_SUB,

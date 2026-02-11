@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.NULL_SET;
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaDecl;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaForAll;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaNot;
