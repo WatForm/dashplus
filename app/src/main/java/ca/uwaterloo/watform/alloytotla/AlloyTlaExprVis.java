@@ -6,6 +6,10 @@ import  ca.uwaterloo.watform.tlaast.tlaquantops.*;
 import  ca.uwaterloo.watform.tlaast.tlanaryops.*;
 import  ca.uwaterloo.watform.tlaast.tlaliterals.*;
 import  ca.uwaterloo.watform.tlaast.*;
+
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.repeatedAnd;
+import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBracketExpr;
@@ -54,14 +58,14 @@ public class AlloyTlaExprVis implements AlloyExprVis<TlaExp> {
 
 	@Override
 	public TlaExp visit(AlloyBlock block) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'visit'");
+		return repeatedAnd(mapBy(block.exprs, e -> visit(e)));
+		
 	}
 
 	@Override
 	public TlaExp visit(AlloyBracketExpr bracketExpr) {
 
-		
+
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'visit'");
 	}
