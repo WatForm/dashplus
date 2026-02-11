@@ -1,11 +1,16 @@
 package ca.uwaterloo.watform.alloytotla;
 
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.repeatedAnd;
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaVar;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyParenExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyCardExpr;
+import ca.uwaterloo.watform.alloyast.expr.unary.AlloyNegExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyQtExpr;
+import ca.uwaterloo.watform.alloyast.expr.unary.AlloyTransExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNoneExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -26,6 +31,12 @@ public class ExprTranslate {
             return translateAlloySigRefExp((AlloySigRefExpr) exp);
         }
 
+		if(exp instanceof AlloyParenExpr)
+			return translate(((AlloyParenExpr)exp).sub);
+
+		// if(exp instanceof AlloyBlock)
+			// return repeatedAnd(mapBy(((AlloyBlock)exp).exprs, e -> translate(e)));
+
         // unary ops
         if (exp instanceof AlloyUnaryExpr) {
             return translateAlloyUnaryExpr((AlloyUnaryExpr) exp);
@@ -41,6 +52,9 @@ public class ExprTranslate {
         if (exp instanceof AlloyQtExpr) return translateAlloyQtExpr((AlloyQtExpr) exp);
 
         if (exp instanceof AlloyCardExpr) return TlaStdLibs.Cardinality(translate(exp));
+
+		if (exp instanceof AlloyNegExpr) return TlaNot(translate(exp));
+
         return ERROR;
     }
 
