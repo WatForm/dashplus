@@ -29,6 +29,10 @@ public class AlloyToTlaHelpers {
         return new TlaVar(sigName + SPECIAL + fieldName);
     }
 
+    public static String unnamedFact(int n) {
+        return UNNAMED_FACT_PREFIX + n;
+    }
+
     public static TlaAppl SIG_SETS_PRIMED() {
         return TlaAppl(SIG_SETS_PRIMED);
     }
