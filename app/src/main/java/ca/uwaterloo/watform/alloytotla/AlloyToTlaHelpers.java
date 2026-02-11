@@ -6,6 +6,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.foldLeft;
 
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaUnionSet;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaFalse;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaIntLiteral;
@@ -22,6 +23,10 @@ public class AlloyToTlaHelpers {
 
     public static String sigConstraint(String sigName) {
         return sigName + SIG_CONSTRAINT_SUFFIX;
+    }
+
+    public static TlaVar fieldVar(String fieldName, String sigName) {
+        return new TlaVar(sigName + SPECIAL + fieldName);
     }
 
     public static TlaAppl SIG_SETS_PRIMED() {

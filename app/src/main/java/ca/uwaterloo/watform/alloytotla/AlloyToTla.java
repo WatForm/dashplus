@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
@@ -15,7 +16,6 @@ public class AlloyToTla {
         tlaModel.addComment("Translation macros", verbose);
         Boilerplate.translate(alloyModel, tlaModel);
 
-        /*
         alloyModel
                 .getParas(AlloySigPara.class)
                 .forEach(
@@ -26,22 +26,25 @@ public class AlloyToTla {
                             System.out.println("fields:" + v.fields.toString());
                             System.out.println("quals:" + v.quals.toString());
                         });
-         */
 
-        SigVars.translate(alloyModel, tlaModel);
         SigConsts.translate(alloyModel, tlaModel);
+        SigVars.translate(alloyModel, tlaModel);
+        FieldVars.translate(alloyModel, tlaModel);
 
         tlaModel.addComment(
                 "topological sort on signatures: " + SigHierarchy.sortedSigs(alloyModel), verbose);
         SigHierarchy.translate(alloyModel, tlaModel);
 
         tlaModel.addComment("signature constraints", verbose);
-        Sigs.translate(alloyModel, tlaModel);
+        SigConstraints.translate(alloyModel, tlaModel);
 
         tlaModel.addComment("INIT relation", verbose);
         InitDefn.translate(alloyModel, tlaModel);
         tlaModel.addComment("NEXT relation", verbose);
         NextDefn.translate(alloyModel, tlaModel);
+
+        Auxiliary.getAllSigNames(alloyModel)
+                .forEach(sn -> System.out.println(Auxiliary.getFieldNames(sn, alloyModel)));
 
         return tlaModel;
     }

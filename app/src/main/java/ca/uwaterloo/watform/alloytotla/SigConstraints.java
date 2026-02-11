@@ -14,7 +14,7 @@ import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.*;
 
-public class Sigs {
+public class SigConstraints {
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
         List<TlaAppl> explicitConstraints = new ArrayList<>();

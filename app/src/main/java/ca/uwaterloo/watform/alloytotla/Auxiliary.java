@@ -112,4 +112,9 @@ public class Auxiliary {
                 });
         return answer;
     }
+
+    public static List<String> getFieldNames(String signame, AlloyModel am) {
+        return mapBy(
+                getSigParaWithName(signame, am).fields, flist -> flist.qnames.get(0).toString());
+    }
 }

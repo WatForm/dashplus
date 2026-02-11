@@ -58,8 +58,11 @@ public class SigHierarchy {
 
         /*
         algorithm:
+        answer <- set of all top-level sigs
         in each step:
-        for all sigs S: if all parents of S are in answer and S is not, then S is added
+            for all sigs S:
+                if all parents of S are in answer and S is not
+                then S is added to the answer
         once no changes in answer's size is detected, the steps stop
 
         finally, the following property holds:
