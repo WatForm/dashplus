@@ -28,8 +28,6 @@ public class AlloyToTla {
                         });
          */
 
-        
-
         SigVars.translate(alloyModel, tlaModel);
         SigConsts.translate(alloyModel, tlaModel);
 

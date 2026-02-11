@@ -1,13 +1,14 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.NULL_SET;
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.*;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.Arrays;
+import ca.uwaterloo.watform.tlamodel.*;
+import java.util.*;
 
 public class Boilerplate {
 
@@ -17,7 +18,10 @@ public class Boilerplate {
 
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
-		
+        List<TlaConst> setConsts =
+                mapBy(Auxiliary.getTopLevelSigNames(alloyModel), s -> TlaConst(sigSet(s)));
+
+        tlaModel.addDefn(TlaDefn(UNIV, repeatedUnion(setConsts)));
 
         tlaModel.addDefn(some());
         tlaModel.addDefn(lone());
