@@ -14,8 +14,9 @@ public class AlloyToTla {
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
         tlaModel.addComment("Translation macros", verbose);
-        Boilerplate.translate(tlaModel);
+        Boilerplate.translate(alloyModel, tlaModel);
 
+        /*
         alloyModel
                 .getParas(AlloySigPara.class)
                 .forEach(
@@ -26,28 +27,9 @@ public class AlloyToTla {
                             System.out.println("fields:" + v.fields.toString());
                             System.out.println("quals:" + v.quals.toString());
                         });
+         */
 
-        System.out.println("----------------");
-
-        Auxiliary.getAllSigNames(alloyModel)
-                .forEach(
-                        sn -> {
-                            System.out.println("sig name: " + sn);
-                            System.out.println(
-                                    "top-level: " + Auxiliary.isTopLevelSig(sn, alloyModel));
-                            System.out.println(
-                                    "extends parent: "
-                                            + Auxiliary.getExtendsParent(sn, alloyModel));
-                            System.out.println(
-                                    "in parents: " + Auxiliary.getInParents(sn, alloyModel));
-                            System.out.println(
-                                    "abstract: " + Auxiliary.isAbstractSig(sn, alloyModel));
-                            System.out.println("one: " + Auxiliary.isOneSig(sn, alloyModel));
-                            System.out.println("lone: " + Auxiliary.isLoneSig(sn, alloyModel));
-                            System.out.println("some: " + Auxiliary.isSomeSig(sn, alloyModel));
-                            System.out.println(
-                                    "ancestors: " + Auxiliary.getAncestorsNames(sn, alloyModel));
-                        });
+        
 
         SigVars.translate(alloyModel, tlaModel);
         SigConsts.translate(alloyModel, tlaModel);
