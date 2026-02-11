@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Auxiliary {
 
-    public static String getQname(AlloySigPara asp) {
+    private static String getQname(AlloySigPara asp) {
         return asp.qnames.get(0).toString();
     }
 
-    public static List<AlloySigPara> getAllSigParas(AlloyModel am) {
+    private static List<AlloySigPara> getAllSigParas(AlloyModel am) {
         return am.getParas(AlloySigPara.class);
     }
 
@@ -96,6 +96,7 @@ public class Auxiliary {
         return filterBy(getAllSigNames(am), s -> signame.equals(getExtendsParent(s, am)));
     }
 
+    // this is not used anymore and can be removed
     public static List<String> getAncestorsNames(String sigName, AlloyModel am) {
         if (isTopLevelSig(sigName, am)) return Arrays.asList(sigName);
 
