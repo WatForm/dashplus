@@ -21,13 +21,15 @@ public class Boilerplate {
         List<TlaConst> setConsts =
                 mapBy(Auxiliary.getTopLevelSigNames(alloyModel), s -> TlaConst(sigSet(s)));
 
-        // univ = A_set \\union B_set... where A, B... are top-level sigs
+        // _univ == A_set \\union B_set... where A, B... are top-level sigs
         tlaModel.addDefn(TlaDefn(UNIV, repeatedUnion(setConsts)));
+
+        // _none == {}
+        tlaModel.addDefn(TlaDefn(NONE, NULL_SET()));
 
         tlaModel.addDefn(some());
         tlaModel.addDefn(lone());
         tlaModel.addDefn(one());
-        tlaModel.addDefn(none());
     }
 
     public static TlaAppl _SOME(TlaExp e) {
@@ -40,10 +42,6 @@ public class Boilerplate {
 
     public static TlaAppl _ONE(TlaExp e) {
         return TlaAppl(ONE, Arrays.asList(e));
-    }
-
-    public static TlaAppl _NONE(TlaExp e) {
-        return TlaAppl(NONE, Arrays.asList(e));
     }
 
     private static TlaExp allEqual(String v, String v1, String v2) {
@@ -71,10 +69,5 @@ public class Boilerplate {
         // _one(S)
         return new TlaDefn(
                 TlaDecl(ONE, Arrays.asList(TlaVar(S))), allEqual(S, X, Y).AND(TlaNot(isNull(S))));
-    }
-
-    private static TlaDefn none() {
-        // _none(S) == ! x != {}
-        return new TlaDefn(TlaDecl(NONE, Arrays.asList(TlaVar(S))), isNull(S));
     }
 }
