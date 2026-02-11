@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
@@ -35,15 +34,6 @@ public class AlloyToTla {
 
         tlaModel.addComment("NEXT relation", verbose);
         NextDefn.translate(alloyModel, tlaModel);
-
-        alloyModel
-                .getParas(AlloyFactPara.class)
-                .forEach(
-                        fp -> {
-                            System.out.println(fp.qname);
-                            System.out.println(fp.strLit);
-                            System.out.println(fp.block);
-                        });
 
         return tlaModel;
     }
