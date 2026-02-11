@@ -21,7 +21,7 @@ public class TlaSetMap extends TlaQuantOp {
                 + TlaStrings.SPACE
                 + this.getTLASnippetOfChild(this.variable)
                 + TlaStrings.SPACE
-                + TlaStrings.IN
+                + TlaStrings.SET_IN
                 + TlaStrings.SPACE
                 + this.getTLASnippetOfChild(this.set)
                 + TlaStrings.SET_END;

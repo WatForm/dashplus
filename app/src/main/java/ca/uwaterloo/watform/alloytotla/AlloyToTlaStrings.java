@@ -14,6 +14,7 @@ public class AlloyToTlaStrings {
     public static final String ALL_SIG_CONSTRAINTS =
             SPECIAL + "all" + SPECIAL + "sig" + SPECIAL + "constraints";
     public static final String UNIV = SPECIAL + "univ";
+    public static final String IDEN = SPECIAL + "iden";
 
     // boilerplate macro formulae
     public static final String SOME = SPECIAL + "some";
