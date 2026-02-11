@@ -16,17 +16,6 @@ public class AlloyToTla {
         tlaModel.addComment("Translation macros", verbose);
         Boilerplate.translate(alloyModel, tlaModel);
 
-        alloyModel
-                .getParas(AlloySigPara.class)
-                .forEach(
-                        v -> {
-                            System.out.println("qnames" + v.qnames.toString());
-                            System.out.println("rel:" + v.rel.toString());
-                            System.out.println("block:" + v.block.toString());
-                            System.out.println("fields:" + v.fields.toString());
-                            System.out.println("quals:" + v.quals.toString());
-                        });
-
         SigConsts.translate(alloyModel, tlaModel);
         SigVars.translate(alloyModel, tlaModel);
         FieldVars.translate(alloyModel, tlaModel);
@@ -40,11 +29,9 @@ public class AlloyToTla {
 
         tlaModel.addComment("INIT relation", verbose);
         InitDefn.translate(alloyModel, tlaModel);
+
         tlaModel.addComment("NEXT relation", verbose);
         NextDefn.translate(alloyModel, tlaModel);
-
-        Auxiliary.getAllSigNames(alloyModel)
-                .forEach(sn -> System.out.println(Auxiliary.getFieldNames(sn, alloyModel)));
 
         return tlaModel;
     }
