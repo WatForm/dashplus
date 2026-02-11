@@ -19,9 +19,13 @@ public class AlloyToTla {
                         v -> {
                             System.out.println("qnames" + v.qnames.toString());
                             System.out.println("rel:" + v.rel.toString());
+                            v.rel.ifPresent(
+                                    x -> System.out.println(((AlloySigPara.In) x).sigRefs.get(0)));
                             System.out.println("block:" + v.block.toString());
                             System.out.println("fields:" + v.fields.toString());
                             System.out.println("quals:" + v.quals.toString());
+
+                            Auxiliary.getExtendsParent(v.qnames.get(0).toString(), alloyModel);
                         });
 
         SigVars.translate(alloyModel, tlaModel);
