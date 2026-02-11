@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TlaStdLibs extends TlaExp { // enums used for extensibility
@@ -33,10 +34,8 @@ public class TlaStdLibs extends TlaExp { // enums used for extensibility
         return "Unknown"; // implementation error TODO
     }
 
-    public static TlaAppl Cardinality(TlaVar arg) {
-        List<TlaExp> children = new ArrayList<>();
-        children.add(arg);
-        return new TlaAppl(TlaStrings.CARDINALITY, children);
+    public static TlaAppl Cardinality(TlaExp arg) {
+        return new TlaAppl(TlaStrings.CARDINALITY, Arrays.asList(arg));
     }
 
     public static TlaAppl Len(TlaVar arg) {
