@@ -21,6 +21,7 @@ public class Boilerplate {
         List<TlaConst> setConsts =
                 mapBy(Auxiliary.getTopLevelSigNames(alloyModel), s -> TlaConst(sigSet(s)));
 
+        // univ = A_set \\union B_set... where A, B... are top-level sigs
         tlaModel.addDefn(TlaDefn(UNIV, repeatedUnion(setConsts)));
 
         tlaModel.addDefn(some());

@@ -50,7 +50,7 @@ public class SigHierarchy {
                             repeatedUnion(
                                     mapBy(
                                             Auxiliary.getParentNames(sn, alloyModel),
-                                            psn -> TlaVar(psn)))));
+                                            psn -> primed ? TlaVar(psn).PRIME() : TlaVar(psn)))));
     }
 
     public static List<String> sortedSigs(AlloyModel alloyModel) {
