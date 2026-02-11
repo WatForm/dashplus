@@ -25,8 +25,18 @@ public class AlloyToTla {
                             System.out.println("fields:" + v.fields.toString());
                             System.out.println("quals:" + v.quals.toString());
 
-                            Auxiliary.getExtendsParent(v.qnames.get(0).toString(), alloyModel);
+                            
                         });
+
+        System.out.println("----------------");
+
+        Auxiliary.getAllSigNames(alloyModel).forEach(sn -> {
+            System.out.println("sig name: "+sn);
+            System.out.println("top-level: "+Auxiliary.isTopLevelSig(sn, alloyModel));
+            System.out.println("extends parent: "+Auxiliary.getExtendsParent(sn, alloyModel));
+            System.out.println("in parents: "+Auxiliary.getInParents(sn, alloyModel));
+
+        });
 
         SigVars.translate(alloyModel, tlaModel);
         SigVarConf.translate(alloyModel, tlaModel);

@@ -14,26 +14,42 @@ public class Auxiliary {
         return asp.qnames.get(0).toString();
     }
 
-    public static String getAncestorName(String sigName, AlloyModel am) {
-        List<AlloySigPara> topLevelSigParas =
-                filterBy(am.getParas(AlloySigPara.class), sp -> sp.isTopLevel());
-
-        AlloySigPara p = topLevelSigParas.get(0);
-
-        return "";
+    public static List<AlloySigPara> getAllSigParas(AlloyModel am)
+    {
+        return am.getParas(AlloySigPara.class);
     }
+
+    public static AlloySigPara getSigParaWithName(String signame, AlloyModel am)
+    {
+        return filterBy(getAllSigParas(am), s -> signame.equals(getQname(s))).get(0);
+    }
+
+    public static boolean isTopLevelSig(String signame, AlloyModel am)
+    {
+        return getSigParaWithName(signame, am).isTopLevel();
+    }
+
+    
+
+    public static List<String> getAllSigNames(AlloyModel am) {
+
+        return mapBy(getAllSigParas(am), sigPara -> getQname(sigPara));
+    }
+
+    public static List<String> getTopLevelSigNames(AlloyModel am) {
+        return mapBy(
+                filterBy(getAllSigParas(am), sigPara -> sigPara.isTopLevel()),
+                sigPara -> getQname(sigPara));
+    }
+
 
     public static String getExtendsParent(String signame, AlloyModel am) {
         AtomicReference<String> answer = new AtomicReference<>("");
-        List<AlloySigPara> sps = am.getParas(AlloySigPara.class);
-        for (AlloySigPara sp : sps) {
-            if (sp.qnames.get(0).toString().equals(signame))
-                sp.rel.ifPresent(
-                        x -> {
-                            if (x instanceof AlloySigPara.Extends)
-                                answer.set(((AlloySigPara.Extends) x).sigRef.toString());
-                        });
-        }
+
+        getSigParaWithName(signame, am).rel.ifPresent(x -> {
+            if (x instanceof AlloySigPara.Extends)
+                answer.set(((AlloySigPara.Extends) x).sigRef.toString());
+        });
 
         return answer.get();
     }
@@ -53,14 +69,13 @@ public class Auxiliary {
         return answer;
     }
 
-    public static List<String> getAllSigNames(AlloyModel am) {
+    public static String getAncestorName(String sigName, AlloyModel am) {
+        List<AlloySigPara> topLevelSigParas =
+                filterBy(am.getParas(AlloySigPara.class), sp -> sp.isTopLevel());
 
-        return mapBy(am.getParas(AlloySigPara.class), sigPara -> getQname(sigPara));
-    }
+        AlloySigPara p = topLevelSigParas.get(0);
 
-    public static List<String> getTopLevelSigNames(AlloyModel am) {
-        return mapBy(
-                filterBy(am.getParas(AlloySigPara.class), sigPara -> sigPara.isTopLevel()),
-                sigPara -> getQname(sigPara));
+        return "";
     }
+    
 }
