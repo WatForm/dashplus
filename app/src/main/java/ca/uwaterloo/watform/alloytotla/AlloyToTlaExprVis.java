@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.alloytotla;
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.repeatedAnd;
 import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 
+import java.util.Arrays;
 import java.util.function.*;
 
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
@@ -46,9 +47,12 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(AlloyUnaryExpr unaryExpr) {
-        Function<TlaExp,TlaExp> f = AlloyTlaExprLookup.getUnary(unaryExpr);
+        Function<TlaExp[],TlaExp> f = AlloyTlaExprLookup.getUnary(unaryExpr);
         if(f!=null)
-            return f.apply(this.visit(unaryExpr.sub));
+        {
+            TlaExp[] args = new TlaExp[] {this.visit(unaryExpr.sub)};
+            return f.apply(args);
+        }
         throw new UnsupportedOperationException("non-translatable expression: "+unaryExpr.toString());
     }
 

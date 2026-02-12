@@ -30,7 +30,7 @@ public class AlloyTlaExprLookup {
 
     private static final Map<
                     Class<? extends AlloyUnaryExpr>,
-                    Function<AlloyUnaryExpr, Function<TlaExp, TlaExp>>>
+                    Function<AlloyUnaryExpr, Function<TlaExp[], TlaExp>>>
             unary;
 
 
@@ -40,7 +40,7 @@ public class AlloyTlaExprLookup {
             return binary.get(expr.getClass()).apply(expr);
         return null;
     }
-    public static Function<TlaExp, TlaExp> getUnary(AlloyUnaryExpr expr)
+    public static Function<TlaExp[], TlaExp> getUnary(AlloyUnaryExpr expr)
     {
         if(binary.keySet().contains(expr.getClass()))
             return unary.get(expr.getClass()).apply(expr);
@@ -73,10 +73,19 @@ public class AlloyTlaExprLookup {
         binary.put(AlloyUnionExpr.class, (exp) -> CreateHelper::TlaUnionSet);
     }
 
+    private static Function<TlaExp[],TlaExp> unaryWrap(Function<TlaExp,TlaExp> f)
+    {
+        return (exp) -> {return f.apply(exp[0]);};
+    }
+    private static Function<TlaExp[],TlaExp> binaryWrap(BiFunction<TlaExp,TlaExp,TlaExp> f)
+    {
+        return (exp) -> {return f.apply(exp[0],exp[1]);};
+    }
+
     static {
         unary = new HashMap<>();
 
-        unary.put(AlloyNegExpr.class, (exp) -> CreateHelper::TlaNot);
+        unary.put(AlloyNegExpr.class, (exp) -> unaryWrap(CreateHelper::TlaNot));
     }
 
     private static final TlaExp ERROR = new TlaVar("THIS_IS_NOT_SUPPORTED");
