@@ -26,6 +26,9 @@ public class AlloyToTla {
         tlaModel.addComment("signature constraints", verbose);
         SigConstraints.translate(alloyModel, tlaModel);
 
+        tlaModel.addComment("facts", verbose);
+        Facts.translate(alloyModel, tlaModel, verbose);
+
         tlaModel.addComment("INIT relation", verbose);
         InitDefn.translate(alloyModel, tlaModel);
 

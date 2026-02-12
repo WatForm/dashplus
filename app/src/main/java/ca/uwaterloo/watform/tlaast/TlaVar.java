@@ -3,6 +3,18 @@ package ca.uwaterloo.watform.tlaast;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaPrime;
 
 public class TlaVar extends TlaSimpleExp {
+
+    /*
+
+    VARIABLES A, B
+
+    F == A + B...
+    G(X) == X + A...
+
+    Here, X, A and B are TlaVars
+
+    */
+
     public TlaVar(String name) {
         super(name);
     }

@@ -13,13 +13,18 @@ public class AlloyToTlaStrings {
             SPECIAL + "sig" + SPECIAL + "sets" + SPECIAL + "primed";
     public static final String ALL_SIG_CONSTRAINTS =
             SPECIAL + "all" + SPECIAL + "sig" + SPECIAL + "constraints";
-    public static final String UNIV = SPECIAL + "univ";
-    public static final String IDEN = SPECIAL + "iden";
+
+    public static final String ALL_FACTS = SPECIAL + "all" + SPECIAL + "facts";
 
     // boilerplate macro formulae
     public static final String SOME = SPECIAL + "some";
     public static final String ONE = SPECIAL + "one";
     public static final String LONE = SPECIAL + "lone";
+    public static final String NO = SPECIAL + "no";
+
+    // macro - constants
+    public static final String UNIV = SPECIAL + "univ";
+    public static final String IDEN = SPECIAL + "iden";
     public static final String NONE = SPECIAL + "none";
 
     public static final String DOLLAR = "$";
@@ -27,4 +32,5 @@ public class AlloyToTlaStrings {
     //
     public static final String SIG_SET_SUFFIX = SPECIAL + "set";
     public static final String SIG_CONSTRAINT_SUFFIX = SPECIAL + "sig" + SPECIAL + "constraints";
+    public static final String UNNAMED_FACT_PREFIX = SPECIAL + "fact" + SPECIAL;
 }

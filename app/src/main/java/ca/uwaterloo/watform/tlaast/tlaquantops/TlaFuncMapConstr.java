@@ -6,11 +6,21 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 
 public class TlaFuncMapConstr extends TlaQuantOp {
+
+    /*
+    [v \in S |-> exp]
+
+    variable: v
+    set: S  (can be an expression that evaluates to a set)
+    expression: exp
+
+    used to construct another function by applying a map to a function
+    */
+
     public TlaFuncMapConstr(TlaVar variable, TlaExp set, TlaExp expression) {
         super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 
-    // [x \in S |-> e]
     @Override
     public String toTLAPlusSnippetCore() {
         return TlaStrings.SQUARE_BRACKET_OPEN

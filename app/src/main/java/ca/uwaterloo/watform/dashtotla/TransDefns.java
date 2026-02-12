@@ -100,7 +100,7 @@ public class TransDefns {
         if (!dashModel.hasOnlyOneState())
             exps.add(
                     // _conf \intersection <fromState> \= {}
-                    CONF().INTERSECTION(fromState).NOT_EQUALS(NULL_SET()));
+                    CONF().INTERSECTION(fromState).NOT_EQUALS(TlaNullSet()));
 
         if (dashModel.hasConcurrency()) {
             // has a scope orthogonal to the scopes used
@@ -113,7 +113,7 @@ public class TransDefns {
                     scope ->
                             exps.add(
                                     // (<non-orthogonal-scope-i> \notin _scopes_used)
-                                    scope.INTERSECTION(SCOPES_USED()).EQUALS(NULL_SET())));
+                                    scope.INTERSECTION(SCOPES_USED()).EQUALS(TlaNullSet())));
         }
 
         if (dashModel.hasEvents()) {
@@ -156,7 +156,7 @@ public class TransDefns {
                                             .UNION(repeatedUnion(entered))));
         }
 
-        TlaExp sentEvents = NULL_SET();
+        TlaExp sentEvents = TlaNullSet();
         if (dashModel.onR(transFQN) != null)
             sentEvents = TlaSet(TlaAppl((tlaFQN(dashModel.onR(transFQN).name))));
 
@@ -165,7 +165,7 @@ public class TransDefns {
             List<TlaExp> nextStableExps = new ArrayList<>();
             nextStableExps.add(STABLE().PRIME().EQUALS(TlaTrue()));
             if (dashModel.hasConcurrency())
-                nextStableExps.add(SCOPES_USED().PRIME().EQUALS(NULL_SET()));
+                nextStableExps.add(SCOPES_USED().PRIME().EQUALS(TlaNullSet()));
 
             if (dashModel.hasEvents()) {
                 TlaExp stableCase =
@@ -235,7 +235,7 @@ public class TransDefns {
 
         if (!dashModel.hasOnlyOneState()) {
             TlaAppl sourceState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).name));
-            exps.add(sourceState.INTERSECTION(CONF().PRIME()).NOT_EQUALS(NULL_SET()));
+            exps.add(sourceState.INTERSECTION(CONF().PRIME()).NOT_EQUALS(TlaNullSet()));
         }
 
         List<TlaExp> stableExps = new ArrayList<>();
@@ -251,7 +251,7 @@ public class TransDefns {
                     s ->
                             stableExps.add(
                                     s.INTERSECTION(TlaVar(paramVar(SCOPES_USED)))
-                                            .EQUALS(NULL_SET())));
+                                            .EQUALS(TlaNullSet())));
 
             nonOrthogonalScopes.forEach(
                     s ->
@@ -259,7 +259,7 @@ public class TransDefns {
                                     s.INTERSECTION(
                                                     SCOPES_USED()
                                                             .UNION(TlaVar(paramVar(SCOPES_USED))))
-                                            .EQUALS(NULL_SET())));
+                                            .EQUALS(TlaNullSet())));
         }
 
         if (dashModel.hasEvents() && dashModel.onR(transFQN) != null) {
@@ -271,12 +271,12 @@ public class TransDefns {
                             .INTERSECTION(
                                     EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS())
                                             .UNION(TlaVar(paramVar(EVENTS))))
-                            .NOT_EQUALS(NULL_SET()));
+                            .NOT_EQUALS(TlaNullSet()));
 
             unstableExps.add(
                     sentEvents
                             .INTERSECTION(EVENTS().UNION(TlaVar(paramVar(EVENTS))))
-                            .NOT_EQUALS(NULL_SET()));
+                            .NOT_EQUALS(TlaNullSet()));
         }
 
         if (!dashModel.hasOnlyOneState())

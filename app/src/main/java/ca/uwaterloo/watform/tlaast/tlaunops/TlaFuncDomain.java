@@ -6,6 +6,12 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 
 public class TlaFuncDomain extends TlaUnaryOp {
 
+    /*
+    DOMAIN f
+
+    function domain: the set of keys of function f
+    */
+
     public TlaFuncDomain(TlaExp operand) {
         super(operand, TlaOperator.PrecedenceGroup.UNSAFE);
     }

@@ -33,7 +33,7 @@ public class Boilerplate {
         tlaModel.addDefn(TlaDefn(UNIV, repeatedUnion(setConsts)));
 
         // _none == {}
-        tlaModel.addDefn(TlaDefn(NONE, NULL_SET()));
+        tlaModel.addDefn(TlaDefn(NONE, TlaNullSet()));
 
         // _iden = {<<x,x>> : x \in _univ}
         tlaModel.addDefn(TlaDefn(IDEN, TlaSetMap(X(), _UNIV(), TlaTuple(X(), X()))));
@@ -41,6 +41,7 @@ public class Boilerplate {
         tlaModel.addDefn(some());
         tlaModel.addDefn(lone());
         tlaModel.addDefn(one());
+        tlaModel.addDefn(no());
     }
 
     public static TlaAppl _SOME(TlaExp e) {
@@ -53,6 +54,10 @@ public class Boilerplate {
 
     public static TlaAppl _ONE(TlaExp e) {
         return TlaAppl(ONE, Arrays.asList(e));
+    }
+
+    public static TlaAppl _NO(TlaExp e) {
+        return TlaAppl(NO, Arrays.asList(e));
     }
 
     public static TlaAppl _UNIV() {
@@ -85,6 +90,13 @@ public class Boilerplate {
         // _one(S)
         return new TlaDefn(
                 TlaDecl(ONE, Arrays.asList(S())),
-                allEqual(S(), X(), Y()).AND(S().NOT_EQUALS(NULL_SET())));
+                allEqual(S(), X(), Y()).AND(S().NOT_EQUALS(TlaNullSet())));
+    }
+
+    private static TlaDefn no() {
+        // _one(S)
+        return new TlaDefn(
+                TlaDecl(NO, Arrays.asList(S())),
+                allEqual(S(), X(), Y()).AND(S().EQUALS(TlaNullSet())));
     }
 }

@@ -4,6 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TlaDefn extends TlaExp {
+
+    /*
+    G(arg1,arg2...) == exp
+
+    Here, G(arg1,arg2...) == exp is represented by this node
+    GG(arg1,arg2...) is the decl
+    exp is the body
+    */
+
     public final TlaDecl decl;
     public final TlaExp body;
 

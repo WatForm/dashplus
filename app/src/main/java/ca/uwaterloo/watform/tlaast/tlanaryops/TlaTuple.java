@@ -5,6 +5,12 @@ import java.util.List;
 
 public class TlaTuple extends TlaNaryOp {
 
+    /*
+    <<exp1, exp2...>>
+
+    where children are exp1, exp2...
+    */
+
     public TlaTuple(List<? extends TlaExp> children) {
         super(
                 TlaStrings.TUPLE_OPEN,

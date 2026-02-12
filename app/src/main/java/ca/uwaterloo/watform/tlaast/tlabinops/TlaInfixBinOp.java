@@ -6,6 +6,10 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 
 public abstract class TlaInfixBinOp extends TlaBinOp {
 
+    /*
+    subtype of Binary operators where the operator appears between the operands when printed
+    */
+
     private final String infixOperator;
 
     public TlaInfixBinOp(
