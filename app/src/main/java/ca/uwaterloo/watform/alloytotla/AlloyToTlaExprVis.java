@@ -17,19 +17,18 @@ import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
-import java.util.function.*;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(DashRef dashRef) {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'visit' dashRef");
     }
 
     @Override
     public TlaExp visit(DashParam dashParam) {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'visit' dashParam");
     }
 
@@ -53,7 +52,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(AlloyVarExpr varExpr) {
-        // TODO Auto-generated method stub
+        
         VarArgsFunction<TlaExp, TlaExp> f = AlloyTlaExprLookup.lookup(varExpr);
         if (f != null) return f.apply();
         throw new UnsupportedOperationException(
@@ -72,37 +71,37 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyBracketExpr bracketExpr) {
 
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'visit' for bracket");
     }
 
     @Override
     public TlaExp visit(AlloyCphExpr comprehensionExpr) {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'visit' for cph");
     }
 
     @Override
     public TlaExp visit(AlloyIteExpr iteExpr) {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'visit' for ite");
     }
 
     @Override
     public TlaExp visit(AlloyLetExpr letExpr) {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'visit' for let");
     }
 
     @Override
     public TlaExp visit(AlloyQuantificationExpr quantificationExpr) {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'visit' for quantification");
     }
 
     @Override
     public TlaExp visit(AlloyDecl decl) {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'visit' for decl");
     }
 }

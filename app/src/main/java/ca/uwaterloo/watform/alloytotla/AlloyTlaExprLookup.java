@@ -94,7 +94,7 @@ public class AlloyTlaExprLookup {
         // decl
         // if-then-else
         // let
-        // paren
+        table.put(AlloyParenExpr.class, simple(unary((e) -> e)));
         // quantification
 
         // unary
