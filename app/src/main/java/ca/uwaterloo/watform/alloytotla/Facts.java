@@ -42,7 +42,7 @@ public class Facts {
                                     repeatedAnd(
                                             mapBy(
                                                     fp.block.exprs,
-                                                    exp -> ExprTranslate.translate(exp)))));
+                                                    exp -> AlloyTlaExprLookup.translate(exp)))));
                 });
 
         tlaModel.addDefn(TlaDefn(ALL_FACTS, repeatedAnd(mapBy(factNames, fn -> TlaAppl(fn)))));
