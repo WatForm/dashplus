@@ -29,10 +29,11 @@ public class AlloyExprFactory {
         assert (sl != null && !sl.isEmpty());
         List<String> reversed = reverse(sl);
         AlloyExpr o = AlloyVar(reversed.get(0));
-        if (sl.size() == 1) return AlloySet(o);
-        else {
+        if (sl.size() == 1) {
+            return AlloySet(o);
+        } else {
             for (String s : reversed.subList(1, reversed.size())) {
-                o = new AlloyArrowExpr(new AlloyQnameExpr(s), o);
+                o = new AlloyArrowExpr(AlloyVar(s), o);
             }
             return o;
         }

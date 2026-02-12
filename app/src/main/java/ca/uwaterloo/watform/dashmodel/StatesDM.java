@@ -308,10 +308,6 @@ public class StatesDM extends TransDM {
     }
 
     public List<DashRef> entered(String tfqn) {
-        System.out.println("Scope of " + tfqn);
-        System.out.println(scope(tfqn));
-        System.out.println("gotoR of " + tfqn);
-        System.out.println(gotoR(tfqn));
         return leafStatesEnteredInScope(scope(tfqn), gotoR(tfqn));
     }
 

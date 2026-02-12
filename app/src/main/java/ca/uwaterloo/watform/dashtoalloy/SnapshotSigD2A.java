@@ -53,12 +53,13 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                                                 D2AStrings.scopeLabelName))));
             }
             // conf0, conf1, etc.
-            if (!dm.hasOnlyOneState())
+            if (!dm.hasOnlyOneState()) {
                 decls.add(
                         AlloyDecl(
                                 this.dsl.nameNum(D2AStrings.confName, i),
                                 AlloyArrowStringList(
                                         newListWithOneMore(cop, D2AStrings.stateLabelName))));
+            }
 
             // transTaken1, etc.
             decls.add(
@@ -86,6 +87,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         // add the snapshot signature
         this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+        // System.out.println(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
     }
 
     public void varsBuffersOnlySnapshotSig() {

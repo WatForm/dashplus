@@ -290,18 +290,12 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         // from appropriate 'type' of element
         // for this function, match can only be within enclosing sfqn
         List<String> region = new ArrayList<String>();
-        System.out.println("Looking for matches for: " + name);
-        System.out.println(kind);
         if (kind == DashStrings.DashRefKind.STATE) region = region(sfqn);
         else if (kind == DashStrings.DashRefKind.EVENT) {
             // get all the events within these regions
             for (String x : region(sfqn)) {
-                System.out.println("Events within state " + x);
-                System.out.println(eventsWithinState(x));
                 region.addAll(eventsWithinState(x));
             }
-            System.out.println("region");
-            System.out.println(region);
         } else if (kind == DashStrings.DashRefKind.VAR) {
             for (String x : region(sfqn)) {
                 region.addAll(varsOfState(x));
