@@ -12,7 +12,7 @@ public class TlaFuncMapConstr extends TlaQuantOp {
 
     variable: v
     set: S  (can be an expression that evaluates to a set)
-    expression: exp 
+    expression: exp
 
     used to construct another function by applying a map to a function
     */
@@ -21,7 +21,6 @@ public class TlaFuncMapConstr extends TlaQuantOp {
         super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 
-    
     @Override
     public String toTLAPlusSnippetCore() {
         return TlaStrings.SQUARE_BRACKET_OPEN

@@ -8,7 +8,7 @@ import ca.uwaterloo.watform.tlaast.TlaVar;
 public class TlaSetMap extends TlaQuantOp {
 
     /*
-    
+
     {exp : v \in S}
 
     variable: v
@@ -16,7 +16,7 @@ public class TlaSetMap extends TlaQuantOp {
     expression: exp (usually written in terms of v)
 
     used to construct a set by applying a filter to another set
-    
+
     */
 
     public TlaSetMap(TlaVar variable, TlaExp set, TlaExp expression) {

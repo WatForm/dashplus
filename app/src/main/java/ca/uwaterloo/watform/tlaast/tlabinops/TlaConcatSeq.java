@@ -8,8 +8,8 @@ public class TlaConcatSeq extends TlaInfixBinOp {
     <<a,b,c>> \o <<1,2,3>>
 
     concatenates sequences
-    operandOne: <<a,b,c>> (can be an exp) 
-    operandTwo: <<1,2,3>> (can be an exp) 
+    operandOne: <<a,b,c>> (can be an exp)
+    operandTwo: <<1,2,3>> (can be an exp)
     */
 
     public TlaConcatSeq(TlaExp operandOne, TlaExp operandTwo) {

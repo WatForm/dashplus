@@ -36,13 +36,7 @@ public class Facts {
                     fp.qname.ifPresent(n -> comments.add(factName + " -> " + n));
                     fp.strLit.ifPresent(str -> comments.add(factName + " -> " + str));
 
-                    tlaModel.addDefn(
-                            TlaDefn(
-                                    factName,
-                                    repeatedAnd(
-                                            mapBy(
-                                                    fp.block.exprs,
-                                                    exp -> AlloyTlaExprLookup.translate(exp)))));
+                    tlaModel.addDefn(TlaDefn(factName, new AlloyToTlaExprVis().visit(fp.block)));
                 });
 
         tlaModel.addDefn(TlaDefn(ALL_FACTS, repeatedAnd(mapBy(factNames, fn -> TlaAppl(fn)))));

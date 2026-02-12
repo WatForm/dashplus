@@ -7,7 +7,6 @@ import java.util.List;
 
 public class TlaAndList extends TlaNaryOp {
 
-
     /*
     exp1
     /\ exp2

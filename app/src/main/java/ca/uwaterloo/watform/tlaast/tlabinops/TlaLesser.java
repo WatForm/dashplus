@@ -6,7 +6,7 @@ public class TlaLesser extends TlaInfixBinOp {
 
     /*
     exp1 < exp2
-    
+
     */
 
     public TlaLesser(TlaExp operandOne, TlaExp operandTwo) {

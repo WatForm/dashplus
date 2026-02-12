@@ -23,6 +23,7 @@
 * Operand --> op
 * Context --> ctx
 * If-Then-Else -> ite
+* Comprehension -> cph
 
 ### Domain-specific:
 

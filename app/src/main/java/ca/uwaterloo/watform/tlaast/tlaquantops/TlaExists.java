@@ -4,7 +4,7 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaExists extends TlaQuantOp {
 
-    /* 
+    /*
     \E v \in S : exp
 
     variable: v

@@ -7,7 +7,7 @@ import java.util.List;
 public class TlaStdLibs extends TlaExp { // enums used for extensibility
 
     /*
-    
+
     EXTENDS FiniteSets
 
     Here, FiniteSets is a TlaStdLibs object whose "library" has the enum value STL_FiniteSets
@@ -49,22 +49,22 @@ public class TlaStdLibs extends TlaExp { // enums used for extensibility
     }
 
     public static TlaAppl Len(TlaVar arg) {
-        
+
         return new TlaAppl(TlaStrings.LEN, Arrays.asList(arg));
     }
 
     public static TlaAppl Head(TlaVar arg) {
-        
+
         return new TlaAppl(TlaStrings.HEAD, Arrays.asList(arg));
     }
 
     public static TlaAppl Tail(TlaVar arg) {
-        
+
         return new TlaAppl(TlaStrings.TAIL, Arrays.asList(arg));
     }
 
     public static TlaAppl Append(TlaVar sequence, TlaVar element) {
-        
+
         return new TlaAppl(TlaStrings.APPEND, Arrays.asList(sequence, element));
     }
 }

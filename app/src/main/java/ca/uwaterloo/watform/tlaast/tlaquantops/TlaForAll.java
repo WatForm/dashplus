@@ -4,8 +4,7 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaForAll extends TlaQuantOp {
 
-
-    /* 
+    /*
     \A v \in S : exp
 
     variable: v

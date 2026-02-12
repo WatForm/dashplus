@@ -9,7 +9,7 @@ public class TlaComment extends ASTNode {
     if contents contains a newline, then:
     (* <contents> *)
     else
-    \* <contents> 
+    \* <contents>
 
     */
 

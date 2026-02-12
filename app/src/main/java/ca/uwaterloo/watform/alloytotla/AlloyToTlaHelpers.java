@@ -13,6 +13,7 @@ import ca.uwaterloo.watform.tlaast.tlaliterals.TlaIntLiteral;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AlloyToTlaHelpers {
@@ -70,6 +71,14 @@ public class AlloyToTlaHelpers {
     public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
         if (operands.size() == 0) return TlaTrue();
         return TlaAndList(operands);
+    }
+
+    public static TlaExp repeatedAnd(TlaExp... operands) {
+        return TlaAndList(Arrays.asList(operands));
+    }
+
+    public static TlaExp repeatedOr(TlaExp... operands) {
+        return TlaOrList(Arrays.asList(operands));
     }
 
     public static TlaExp repeatedOr(List<? extends TlaExp> operands) {

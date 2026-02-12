@@ -5,7 +5,7 @@ import ca.uwaterloo.watform.tlaast.*;
 public class TlaOr extends TlaInfixBinOp {
 
     /*
-    
+
     exp1 \/ exp2
     */
 

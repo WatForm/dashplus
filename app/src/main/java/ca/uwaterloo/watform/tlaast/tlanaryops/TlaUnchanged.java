@@ -5,13 +5,13 @@ import java.util.List;
 
 public class TlaUnchanged extends TlaNaryOp {
 
-    /* 
+    /*
     UNCHANGED <<V1,V2...>>
 
     where V1, V2.. are the children
     this is equivalent to V1' = V1 /\ V2' = V2 /\ ...
     (syntactic sugar)
-    
+
     */
 
     public TlaUnchanged(List<? extends TlaVar> children) {

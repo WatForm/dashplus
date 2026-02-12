@@ -13,7 +13,6 @@ public class TlaDefn extends TlaExp {
     exp is the body
     */
 
-
     public final TlaDecl decl;
     public final TlaExp body;
 
