@@ -16,6 +16,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyLetExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyQuantificationExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
+import ca.uwaterloo.watform.alloytotla.AlloyTlaExprLookup.VarArgsFunction;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
@@ -39,7 +40,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyBinaryExpr binExpr) {
 
-        BiFunction<TlaExp,TlaExp,TlaExp> f = AlloyTlaExprLookup.getBinary(binExpr);
+        VarArgsFunction<TlaExp, TlaExp> f = AlloyTlaExprLookup.lookup(binExpr);
         if(f!=null)
             return f.apply(this.visit(binExpr.left),this.visit(binExpr.right));
         throw new UnsupportedOperationException("non-translatable expression: "+binExpr.toString());
@@ -47,12 +48,10 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(AlloyUnaryExpr unaryExpr) {
-        Function<TlaExp[],TlaExp> f = AlloyTlaExprLookup.getUnary(unaryExpr);
+        VarArgsFunction<TlaExp, TlaExp> f = AlloyTlaExprLookup.lookup(unaryExpr);
         if(f!=null)
-        {
-            TlaExp[] args = new TlaExp[] {this.visit(unaryExpr.sub)};
-            return f.apply(args);
-        }
+            return f.apply(this.visit(unaryExpr.sub));
+        
         throw new UnsupportedOperationException("non-translatable expression: "+unaryExpr.toString());
     }
 

@@ -23,34 +23,66 @@ import java.util.function.*;
 
 public class AlloyTlaExprLookup {
 
-    private static final Map<
-                    Class<? extends AlloyBinaryExpr>,
-                    Function<AlloyBinaryExpr, BiFunction<TlaExp, TlaExp, TlaExp>>>
-            binary;
+    public static interface VarArgsFunction<T, R> {
+        R apply(T... args);
+    }
 
     private static final Map<
-                    Class<? extends AlloyUnaryExpr>,
-                    Function<AlloyUnaryExpr, Function<TlaExp[], TlaExp>>>
-            unary;
+                    Class<? extends AlloyExpr>,
+                    Function<AlloyExpr, VarArgsFunction<TlaExp,TlaExp>>>
+            table;
 
 
-    public static BiFunction<TlaExp, TlaExp, TlaExp> getBinary(AlloyBinaryExpr expr)
+    public static VarArgsFunction<TlaExp, TlaExp> lookup(AlloyExpr expr)
     {
-        if(binary.keySet().contains(expr.getClass()))
-            return binary.get(expr.getClass()).apply(expr);
+        if(table.keySet().contains(expr.getClass()))
+            return table.get(expr.getClass()).apply(expr);
         return null;
     }
-    public static Function<TlaExp[], TlaExp> getUnary(AlloyUnaryExpr expr)
+
+    private static Function<AlloyExpr, VarArgsFunction<TlaExp,TlaExp>> simple(VarArgsFunction<TlaExp,TlaExp> f)
     {
-        if(binary.keySet().contains(expr.getClass()))
-            return unary.get(expr.getClass()).apply(expr);
-        return null;
+        return (exp) -> f;
+    }
+    private static VarArgsFunction<TlaExp,TlaExp> unary(Function<TlaExp,TlaExp> f)
+    {
+        return (exp) -> {return f.apply(exp[0]);};
+    }
+    private static VarArgsFunction<TlaExp,TlaExp> binary(BiFunction<TlaExp,TlaExp,TlaExp> f)
+    {
+        return (exp) -> {return f.apply(exp[0],exp[1]);};
     }
 
     static {
-        binary = new HashMap<>();
+        table = new HashMap<>();
 
-        binary.put(AlloyAndExpr.class, (exp) -> CreateHelper::TlaAnd);
+        // unary
+        table.put(AlloyNegExpr.class, simple(unary(CreateHelper::TlaNot)));
+
+        // binary
+        table.put(AlloyAndExpr.class, simple(binary(CreateHelper::TlaAnd)));
+        table.put(AlloyCmpExpr.class, (exp) -> {
+            return binary(
+                switch (((AlloyCmpExpr) exp).comp)
+                {
+                case AlloyCmpExpr.Comp.EQUAL_LESS -> CreateHelper::TlaAdd;
+                case AlloyCmpExpr.Comp.LESS_EQUAL -> CreateHelper::TlaLesserEq;
+                        case AlloyCmpExpr.Comp.LESS_THAN -> CreateHelper::TlaLesser;
+                        case AlloyCmpExpr.Comp.IN -> CreateHelper::TlaSubsetEq;
+                        case AlloyCmpExpr.Comp.GREATER_EQUAL -> CreateHelper::TlaGreater;
+                        case AlloyCmpExpr.Comp.GREATER_THAN -> CreateHelper::TlaGreaterEq;
+            });
+        });
+        table.put(AlloyDiffExpr.class,simple(binary(CreateHelper::TlaDiffSet)));
+        table.put(AlloyEqualsExpr.class,simple(binary(CreateHelper::TlaEquals)));
+        table.put(AlloyIntersExpr.class,simple(binary(CreateHelper::TlaIntersectionSet)));
+        table.put(AlloyNotEqualsExpr.class,simple(binary(CreateHelper::TlaNotEq)));
+        table.put(AlloyOrExpr.class,simple(binary(CreateHelper::TlaOr)));
+        table.put(AlloyUnionExpr.class,simple(binary(CreateHelper::TlaUnionSet)));
+        //table.put(.class,simple(binary(CreateHelper::)));
+
+
+        /* 
         binary.put(
                 AlloyCmpExpr.class,
                 (exp) -> {
@@ -71,22 +103,11 @@ public class AlloyTlaExprLookup {
         binary.put(AlloyNotEqualsExpr.class, (exp) -> CreateHelper::TlaNotEq);
         binary.put(AlloyOrExpr.class, (exp) -> CreateHelper::TlaOr);
         binary.put(AlloyUnionExpr.class, (exp) -> CreateHelper::TlaUnionSet);
+        */
     }
 
-    private static Function<TlaExp[],TlaExp> unaryWrap(Function<TlaExp,TlaExp> f)
-    {
-        return (exp) -> {return f.apply(exp[0]);};
-    }
-    private static Function<TlaExp[],TlaExp> binaryWrap(BiFunction<TlaExp,TlaExp,TlaExp> f)
-    {
-        return (exp) -> {return f.apply(exp[0],exp[1]);};
-    }
+    
 
-    static {
-        unary = new HashMap<>();
-
-        unary.put(AlloyNegExpr.class, (exp) -> unaryWrap(CreateHelper::TlaNot));
-    }
 
     private static final TlaExp ERROR = new TlaVar("THIS_IS_NOT_SUPPORTED");
 
