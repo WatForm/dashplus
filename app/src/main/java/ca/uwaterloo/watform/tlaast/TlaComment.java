@@ -4,6 +4,15 @@ import ca.uwaterloo.watform.utils.*;
 
 public class TlaComment extends ASTNode {
 
+    /*
+
+    if contents contains a newline, then:
+    (* <contents> *)
+    else
+    \* <contents> 
+
+    */
+
     public final String contents;
 
     public TlaComment(String contents) {

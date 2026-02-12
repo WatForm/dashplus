@@ -7,11 +7,23 @@ import ca.uwaterloo.watform.tlaast.TlaVar;
 
 public class TlaSetFilter extends TlaQuantOp {
 
+    /*
+    
+    {v \in S : exp}
+
+    variable: v
+    set: S  (can be an expression that evaluates to a set)
+    expression: exp (boolean expression)
+
+    used to construct a set by applying a filter to another set
+    
+    */
+
     public TlaSetFilter(TlaVar variable, TlaExp set, TlaExp expression) {
         super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 
-    // {x \in S: P(x)}
+    
     @Override
     public String toTLAPlusSnippetCore() {
         return TlaStrings.SET_START

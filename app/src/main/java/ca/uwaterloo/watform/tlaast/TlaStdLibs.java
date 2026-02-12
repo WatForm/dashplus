@@ -6,6 +6,16 @@ import java.util.List;
 
 public class TlaStdLibs extends TlaExp { // enums used for extensibility
 
+    /*
+    
+    EXTENDS FiniteSets
+
+    Here, FiniteSets is a TlaStdLibs object whose "library" has the enum value STL_FiniteSets
+
+    Note that EXTENDS is not part of the object
+
+    */
+
     public static enum LIBRARIES {
         STL_FiniteSets,
         STL_Naturals,
@@ -39,27 +49,22 @@ public class TlaStdLibs extends TlaExp { // enums used for extensibility
     }
 
     public static TlaAppl Len(TlaVar arg) {
-        List<TlaExp> children = new ArrayList<>();
-        children.add(arg);
-        return new TlaAppl(TlaStrings.LEN, children);
+        
+        return new TlaAppl(TlaStrings.LEN, Arrays.asList(arg));
     }
 
     public static TlaAppl Head(TlaVar arg) {
-        List<TlaExp> children = new ArrayList<>();
-        children.add(arg);
-        return new TlaAppl(TlaStrings.HEAD, children);
+        
+        return new TlaAppl(TlaStrings.HEAD, Arrays.asList(arg));
     }
 
     public static TlaAppl Tail(TlaVar arg) {
-        List<TlaExp> children = new ArrayList<>();
-        children.add(arg);
-        return new TlaAppl(TlaStrings.TAIL, children);
+        
+        return new TlaAppl(TlaStrings.TAIL, Arrays.asList(arg));
     }
 
     public static TlaAppl Append(TlaVar sequence, TlaVar element) {
-        List<TlaExp> children = new ArrayList<>();
-        children.add(sequence);
-        children.add(element);
-        return new TlaAppl(TlaStrings.APPEND, children);
+        
+        return new TlaAppl(TlaStrings.APPEND, Arrays.asList(sequence, element));
     }
 }

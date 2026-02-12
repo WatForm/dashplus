@@ -7,6 +7,15 @@ import java.util.List;
 
 public class TlaAppl extends TlaOperator {
 
+    /*
+    G(arg1,arg2...) == exp
+    F == G(exp1,exp2...)
+
+    Here, G(exp1,exp2...) is represented by this node
+    G is the name
+    (exp1,exp2...) is params
+    */
+
     public final String name;
     public final List<? extends TlaExp> params;
 

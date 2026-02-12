@@ -5,9 +5,13 @@ import java.util.List;
 
 public class TlaIfThenElse extends TlaOperator {
 
-    public final TlaExp condition;
-    public final TlaExp thenExpression;
-    public final TlaExp elseExpression;
+    /*
+    IF P THEN e1 ELSE e2
+    */
+
+    public final TlaExp condition; // P
+    public final TlaExp thenExpression; // e1
+    public final TlaExp elseExpression; // e2
 
     public TlaIfThenElse(TlaExp condition, TlaExp thenExpression, TlaExp elseExpression) {
         super(TlaOperator.Associativity.IRRELEVANT, TlaOperator.PrecedenceGroup.UNSAFE);

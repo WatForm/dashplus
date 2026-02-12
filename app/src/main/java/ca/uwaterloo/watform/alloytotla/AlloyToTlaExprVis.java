@@ -17,12 +17,6 @@ import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
-import ca.uwaterloo.watform.tlaast.tlabinops.*;
-import ca.uwaterloo.watform.tlaast.tlaliterals.*;
-import ca.uwaterloo.watform.tlaast.tlanaryops.*;
-import ca.uwaterloo.watform.tlaast.tlaquantops.*;
-import ca.uwaterloo.watform.tlaast.tlaunops.*;
-
 public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
@@ -39,7 +33,10 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(AlloyBinaryExpr binExpr) {
-        return AlloyTlaExprLookup.translateAlloyBinaryExpr(binExpr);
+
+		
+
+        throw new UnsupportedOperationException("non-translatable expression: "+binExpr.toString());
     }
 
     @Override
