@@ -4,6 +4,10 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaIndexing extends TlaBinOp {
 
+    /*
+    op1[op2]
+    */
+
     public TlaIndexing(TlaExp operandOne, TlaExp operandTwo) {
         super(
                 operandOne,

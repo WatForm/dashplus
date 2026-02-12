@@ -4,6 +4,11 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaOr extends TlaInfixBinOp {
 
+    /*
+    
+    exp1 \/ exp2
+    */
+
     public TlaOr(TlaExp operandOne, TlaExp operandTwo) {
         super(
                 TlaStrings.OR,

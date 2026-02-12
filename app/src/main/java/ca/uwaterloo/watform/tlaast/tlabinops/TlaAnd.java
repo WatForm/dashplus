@@ -4,6 +4,10 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaAnd extends TlaInfixBinOp {
 
+    /*
+    exp1 /\ exp2
+    */
+
     public TlaAnd(TlaExp operandOne, TlaExp operandTwo) {
         super(
                 TlaStrings.AND,
