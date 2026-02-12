@@ -94,7 +94,7 @@ public abstract class DashRef extends AlloyExpr {
             s += "[";
             s += GeneralUtil.strCommaList(this.paramValues);
             s += "]";
-            if (this instanceof StateDashRef) {
+            if (!(this instanceof StateDashRef)) {
                 s += "/";
                 s += DashFQN.chopNameFromFQN(this.name);
             }

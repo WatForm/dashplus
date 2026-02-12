@@ -8,6 +8,7 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -180,9 +181,12 @@ public class StatesDM extends TransDM {
         Does not seem to be any room for syntactic simplifications in these expressions.
     */
     public List<DashRef> leafStatesEnteredInScope(DashRef context, DashRef dest) {
+
         List<DashRef> cR = prefixDashRefs(context);
         List<DashRef> dR = prefixDashRefs(dest);
+
         List<DashRef> r = new ArrayList<DashRef>(); // result
+
         int p = 0; // parameter value position
         List<AlloyExpr> xP = new ArrayList<AlloyExpr>(); // parameters carrying forward
         List<AlloyExpr> nP; // parameters for each addition
@@ -260,19 +264,14 @@ public class StatesDM extends TransDM {
         // this is not necessarily an AND scope
         DashRef src = fromR(tfqn);
         DashRef dest = gotoR(tfqn);
-        // myprint("src");
-        // System.out.println(src);
-        // myprint("dest");
-        // System.out.println(dest);
+
         String sc = DashFQN.longestCommonFQN(src.name, dest.name);
         // maxCommonParams is max number of params that could have in common
         // but they don't necessarily have the same values
         Integer maxCommonParams = stateParams(sc).size();
-        // myprint("scope");
-        // System.out.println("maxCommonParams");
-        // System.out.println(maxCommonParams);
+
         List<AlloyExpr> scopeParams = new ArrayList<AlloyExpr>();
-        AlloyExpr equals = null;
+        AlloyExpr equals = AlloyTrueCond();
         AlloyExpr s = null;
         AlloyExpr d = null;
         for (int i = 0; i < maxCommonParams; i++) {
@@ -282,35 +281,14 @@ public class StatesDM extends TransDM {
                 // syntactically equal
                 scopeParams.add(s);
             } else {
-                equals = new AlloyEqualsExpr(s, d);
-                scopeParams.add(
-                        new AlloyIteExpr(
-                                equals,
-                                s,
-                                ((DashParam) stateParams(sc).get(i)).asAlloyVar())); // whole set
-
-                for (int j = i + 1; j < maxCommonParams; j++) {
-                    s = src.paramValues.get(j);
-                    d = dest.paramValues.get(j);
-                    if (s.equals(d)) {
-                        // syntactically equal
-                        scopeParams.add(s);
-                    } else {
-                        equals = new AlloyAndExpr(equals, new AlloyEqualsExpr(s, d));
-                        scopeParams.add(
-                                new AlloyIteExpr(
-                                        equals,
-                                        s,
-                                        ((DashParam) stateParams(sc).get(j))
-                                                .asAlloyVar())); // whole set
-                    }
-                }
-                break;
+                // have to continue to create a larger condition
+                // because if earlier condition is true,
+                // this defaults to a simpler case
+                equals = AlloyAnd(equals, AlloyEqual(s, d));
+                scopeParams.add(new AlloyIteExpr(equals, s, stateParams(sc).get(i))); // whole set
             }
         }
         StateDashRef x = new StateDashRef(sc, scopeParams); // no pos possible
-        // System.out.println("scope");
-        // System.out.println(x);
         return x;
     }
 
@@ -330,6 +308,10 @@ public class StatesDM extends TransDM {
     }
 
     public List<DashRef> entered(String tfqn) {
+        System.out.println("Scope of " + tfqn);
+        System.out.println(scope(tfqn));
+        System.out.println("gotoR of " + tfqn);
+        System.out.println(gotoR(tfqn));
         return leafStatesEnteredInScope(scope(tfqn), gotoR(tfqn));
     }
 
@@ -485,6 +467,14 @@ public class StatesDM extends TransDM {
         return r;
     }
 
+    // If input is A/B/C/D/E [id1, id2]
+    // where B and D are parametrized states
+    // Output is:
+    // A
+    // A/B [id1]
+    // A/B/C [id1]
+    // A/B/C/D [id1, id2]
+    // A/B/C/D/E [id1, id2]
     public List<DashRef> prefixDashRefs(DashRef s) {
         // resulting order is ancestors to descendants
         // includes this DashRef itself at the end

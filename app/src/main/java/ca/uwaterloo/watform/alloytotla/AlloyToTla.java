@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;

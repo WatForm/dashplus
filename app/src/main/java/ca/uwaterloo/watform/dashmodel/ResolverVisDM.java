@@ -187,7 +187,6 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
                 return varExpr;
             }
             // otherwise, look for matches in Dash model var decls
-            System.out.println("here15");
             matches = findMatchesInRegion(v);
         } else {
             // if it has params expr, params could be suffix of any var params
@@ -201,8 +200,6 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             return null;
         }
 
-        // FIX HERE
-        System.out.println(matches);
         String m = chooseMatch(matches);
         if (m == null) {
             ambiguousRefError(varExpr);
@@ -230,8 +227,9 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         else m_params = varParams(m);
 
         // parameters from enclosing state of this element
-        List<? extends AlloyExpr> sfqn_param_vals = stateParams(sfqn);
-        List<? extends AlloyExpr> m_param_vals = m_params;
+        List<? extends AlloyExpr> sfqn_param_vals = mapBy(stateParams(sfqn), x -> x.asAlloyVar());
+        // these must be values p_Statename
+        List<? extends AlloyExpr> m_param_vals = mapBy(m_params, x -> x.asAlloyVar());
         List<? extends AlloyExpr> final_param_vals = new ArrayList<AlloyExpr>();
 
         // v_param_vals is the parameter expressions (as Expr) provided
