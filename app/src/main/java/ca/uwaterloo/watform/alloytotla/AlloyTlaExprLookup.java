@@ -30,8 +30,22 @@ public class AlloyTlaExprLookup {
 
     private static final Map<
                     Class<? extends AlloyUnaryExpr>,
-                    Function<AlloyBinaryExpr, Function<TlaExp, TlaExp>>>
+                    Function<AlloyUnaryExpr, Function<TlaExp, TlaExp>>>
             unary;
+
+
+    public static BiFunction<TlaExp, TlaExp, TlaExp> getBinary(AlloyBinaryExpr expr)
+    {
+        if(binary.keySet().contains(expr.getClass()))
+            return binary.get(expr.getClass()).apply(expr);
+        return null;
+    }
+    public static Function<TlaExp, TlaExp> getUnary(AlloyUnaryExpr expr)
+    {
+        if(binary.keySet().contains(expr.getClass()))
+            return unary.get(expr.getClass()).apply(expr);
+        return null;
+    }
 
     static {
         binary = new HashMap<>();

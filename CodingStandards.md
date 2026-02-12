@@ -22,6 +22,7 @@
 * Concurrent --> conc
 * Operand --> op
 * Context --> ctx
+* If-Then-Else -> ite
 
 ### Domain-specific:
 
