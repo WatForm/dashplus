@@ -5,10 +5,9 @@ import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.Arrays;
-import java.util.List;
+import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlamodel.*;
+import java.util.*;
 
 public class InitDefn {
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {

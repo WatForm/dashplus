@@ -1,13 +1,10 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.NULL_SET;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.repeatedAnd;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.repeatedUnion;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.sigConstraint;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.ALL_SIG_CONSTRAINTS;
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
-import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.*;
@@ -49,7 +46,7 @@ public class SigConstraints {
                 TlaVar si = TlaVar(extendsChildNames.get(i));
                 TlaVar sj = TlaVar(extendsChildNames.get(j));
                 // Si \intersect Sj = {}  (i < j)
-                constraints.add(si.INTERSECTION(sj).EQUALS(NULL_SET()));
+                constraints.add(si.INTERSECTION(sj).EQUALS(TlaNullSet()));
             }
 
         // abstract sigs

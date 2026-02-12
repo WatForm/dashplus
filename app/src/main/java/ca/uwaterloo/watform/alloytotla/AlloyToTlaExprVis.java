@@ -22,13 +22,13 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(DashRef dashRef) {
-        
+
         throw new UnsupportedOperationException("Unimplemented method 'visit' dashRef");
     }
 
     @Override
     public TlaExp visit(DashParam dashParam) {
-        
+
         throw new UnsupportedOperationException("Unimplemented method 'visit' dashParam");
     }
 
@@ -52,7 +52,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(AlloyVarExpr varExpr) {
-        
+
         VarArgsFunction<TlaExp, TlaExp> f = AlloyTlaExprLookup.lookup(varExpr);
         if (f != null) return f.apply();
         throw new UnsupportedOperationException(
@@ -71,37 +71,36 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyBracketExpr bracketExpr) {
 
-        
         throw new UnsupportedOperationException("Unimplemented method 'visit' for bracket");
     }
 
     @Override
     public TlaExp visit(AlloyCphExpr comprehensionExpr) {
-        
+
         throw new UnsupportedOperationException("Unimplemented method 'visit' for cph");
     }
 
     @Override
     public TlaExp visit(AlloyIteExpr iteExpr) {
-        
+
         throw new UnsupportedOperationException("Unimplemented method 'visit' for ite");
     }
 
     @Override
     public TlaExp visit(AlloyLetExpr letExpr) {
-        
+
         throw new UnsupportedOperationException("Unimplemented method 'visit' for let");
     }
 
     @Override
     public TlaExp visit(AlloyQuantificationExpr quantificationExpr) {
-        
+
         throw new UnsupportedOperationException("Unimplemented method 'visit' for quantification");
     }
 
     @Override
     public TlaExp visit(AlloyDecl decl) {
-        
+
         throw new UnsupportedOperationException("Unimplemented method 'visit' for decl");
     }
 }

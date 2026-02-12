@@ -88,7 +88,7 @@ public class AlloyTlaExprLookup {
         table.put(AlloyUnionExpr.class, simple(binary(CreateHelper::TlaUnionSet)));
 
         // misc
-        table.put(AlloyBlock.class, simple(AlloyToTlaHelpers::repeatedAnd));
+        table.put(AlloyBlock.class, simple(CreateHelper::repeatedAnd));
         // brackets
         // cph (comprehension)
         // decl

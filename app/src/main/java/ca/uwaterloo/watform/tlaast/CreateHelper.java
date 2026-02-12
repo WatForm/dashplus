@@ -1,14 +1,50 @@
 package ca.uwaterloo.watform.tlaast;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.foldLeft;
+
 import ca.uwaterloo.watform.tlaast.tlabinops.*;
 import ca.uwaterloo.watform.tlaast.tlaliterals.*;
 import ca.uwaterloo.watform.tlaast.tlanaryops.*;
 import ca.uwaterloo.watform.tlaast.tlaquantops.*;
 import ca.uwaterloo.watform.tlaast.tlaunops.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CreateHelper {
+
+    // custom
+    public static final TlaSet TlaNullSet() {
+        return TlaSet(new ArrayList<>());
+    }
+
+    public static final TlaIntLiteral TlaZero() {
+        return TlaIntLiteral(0);
+    }
+
+    public static TlaExp repeatedUnion(List<? extends TlaExp> operands) {
+        int n = operands.size();
+        if (n == 0) return TlaNullSet();
+        return foldLeft(operands.subList(1, n), TlaUnionSet::new, operands.get(0));
+    }
+
+    public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
+        if (operands.size() == 0) return TlaTrue();
+        return TlaAndList(operands);
+    }
+
+    public static TlaExp repeatedAnd(TlaExp... operands) {
+        return TlaAndList(Arrays.asList(operands));
+    }
+
+    public static TlaExp repeatedOr(TlaExp... operands) {
+        return TlaOrList(Arrays.asList(operands));
+    }
+
+    public static TlaExp repeatedOr(List<? extends TlaExp> operands) {
+        if (operands.size() == 0) return TlaFalse();
+        return TlaOrList(operands);
+    }
 
     // generic
     /*
