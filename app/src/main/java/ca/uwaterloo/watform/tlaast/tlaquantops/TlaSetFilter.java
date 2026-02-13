@@ -1,5 +1,8 @@
 package ca.uwaterloo.watform.tlaast.tlaquantops;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+import static ca.uwaterloo.watform.utils.GeneralUtil.strCommaList;
+
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
@@ -17,6 +20,12 @@ public class TlaSetFilter extends TlaQuantOp {
 
     used to construct a set by applying a filter to another set
 
+    for more complex constructions:
+
+    {<quantophead> : exp}
+
+    where quantophead can be constructed from the QuantOP class
+
     */
 
     public TlaSetFilter(TlaVar variable, TlaExp set, TlaExp expression) {
@@ -26,11 +35,7 @@ public class TlaSetFilter extends TlaQuantOp {
     @Override
     public String toTLAPlusSnippetCore() {
         return TlaStrings.SET_START
-                + this.getTLASnippetOfChild(this.variable)
-                + TlaStrings.SPACE
-                + TlaStrings.IN
-                + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.set)
+                + strCommaList(mapBy(this.heads, h -> h.toTLAPlusSnippetCore(this)))
                 + TlaStrings.SPACE
                 + TlaStrings.COLON
                 + TlaStrings.SPACE

@@ -1,5 +1,8 @@
 package ca.uwaterloo.watform.tlaast.tlaquantops;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+import static ca.uwaterloo.watform.utils.GeneralUtil.strCommaList;
+
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
@@ -30,11 +33,7 @@ public class TlaSetMap extends TlaQuantOp {
                 + TlaStrings.SPACE
                 + TlaStrings.COLON
                 + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.variable)
-                + TlaStrings.SPACE
-                + TlaStrings.SET_IN
-                + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.set)
+                + strCommaList(mapBy(this.heads, h -> h.toTLAPlusSnippetCore(this)))
                 + TlaStrings.SET_END;
     }
 }
