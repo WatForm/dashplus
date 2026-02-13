@@ -4,6 +4,8 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
+// the _use_ of Int in an AlloyExpr (usually an AlloyDecl)
+// Int is a sig
 public final class AlloySigIntExpr extends AlloyVarExpr
         implements AlloySigRefExpr, AlloyScopableExpr {
     public AlloySigIntExpr(Pos pos) {

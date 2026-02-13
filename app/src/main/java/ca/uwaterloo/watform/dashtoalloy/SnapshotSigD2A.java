@@ -7,6 +7,8 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyQtExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloySigIntExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -41,40 +43,36 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             if (dm.hasConcurrency()) {
                 decls.add(
                         // scopesUsedi: p0 -> p1 -> p2 -> set Scopes
-                        AlloyDecl(
+                        this.dsl.AlloyDeclArrowStringList(
                                 this.dsl.nameNum(D2AStrings.scopesUsedName, i),
                                 // p0 -> p1 -> p2 -> set Scopes
-                                AlloyArrowStringList(
-                                        newListWithOneMore(
-                                                // p0, p1, p2
-                                                cop,
-                                                // some Scopes
-                                                // has to be "set", b/c default is "one"
-                                                D2AStrings.scopeLabelName))));
+                                newListWithOneMore(
+                                        // p0, p1, p2
+                                        cop,
+                                        // some Scopes
+                                        // has to be "set", b/c default is "one"
+                                        D2AStrings.scopeLabelName)));
             }
             // conf0, conf1, etc.
             if (!dm.hasOnlyOneState()) {
                 decls.add(
-                        AlloyDecl(
+                        this.dsl.AlloyDeclArrowStringList(
                                 this.dsl.nameNum(D2AStrings.confName, i),
-                                AlloyArrowStringList(
-                                        newListWithOneMore(cop, D2AStrings.stateLabelName))));
+                                newListWithOneMore(cop, D2AStrings.stateLabelName)));
             }
 
             // transTaken1, etc.
             decls.add(
-                    AlloyDecl(
+                    this.dsl.AlloyDeclArrowStringList(
                             this.dsl.nameNum(D2AStrings.transTakenName, i),
-                            AlloyArrowStringList(
-                                    newListWithOneMore(cop, D2AStrings.transLabelName))));
+                            newListWithOneMore(cop, D2AStrings.transLabelName)));
 
             // events0, event1, etc.
             if (dm.hasEvents() && dm.hasEventsAti(i))
                 decls.add(
-                        AlloyDecl(
+                        this.dsl.AlloyDeclArrowStringList(
                                 this.dsl.nameNum(D2AStrings.eventsName, i),
-                                AlloyArrowStringList(
-                                        newListWithOneMore(cop, D2AStrings.allEventsName))));
+                                newListWithOneMore(cop, D2AStrings.allEventsName)));
         }
 
         // stable: one boolean;
@@ -108,63 +106,70 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             // [PID1, PID2]
             // could be empty
             List<AlloyExpr> arrowList = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
-
             AlloyExpr varTyp = this.translateExpr(dm.varTyp(vfqn));
+            AlloyDecl decl;
+
+            // In Dash, a var decl x : one Y produces
+            // DashVarDecls("x", "one Y",..)
+            // where one Y is an AlloyQtExpr (mult=ONE, AlloyVar("Y"))
+            // however,
+            // a field in Alloy in a signature as in sig a { x: one Y },
+            // is AlloyDecl("x", mul=ONE, AlloyVar("Y"))
+            // i.e., in Dash parsing the var decl fully
+            // separates the var name and AlloyExpr that follows,
+            // but in Alloy, the multiplicity of the "type" is
+            // built-in to the Decl
+
             if (varTyp instanceof AlloyArrowExpr) {
                 // varType is "X m -> n Y"
-                // in which case we want PID set -> set (X m -> n Y)
+                // in which case we can just tack it on the end
+                // vfqn: PID set -> set (X m -> n Y)
+                // and if there are no params, it is just
+                // vfqn: X m -> n Y
                 arrowList.add(this.translateExpr(dm.varTyp(vfqn)));
+                decl = AlloyDecl(DashFQN.translateFQN(vfqn), AlloyArrowExprList(arrowList));
+
             } else if (varTyp instanceof AlloyQtExpr) {
-                if (!arrowList.isEmpty()) {
-                    AlloyQtExpr qtExpr = (AlloyQtExpr) varTyp;
+                // x: one A
+
+                // this is just doing a cast
+                AlloyQtExpr qtExpr = (AlloyQtExpr) varTyp;
+
+                // not sure how we would support anything else
+                if (!(qtExpr.sub instanceof AlloyQnameExpr
+                        || qtExpr.sub instanceof AlloySigIntExpr))
+                    throw ImplementationError.notSupported(
+                            qtExpr.sub.toString()
+                                    + ", which is "
+                                    + qtExpr.sub.getClass().getName());
+
+                if (arrowList.isEmpty()) {
+                    // no params
+                    // resulting decl must have Quant built in to it
+                    decl =
+                            new AlloyDecl(
+                                    DashFQN.translateFQN(vfqn),
+                                    QtQuantToDeclQuant(qtExpr.qt),
+                                    qtExpr.sub);
+                } else {
                     // varType is "m X",
-                    // in which case we want to create PID set -> set (PID set -> m X)
-                    AlloyExpr lastArrow;
-                    switch (qtExpr.qt) {
-                        case AlloyQtExpr.Quant.SOME:
-                            lastArrow =
-                                    new AlloyArrowExpr(
-                                            lastElement(arrowList),
-                                            AlloyArrowExpr.Mul.SET,
-                                            AlloyArrowExpr.Mul.SOME,
-                                            qtExpr.sub);
-                            break;
-                        case AlloyQtExpr.Quant.LONE:
-                            lastArrow =
-                                    new AlloyArrowExpr(
-                                            lastElement(arrowList),
-                                            AlloyArrowExpr.Mul.SET,
-                                            AlloyArrowExpr.Mul.LONE,
-                                            qtExpr.sub);
-                            break;
-                        case AlloyQtExpr.Quant.ONE:
-                            lastArrow =
-                                    new AlloyArrowExpr(
-                                            lastElement(arrowList),
-                                            AlloyArrowExpr.Mul.SET,
-                                            AlloyArrowExpr.Mul.ONE,
-                                            qtExpr.sub);
-                            break;
-                        case AlloyQtExpr.Quant.SET:
-                            lastArrow =
-                                    new AlloyArrowExpr(
-                                            lastElement(arrowList),
-                                            AlloyArrowExpr.Mul.SET,
-                                            AlloyArrowExpr.Mul.SET,
-                                            qtExpr.sub);
-                            break;
-                        default:
-                            throw ImplementationError.shouldNotReach();
-                    }
+                    // so create decl that is
+                    // PID set -> set (PID set -> m X)
+                    AlloyExpr lastArrow =
+                            new AlloyArrowExpr(
+                                    lastElement(arrowList),
+                                    AlloyArrowExpr.Mul.SET,
+                                    QtQuantToArrowQuant(qtExpr.qt),
+                                    qtExpr.sub);
+
                     arrowList = allButLast(arrowList);
                     arrowList.add(lastArrow);
-                } else arrowList.add(varTyp);
+                    decl = AlloyDecl(DashFQN.translateFQN(vfqn), AlloyArrowExprList(arrowList));
+                }
             } else {
-                throw ImplementationError.shouldNotReach();
+                throw ImplementationError.notSupported();
             }
-            // Id1 set -> set (Id2 set -> set (Id3 set -> ? varType)
-            // with ? described as above
-            decls.add(AlloyDecl(DashFQN.translateFQN(vfqn), AlloyArrowExprList(arrowList)));
+            decls.add(decl);
         }
         return decls;
     }

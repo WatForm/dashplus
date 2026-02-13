@@ -11,6 +11,7 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,22 +22,6 @@ public class AlloyExprFactory {
     // left set -> set right
     public static AlloyExpr AlloyArrow(AlloyExpr left, AlloyExpr right) {
         return new AlloyArrowExpr(left, right);
-    }
-
-    // AlloyVar(sl(0)) set -> set (AlloyVar(sl(1)) set -> set AlloyVar(sl(2)))
-    // if eList.size() == 1, give it the quant of "set"
-    public static AlloyExpr AlloyArrowStringList(List<String> sl) {
-        assert (sl != null && !sl.isEmpty());
-        List<String> reversed = reverse(sl);
-        AlloyExpr o = AlloyVar(reversed.get(0));
-        if (sl.size() == 1) {
-            return AlloySet(o);
-        } else {
-            for (String s : reversed.subList(1, reversed.size())) {
-                o = new AlloyArrowExpr(AlloyVar(s), o);
-            }
-            return o;
-        }
     }
 
     // eList(0) set -> set (eList(1) set -> set eList(2))
@@ -260,5 +245,31 @@ public class AlloyExprFactory {
 
     public static AlloyExpr AlloyIte(AlloyExpr cond, AlloyExpr conseq, AlloyExpr alt) {
         return new AlloyIteExpr(cond, conseq, alt);
+    }
+
+    public static AlloyDecl.Quant QtQuantToDeclQuant(AlloyQtExpr.Quant quant) {
+        // nothing give an output of AlloyDecl.Quant.EXACTLY
+        return switch (quant) {
+            case AlloyQtExpr.Quant.SOME -> AlloyDecl.Quant.SOME;
+            case AlloyQtExpr.Quant.LONE -> AlloyDecl.Quant.LONE;
+            case AlloyQtExpr.Quant.ONE -> AlloyDecl.Quant.ONE;
+            case AlloyQtExpr.Quant.SET -> AlloyDecl.Quant.SET;
+            case AlloyQtExpr.Quant.ALL, AlloyQtExpr.Quant.NO, AlloyQtExpr.Quant.SEQ ->
+                    throw ImplementationError.notSupported();
+            default -> throw ImplementationError.shouldNotReach();
+        };
+    }
+
+    public static AlloyArrowExpr.Mul QtQuantToArrowQuant(AlloyQtExpr.Quant quant) {
+        // returns all possible values of AlloyArrowExpr.Mul
+        return switch (quant) {
+            case AlloyQtExpr.Quant.SOME -> AlloyArrowExpr.Mul.SOME;
+            case AlloyQtExpr.Quant.LONE -> AlloyArrowExpr.Mul.LONE;
+            case AlloyQtExpr.Quant.ONE -> AlloyArrowExpr.Mul.ONE;
+            case AlloyQtExpr.Quant.SET -> AlloyArrowExpr.Mul.SET;
+            case AlloyQtExpr.Quant.ALL, AlloyQtExpr.Quant.NO, AlloyQtExpr.Quant.SEQ ->
+                    throw ImplementationError.notSupported();
+            default -> throw ImplementationError.shouldNotReach();
+        };
     }
 }
