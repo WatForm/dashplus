@@ -4,6 +4,7 @@ import ca.uwaterloo.watform.tlaast.tlabinops.TlaAnd;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaDiffSet;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaEquals;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaInSet;
+import ca.uwaterloo.watform.tlaast.tlabinops.TlaIndexing;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaIntersectionSet;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaNotEq;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaNotInSet;
@@ -58,6 +59,10 @@ public abstract class TlaExp extends ASTNode {
 
     public TlaInSet IN(TlaExp op) {
         return new TlaInSet(this, op);
+    }
+
+    public TlaIndexing INDEX(TlaExp op) {
+        return new TlaIndexing(this, op);
     }
 
     public TlaNotInSet NOTIN(TlaExp op) {
