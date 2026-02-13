@@ -362,4 +362,7 @@ public class CreateHelper {
     }
 
     // misc
+    public static TlaIfThenElse TlaIfThenElse(TlaExp condition, TlaExp then, TlaExp alt) {
+        return new TlaIfThenElse(condition, then, alt);
+    }
 }

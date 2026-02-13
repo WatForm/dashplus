@@ -82,7 +82,9 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(AlloyIteExpr iteExpr) {
-
+        VarArgsFunction<TlaExp, TlaExp> f = AlloyTlaExprLookup.lookup(iteExpr);
+        if (f != null)
+            return f.apply(visit(iteExpr.cond), visit(iteExpr.conseq), visit(iteExpr.alt));
         throw new UnsupportedOperationException("Unimplemented method 'visit' for ite");
     }
 

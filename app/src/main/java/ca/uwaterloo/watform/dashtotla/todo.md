@@ -104,7 +104,7 @@
 |operator|positive TC ^r|❌|❌|❔|
 |operator|reflexive TC *r|❌|❌|❔|
 |operator|cardinality #S|✅|✅|❔|
-|operator|override r1 ++ r2|❌|❌|❔|
+|operator|override r1 ++ r2|✅|✅|❔|
 |operator|set union|✅|✅|❔|
 |operator|set intersection|✅|✅|❔|
 |operator|set difference|✅|✅|❔|

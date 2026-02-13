@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloytotla;
 
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaIfThenElse;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -57,7 +59,7 @@ public class AlloyTlaExprLookup {
 
         // binary
         table.put(AlloyAndExpr.class, simple(binary(CreateHelper::TlaAnd)));
-        // arrow exp
+        table.put(AlloyArrowExpr.class, simple(binary(CreateHelper::TlaProductSet)));
         table.put(
                 AlloyCmpExpr.class,
                 (exp) -> {
@@ -84,7 +86,7 @@ public class AlloyTlaExprLookup {
         table.put(AlloyRelOvrdExpr.class, simple(binary(Boilerplate::_RELATIONAL_OVERRIDE)));
         table.put(AlloyRngRestrExpr.class, simple(binary(Boilerplate::_RANGE_RESTRICTION)));
         // shift left, shift right logical, shift right arithmetic
-        // ; join (opposite of . join)
+        table.put(AlloyDotExpr.class, simple(binary(Boilerplate::_INNER_PRODUCT)));
         table.put(AlloyUnionExpr.class, simple(binary(CreateHelper::TlaUnionSet)));
 
         // misc
@@ -92,7 +94,7 @@ public class AlloyTlaExprLookup {
         // brackets
         // cph (comprehension)
         // decl
-        // if-then-else
+        table.put(AlloyIteExpr.class, simple((args) -> TlaIfThenElse(args[0], args[1], args[2])));
         // let
         table.put(AlloyParenExpr.class, simple(unary((e) -> e)));
         // quantification
