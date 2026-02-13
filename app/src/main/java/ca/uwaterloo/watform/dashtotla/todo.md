@@ -85,10 +85,20 @@
 |constants|univ|✅|✅|❔|
 |constants|none|✅|✅|❔|
 |constants|iden|✅|✅|❔|
-|multiplicities|lone|✅|✅|❔|
-|multiplicities|one|✅|✅|❔|
-|multiplicities|some|✅|✅|❔|
-|multiplicities|no|✅|✅|❔|
+|multiplicities Qt|lone|✅|✅|❔|
+|multiplicities Qt|one|✅|✅|❔|
+|multiplicities Qt|some|✅|✅|❔|
+|multiplicities Qt|no|✅|✅|❔|
+|multiplicities Qt|set|❌|❌|❔|
+|multiplicities Arrow|lone|❌|❌|❔|
+|multiplicities Arrow|one|❌|❌|❔|
+|multiplicities Arrow|some|❌|❌|❔|
+|multiplicities Arrow|set|❌|❌|❔|
+|multiplicities Cmp|lone|❌|❌|❔|
+|multiplicities Cmp|one|❌|❌|❔|
+|multiplicities Cmp|some|❌|❌|❔|
+|multiplicities Cmp|set|❌|❌|❔|
+|multiplicities Cmp|all|❌|❌|❔|
 |fields|vars|✅|✅|❔|
 |fields|type|❔|❔|❔|
 |fields|basic (A->B)|❔|❔|❔|
