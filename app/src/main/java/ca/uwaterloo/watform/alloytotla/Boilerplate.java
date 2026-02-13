@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaast.tlaquantops.TlaSetMap;
 import ca.uwaterloo.watform.tlamodel.*;
 import java.util.*;
 
@@ -24,24 +25,35 @@ public class Boilerplate {
         return TlaVar(SPECIAL + "y");
     }
 
+    private static final TlaVar R1() {
+        return TlaVar(SPECIAL + "R1");
+    }
+
+    private static final TlaVar R2() {
+        return TlaVar(SPECIAL + "R2");
+    }
+
+    private static final TlaVar R() {
+        return TlaVar(SPECIAL + "R");
+    }
+
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
         List<TlaConst> setConsts =
                 mapBy(Auxiliary.getTopLevelSigNames(alloyModel), s -> TlaConst(sigSet(s)));
 
-        // _univ == A_set \\union B_set... where A, B... are top-level sigs
-        tlaModel.addDefn(TlaDefn(UNIV, repeatedUnion(setConsts)));
-
-        // _none == {}
-        tlaModel.addDefn(TlaDefn(NONE, TlaNullSet()));
-
-        // _iden = {<<x,x>> : x \in _univ}
-        tlaModel.addDefn(TlaDefn(IDEN, TlaSetMap(X(), _UNIV(), TlaTuple(X(), X()))));
-
+        tlaModel.addDefn(univ(setConsts));
+        tlaModel.addDefn(none());
+        tlaModel.addDefn(iden());
         tlaModel.addDefn(some());
         tlaModel.addDefn(lone());
         tlaModel.addDefn(one());
         tlaModel.addDefn(no());
+        tlaModel.addDefn(transpose());
+        tlaModel.addDefn(domain_restriction());
+        tlaModel.addDefn(range_restriction());
+        tlaModel.addDefn(inner_product());
+        tlaModel.addDefn(relational_override());
     }
 
     public static TlaAppl _SOME(TlaExp e) {
@@ -61,6 +73,7 @@ public class Boilerplate {
     }
 
     public static TlaAppl _UNIV() {
+
         return TlaAppl(UNIV);
     }
 
@@ -72,8 +85,68 @@ public class Boilerplate {
         return TlaAppl(NONE);
     }
 
+    public static TlaAppl _RANGE_RESTRICTION(TlaExp relation, TlaExp set) {
+        return TlaAppl(RANGE_RESTRICTION, Arrays.asList(relation, set));
+    }
+
+    public static TlaAppl _DOMAIN_RESTRICTION(TlaExp relation, TlaExp set) {
+        return TlaAppl(DOMAIN_RESTRICTION, Arrays.asList(relation, set));
+    }
+
+    public static TlaAppl _TRANSPOSE(TlaExp relation) {
+        return TlaAppl(TRANSPOSE, Arrays.asList(relation));
+    }
+
+    public static TlaAppl _RELATIONAL_OVERRIDE(TlaExp r1, TlaExp r2) {
+        return TlaAppl(RELATIONAL_OVERRIDE, Arrays.asList(r1, r2));
+    }
+
+    public static TlaAppl _INNER_PRODUCT(TlaExp r1, TlaExp r2) {
+        return TlaAppl(INNER_PRODUCT, Arrays.asList(r1, r2));
+    }
+
+    private static TlaDefn range_restriction() {
+        return new TlaDefn(TlaDecl(RANGE_RESTRICTION, Arrays.asList(R(), S())), TlaTrue());
+    }
+
+    private static TlaDefn domain_restriction() {
+        return new TlaDefn(TlaDecl(DOMAIN_RESTRICTION, Arrays.asList(S(), R())), TlaTrue());
+    }
+
+    private static TlaDefn inner_product() {
+        return new TlaDefn(TlaDecl(INNER_PRODUCT, Arrays.asList(R1(), R2())), TlaTrue());
+    }
+
+    private static TlaDefn relational_override() {
+        return new TlaDefn(TlaDecl(RELATIONAL_OVERRIDE, Arrays.asList(R1(), R2())), TlaTrue());
+    }
+
+    private static TlaDefn transpose() {
+        // _transpose(R) == {<<y,x>> : <<x,y>> \in R}
+        TlaSetMap body =
+                TlaSetMap(
+                        TlaQuantOpHeadTuple(Arrays.asList(X(), Y()), R()),
+                        TlaTuple(Arrays.asList(Y(), X())));
+        return new TlaDefn(TlaDecl(TRANSPOSE, Arrays.asList(R())), body);
+    }
+
+    private static TlaDefn none() {
+        // _none == {}
+        return TlaDefn(NONE, TlaNullSet());
+    }
+
+    private static TlaDefn iden() {
+        // _iden = {<<x,x>> : x \in _univ}
+        return TlaDefn(IDEN, TlaSetMap(TlaQuantOpHead(X(), _UNIV()), TlaTuple(X(), X())));
+    }
+
+    private static TlaDefn univ(List<TlaConst> setConsts) {
+        // _univ == A_set \\union B_set... where A, B... are top-level sigs
+        return TlaDefn(UNIV, repeatedUnion(setConsts));
+    }
+
     private static TlaExp allEqual(TlaVar v, TlaVar v1, TlaVar v2) {
-        return TlaForAll(v1, v, TlaForAll(v2, v, v1.EQUALS(v2)));
+        return TlaForAll(TlaQuantOpHeadFlat(Arrays.asList(v1, v2), v), v1.EQUALS(v2));
     }
 
     private static TlaDefn some() {

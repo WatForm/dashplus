@@ -6,7 +6,8 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.strCommaList;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
-import ca.uwaterloo.watform.tlaast.TlaVar;
+import java.util.Arrays;
+import java.util.List;
 
 public class TlaSetMap extends TlaQuantOp {
 
@@ -22,8 +23,12 @@ public class TlaSetMap extends TlaQuantOp {
 
     */
 
-    public TlaSetMap(TlaVar variable, TlaExp set, TlaExp expression) {
-        super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
+    public TlaSetMap(List<TlaQuantOpHead> heads, TlaExp expression) {
+        super(heads, expression, TlaOperator.PrecedenceGroup.SAFE);
+    }
+
+    public TlaSetMap(TlaQuantOpHead head, TlaExp expression) {
+        super(Arrays.asList(head), expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 
     @Override

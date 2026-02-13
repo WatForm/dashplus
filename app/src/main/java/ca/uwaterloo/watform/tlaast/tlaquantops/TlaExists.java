@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast.tlaquantops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import java.util.List;
 
 public class TlaExists extends TlaQuantOp {
 
@@ -12,8 +13,8 @@ public class TlaExists extends TlaQuantOp {
     expression: exp  (boolean expression)
     */
 
-    public TlaExists(TlaVar variable, TlaExp set, TlaExp expression) {
-        super(variable, set, expression, TlaOperator.PrecedenceGroup.PREDICATE);
+    public TlaExists(List<TlaQuantOpHead> heads, TlaExp expression) {
+        super(heads, expression, TlaOperator.PrecedenceGroup.UNSAFE);
     }
 
     @Override

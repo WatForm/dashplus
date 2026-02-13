@@ -6,7 +6,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.strCommaList;
 
 import ca.uwaterloo.watform.tlaast.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class TlaQuantOp extends TlaOperator {
@@ -65,18 +64,6 @@ public abstract class TlaQuantOp extends TlaOperator {
             TlaOperator.PrecedenceGroup precedenceGroup) {
         super(TlaOperator.Associativity.IRRELEVANT, precedenceGroup);
         this.heads = heads;
-        this.expression = expression;
-    }
-
-    public TlaQuantOp(
-            TlaVar variable,
-            TlaExp set,
-            TlaExp expression,
-            TlaOperator.PrecedenceGroup precedenceGroup) {
-        super(TlaOperator.Associativity.IRRELEVANT, precedenceGroup);
-        this.heads =
-                Arrays.asList(
-                        new TlaQuantOpHead(TlaQuantOpHead.Type.FLAT, Arrays.asList(variable), set));
         this.expression = expression;
     }
 

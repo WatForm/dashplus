@@ -100,7 +100,7 @@
 |operator|box join a\[b\]|❔|❔|❔|
 |operator|domain restriction s <: a|❌|❌|❔|
 |operator|range restriction s :> a|❌|❌|❔|
-|operator|transpose ~r|❌|❌|❔|
+|operator|transpose ~r|✅|✅|❔|
 |operator|positive TC ^r|❌|❌|❔|
 |operator|reflexive TC *r|❌|❌|❔|
 |operator|cardinality #S|✅|✅|❔|

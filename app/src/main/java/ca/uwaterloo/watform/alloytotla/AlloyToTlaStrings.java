@@ -27,6 +27,13 @@ public class AlloyToTlaStrings {
     public static final String IDEN = SPECIAL + "iden";
     public static final String NONE = SPECIAL + "none";
 
+    // macro operations
+    public static final String RANGE_RESTRICTION = SPECIAL + "range" + SPECIAL + "restriction";
+    public static final String DOMAIN_RESTRICTION = SPECIAL + "domain" + SPECIAL + "restriction";
+    public static final String RELATIONAL_OVERRIDE = SPECIAL + "relational" + SPECIAL + "override";
+    public static final String INNER_PRODUCT = SPECIAL + "inner" + SPECIAL + "product";
+    public static final String TRANSPOSE = SPECIAL + "transpose";
+
     public static final String DOLLAR = "$";
 
     //

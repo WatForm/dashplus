@@ -72,8 +72,8 @@ public class AlloyTlaExprLookup {
                             });
                 });
         table.put(AlloyDiffExpr.class, simple(binary(CreateHelper::TlaDiffSet)));
-        // domain restriction
-        // dot join
+        table.put(AlloyDomRestrExpr.class, simple(binary(Boilerplate::_DOMAIN_RESTRICTION)));
+        table.put(AlloyDotExpr.class, simple(binary(Boilerplate::_INNER_PRODUCT)));
         table.put(AlloyEqualsExpr.class, simple(binary(CreateHelper::TlaEquals)));
         // add, mult, rem, sub
         table.put(AlloyIffExpr.class, simple(binary(CreateHelper::TlaEquivalence)));
@@ -81,8 +81,8 @@ public class AlloyTlaExprLookup {
         table.put(AlloyIntersExpr.class, simple(binary(CreateHelper::TlaIntersectionSet)));
         table.put(AlloyNotEqualsExpr.class, simple(binary(CreateHelper::TlaNotEq)));
         table.put(AlloyOrExpr.class, simple(binary(CreateHelper::TlaOr)));
-        // relational override
-        // range restriction
+        table.put(AlloyRelOvrdExpr.class, simple(binary(Boilerplate::_RELATIONAL_OVERRIDE)));
+        table.put(AlloyRngRestrExpr.class, simple(binary(Boilerplate::_RANGE_RESTRICTION)));
         // shift left, shift right logical, shift right arithmetic
         // ; join (opposite of . join)
         table.put(AlloyUnionExpr.class, simple(binary(CreateHelper::TlaUnionSet)));
@@ -115,13 +115,14 @@ public class AlloyTlaExprLookup {
                                 case AlloyQtExpr.Quant.SEQ -> ERROR_UNARY;
                             });
                 });
+        table.put(AlloyTransExpr.class, simple(unary(Boilerplate::_TRANSPOSE)));
         // sum, int, transpose, transitive closure, reflexive transitive closure
 
         // var
         // @
         // disj
         // max, min, next
-        table.put(AlloyUnivExpr.class, simple(empty(Boilerplate::_IDEN)));
+        table.put(AlloyIdenExpr.class, simple(empty(Boilerplate::_IDEN)));
         // Int
         // Name
         table.put(AlloyUnivExpr.class, simple(empty(Boilerplate::_NONE)));

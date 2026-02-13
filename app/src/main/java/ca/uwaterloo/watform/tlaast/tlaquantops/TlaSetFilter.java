@@ -6,7 +6,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.strCommaList;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
-import ca.uwaterloo.watform.tlaast.TlaVar;
+import java.util.List;
 
 public class TlaSetFilter extends TlaQuantOp {
 
@@ -28,8 +28,8 @@ public class TlaSetFilter extends TlaQuantOp {
 
     */
 
-    public TlaSetFilter(TlaVar variable, TlaExp set, TlaExp expression) {
-        super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
+    public TlaSetFilter(List<TlaQuantOpHead> heads, TlaExp expression) {
+        super(heads, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 
     @Override

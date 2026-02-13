@@ -6,7 +6,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.strCommaList;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
-import ca.uwaterloo.watform.tlaast.TlaVar;
+import java.util.List;
 
 public class TlaFuncMapConstr extends TlaQuantOp {
 
@@ -20,8 +20,8 @@ public class TlaFuncMapConstr extends TlaQuantOp {
     used to construct another function by applying a map to a function
     */
 
-    public TlaFuncMapConstr(TlaVar variable, TlaExp set, TlaExp expression) {
-        super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
+    public TlaFuncMapConstr(List<TlaQuantOpHead> heads, TlaExp expression) {
+        super(heads, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 
     @Override
