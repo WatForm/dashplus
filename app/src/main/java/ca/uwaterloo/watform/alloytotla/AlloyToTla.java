@@ -12,6 +12,8 @@ public class AlloyToTla {
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
+        StdLibDefns.translate(alloyModel, tlaModel);
+
         tlaModel.addComment("Translation macros", verbose);
         Boilerplate.translate(alloyModel, tlaModel);
 
