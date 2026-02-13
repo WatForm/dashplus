@@ -109,6 +109,7 @@
 |operator|set intersection|✅|✅|❔|
 |operator|set difference|✅|✅|❔|
 |operator|set membership|✅|✅|❔|
+|operator|cartesian product a -> b|✅|✅|❔|
 |operator| = |✅|✅|❔|
 |operator| != |✅|✅|❔|
 |operator| <= |✅|✅|❔|
@@ -121,7 +122,7 @@
 |operator|Implication|✅|✅|❔|
 |operator|Bi-Implication|✅|✅|❔|
 |operator|Negation|✅|✅|❔|
-|operator|if-then-else|❌|❌|❔|
+|operator|if-then-else|✅|✅|❔|
 |operator|let binding|❌|❌|❔|
 |in-built-function|disj|❔|❔|❔|
 |in-built-function|sum|❔|❔|❔|
@@ -138,7 +139,7 @@
 |predicate|unparameterized|❔|❔|❔|
 |predicate|parameterized|❔|❔|❔|
 
-- arrow expressions
+
 - run commands
 - check commands
 
