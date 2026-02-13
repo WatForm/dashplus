@@ -29,6 +29,7 @@ public class ContainsVarExprVis implements AlloyExprVis<Boolean> {
 
     // ones from Dash
     public Boolean visit(DashRef dashRef) {
+
         return (dashRef.name == varToFind.label
                 || !allFalse(mapBy(dashRef.paramValues, p -> this.visit(p))));
     }
@@ -52,7 +53,7 @@ public class ContainsVarExprVis implements AlloyExprVis<Boolean> {
         // this is probably sufficient
         // but it is not general enough for other cases
         return (varExpr instanceof AlloyQnameExpr
-                && ((AlloyQnameExpr) varExpr).vars.equals(varToFind.vars));
+                && ((AlloyQnameExpr) varExpr).label.equals(this.varToFind));
     }
 
     public Boolean visit(AlloyBlock blockExpr) {
