@@ -40,6 +40,14 @@ public class ImplementationError extends DashPlusException {
         return new ImplementationError("should not be called reach this point");
     }
 
+    public static ImplementationError notSupported() throws ImplementationError {
+        return new ImplementationError("Alloy or Dash case that is not supported");
+    }
+
+    public static ImplementationError notSupported(String msg) throws ImplementationError {
+        return new ImplementationError("Alloy or Dash case that is not supported: " + msg);
+    }
+
     /**
      * A WFF error, but it cannot occur through the ANTLR parser. Since it cannot occur during
      * parsing; it must be an ImplementationError

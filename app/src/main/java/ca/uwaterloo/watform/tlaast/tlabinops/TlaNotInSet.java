@@ -4,6 +4,10 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaNotInSet extends TlaInfixBinOp {
 
+    /*
+    element \notin Set
+    */
+
     public TlaNotInSet(TlaExp operandOne, TlaExp operandTwo) {
         super(
                 TlaStrings.SET_NOT_IN,

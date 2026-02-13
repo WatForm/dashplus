@@ -1,10 +1,20 @@
 package ca.uwaterloo.watform.tlaast.tlaquantops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import java.util.List;
 
 public class TlaExists extends TlaQuantOp {
-    public TlaExists(TlaVar variable, TlaExp set, TlaExp expression) {
-        super(variable, set, expression, TlaOperator.PrecedenceGroup.PREDICATE);
+
+    /*
+    \E v \in S : exp
+
+    variable: v
+    set: S  (can be an expression that evaluates to a set)
+    expression: exp  (boolean expression)
+    */
+
+    public TlaExists(List<TlaQuantOpHead> heads, TlaExp expression) {
+        super(heads, expression, TlaOperator.PrecedenceGroup.UNSAFE);
     }
 
     @Override

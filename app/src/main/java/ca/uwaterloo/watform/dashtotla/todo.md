@@ -46,7 +46,7 @@
 |post-trans|sending events|✅|✅|❕|
 |enabled-trans|defining enabled-trans|✅|✅|❕|
 |enabled-trans|conf|✅|✅|❕|
-|enabled-trans|scope|❔|✅|❕|
+|enabled-trans|scope|✅|✅|❕|
 |enabled-trans|events|✅|✅|❕|
 |transition|combining pre and post|✅|✅|❕|
 |nextIsStable|combining enabled|✅|✅|❕|
@@ -59,8 +59,8 @@
 |conf|type definition|✅|✅|❕|
 |scopes_used|type definition|✅|✅|❕|
 |trans_taken|type definition (none included)|✅|✅|❕|
-|valid|formulae|✅|✅||❕|
-|valid|primed and unprimed|✅|✅||❕|
+|valid|formulae|✅|✅|❕|
+|valid|primed and unprimed|✅|✅|❕|
 |Next|Defining Next|✅|✅|❕|
 |Next sync|Syncing config and module|✅|✅|❕|
 |Implementing stutter|implementing a stutter framework|❔|❔|❔|
@@ -70,48 +70,88 @@
 
 ## Core Alloy
 
+### Sigs
+
 |feature|description|translation|running|tests|
 |--|--|--|--|--|
-|sigs|basic|❔|❔|❔|
-|sigs|subtypes|❔|❔|❔|
-|sigs|subsets|❔|❔|❔|
-|sigs|multi-sig declarations|❔|❔|❔|
-|multiplicities|set|❔|❔|❔|
-|multiplicities|none|❔|❔|❔|
-|multiplicities|lone|❔|❔|❔|
-|multiplicities|one|❔|❔|❔|
-|multiplicities|some|❔|❔|❔|
+|sigs|consts|✅|✅|❔|
+|sigs|vars|✅|✅|❔|
+|sigs|types|✅|✅|❔|
+|sigs|subtypes|✅|✅|❔|
+|sigs|subsets|✅|✅|❔|
+|sigs|abstract|✅|✅|❔|
+|sigs|multiplicities|✅|✅|❔|
+|sigs|multi-sig declarations|✅|✅|❔|
+|constants|univ|✅|✅|❔|
+|constants|none|✅|✅|❔|
+|constants|iden|✅|✅|❔|
+|multiplicities Qt|lone|✅|✅|❔|
+|multiplicities Qt|one|✅|✅|❔|
+|multiplicities Qt|some|✅|✅|❔|
+|multiplicities Qt|no|✅|✅|❔|
+|multiplicities Qt|set|❌|❌|❔|
+|multiplicities Arrow|lone|❌|❌|❔|
+|multiplicities Arrow|one|❌|❌|❔|
+|multiplicities Arrow|some|❌|❌|❔|
+|multiplicities Arrow|set|❌|❌|❔|
+|multiplicities Cmp|lone|❌|❌|❔|
+|multiplicities Cmp|one|❌|❌|❔|
+|multiplicities Cmp|some|❌|❌|❔|
+|multiplicities Cmp|set|❌|❌|❔|
+|multiplicities Cmp|all|❌|❌|❔|
+|fields|vars|✅|✅|❔|
+|fields|type|❔|❔|❔|
 |fields|basic (A->B)|❔|❔|❔|
 |fields|with multiplicities (A->lone B)|❔|❔|❔|
 |fields|complex (A->B->C)|❔|❔|❔|
-|dot join||❔|❔|❔|
-|box join||❔|❔|❔|
-|domain restriction|s <; a|❔|❔|❔|
-|range restriction|s :> a|❔|❔|❔|
-|transpose|~r|❔|❔|❔|
-|positive TC|^r|❔|❔|❔|
-|reflexive TC|*r|❔|❔|❔|
-|cardinality|inbuilt function in TLA+|❔|❔|❔|
-|set operations|union, intersection, difference|❔|❔|❔|
-|Cartesian product|a -> b|❔|❔|❔|
-|Override|r1 ++ r2|❔|❔|❔|
-|Expression multiplicities|refer to multiplicities|❔|❔|❔|
-|Comparison Negation|not/!|❔|❔|❔|
-|Comparison| =, <, >, <=, >=|❔|❔|❔|
-|in||❔|❔|❔|
-|Logical negation|not/!|❔|❔|❔|
-|Conjunction||❔|❔|❔|
-|Disjunction||❔|❔|❔|
-|Implication||❔|❔|❔|
-|Bi-implication||❔|❔|❔|
-|let, quantification||❔|❔|❔|
-|sum||❔|❔|❔|
-|let expressions||❔|❔|❔|
-|Arithmetic|plus/minus/mul/div/rem|❔|❔|❔|
-|Conditional expressions|bool implies exp (else exp)|❔|❔|❔|
+|fields|arbitrary expressions (A+B)|❔|❔|❔|
+|operator|dot join a.b|❔|❔|❔|
+|operator|inv dot join a;b|❔|❔|❔|
+|operator|box join a\[b\]|❔|❔|❔|
+|operator|domain restriction s <: a|✅|✅|❔|
+|operator|range restriction s :> a|✅|✅|❔|
+|operator|transpose ~r|✅|✅|❔|
+|operator|positive TC ^r|❌|❌|❔|
+|operator|reflexive TC *r|❌|❌|❔|
+|operator|cardinality #S|✅|✅|❔|
+|operator|override r1 ++ r2|✅|✅|❔|
+|operator|set union|✅|✅|❔|
+|operator|set intersection|✅|✅|❔|
+|operator|set difference|✅|✅|❔|
+|operator|set membership|✅|✅|❔|
+|operator|cartesian product a -> b|✅|✅|❔|
+|operator| = |✅|✅|❔|
+|operator| != |✅|✅|❔|
+|operator| <= |✅|✅|❔|
+|operator| =< |✅|✅|❔|
+|operator| < |✅|✅|❔|
+|operator| > |✅|✅|❔|
+|operator| >= |✅|✅|❔|
+|operator|Conjunction|✅|✅|❔|
+|operator|Disjunction|✅|✅|❔|
+|operator|Implication|✅|✅|❔|
+|operator|Bi-Implication|✅|✅|❔|
+|operator|Negation|✅|✅|❔|
+|operator|if-then-else|✅|✅|❔|
+|operator|let binding|❌|❌|❔|
+|in-built-function|disj|❔|❔|❔|
+|in-built-function|sum|❔|❔|❔|
+|in-built-function|plus|❌|❌|❔|
+|in-built-function|minus|❌|❌|❔|
+|in-built-function|rem|❌|❌|❔|
+|in-built-function|mult|❌|❌|❔|
+|fact|named|✅|✅|❔|
+|fact|signed|✅|✅|❔|
+|fact|unidentified|✅|✅|❔|
+|fact|localized to sig|❔|❔|❔|
+|function|unparameterized|❔|❔|❔|
+|function|parameterized|❔|❔|❔|
+|predicate|unparameterized|❔|❔|❔|
+|predicate|parameterized|❔|❔|❔|
 
 
-
+- run commands
+- check commands
 
 
 ## Parameterized Dash

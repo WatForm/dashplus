@@ -79,16 +79,20 @@ public class ResolveDM extends ResolverVisDM {
         for (DashTrans t : s.trans()) {
 
             String tfqn = DashFQN.fqn(sfqn, t.name);
+
+            // these must be values, therefore they must be AlloyExpr not DashRefs
             DashRef fromR =
                     (t.fromP == null)
                             // loop on root
-                            ? new StateDashRef(sfqn, sparams)
+                            // these must be parameter VALUES
+                            ? (new StateDashRef(sfqn, mapBy(sparams, x -> x.asAlloyVar())))
                             : resolveState(t.fromP.exp, sfqn);
 
             DashRef gotoR =
                     (t.gotoP == null)
                             // loop on root
-                            ? new StateDashRef(sfqn, sparams)
+                            // these must be parameter values
+                            ? (new StateDashRef(sfqn, mapBy(sparams, x -> x.asAlloyVar())))
                             : resolveState(t.gotoP.exp, sfqn);
 
             DashRef onR = (t.onP == null) ? null : resolveEvent(t.onP.exp, sfqn);

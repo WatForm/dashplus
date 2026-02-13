@@ -12,6 +12,31 @@ public class AlloyToTla {
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
+        StdLibDefns.translate(alloyModel, tlaModel);
+
+        tlaModel.addComment("Translation macros", verbose);
+        Boilerplate.translate(alloyModel, tlaModel);
+
+        SigConsts.translate(alloyModel, tlaModel);
+        SigVars.translate(alloyModel, tlaModel);
+        FieldVars.translate(alloyModel, tlaModel);
+
+        tlaModel.addComment(
+                "topological sort on signatures: " + SigHierarchy.sortedSigs(alloyModel), verbose);
+        SigHierarchy.translate(alloyModel, tlaModel);
+
+        tlaModel.addComment("signature constraints", verbose);
+        SigConstraints.translate(alloyModel, tlaModel);
+
+        tlaModel.addComment("facts", verbose);
+        Facts.translate(alloyModel, tlaModel, verbose);
+
+        tlaModel.addComment("INIT relation", verbose);
+        InitDefn.translate(alloyModel, tlaModel);
+
+        tlaModel.addComment("NEXT relation", verbose);
+        NextDefn.translate(alloyModel, tlaModel);
+
         return tlaModel;
     }
 }

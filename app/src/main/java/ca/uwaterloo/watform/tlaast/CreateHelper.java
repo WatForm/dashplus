@@ -1,14 +1,51 @@
 package ca.uwaterloo.watform.tlaast;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.foldLeft;
+
 import ca.uwaterloo.watform.tlaast.tlabinops.*;
 import ca.uwaterloo.watform.tlaast.tlaliterals.*;
 import ca.uwaterloo.watform.tlaast.tlanaryops.*;
 import ca.uwaterloo.watform.tlaast.tlaquantops.*;
+import ca.uwaterloo.watform.tlaast.tlaquantops.TlaQuantOp.TlaQuantOpHead;
 import ca.uwaterloo.watform.tlaast.tlaunops.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CreateHelper {
+
+    // custom
+    public static final TlaSet TlaNullSet() {
+        return TlaSet(new ArrayList<>());
+    }
+
+    public static final TlaIntLiteral TlaZero() {
+        return TlaIntLiteral(0);
+    }
+
+    public static TlaExp repeatedUnion(List<? extends TlaExp> operands) {
+        int n = operands.size();
+        if (n == 0) return TlaNullSet();
+        return foldLeft(operands.subList(1, n), TlaUnionSet::new, operands.get(0));
+    }
+
+    public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
+        if (operands.size() == 0) return TlaTrue();
+        return TlaAndList(operands);
+    }
+
+    public static TlaExp repeatedAnd(TlaExp... operands) {
+        return TlaAndList(Arrays.asList(operands));
+    }
+
+    public static TlaExp repeatedOr(TlaExp... operands) {
+        return TlaOrList(Arrays.asList(operands));
+    }
+
+    public static TlaExp repeatedOr(List<? extends TlaExp> operands) {
+        if (operands.size() == 0) return TlaFalse();
+        return TlaOrList(operands);
+    }
 
     // generic
     /*
@@ -125,24 +162,57 @@ public class CreateHelper {
     	return new Tla(var,set,exp);
     }
     */
-    public static TlaExists TlaExists(TlaVar var, TlaExp set, TlaExp exp) {
-        return new TlaExists(var, set, exp);
+
+    public static TlaQuantOpHead TlaQuantOpHead(TlaVar var, TlaExp set) {
+        return new TlaQuantOpHead(TlaQuantOpHead.Type.FLAT, Arrays.asList(var), set);
     }
 
-    public static TlaForAll TlaForAll(TlaVar var, TlaExp set, TlaExp exp) {
-        return new TlaForAll(var, set, exp);
+    public static TlaQuantOpHead TlaQuantOpHeadFlat(List<TlaVar> vars, TlaExp set) {
+        return new TlaQuantOpHead(TlaQuantOpHead.Type.FLAT, vars, set);
     }
 
-    public static TlaFuncMapConstr TlaFuncMapConstr(TlaVar var, TlaExp set, TlaExp exp) {
-        return new TlaFuncMapConstr(var, set, exp);
+    public static TlaQuantOpHead TlaQuantOpHeadTuple(List<TlaVar> vars, TlaExp set) {
+        return new TlaQuantOpHead(TlaQuantOpHead.Type.TUPLE, vars, set);
     }
 
-    public static TlaSetFilter TlaSetFilter(TlaVar var, TlaExp set, TlaExp exp) {
-        return new TlaSetFilter(var, set, exp);
+    public static TlaExists TlaExists(List<TlaQuantOpHead> heads, TlaExp exp) {
+        return new TlaExists(heads, exp);
     }
 
-    public static TlaSetMap TlaSetMap(TlaVar var, TlaExp set, TlaExp exp) {
-        return new TlaSetMap(var, set, exp);
+    public static TlaExists TlaExists(TlaQuantOpHead head, TlaExp exp) {
+        return new TlaExists(Arrays.asList(head), exp);
+    }
+
+    public static TlaForAll TlaForAll(List<TlaQuantOpHead> heads, TlaExp exp) {
+        return new TlaForAll(heads, exp);
+    }
+
+    public static TlaForAll TlaForAll(TlaQuantOpHead head, TlaExp exp) {
+        return new TlaForAll(Arrays.asList(head), exp);
+    }
+
+    public static TlaFuncMapConstr TlaFuncMapConstr(List<TlaQuantOpHead> heads, TlaExp exp) {
+        return new TlaFuncMapConstr(heads, exp);
+    }
+
+    public static TlaFuncMapConstr TlaFuncMapConstr(TlaQuantOpHead head, TlaExp exp) {
+        return new TlaFuncMapConstr(Arrays.asList(head), exp);
+    }
+
+    public static TlaSetFilter TlaSetFilter(List<TlaQuantOpHead> heads, TlaExp exp) {
+        return new TlaSetFilter(heads, exp);
+    }
+
+    public static TlaSetFilter TlaSetFilter(TlaQuantOpHead head, TlaExp exp) {
+        return new TlaSetFilter(Arrays.asList(head), exp);
+    }
+
+    public static TlaSetMap TlaSetMap(List<TlaQuantOpHead> heads, TlaExp exp) {
+        return new TlaSetMap(heads, exp);
+    }
+
+    public static TlaSetMap TlaSetMap(TlaQuantOpHead head, TlaExp exp) {
+        return new TlaSetMap(Arrays.asList(head), exp);
     }
 
     // binops
@@ -292,4 +362,7 @@ public class CreateHelper {
     }
 
     // misc
+    public static TlaIfThenElse TlaIfThenElse(TlaExp condition, TlaExp then, TlaExp alt) {
+        return new TlaIfThenElse(condition, then, alt);
+    }
 }

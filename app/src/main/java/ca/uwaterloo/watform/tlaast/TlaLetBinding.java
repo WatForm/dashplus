@@ -1,29 +1,40 @@
 package ca.uwaterloo.watform.tlaast;
 
-import java.util.Arrays;
+import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class TlaLetBinding extends TlaOperator {
 
-    public final TlaDefn definition;
-    public final TlaExp expression;
+    /*
+    LET x == e1 IN e2
+    */
 
-    public TlaLetBinding(TlaDefn definition, TlaExp expression) {
+    public final List<TlaDefn> definitions; // x == e1
+    public final TlaExp expression; // e2
+
+    public TlaLetBinding(List<TlaDefn> definitions, TlaExp expression) {
         super(TlaOperator.Associativity.IRRELEVANT, TlaOperator.PrecedenceGroup.SAFE);
-        this.definition = definition;
+        this.definitions = definitions;
         this.expression = expression;
     }
 
     @Override
     public List<TlaExp> getChildren() {
-        return Arrays.asList(this.definition, this.expression);
+        List<TlaExp> answer = new ArrayList<>();
+        answer.addAll(this.definitions);
+        answer.add(this.expression);
+        return answer;
     }
 
     @Override
     public String toTLAPlusSnippetCore() {
         return TlaStrings.LET
                 + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(definition)
+                + String.join(
+                        TlaStrings.SPACE,
+                        mapBy(this.definitions, d -> this.getTLASnippetOfChild(d)))
                 + TlaStrings.SPACE
                 + TlaStrings.IN
                 + TlaStrings.SPACE

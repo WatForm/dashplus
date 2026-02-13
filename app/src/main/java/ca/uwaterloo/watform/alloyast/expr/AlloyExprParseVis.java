@@ -390,8 +390,9 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
 
     @Override
     public AlloyArrowExpr visitArrowExpr(DashParser.ArrowExprContext ctx) {
-        AlloyArrowExpr.Mul mul1 = null;
-        AlloyArrowExpr.Mul mul2 = null;
+        // by default it is Mul.SET
+        AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.SET;
+        AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.SET;
 
         int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
 
@@ -409,8 +410,9 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
 
     @Override
     public AlloyArrowExpr visitArrowBindExpr(DashParser.ArrowBindExprContext ctx) {
-        AlloyArrowExpr.Mul mul1 = null;
-        AlloyArrowExpr.Mul mul2 = null;
+        // by default it is Mul.SET
+        AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.SET;
+        AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.SET;
 
         int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
 
@@ -786,7 +788,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             }
         }
 
-        AlloyDecl.Quant quant = null;
+        AlloyDecl.Quant quant = AlloyDecl.Quant.ONE;
         if (null != ctx.LONE()) {
             quant = AlloyDecl.Quant.LONE;
         } else if (null != ctx.ONE()) {

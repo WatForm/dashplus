@@ -28,7 +28,7 @@ public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
     public AlloyExpr visit(AlloyArrowExpr arrowExpr) {
         AlloyExpr l = new AlloyQnameExpr("arrowLeft");
         AlloyExpr r = new AlloyQnameExpr("arrowRight");
-        return new AlloyArrowExpr(l, arrowExpr.mul1.orElse(null), AlloyArrowExpr.Mul.ONE, r);
+        return new AlloyArrowExpr(l, arrowExpr.mul1, AlloyArrowExpr.Mul.ONE, r);
     }
 
     @Override

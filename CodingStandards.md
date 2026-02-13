@@ -22,6 +22,9 @@
 * Concurrent --> conc
 * Operand --> op
 * Context --> ctx
+* If-Then-Else --> ite
+* Comprehension --> cph
+* Command --> cmd
 
 ### Domain-specific:
 

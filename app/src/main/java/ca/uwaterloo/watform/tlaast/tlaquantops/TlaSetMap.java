@@ -1,17 +1,36 @@
 package ca.uwaterloo.watform.tlaast.tlaquantops;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+import static ca.uwaterloo.watform.utils.GeneralUtil.strCommaList;
+
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
-import ca.uwaterloo.watform.tlaast.TlaVar;
+import java.util.Arrays;
+import java.util.List;
 
 public class TlaSetMap extends TlaQuantOp {
 
-    public TlaSetMap(TlaVar variable, TlaExp set, TlaExp expression) {
-        super(variable, set, expression, TlaOperator.PrecedenceGroup.SAFE);
+    /*
+
+    {exp : v \in S}
+
+    variable: v
+    set: S  (can be an expression that evaluates to a set)
+    expression: exp (usually written in terms of v)
+
+    used to construct a set by applying a filter to another set
+
+    */
+
+    public TlaSetMap(List<TlaQuantOpHead> heads, TlaExp expression) {
+        super(heads, expression, TlaOperator.PrecedenceGroup.SAFE);
     }
 
-    // {e: x \in S}
+    public TlaSetMap(TlaQuantOpHead head, TlaExp expression) {
+        super(Arrays.asList(head), expression, TlaOperator.PrecedenceGroup.SAFE);
+    }
+
     @Override
     public String toTLAPlusSnippetCore() {
         return TlaStrings.SET_START
@@ -19,11 +38,7 @@ public class TlaSetMap extends TlaQuantOp {
                 + TlaStrings.SPACE
                 + TlaStrings.COLON
                 + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.variable)
-                + TlaStrings.SPACE
-                + TlaStrings.IN
-                + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.set)
+                + strCommaList(mapBy(this.heads, h -> h.toTLAPlusSnippetCore(this)))
                 + TlaStrings.SET_END;
     }
 }

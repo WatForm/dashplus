@@ -227,8 +227,9 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         else m_params = varParams(m);
 
         // parameters from enclosing state of this element
-        List<? extends AlloyExpr> sfqn_param_vals = stateParams(sfqn);
-        List<? extends AlloyExpr> m_param_vals = m_params;
+        List<? extends AlloyExpr> sfqn_param_vals = mapBy(stateParams(sfqn), x -> x.asAlloyVar());
+        // these must be values p_Statename
+        List<? extends AlloyExpr> m_param_vals = mapBy(m_params, x -> x.asAlloyVar());
         List<? extends AlloyExpr> final_param_vals = new ArrayList<AlloyExpr>();
 
         // v_param_vals is the parameter expressions (as Expr) provided
@@ -289,11 +290,12 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         // from appropriate 'type' of element
         // for this function, match can only be within enclosing sfqn
         List<String> region = new ArrayList<String>();
-
         if (kind == DashStrings.DashRefKind.STATE) region = region(sfqn);
         else if (kind == DashStrings.DashRefKind.EVENT) {
             // get all the events within these regions
-            for (String x : region(sfqn)) region.addAll(eventsWithinState(x));
+            for (String x : region(sfqn)) {
+                region.addAll(eventsWithinState(x));
+            }
         } else if (kind == DashStrings.DashRefKind.VAR) {
             for (String x : region(sfqn)) {
                 region.addAll(varsOfState(x));
@@ -356,8 +358,6 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         if (unaryExpr.op == AlloyStrings.PRIME) {
             // can only apply a prime to a var
             // this should be not allowed in parsing
-            System.out.println(unaryExpr.sub.getClass());
-            System.out.println(unaryExpr);
             assert (unaryExpr.sub instanceof AlloyQnameExpr || unaryExpr.sub instanceof VarDashRef);
             if (!this.nextOk) {
                 noNextVarsError(unaryExpr);

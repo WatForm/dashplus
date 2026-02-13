@@ -75,7 +75,8 @@ public class AlloyInterface {
         Optional<AlloyCmdPara> cmd = am.getCmdNum(cmdnum);
         String result = cmd.map(Object::toString).orElse("");
         // print solution: might be unsat
-        return result + "\n" + soln.toString();
+        if (soln.isSat()) return result + "\nSATISFIABLE\n" + soln.toString();
+        else return result + "\nUNSATISFIABLE\n";
     }
 
     /*

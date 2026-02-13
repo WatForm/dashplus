@@ -4,6 +4,7 @@ import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaComment;
 import ca.uwaterloo.watform.tlaast.TlaConst;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
+import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaSimpleExp;
 import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlaast.TlaVar;
@@ -51,8 +52,9 @@ public class TlaModel {
         this.module.variables.add(v);
     }
 
-    public void addConst(TlaConst c) {
+    public void addConst(TlaConst c, TlaExp value) {
         this.module.constants.add(c);
+        this.cfg.constants.add(c.EQUALS(value));
     }
 
     public void addDefn(TlaDefn d) {

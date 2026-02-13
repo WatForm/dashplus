@@ -22,7 +22,7 @@ public final class AlloyDecl extends AlloyExpr {
     public final boolean isDisj1;
     public final List<AlloyQnameExpr> qnames;
     public final boolean isDisj2;
-    public final Optional<Quant> quant;
+    public final Quant quant;
     public final AlloyExpr expr;
 
     public AlloyDecl(
@@ -40,9 +40,9 @@ public final class AlloyDecl extends AlloyExpr {
         this.isDisj1 = isDisj1;
         this.qnames = Collections.unmodifiableList(qnames);
         this.isDisj2 = isDisj2;
-        this.quant = Optional.ofNullable(quant);
+        this.quant = quant;
         this.expr = expr;
-        if (!this.quant.isEmpty() && this.quant.get() == Quant.EXACTLY) {
+        if (this.quant == Quant.EXACTLY) {
             if (isVar || isDisj1 || isDisj2) {
                 throw AlloyCtorError.declExactlyCannotHaveDisj(pos);
             }
@@ -62,11 +62,19 @@ public final class AlloyDecl extends AlloyExpr {
     }
 
     public AlloyDecl(List<AlloyQnameExpr> qnames, AlloyExpr expr) {
-        this(Pos.UNKNOWN, false, false, false, qnames, false, null, expr);
+        this(Pos.UNKNOWN, false, false, false, qnames, false, Quant.ONE, expr);
     }
 
     public AlloyDecl(AlloyQnameExpr qname, AlloyExpr expr) {
-        this(Pos.UNKNOWN, false, false, false, Collections.singletonList(qname), false, null, expr);
+        this(
+                Pos.UNKNOWN,
+                false,
+                false,
+                false,
+                Collections.singletonList(qname),
+                false,
+                Quant.ONE,
+                expr);
     }
 
     public AlloyDecl(String qname, String expr) {
@@ -77,7 +85,7 @@ public final class AlloyDecl extends AlloyExpr {
                 false,
                 Collections.singletonList(new AlloyQnameExpr(qname)),
                 false,
-                null,
+                Quant.ONE,
                 new AlloyQnameExpr(expr));
     }
 
@@ -89,7 +97,19 @@ public final class AlloyDecl extends AlloyExpr {
                 false,
                 Collections.singletonList(new AlloyQnameExpr(qname)),
                 false,
-                null,
+                Quant.ONE,
+                expr);
+    }
+
+    public AlloyDecl(String qname, AlloyDecl.Quant quant, AlloyExpr expr) {
+        this(
+                Pos.UNKNOWN,
+                false,
+                false,
+                false,
+                Collections.singletonList(new AlloyQnameExpr(qname)),
+                false,
+                quant,
                 expr);
     }
 
@@ -118,26 +138,10 @@ public final class AlloyDecl extends AlloyExpr {
                             this.isDisj1,
                             Collections.singletonList(qname),
                             this.isDisj2,
-                            this.quant.isPresent() ? this.quant.get() : null,
+                            this.quant,
                             this.expr));
         }
         return expandedLi;
-    }
-
-    @Override
-    public void toString(StringBuilder sb, int indent) {
-        sb.append(this.isVar ? VAR + SPACE : "");
-        sb.append(this.isPrivate ? PRIVATE + SPACE : "");
-        sb.append((this.isDisj1 ? DISJ + SPACE : ""));
-        ASTNode.join(sb, indent, this.qnames, COMMA + SPACE);
-        if (!this.quant.isEmpty() && this.quant.get() == Quant.EXACTLY) {
-            sb.append(EQUAL);
-        } else {
-            sb.append(COLON);
-            sb.append((this.isDisj2 ? DISJ + SPACE : ""));
-            sb.append(this.quant.map(q -> q.toString() + SPACE).orElse(""));
-        }
-        this.expr.toString(sb, indent);
     }
 
     @Override
@@ -147,7 +151,7 @@ public final class AlloyDecl extends AlloyExpr {
         pCtx.append((this.isDisj1 ? DISJ + SPACE : ""));
         pCtx.appendList(this.qnames, COMMA);
         pCtx.append(SPACE);
-        if (this.quant.isPresent() && this.quant.get() == Quant.EXACTLY) {
+        if (this.quant == Quant.EXACTLY) {
             pCtx.append(EQUAL);
             pCtx.brk();
         } else {
@@ -156,16 +160,13 @@ public final class AlloyDecl extends AlloyExpr {
             if (this.isDisj2) {
                 pCtx.append(DISJ + SPACE);
             }
-            if (this.quant.isPresent()) {
-                pCtx.append(this.quant.get().toString() + SPACE);
-            }
+            pCtx.append(this.quant.toString() + SPACE);
         }
         this.expr.pp(pCtx);
     }
 
     public AlloyDecl withExpr(AlloyExpr newExpr) {
-        return new AlloyDecl(
-                pos, isVar, isPrivate, isDisj1, qnames, isDisj2, quant.orElse(null), newExpr);
+        return new AlloyDecl(pos, isVar, isPrivate, isDisj1, qnames, isDisj2, quant, newExpr);
     }
 
     public enum Quant {

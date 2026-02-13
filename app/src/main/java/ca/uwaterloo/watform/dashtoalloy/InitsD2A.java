@@ -41,7 +41,7 @@ public class InitsD2A extends SnapshotSigD2A {
                                 filterBy(entered, x -> x.hasNumParams(numParams)),
                                 y -> y.asAlloyArrow());
                 if (!ent.isEmpty()) body.add(AlloyEqual(this.dsl.curConf(i), AlloyUnionList(ent)));
-                else body.add(AlloyEqual(this.dsl.curConf(i), AlloyNone()));
+                else body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.noneArrow(i)));
             }
         }
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {

@@ -315,19 +315,16 @@ public class DSL {
 
     public AlloyDecl scopeDecl(int i) {
         List<String> cop = Collections.nCopies(i, D2AStrings.identifierName);
-        return new AlloyDecl(
-                D2AStrings.scopeName + i,
-                AlloyArrowStringListEndInSet(newListWithOneMore(cop, D2AStrings.scopeLabelName)));
+        return AlloyDeclArrowStringList(
+                D2AStrings.scopeName + i, newListWithOneMore(cop, D2AStrings.scopeLabelName));
     }
 
     public AlloyDecl genEventDecl(int i) {
         if (i == 0) return new AlloyDecl(D2AStrings.genEventName + i, allEventsVar());
         else {
             List<String> cop = Collections.nCopies(i, D2AStrings.identifierName);
-            return new AlloyDecl(
-                    D2AStrings.genEventName + i,
-                    AlloyArrowStringListEndInSet(
-                            newListWithOneMore(cop, D2AStrings.allEventsName)));
+            return AlloyDeclArrowStringList(
+                    D2AStrings.genEventName + i, newListWithOneMore(cop, D2AStrings.allEventsName));
         }
     }
 
@@ -379,5 +376,25 @@ public class DSL {
         else
             // e1 :> e2
             return AlloyRangeRes(e1, e2);
+    }
+
+    // Creates either
+    // (list of length one) AlloyDecl(name, Quant.SET, AlloyVar(sl.get(0)))
+    // or
+    // (list of length > 1) AlloyVar(sl(0)) set -> set ( AlloyVar(sl(1)) set -> set AlloyVar(sl(2))
+    // )
+    public static AlloyDecl AlloyDeclArrowStringList(String name, List<String> sl) {
+        assert (name != null && name != "" && sl != null && !sl.isEmpty());
+        List<String> reversed = reverse(sl);
+        AlloyExpr o = AlloyVar(reversed.get(0));
+        if (sl.size() == 1) {
+            return new AlloyDecl(name, AlloyDecl.Quant.SET, AlloyVar(sl.get(0)));
+        } else {
+            for (String s : reversed.subList(1, reversed.size())) {
+                // by default this is A set -> set B
+                o = new AlloyArrowExpr(AlloyVar(s), o);
+            }
+            return AlloyDecl(name, o);
+        }
     }
 }

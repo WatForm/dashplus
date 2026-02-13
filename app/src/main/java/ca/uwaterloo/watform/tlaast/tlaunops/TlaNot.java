@@ -3,6 +3,13 @@ package ca.uwaterloo.watform.tlaast.tlaunops;
 import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaNot extends TlaUnaryOp {
+
+    /*
+    ~(exp)
+
+    logical negation
+    */
+
     public TlaNot(TlaExp operand) {
         super(operand, TlaOperator.PrecedenceGroup.NOT);
     }

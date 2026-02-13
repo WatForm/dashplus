@@ -72,7 +72,7 @@ public abstract class DashRef extends AlloyExpr {
         // p1 -> p2 -> fqn
         // used for initialization and
         // checking elements in conf/events
-        assert (this instanceof VarDashRef && !((VarDashRef) this).isNext);
+        assert (!(this instanceof VarDashRef) || !((VarDashRef) this).isNext);
         List<AlloyExpr> ll = reverse(this.paramValues);
         ll.add(AlloyVar(DashFQN.translateFQN(this.name)));
         return AlloyArrowExprList(ll);
@@ -84,24 +84,31 @@ public abstract class DashRef extends AlloyExpr {
         // STATE: Root/A/B[a1,b1]
         // other: Root/A/B[a1,b1]/var1
         String s = "";
-        if (!paramValues.isEmpty()) {
+        if (!this.paramValues.isEmpty()) {
             // then it has to be at least partially resolved already
             if (this instanceof StateDashRef) {
-                s += name;
+                s += this.name;
             } else {
-                s += DashFQN.chopPrefixFromFQN(name);
+                s += DashFQN.chopPrefixFromFQN(this.name);
             }
             s += "[";
-            s += GeneralUtil.strCommaList(paramValues);
+            s += GeneralUtil.strCommaList(this.paramValues);
             s += "]";
-            if (this instanceof StateDashRef) {
+            if (!(this instanceof StateDashRef)) {
                 s += "/";
-                s += DashFQN.chopNameFromFQN(name);
+                s += DashFQN.chopNameFromFQN(this.name);
             }
         } else {
-            s += name;
+            s += this.name;
         }
         pCtx.append(s);
+        if (s.equals(
+                "System/Elevator/MovingUp[PID, System/Elevator/MovingUp[PID]/MovingUp]/MovingUp")) {
+            System.out.println(this.name);
+            System.out.println(this.paramValues);
+            printStackTrace();
+            System.exit(1);
+        }
     }
 
     public boolean hasNumParams(int i) {

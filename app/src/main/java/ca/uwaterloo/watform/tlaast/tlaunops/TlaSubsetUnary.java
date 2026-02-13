@@ -3,6 +3,16 @@ package ca.uwaterloo.watform.tlaast.tlaunops;
 import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaSubsetUnary extends TlaUnaryOp {
+
+    /*
+
+    SUBSET exp
+
+
+    this is a way to obtain the power set P(exp)
+
+    */
+
     public TlaSubsetUnary(TlaExp operand) {
         super(operand, TlaOperator.PrecedenceGroup.SET_OPERATORS);
     }

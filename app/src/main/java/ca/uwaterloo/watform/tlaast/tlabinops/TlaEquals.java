@@ -4,6 +4,12 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaEquals extends TlaInfixBinOp {
 
+    /*
+    exp1 = exp2
+
+    equality of two expressions
+    */
+
     public TlaEquals(TlaExp operandOne, TlaExp operandTwo) {
         super(
                 TlaStrings.EQUALS,

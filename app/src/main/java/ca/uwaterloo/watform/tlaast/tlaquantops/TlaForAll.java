@@ -1,10 +1,20 @@
 package ca.uwaterloo.watform.tlaast.tlaquantops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import java.util.List;
 
 public class TlaForAll extends TlaQuantOp {
-    public TlaForAll(TlaVar variable, TlaExp set, TlaExp expression) {
-        super(variable, set, expression, TlaOperator.PrecedenceGroup.PREDICATE);
+
+    /*
+    \A v \in S : exp
+
+    variable: v
+    set: S  (can be an expression that evaluates to a set)
+    expression: exp  (boolean expression)
+    */
+
+    public TlaForAll(List<TlaQuantOpHead> heads, TlaExp expression) {
+        super(heads, expression, TlaOperator.PrecedenceGroup.UNSAFE);
     }
 
     @Override

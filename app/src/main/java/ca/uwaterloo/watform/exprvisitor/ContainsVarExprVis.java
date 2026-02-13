@@ -1,6 +1,11 @@
 /*
 	Searches generically over all vars
 	(could be a var derived from a param)
+
+    Satisfying criteria is:
+    varExpr instanceof AlloyQnameExpr
+    && ((AlloyQnameExpr) varExpr).vars.equals(varToFind.vars)
+
 */
 
 package ca.uwaterloo.watform.exprvisitor;
@@ -24,6 +29,7 @@ public class ContainsVarExprVis implements AlloyExprVis<Boolean> {
 
     // ones from Dash
     public Boolean visit(DashRef dashRef) {
+
         return (dashRef.name == varToFind.label
                 || !allFalse(mapBy(dashRef.paramValues, p -> this.visit(p))));
     }
@@ -34,7 +40,7 @@ public class ContainsVarExprVis implements AlloyExprVis<Boolean> {
     }
 
     public Boolean visit(AlloyBinaryExpr binExpr) {
-        return visit(binExpr.left) && visit(binExpr.right);
+        return visit(binExpr.left) || visit(binExpr.right);
     }
 
     public Boolean visit(AlloyUnaryExpr unaryExpr) {
@@ -42,7 +48,12 @@ public class ContainsVarExprVis implements AlloyExprVis<Boolean> {
     }
 
     public Boolean visit(AlloyVarExpr varExpr) {
-        return varExpr.label == this.varToFind.label;
+        // TODO: not sure this is correct
+        // since we are looking for a parameter variable
+        // this is probably sufficient
+        // but it is not general enough for other cases
+        return (varExpr instanceof AlloyQnameExpr
+                && ((AlloyQnameExpr) varExpr).label.equals(this.varToFind));
     }
 
     public Boolean visit(AlloyBlock blockExpr) {

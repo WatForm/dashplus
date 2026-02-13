@@ -8,6 +8,7 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -38,6 +39,8 @@ public class StatesDM extends TransDM {
     // this is in order of depth-first traversal of the tree
     // these parameters can be from different branches
     // of the state hierarchy
+    // the same paramSig used in different places could have different values
+    // so these have to be distinct per paramSig
     protected List<DashParam> allParams = new ArrayList<DashParam>();
 
     public StatesDM() {
@@ -90,7 +93,9 @@ public class StatesDM extends TransDM {
     }
 
     public List<DashParam> stateParams(String sfqn) {
-        return this.st.get(sfqn).params;
+        // to avoid any problems with list copying
+        // make this a shallow copy
+        return new ArrayList<DashParam>(this.st.get(sfqn).params);
     }
 
     public boolean stateHasParams(String sfqn) {
@@ -176,9 +181,12 @@ public class StatesDM extends TransDM {
         Does not seem to be any room for syntactic simplifications in these expressions.
     */
     public List<DashRef> leafStatesEnteredInScope(DashRef context, DashRef dest) {
+
         List<DashRef> cR = prefixDashRefs(context);
         List<DashRef> dR = prefixDashRefs(dest);
+
         List<DashRef> r = new ArrayList<DashRef>(); // result
+
         int p = 0; // parameter value position
         List<AlloyExpr> xP = new ArrayList<AlloyExpr>(); // parameters carrying forward
         List<AlloyExpr> nP; // parameters for each addition
@@ -256,19 +264,14 @@ public class StatesDM extends TransDM {
         // this is not necessarily an AND scope
         DashRef src = fromR(tfqn);
         DashRef dest = gotoR(tfqn);
-        // myprint("src");
-        // System.out.println(src);
-        // myprint("dest");
-        // System.out.println(dest);
+
         String sc = DashFQN.longestCommonFQN(src.name, dest.name);
         // maxCommonParams is max number of params that could have in common
         // but they don't necessarily have the same values
         Integer maxCommonParams = stateParams(sc).size();
-        // myprint("scope");
-        // System.out.println("maxCommonParams");
-        // System.out.println(maxCommonParams);
+
         List<AlloyExpr> scopeParams = new ArrayList<AlloyExpr>();
-        AlloyExpr equals = null;
+        AlloyExpr equals = AlloyTrueCond();
         AlloyExpr s = null;
         AlloyExpr d = null;
         for (int i = 0; i < maxCommonParams; i++) {
@@ -278,35 +281,14 @@ public class StatesDM extends TransDM {
                 // syntactically equal
                 scopeParams.add(s);
             } else {
-                equals = new AlloyEqualsExpr(s, d);
-                scopeParams.add(
-                        new AlloyIteExpr(
-                                equals,
-                                s,
-                                ((DashParam) stateParams(sc).get(i)).asAlloyVar())); // whole set
-
-                for (int j = i + 1; j < maxCommonParams; j++) {
-                    s = src.paramValues.get(j);
-                    d = dest.paramValues.get(j);
-                    if (s.equals(d)) {
-                        // syntactically equal
-                        scopeParams.add(s);
-                    } else {
-                        equals = new AlloyAndExpr(equals, new AlloyEqualsExpr(s, d));
-                        scopeParams.add(
-                                new AlloyIteExpr(
-                                        equals,
-                                        s,
-                                        ((DashParam) stateParams(sc).get(j))
-                                                .asAlloyVar())); // whole set
-                    }
-                }
-                break;
+                // have to continue to create a larger condition
+                // because if earlier condition is true,
+                // this defaults to a simpler case
+                equals = AlloyAnd(equals, AlloyEqual(s, d));
+                scopeParams.add(new AlloyIteExpr(equals, s, stateParams(sc).get(i))); // whole set
             }
         }
         StateDashRef x = new StateDashRef(sc, scopeParams); // no pos possible
-        // System.out.println("scope");
-        // System.out.println(x);
         return x;
     }
 
@@ -452,7 +434,7 @@ public class StatesDM extends TransDM {
             for (String ch : immChildren(s.name)) {
                 // exit all copies of the params
                 List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.paramValues);
-                if (stateHasParams(ch)) newParamValues.add(new StateDashRef(ch, stateParams(ch)));
+                if (stateHasParam(ch)) newParamValues.add(stateParam(ch));
                 r.addAll(leafStatesExited(new StateDashRef(ch, newParamValues)));
             }
             return r;
@@ -481,6 +463,14 @@ public class StatesDM extends TransDM {
         return r;
     }
 
+    // If input is A/B/C/D/E [id1, id2]
+    // where B and D are parametrized states
+    // Output is:
+    // A
+    // A/B [id1]
+    // A/B/C [id1]
+    // A/B/C/D [id1, id2]
+    // A/B/C/D/E [id1, id2]
     public List<DashRef> prefixDashRefs(DashRef s) {
         // resulting order is ancestors to descendants
         // includes this DashRef itself at the end

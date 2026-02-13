@@ -35,16 +35,16 @@ public class InitDefn {
         if (dashModel.hasConcurrency()) {
             exps.add(
                     // stable = TRUE
-                    STABLE().EQUALS(TRUE()));
+                    STABLE().EQUALS(TlaTrue()));
             exps.add(
                     // scopes_used = {}
-                    SCOPES_USED().EQUALS(NULL_SET()));
+                    SCOPES_USED().EQUALS(TlaNullSet()));
         }
 
         if (dashModel.hasEvents()) {
             exps.add(
                     // _events \intersect _internal_events = {}
-                    EVENTS().INTERSECTION(INTERNAL_EVENTS()).EQUALS(NULL_SET()));
+                    EVENTS().INTERSECTION(INTERNAL_EVENTS()).EQUALS(TlaNullSet()));
             if (singleEnvInput) exps.add(SINGLE_ENV_INPUT());
         }
 

@@ -27,7 +27,6 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
-import ca.uwaterloo.watform.dashast.DashPara;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.io.StringWriter;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class AlloyModel {
-    private final AlloyFile alloyFile;
     private final AlloyModelTable<AlloyModulePara> modules;
     private final AlloyModelTable<AlloyImportPara> imports;
     private final AlloyModelTable<AlloyMacroPara> macros;
@@ -54,14 +52,8 @@ public class AlloyModel {
     }
 
     private AlloyModel(AlloyModel other) {
-        this.alloyFile =
-                new AlloyFile(
-                        other.alloyFile.pos,
-                        filterBy(
-                                other.alloyFile.paras,
-                                alloyPara -> !(alloyPara instanceof DashPara)));
         this.modules = other.modules.copy();
-        this.imports = other.imports;
+        this.imports = other.imports.copy();
         this.macros = other.macros.copy();
         this.sigs = other.sigs.copy();
         this.enums = other.enums.copy();
@@ -77,12 +69,6 @@ public class AlloyModel {
     }
 
     public AlloyModel(AlloyFile alloyFile) {
-        this(alloyFile, false);
-    }
-
-    public AlloyModel(AlloyFile alloyFile, boolean addModelSatCmd) {
-
-        this.alloyFile = alloyFile;
         this.modules = new AlloyModelTable<>(alloyFile, AlloyModulePara.class);
         this.imports = new AlloyModelTable<>(alloyFile, AlloyImportPara.class);
         this.macros = new AlloyModelTable<>(alloyFile, AlloyMacroPara.class);
