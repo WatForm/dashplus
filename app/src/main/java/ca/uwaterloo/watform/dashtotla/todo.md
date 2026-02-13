@@ -98,8 +98,8 @@
 |operator|dot join a.b|❔|❔|❔|
 |operator|inv dot join a;b|❔|❔|❔|
 |operator|box join a\[b\]|❔|❔|❔|
-|operator|domain restriction s <: a|❌|❌|❔|
-|operator|range restriction s :> a|❌|❌|❔|
+|operator|domain restriction s <: a|✅|✅|❔|
+|operator|range restriction s :> a|✅|✅|❔|
 |operator|transpose ~r|✅|✅|❔|
 |operator|positive TC ^r|❌|❌|❔|
 |operator|reflexive TC *r|❌|❌|❔|

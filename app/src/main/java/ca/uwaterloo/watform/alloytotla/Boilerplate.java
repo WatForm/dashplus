@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
 import ca.uwaterloo.watform.tlaast.tlaquantops.TlaSetMap;
 import ca.uwaterloo.watform.tlamodel.*;
 import java.util.*;
@@ -124,7 +125,15 @@ public class Boilerplate {
     }
 
     private static TlaDefn relational_override() {
-        return new TlaDefn(TlaDecl(RELATIONAL_OVERRIDE, Arrays.asList(R1(), R2())), TlaTrue());
+        // _override(R1,R2) : R1 \ {x \in R1 : \E y \in R2 : x[1] = y[1]} \\union R2
+        TlaExp set =
+                TlaSetFilter(
+                        TlaQuantOpHead(X(), R1()),
+                        TlaExists(
+                                TlaQuantOpHead(Y(), R2()),
+                                X().INDEX(TlaIntLiteral(1)).EQUALS(Y().INDEX(TlaIntLiteral(1)))));
+        TlaExp body = R1().DIFF(set).UNION(R2());
+        return new TlaDefn(TlaDecl(RELATIONAL_OVERRIDE, Arrays.asList(R1(), R2())), body);
     }
 
     private static TlaDefn transpose() {
