@@ -38,9 +38,20 @@ _inner_product(R1,R2) == {_join(e1,e2) : <<e1,e2>> \in {<<f1,f2>> \in R1 \X R2 :
 
 ```
 
+for sets:
+
+```
+_ip_RS_map(e,x) == SubSeq(e1,1,Len(e1)-1)
+_ip_RS_filter(e,x) == e[Len(e)] = x
+_ip_RS(R,S) == {_ip_RS_map(e,x) : <<e,x>> \in {<<f,y>> \in R \X S} }
+
+```
+
 Empty things are supported, so unification of sets and relations is done by treating all sets are relations of arity 1
 
 It eliminates the need for type inference at both the translation stage and run stage
+
+Note: cross products are not associative
 
 
 
