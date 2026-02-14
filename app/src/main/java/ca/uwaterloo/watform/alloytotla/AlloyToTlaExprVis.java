@@ -99,6 +99,16 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyVarExpr varExpr) {
 
+        TlaExp answer =
+                switch (varExpr) {
+                    case AlloyUnivExpr _ -> _UNIV();
+                    case AlloyIdenExpr _ -> _IDEN();
+                    case AlloyNoneExpr _ -> _NONE();
+                    default -> null;
+                };
+
+        if (answer != null) return answer;
+
         throw new UnsupportedOperationException(
                 "non-translatable expression: " + varExpr.toString());
     }
