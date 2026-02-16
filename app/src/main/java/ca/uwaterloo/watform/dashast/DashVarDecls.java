@@ -21,6 +21,8 @@ public final class DashVarDecls extends ASTNode implements DashStateItem {
         this.names = Collections.unmodifiableList(n);
         this.typ = e;
         this.kind = k;
+        // assert(e instanceof AlloyQtExpr || e instanceof AlloyArrowExpr || e instanceof
+        // AlloyQnameExpr);
     }
 
     @Override
