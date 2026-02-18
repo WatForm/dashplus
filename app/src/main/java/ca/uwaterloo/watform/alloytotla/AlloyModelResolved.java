@@ -27,6 +27,11 @@ public class AlloyModelResolved extends AlloyModel {
         List<String> descs;
         List<String> ances;
 
+		@Override
+		public String toString() {
+			return "inParents: "+inParents.toString()+"\nextendsParent: "+extendsParent.toString()+"\ninChildren: "+inChildren.toString()+"\nextendsChildren: "+extendsChildren.toString()+"\ntop-level-Parents: "+topLevelParents.toString()+"\nDescendants: "+descs.toString()+"\nancestors: "+ances.toString();
+		}
+
         SignatureRecord(AlloySigPara p) {
             this.para = p;
         }
@@ -46,7 +51,10 @@ public class AlloyModelResolved extends AlloyModel {
         populateAncestorsDescendants(); // third pass, transitively fill table with memoization
     }
 
-    private void populateAncestorsDescendants() {}
+    private void populateAncestorsDescendants() 
+	{
+
+	}
 
     private void populateNames() {
         this.getParas(AlloySigPara.class)
