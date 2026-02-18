@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.Qual;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -53,8 +53,13 @@ public class AlloyModelResolved extends AlloyModel {
     }
 
     private static class FieldData {
-        String sigParent;
-        AlloyDecl decl;
+        String sigParent = null;
+        AlloyExpr expr = null;
+
+        @Override
+        public String toString() {
+            return "\nsigParent: " + this.sigParent + "\ndecl: " + expr.toString() + "\n";
+        }
     }
 
     private HashMap<String, SignatureData> sigTable;
@@ -64,6 +69,7 @@ public class AlloyModelResolved extends AlloyModel {
         populateNames(); // first pass, to get the sig names
         populateParentsChildren(); // second pass, to populate the parents and children
         populateAncestorsDescendants(); // recursive pass, transitively fill table, with memoization
+        resolveFields();
 
         // debug
         System.out.println(this.sigTable.toString());
@@ -75,7 +81,13 @@ public class AlloyModelResolved extends AlloyModel {
                 .getParas(AlloySigPara.class)
                 .forEach(
                         sp -> {
-                            System.out.println(sp.fields);
+                            sp.fields.forEach(
+                                    f -> {
+                                        FieldData fd = new FieldData();
+                                        fd.expr = f.expr;
+                                        fd.sigParent = sp.qnames.get(0).toString();
+                                        fieldTable.put(f.toString(), fd);
+                                    });
                         });
     }
 
