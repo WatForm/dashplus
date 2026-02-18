@@ -58,7 +58,7 @@ public class CliConf {
     public boolean verbose = false;
 
     @Option(
-            names = {"-d", "--debug"},
+            names = {"-d", "--debug", "-debug"},
             description = "Enable debug output.")
     public boolean debug = false;
 

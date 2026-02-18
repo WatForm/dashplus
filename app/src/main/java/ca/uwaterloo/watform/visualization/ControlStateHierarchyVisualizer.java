@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.visualization;
 
+import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -8,6 +9,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ControlStateHierarchyVisualizer {
 
@@ -37,7 +39,7 @@ public class ControlStateHierarchyVisualizer {
         if (!dm.isLeaf(nodeName) || !atMaxDepth) {
             if (dm.isRoot(nodeName)) {
                 gp.addln("subgraph cluster_" + formatString(nodeName) + " {");
-                gp.addln("label=" + formatString(nodeName));
+                gp.addln("label=" + labelForNode(dm, nodeName));
                 if (dm.isAnd(nodeName)) {
                     gp.addln("style=dashed");
                 }
@@ -47,7 +49,7 @@ public class ControlStateHierarchyVisualizer {
                     gp.addln("style=filled");
                     gp.addln("fillcolor=yellow");
                 }
-                gp.addln("label=" + labelFromFormatted(formatString(nodeName)));
+                gp.addln("label=" + labelForNode(dm, nodeName));
                 gp.addln(formatString(nodeName) + " [style=invis,shape=point,  penwidth=0]");
                 if (dm.isAnd(nodeName)) {
                     gp.addln("style=dashed");
@@ -58,14 +60,10 @@ public class ControlStateHierarchyVisualizer {
                 gp.addln(
                         formatString(nodeName)
                                 + " [label="
-                                + labelFromFormatted(formatString(nodeName))
+                                + labelForNode(dm, nodeName)
                                 + ", style=filled, fillcolor=yellow]");
             } else {
-                gp.addln(
-                        formatString(nodeName)
-                                + " [label="
-                                + labelFromFormatted(formatString(nodeName))
-                                + "]");
+                gp.addln(formatString(nodeName) + " [label=" + labelForNode(dm, nodeName) + "]");
             }
         }
 
@@ -158,6 +156,26 @@ public class ControlStateHierarchyVisualizer {
     private static String labelFromFormatted(String formattedName) {
         int lastIndex = formattedName.lastIndexOf('_');
         return lastIndex >= 0 ? formattedName.substring(lastIndex + 1) : formattedName;
+    }
+
+    private static String labelForNode(DashModel dm, String nodeName) {
+        String formattedName = formatString(nodeName);
+        String baseLabel = labelFromFormatted(formattedName);
+        List<DashParam> params = dm.stateParams(nodeName);
+        if (params.isEmpty()) {
+            return quoteLabel(baseLabel);
+        }
+        String parent = dm.parent(nodeName);
+        if (parent != null && dm.stateHasParams(parent)) {
+            return quoteLabel(baseLabel);
+        }
+        String paramText =
+                params.stream().map(param -> param.paramSig).collect(Collectors.joining(", "));
+        return quoteLabel(baseLabel + " [" + paramText + "]");
+    }
+
+    private static String quoteLabel(String label) {
+        return "\"" + label.replace("\"", "\\\"") + "\"";
     }
 
     private static Set<String> normalizeHighlights(List<String> highlightedStates) {

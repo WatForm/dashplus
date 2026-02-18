@@ -11,6 +11,8 @@ import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtotla.*;
+import ca.uwaterloo.watform.debugcli.DebugCli;
+import ca.uwaterloo.watform.debugcli.DebugDashSimulationManager;
 import ca.uwaterloo.watform.predabstraction.PredicateAbstraction;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.*;
@@ -126,6 +128,21 @@ public class Main implements Callable<Integer> {
                     } else if (fileName.endsWith(".dsh")) {
                         // Dash Mode
                         DashModel dm = (DashModel) parseToModel(absolutePath);
+
+                        if (cliConf.visualize) {
+                            Path outputDir =
+                                    path.getParent() == null ? Paths.get(".") : path.getParent();
+                            ControlStateHierarchyVisualizer visualizer =
+                                    new ControlStateHierarchyVisualizer();
+                            String prefix =
+                                    path.getFileName().toString()
+                                            + "-"
+                                            + ControlStateHierarchyVisualizer.DEFAULT_PREFIX;
+                            visualizer.visualize(dm, outputDir, prefix);
+                            System.out.println(
+                                    "Visualization output: " + outputDir.resolve(prefix + ".dot"));
+                        }
+
                         AlloyModel am = new DashToAlloy(dm).translate();
 
                         // change the filename from .dsh to .als for output
@@ -152,15 +169,13 @@ public class Main implements Callable<Integer> {
                         int count = writeInstancesToXML(am, nameWithoutExtensionWithMethod, 5);
                         System.out.println("Wrote " + String.valueOf(count) + " instance(s).");
 
-                        if (cliConf.visualize) {
-                            // visualize the control state hierarchy of the Dash model, outputs a .dot file in the same dir as the input file
-                            Path outputDir = path.getParent() == null ? Paths.get(".") : path.getParent();
-                            ControlStateHierarchyVisualizer visualizer = new ControlStateHierarchyVisualizer();
-                            visualizer.visualize(dm,outputDir,nameWithoutExtensionWithMethod+ "-" + ControlStateHierarchyVisualizer.DEFAULT_P+ "-"+ ControlStateHierarchyVisualizer.DEFAULT_PREFIX+ ".dot"));
-                            }
-
                         // later add output about executing cmds
                         Reporter.INSTANCE.print();
+
+                        if (cliConf.debug) {
+                            System.out.println("Entering debug CLI...");
+                            new DebugCli(new DebugDashSimulationManager()).run();
+                        }
                     } else {
                         Reporter.INSTANCE.addError(invalidFile(fileName));
                     }
