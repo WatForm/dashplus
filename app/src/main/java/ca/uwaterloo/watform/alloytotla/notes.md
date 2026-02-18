@@ -198,3 +198,11 @@ Run and check rules:
 - One command per translation
 - if flag left unspecified, command is
 `run {} for 4` 
+
+## Macros:
+
+- let is a global macro, not bound using in (i.e. not necessarily)
+- thus, there are three approaches
+- one - pre-translate the macro by editing the AST
+- two - expand them in the translation using a DSL-generator
+- three - make equivalent macros in translation
