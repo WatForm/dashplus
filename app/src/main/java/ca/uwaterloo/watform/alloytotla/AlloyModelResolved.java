@@ -77,16 +77,22 @@ public class AlloyModelResolved extends AlloyModel {
                         });
     }
 
-    private void populateExtendsParentsChildren(String sn) {
+    private void populateExtendsParentsChildren(String sig) {
 
         AtomicReference<String> answer = new AtomicReference<>(null);
-        sigTable.get(sn)
+        sigTable.get(sig)
                 .para
                 .rel
                 .ifPresent(
                         x -> {
                             if (x instanceof AlloySigPara.Extends)
-                                answer.set(((AlloySigPara.Extends) x).sigRef.toString());
+							{
+								String sigParent = ((AlloySigPara.Extends) x).sigRef.toString();
+								answer.set(sigParent);
+								sigTable.get(sigParent).extendsChildren.add(sig);
+							}
+                                
+
                         });
 
         sigTable.get(sn).extendsParent = Optional.ofNullable(answer.get());
