@@ -21,7 +21,8 @@ public class AlloyModelResolved extends AlloyModel {
         AlloySigPara para;
         List<String> inParents;
         Optional<String> extendsParent;
-        List<String> children;
+        List<String> inChildren;
+        List<String> extendsChildren;
         List<String> topLevelParents;
         List<String> descs;
         List<String> ances;
@@ -40,10 +41,12 @@ public class AlloyModelResolved extends AlloyModel {
     private HashMap<String, FieldRecord> fieldTable;
 
     private void resolve() {
-        populateNames();
-        populateExtendsParent();
-        populateInParents();
+        populateNames(); // first pass, to get the sig names
+        populateParentsChildren(); // second pass, to populate the parents and children
+        populateAncestorsDescendants(); // third pass, transitively fill table with memoization
     }
+
+    private void populateAncestorsDescendants() {}
 
     private void populateNames() {
         this.getParas(AlloySigPara.class)
@@ -55,44 +58,56 @@ public class AlloyModelResolved extends AlloyModel {
                         });
     }
 
-    private void populateExtendsParent() {
+    private void populateParentsChildren() {
         this.sigTable
                 .keySet()
                 .forEach(
                         sn -> {
-                            AtomicReference<String> answer = new AtomicReference<>(null);
-                            sigTable.get(sn)
-                                    .para
-                                    .rel
-                                    .ifPresent(
-                                            x -> {
-                                                if (x instanceof AlloySigPara.Extends)
-                                                    answer.set(
-                                                            ((AlloySigPara.Extends) x)
-                                                                    .sigRef.toString());
-                                            });
-                            sigTable.get(sn).extendsParent = Optional.ofNullable(answer.get());
+                            SignatureRecord entry = this.sigTable.get(sn);
+                            entry.inParents = new ArrayList<>();
+                            entry.inChildren = new ArrayList<>();
+                            entry.extendsChildren = new ArrayList<>();
+                        });
+        this.sigTable
+                .keySet()
+                .forEach(
+                        sn -> {
+                            populateInParentsChildren(sn);
+                            populateExtendsParentsChildren(sn);
                         });
     }
 
-    private void populateInParents() {
+    private void populateExtendsParentsChildren(String sn) {
 
-        this.sigTable
-                .keySet()
-                .forEach(
-                        sn -> {
-                            sigTable.get(sn)
-                                    .para
-                                    .rel
-                                    .ifPresent(
-                                            x -> {
-                                                if (x instanceof AlloySigPara.In)
-                                                    sigTable.get(sn).inParents =
-                                                            mapBy(
-                                                                    ((AlloySigPara.In) x).sigRefs,
-                                                                    s -> s.toString());
-                                                else sigTable.get(sn).inParents = new ArrayList<>();
-                                            });
+        AtomicReference<String> answer = new AtomicReference<>(null);
+        sigTable.get(sn)
+                .para
+                .rel
+                .ifPresent(
+                        x -> {
+                            if (x instanceof AlloySigPara.Extends)
+                                answer.set(((AlloySigPara.Extends) x).sigRef.toString());
+                        });
+
+        sigTable.get(sn).extendsParent = Optional.ofNullable(answer.get());
+    }
+
+    private void populateInParentsChildren(String sig) {
+
+        sigTable.get(sig)
+                .para
+                .rel
+                .ifPresent(
+                        x -> {
+                            if (x instanceof AlloySigPara.In)
+                                ((AlloySigPara.In) x)
+                                        .sigRefs.forEach(
+                                                y -> {
+                                                    // sn in sc1 + sc2 + sc3...
+                                                    String sigParent = y.toString();
+                                                    sigTable.get(sig).inParents.add(sigParent);
+                                                    sigTable.get(sigParent).inChildren.add(sig);
+                                                });
                         });
     }
 
@@ -104,8 +119,30 @@ public class AlloyModelResolved extends AlloyModel {
         return filterBy(getAllSigNames(), s -> this.isTopLevelSig(s));
     }
 
-    public List<String> getDescendedSigNames() {
+    public List<String> getNonTopLevelSigNames() {
         return filterBy(getAllSigNames(), s -> !this.isTopLevelSig(s));
+    }
+
+    public List<String> getInParents(String signame) {
+        return this.sigTable.get(signame).inParents;
+    }
+
+    public Optional<String> getExtendsParent(String signame) {
+        return this.sigTable.get(signame).extendsParent;
+    }
+
+    public List<String> getAllParents(String signame) {
+        List<String> answer = getInParents(signame);
+        getExtendsParent(signame).ifPresent(sp -> answer.add(sp));
+        return answer;
+    }
+
+    public List<String> getInChildren(String signame) {
+        return this.sigTable.get(signame).inChildren;
+    }
+
+    public List<String> getExtendsChildren(String signame) {
+        return this.sigTable.get(signame).extendsChildren;
     }
 
     public boolean isTopLevelSig(String signame) {
