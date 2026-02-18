@@ -47,9 +47,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExpr> {
 
@@ -291,14 +289,10 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         // set up names that we are searching for
         // from appropriate 'type' of element
         // for this function, match can only be within enclosing sfqn
-
-        // for now make it a set to avoid duplicates
-        Set<String> region = new HashSet<String>();
-        if (kind == DashStrings.DashRefKind.STATE) region.addAll(region(sfqn));
+        List<String> region = new ArrayList<String>();
+        if (kind == DashStrings.DashRefKind.STATE) region = region(sfqn);
         else if (kind == DashStrings.DashRefKind.EVENT) {
             // get all the events within these regions
-            // TODO: this may be repetitive as the same
-            // states are declared within multiple regions
             for (String x : region(sfqn)) {
                 region.addAll(eventsWithinState(x));
             }
@@ -309,7 +303,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             }
             region.addAll(allPredNames());
         }
-        return compareNames(name, setToList(region));
+        return compareNames(name, region);
     }
 
     private List<String> compareNames(String name, List<String> region) {

@@ -65,6 +65,7 @@ public class InitializeDM extends PredsDM {
 
         // this state is not yet in the st
         // but its parent is in the st
+
         // figure out its sfqn and its parent's fqn
         if (DashFQN.isFQN(s.name)) Error.nameCantBeFQN(s.pos, s.name);
         String sfqn;
@@ -81,10 +82,7 @@ public class InitializeDM extends PredsDM {
             newParams.add(thisStateParam);
             // add to the overall param list for the DashModel
             this.allParams.add(thisStateParam);
-            if (this.maxDepthParams <= depth) {
-                this.maxDepthParams = depth + 1;
-                System.out.println("increasing depth");
-            }
+            if (this.maxDepthParams < depth) this.maxDepthParams = depth + 1;
         }
 
         // stuff that is put in the table with this state
@@ -175,7 +173,7 @@ public class InitializeDM extends PredsDM {
                 // where we call stateRecurse
                 // to make sure all args are correct
                 stateRecurseToInitializeStatesVarsEventsBuffers(
-                        sub, sfqn, newParams, defk, s.param != null ? depth + 1 : depth);
+                        sub, sfqn, newParams, defk, depth + 1);
             }
         }
 

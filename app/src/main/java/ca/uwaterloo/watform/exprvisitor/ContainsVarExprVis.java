@@ -53,7 +53,7 @@ public class ContainsVarExprVis implements AlloyExprVis<Boolean> {
         // this is probably sufficient
         // but it is not general enough for other cases
         return (varExpr instanceof AlloyQnameExpr
-                && ((AlloyQnameExpr) varExpr).label.equals(this.varToFind.label));
+                && ((AlloyQnameExpr) varExpr).label.equals(this.varToFind));
     }
 
     public Boolean visit(AlloyBlock blockExpr) {
