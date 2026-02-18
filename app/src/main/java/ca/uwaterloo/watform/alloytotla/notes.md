@@ -90,3 +90,127 @@ comprehension expressions are omre complex than that would suggest
 ```
 
 this is also valid
+
+
+## Translating Arrow expressions in Alloy, unified with field expressions:
+
+- An arrow expression `a -> b` refers to the set which is a cross product of a and b
+
+- Internally, `a -> b` translates to `a set -> set b`
+
+- This means no restrictions on `a`.
+
+- Consider `sig B { f : A }`
+- This translates to: f is a subset of `A -> B` 
+
+- `sig B {f : mult A}` means f is a subset of `B set -> mult A`
+
+- For the general `a m -> n b`, forall xa in a, `n({xb : (xa,xb) \in axb})` and forall xb in b, `m({xa : (xa,xb) \in axb})`
+
+- `m(S) = TRUE` if m = set
+
+| Alloy | Core set | Constraints |
+|---|---|---|
+| a -> b | a set -> set b | \A xa \in a : set (xa.(a->b)) && \A xb \in b : set ((a->b).xb) |
+| a m -> n b | a m -> n b | \A xa \in a :  n(xa.(a->b)) && \A xb \in b : m((a->b).xb)  |
+| sig a { f : b } | A set -> set b | f \in P(a->b) && \A xa \in a :  set(xa.f) && \A xb \in b : set(f.xb) |
+| sig a { f : n b } | A set -> n b | f \in P(a->b) && \A xa \in a :  n(xa.f) && \A xb \in b : set(f.xb) |
+| sig z { f : a m -> n b } | (z set -> set a) m -> n b | f \in P((z->a)->b) && |
+
+
+
+# Associativity:
+
+```
+sig A {
+f : q B m -> n C
+}
+
+A set -> q (B m -> n C)   # this is the left exception interpretation
+(A set -> q B) m -> n C    # this is the total left interpretation
+
+
+sig A {
+    f : B -> C -> D -> E
+}
+
+1) A -> (((B->C)->D)->E)
+2) ((((A->B)->C)->D)->E)
+
+m = one
+n = one
+q = set
+exactly 2 A, exactly 1 B, exactly 1 C
+
+In the first interpretation: 
+A set -> set (B one -> one C)
+
+There will be 1 instance:
+{(a0,(b0,c0)),(a1,(b0,c0))}
+
+
+In the second interpretation:
+(A set -> set B) one -> one C
+There will be 0 instances because there cannot be a one-one relation when one set has 4 elements
+```
+
+Thus, the first interpretation is correct, since Alloy produced 1 instance.
+
+Sanity check:
+
+When running for `2 A, exactly 1 B, exactly 1 C` we expect 4 instances, which is what the Analyzer shows (absent symmetry breaking)
+
+When translating with PID:
+```
+sig A
+{
+    f : B -> C -> D
+}
+```
+cannot become 
+```
+sig A
+{
+    f : PID -> B -> C -> D
+}
+```
+it should be
+```
+sig PID
+{
+    f : A -> (B -> C -> D)
+}
+```
+
+General translation:
+
+```
+A m -> n B
+```
+
+```
+f \in SUBSET (A \X B)
+/\ \A xA \in A : n(xA.f)
+/\ \A xB \in B : m(f.xB)
+```
+
+
+Run and check rules:
+
+- All commands are translated
+- Subtypes may be scoped
+- run predicate or run block
+- run for (n but) (exactly? m S)*
+- this needs a resolution step - for each sig (may or may not be top-level), (int value, bool exact)
+- this is translated into both the TLA+ and the cfg
+- One command per translation
+- if flag left unspecified, command is
+`run {} for 4` 
+
+## Macros:
+
+- let is a global macro, not bound using in (i.e. not necessarily)
+- thus, there are three approaches
+- one - pre-translate the macro by editing the AST
+- two - expand them in the translation using a DSL-generator
+- three - make equivalent macros in translation

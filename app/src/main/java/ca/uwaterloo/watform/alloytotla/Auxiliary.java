@@ -2,12 +2,14 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.Qual;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Auxiliary {
@@ -82,6 +84,10 @@ public class Auxiliary {
                         });
         }
         return answer;
+    }
+
+    public static Optional<AlloyBlock> getAlloyBlock(String signame, AlloyModel am) {
+        return getSigParaWithName(signame, am).block;
     }
 
     public static List<String> getParentNames(String signame, AlloyModel am) {
