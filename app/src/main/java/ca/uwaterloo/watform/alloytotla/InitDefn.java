@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
+
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 

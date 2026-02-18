@@ -2,13 +2,11 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
-import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.tlaliterals.*;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SigConsts {
 
