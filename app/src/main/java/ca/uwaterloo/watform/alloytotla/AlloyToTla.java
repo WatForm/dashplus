@@ -10,7 +10,7 @@ public class AlloyToTla {
     public static TlaModel translate(
             AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
 
-        AlloyModelResolved amr = new AlloyModelResolved(alloyModel);
+        new AlloyModelResolved(alloyModel);
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 

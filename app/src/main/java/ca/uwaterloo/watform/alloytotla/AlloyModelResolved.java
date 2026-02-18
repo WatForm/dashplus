@@ -9,11 +9,12 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AlloyModelResolved {
+public class AlloyModelResolved extends AlloyModel {
 
     AlloyModel am;
 
     public AlloyModelResolved(AlloyModel am) {
+
         this.am = am;
         this.sigTable = new HashMap<>();
         this.fieldTable = new HashMap<>();
@@ -67,6 +68,15 @@ public class AlloyModelResolved {
         // debug
         System.out.println(this.sigTable.toString());
         System.out.println(this.fieldTable.toString());
+    }
+
+    private void resolveFields() {
+        this.am
+                .getParas(AlloySigPara.class)
+                .forEach(
+                        sp -> {
+                            System.out.println(sp.fields);
+                        });
     }
 
     private void populateNames() {

@@ -33,6 +33,12 @@ public class SigConstraints {
     private static List<TlaExp> constraints(String sig, AlloyModel alloyModel) {
         List<TlaExp> constraints = new ArrayList<>();
 
+        Auxiliary.getAlloyBlock(sig, alloyModel)
+                .ifPresent(
+                        b -> {
+                            constraints.add(new AlloyToTlaExprVis().visit(b));
+                        });
+
         if (Auxiliary.isOneSig(sig, alloyModel)) constraints.add(_ONE(TlaVar(sig)));
         if (Auxiliary.isLoneSig(sig, alloyModel)) constraints.add(_LONE(TlaVar(sig)));
         if (Auxiliary.isSomeSig(sig, alloyModel)) constraints.add(_SOME(TlaVar(sig)));
