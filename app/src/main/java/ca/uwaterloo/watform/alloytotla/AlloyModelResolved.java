@@ -10,10 +10,12 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AlloyModelResolved extends AlloyModel {
+public class AlloyModelResolved{
 
-    public AlloyModelResolved(AlloyFile alloyFile) {
-        super(alloyFile);
+	AlloyModel am;
+
+    public AlloyModelResolved(AlloyModel am) {
+        this.am = am;
         resolve();
     }
 
@@ -49,6 +51,10 @@ public class AlloyModelResolved extends AlloyModel {
         populateNames(); // first pass, to get the sig names
         populateParentsChildren(); // second pass, to populate the parents and children
         populateAncestorsDescendants(); // third pass, transitively fill table with memoization
+
+		// debug
+		System.out.println(this.sigTable.toString());
+		System.out.println(this.fieldTable.toString());
     }
 
     private void populateAncestorsDescendants() 
@@ -57,7 +63,7 @@ public class AlloyModelResolved extends AlloyModel {
 	}
 
     private void populateNames() {
-        this.getParas(AlloySigPara.class)
+        this.am.getParas(AlloySigPara.class)
                 .forEach(
                         sp -> {
                             String name = sp.qnames.get(0).toString();
