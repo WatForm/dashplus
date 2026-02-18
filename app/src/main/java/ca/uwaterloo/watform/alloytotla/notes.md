@@ -132,12 +132,13 @@ A set -> q (B m -> n C)   # this is the left exception interpretation
 m = one
 n = one
 q = set
-exactly 2 A, 1 B, 1 C
+exactly 2 A, exactly 1 B, exactly 1 C
 
 In the first interpretation: 
 A set -> set (B one -> one C)
 
-There will be 4 instances
+There will be 1 instance:
+{(a0,(b0,c0)),(a1,(b0,c0))}
 
 
 In the second interpretation:
@@ -145,4 +146,42 @@ In the second interpretation:
 There will be 0 instances because there cannot be a one-one relation when one set has 4 elements
 ```
 
+Thus, the first interpretation is correct, since Alloy produced 1 instance.
 
+Sanity check:
+
+When running for `2 A, exactly 1 B, exactly 1 C` we expect 4 instances, which is what the Analyzer shows (absent symmetry breaking)
+
+When translating with PID:
+```
+sig A
+{
+    f : B -> C -> D
+}
+```
+cannot become 
+```
+sig A
+{
+    f : PID -> B -> C -> D
+}
+```
+it should be
+```
+sig PID
+{
+    f : A -> (B -> C -> D)
+}
+```
+
+General translation:
+
+```
+A m -> n B
+```
+
+```
+f \in SUBSET (A \X B)
+/\ \A xA \in A : n(xA.f)
+/\ \A xB \in B : m(f.xB)
+```
