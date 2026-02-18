@@ -182,18 +182,33 @@ public class StatesDM extends TransDM {
     */
     public List<DashRef> leafStatesEnteredInScope(DashRef context, DashRef dest) {
 
+        // System.out.println("scope");
+        // System.out.println(context);
+        // System.out.println("dest");
+        // System.out.println(dest);
+
         List<DashRef> cR = prefixDashRefs(context);
         List<DashRef> dR = prefixDashRefs(dest);
+        // cr.size() <= dr.size()
 
+        // System.out.println("prefixDashRefs of scope");
+        // System.out.println(cR);
+        // System.out.println("prefixDashRefs of dest");
+        // System.out.println(dR);
         List<DashRef> r = new ArrayList<DashRef>(); // result
 
-        int p = 0; // parameter value position
+        // first deal with entering any concurrent regions
+        // within cr but outside of dr
+
         List<AlloyExpr> xP = new ArrayList<AlloyExpr>(); // parameters carrying forward
         List<AlloyExpr> nP; // parameters for each addition
         AlloyExpr e1;
         AlloyExpr e2;
-        for (int i = 0; i < cR.size(); i++) {
-            DashRef c = cR.get(i);
+        int p = 0; // parameter value position
+
+        // walking over all the prefixDashRefs
+        for (DashRef c : cR) {
+            // question: what if it does not have parameters???
             if (isAnd(c.name) && stateHasParams(c.name)) {
                 nP = new ArrayList<AlloyExpr>(xP);
                 e1 = lastElement(c.paramValues);
@@ -203,7 +218,7 @@ public class StatesDM extends TransDM {
                     r.addAll(leafStatesEntered(new StateDashRef(c.name, nP)));
                 } // if equal this is empty so don't include it
                 xP.add(e2); // just e2 for next one
-                p++;
+                p++; // p only goes up if there are params
             }
         }
         // we've dealt with all the side paths in cR of dR (including the last one in CR)
@@ -248,7 +263,10 @@ public class StatesDM extends TransDM {
             }
             // if its an OR state, just go on to the next one
         }
+        // now add what we enter at the destination
         r.addAll(leafStatesEntered(dest));
+        // System.out.println("leafStatesEnteredInScope");
+        // System.out.println(r);
         return r;
     }
 

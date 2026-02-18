@@ -1,3 +1,11 @@
+/*
+    Because Solution is a class (and A4Solution is a class inside our Solution class, only one solution can exist at any time, thus
+    getting a list of Solutions is not an option.  We can iterate
+    soln.next() and writeXML right away but we cannot get a list of
+    satisfying solutions by iterating soln.next() because it will just
+    be a list of the same objects.
+*/
+
 package ca.uwaterloo.watform.alloyinterface;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
@@ -13,8 +21,6 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class AlloyInterface {
@@ -38,15 +44,16 @@ public class AlloyInterface {
     // and DashModel
     // assumption: cmdnum exists
     private static Solution executeCommand(String alloyCode, int cmdnum) {
-        System.out.println("Command: " + String.valueOf(cmdnum));
+        blue("Command: " + String.valueOf(cmdnum));
         // this will put in a cmd 0: run {} if there are no other cmds
         CompModule alloy = parse(alloyCode);
         A4Reporter rep = new A4Reporter();
         Command cmd = alloy.getAllCommands().get(cmdnum);
-        System.out.println(cmd);
+        blue(String.valueOf(cmd));
         A4Solution ans =
                 TranslateAlloyToKodkod.execute_command(
                         rep, alloy.getAllReachableSigs(), cmd, new A4Options());
+        blue("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
         return new Solution(ans, alloy);
     }
 
@@ -98,11 +105,20 @@ public class AlloyInterface {
             String instanceFileName, // should not include .xml at end
             Integer maxInstances) {
         assert (!instanceFileName.contains(".xml"));
-        List<Solution> solnList = getInstances(am, cmdNum, maxInstances);
-        for (int i = 0; i < solnList.size(); i++) {
-            solnList.get(i).writeXML(instanceFileName + String.valueOf(i) + ".xml");
+        assert (cmdNum >= NOCMD);
+
+        // at this point we don't know if it is satisfiable
+        Solution soln =
+                (cmdNum == NOCMD) ? checkModelSatisfiability(am) : executeCommand(am, cmdNum);
+        int c;
+        for (c = 1; c <= maxInstances; c++) {
+            if (!(soln.isSat())) break;
+            String iFile = instanceFileName + String.valueOf(c) + ".xml";
+            soln.writeXML(iFile);
+            blue("Wrote " + iFile);
+            soln.next();
         }
-        return solnList.size();
+        return c - 1;
     }
 
     // returns number of instances written to file(s)
@@ -111,26 +127,5 @@ public class AlloyInterface {
             String instanceFileName, // should not include .xml at end
             Integer maxInstances) {
         return writeInstancesToXML(am, NOCMD, instanceFileName, maxInstances);
-    }
-
-    public static List<Solution> getInstances(AlloyModel am, Integer maxInstances) {
-        return getInstances(am, NOCMD, maxInstances);
-    }
-
-    public static List<Solution> getInstances(AlloyModel am, Integer cmdNum, Integer maxInstances) {
-        // -1 means ignore commands and just check model satisfiability
-        assert (cmdNum >= NOCMD);
-        // at this point we don't know if it is satisfiable
-        List<Solution> solnList = new ArrayList<Solution>();
-        Solution soln =
-                (cmdNum == NOCMD) ? checkModelSatisfiability(am) : executeCommand(am, cmdNum);
-        int c;
-        for (c = 0; c < maxInstances; c++) {
-            if (!(soln.isSat() && c <= maxInstances)) break;
-            int j = c + 1;
-            solnList.add(soln);
-            soln.next();
-        }
-        return solnList;
     }
 }
