@@ -129,7 +129,11 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                 // and if there are no params, it is just
                 // vfqn: X m -> n Y
                 arrowList.add(this.translateExpr(dm.varTyp(vfqn)));
-                decl = AlloyDecl(DashFQN.translateFQN(vfqn), AlloyArrowExprList(arrowList));
+                decl =
+                        new AlloyDecl(
+                                DashFQN.translateFQN(vfqn),
+                                AlloyDecl.Quant.SET,
+                                AlloyArrowExprList(arrowList));
 
             } else if (varTyp instanceof AlloyQtExpr) {
                 // x: one A
@@ -166,7 +170,11 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
                     arrowList = allButLast(arrowList);
                     arrowList.add(lastArrow);
-                    decl = AlloyDecl(DashFQN.translateFQN(vfqn), AlloyArrowExprList(arrowList));
+                    decl =
+                            new AlloyDecl(
+                                    DashFQN.translateFQN(vfqn),
+                                    AlloyDecl.Quant.SET,
+                                    AlloyArrowExprList(arrowList));
                 }
             } else {
                 throw ImplementationError.notSupported();

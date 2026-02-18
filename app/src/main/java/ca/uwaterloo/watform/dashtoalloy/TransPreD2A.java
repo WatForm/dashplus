@@ -74,18 +74,19 @@ public class TransPreD2A extends InvsD2A {
             // trig_events_t1
             DashRef ev = this.dm.onR(tfqn);
             int sz = ev.paramValues.size();
-            AlloyExpr ifBranch;
             if (this.dm.isIntEvent(ev.name)) {
-                ifBranch = AlloyFalseCond();
+                // this transition can never be triggered
+                // when the snapshot is stable
+                body.add(AlloyNot(this.dsl.curStableTrue()));
             } else {
-                ifBranch =
+                AlloyExpr ifBranch =
                         AlloyIn(
                                 ev.asAlloyArrow(),
                                 this.dsl.RangeResLevel(
                                         this.dsl.curEvents(sz), this.dsl.allEnvEventsVar(), sz));
+                AlloyExpr elseBranch = AlloyIn(ev.asAlloyArrow(), this.dsl.curEvents(sz));
+                body.add(AlloyIte(this.dsl.curStableTrue(), ifBranch, elseBranch));
             }
-            AlloyExpr elseBranch = AlloyIn(ev.asAlloyArrow(), this.dsl.curEvents(sz));
-            body.add(AlloyIte(this.dsl.curStableTrue(), ifBranch, elseBranch));
         } else if (this.dm.onR(tfqn) != null) {
             DashRef ev = this.dm.onR(tfqn);
             int sz = ev.paramValues.size();
