@@ -15,7 +15,7 @@ public class TlaProductSet extends TlaInfixBinOp {
                 TlaStrings.SET_PRODUCT,
                 operandOne,
                 operandTwo,
-                TlaOperator.Associativity.IRRELEVANT,
+                TlaOperator.Associativity.UNSAFE,
                 PrecedenceGroup.SET_OPERATORS);
     }
 }

@@ -25,6 +25,9 @@
 * If-Then-Else --> ite
 * Comprehension --> cph
 * Command --> cmd
+* Override --> ovrd
+* range --> rng
+* domain --> dom
 
 ### Domain-specific:
 

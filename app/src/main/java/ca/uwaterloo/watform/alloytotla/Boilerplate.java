@@ -7,8 +7,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.*;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaTrue;
-import ca.uwaterloo.watform.tlaast.tlaquantops.TlaSetMap;
 import ca.uwaterloo.watform.tlamodel.*;
 import java.util.*;
 
@@ -138,7 +136,7 @@ public class Boilerplate {
 
     private static TlaDefn transpose() {
         // _transpose(R) == {<<y,x>> : <<x,y>> \in R}
-        TlaSetMap body =
+        TlaExp body =
                 TlaSetMap(
                         TlaQuantOpHeadTuple(Arrays.asList(X(), Y()), R()),
                         TlaTuple(Arrays.asList(Y(), X())));

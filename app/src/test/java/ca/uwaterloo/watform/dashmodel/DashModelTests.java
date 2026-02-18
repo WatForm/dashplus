@@ -102,14 +102,14 @@ public class DashModelTests {
     @Test
     public void paramSrcDest1() {
         DashModel d = test("paramSrcDest1");
-        assertEquals(src(d, "Root/A/t1"), "Root/A[p0_APID]");
-        assertEquals(dest(d, "Root/A/t1"), "Root/A[p0_APID]");
+        assertEquals(src(d, "Root/A/t1"), "Root/A[p_Root_A]");
+        assertEquals(dest(d, "Root/A/t1"), "Root/A[p_Root_A]");
     }
 
     @Test
     public void paramSrcDest2() {
         DashModel d = test("paramSrcDest2");
-        assertEquals(src(d, "Root/A/t1"), "Root/A[p0_APID]");
+        assertEquals(src(d, "Root/A/t1"), "Root/A[p_Root_A]");
         assertEquals(dest(d, "Root/A/t1"), "Root/B/S1[x]");
     }
 
@@ -180,34 +180,45 @@ public class DashModelTests {
     }
 
     // prefixDashRefs ----------------------
+    // prefix dash refs of scope of transition
+    // slashes in these b/c they have not been translated
 
+    // "x" is a sig external to Dash so no FQN
     @Test
     public void prefixDashRefs1() {
         DashModel d = test("scopeParam1");
         assertEquals(
+                d.scope("Root/A/S1/t1").toString(), "Root/A[p_Root_A = x => p_Root_A else APID]");
+        assertEquals(
                 prefixDashRefs(d, "Root/A/S1/t1"),
-                ll(new String[] {"Root", "Root/A[(p0_APID = x => p0_APID else APID)]"}));
+                ll(new String[] {"Root", "Root/A[p_Root_A = x => p_Root_A else APID]"}));
     }
 
+    // "x" is a var decl within Root so it has an FQN
     @Test
     public void prefixDashRefs2() {
         DashModel d = test("scopeParam2");
+        assertEquals(
+                d.scope("Root/A/B/S1/t1").toString(),
+                "Root/A/B[p_Root_A = Root/x => p_Root_A else APID, p_Root_A = Root/x and p_Root_A_B = Root/y => p_Root_A_B else BPID]");
         assertEquals(
                 prefixDashRefs(d, "Root/A/B/S1/t1"),
                 ll(
                         new String[] {
                             "Root",
-                            "Root/A[(p0_APID = x => p0_APID else APID)]",
-                            "Root/A/B[(p0_APID = x => p0_APID else APID), (AND[p0_APID = x, p1_BPID = y] => p1_BPID else BPID)]"
+                            "Root/A[p_Root_A = Root/x => p_Root_A else APID]",
+                            "Root/A/B[p_Root_A = Root/x => p_Root_A else APID, p_Root_A = Root/x and p_Root_A_B = Root/y => p_Root_A_B else BPID]"
                         }));
     }
 
+    // no parameter values in src or dest
     @Test
     public void prefixDashRefs3() {
         DashModel d = test("scopeParam3");
+        assertEquals(d.scope("Root/A/B/S1/t1").toString(), "Root/A/B[p_Root_A, p_Root_A_B]");
         assertEquals(
                 prefixDashRefs(d, "Root/A/B/S1/t1"),
-                ll(new String[] {"Root", "Root/A[p0_APID]", "Root/A/B[p0_APID, p1_BPID]"}));
+                ll(new String[] {"Root", "Root/A[p_Root_A]", "Root/A/B[p_Root_A, p_Root_A_B]"}));
     }
 
     @Test
