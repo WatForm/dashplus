@@ -85,17 +85,14 @@ public class AlloyModelResolved extends AlloyModel {
                 .rel
                 .ifPresent(
                         x -> {
-                            if (x instanceof AlloySigPara.Extends)
-							{
-								String sigParent = ((AlloySigPara.Extends) x).sigRef.toString();
-								answer.set(sigParent);
-								sigTable.get(sigParent).extendsChildren.add(sig);
-							}
-                                
-
+                            if (x instanceof AlloySigPara.Extends) {
+                                String sigParent = ((AlloySigPara.Extends) x).sigRef.toString();
+                                answer.set(sigParent);
+                                sigTable.get(sigParent).extendsChildren.add(sig);
+                            }
                         });
 
-        sigTable.get(sn).extendsParent = Optional.ofNullable(answer.get());
+        sigTable.get(sig).extendsParent = Optional.ofNullable(answer.get());
     }
 
     private void populateInParentsChildren(String sig) {
@@ -151,12 +148,11 @@ public class AlloyModelResolved extends AlloyModel {
         return this.sigTable.get(signame).extendsChildren;
     }
 
-	public List<String> getAllChildren(String signame)
-	{
-		List<String> answer = getInChildren(signame);
-		answer.addAll(getExtendsChildren(signame));
-		return answer;
-	}
+    public List<String> getAllChildren(String signame) {
+        List<String> answer = getInChildren(signame);
+        answer.addAll(getExtendsChildren(signame));
+        return answer;
+    }
 
     public boolean isTopLevelSig(String signame) {
         return this.sigTable.get(signame).para.isTopLevel();
