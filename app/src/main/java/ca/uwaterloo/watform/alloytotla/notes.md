@@ -129,6 +129,14 @@ f : q B m -> n C
 A set -> q (B m -> n C)   # this is the left exception interpretation
 (A set -> q B) m -> n C    # this is the total left interpretation
 
+
+sig A {
+    f : B -> C -> D -> E
+}
+
+1) A -> (((B->C)->D)->E)
+2) ((((A->B)->C)->D)->E)
+
 m = one
 n = one
 q = set

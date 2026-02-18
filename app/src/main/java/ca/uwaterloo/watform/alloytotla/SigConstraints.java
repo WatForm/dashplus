@@ -36,6 +36,7 @@ public class SigConstraints {
         Auxiliary.getAlloyBlock(sig, alloyModel)
                 .ifPresent(
                         b -> {
+                            // universal quantification for facts
                             constraints.add(new AlloyToTlaExprVis().visit(b));
                         });
 
