@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.Qual;
@@ -10,12 +9,14 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AlloyModelResolved{
+public class AlloyModelResolved {
 
-	AlloyModel am;
+    AlloyModel am;
 
     public AlloyModelResolved(AlloyModel am) {
         this.am = am;
+        this.sigTable = new HashMap<>();
+        this.fieldTable = new HashMap<>();
         resolve();
     }
 
@@ -25,14 +26,26 @@ public class AlloyModelResolved{
         Optional<String> extendsParent;
         List<String> inChildren;
         List<String> extendsChildren;
-        List<String> topLevelParents;
         List<String> descs;
         List<String> ances;
 
-		@Override
-		public String toString() {
-			return "inParents: "+inParents.toString()+"\nextendsParent: "+extendsParent.toString()+"\ninChildren: "+inChildren.toString()+"\nextendsChildren: "+extendsChildren.toString()+"\ntop-level-Parents: "+topLevelParents.toString()+"\nDescendants: "+descs.toString()+"\nancestors: "+ances.toString();
-		}
+        @Override
+        public String toString() {
+            return "\ninParents: "
+                    + inParents.toString()
+                    + "\nextendsParent: "
+                    + extendsParent.toString()
+                    + "\ninChildren: "
+                    + inChildren.toString()
+                    + "\nextendsChildren: "
+                    + extendsChildren.toString()
+                    /*
+                    + "\nDescendants: "
+                    + descs.toString()
+                    + "\nancestors: "
+                    + ances.toString() */
+                    + "\n";
+        }
 
         SignatureRecord(AlloySigPara p) {
             this.para = p;
@@ -52,18 +65,16 @@ public class AlloyModelResolved{
         populateParentsChildren(); // second pass, to populate the parents and children
         populateAncestorsDescendants(); // third pass, transitively fill table with memoization
 
-		// debug
-		System.out.println(this.sigTable.toString());
-		System.out.println(this.fieldTable.toString());
+        // debug
+        System.out.println(this.sigTable.toString());
+        System.out.println(this.fieldTable.toString());
     }
 
-    private void populateAncestorsDescendants() 
-	{
-
-	}
+    private void populateAncestorsDescendants() {}
 
     private void populateNames() {
-        this.am.getParas(AlloySigPara.class)
+        this.am
+                .getParas(AlloySigPara.class)
                 .forEach(
                         sp -> {
                             String name = sp.qnames.get(0).toString();
