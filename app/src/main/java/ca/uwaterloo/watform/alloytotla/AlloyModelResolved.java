@@ -20,7 +20,7 @@ public class AlloyModelResolved {
         resolve();
     }
 
-    private static class SignatureRecord {
+    private static class SignatureData {
         AlloySigPara para;
         List<String> inParents = null;
         Optional<String> extendsParent = null;
@@ -46,18 +46,18 @@ public class AlloyModelResolved {
                     + "\n";
         }
 
-        SignatureRecord(AlloySigPara p) {
+        SignatureData(AlloySigPara p) {
             this.para = p;
         }
     }
 
-    private static class FieldRecord {
+    private static class FieldData {
         String sigParent;
         AlloyDecl decl;
     }
 
-    private HashMap<String, SignatureRecord> sigTable;
-    private HashMap<String, FieldRecord> fieldTable;
+    private HashMap<String, SignatureData> sigTable;
+    private HashMap<String, FieldData> fieldTable;
 
     private void resolve() {
         populateNames(); // first pass, to get the sig names
@@ -69,13 +69,13 @@ public class AlloyModelResolved {
         System.out.println(this.fieldTable.toString());
     }
 
-	private void populateNames() {
+    private void populateNames() {
         this.am
                 .getParas(AlloySigPara.class)
                 .forEach(
                         sp -> {
                             String name = sp.qnames.get(0).toString();
-                            SignatureRecord r = new SignatureRecord(sp);
+                            SignatureData r = new SignatureData(sp);
                             this.sigTable.put(name, r);
                         });
     }
@@ -99,11 +99,12 @@ public class AlloyModelResolved {
         getAllParents(signame)
                 .forEach(
                         sc -> {
+                            answer.add(sc);
                             answer.addAll(AncestorsHelper(sc)); // recursion
                         });
 
         sigTable.get(signame).ances = answer; // memoization
-		System.out.println(answer.size());
+        System.out.println(answer.size());
         return answer;
     }
 
@@ -114,6 +115,7 @@ public class AlloyModelResolved {
         getAllChildren(signame)
                 .forEach(
                         sp -> {
+                            answer.add(sp);
                             answer.addAll(DescendantsHelper(sp)); // recursion
                         });
 
@@ -121,14 +123,12 @@ public class AlloyModelResolved {
         return answer;
     }
 
-    
-
     private void populateParentsChildren() {
         this.sigTable
                 .keySet()
                 .forEach(
                         sn -> {
-                            SignatureRecord entry = this.sigTable.get(sn);
+                            SignatureData entry = this.sigTable.get(sn);
                             entry.inParents = new ArrayList<>();
                             entry.inChildren = new ArrayList<>();
                             entry.extendsChildren = new ArrayList<>();
