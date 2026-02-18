@@ -22,12 +22,12 @@ public class AlloyModelResolved {
 
     private static class SignatureRecord {
         AlloySigPara para;
-        List<String> inParents;
-        Optional<String> extendsParent;
-        List<String> inChildren;
-        List<String> extendsChildren;
-        List<String> descs; // null when not resolved
-        List<String> ances;
+        List<String> inParents = null;
+        Optional<String> extendsParent = null;
+        List<String> inChildren = null;
+        List<String> extendsChildren = null;
+        List<String> descs = null; // null when not resolved
+        List<String> ances = null;
 
         @Override
         public String toString() {
@@ -39,11 +39,10 @@ public class AlloyModelResolved {
                     + inChildren.toString()
                     + "\nextendsChildren: "
                     + extendsChildren.toString()
-                    /*
-                    + "\nDescendants: "
+                    + "\ndescendants: "
                     + descs.toString()
                     + "\nancestors: "
-                    + ances.toString() */
+                    + ances.toString()
                     + "\n";
         }
 
@@ -71,6 +70,8 @@ public class AlloyModelResolved {
     }
 
     private void populateAncestorsDescendants() {
+
+        System.out.println("top-lvl");
         this.sigTable
                 .keySet()
                 .forEach(
@@ -84,7 +85,7 @@ public class AlloyModelResolved {
         if (sigTable.get(signame).ances != null) return sigTable.get(signame).ances; // base case
 
         List<String> answer = new ArrayList<>();
-        getAllChildren(signame)
+        getAllParents(signame)
                 .forEach(
                         sc -> {
                             answer.addAll(AncestorsHelper(sc)); // recursion
@@ -98,7 +99,7 @@ public class AlloyModelResolved {
         if (sigTable.get(signame).descs != null) return sigTable.get(signame).descs; // base case
 
         List<String> answer = new ArrayList<>();
-        getAllParents(signame)
+        getAllChildren(signame)
                 .forEach(
                         sp -> {
                             answer.addAll(DescendantsHelper(sp)); // recursion
