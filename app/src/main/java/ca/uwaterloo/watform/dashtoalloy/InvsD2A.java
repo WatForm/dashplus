@@ -57,6 +57,7 @@ public class InvsD2A extends InitsD2A {
 
             // remember invs is a fact, not a pred
             if (!this.isElectrum && this.dsl.containsVar(body, this.dsl.curVar())) {
+
                 decls = this.dsl.emptyDeclList();
                 decls.add(this.dsl.curDecl());
                 e = AlloyAllVars(decls, AlloyAndList(body));

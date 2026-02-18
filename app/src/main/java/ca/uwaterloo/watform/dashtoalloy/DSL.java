@@ -344,7 +344,7 @@ public class DSL {
 
     public boolean containsVar(List<AlloyExpr> exprs, AlloyQnameExpr varToFind) {
         ContainsVarExprVis cvis = new ContainsVarExprVis(varToFind);
-        return allFalse(mapBy(exprs, e -> cvis.visit(e)));
+        return someTrue(mapBy(exprs, e -> cvis.visit(e)));
     }
 
     public AlloyExpr AlloyPredCall(String predName, List<AlloyExpr> exprList) {

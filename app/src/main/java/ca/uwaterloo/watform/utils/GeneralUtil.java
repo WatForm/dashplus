@@ -210,6 +210,10 @@ public class GeneralUtil {
         return !blist.contains(false);
     }
 
+    public static boolean someTrue(List<Boolean> blist) {
+        return blist.contains(true);
+    }
+
     public static boolean allFalse(List<Boolean> blist) {
         return !blist.contains(true);
     }

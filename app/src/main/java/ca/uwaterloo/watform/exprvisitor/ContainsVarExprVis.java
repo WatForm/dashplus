@@ -52,21 +52,21 @@ public class ContainsVarExprVis implements AlloyExprVis<Boolean> {
         // since we are looking for a parameter variable
         // this is probably sufficient
         // but it is not general enough for other cases
-        return (varExpr instanceof AlloyQnameExpr
-                && ((AlloyQnameExpr) varExpr).label.equals(this.varToFind.label));
+
+        return (varExpr instanceof AlloyQnameExpr && varExpr.label.equals(this.varToFind.label));
     }
 
     public Boolean visit(AlloyBlock blockExpr) {
-        return !allFalse(mapBy(blockExpr.exprs, e -> this.visit(e)));
+        return someTrue(mapBy(blockExpr.exprs, e -> this.visit(e)));
     }
 
     public Boolean visit(AlloyBracketExpr bracketExpr) {
-        return !allFalse(mapBy(bracketExpr.exprs, e -> this.visit(e)));
+        return someTrue(mapBy(bracketExpr.exprs, e -> this.visit(e)));
     }
 
     public Boolean visit(AlloyCphExpr comprehensionExpr) {
-        return !allFalse(mapBy(comprehensionExpr.decls, i -> this.visit(i)))
-                || !comprehensionExpr.body.map(b -> this.visit(b)).orElse(false);
+        return someTrue(mapBy(comprehensionExpr.decls, i -> this.visit(i)))
+                || comprehensionExpr.body.map(b -> this.visit(b)).orElse(false);
     }
 
     public Boolean visit(AlloyIteExpr iteExpr) {
