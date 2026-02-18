@@ -77,7 +77,9 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         // stable: one boolean;
         if (dm.hasConcurrency()) {
-            decls.add(AlloyDecl(D2AStrings.stableName, this.dsl.AlloyOneBool()));
+            decls.add(
+                    new AlloyDecl(
+                            D2AStrings.stableName, AlloyDecl.Quant.ONE, this.dsl.AlloyBool()));
         }
 
         decls.addAll(this.varFieldsTraces());
