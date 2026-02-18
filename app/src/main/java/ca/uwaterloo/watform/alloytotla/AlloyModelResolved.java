@@ -26,7 +26,7 @@ public class AlloyModelResolved {
         Optional<String> extendsParent;
         List<String> inChildren;
         List<String> extendsChildren;
-        List<String> descs;
+        List<String> descs; // null when not resolved
         List<String> ances;
 
         @Override
@@ -63,14 +63,50 @@ public class AlloyModelResolved {
     private void resolve() {
         populateNames(); // first pass, to get the sig names
         populateParentsChildren(); // second pass, to populate the parents and children
-        populateAncestorsDescendants(); // third pass, transitively fill table with memoization
+        populateAncestorsDescendants(); // recursive pass, transitively fill table, with memoization
 
         // debug
         System.out.println(this.sigTable.toString());
         System.out.println(this.fieldTable.toString());
     }
 
-    private void populateAncestorsDescendants() {}
+    private void populateAncestorsDescendants() {
+        this.sigTable
+                .keySet()
+                .forEach(
+                        sig -> {
+                            AncestorsHelper(sig);
+                            DescendantsHelper(sig);
+                        });
+    }
+
+    private List<String> AncestorsHelper(String signame) {
+        if (sigTable.get(signame).ances != null) return sigTable.get(signame).ances; // base case
+
+        List<String> answer = new ArrayList<>();
+        getAllChildren(signame)
+                .forEach(
+                        sc -> {
+                            answer.addAll(AncestorsHelper(sc)); // recursion
+                        });
+
+        sigTable.get(signame).ances = answer; // memoization
+        return answer;
+    }
+
+    private List<String> DescendantsHelper(String signame) {
+        if (sigTable.get(signame).descs != null) return sigTable.get(signame).descs; // base case
+
+        List<String> answer = new ArrayList<>();
+        getAllParents(signame)
+                .forEach(
+                        sp -> {
+                            answer.addAll(DescendantsHelper(sp)); // recursion
+                        });
+
+        sigTable.get(signame).descs = answer; // memoization
+        return answer;
+    }
 
     private void populateNames() {
         this.am
