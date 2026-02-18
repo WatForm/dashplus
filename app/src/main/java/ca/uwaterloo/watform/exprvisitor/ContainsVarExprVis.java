@@ -52,7 +52,6 @@ public class ContainsVarExprVis implements AlloyExprVis<Boolean> {
         // since we are looking for a parameter variable
         // this is probably sufficient
         // but it is not general enough for other cases
-
         return (varExpr instanceof AlloyQnameExpr && varExpr.label.equals(this.varToFind.label));
     }
 

@@ -351,8 +351,8 @@ public class DSL {
         return new AlloyBracketExpr(AlloyVar(predName), exprList);
     }
 
-    public AlloyExpr AlloyBool() {
-        return AlloyVar(AlloyStrings.boolName);
+    public AlloyExpr AlloyOneBool() {
+        return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(AlloyStrings.boolName));
     }
 
     public DashRef asScope(DashRef e) {
@@ -394,7 +394,7 @@ public class DSL {
                 // by default this is A set -> set B
                 o = new AlloyArrowExpr(AlloyVar(s), o);
             }
-            return new AlloyDecl(name, AlloyDecl.Quant.SET, o);
+            return AlloyDecl(name, o);
         }
     }
 }

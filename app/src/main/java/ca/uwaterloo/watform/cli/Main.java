@@ -11,9 +11,12 @@ import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtotla.*;
+import ca.uwaterloo.watform.debugcli.DebugCli;
+import ca.uwaterloo.watform.debugcli.DebugDashSimulationManager;
 import ca.uwaterloo.watform.predabstraction.PredicateAbstraction;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.visualization.ControlStateHierarchyVisualizer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,7 +51,7 @@ import picocli.CommandLine.Mixin;
             "",
             // 2) Dash -> Alloy
             "  @|bold 2) dashplus f.dsh -alloy=< traces | tcmc | electrum >|@",
-            "              @|bold < -cmd | -cmd=n | -write | -noCmd > < -s > < -v > < -d > < -vis > |@",
+            "              @|bold < -cmd | -cmd=n | -write | -noCmd | -visualize > < -s > < -v > < -d > < -vis > |@",
             "     (parse/translate to alloy/execute cmd(s) or write .als file in same dir)",
             "     @|italic DEFAULT:|@ dashplus f.dsh means dashplus f.dsh -alloy traces -write",
             "",
@@ -125,6 +128,21 @@ public class Main implements Callable<Integer> {
                     } else if (fileName.endsWith(".dsh")) {
                         // Dash Mode
                         DashModel dm = (DashModel) parseToModel(absolutePath);
+
+                        if (cliConf.visualize) {
+                            Path outputDir =
+                                    path.getParent() == null ? Paths.get(".") : path.getParent();
+                            ControlStateHierarchyVisualizer visualizer =
+                                    new ControlStateHierarchyVisualizer();
+                            String prefix =
+                                    path.getFileName().toString()
+                                            + "-"
+                                            + ControlStateHierarchyVisualizer.DEFAULT_PREFIX;
+                            visualizer.visualize(dm, outputDir, prefix);
+                            System.out.println(
+                                    "Visualization output: " + outputDir.resolve(prefix + ".dot"));
+                        }
+
                         AlloyModel am = new DashToAlloy(dm).translate();
 
                         // change the filename from .dsh to .als for output
@@ -149,9 +167,15 @@ public class Main implements Callable<Integer> {
                         }
                         // executes and writes 5 instances of model with cmd run {}
                         int count = writeInstancesToXML(am, nameWithoutExtensionWithMethod, 5);
+                        System.out.println("Wrote " + String.valueOf(count) + " instance(s).");
 
                         // later add output about executing cmds
                         Reporter.INSTANCE.print();
+
+                        if (cliConf.debug) {
+                            System.out.println("Entering debug CLI...");
+                            new DebugCli(new DebugDashSimulationManager()).run();
+                        }
                     } else {
                         Reporter.INSTANCE.addError(invalidFile(fileName));
                     }

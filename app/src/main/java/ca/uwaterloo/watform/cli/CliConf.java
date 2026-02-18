@@ -58,7 +58,7 @@ public class CliConf {
     public boolean verbose = false;
 
     @Option(
-            names = {"-d", "--debug"},
+            names = {"-d", "--debug", "-debug"},
             description = "Enable debug output.")
     public boolean debug = false;
 
@@ -82,4 +82,9 @@ public class CliConf {
             names = {"-vis"},
             description = "use visualization tool")
     public boolean vis = false;
+
+    @Option(
+            names = {"-visualize", "--visualize"},
+            description = "visualize Dash models")
+    public boolean visualize = false;
 }

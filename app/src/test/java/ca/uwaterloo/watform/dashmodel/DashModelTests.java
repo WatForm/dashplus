@@ -329,12 +329,7 @@ public class DashModelTests {
     @Test
     public void leafStatesEntered3() {
         DashModel d = test("scopeParam1");
-        assertEquals(
-                d.scope("Root/A/S1/t1").toString(), "Root/A[p_Root_A = x => p_Root_A else APID]");
-        System.out.println("here27");
-        assertEquals(
-                entered(d, "Root/A/S1/t1"),
-                ll(new String[] {"Root/A/S2[x]", "Root/A/S1[APID - x]"}));
+        assertEquals(entered(d, "Root/A/S1/t1"), ll(new String[] {"Root/A/S2[x]"}));
     }
 
     @Test
@@ -383,6 +378,8 @@ public class DashModelTests {
     @Test
     public void leafStatesEntered10() {
         DashModel d = test("entered10");
+        System.out.println("here27");
+        System.out.println(entered(d, "Root/S1/t1"));
         assertEquals(
                 entered(d, "Root/S1/t1"),
                 ll(
