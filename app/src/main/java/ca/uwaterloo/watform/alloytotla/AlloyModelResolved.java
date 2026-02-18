@@ -145,6 +145,13 @@ public class AlloyModelResolved extends AlloyModel {
         return this.sigTable.get(signame).extendsChildren;
     }
 
+	public List<String> getAllChildren(String signame)
+	{
+		List<String> answer = getInChildren(signame);
+		answer.addAll(getExtendsChildren(signame));
+		return answer;
+	}
+
     public boolean isTopLevelSig(String signame) {
         return this.sigTable.get(signame).para.isTopLevel();
     }
