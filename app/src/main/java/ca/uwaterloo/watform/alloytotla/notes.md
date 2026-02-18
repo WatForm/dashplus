@@ -185,3 +185,16 @@ f \in SUBSET (A \X B)
 /\ \A xA \in A : n(xA.f)
 /\ \A xB \in B : m(f.xB)
 ```
+
+
+Run and check rules:
+
+- All commands are translated
+- Subtypes may be scoped
+- run predicate or run block
+- run for (n but) (exactly? m S)*
+- this needs a resolution step - for each sig (may or may not be top-level), (int value, bool exact)
+- this is translated into both the TLA+ and the cfg
+- One command per translation
+- if flag left unspecified, command is
+`run {} for 4` 
