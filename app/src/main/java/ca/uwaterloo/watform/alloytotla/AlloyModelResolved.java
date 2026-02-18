@@ -69,6 +69,17 @@ public class AlloyModelResolved {
         System.out.println(this.fieldTable.toString());
     }
 
+	private void populateNames() {
+        this.am
+                .getParas(AlloySigPara.class)
+                .forEach(
+                        sp -> {
+                            String name = sp.qnames.get(0).toString();
+                            SignatureRecord r = new SignatureRecord(sp);
+                            this.sigTable.put(name, r);
+                        });
+    }
+
     private void populateAncestorsDescendants() {
 
         System.out.println("top-lvl");
@@ -92,6 +103,7 @@ public class AlloyModelResolved {
                         });
 
         sigTable.get(signame).ances = answer; // memoization
+		System.out.println(answer.size());
         return answer;
     }
 
@@ -109,16 +121,7 @@ public class AlloyModelResolved {
         return answer;
     }
 
-    private void populateNames() {
-        this.am
-                .getParas(AlloySigPara.class)
-                .forEach(
-                        sp -> {
-                            String name = sp.qnames.get(0).toString();
-                            SignatureRecord r = new SignatureRecord(sp);
-                            this.sigTable.put(name, r);
-                        });
-    }
+    
 
     private void populateParentsChildren() {
         this.sigTable
