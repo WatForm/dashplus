@@ -182,19 +182,19 @@ public class StatesDM extends TransDM {
     */
     public List<DashRef> leafStatesEnteredInScope(DashRef context, DashRef dest) {
 
-        System.out.println("scope");
-        System.out.println(context);
-        System.out.println("dest");
-        System.out.println(dest);
+        // System.out.println("scope");
+        // System.out.println(context);
+        // System.out.println("dest");
+        // System.out.println(dest);
 
         List<DashRef> cR = prefixDashRefs(context);
         List<DashRef> dR = prefixDashRefs(dest);
         // cr.size() <= dr.size()
 
-        System.out.println("prefixDashRefs of scope");
-        System.out.println(cR);
-        System.out.println("prefixDashRefs of dest");
-        System.out.println(dR);
+        // System.out.println("prefixDashRefs of scope");
+        // System.out.println(cR);
+        // System.out.println("prefixDashRefs of dest");
+        // System.out.println(dR);
         List<DashRef> r = new ArrayList<DashRef>(); // result
 
         // first deal with entering any concurrent regions
@@ -265,8 +265,8 @@ public class StatesDM extends TransDM {
         }
         // now add what we enter at the destination
         r.addAll(leafStatesEntered(dest));
-        System.out.println("leafStatesEnteredInScope");
-        System.out.println(r);
+        // System.out.println("leafStatesEnteredInScope");
+        // System.out.println(r);
         return r;
     }
 
