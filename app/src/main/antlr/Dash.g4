@@ -42,7 +42,7 @@ dashFile: paragraph* ;
 stateRoot 	: STATE name LBRACE stateItem* RBRACE ;
 
 stateItem 	: ENV? EVENT qnames LBRACE RBRACE									# dashEventDecls
-			| ENV? names COLON expr1 											# dashVarDecls
+			| ENV? names COLON (LONE | ONE | SOME | SET)? expr1 				# dashVarDecls
 			| names COLON BUF LBRACK (qname | SIGINT) RBRACK					# dashBufferDecls
 			| TRANS name LBRACE transItem* RBRACE								# dashTrans
 			| INIT block														# dashInit

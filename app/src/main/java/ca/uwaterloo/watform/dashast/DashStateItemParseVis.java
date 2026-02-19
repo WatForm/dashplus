@@ -54,9 +54,18 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
 
     @Override
     public DashVarDecls visitDashVarDecls(DashParser.DashVarDeclsContext ctx) {
+        DashVarDecls.Quant quant = DashVarDecls.Quant.ONE;
+        if (null != ctx.LONE()) {
+            quant = DashVarDecls.Quant.LONE;
+        } else if (null != ctx.SOME()) {
+            quant = DashVarDecls.Quant.SOME;
+        } else if (null != ctx.SET()) {
+            quant = DashVarDecls.Quant.SET;
+        }
         return new DashVarDecls(
                 new Pos(ctx),
                 this.extractNames(ctx.names()),
+                quant,
                 exprParseVis.visit(ctx.expr1()),
                 null != ctx.ENV() ? DashStrings.IntEnvKind.ENV : DashStrings.IntEnvKind.INT);
     }
