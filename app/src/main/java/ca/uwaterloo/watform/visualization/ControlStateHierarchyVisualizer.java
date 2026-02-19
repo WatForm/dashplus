@@ -35,35 +35,51 @@ public class ControlStateHierarchyVisualizer {
 
     private void buildHierarchy(
             DashModel dm, String nodeName, GraphPrinter gp, Set<String> highlightedStates) {
+        String formattedName = formatString(nodeName);
+        boolean isHighlighted = highlightedStates.contains(formattedName);
+        boolean isDefault = dm.isDefault(nodeName);
         boolean atMaxDepth = findNodeDepth(nodeName, dm) == maxDepth(dm, dm.rootName());
         if (!dm.isLeaf(nodeName) || !atMaxDepth) {
             if (dm.isRoot(nodeName)) {
-                gp.addln("subgraph cluster_" + formatString(nodeName) + " {");
+                gp.addln("subgraph cluster_" + formattedName + " {");
+                if (isHighlighted) {
+                    gp.addln("style=filled");
+                    gp.addln("fillcolor=yellow");
+                }
                 gp.addln("label=" + labelForNode(dm, nodeName));
                 if (dm.isAnd(nodeName)) {
                     gp.addln("style=dashed");
                 }
             } else {
-                gp.addln("subgraph cluster_" + formatString(nodeName) + " {");
-                if (highlightedStates.contains(formatString(nodeName))) {
+                gp.addln("subgraph cluster_" + formattedName + " {");
+                if (isHighlighted) {
+                    gp.addln("style=filled");
+                    gp.addln("fillcolor=yellow");
+                } else if (isDefault) {
                     gp.addln("style=filled");
                     gp.addln("fillcolor=yellow");
                 }
                 gp.addln("label=" + labelForNode(dm, nodeName));
-                gp.addln(formatString(nodeName) + " [style=invis,shape=point,  penwidth=0]");
+                gp.addln(formattedName + " [style=invis,shape=point,  penwidth=0]");
                 if (dm.isAnd(nodeName)) {
                     gp.addln("style=dashed");
                 }
             }
         } else {
-            if (highlightedStates.contains(formatString(nodeName))) {
+            if (isHighlighted) {
                 gp.addln(
-                        formatString(nodeName)
+                        formattedName
+                                + " [label="
+                                + labelForNode(dm, nodeName)
+                                + ", style=filled, fillcolor=yellow]");
+            } else if (isDefault) {
+                gp.addln(
+                        formattedName
                                 + " [label="
                                 + labelForNode(dm, nodeName)
                                 + ", style=filled, fillcolor=yellow]");
             } else {
-                gp.addln(formatString(nodeName) + " [label=" + labelForNode(dm, nodeName) + "]");
+                gp.addln(formattedName + " [label=" + labelForNode(dm, nodeName) + "]");
             }
         }
 
@@ -73,9 +89,7 @@ public class ControlStateHierarchyVisualizer {
 
         if (!dm.isLeaf(nodeName) || !atMaxDepth) {
             if (!dm.isRoot(nodeName)) {
-                gp.addln(
-                        formatString(nodeName)
-                                + "_other_side [style=invis,shape=point,penwidth=0]");
+                gp.addln(formattedName + "_other_side [style=invis,shape=point,penwidth=0]");
             }
             gp.addln("}");
         }
@@ -90,13 +104,14 @@ public class ControlStateHierarchyVisualizer {
             }
             String source = sourceRef.name;
             String destination = destRef.name;
+            String transitionLabel = labelFromFormatted(formatString(transition));
             if (findNodeDepth(source, dm) == maxDepth(dm, dm.rootName())) {
                 gp.addln(
                         formatString(source)
                                 + "->"
                                 + formatString(destination)
                                 + " [label="
-                                + formatString(transition)
+                                + transitionLabel
                                 + "]");
             } else {
                 gp.addln(
@@ -104,7 +119,7 @@ public class ControlStateHierarchyVisualizer {
                                 + "->"
                                 + formatString(destination)
                                 + "_other_side [label="
-                                + formatString(transition)
+                                + transitionLabel
                                 + ",ltail=cluster_"
                                 + formatString(source)
                                 + ",lhead=cluster_"
