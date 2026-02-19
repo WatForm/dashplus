@@ -244,7 +244,10 @@ public class AlloyExprFactory {
     }
 
     public static AlloyExpr AlloyIte(AlloyExpr cond, AlloyExpr conseq, AlloyExpr alt) {
-        return new AlloyIteExpr(cond, conseq, alt);
+        if (cond.equals(AlloyTrueCond())) return conseq;
+        else if (cond.equals(AlloyFalseCond())) return alt;
+        else if (conseq.equals(alt)) return conseq;
+        else return new AlloyIteExpr(cond, conseq, alt);
     }
 
     public static AlloyDecl.Quant QtQuantToDeclQuant(AlloyQtExpr.Quant quant) {

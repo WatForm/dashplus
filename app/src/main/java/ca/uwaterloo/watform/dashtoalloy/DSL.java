@@ -351,8 +351,8 @@ public class DSL {
         return new AlloyBracketExpr(AlloyVar(predName), exprList);
     }
 
-    public AlloyExpr AlloyOneBool() {
-        return new AlloyQtExpr(AlloyQtExpr.Quant.ONE, AlloyVar(AlloyStrings.boolName));
+    public AlloyExpr AlloyBool() {
+        return AlloyVar(AlloyStrings.boolName);
     }
 
     public DashRef asScope(DashRef e) {
