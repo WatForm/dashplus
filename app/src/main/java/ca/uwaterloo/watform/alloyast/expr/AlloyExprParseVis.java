@@ -380,19 +380,19 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     // ============================
     // ArrowExpr
     // ============================
-    private AlloyArrowExpr.Mul parseMultiplicity(DashParser.MultiplicityContext multCtx) {
-        if (multCtx.LONE() != null) return AlloyArrowExpr.Mul.LONE;
-        if (multCtx.SOME() != null) return AlloyArrowExpr.Mul.SOME;
-        if (multCtx.ONE() != null) return AlloyArrowExpr.Mul.ONE;
-        if (multCtx.SET() != null) return AlloyArrowExpr.Mul.SET;
-        return null;
+    public AlloyQtEnum parseMultiplicity(DashParser.MultiplicityContext multCtx) {
+        if (multCtx.LONE() != null) return AlloyQtEnum.LONE;
+        if (multCtx.SOME() != null) return AlloyQtEnum.SOME;
+        if (multCtx.ONE() != null) return AlloyQtEnum.ONE;
+        if (multCtx.SET() != null) return AlloyQtEnum.SET;
+        throw AlloyASTImplError.invalidCase(new Pos(multCtx));
     }
 
     @Override
     public AlloyArrowExpr visitArrowExpr(DashParser.ArrowExprContext ctx) {
         // by default it is Mul.SET
-        AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.SET;
-        AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.SET;
+        AlloyQtEnum mul1 = AlloyQtEnum.SET;
+        AlloyQtEnum mul2 = AlloyQtEnum.SET;
 
         int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
 
@@ -411,8 +411,8 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     @Override
     public AlloyArrowExpr visitArrowBindExpr(DashParser.ArrowBindExprContext ctx) {
         // by default it is Mul.SET
-        AlloyArrowExpr.Mul mul1 = AlloyArrowExpr.Mul.SET;
-        AlloyArrowExpr.Mul mul2 = AlloyArrowExpr.Mul.SET;
+        AlloyQtEnum mul1 = AlloyQtEnum.SET;
+        AlloyQtEnum mul2 = AlloyQtEnum.SET;
 
         int arrowPosition = ctx.arrow().RARROW().getSymbol().getStartIndex();
 
@@ -585,23 +585,19 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     // ============================
     @Override
     public AlloyQtExpr visitQuantifiedExpr(DashParser.QuantifiedExprContext ctx) {
-        AlloyQtExpr.Quant qt = AlloyQtExpr.Quant.ALL;
-        if (null != ctx.ALL()) {
-            qt = AlloyQtExpr.Quant.ALL;
-        } else if (null != ctx.NO()) {
-            qt = AlloyQtExpr.Quant.NO;
-        } else if (null != ctx.SOME()) {
-            qt = AlloyQtExpr.Quant.SOME;
-        } else if (null != ctx.LONE()) {
-            qt = AlloyQtExpr.Quant.LONE;
-        } else if (null != ctx.ONE()) {
-            qt = AlloyQtExpr.Quant.ONE;
-        } else if (null != ctx.SET()) {
-            qt = AlloyQtExpr.Quant.SET;
-        } else if (null != ctx.SEQ()) {
-            qt = AlloyQtExpr.Quant.SEQ;
+        AlloyQtEnum qt = null;
+        if (null != ctx.multiplicity()) {
+            qt = parseMultiplicity(ctx.multiplicity());
         } else {
-            throw AlloyASTImplError.invalidCase(new Pos(ctx));
+            if (null != ctx.ALL()) {
+                qt = AlloyQtEnum.ALL;
+            } else if (null != ctx.NO()) {
+                qt = AlloyQtEnum.NO;
+            } else if (null != ctx.SEQ()) {
+                qt = AlloyQtEnum.SEQ;
+            } else {
+                throw AlloyASTImplError.invalidCase(new Pos(ctx));
+            }
         }
         return new AlloyQtExpr(new Pos(ctx), qt, this.visit(ctx.expr2()));
     }
@@ -788,15 +784,10 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             }
         }
 
-        AlloyDecl.Quant quant = AlloyDecl.Quant.ONE;
-        if (null != ctx.LONE()) {
-            quant = AlloyDecl.Quant.LONE;
-        } else if (null != ctx.ONE()) {
-            quant = AlloyDecl.Quant.ONE;
-        } else if (null != ctx.SOME()) {
-            quant = AlloyDecl.Quant.SOME;
-        } else if (null != ctx.SET()) {
-            quant = AlloyDecl.Quant.SET;
+        // ONE is default
+        AlloyQtEnum quant = AlloyQtEnum.ONE;
+        if (null != ctx.multiplicity()) {
+            quant = parseMultiplicity(ctx.multiplicity());
         }
         return new AlloyDecl(
                 new Pos(ctx),
@@ -825,7 +816,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
                 false,
                 qnames,
                 false,
-                AlloyDecl.Quant.EXACTLY,
+                AlloyQtEnum.EXACTLY,
                 exprParseVis.visit(ctx.expr1()));
     }
 

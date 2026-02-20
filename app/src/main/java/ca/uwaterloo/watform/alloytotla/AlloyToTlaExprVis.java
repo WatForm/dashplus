@@ -4,6 +4,7 @@ import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -79,11 +80,11 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
                     case AlloyNegExpr _ -> TlaNot(e);
                     case AlloyQtExpr exp ->
                             switch (exp.qt) {
-                                case AlloyQtExpr.Quant.SOME -> _SOME(e);
-                                case AlloyQtExpr.Quant.LONE -> _LONE(e);
-                                case AlloyQtExpr.Quant.NO -> _NO(e);
-                                case AlloyQtExpr.Quant.ONE -> _ONE(e);
-                                case AlloyQtExpr.Quant.ALL -> TlaTrue();
+                                case AlloyQtEnum.SOME -> _SOME(e);
+                                case AlloyQtEnum.LONE -> _LONE(e);
+                                case AlloyQtEnum.NO -> _NO(e);
+                                case AlloyQtEnum.ONE -> _ONE(e);
+                                case AlloyQtEnum.ALL -> TlaTrue();
                                 default -> null;
                             };
                     case AlloyTransExpr _ -> _TRANSPOSE(e);

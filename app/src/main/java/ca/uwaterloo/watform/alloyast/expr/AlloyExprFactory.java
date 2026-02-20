@@ -6,6 +6,7 @@ package ca.uwaterloo.watform.alloyast.expr;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -186,22 +187,22 @@ public class AlloyExprFactory {
 
     // all sub
     public static AlloyExpr AlloySome(AlloyExpr sub) {
-        return new AlloyQtExpr(AlloyQtExpr.Quant.SOME, sub);
+        return new AlloyQtExpr(AlloyQtEnum.SOME, sub);
     }
 
     // lone sub
     public static AlloyExpr AlloyLone(AlloyExpr sub) {
-        return new AlloyQtExpr(AlloyQtExpr.Quant.LONE, sub);
+        return new AlloyQtExpr(AlloyQtEnum.LONE, sub);
     }
 
     // no sub
     public static AlloyExpr AlloyNo(AlloyExpr sub) {
-        return new AlloyQtExpr(AlloyQtExpr.Quant.NO, sub);
+        return new AlloyQtExpr(AlloyQtEnum.NO, sub);
     }
 
     // set sub
     public static AlloyExpr AlloySet(AlloyExpr sub) {
-        return new AlloyQtExpr(AlloyQtExpr.Quant.SET, sub);
+        return new AlloyQtExpr(AlloyQtEnum.SET, sub);
     }
 
     // vars ----------------------------
@@ -250,27 +251,27 @@ public class AlloyExprFactory {
         else return new AlloyIteExpr(cond, conseq, alt);
     }
 
-    public static AlloyDecl.Quant QtQuantToDeclQuant(AlloyQtExpr.Quant quant) {
-        // nothing give an output of AlloyDecl.Quant.EXACTLY
+    public static AlloyQtEnum QtQuantToDeclQuant(AlloyQtEnum quant) {
+        // nothing give an output of AlloyQtEnum.EXACTLY
         return switch (quant) {
-            case AlloyQtExpr.Quant.SOME -> AlloyDecl.Quant.SOME;
-            case AlloyQtExpr.Quant.LONE -> AlloyDecl.Quant.LONE;
-            case AlloyQtExpr.Quant.ONE -> AlloyDecl.Quant.ONE;
-            case AlloyQtExpr.Quant.SET -> AlloyDecl.Quant.SET;
-            case AlloyQtExpr.Quant.ALL, AlloyQtExpr.Quant.NO, AlloyQtExpr.Quant.SEQ ->
+            case AlloyQtEnum.SOME -> AlloyQtEnum.SOME;
+            case AlloyQtEnum.LONE -> AlloyQtEnum.LONE;
+            case AlloyQtEnum.ONE -> AlloyQtEnum.ONE;
+            case AlloyQtEnum.SET -> AlloyQtEnum.SET;
+            case AlloyQtEnum.ALL, AlloyQtEnum.NO, AlloyQtEnum.SEQ ->
                     throw ImplementationError.notSupported();
             default -> throw ImplementationError.shouldNotReach();
         };
     }
 
-    public static AlloyArrowExpr.Mul QtQuantToArrowQuant(AlloyQtExpr.Quant quant) {
-        // returns all possible values of AlloyArrowExpr.Mul
+    public static AlloyQtEnum QtQuantToArrowQuant(AlloyQtEnum quant) {
+        // returns all possible values of AlloyQtEnum
         return switch (quant) {
-            case AlloyQtExpr.Quant.SOME -> AlloyArrowExpr.Mul.SOME;
-            case AlloyQtExpr.Quant.LONE -> AlloyArrowExpr.Mul.LONE;
-            case AlloyQtExpr.Quant.ONE -> AlloyArrowExpr.Mul.ONE;
-            case AlloyQtExpr.Quant.SET -> AlloyArrowExpr.Mul.SET;
-            case AlloyQtExpr.Quant.ALL, AlloyQtExpr.Quant.NO, AlloyQtExpr.Quant.SEQ ->
+            case AlloyQtEnum.SOME -> AlloyQtEnum.SOME;
+            case AlloyQtEnum.LONE -> AlloyQtEnum.LONE;
+            case AlloyQtEnum.ONE -> AlloyQtEnum.ONE;
+            case AlloyQtEnum.SET -> AlloyQtEnum.SET;
+            case AlloyQtEnum.ALL, AlloyQtEnum.NO, AlloyQtEnum.SEQ ->
                     throw ImplementationError.notSupported();
             default -> throw ImplementationError.shouldNotReach();
         };

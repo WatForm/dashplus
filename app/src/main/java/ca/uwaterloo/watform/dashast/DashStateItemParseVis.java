@@ -6,6 +6,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.extractItemsOfClass;
 import static ca.uwaterloo.watform.utils.GeneralUtil.extractOneFromList;
 
 import antlr.generated.*;
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -56,21 +57,17 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
 
     @Override
     public DashVarDecls visitDashVarDecls(DashParser.DashVarDeclsContext ctx) {
-        DashVarDecls.Quant quant = DashVarDecls.Quant.ONE;
-        if (null != ctx.LONE()) {
-            quant = DashVarDecls.Quant.LONE;
-        } else if (null != ctx.SOME()) {
-            quant = DashVarDecls.Quant.SOME;
-        } else if (null != ctx.SET()) {
-            quant = DashVarDecls.Quant.SET;
+        AlloyQtEnum mul = AlloyQtEnum.ONE;
+        if (null != ctx.multiplicity()) {
+            mul = exprParseVis.parseMultiplicity(ctx.multiplicity());
         }
         AlloyExpr expr = exprParseVis.visit(ctx.expr1());
 
-        if (quant != null && expr instanceof AlloyArrowExpr) quant = DashVarDecls.Quant.SET;
+        if (mul != null && expr instanceof AlloyArrowExpr) mul = AlloyQtEnum.SET;
         return new DashVarDecls(
                 new Pos(ctx),
                 this.extractNames(ctx.names()),
-                quant,
+                mul,
                 expr,
                 null != ctx.ENV() ? DashStrings.IntEnvKind.ENV : DashStrings.IntEnvKind.INT);
     }

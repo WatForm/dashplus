@@ -14,6 +14,7 @@ package ca.uwaterloo.watform.dashtoalloy;
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -388,7 +389,7 @@ public class DSL {
         List<String> reversed = reverse(sl);
         AlloyExpr o = AlloyVar(reversed.get(0));
         if (sl.size() == 1) {
-            return new AlloyDecl(name, AlloyDecl.Quant.SET, AlloyVar(sl.get(0)));
+            return new AlloyDecl(name, AlloyQtEnum.SET, AlloyVar(sl.get(0)));
         } else {
             for (String s : reversed.subList(1, reversed.size())) {
                 // by default this is A set -> set B

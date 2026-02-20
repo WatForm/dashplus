@@ -22,7 +22,7 @@ public class AlloyToTla {
         FieldVars.translate(alloyModel, tlaModel);
 
         tlaModel.addComment(
-                "topological sort on signatures: " + SigHierarchy.sortedSigs(alloyModel), verbose);
+                "topological sort on signatures: " + alloyModel.topoSortedSigs(), verbose);
         SigHierarchy.translate(alloyModel, tlaModel);
 
         tlaModel.addComment("signature constraints", verbose);

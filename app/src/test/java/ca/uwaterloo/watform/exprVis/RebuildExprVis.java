@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.exprVis;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -28,7 +29,7 @@ public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
     public AlloyExpr visit(AlloyArrowExpr arrowExpr) {
         AlloyExpr l = new AlloyQnameExpr("arrowLeft");
         AlloyExpr r = new AlloyQnameExpr("arrowRight");
-        return new AlloyArrowExpr(l, arrowExpr.mul1, AlloyArrowExpr.Mul.ONE, r);
+        return new AlloyArrowExpr(l, arrowExpr.mul1, AlloyQtEnum.ONE, r);
     }
 
     @Override

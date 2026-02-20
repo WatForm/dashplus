@@ -248,7 +248,7 @@ public class PCtxTestAls {
                                                                         shortCQname,
                                                                         shortDQname),
                                                                 true,
-                                                                AlloyDecl.Quant.LONE,
+                                                                AlloyQtEnum.LONE,
                                                                 shortAQname),
                                                         new AlloyDecl(
                                                                 List.of(
@@ -265,7 +265,7 @@ public class PCtxTestAls {
                                                                         longBQname,
                                                                         longCQname),
                                                                 true,
-                                                                AlloyDecl.Quant.LONE,
+                                                                AlloyQtEnum.LONE,
                                                                 longDQname))))));
         System.out.println(alloyFile.toString(30, 4));
     }
@@ -302,8 +302,7 @@ public class PCtxTestAls {
                                                                                         shortCQname,
                                                                                         shortDQname),
                                                                                 true,
-                                                                                AlloyDecl.Quant
-                                                                                        .LONE,
+                                                                                AlloyQtEnum.LONE,
                                                                                 shortAQname),
                                                                         new AlloyDecl(
                                                                                 List.of(
@@ -320,8 +319,7 @@ public class PCtxTestAls {
                                                                                         longBQname,
                                                                                         longCQname),
                                                                                 true,
-                                                                                AlloyDecl.Quant
-                                                                                        .LONE,
+                                                                                AlloyQtEnum.LONE,
                                                                                 longDQname)),
                                                                 shortCQname),
                                                         new AlloyCphExpr(

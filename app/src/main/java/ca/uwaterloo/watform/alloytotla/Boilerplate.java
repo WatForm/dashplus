@@ -38,8 +38,7 @@ public class Boilerplate {
 
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
-        List<TlaConst> setConsts =
-                mapBy(alloyModel.getTopLevelSigNames(), s -> TlaConst(sigSet(s)));
+        List<TlaConst> setConsts = mapBy(alloyModel.topLevelSigs(), s -> TlaConst(sigSet(s)));
 
         tlaModel.addDefn(univ(setConsts));
         tlaModel.addDefn(none());

@@ -16,10 +16,10 @@ public class NextDefn {
 
         List<TlaVar> unchanged = new ArrayList<>();
 
-        alloyModel.getAllSigNames().forEach(sigName -> unchanged.add(new TlaVar(sigName)));
+        alloyModel.allSigs().forEach(sigName -> unchanged.add(new TlaVar(sigName)));
 
         alloyModel
-                .getAllSigNames()
+                .allSigs()
                 .forEach(
                         sn ->
                                 alloyModel

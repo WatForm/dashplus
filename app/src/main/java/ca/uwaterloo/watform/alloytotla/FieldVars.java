@@ -9,7 +9,7 @@ public class FieldVars {
 
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
         alloyModel
-                .getAllSigNames()
+                .allSigs()
                 .forEach(
                         sn ->
                                 alloyModel

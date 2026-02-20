@@ -27,7 +27,7 @@ public class SigHierarchy {
 
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
-        List<String> sortedSigs = sortedSigs(alloyModel);
+        List<String> sortedSigs = alloyModel.topoSortedSigs();
 
         tlaModel.addDefn(
                 TlaDefn(
@@ -48,38 +48,7 @@ public class SigHierarchy {
                     TlaSubsetUnary(
                             repeatedUnion(
                                     mapBy(
-                                            alloyModel.getAllParents(sn),
+                                            alloyModel.allParentsOfSig(sn),
                                             psn -> primed ? TlaVar(psn).PRIME() : TlaVar(psn)))));
-    }
-
-    public static List<String> sortedSigs(AlloyModel alloyModel) {
-        List<String> answer = alloyModel.getTopLevelSigNames();
-
-        /*
-        algorithm:
-        answer <- set of all top-level sigs
-        in each step:
-            for all sigs S:
-                if all parents of S are in answer and S is not
-                then S is added to the answer
-        once no changes in answer's size is detected, the steps stop
-
-        finally, the following property holds:
-        for all sigs S: all of its parents lie before it in the list
-        */
-
-        int oldSize;
-        do {
-            oldSize = answer.size();
-            alloyModel
-                    .getAllSigNames()
-                    .forEach(
-                            sn -> {
-                                if (answer.containsAll(alloyModel.getAllParents(sn)))
-                                    if (!answer.contains(sn)) answer.add(sn);
-                            });
-        } while (oldSize != answer.size());
-
-        return answer;
     }
 }
