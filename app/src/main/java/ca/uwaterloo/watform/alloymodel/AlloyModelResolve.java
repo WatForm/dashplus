@@ -12,33 +12,63 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class AlloyModelResolve extends AlloyModelInitialize {
 
-    public List<String> getAllSigNames() {
+    public List<String> allSigs() {
         return new ArrayList<>(this.sigTable.keySet());
     }
 
-    public List<String> getTopLevelSigNames() {
-        return filterBy(getAllSigNames(), s -> this.isTopLevelSig(s));
-    }
+    public List<String> topoSortedSigs() {
+        List<String> answer = this.topLevelSigs();
 
-    public List<String> getNonTopLevelSigNames() {
-        return filterBy(getAllSigNames(), s -> !this.isTopLevelSig(s));
-    }
+        /*
+        algorithm:
+        answer <- set of all top-level sigs
+        in each step:
+            for all sigs S:
+                if all parents of S are in answer and S is not
+                then S is added to the answer
+        once no changes in answer's size is detected, the steps stop
 
-    public List<String> getInParents(String signame) {
-        return this.sigTable.get(signame).inParents;
-    }
+        finally, the following property holds:
+        for all sigs S: all of its parents lie before it in the list
+        */
 
-    public Optional<String> getExtendsParent(String signame) {
-        return this.sigTable.get(signame).extendsParent;
-    }
+        int oldSize;
+        do {
+            oldSize = answer.size();
+            allSigs()
+                    .forEach(
+                            sn -> {
+                                if (answer.containsAll(allParentsOfSig(sn)))
+                                    if (!answer.contains(sn)) answer.add(sn);
+                            });
+        } while (oldSize != answer.size());
 
-    public List<String> getAllParents(String signame) {
-        List<String> answer = getInParents(signame);
-        getExtendsParent(signame).ifPresent(sp -> answer.add(sp));
         return answer;
     }
 
-    public List<String> getInChildren(String signame) {
+    public List<String> topLevelSigs() {
+        return filterBy(allSigs(), s -> this.isTopLevelSig(s));
+    }
+
+    public List<String> nonTopLevelSigNames() {
+        return filterBy(allSigs(), s -> !this.isTopLevelSig(s));
+    }
+
+    public List<String> inParentsOfSig(String signame) {
+        return this.sigTable.get(signame).inParents;
+    }
+
+    public Optional<String> extendsParentOfSig(String signame) {
+        return this.sigTable.get(signame).extendsParent;
+    }
+
+    public List<String> allParentsOfSig(String signame) {
+        List<String> answer = inParentsOfSig(signame);
+        extendsParentOfSig(signame).ifPresent(sp -> answer.add(sp));
+        return answer;
+    }
+
+    public List<String> inChildrenOfSig(String signame) {
         return this.sigTable.get(signame).inChildren;
     }
 
@@ -51,7 +81,7 @@ public class AlloyModelResolve extends AlloyModelInitialize {
     }
 
     public List<String> getAllChildren(String signame) {
-        List<String> answer = getInChildren(signame);
+        List<String> answer = inChildrenOfSig(signame);
         answer.addAll(getExtendsChildren(signame));
         return answer;
     }
@@ -132,8 +162,13 @@ public class AlloyModelResolve extends AlloyModelInitialize {
     }
 
     private static class FieldData {
-        String sigParent = null;
-        AlloyExpr expr = null;
+        String sigParent;
+        AlloyExpr expr;
+
+        FieldData(String sigParent, AlloyExpr expr) {
+            this.sigParent = sigParent;
+            this.expr = expr;
+        }
 
         @Override
         public String toString() {
@@ -160,10 +195,9 @@ public class AlloyModelResolve extends AlloyModelInitialize {
                         sp -> {
                             sp.fields.forEach(
                                     f -> {
-                                        FieldData fd = new FieldData();
-                                        fd.expr = f.expr;
-                                        fd.sigParent = sp.qnames.get(0).toString();
-                                        fieldTable.put(f.toString(), fd);
+                                        String sigParent = sp.qnames.get(0).toString();
+                                        fieldTable.put(
+                                                f.toString(), new FieldData(sigParent, f.expr));
                                     });
                         });
     }
@@ -193,7 +227,7 @@ public class AlloyModelResolve extends AlloyModelInitialize {
         if (sigTable.get(signame).ances != null) return sigTable.get(signame).ances; // base case
 
         List<String> answer = new ArrayList<>();
-        getAllParents(signame)
+        allParentsOfSig(signame)
                 .forEach(
                         sc -> {
                             answer.add(sc);

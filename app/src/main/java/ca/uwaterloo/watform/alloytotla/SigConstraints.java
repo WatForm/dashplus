@@ -17,7 +17,7 @@ public class SigConstraints {
         List<TlaAppl> explicitConstraints = new ArrayList<>();
 
         alloyModel
-                .getAllSigNames()
+                .allSigs()
                 .forEach(
                         sig -> {
                             List<TlaExp> constraints = constraints(sig, alloyModel);
