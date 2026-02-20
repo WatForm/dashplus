@@ -8,7 +8,6 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 public class SigVars {
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
-        for (String sigName : Auxiliary.getAllSigNames(alloyModel))
-            tlaModel.addVar(TlaVar(sigName));
+        for (String sigName : alloyModel.getAllSigNames()) tlaModel.addVar(TlaVar(sigName));
     }
 }

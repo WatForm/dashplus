@@ -1,23 +1,102 @@
-package ca.uwaterloo.watform.alloytotla;
+package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.Qual;
-import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AlloyModelResolved extends AlloyModel {
+public class AlloyModelResolve extends AlloyModelInitialize {
 
-    AlloyModel am;
+    public List<String> getAllSigNames() {
+        return new ArrayList<>(this.sigTable.keySet());
+    }
 
-    public AlloyModelResolved(AlloyModel am) {
+    public List<String> getTopLevelSigNames() {
+        return filterBy(getAllSigNames(), s -> this.isTopLevelSig(s));
+    }
 
-        this.am = am;
-        this.sigTable = new HashMap<>();
-        this.fieldTable = new HashMap<>();
+    public List<String> getNonTopLevelSigNames() {
+        return filterBy(getAllSigNames(), s -> !this.isTopLevelSig(s));
+    }
+
+    public List<String> getInParents(String signame) {
+        return this.sigTable.get(signame).inParents;
+    }
+
+    public Optional<String> getExtendsParent(String signame) {
+        return this.sigTable.get(signame).extendsParent;
+    }
+
+    public List<String> getAllParents(String signame) {
+        List<String> answer = getInParents(signame);
+        getExtendsParent(signame).ifPresent(sp -> answer.add(sp));
+        return answer;
+    }
+
+    public List<String> getInChildren(String signame) {
+        return this.sigTable.get(signame).inChildren;
+    }
+
+    public List<String> getExtendsChildren(String signame) {
+        return this.sigTable.get(signame).extendsChildren;
+    }
+
+    public Optional<AlloyBlock> getAlloyBlockOfSig(String signame) {
+        return sigTable.get(signame).para.block;
+    }
+
+    public List<String> getAllChildren(String signame) {
+        List<String> answer = getInChildren(signame);
+        answer.addAll(getExtendsChildren(signame));
+        return answer;
+    }
+
+    public boolean isTopLevelSig(String signame) {
+        return this.sigTable.get(signame).para.isTopLevel();
+    }
+
+    public boolean isAbstractSig(String signame) {
+        return this.sigTable.get(signame).para.quals.contains(Qual.ABSTRACT);
+    }
+
+    public boolean isOneSig(String signame) {
+        return this.sigTable.get(signame).para.quals.contains(Qual.ONE);
+    }
+
+    public boolean isSomeSig(String signame) {
+        return this.sigTable.get(signame).para.quals.contains(Qual.SOME);
+    }
+
+    public boolean isLoneSig(String signame) {
+        return this.sigTable.get(signame).para.quals.contains(Qual.LONE);
+    }
+
+    public List<String> getFieldNames(String signame) {
+        return new ArrayList<>();
+    }
+
+    public AlloyModelResolve() {
+        super(new AlloyFile(Collections.emptyList()));
+        resolve();
+    }
+
+    protected AlloyModelResolve(AlloyModelResolve other) {
+        super(other);
+        resolve();
+    }
+
+    public AlloyModelResolve copy() {
+        return new AlloyModelResolve(this);
+    }
+
+    public AlloyModelResolve(AlloyFile alloyFile) {
+
+        super(alloyFile);
         resolve();
     }
 
@@ -66,19 +145,17 @@ public class AlloyModelResolved extends AlloyModel {
     private HashMap<String, FieldData> fieldTable;
 
     private void resolve() {
+        this.sigTable = new HashMap<>();
+        this.fieldTable = new HashMap<>();
+
         populateNames(); // first pass, to get the sig names
         populateParentsChildren(); // second pass, to populate the parents and children
         populateAncestorsDescendants(); // recursive pass, transitively fill table, with memoization
         resolveFields();
-
-        // debug
-        System.out.println(this.sigTable.toString());
-        System.out.println(this.fieldTable.toString());
     }
 
     private void resolveFields() {
-        this.am
-                .getParas(AlloySigPara.class)
+        this.getParas(AlloySigPara.class)
                 .forEach(
                         sp -> {
                             sp.fields.forEach(
@@ -92,8 +169,7 @@ public class AlloyModelResolved extends AlloyModel {
     }
 
     private void populateNames() {
-        this.am
-                .getParas(AlloySigPara.class)
+        this.getParas(AlloySigPara.class)
                 .forEach(
                         sp -> {
                             String name = sp.qnames.get(0).toString();
@@ -104,7 +180,6 @@ public class AlloyModelResolved extends AlloyModel {
 
     private void populateAncestorsDescendants() {
 
-        System.out.println("top-lvl");
         this.sigTable
                 .keySet()
                 .forEach(
@@ -126,7 +201,6 @@ public class AlloyModelResolved extends AlloyModel {
                         });
 
         sigTable.get(signame).ances = answer; // memoization
-        System.out.println(answer.size());
         return answer;
     }
 
@@ -199,65 +273,5 @@ public class AlloyModelResolved extends AlloyModel {
                                                     sigTable.get(sigParent).inChildren.add(sig);
                                                 });
                         });
-    }
-
-    public List<String> getAllSigNames() {
-        return new ArrayList<>(this.sigTable.keySet());
-    }
-
-    public List<String> getTopLevelSigNames() {
-        return filterBy(getAllSigNames(), s -> this.isTopLevelSig(s));
-    }
-
-    public List<String> getNonTopLevelSigNames() {
-        return filterBy(getAllSigNames(), s -> !this.isTopLevelSig(s));
-    }
-
-    public List<String> getInParents(String signame) {
-        return this.sigTable.get(signame).inParents;
-    }
-
-    public Optional<String> getExtendsParent(String signame) {
-        return this.sigTable.get(signame).extendsParent;
-    }
-
-    public List<String> getAllParents(String signame) {
-        List<String> answer = getInParents(signame);
-        getExtendsParent(signame).ifPresent(sp -> answer.add(sp));
-        return answer;
-    }
-
-    public List<String> getInChildren(String signame) {
-        return this.sigTable.get(signame).inChildren;
-    }
-
-    public List<String> getExtendsChildren(String signame) {
-        return this.sigTable.get(signame).extendsChildren;
-    }
-
-    public List<String> getAllChildren(String signame) {
-        List<String> answer = getInChildren(signame);
-        answer.addAll(getExtendsChildren(signame));
-        return answer;
-    }
-
-    public boolean isTopLevelSig(String signame) {
-        return this.sigTable.get(signame).para.isTopLevel();
-    }
-
-    public boolean isAbstractSig(String signame) {
-        return this.sigTable.get(signame).para.quals.contains(Qual.ABSTRACT);
-    }
-
-    public boolean isOneSig(String signame) {
-        return this.sigTable.get(signame).para.quals.contains(Qual.ONE);
-    }
-
-    public boolean isSomeSig(String signame) {
-        return this.sigTable.get(signame).para.quals.contains(Qual.SOME);
-    }
-
-    public boolean isLoneSig(String signame) {
-        return this.sigTable.get(signame).para.quals.contains(Qual.LONE);
     }
 }

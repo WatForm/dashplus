@@ -16,7 +16,8 @@ public class SigConstraints {
 
         List<TlaAppl> explicitConstraints = new ArrayList<>();
 
-        Auxiliary.getAllSigNames(alloyModel)
+        alloyModel
+                .getAllSigNames()
                 .forEach(
                         sig -> {
                             List<TlaExp> constraints = constraints(sig, alloyModel);
@@ -33,18 +34,19 @@ public class SigConstraints {
     private static List<TlaExp> constraints(String sig, AlloyModel alloyModel) {
         List<TlaExp> constraints = new ArrayList<>();
 
-        Auxiliary.getAlloyBlock(sig, alloyModel)
+        alloyModel
+                .getAlloyBlockOfSig(sig)
                 .ifPresent(
                         b -> {
                             // universal quantification for facts
                             constraints.add(new AlloyToTlaExprVis().visit(b));
                         });
 
-        if (Auxiliary.isOneSig(sig, alloyModel)) constraints.add(_ONE(TlaVar(sig)));
-        if (Auxiliary.isLoneSig(sig, alloyModel)) constraints.add(_LONE(TlaVar(sig)));
-        if (Auxiliary.isSomeSig(sig, alloyModel)) constraints.add(_SOME(TlaVar(sig)));
+        if (alloyModel.isOneSig(sig)) constraints.add(_ONE(TlaVar(sig)));
+        if (alloyModel.isLoneSig(sig)) constraints.add(_LONE(TlaVar(sig)));
+        if (alloyModel.isSomeSig(sig)) constraints.add(_SOME(TlaVar(sig)));
 
-        List<String> extendsChildNames = Auxiliary.getExtendsChildNames(sig, alloyModel);
+        List<String> extendsChildNames = alloyModel.getExtendsChildren(sig);
 
         // pairwise disjoint sets for sigs that extend the same sig
         int n = extendsChildNames.size();
@@ -57,7 +59,7 @@ public class SigConstraints {
             }
 
         // abstract sigs
-        if (Auxiliary.isAbstractSig(sig, alloyModel))
+        if (alloyModel.isAbstractSig(sig))
             constraints.add(
                     TlaVar(sig)
                             .EQUALS(repeatedUnion(mapBy(extendsChildNames, ecn -> TlaVar(ecn)))));

@@ -42,19 +42,18 @@ public class SigHierarchy {
 
     private static TlaExp sigSetClause(String sn, AlloyModel alloyModel, boolean primed) {
         TlaExp v = primed ? TlaVar(sn).PRIME() : TlaVar(sn);
-        if (Auxiliary.isTopLevelSig(sn, alloyModel))
-            return v.IN(TlaSubsetUnary(TlaConst(sigSet(sn))));
+        if (alloyModel.isTopLevelSig(sn)) return v.IN(TlaSubsetUnary(TlaConst(sigSet(sn))));
         else
             return v.IN(
                     TlaSubsetUnary(
                             repeatedUnion(
                                     mapBy(
-                                            Auxiliary.getParentNames(sn, alloyModel),
+                                            alloyModel.getAllParents(sn),
                                             psn -> primed ? TlaVar(psn).PRIME() : TlaVar(psn)))));
     }
 
     public static List<String> sortedSigs(AlloyModel alloyModel) {
-        List<String> answer = Auxiliary.getTopLevelSigNames(alloyModel);
+        List<String> answer = alloyModel.getTopLevelSigNames();
 
         /*
         algorithm:
@@ -72,10 +71,11 @@ public class SigHierarchy {
         int oldSize;
         do {
             oldSize = answer.size();
-            Auxiliary.getAllSigNames(alloyModel)
+            alloyModel
+                    .getAllSigNames()
                     .forEach(
                             sn -> {
-                                if (answer.containsAll(Auxiliary.getParentNames(sn, alloyModel)))
+                                if (answer.containsAll(alloyModel.getAllParents(sn)))
                                     if (!answer.contains(sn)) answer.add(sn);
                             });
         } while (oldSize != answer.size());

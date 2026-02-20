@@ -8,10 +8,12 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 public class FieldVars {
 
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
-        Auxiliary.getAllSigNames(alloyModel)
+        alloyModel
+                .getAllSigNames()
                 .forEach(
                         sn ->
-                                Auxiliary.getFieldNames(sn, alloyModel)
+                                alloyModel
+                                        .getFieldNames(sn)
                                         .forEach(fn -> tlaModel.addVar(fieldVar(fn, sn))));
     }
 }

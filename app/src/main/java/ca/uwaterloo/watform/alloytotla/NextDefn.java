@@ -16,12 +16,14 @@ public class NextDefn {
 
         List<TlaVar> unchanged = new ArrayList<>();
 
-        Auxiliary.getAllSigNames(alloyModel).forEach(sigName -> unchanged.add(new TlaVar(sigName)));
+        alloyModel.getAllSigNames().forEach(sigName -> unchanged.add(new TlaVar(sigName)));
 
-        Auxiliary.getAllSigNames(alloyModel)
+        alloyModel
+                .getAllSigNames()
                 .forEach(
                         sn ->
-                                Auxiliary.getFieldNames(sn, alloyModel)
+                                alloyModel
+                                        .getFieldNames(sn)
                                         .forEach(fn -> unchanged.add(fieldVar(fn, sn))));
 
         tlaModel.addDefn(TlaDefn(NEXT, TlaUnchanged(unchanged)));

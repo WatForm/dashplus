@@ -12,7 +12,7 @@ public class SigConsts {
 
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
-        for (String name : Auxiliary.getTopLevelSigNames(alloyModel)) {
+        for (String name : alloyModel.getTopLevelSigNames()) {
             makeSigSet(name, alloyModel, tlaModel, 4);
         }
     }
