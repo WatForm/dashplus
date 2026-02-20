@@ -3,9 +3,13 @@ package ca.uwaterloo.watform.dashast;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
+import ca.uwaterloo.watform.alloyast.expr.binary.AlloyUnionExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +29,10 @@ public final class DashVarDecls extends ASTNode implements DashStateItem {
         this.quant = quant;
         this.typ = e;
         this.kind = k;
+        if (!(e instanceof AlloyArrowExpr
+                || e instanceof AlloyQnameExpr
+                || e instanceof AlloyUnionExpr))
+            notSupported(" var decl " + e.toString() + " is of class " + e.getClass().getName());
     }
 
     @Override
