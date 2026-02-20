@@ -1,8 +1,12 @@
-The org.alloytools.alloy.dist.jar is a custom built Alloy 6 Jar from 
-https://github.com/AlloyTools/org.alloytools.alloy (downloaded 2026-02-19).
+The org.alloytools.alloy.dist.jar is a custom built Alloy 6 Jar from the
+srcs at 
+
+https://github.com/AlloyTools/org.alloytools.alloy/releases/tag/v6.2.0
+
+Built on 2026-02-20
+
 
 The only modification to the Alloy 6 Jar is the addition of the following Dash util files:
-
 
 * buffer.als
 * ring.als
