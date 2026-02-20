@@ -69,4 +69,14 @@ public final class AlloyASTImplError extends ImplementationError {
     public static AlloyASTImplError dashParaInAlloyFile(Pos pos) {
         return new AlloyASTImplError(pos, "AlloyFile should not contain a DashParagraph. ");
     }
+
+    // ====================================================================================
+    // AlloyQtEnum
+    // This error is not possible to come from parsing,
+    // dash.g4 enforces the correct mul; an Antlr
+    // error is thrown if it's not correct.
+    // ====================================================================================
+    public static AlloyASTImplError invalidAlloyQtEnum(Pos pos, String msg) {
+        return new AlloyASTImplError(pos, msg);
+    }
 }

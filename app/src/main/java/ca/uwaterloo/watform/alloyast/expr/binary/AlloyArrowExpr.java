@@ -4,50 +4,35 @@ import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.*;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyArrowExpr extends AlloyBinaryExpr {
-    public enum Mul {
-        LONE(AlloyStrings.LONE),
-        ONE(AlloyStrings.ONE),
-        SOME(AlloyStrings.SOME),
-        SET(AlloyStrings.SET);
+    public final AlloyQtEnum mul1;
+    public final AlloyQtEnum mul2;
 
-        public final String label;
-
-        private Mul(String label) {
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        @Override
-        public final String toString() {
-            return label;
-        }
-    }
-
-    public final Mul mul1;
-    public final Mul mul2;
-
-    public AlloyArrowExpr(Pos pos, AlloyExpr left, Mul mul1, Mul mul2, AlloyExpr right) {
+    public AlloyArrowExpr(
+            Pos pos, AlloyExpr left, AlloyQtEnum mul1, AlloyQtEnum mul2, AlloyExpr right) {
         super(pos, left, right, (mul1.toString()) + RARROW + (mul2.toString()));
         this.mul1 = mul1;
         this.mul2 = mul2;
         reqNonNull(nullField(pos, this), this.mul1, this.mul2);
+        if (!AlloyQtEnum.MUL.contains(this.mul1) || !AlloyQtEnum.MUL.contains(this.mul2)) {
+            throw AlloyASTImplError.invalidAlloyQtEnum(
+                    pos,
+                    this.getClass().getSimpleName() + ".mul must be LONE, ONE, SOME, or SET. ");
+        }
     }
 
-    public AlloyArrowExpr(AlloyExpr left, Mul mul1, Mul mul2, AlloyExpr right) {
+    public AlloyArrowExpr(AlloyExpr left, AlloyQtEnum mul1, AlloyQtEnum mul2, AlloyExpr right) {
         this(Pos.UNKNOWN, left, mul1, mul2, right);
     }
 
     public AlloyArrowExpr(AlloyExpr left, AlloyExpr right) {
-        this(Pos.UNKNOWN, left, Mul.SET, Mul.SET, right);
+        this(Pos.UNKNOWN, left, AlloyQtEnum.SET, AlloyQtEnum.SET, right);
     }
 
     @Override

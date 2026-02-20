@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.exprVis;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyAndExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
@@ -39,8 +40,8 @@ public class RebuildExprVisTest {
         AlloyExpr arrow =
                 new AlloyArrowExpr(
                         new AlloyQnameExpr("left"),
-                        AlloyArrowExpr.Mul.SOME,
-                        AlloyArrowExpr.Mul.SOME,
+                        AlloyQtEnum.SOME,
+                        AlloyQtEnum.SOME,
                         new AlloyQnameExpr("right"));
         AlloyArrowExpr rebuiltArrow = (AlloyArrowExpr) arrow.accept(new RebuildExprVis());
         assertEquals("arrowLeft", rebuiltArrow.left.toString());

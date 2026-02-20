@@ -4,46 +4,26 @@ import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
+import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyQtExpr extends AlloyUnaryExpr {
-    public enum Quant {
-        ALL(AlloyStrings.ALL),
-        NO(AlloyStrings.NO),
-        SOME(AlloyStrings.SOME),
-        LONE(AlloyStrings.LONE),
-        ONE(AlloyStrings.ONE),
-        SET(AlloyStrings.SET),
-        SEQ(AlloyStrings.SEQ);
+    public final AlloyQtEnum qt;
 
-        public final String label;
-
-        private Quant(String label) {
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        @Override
-        public final String toString() {
-            return label;
-        }
-    }
-
-    public final Quant qt;
-
-    public AlloyQtExpr(Pos pos, Quant qt, AlloyExpr sub) {
+    public AlloyQtExpr(Pos pos, AlloyQtEnum qt, AlloyExpr sub) {
         super(pos, sub, qt.toString());
         this.qt = qt;
         reqNonNull(nullField(pos, this), this.qt);
+        if (this.qt == AlloyQtEnum.EXACTLY) {
+            throw AlloyASTImplError.invalidAlloyQtEnum(
+                    pos, this.getClass().getSimpleName() + ".qt cannot be AlloyQtEnum.EXACTLY. ");
+        }
     }
 
-    public AlloyQtExpr(Quant qt, AlloyExpr sub) {
+    public AlloyQtExpr(AlloyQtEnum qt, AlloyExpr sub) {
         this(Pos.UNKNOWN, qt, sub);
     }
 

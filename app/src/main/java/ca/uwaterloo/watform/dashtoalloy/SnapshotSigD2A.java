@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.dashtoalloy;
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
@@ -77,9 +78,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         // stable: one boolean;
         if (dm.hasConcurrency()) {
-            decls.add(
-                    new AlloyDecl(
-                            D2AStrings.stableName, AlloyDecl.Quant.ONE, this.dsl.AlloyBool()));
+            decls.add(new AlloyDecl(D2AStrings.stableName, AlloyQtEnum.ONE, this.dsl.AlloyBool()));
         }
 
         decls.addAll(this.varFieldsTraces());
@@ -160,7 +159,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                     AlloyExpr lastArrow =
                             new AlloyArrowExpr(
                                     lastElement(arrowList),
-                                    AlloyArrowExpr.Mul.SET,
+                                    AlloyQtEnum.SET,
                                     QtQuantToArrowQuant(qtExpr.qt),
                                     qtExpr.sub);
 

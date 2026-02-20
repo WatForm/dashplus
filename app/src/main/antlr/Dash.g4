@@ -42,7 +42,7 @@ dashFile: paragraph* ;
 stateRoot 	: STATE name LBRACE stateItem* RBRACE ;
 
 stateItem 	: ENV? EVENT qnames LBRACE RBRACE									# dashEventDecls
-			| ENV? names COLON (LONE | ONE | SOME | SET)? expr1 				# dashVarDecls
+			| ENV? names COLON multiplicity? expr1 								# dashVarDecls
 			| names COLON BUF LBRACK (qname | SIGINT) RBRACK					# dashBufferDecls
 			| TRANS name LBRACE transItem* RBRACE								# dashTrans
 			| INIT block														# dashInit
@@ -199,7 +199,7 @@ expr2			: baseExpr																					# baseExprFromExpr2
 				| expr2 (PLUS | MINUS | FUNADD | FUNSUB) bind												# plusMinusBindExpr
 				| expr2 (SHL | SHR | SHA) expr2																# shiftExpr
 				| expr2 (SHL | SHR | SHA) bind																# shiftBindExpr
-				| (ALL | NO | SOME | LONE | ONE | SET | SEQ ) expr2											# quantifiedExpr
+				| (ALL | NO | multiplicity | SEQ ) expr2													# quantifiedExpr
 				| expr2 comparison  expr2																	# compExpr
 				| (NOT_EXCL | NOT | ALWAYS | EVENTUALLY | AFTER | HISTORICALLY | ONCE | BEFORE) expr2		# unTempExpr
 				| (NOT_EXCL | NOT | ALWAYS | EVENTUALLY | AFTER | HISTORICALLY | ONCE | BEFORE) bind		# unTempBindExpr
@@ -216,7 +216,7 @@ block           : LBRACE expr1* RBRACE ;
 decl            : declMul
 				| declExact
 				;
-declMul			: VAR? PRIVATE? DISJ? qnames COLON DISJ? (LONE | ONE | SOME | SET)? expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
+declMul			: VAR? PRIVATE? DISJ? qnames COLON DISJ? multiplicity? expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
 declExact		: PRIVATE? qnames EQUAL expr1 ; // EXACTLYOF
 decls			: decl (COMMA decl)* ;
 
@@ -241,15 +241,6 @@ body			: block  		# blockBody
 
 arrow			: multiplicity? RARROW multiplicity? ;
 comparison 		: (NOT_EXCL | NOT)? (IN | EQUAL | LT | GT | LE | EL | GE) ;	
-
-// x: lone S in declarations
-// cardinality     : LONE | ONE | SOME | SET ; // LONEOF, ONEOF, SOMEOF, SETOF
-
-// no S means is the relation S empty
-// cardinalityConstraint		: LONE |  ONE | SOME | NO | SET ; 
-
-// some x: e | F means is F true for some binding of the variable x
-// bindingQuantifier		: LONE | ONE | SOME | NO | ALL ; 
 
 multiplicity    : LONE | ONE | SOME |  SET ;
 
