@@ -209,7 +209,7 @@ public class InitializeDM extends PredsDM {
                     // DashModelErrors.duplicateName(v.pos, "var", x);
                     String vfqn = DashFQN.fqn(sfqn, x);
                     // v.typ will have to be resolved later
-                    this.addVar(v.pos, vfqn, v.kind, newParams, v.typ);
+                    this.addVar(v.pos, vfqn, v.kind, newParams, v.mul, v.typ);
                 }
             }
         }

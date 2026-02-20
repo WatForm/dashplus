@@ -5,6 +5,7 @@ package ca.uwaterloo.watform.dashmodel;
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashFile;
@@ -85,19 +86,26 @@ public class VarsDM extends StatesDM {
                 .collect(Collectors.toList());
     }
 
-    public void addVar(Pos pos, String vfqn, IntEnvKind k, List<DashParam> prms, AlloyExpr t) {
+    public void addVar(
+            Pos pos,
+            String vfqn,
+            IntEnvKind k,
+            List<DashParam> prms,
+            AlloyQtEnum mul,
+            AlloyExpr t) {
         assert (prms != null);
         if (this.vt.containsKey(vfqn)) {
             DashModelErrors.duplicateName(pos, "var", vfqn);
         } else if (hasPrime(vfqn)) {
             DashModelErrors.nameShouldNotBePrimed(pos, vfqn);
         } else {
-            this.vt.put(vfqn, new VarEntry(pos, k, prms, t));
+            this.vt.put(vfqn, new VarEntry(pos, k, prms, mul, t));
         }
     }
 
-    public void addVar(String vfqn, IntEnvKind k, List<DashParam> prms, AlloyExpr t) {
-        addVar(Pos.UNKNOWN, vfqn, k, prms, t);
+    public void addVar(
+            String vfqn, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
+        addVar(Pos.UNKNOWN, vfqn, k, prms, mul, t);
     }
 
     public String vtToString() {
@@ -115,15 +123,22 @@ public class VarsDM extends StatesDM {
         public final Pos pos;
         public final IntEnvKind kind;
         public final List<DashParam> params;
+        // this is the multiplicity on the arrow from the Snapshot to the element
+        // sig Snapshot {
+        //     x: mul type
+        // }
+
+        public AlloyQtEnum mul;
         // can't be final because it has to be resolved
         // after all the vars are in the var table
         public AlloyExpr typ;
 
-        public VarEntry(Pos p, IntEnvKind k, List<DashParam> prms, AlloyExpr t) {
+        public VarEntry(Pos p, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
             assert (prms != null);
             this.pos = p;
             this.kind = k;
             this.params = prms;
+            this.mul = mul;
             this.typ = t;
         }
 
@@ -131,6 +146,7 @@ public class VarsDM extends StatesDM {
             String s = new String();
             s += "kind: " + kind + "\n";
             s += "params: " + NoneStringIfNeeded(params) + "\n";
+            s += "mul: " + mul.toString() + "\n";
             s += "typ: " + typ.toString() + "\n";
             return s;
         }
