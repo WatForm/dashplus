@@ -4,6 +4,9 @@
 
 package ca.uwaterloo.watform.utils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -245,5 +248,25 @@ public class GeneralUtil {
         result.sort(Comparator.comparingInt(List::size));
 
         return result;
+    }
+
+    // from ChatGPT
+    public static void validateWritableFile(String filename) {
+        File file = new File(filename);
+        File parent = file.getAbsoluteFile().getParentFile();
+
+        if (parent != null && !parent.exists()) {
+            throw new IllegalStateException("Output directory does not exist: " + parent);
+        }
+
+        if (parent != null && !parent.canWrite()) {
+            throw new IllegalStateException("Output directory is not writable: " + parent);
+        }
+
+        try (FileOutputStream ignored = new FileOutputStream(file, true)) {
+            // test passed
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot write to output file: " + filename, e);
+        }
     }
 }

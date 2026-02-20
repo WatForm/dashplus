@@ -6,6 +6,8 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.extractItemsOfClass;
 import static ca.uwaterloo.watform.utils.GeneralUtil.extractOneFromList;
 
 import antlr.generated.*;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.dashast.dashref.DashExprParseVis;
@@ -62,6 +64,8 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
         } else if (null != ctx.SET()) {
             quant = DashVarDecls.Quant.SET;
         }
+        AlloyExpr expr = exprParseVis.visit(ctx.expr1());
+        if (quant != null && expr instanceof AlloyArrowExpr) quant = DashVarDecls.Quant.SET;
         return new DashVarDecls(
                 new Pos(ctx),
                 this.extractNames(ctx.names()),
