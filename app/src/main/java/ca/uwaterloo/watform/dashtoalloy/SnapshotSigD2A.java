@@ -7,13 +7,9 @@ import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.expr.unary.AlloyQtExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloySigIntExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.Collections;
 import java.util.List;
 
@@ -82,7 +78,8 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         }
 
         decls.addAll(this.varFieldsTraces());
-        decls.addAll(this.bufferFieldsTraces());
+        // TODO add this functionality
+        // decls.addAll(this.bufferFieldsTraces());
 
         // add the snapshot signature
         this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
@@ -93,7 +90,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         if (!this.isElectrum) {
             List<AlloyDecl> decls = this.dsl.emptyDeclList();
             decls.addAll(varFieldsTraces());
-            decls.addAll(bufferFieldsTraces());
+            // decls.addAll(bufferFieldsTraces());
             // add the snapshot signature
             this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
         }
@@ -104,78 +101,39 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         List<AlloyDecl> decls = this.dsl.emptyDeclList();
         for (String vfqn : dm.allVarNames()) {
-            // [PID1, PID2]
-            // could be empty
-            List<AlloyExpr> arrowList = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
+
+            String vfqnName = DashFQN.translateFQN(vfqn);
+            AlloyQtEnum mul = dm.mul(vfqn); // ONE/LONE etc
             AlloyExpr varTyp = this.translateExpr(dm.varTyp(vfqn));
-            AlloyDecl decl;
 
-            // In Dash, a var decl x : one Y produces
-            // DashVarDecls("x", "one Y",..)
-            // where one Y is an AlloyQtExpr (mult=ONE, AlloyVar("Y"))
-            // however,
-            // a field in Alloy in a signature as in sig a { x: one Y },
-            // is AlloyDecl("x", mul=ONE, AlloyVar("Y"))
-            // i.e., in Dash parsing the var decl fully
-            // separates the var name and AlloyExpr that follows,
-            // but in Alloy, the multiplicity of the "type" is
-            // built-in to the Decl
-
-            if (varTyp instanceof AlloyArrowExpr) {
-                // varType is "X m -> n Y"
-                // in which case we can just tack it on the end
-                // vfqn: PID set -> set (X m -> n Y)
-                // and if there are no params, it is just
-                // vfqn: X m -> n Y
-                arrowList.add(this.translateExpr(dm.varTyp(vfqn)));
-                decl = AlloyDecl(DashFQN.translateFQN(vfqn), AlloyArrowExprList(arrowList));
-
-            } else if (varTyp instanceof AlloyQtExpr) {
-                // x: one A
-
-                // this is just doing a cast
-                AlloyQtExpr qtExpr = (AlloyQtExpr) varTyp;
-
-                // not sure how we would support anything else
-                if (!(qtExpr.sub instanceof AlloyQnameExpr
-                        || qtExpr.sub instanceof AlloySigIntExpr))
-                    throw ImplementationError.notSupported(
-                            qtExpr.sub.toString()
-                                    + ", which is "
-                                    + qtExpr.sub.getClass().getName());
-
-                if (arrowList.isEmpty()) {
-                    // no params
-                    // resulting decl must have Quant built in to it
-                    decl =
-                            new AlloyDecl(
-                                    DashFQN.translateFQN(vfqn),
-                                    QtQuantToDeclQuant(qtExpr.qt),
-                                    qtExpr.sub);
-                } else {
-                    // varType is "m X",
-                    // so create decl that is
-                    // PID set -> set (PID set -> m X)
-                    AlloyExpr lastArrow =
-                            new AlloyArrowExpr(
-                                    lastElement(arrowList),
-                                    AlloyQtEnum.SET,
-                                    QtQuantToArrowQuant(qtExpr.qt),
-                                    qtExpr.sub);
-
-                    arrowList = allButLast(arrowList);
-                    arrowList.add(lastArrow);
-                    decl = AlloyDecl(DashFQN.translateFQN(vfqn), AlloyArrowExprList(arrowList));
-                }
+            if (dm.varParams(vfqn).isEmpty()) {
+                // no params
+                decls.add(new AlloyDecl(vfqnName, mul, varTyp));
             } else {
-                throw ImplementationError.notSupported("varTyp is " + varTyp.getClass().getName());
+                // if params
+                // -> is left assoc
+                // vfqn: set ( (PID1 set->set PID2) set->set PID3 ) set->mul (varType)
+
+                // dm.varParams(vfqn) is [DashParam (stateName, PID), ...]
+                // arrowList is [AlloyVar(PID), ...]
+                List<AlloyExpr> PIDList = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
+                AlloyExpr arrow = PIDList.get(0); // PID1
+                for (int i = 1; i < PIDList.size(); i++) {
+                    //  (PID1 set->set PID2) set->set PID3
+                    arrow =
+                            new AlloyArrowExpr(
+                                    arrow, AlloyQtEnum.SET, AlloyQtEnum.SET, PIDList.get(i));
+                }
+                // ( (PID1 set->set PID2) set->set PID3 ) set->mul (varType)
+                arrow = new AlloyArrowExpr(arrow, AlloyQtEnum.SET, mul, varTyp);
+                decls.add(new AlloyDecl(vfqnName, AlloyQtEnum.SET, arrow));
             }
-            decls.add(decl);
         }
         return decls;
     }
 
     // TODO: check for issues above in mul of buffer
+    /*
     private List<AlloyDecl> bufferFieldsTraces() {
 
         List<AlloyDecl> decls = this.dsl.emptyDeclList();
@@ -189,6 +147,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         }
         return decls;
     }
+    */
 
     private void addSnapshotSigElectrum() {
         /* TODO

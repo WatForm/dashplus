@@ -232,8 +232,22 @@ public class AlloyExprFactory {
 
     // decls -----------
 
-    public static AlloyDecl AlloyDecl(String s, AlloyExpr expr) {
-        return new AlloyDecl(AlloyVar(s), expr);
+    public static AlloyDecl AlloyDecl(String s, AlloyQtEnum mul, AlloyExpr expr) {
+        return new AlloyDecl(AlloyVar(s), mul, expr);
+    }
+
+    // e.g., decl x:expr within all x:expr | ...
+    // should be all s: one expr | ...
+    // always gets multiplicity of ONE
+    public static AlloyDecl AlloyQuantVar(String x, AlloyExpr expr) {
+        return new AlloyDecl(AlloyVar(x), AlloyQtEnum.ONE, expr);
+    }
+
+    // e.g., decl x:expr within pred YY [x: expr]
+    // should be pred YY [x: one expr]
+    // always gets multiplicity of ONE
+    public static AlloyDecl AlloyPredArg(String x, AlloyExpr expr) {
+        return new AlloyDecl(AlloyVar(x), AlloyQtEnum.ONE, expr);
     }
 
     public static AlloyExpr AlloyPredCall(String name, List<AlloyExpr> elist) {

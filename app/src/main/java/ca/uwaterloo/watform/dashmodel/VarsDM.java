@@ -49,6 +49,10 @@ public class VarsDM extends StatesDM {
         return this.vt.get(vfqn).params;
     }
 
+    public AlloyQtEnum mul(String vfqn) {
+        return this.vt.get(vfqn).mul;
+    }
+
     public AlloyExpr varTyp(String vfqn) {
         return this.vt.get(vfqn).typ;
     }

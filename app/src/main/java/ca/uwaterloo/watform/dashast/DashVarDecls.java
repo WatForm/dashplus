@@ -7,9 +7,6 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
-import ca.uwaterloo.watform.alloyast.expr.binary.AlloyUnionExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -29,10 +26,8 @@ public final class DashVarDecls extends ASTNode implements DashStateItem {
         this.mul = mul;
         this.typ = e;
         this.kind = k;
-        if (!(e instanceof AlloyArrowExpr
-                || e instanceof AlloyQnameExpr
-                || e instanceof AlloyUnionExpr))
-            notSupported(" var decl " + e.toString() + " is of class " + e.getClass().getName());
+        // no limits on the classes of varType
+        // translator does not care what they are
         if (!AlloyQtEnum.MUL.contains(this.mul)) {
             throw new ImplementationError(
                     pos, this.getClass().getSimpleName() + ".mul must be LONE, ONE, SOME or SET. ");

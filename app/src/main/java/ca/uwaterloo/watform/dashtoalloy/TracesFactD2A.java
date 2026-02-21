@@ -79,7 +79,7 @@ public class TracesFactD2A extends SmallStepD2A {
 
         List<AlloyDecl> decls2 = this.dsl.emptyDeclList();
         decls2.add(
-                AlloyDecl(
+                AlloyQuantVar(
                         D2AStrings.curName,
                         AlloyDiff(AlloyVar(D2AStrings.snapshotName), snapShotLast)));
 
@@ -112,7 +112,7 @@ public class TracesFactD2A extends SmallStepD2A {
         }
         AlloyExpr ex = AlloyOr(AlloyEqual(this.dsl.curVar(), snapShotFirst), AlloyOrList(bigOr));
 
-        decls.add(AlloyDecl(D2AStrings.curName, AlloyVar(D2AStrings.snapshotName)));
+        decls.add(AlloyQuantVar(D2AStrings.curName, AlloyVar(D2AStrings.snapshotName)));
         body.add(AlloyAllVars(decls, ex));
 
         List<AlloyDecl> emptyDeclList = this.dsl.emptyDeclList();

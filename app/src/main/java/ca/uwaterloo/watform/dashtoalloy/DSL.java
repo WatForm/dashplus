@@ -259,12 +259,12 @@ public class DSL {
     // decls ---------------------------
     // s:Snapshot
     public AlloyDecl curDecl() {
-        return new AlloyDecl(D2AStrings.curName, D2AStrings.snapshotName);
+        return AlloyQuantVar(D2AStrings.curName, this.snapshotVar());
     }
 
     // snext:Snapshot
     public AlloyDecl nextDecl() {
-        return new AlloyDecl(D2AStrings.nextName, D2AStrings.snapshotName);
+        return AlloyQuantVar(D2AStrings.nextName, this.snapshotVar());
     }
 
     // [s:Snapshot]
@@ -327,6 +327,10 @@ public class DSL {
             return AlloyDeclArrowStringList(
                     D2AStrings.genEventName + i, newListWithOneMore(cop, D2AStrings.allEventsName));
         }
+    }
+
+    public AlloyQnameExpr snapshotVar() {
+        return AlloyVar(D2AStrings.snapshotName);
     }
 
     // -----------------------------------------------
@@ -395,7 +399,7 @@ public class DSL {
                 // by default this is A set -> set B
                 o = new AlloyArrowExpr(AlloyVar(s), o);
             }
-            return AlloyDecl(name, o);
+            return AlloyDecl(name, AlloyQtEnum.SET, o);
         }
     }
 }

@@ -84,6 +84,10 @@ public final class AlloyDecl extends AlloyExpr {
                 expr);
     }
 
+    public AlloyDecl(AlloyQnameExpr qname, AlloyQtEnum mul, AlloyExpr expr) {
+        this(Pos.UNKNOWN, false, false, false, Collections.singletonList(qname), false, mul, expr);
+    }
+
     public AlloyDecl(String qname, String expr) {
         this(
                 Pos.UNKNOWN,
