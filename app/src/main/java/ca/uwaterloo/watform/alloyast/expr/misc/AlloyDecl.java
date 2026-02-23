@@ -27,7 +27,7 @@ public final class AlloyDecl extends AlloyExpr {
     public final AlloyExpr expr;
 
     private static AlloyQtEnum defaultMul(AlloyExpr expr) {
-        if (expr instanceof AlloyQnameExpr) return AlloyQtEnum.ONE;
+        if (expr instanceof AlloyVarExpr) return AlloyQtEnum.ONE;
         else return AlloyQtEnum.SET;
     }
 
