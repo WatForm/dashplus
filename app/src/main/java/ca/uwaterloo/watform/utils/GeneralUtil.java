@@ -24,6 +24,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GeneralUtil {
+
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
+    public static void blue(String x) {
+        System.out.println(ANSI_BLUE + x + ANSI_RESET);
+    }
+
     public static void reqNonNull(RuntimeException e, Object... objects) {
         for (Object object : objects) {
             if (object instanceof String) {

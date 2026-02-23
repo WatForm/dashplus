@@ -1,3 +1,11 @@
+/*
+    Because Solution is a class (and A4Solution is a class inside our Solution class, only one solution can exist at any time, thus
+    getting a list of Solutions is not an option.  We can iterate
+    soln.next() and writeXML right away but we cannot get a list of
+    satisfying solutions by iterating soln.next() because it will just
+    be a list of the same objects.
+*/
+
 package ca.uwaterloo.watform.alloyinterface;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
@@ -36,15 +44,15 @@ public class AlloyInterface {
     // and DashModel
     // assumption: cmdnum exists
     private static Solution executeCommand(String alloyCode, int cmdnum) {
-        System.out.println("Command: " + String.valueOf(cmdnum));
         // this will put in a cmd 0: run {} if there are no other cmds
         CompModule alloy = parse(alloyCode);
         A4Reporter rep = new A4Reporter();
         Command cmd = alloy.getAllCommands().get(cmdnum);
-        System.out.println(cmd);
+        blue("Executing cmd " + String.valueOf(cmdnum) + ": " + cmd.toString());
         A4Solution ans =
                 TranslateAlloyToKodkod.execute_command(
                         rep, alloy.getAllReachableSigs(), cmd, new A4Options());
+        blue("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
         return new Solution(ans, alloy);
     }
 
