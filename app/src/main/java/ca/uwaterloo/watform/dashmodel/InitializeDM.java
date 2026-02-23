@@ -82,7 +82,9 @@ public class InitializeDM extends PredsDM {
             newParams.add(thisStateParam);
             // add to the overall param list for the DashModel
             this.allParams.add(thisStateParam);
-            if (this.maxDepthParams < depth) this.maxDepthParams = depth + 1;
+            if (this.maxDepthParams <= depth) {
+                this.maxDepthParams = depth + 1;
+            }
         }
 
         // stuff that is put in the table with this state
@@ -173,7 +175,7 @@ public class InitializeDM extends PredsDM {
                 // where we call stateRecurse
                 // to make sure all args are correct
                 stateRecurseToInitializeStatesVarsEventsBuffers(
-                        sub, sfqn, newParams, defk, depth + 1);
+                        sub, sfqn, newParams, defk, s.param != null ? depth + 1 : depth);
             }
         }
 
