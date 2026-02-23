@@ -2,12 +2,13 @@ package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
-import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.*;
+import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
@@ -26,9 +27,23 @@ public final class AlloyDecl extends AlloyExpr {
     public final AlloyQtEnum mul;
     public final AlloyExpr expr;
 
+    private static AlloyQtEnum defaultMul(Pos pos, AlloyExpr expr) {
+        if (expr instanceof AlloyVarExpr) return AlloyQtEnum.ONE;
+        else if (expr instanceof AlloyArrowExpr) return AlloyQtEnum.SET;
+        else
+            // @53 this is not throwing an error msg with a pos
+            throw AlloyASTImplError.invalidAlloyQtEnum(
+                    pos,
+                    expr.getClass().getSimpleName() + " must be given a multiplicity explicitly");
+    }
+
     private static AlloyQtEnum defaultMul(AlloyExpr expr) {
         if (expr instanceof AlloyVarExpr) return AlloyQtEnum.ONE;
-        else return AlloyQtEnum.SET;
+        else if (expr instanceof AlloyArrowExpr) return AlloyQtEnum.SET;
+        else {
+            throw AlloyASTImplError.invalidAlloyQtEnum(
+                    expr.getClass().getSimpleName() + " must be given a multiplicity explicitly");
+        }
     }
 
     public AlloyDecl(
@@ -70,7 +85,7 @@ public final class AlloyDecl extends AlloyExpr {
             List<AlloyQnameExpr> qnames,
             boolean isDisj2,
             AlloyExpr expr) {
-        this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, qnames, isDisj2, defaultMul(expr), expr);
+        this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, qnames, isDisj2, defaultMul(pos, expr), expr);
     }
 
     public AlloyDecl(

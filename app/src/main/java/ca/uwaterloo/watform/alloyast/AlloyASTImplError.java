@@ -79,4 +79,8 @@ public final class AlloyASTImplError extends ImplementationError {
     public static AlloyASTImplError invalidAlloyQtEnum(Pos pos, String msg) {
         return new AlloyASTImplError(pos, msg);
     }
+
+    public static AlloyASTImplError invalidAlloyQtEnum(String msg) {
+        return new AlloyASTImplError(msg);
+    }
 }

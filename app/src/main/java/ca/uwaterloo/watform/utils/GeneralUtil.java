@@ -227,7 +227,7 @@ public class GeneralUtil {
         }
     }
 
-    public static void howGetHere() {
+    public static void howGotHere() {
         System.out.println("how did it get here?");
         printStackTrace();
         System.exit(1);
