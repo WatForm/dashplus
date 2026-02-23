@@ -32,6 +32,14 @@ public class Boilerplate {
         return TlaVar(SPECIAL + "R2");
     }
 
+    private static final TlaVar E1() {
+        return TlaVar(SPECIAL + "e1");
+    }
+
+    private static final TlaVar E2() {
+        return TlaVar(SPECIAL + "e2");
+    }
+
     private static final TlaVar R() {
         return TlaVar(SPECIAL + "R");
     }
@@ -50,6 +58,8 @@ public class Boilerplate {
         tlaModel.addDefn(transpose());
         tlaModel.addDefn(domain_restriction());
         tlaModel.addDefn(range_restriction());
+        tlaModel.addDefn(inner_product_map());
+        tlaModel.addDefn(inner_product_filter());
         tlaModel.addDefn(inner_product());
         tlaModel.addDefn(relational_override());
     }
@@ -103,6 +113,7 @@ public class Boilerplate {
         return TlaAppl(INNER_PRODUCT, Arrays.asList(r1, r2));
     }
 
+    
     private static TlaDefn range_restriction() {
 
         // _range_restrict(R,S) : {e \in R : e[Len(e)] \in S}
@@ -119,6 +130,14 @@ public class Boilerplate {
 
     private static TlaDefn inner_product() {
         return new TlaDefn(TlaDecl(INNER_PRODUCT, Arrays.asList(R1(), R2())), TlaTrue());
+    }
+
+    private static TlaDefn inner_product_filter() {
+        return new TlaDefn(TlaDecl(INNER_PRODUCT_FILTER, Arrays.asList(R1(), R2())), TlaTrue());
+    }
+
+    private static TlaDefn inner_product_map() {
+        return new TlaDefn(TlaDecl(INNER_PRODUCT_MAP, Arrays.asList(R1(), R2())), TlaTrue());
     }
 
     private static TlaDefn relational_override() {

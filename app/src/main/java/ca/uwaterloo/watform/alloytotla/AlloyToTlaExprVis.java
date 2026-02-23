@@ -13,19 +13,20 @@ import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.utils.ImplementationError;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
     @Override
     public TlaExp visit(DashRef dashRef) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'visit' dashRef");
+        throw ImplementationError.notSupported("dashref inside pure AlloyVis");
     }
 
     @Override
     public TlaExp visit(DashParam dashParam) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'visit' dashParam");
+        throw ImplementationError.notSupported("dashParam inside pure AlloyVis");
     }
 
     @Override
@@ -59,13 +60,12 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
                     case AlloyRelOvrdExpr _ -> _RELATIONAL_OVERRIDE(el, er);
                     case AlloyRngRestrExpr _ -> _RANGE_RESTRICTION(el, er);
                     case AlloyUnionExpr _ -> TlaUnionSet(el, er);
-                    /* case  _ -> (el, er); */
-                    default -> null;
+                    default -> null;  /* case  _ -> (el, er); */
                 };
 
         if (answer != null) return answer;
 
-        throw new UnsupportedOperationException(
+        throw ImplementationError.notSupported(
                 "non-translatable expression: " + binExpr.toString());
     }
 
@@ -93,7 +93,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
         if (answer != null) return answer;
 
-        throw new UnsupportedOperationException(
+        throw ImplementationError.notSupported(
                 "non-translatable expression: " + unaryExpr.toString());
     }
 
@@ -110,7 +110,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
         if (answer != null) return answer;
 
-        throw new UnsupportedOperationException(
+        throw ImplementationError.notSupported(
                 "non-translatable expression: " + varExpr.toString());
     }
 
@@ -123,13 +123,13 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyBracketExpr bracketExpr) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'visit' for bracket");
+        throw ImplementationError.notSupported("Unimplemented method 'visit' for bracket");
     }
 
     @Override
     public TlaExp visit(AlloyCphExpr comprehensionExpr) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'visit' for cph");
+        throw ImplementationError.notSupported("Unimplemented method 'visit' for cph");
     }
 
     @Override
@@ -142,18 +142,18 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyLetExpr letExpr) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'visit' for let");
+        throw ImplementationError.notSupported("Unimplemented method 'visit' for let");
     }
 
     @Override
     public TlaExp visit(AlloyQuantificationExpr quantificationExpr) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'visit' for quantification");
+        throw ImplementationError.notSupported("Unimplemented method 'visit' for quantification");
     }
 
     @Override
     public TlaExp visit(AlloyDecl decl) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'visit' for decl");
+        throw ImplementationError.notSupported("Unimplemented method 'visit' for decl");
     }
 }
