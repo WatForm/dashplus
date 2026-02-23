@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.cli;
 import static ca.uwaterloo.watform.alloyinterface.AlloyInterface.*;
 import static ca.uwaterloo.watform.cli.CliError.*;
 import static ca.uwaterloo.watform.parser.Parser.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyinterface.Solution;
@@ -147,7 +148,7 @@ public class Main implements Callable<Integer> {
 
                         // change the filename from .dsh to .als for output
                         String fullFileName = absolutePath.toString();
-                        System.out.println("Input: " + fullFileName);
+                        blue("Input: " + fullFileName);
                         int lastDotIndex = fullFileName.lastIndexOf('.');
                         String nameWithoutExtension =
                                 (lastDotIndex == -1)
@@ -159,7 +160,7 @@ public class Main implements Callable<Integer> {
                         try {
                             // write the .als file
                             Files.writeString(new File(newFullFileName).toPath(), am.toString());
-                            System.out.println("Output: " + newFullFileName);
+                            blue("Output: " + newFullFileName);
 
                         } catch (IOException e) {
                             System.out.println("An error occurred: " + e.getMessage());
@@ -167,7 +168,7 @@ public class Main implements Callable<Integer> {
                         }
                         // executes and writes 5 instances of model with cmd run {}
                         int count = writeInstancesToXML(am, nameWithoutExtensionWithMethod, 5);
-                        System.out.println("Wrote " + String.valueOf(count) + " instance(s).");
+                        blue("Wrote " + String.valueOf(count) + " instance(s).");
 
                         // later add output about executing cmds
                         Reporter.INSTANCE.print();

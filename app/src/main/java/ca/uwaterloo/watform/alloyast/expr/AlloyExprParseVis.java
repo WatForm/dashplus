@@ -784,20 +784,28 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             }
         }
 
-        // ONE is default
-        AlloyQtEnum quant = AlloyQtEnum.ONE;
         if (null != ctx.multiplicity()) {
-            quant = parseMultiplicity(ctx.multiplicity());
+            return new AlloyDecl(
+                    new Pos(ctx),
+                    isVar,
+                    isPrivate,
+                    isDisj1,
+                    qnames,
+                    isDisj2,
+                    parseMultiplicity(ctx.multiplicity()),
+                    exprParseVis.visit(ctx.expr1()));
+        } else {
+            // we don't want to put in a default mul here
+            // let the AST choose the default
+            return new AlloyDecl(
+                    new Pos(ctx),
+                    isVar,
+                    isPrivate,
+                    isDisj1,
+                    qnames,
+                    isDisj2,
+                    exprParseVis.visit(ctx.expr1()));
         }
-        return new AlloyDecl(
-                new Pos(ctx),
-                isVar,
-                isPrivate,
-                isDisj1,
-                qnames,
-                isDisj2,
-                quant,
-                exprParseVis.visit(ctx.expr1()));
     }
 
     @Override

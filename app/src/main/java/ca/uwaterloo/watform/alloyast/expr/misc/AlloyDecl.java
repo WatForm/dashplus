@@ -26,6 +26,11 @@ public final class AlloyDecl extends AlloyExpr {
     public final AlloyQtEnum mul;
     public final AlloyExpr expr;
 
+    private static AlloyQtEnum defaultMul(AlloyExpr expr) {
+        if (expr instanceof AlloyQnameExpr) return AlloyQtEnum.ONE;
+        else return AlloyQtEnum.SET;
+    }
+
     public AlloyDecl(
             Pos pos,
             boolean isVar,
@@ -58,6 +63,17 @@ public final class AlloyDecl extends AlloyExpr {
     }
 
     public AlloyDecl(
+            Pos pos,
+            boolean isVar,
+            boolean isPrivate,
+            boolean isDisj1,
+            List<AlloyQnameExpr> qnames,
+            boolean isDisj2,
+            AlloyExpr expr) {
+        this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, qnames, isDisj2, defaultMul(expr), expr);
+    }
+
+    public AlloyDecl(
             boolean isVar,
             boolean isPrivate,
             boolean isDisj1,
@@ -80,7 +96,7 @@ public final class AlloyDecl extends AlloyExpr {
                 false,
                 Collections.singletonList(qname),
                 false,
-                AlloyQtEnum.ONE,
+                defaultMul(expr),
                 expr);
     }
 
@@ -89,6 +105,7 @@ public final class AlloyDecl extends AlloyExpr {
     }
 
     public AlloyDecl(String qname, String expr) {
+        AlloyQnameExpr e = new AlloyQnameExpr(expr);
         this(
                 Pos.UNKNOWN,
                 false,
@@ -96,8 +113,8 @@ public final class AlloyDecl extends AlloyExpr {
                 false,
                 Collections.singletonList(new AlloyQnameExpr(qname)),
                 false,
-                AlloyQtEnum.ONE,
-                new AlloyQnameExpr(expr));
+                defaultMul(e),
+                e);
     }
 
     public AlloyDecl(String qname, AlloyExpr expr) {
@@ -108,7 +125,7 @@ public final class AlloyDecl extends AlloyExpr {
                 false,
                 Collections.singletonList(new AlloyQnameExpr(qname)),
                 false,
-                AlloyQtEnum.ONE,
+                defaultMul(expr),
                 expr);
     }
 
