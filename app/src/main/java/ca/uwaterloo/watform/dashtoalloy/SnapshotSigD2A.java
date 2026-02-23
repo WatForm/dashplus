@@ -104,7 +104,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
             String vfqnName = DashFQN.translateFQN(vfqn);
             AlloyQtEnum mul = dm.mul(vfqn); // ONE/LONE etc
-            AlloyExpr varTyp = this.translateExpr(dm.varTyp(vfqn));
+            AlloyExpr varTyp = this.translateExprOnlyGetName(dm.varTyp(vfqn));
 
             if (dm.varParams(vfqn).isEmpty()) {
                 // no params

@@ -52,6 +52,10 @@ public class BaseD2A {
         return new ExprTranslatorVis(dm, isElectrum).translateExpr(expr);
     }
 
+    protected AlloyExpr translateExprOnlyGetName(AlloyExpr expr) {
+        return new ExprTranslatorVis(dm, isElectrum).translateExpr(expr, true);
+    }
+
     protected Set<DashRef> collectDashRefs(AlloyExpr expr) {
         return new CollectDashRefVis().collect(expr);
     }

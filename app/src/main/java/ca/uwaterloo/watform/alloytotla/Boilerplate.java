@@ -113,7 +113,6 @@ public class Boilerplate {
         return TlaAppl(INNER_PRODUCT, Arrays.asList(r1, r2));
     }
 
-    
     private static TlaDefn range_restriction() {
 
         // _range_restrict(R,S) : {e \in R : e[Len(e)] \in S}

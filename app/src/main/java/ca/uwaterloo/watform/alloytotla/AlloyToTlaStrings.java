@@ -32,8 +32,10 @@ public class AlloyToTlaStrings {
     public static final String DOMAIN_RESTRICTION = SPECIAL + "domain" + SPECIAL + "restriction";
     public static final String RELATIONAL_OVERRIDE = SPECIAL + "relational" + SPECIAL + "override";
     public static final String INNER_PRODUCT = SPECIAL + "inner" + SPECIAL + "product";
-    public static final String INNER_PRODUCT_MAP = SPECIAL + "inner" + SPECIAL + "product" + SPECIAL + "map";
-    public static final String INNER_PRODUCT_FILTER = SPECIAL + "inner" + SPECIAL + "product" + SPECIAL + "filter";
+    public static final String INNER_PRODUCT_MAP =
+            SPECIAL + "inner" + SPECIAL + "product" + SPECIAL + "map";
+    public static final String INNER_PRODUCT_FILTER =
+            SPECIAL + "inner" + SPECIAL + "product" + SPECIAL + "filter";
     public static final String TRANSPOSE = SPECIAL + "transpose";
 
     public static final String DOLLAR = "$";

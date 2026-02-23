@@ -219,6 +219,12 @@ public class GeneralUtil {
         }
     }
 
+    public static void howGetHere() {
+        System.out.println("how did it get here?");
+        printStackTrace();
+        System.exit(1);
+    }
+
     public static void printStackTrace() {
         try {
             throw new RuntimeException("Something went wrong!");

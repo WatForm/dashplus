@@ -28,6 +28,7 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.dashast.DashFQN.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -53,6 +54,8 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
     // these bits of state are used throughout the
     // visit functions with the same values
+    // all must be set in top-level calling functions below so that we do not
+    // rely on any state
     private DashStrings.DashRefKind kind;
     private boolean nextOk;
     private boolean nextOkInPrmExprs;

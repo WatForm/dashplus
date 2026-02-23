@@ -60,7 +60,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
                     case AlloyRelOvrdExpr _ -> _RELATIONAL_OVERRIDE(el, er);
                     case AlloyRngRestrExpr _ -> _RANGE_RESTRICTION(el, er);
                     case AlloyUnionExpr _ -> TlaUnionSet(el, er);
-                    default -> null;  /* case  _ -> (el, er); */
+                    default -> null; /* case  _ -> (el, er); */
                 };
 
         if (answer != null) return answer;

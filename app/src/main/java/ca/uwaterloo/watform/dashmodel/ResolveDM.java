@@ -55,6 +55,17 @@ public class ResolveDM extends ResolverVisDM {
         for (String vfqn : allVarNames()) {
             String sfqn = DashFQN.chopPrefixFromFQN(vfqn);
             // setter
+
+            // Do resolve the varTyp for parameters;
+            // varTyp reference other var decls that
+            // will be in the snapshot
+            // however when we TRANSLATE, this has to
+            // print only its name b/c
+            // it won't work to have x: ... s.y ...
+            // in the snapshot decl
+            // better to have
+            // x:   .... y ...
+            // but we do have to put y in terms of its FQN
             setVarTyp(vfqn, resolveVar(varTyp(vfqn), sfqn));
         }
     }
