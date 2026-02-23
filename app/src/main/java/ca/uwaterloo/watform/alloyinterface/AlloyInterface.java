@@ -13,8 +13,6 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class AlloyInterface {
@@ -98,11 +96,16 @@ public class AlloyInterface {
             String instanceFileName, // should not include .xml at end
             Integer maxInstances) {
         assert (!instanceFileName.contains(".xml"));
-        List<Solution> solnList = getInstances(am, cmdNum, maxInstances);
-        for (int i = 0; i < solnList.size(); i++) {
-            solnList.get(i).writeXML(instanceFileName + String.valueOf(i) + ".xml");
+        Solution soln =
+                (cmdNum == NOCMD) ? checkModelSatisfiability(am) : executeCommand(am, cmdNum);
+        int c;
+        for (c = 0; c < maxInstances; c++) {
+            // c is how many instances that we have written
+            if (!(soln.isSat() && c < maxInstances)) break;
+            soln.writeXML(instanceFileName + String.valueOf(c + 1) + ".xml");
+            soln.next();
         }
-        return solnList.size();
+        return c;
     }
 
     // returns number of instances written to file(s)
@@ -111,26 +114,5 @@ public class AlloyInterface {
             String instanceFileName, // should not include .xml at end
             Integer maxInstances) {
         return writeInstancesToXML(am, NOCMD, instanceFileName, maxInstances);
-    }
-
-    public static List<Solution> getInstances(AlloyModel am, Integer maxInstances) {
-        return getInstances(am, NOCMD, maxInstances);
-    }
-
-    public static List<Solution> getInstances(AlloyModel am, Integer cmdNum, Integer maxInstances) {
-        // -1 means ignore commands and just check model satisfiability
-        assert (cmdNum >= NOCMD);
-        // at this point we don't know if it is satisfiable
-        List<Solution> solnList = new ArrayList<Solution>();
-        Solution soln =
-                (cmdNum == NOCMD) ? checkModelSatisfiability(am) : executeCommand(am, cmdNum);
-        int c;
-        for (c = 0; c < maxInstances; c++) {
-            if (!(soln.isSat() && c <= maxInstances)) break;
-            int j = c + 1;
-            solnList.add(soln);
-            soln.next();
-        }
-        return solnList;
     }
 }
