@@ -68,7 +68,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                 decls.add(
                         new AlloyDecl(
                                 this.dsl.transTakenVar(0),
-                                AlloyQtEnum.ONE,
+                                AlloyQtEnum.LONE,
                                 this.dsl.transLabelNameVar()));
             } else {
                 // PID set->one Transitions
@@ -76,7 +76,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                         new AlloyArrowExpr(
                                 AlloyVar(cop.get(0)),
                                 AlloyQtEnum.SET,
-                                AlloyQtEnum.ONE,
+                                AlloyQtEnum.LONE,
                                 this.dsl.transLabelNameVar());
                 for (int x = 1; x < i; x++)
                     // PID set -> set arrow
