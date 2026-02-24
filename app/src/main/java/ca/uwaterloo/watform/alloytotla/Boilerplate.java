@@ -16,31 +16,31 @@ public class Boilerplate {
         return TlaVar(SPECIAL + "S");
     }
 
-    private static final TlaVar X() {
+    public static final TlaVar X() {
         return TlaVar(SPECIAL + "x");
     }
 
-    private static final TlaVar Y() {
+    public static final TlaVar Y() {
         return TlaVar(SPECIAL + "y");
     }
 
-    private static final TlaVar R1() {
+    public static final TlaVar R1() {
         return TlaVar(SPECIAL + "R1");
     }
 
-    private static final TlaVar R2() {
+    public static final TlaVar R2() {
         return TlaVar(SPECIAL + "R2");
     }
 
-    private static final TlaVar E1() {
+    public static final TlaVar E1() {
         return TlaVar(SPECIAL + "e1");
     }
 
-    private static final TlaVar E2() {
+    public static final TlaVar E2() {
         return TlaVar(SPECIAL + "e2");
     }
 
-    private static final TlaVar R() {
+    public static final TlaVar R() {
         return TlaVar(SPECIAL + "R");
     }
 
