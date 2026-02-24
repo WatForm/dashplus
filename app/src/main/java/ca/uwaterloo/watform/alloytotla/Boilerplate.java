@@ -128,15 +128,23 @@ public class Boilerplate {
     }
 
     private static TlaDefn inner_product() {
-        return new TlaDefn(TlaDecl(INNER_PRODUCT, Arrays.asList(R1(), R2())), TlaTrue());
+        TlaExp inner = TlaNullSet(); // todo fill this out
+        return new TlaDefn(
+                TlaDecl(INNER_PRODUCT, Arrays.asList(R1(), R2())),
+                TlaSetMap(
+                        TlaQuantOpHeadTuple(Arrays.asList(E1(), E2()), inner),
+                        TlaAppl(INNER_PRODUCT_MAP, Arrays.asList(E1(), E2()))));
     }
 
     private static TlaDefn inner_product_filter() {
-        return new TlaDefn(TlaDecl(INNER_PRODUCT_FILTER, Arrays.asList(R1(), R2())), TlaTrue());
+        return new TlaDefn(
+                TlaDecl(INNER_PRODUCT_FILTER, Arrays.asList(E1(), E2())),
+                E1().INDEX(TlaStdLibs.Len(E1())).EQUALS(E2().INDEX(TlaIntLiteral(1))));
     }
 
     private static TlaDefn inner_product_map() {
-        return new TlaDefn(TlaDecl(INNER_PRODUCT_MAP, Arrays.asList(R1(), R2())), TlaTrue());
+        return new TlaDefn(
+                TlaDecl(INNER_PRODUCT_MAP, Arrays.asList(E1(), E2())), TlaConcatSeq(E1(), E2()));
     }
 
     private static TlaDefn relational_override() {

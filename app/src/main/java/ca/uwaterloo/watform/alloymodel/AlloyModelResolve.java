@@ -72,17 +72,17 @@ public class AlloyModelResolve extends AlloyModelInitialize {
         return this.sigTable.get(signame).inChildren;
     }
 
-    public List<String> getExtendsChildren(String signame) {
+    public List<String> extendsChildrenOfSig(String signame) {
         return this.sigTable.get(signame).extendsChildren;
     }
 
-    public Optional<AlloyBlock> getAlloyBlockOfSig(String signame) {
+    public Optional<AlloyBlock> alloyBlockOfSig(String signame) {
         return sigTable.get(signame).para.block;
     }
 
-    public List<String> getAllChildren(String signame) {
+    public List<String> allChildrenOfSig(String signame) {
         List<String> answer = inChildrenOfSig(signame);
-        answer.addAll(getExtendsChildren(signame));
+        answer.addAll(extendsChildrenOfSig(signame));
         return answer;
     }
 
@@ -106,7 +106,7 @@ public class AlloyModelResolve extends AlloyModelInitialize {
         return this.sigTable.get(signame).para.quals.contains(Qual.LONE);
     }
 
-    public List<String> getFieldNames(String signame) {
+    public List<String> fieldNames(String signame) {
         return new ArrayList<>();
     }
 
@@ -242,7 +242,7 @@ public class AlloyModelResolve extends AlloyModelInitialize {
         if (sigTable.get(signame).descs != null) return sigTable.get(signame).descs; // base case
 
         List<String> answer = new ArrayList<>();
-        getAllChildren(signame)
+        allChildrenOfSig(signame)
                 .forEach(
                         sp -> {
                             answer.add(sp);
