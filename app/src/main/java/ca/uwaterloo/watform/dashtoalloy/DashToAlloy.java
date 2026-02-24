@@ -60,7 +60,7 @@ public class DashToAlloy extends StutterD2A {
 
                 // next ones can be used along with property checking
                 this.addStrongNoStutter();
-                // only useful for Tcmc
+                // only useful for Tcmc and is a fact
                 this.addReachability();
 
             } else if (this.isTraces) {
