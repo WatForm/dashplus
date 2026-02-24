@@ -35,7 +35,7 @@ public class SigConstraints {
         List<TlaExp> constraints = new ArrayList<>();
 
         alloyModel
-                .getAlloyBlockOfSig(sig)
+                .alloyBlockOfSig(sig)
                 .ifPresent(
                         b -> {
                             // universal quantification for facts
@@ -46,7 +46,7 @@ public class SigConstraints {
         if (alloyModel.isLoneSig(sig)) constraints.add(_LONE(TlaVar(sig)));
         if (alloyModel.isSomeSig(sig)) constraints.add(_SOME(TlaVar(sig)));
 
-        List<String> extendsChildNames = alloyModel.getExtendsChildren(sig);
+        List<String> extendsChildNames = alloyModel.extendsChildrenOfSig(sig);
 
         // pairwise disjoint sets for sigs that extend the same sig
         int n = extendsChildNames.size();

@@ -13,7 +13,7 @@ public class FieldVars {
                 .forEach(
                         sn ->
                                 alloyModel
-                                        .getFieldNames(sn)
+                                        .fieldNames(sn)
                                         .forEach(fn -> tlaModel.addVar(fieldVar(fn, sn))));
     }
 }

@@ -23,7 +23,7 @@ public class NextDefn {
                 .forEach(
                         sn ->
                                 alloyModel
-                                        .getFieldNames(sn)
+                                        .fieldNames(sn)
                                         .forEach(fn -> unchanged.add(fieldVar(fn, sn))));
 
         tlaModel.addDefn(TlaDefn(NEXT, TlaUnchanged(unchanged)));
