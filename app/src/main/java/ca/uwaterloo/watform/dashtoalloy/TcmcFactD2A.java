@@ -35,9 +35,7 @@ public class TcmcFactD2A extends TracesFactD2A {
 
         // open util/tcmc[Snapshot] as snapshot
         this.am.addImport(
-                List.of(AlloyStrings.utilName, D2AStrings.tcmcName),
-                D2AStrings.snapshotName,
-                D2AStrings.snapshotName);
+                List.of(AlloyStrings.utilName, D2AStrings.tcmcName), D2AStrings.snapshotName);
 
         List<AlloyExpr> body = this.dsl.emptyExprList();
 

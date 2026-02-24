@@ -123,6 +123,15 @@ public class AlloyModel extends AlloyModelResolve {
                         new AlloyQnameExpr(asName)));
     }
 
+    public void addImport(List<String> names, String sigName) {
+        this.addPara(
+                new AlloyImportPara(
+                        false,
+                        new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
+                        List.of(new AlloyQnameExpr(sigName)),
+                        null));
+    }
+
     public void addImport(List<String> names) {
         this.addPara(
                 new AlloyImportPara(

@@ -33,8 +33,7 @@ public final class AlloyDecl extends AlloyExpr {
         else
             // @53 this is not throwing an error msg with a pos
             throw AlloyASTImplError.invalidAlloyQtEnum(
-                    pos,
-                    expr.getClass().getSimpleName() + " must be given a multiplicity explicitly");
+                    pos, expr.toString() + " must be given a multiplicity explicitly");
     }
 
     private static AlloyQtEnum defaultMul(AlloyExpr expr) {
@@ -42,7 +41,7 @@ public final class AlloyDecl extends AlloyExpr {
         else if (expr instanceof AlloyArrowExpr) return AlloyQtEnum.SET;
         else {
             throw AlloyASTImplError.invalidAlloyQtEnum(
-                    expr.getClass().getSimpleName() + " must be given a multiplicity explicitly");
+                    expr.toString() + " must be given a multiplicity explicitly");
         }
     }
 

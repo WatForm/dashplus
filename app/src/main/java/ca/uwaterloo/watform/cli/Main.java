@@ -144,7 +144,8 @@ public class Main implements Callable<Integer> {
                                     "Visualization output: " + outputDir.resolve(prefix + ".dot"));
                         }
 
-                        AlloyModel am = new DashToAlloy(dm).translate();
+                        AlloyModel am =
+                                new DashToAlloy(dm, DashToAlloy.TranslateOutput.TCMC).translate();
 
                         // change the filename from .dsh to .als for output
                         String fullFileName = absolutePath.toString();
