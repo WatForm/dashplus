@@ -34,6 +34,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         // scopesUsed0, scopesUsed1, etc, (need if have parameters)
         List<String> cop;
+        AlloyArrowExpr arrow;
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             cop = Collections.nCopies(i, D2AStrings.identifierName);
             // scopesUsed0, scopeUsed1, etc
@@ -59,11 +60,31 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             }
 
             // transTaken1, etc.
-            decls.add(
-                    this.dsl.AlloyDeclArrowStringList(
-                            this.dsl.nameNum(D2AStrings.transTakenName, i),
-                            newListWithOneMore(cop, D2AStrings.transLabelName)));
-
+            // this one is different b/c it has to be ONE mul at the end
+            // __taken0: one Transitions
+            // __taken0: set PID set->one Transitions
+            // __taken1: set PID set -> set PID set->one Transitions
+            if (i == 0) {
+                decls.add(
+                        new AlloyDecl(
+                                this.dsl.transTakenVar(0),
+                                AlloyQtEnum.ONE,
+                                this.dsl.transLabelNameVar()));
+            } else {
+                // PID set->one Transitions
+                arrow =
+                        new AlloyArrowExpr(
+                                AlloyVar(cop.get(0)),
+                                AlloyQtEnum.SET,
+                                AlloyQtEnum.ONE,
+                                this.dsl.transLabelNameVar());
+                for (int x = 1; x < i; x++)
+                    // PID set -> set arrow
+                    arrow =
+                            new AlloyArrowExpr(
+                                    AlloyVar(cop.get(x)), AlloyQtEnum.SET, AlloyQtEnum.SET, arrow);
+                decls.add(new AlloyDecl(this.dsl.transTakenVar(i), AlloyQtEnum.SET, arrow));
+            }
             // events0, event1, etc.
             if (dm.hasEvents() && dm.hasEventsAti(i))
                 decls.add(
@@ -83,7 +104,6 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         // add the snapshot signature
         this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
-        // System.out.println(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
     }
 
     public void varsBuffersOnlySnapshotSig() {

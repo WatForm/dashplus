@@ -119,6 +119,11 @@ public class DSL {
         return AlloyVar(D2AStrings.transTakenName + size);
     }
 
+    // Transitions
+    public AlloyQnameExpr transLabelNameVar() {
+        return AlloyVar(D2AStrings.transLabelName);
+    }
+
     // bufIdex0
     public AlloyQnameExpr bufferIndexVar(int i) {
         return AlloyVar(D2AStrings.bufferIndexName + i);
