@@ -16,10 +16,10 @@ import java.util.*;
 
 public class BaseD2A {
 
-    public enum TranslateOutput {
-        ELECTRUM,
-        TRACES,
-        TCMC
+    public enum Options {
+        electrum,
+        traces,
+        tcmc
     }
 
     protected DashModel dm; // input
@@ -29,22 +29,24 @@ public class BaseD2A {
     protected boolean isTcmc = false;
     protected DSL dsl;
 
-    protected BaseD2A(DashModel dm, TranslateOutput opt) {
+    protected BaseD2A(DashModel dm, Options opt) {
         this.dm = dm;
 
+        System.out.println(opt);
         switch (opt) {
-            case TranslateOutput.ELECTRUM:
+            case Options.electrum:
                 this.isElectrum = true;
                 break;
-            case TranslateOutput.TRACES:
+            case Options.traces:
                 this.isTraces = true;
                 break;
-            case TranslateOutput.TCMC:
+            case Options.tcmc:
                 this.isTcmc = true;
                 break;
         }
-
-        this.isElectrum = isElectrum;
+        System.out.println("isElectrum: " + this.isElectrum);
+        System.out.println("isTraces: " + this.isTraces);
+        System.out.println("isTcmc: " + this.isTcmc);
         this.dsl = new DSL(isElectrum);
     }
 

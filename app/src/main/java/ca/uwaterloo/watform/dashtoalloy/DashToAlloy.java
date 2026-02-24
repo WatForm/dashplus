@@ -13,12 +13,12 @@ import java.util.List;
 
 public class DashToAlloy extends StutterD2A {
 
-    public DashToAlloy(DashModel dm, TranslateOutput opt) {
+    public DashToAlloy(DashModel dm, Options opt) {
         super(dm, opt);
     }
 
     public DashToAlloy(DashModel dm) {
-        super(dm, TranslateOutput.TRACES);
+        super(dm, Options.traces);
     }
 
     public AlloyModel translate() {

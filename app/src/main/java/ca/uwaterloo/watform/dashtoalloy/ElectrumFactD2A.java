@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ElectrumFactD2A extends TcmcFactD2A {
 
-    protected ElectrumFactD2A(DashModel dm, TranslateOutput opt) {
+    protected ElectrumFactD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

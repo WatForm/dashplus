@@ -45,7 +45,7 @@ import java.util.List;
 
 public class TransIsEnabledAfterStepD2A extends TransPreD2A {
 
-    protected TransIsEnabledAfterStepD2A(DashModel dm, TranslateOutput opt) {
+    protected TransIsEnabledAfterStepD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

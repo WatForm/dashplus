@@ -15,7 +15,7 @@ import java.util.List;
 
 public class SnapshotSigD2A extends SpaceSigsD2A {
 
-    protected SnapshotSigD2A(DashModel dm, TranslateOutput opt) {
+    protected SnapshotSigD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

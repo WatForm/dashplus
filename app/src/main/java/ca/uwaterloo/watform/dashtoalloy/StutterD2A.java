@@ -21,7 +21,7 @@ import java.util.List;
 
 public class StutterD2A extends SingleEventInputD2A {
 
-    protected StutterD2A(DashModel dm, TranslateOutput opt) {
+    protected StutterD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

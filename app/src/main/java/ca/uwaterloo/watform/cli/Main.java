@@ -144,8 +144,7 @@ public class Main implements Callable<Integer> {
                                     "Visualization output: " + outputDir.resolve(prefix + ".dot"));
                         }
 
-                        AlloyModel am =
-                                new DashToAlloy(dm, DashToAlloy.TranslateOutput.TCMC).translate();
+                        AlloyModel am = new DashToAlloy(dm, cliConf.d2aOptions).translate();
 
                         // change the filename from .dsh to .als for output
                         String fullFileName = absolutePath.toString();
@@ -156,7 +155,7 @@ public class Main implements Callable<Integer> {
                                         ? fullFileName
                                         : fullFileName.substring(0, lastDotIndex);
                         String nameWithoutExtensionWithMethod =
-                                nameWithoutExtension + "-" + cliConf.alloyMode;
+                                nameWithoutExtension + "-" + cliConf.d2aOptions;
                         String newFullFileName = nameWithoutExtensionWithMethod + ".als";
                         try {
                             // write the .als file

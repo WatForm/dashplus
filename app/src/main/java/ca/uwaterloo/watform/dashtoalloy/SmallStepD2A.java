@@ -26,7 +26,7 @@ import java.util.List;
 
 public class SmallStepD2A extends TransD2A {
 
-    protected SmallStepD2A(DashModel dm, TranslateOutput opt) {
+    protected SmallStepD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

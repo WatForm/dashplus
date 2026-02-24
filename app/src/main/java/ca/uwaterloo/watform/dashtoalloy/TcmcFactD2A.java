@@ -25,7 +25,7 @@ import java.util.List;
 
 public class TcmcFactD2A extends TracesFactD2A {
 
-    protected TcmcFactD2A(DashModel dm, TranslateOutput opt) {
+    protected TcmcFactD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

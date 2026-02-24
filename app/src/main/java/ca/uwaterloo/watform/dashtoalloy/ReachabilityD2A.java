@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ReachabilityD2A extends ElectrumFactD2A {
 
-    protected ReachabilityD2A(DashModel dm, TranslateOutput opt) {
+    protected ReachabilityD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

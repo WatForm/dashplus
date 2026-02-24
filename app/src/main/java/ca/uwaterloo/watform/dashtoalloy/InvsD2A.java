@@ -16,7 +16,7 @@ public class InvsD2A extends InitsD2A {
         TODO add Electrum
     */
 
-    protected InvsD2A(DashModel dm, TranslateOutput opt) {
+    protected InvsD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

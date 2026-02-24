@@ -18,7 +18,7 @@ import java.util.List;
 
 public class TransD2A extends TransPostD2A {
 
-    protected TransD2A(DashModel dm, TranslateOutput opt) {
+    protected TransD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

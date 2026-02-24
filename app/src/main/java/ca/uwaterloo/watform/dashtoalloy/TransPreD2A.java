@@ -35,7 +35,7 @@ public class TransPreD2A extends InvsD2A {
         Assumption: prs for src state and trig events are a subset of prs for trans
     */
 
-    protected TransPreD2A(DashModel dm, TranslateOutput opt) {
+    protected TransPreD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

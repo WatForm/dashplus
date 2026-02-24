@@ -23,7 +23,7 @@ import java.util.List;
 
 public class CompleteBigStepsD2A extends ReachabilityD2A {
 
-    protected CompleteBigStepsD2A(DashModel dm, TranslateOutput opt) {
+    protected CompleteBigStepsD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

@@ -17,7 +17,7 @@ public class InitsD2A extends SnapshotSigD2A {
         TODO add Electrum
     */
 
-    protected InitsD2A(DashModel dm, TranslateOutput opt) {
+    protected InitsD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

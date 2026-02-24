@@ -24,7 +24,7 @@ import java.util.List;
 
 public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
 
-    protected AllSnapshotsDiffD2A(DashModel dm, TranslateOutput opt) {
+    protected AllSnapshotsDiffD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

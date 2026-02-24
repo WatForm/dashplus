@@ -41,7 +41,7 @@ import java.util.List;
 
 public class TracesFactD2A extends SmallStepD2A {
 
-    protected TracesFactD2A(DashModel dm, TranslateOutput opt) {
+    protected TracesFactD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 
@@ -50,7 +50,9 @@ public class TracesFactD2A extends SmallStepD2A {
 
         // open util/traces[Snapshot] as Snapshot
         this.am.addImport(
-                List.of(AlloyStrings.utilName, D2AStrings.tracesName), D2AStrings.snapshotName);
+                List.of(AlloyStrings.utilName, D2AStrings.tracesName),
+                D2AStrings.snapshotName,
+                D2AStrings.snapshotName);
 
         List<AlloyExpr> body = this.dsl.emptyExprList();
 

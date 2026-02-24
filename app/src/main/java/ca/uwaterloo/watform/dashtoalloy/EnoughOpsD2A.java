@@ -25,7 +25,7 @@ import java.util.List;
 
 public class EnoughOpsD2A extends AllSnapshotsDiffD2A {
 
-    protected EnoughOpsD2A(DashModel dm, TranslateOutput opt) {
+    protected EnoughOpsD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

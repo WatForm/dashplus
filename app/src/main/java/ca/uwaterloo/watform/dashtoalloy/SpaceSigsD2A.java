@@ -11,7 +11,7 @@ import java.util.List;
 
 public class SpaceSigsD2A extends BaseD2A {
 
-    protected SpaceSigsD2A(DashModel dm, TranslateOutput opt) {
+    protected SpaceSigsD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

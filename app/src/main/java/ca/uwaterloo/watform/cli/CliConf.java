@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.cli;
 
 import static ca.uwaterloo.watform.parser.Parser.*;
 
+import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import picocli.CommandLine.Option;
@@ -10,12 +11,6 @@ import picocli.CommandLine.Parameters;
 public class CliConf {
     public static final CliConf INSTANCE = new CliConf();
 
-    public enum AlloyMode {
-        traces,
-        tcmc,
-        electrum
-    }
-
     @Parameters(index = "0", arity = "1..*", description = "Alloy/Dash file names")
     public List<String> fileNames;
 
@@ -23,7 +18,7 @@ public class CliConf {
             names = "-alloy",
             description = "Translation mode: ${COMPLETION-CANDIDATES}.",
             defaultValue = "traces")
-    public AlloyMode alloyMode;
+    public DashToAlloy.Options d2aOptions;
 
     // 0 indexed
     //

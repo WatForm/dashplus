@@ -13,7 +13,7 @@ import java.util.List;
 
 public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
 
-    protected TransTestIfNextStableD2A(DashModel dm, TranslateOutput opt) {
+    protected TransTestIfNextStableD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

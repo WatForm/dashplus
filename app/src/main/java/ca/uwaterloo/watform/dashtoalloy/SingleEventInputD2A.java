@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SingleEventInputD2A extends EnoughOpsD2A {
 
-    protected SingleEventInputD2A(DashModel dm, TranslateOutput opt) {
+    protected SingleEventInputD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 

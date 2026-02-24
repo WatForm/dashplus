@@ -67,7 +67,7 @@ import java.util.Set;
 
 public class TransPostD2A extends TransTestIfNextStableD2A {
 
-    protected TransPostD2A(DashModel dm, TranslateOutput opt) {
+    protected TransPostD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 
