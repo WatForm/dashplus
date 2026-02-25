@@ -24,6 +24,9 @@ l.config("test config message");
 
 further documentation: https://docs.oracle.com/javase/8/docs/api/java/util/logging/Logger.html
 
+A logger does not have to be threaded through multiple files.  If multiple loggers have the same
+filename, they will write to the same file.
+
 */
 
 public class CustomLoggerFactory {
