@@ -39,7 +39,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             DashParser.QuantificationExprContext ctx) {
         List<AlloyDecl> decls =
                 null != ctx.decls()
-                        ? visitAll(ctx.decls().decl(), this, AlloyDecl.class)
+                        ? visitAll(ctx.decls().declDefaultOne(), this, AlloyDecl.class)
                         : Collections.emptyList();
         if (null != ctx.ALL()) {
             return new AlloyQuantificationExpr(
@@ -244,7 +244,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     public AlloyCphExpr visitComprehensionExpr(DashParser.ComprehensionExprContext ctx) {
         return new AlloyCphExpr(
                 new Pos(ctx),
-                visitAll(ctx.declMul(), this, AlloyDecl.class),
+                visitAll(ctx.declDefaultOne(), this, AlloyDecl.class),
                 (null != ctx.body()) ? this.visit(ctx.body()) : null);
     }
 
@@ -758,12 +758,51 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     // Decl
     // ============================
     @Override
-    public AlloyDecl visitDecl(DashParser.DeclContext ctx) {
+    public AlloyDecl visitDeclSig(DashParser.DeclSigContext ctx) {
         return (AlloyDecl) this.visit(ctx.getChild(0));
     }
 
     @Override
-    public AlloyDecl visitDeclMul(DashParser.DeclMulContext ctx) {
+    public AlloyDecl visitDeclDefaultOne(DashParser.DeclDefaultOneContext ctx) {
+        return (AlloyDecl) this.visit(ctx.getChild(0));
+    }
+
+    @Override
+    public AlloyDecl visitDeclWithMul(DashParser.DeclWithMulContext ctx) {
+        // declWithMul      : VAR? PRIVATE? DISJ? qnames COLON DISJ? multiplicity expr1
+        AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
+
+        final boolean isVar = null != ctx.VAR() ? true : false;
+
+        final boolean isPrivate = null != ctx.PRIVATE() ? true : false;
+
+        List<AlloyQnameExpr> qnames =
+                visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class);
+
+        boolean isDisj1 = false;
+        boolean isDisj2 = false;
+        int colonPosition = ctx.COLON().getSymbol().getStartIndex();
+        for (TerminalNode disj : ctx.DISJ()) {
+            if (disj.getSymbol().getStartIndex() < colonPosition) {
+                isDisj1 = true;
+            } else {
+                isDisj2 = true;
+            }
+        }
+        return new AlloyDecl(
+                new Pos(ctx),
+                isVar,
+                isPrivate,
+                isDisj1,
+                qnames,
+                isDisj2,
+                parseMultiplicity(ctx.multiplicity()),
+                exprParseVis.visit(ctx.expr1()));
+    }
+
+    @Override
+    public AlloyDecl visitDeclNoMulSigDefault(DashParser.DeclNoMulSigDefaultContext ctx) {
+        // VAR? PRIVATE? DISJ? qnames COLON DISJ? expr1 ;
         AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
 
         final boolean isVar = null != ctx.VAR() ? true : false;
@@ -784,28 +823,50 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
             }
         }
 
-        if (null != ctx.multiplicity()) {
-            return new AlloyDecl(
-                    new Pos(ctx),
-                    isVar,
-                    isPrivate,
-                    isDisj1,
-                    qnames,
-                    isDisj2,
-                    parseMultiplicity(ctx.multiplicity()),
-                    exprParseVis.visit(ctx.expr1()));
-        } else {
-            // we don't want to put in a default mul here
-            // let the AST choose the default
-            return new AlloyDecl(
-                    new Pos(ctx),
-                    isVar,
-                    isPrivate,
-                    isDisj1,
-                    qnames,
-                    isDisj2,
-                    exprParseVis.visit(ctx.expr1()));
+        // defaults for mulitplicity of sig fields
+        AlloyExpr expr = exprParseVis.visit(ctx.expr1());
+        AlloyQtEnum mul;
+        if (expr instanceof AlloyVarExpr) mul = AlloyQtEnum.ONE;
+        else if (expr instanceof AlloyArrowExpr) mul = AlloyQtEnum.SET;
+        else
+            throw AlloyASTImplError.invalidAlloyQtEnum(
+                    expr.toString() + " must be given a multiplicity explicitly");
+
+        return new AlloyDecl(new Pos(ctx), isVar, isPrivate, isDisj1, qnames, isDisj2, mul, expr);
+    }
+
+    @Override
+    public AlloyDecl visitDeclNoMulDefaultOne(DashParser.DeclNoMulDefaultOneContext ctx) {
+        // VAR? PRIVATE? DISJ? qnames COLON DISJ? expr1 ;
+        AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
+
+        final boolean isVar = null != ctx.VAR() ? true : false;
+
+        final boolean isPrivate = null != ctx.PRIVATE() ? true : false;
+
+        List<AlloyQnameExpr> qnames =
+                visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class);
+
+        boolean isDisj1 = false;
+        boolean isDisj2 = false;
+        int colonPosition = ctx.COLON().getSymbol().getStartIndex();
+        for (TerminalNode disj : ctx.DISJ()) {
+            if (disj.getSymbol().getStartIndex() < colonPosition) {
+                isDisj1 = true;
+            } else {
+                isDisj2 = true;
+            }
         }
+
+        return new AlloyDecl(
+                new Pos(ctx),
+                isVar,
+                isPrivate,
+                isDisj1,
+                qnames,
+                isDisj2,
+                AlloyQtEnum.ONE, // defaults for mulitplicity of comp, arguments, quantified vars
+                exprParseVis.visit(ctx.expr1()));
     }
 
     @Override

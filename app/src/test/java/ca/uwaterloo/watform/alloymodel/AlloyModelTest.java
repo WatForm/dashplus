@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -205,8 +206,10 @@ public class AlloyModelTest {
         String f1 = "f1";
         String f2 = "f2";
 
-        AlloyDecl decl1 = new AlloyDecl(new AlloyQnameExpr(f1), new AlloyQnameExpr("F1"));
-        AlloyDecl decl2 = new AlloyDecl(new AlloyQnameExpr(f2), new AlloyQnameExpr("F2"));
+        AlloyDecl decl1 =
+                new AlloyDecl(new AlloyQnameExpr(f1), AlloyQtEnum.ONE, new AlloyQnameExpr("F1"));
+        AlloyDecl decl2 =
+                new AlloyDecl(new AlloyQnameExpr(f2), AlloyQtEnum.ONE, new AlloyQnameExpr("F2"));
         AlloySigPara sig1 = new AlloySigPara(s1, List.of(decl1), new AlloyBlock());
         AlloySigPara sig2 = new AlloySigPara(s2);
         AlloyFile alloyFile = new AlloyFile(List.of(sig1, sig2));
@@ -284,8 +287,14 @@ public class AlloyModelTest {
                 new AlloyPredPara(
                         new AlloyQnameExpr(p2),
                         List.of(
-                                new AlloyDecl(new AlloyQnameExpr("decl1"), new AlloyQnameExpr(s1)),
-                                new AlloyDecl(new AlloyQnameExpr("decl2"), new AlloyQnameExpr(s2))),
+                                new AlloyDecl(
+                                        new AlloyQnameExpr("decl1"),
+                                        AlloyQtEnum.ONE,
+                                        new AlloyQnameExpr(s1)),
+                                new AlloyDecl(
+                                        new AlloyQnameExpr("decl2"),
+                                        AlloyQtEnum.ONE,
+                                        new AlloyQnameExpr(s2))),
                         new AlloyBlock());
 
         AlloyFile alloyFile = new AlloyFile(List.of(sig1, pred1, pred2));
@@ -304,7 +313,8 @@ public class AlloyModelTest {
         String f1 = "f1";
         String s2 = "s2";
 
-        AlloyDecl decl1 = new AlloyDecl(new AlloyQnameExpr(f1), new AlloyQnameExpr("F1"));
+        AlloyDecl decl1 =
+                new AlloyDecl(new AlloyQnameExpr(f1), AlloyQtEnum.ONE, new AlloyQnameExpr("F1"));
         AlloySigPara sig1 = new AlloySigPara(s1, List.of(decl1), new AlloyBlock());
         AlloySigPara sig2 = new AlloySigPara(s2);
         AlloyFile alloyFile = new AlloyFile(List.of(sig1, sig2));
@@ -326,7 +336,8 @@ public class AlloyModelTest {
         String f2 = "f2";
         String s3 = "s3";
 
-        AlloyDecl decl2 = new AlloyDecl(new AlloyQnameExpr(f2), new AlloyQnameExpr("F2"));
+        AlloyDecl decl2 =
+                new AlloyDecl(new AlloyQnameExpr(f2), AlloyQtEnum.ONE, new AlloyQnameExpr("F2"));
         AlloySigPara sig3 = new AlloySigPara(new AlloyQnameExpr(s3), List.of(decl2));
         alloyModel2.addPara(sig3);
 

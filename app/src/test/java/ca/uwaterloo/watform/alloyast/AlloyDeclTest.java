@@ -17,6 +17,7 @@ public class AlloyDeclTest {
         AlloyDecl nestedDecl =
                 new AlloyDecl(
                         List.of(new AlloyQnameExpr("a"), new AlloyQnameExpr("b")),
+                        AlloyQtEnum.ONE,
                         new AlloySigIntExpr());
         assertEquals(2, nestedDecl.qnames.size());
         List<AlloyDecl> expandedDecls = nestedDecl.expand();

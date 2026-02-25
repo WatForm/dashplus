@@ -49,11 +49,11 @@ public class PCtxTestAlsParen {
     }
 
     public static AlloyDecl decl1() {
-        return new AlloyDecl(shortAQname, shortBQname);
+        return new AlloyDecl(shortAQname, AlloyQtEnum.ONE, shortBQname);
     }
 
     public static AlloyDecl decl2() {
-        return new AlloyDecl(longAQname, longBQname);
+        return new AlloyDecl(longAQname, AlloyQtEnum.ONE, longBQname);
     }
 
     public static AlloyCmdPara.CommandDecl.Scope.Typescope typescope1() {

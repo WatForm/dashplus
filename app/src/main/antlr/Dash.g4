@@ -81,7 +81,7 @@ moduleArg       : (EXACTLY? qname ) ;
 
 importPara      : PRIVATE? OPEN qname ( LBRACK sigRefs? RBRACK )? ( AS qname )? ;
 
-sigPara         : sigQualifier* SIG qnames sigRel? LBRACE COMMA? (decl ( COMMA* decl )*)? COMMA? RBRACE block? ;
+sigPara         : sigQualifier* SIG qnames sigRel? LBRACE COMMA? (declSig ( COMMA* declSig )*)? COMMA? RBRACE block? ;
 sigQualifier    : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
 sigRel			: EXTENDS sigRef 					# extendSigIn
 				| IN sigRef (PLUS sigRef)* 			# inSigIn
@@ -160,7 +160,7 @@ baseExpr		: number																					# numberExpr
 				| sigRef																					# sigRefExpr
 				| AT qname																					# atNameExpr
 				| block																						# blockExpr
-				| LBRACE declMul (COMMA declMul)* body? RBRACE              								# comprehensionExpr
+				| LBRACE declDefaultOne (COMMA declDefaultOne)* body? RBRACE              					# comprehensionExpr
 				| {((DashLexer)this._input.getTokenSource()).dashMode}? dashRef								# dashRefExpr
 				;
 
@@ -213,12 +213,31 @@ expr2			: baseExpr																					# baseExprFromExpr2
 // Misc
 
 block           : LBRACE expr1* RBRACE ;
-decl            : declMul
+
+// decl in a sig field
+declSig         : declWithMul
+				| declNoMulSigDefault
 				| declExact
 				;
-declMul			: VAR? PRIVATE? DISJ? qnames COLON DISJ? multiplicity? expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
+
+// decl in argument (to pred/fun), bind (quantified var) or baseExpr(comprehension)
+declDefaultOne  : declWithMul						
+                | declNoMulDefaultOne				
+                ;	
+
+declWithMul		: VAR? PRIVATE? DISJ? qnames COLON DISJ? multiplicity expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
+
+declNoMulSigDefault			
+				: VAR? PRIVATE? DISJ? qnames COLON DISJ? expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
+
+declNoMulDefaultOne			
+				: VAR? PRIVATE? DISJ? qnames COLON DISJ? expr1 ; // LONEOF, ONEOF, SOMEOF, SETOF
+
+
 declExact		: PRIVATE? qnames EQUAL expr1 ; // EXACTLYOF
-decls			: decl (COMMA decl)* ;
+
+// only used by arguments, bind
+decls			: declDefaultOne (COMMA declDefaultOne)* ;
 
 
 

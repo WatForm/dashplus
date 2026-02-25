@@ -68,7 +68,7 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
                         ? visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                         : Collections.emptyList(),
                 null != ctx.sigRel() ? new AlloySigRelParseVis().visit(ctx.sigRel()) : null,
-                visitAll(ctx.decl(), exprParseVis, AlloyDecl.class),
+                visitAll(ctx.declSig(), exprParseVis, AlloyDecl.class),
                 null != ctx.block() ? (AlloyBlock) exprParseVis.visit(ctx.block()) : null);
     }
 
@@ -114,7 +114,11 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
         List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
             if (null != ctx.arguments().decls()) {
-                decls = visitAll(ctx.arguments().decls().decl(), exprParseVis, AlloyDecl.class);
+                decls =
+                        visitAll(
+                                ctx.arguments().decls().declDefaultOne(),
+                                exprParseVis,
+                                AlloyDecl.class);
             }
         }
 
@@ -135,7 +139,11 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
         List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
             if (null != ctx.arguments().decls()) {
-                decls = visitAll(ctx.arguments().decls().decl(), exprParseVis, AlloyDecl.class);
+                decls =
+                        visitAll(
+                                ctx.arguments().decls().declDefaultOne(),
+                                exprParseVis,
+                                AlloyDecl.class);
             }
         }
 

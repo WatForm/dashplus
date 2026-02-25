@@ -326,7 +326,8 @@ public class DSL {
     }
 
     public AlloyDecl genEventDecl(int i) {
-        if (i == 0) return new AlloyDecl(D2AStrings.genEventName + i, allEventsVar());
+        if (i == 0)
+            return new AlloyDecl(D2AStrings.genEventName + i, AlloyQtEnum.SET, allEventsVar());
         else {
             List<String> cop = Collections.nCopies(i, D2AStrings.identifierName);
             return AlloyDeclArrowStringList(

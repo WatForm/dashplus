@@ -62,10 +62,12 @@ public class AlloySigParaTest {
         AlloyDecl d12 =
                 new AlloyDecl(
                         List.of(new AlloyQnameExpr("f1"), new AlloyQnameExpr("f2")),
+                        AlloyQtEnum.ONE,
                         new AlloyQnameExpr("F12"));
         AlloyDecl d34 =
                 new AlloyDecl(
                         List.of(new AlloyQnameExpr("f3"), new AlloyQnameExpr("f4")),
+                        AlloyQtEnum.ONE,
                         new AlloyQnameExpr("F34"));
         AlloySigPara sigABC =
                 new AlloySigPara(

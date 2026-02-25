@@ -14,6 +14,7 @@
 
 package ca.uwaterloo.watform.dashast;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -55,9 +56,7 @@ public class DashParam extends AlloyExpr {
     public AlloyDecl asAlloyDecl() {
         return new AlloyDecl(
                 // name
-                this.asAlloyVar(),
-                // type
-                new AlloyQnameExpr(this.paramSig));
+                this.asAlloyVar(), AlloyQtEnum.ONE, new AlloyQnameExpr(this.paramSig));
     }
 
     @Override

@@ -48,11 +48,11 @@ public class PCtxTestAls {
     }
 
     public static AlloyDecl decl1() {
-        return new AlloyDecl(shortAQname, shortBQname);
+        return new AlloyDecl(shortAQname, AlloyQtEnum.ONE, shortBQname);
     }
 
     public static AlloyDecl decl2() {
-        return new AlloyDecl(longAQname, longBQname);
+        return new AlloyDecl(longAQname, AlloyQtEnum.ONE, longBQname);
     }
 
     public static AlloyCmdPara.CommandDecl.Scope.Typescope typescope1() {
@@ -226,9 +226,13 @@ public class PCtxTestAls {
                                         new AlloyQnameExpr("name"),
                                         new AlloyBlock(
                                                 List.of(
-                                                        new AlloyDecl(shortAQname, shortBQname),
+                                                        new AlloyDecl(
+                                                                shortAQname,
+                                                                AlloyQtEnum.ONE,
+                                                                shortBQname),
                                                         new AlloyDecl(
                                                                 longAQname,
+                                                                AlloyQtEnum.ONE,
                                                                 new AlloyOrExpr(
                                                                         longBQname, longCQname)),
                                                         new AlloyDecl(
@@ -237,6 +241,7 @@ public class PCtxTestAls {
                                                                         shortBQname,
                                                                         shortCQname,
                                                                         shortDQname),
+                                                                AlloyQtEnum.ONE,
                                                                 shortAQname),
                                                         new AlloyDecl(
                                                                 true,
@@ -255,6 +260,7 @@ public class PCtxTestAls {
                                                                         longAQname,
                                                                         longBQname,
                                                                         longCQname),
+                                                                AlloyQtEnum.ONE,
                                                                 shortBQname),
                                                         new AlloyDecl(
                                                                 true,
@@ -284,6 +290,7 @@ public class PCtxTestAls {
                                                                 List.of(
                                                                         new AlloyDecl(
                                                                                 shortAQname,
+                                                                                AlloyQtEnum.ONE,
                                                                                 shortBQname),
                                                                         new AlloyDecl(
                                                                                 List.of(
@@ -291,6 +298,7 @@ public class PCtxTestAls {
                                                                                         shortBQname,
                                                                                         shortCQname,
                                                                                         shortDQname),
+                                                                                AlloyQtEnum.ONE,
                                                                                 shortAQname),
                                                                         new AlloyDecl(
                                                                                 true,
@@ -309,6 +317,7 @@ public class PCtxTestAls {
                                                                                         longAQname,
                                                                                         longBQname,
                                                                                         longCQname),
+                                                                                AlloyQtEnum.ONE,
                                                                                 shortBQname),
                                                                         new AlloyDecl(
                                                                                 true,
@@ -326,12 +335,14 @@ public class PCtxTestAls {
                                                                 List.of(
                                                                         new AlloyDecl(
                                                                                 shortAQname,
+                                                                                AlloyQtEnum.ONE,
                                                                                 shortBQname)),
                                                                 shortCQname),
                                                         new AlloyCphExpr(
                                                                 List.of(
                                                                         new AlloyDecl(
                                                                                 shortAQname,
+                                                                                AlloyQtEnum.ONE,
                                                                                 shortBQname)),
                                                                 new AlloyAndExpr(
                                                                         longCQname,

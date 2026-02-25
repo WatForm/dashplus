@@ -1,3 +1,28 @@
+/*
+    Defaults for multiplicities are chosen at parsing.
+    An AlloyDecl must have explicit multiplicities when created.
+
+    The defaults chosen by the parsing phase are:
+    * In a Sig field name:expr
+        ONE if expr is an AlloyVarName (unary set - see p. 77 Jackson Green book)
+        SET if expr is an AlloyArrowExpr (clearly arity >1 - Jackson Green book p. 77
+         says no arity is supposed to be there at all, but th AA allows a multiplicity)
+        throw an error is no mul provided and it is any other kind of expr (e.g. a dot join)
+    * In a pred var decl p[a:A]
+        default is p[a: one A]
+    * In a quantified var some a:A | ...
+        default is some a:one A | ...
+        (A could be any expression)
+    * In a set comprehension: {a : A | ...}
+        default is {a : one A | ...}
+
+    * there are the following kinds of AlloyDecls in parser now:
+        AlloyDeclInSig
+        AlloyDeclInArg
+        AlloyDeclInQuantifiedVar
+        AlloyDeclInComp
+*/
+
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
@@ -77,17 +102,6 @@ public final class AlloyDecl extends AlloyExpr {
     }
 
     public AlloyDecl(
-            Pos pos,
-            boolean isVar,
-            boolean isPrivate,
-            boolean isDisj1,
-            List<AlloyQnameExpr> qnames,
-            boolean isDisj2,
-            AlloyExpr expr) {
-        this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, qnames, isDisj2, defaultMul(pos, expr), expr);
-    }
-
-    public AlloyDecl(
             boolean isVar,
             boolean isPrivate,
             boolean isDisj1,
@@ -98,49 +112,12 @@ public final class AlloyDecl extends AlloyExpr {
         this(Pos.UNKNOWN, isVar, isPrivate, isDisj1, qnames, isDisj2, mul, expr);
     }
 
-    public AlloyDecl(List<AlloyQnameExpr> qnames, AlloyExpr expr) {
-        this(Pos.UNKNOWN, false, false, false, qnames, false, AlloyQtEnum.ONE, expr);
-    }
-
-    public AlloyDecl(AlloyQnameExpr qname, AlloyExpr expr) {
-        this(
-                Pos.UNKNOWN,
-                false,
-                false,
-                false,
-                Collections.singletonList(qname),
-                false,
-                defaultMul(expr),
-                expr);
+    public AlloyDecl(List<AlloyQnameExpr> qnames, AlloyQtEnum mul, AlloyExpr expr) {
+        this(Pos.UNKNOWN, false, false, false, qnames, false, mul, expr);
     }
 
     public AlloyDecl(AlloyQnameExpr qname, AlloyQtEnum mul, AlloyExpr expr) {
         this(Pos.UNKNOWN, false, false, false, Collections.singletonList(qname), false, mul, expr);
-    }
-
-    public AlloyDecl(String qname, String expr) {
-        AlloyQnameExpr e = new AlloyQnameExpr(expr);
-        this(
-                Pos.UNKNOWN,
-                false,
-                false,
-                false,
-                Collections.singletonList(new AlloyQnameExpr(qname)),
-                false,
-                defaultMul(e),
-                e);
-    }
-
-    public AlloyDecl(String qname, AlloyExpr expr) {
-        this(
-                Pos.UNKNOWN,
-                false,
-                false,
-                false,
-                Collections.singletonList(new AlloyQnameExpr(qname)),
-                false,
-                defaultMul(expr),
-                expr);
     }
 
     public AlloyDecl(String qname, AlloyQtEnum mul, AlloyExpr expr) {

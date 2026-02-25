@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.TestUtil;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
@@ -105,7 +106,11 @@ public class SolutionTest {
         AlloySigPara S1Sig =
                 new AlloySigPara(
                         new AlloyQnameExpr(S1),
-                        List.of(new AlloyDecl(new AlloyQnameExpr(F), new AlloySigIntExpr())),
+                        List.of(
+                                new AlloyDecl(
+                                        new AlloyQnameExpr(F),
+                                        AlloyQtEnum.ONE,
+                                        new AlloySigIntExpr())),
                         TestUtil.createBlock());
         AlloyCmdPara cmdPara =
                 new AlloyCmdPara(
@@ -144,7 +149,11 @@ public class SolutionTest {
         AlloySigPara S1Sig =
                 new AlloySigPara(
                         new AlloyQnameExpr(S1),
-                        List.of(new AlloyDecl(new AlloyQnameExpr(F), new AlloySigIntExpr())),
+                        List.of(
+                                new AlloyDecl(
+                                        new AlloyQnameExpr(F),
+                                        AlloyQtEnum.ONE,
+                                        new AlloySigIntExpr())),
                         TestUtil.createBlock());
         AlloyCmdPara cmdPara =
                 new AlloyCmdPara(
