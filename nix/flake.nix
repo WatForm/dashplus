@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable"; # this provides the ability to update dependencies, but no update happens unless flake.lock is modified explicitly. This does not imply that the dependencies themselves are bug-prone
     flake-utils.url = "github:numtide/flake-utils"; # used to generalize for all hardware
   };
 
@@ -9,7 +9,7 @@
     
     flake-utils.lib.eachDefaultSystem (system:
     let
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = nixpkgs.legacyPackages.${system}; # this refers to the main nixpkgs repo, this does not imply that the packages themselves are outdated in any way
       jdk = pkgs.jdk25; # minimum version of java on which this is confirmed to work
     in
     {
