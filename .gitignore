@@ -3,6 +3,9 @@
 build/
 bin/
 
+# Logging
+*.log
+
 # Metals
 .metals/
 .worksheet/

@@ -5,12 +5,18 @@ import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import ca.uwaterloo.watform.utils.CustomFileLogger;
 
 public class AlloyToTla {
     public static TlaModel translate(
             AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
 
+        CustomFileLogger log = new CustomFileLogger("Alloy to Tla");
+        log.logger.info("beginning the translation");
+
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
+
+        log.logger.info("created model");
 
         StdLibDefns.translate(alloyModel, tlaModel);
 
