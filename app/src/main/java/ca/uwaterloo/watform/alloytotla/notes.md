@@ -126,16 +126,18 @@ sig A {
 f : q B m -> n C
 }
 
-A set -> q (B m -> n C)   # this is the left exception interpretation
-(A set -> q B) m -> n C    # this is the total left interpretation
+A set -> q (B m -> n C)   // this is the left exception interpretation
+(A set -> q B) m -> n C    this is the total left interpretation
 
 
 sig A {
     f : B -> C -> D -> E
 }
 
-1) A -> (((B->C)->D)->E)
-2) ((((A->B)->C)->D)->E)
+1) A -> (((B->C)->D)->E)  [explicit left-associative]
+2) ((((A->B)->C)->D)->E)  [total left-associative]
+3) A -> (B->(C->(D->E)))  [total right-associative]
+4) (A->B)->((C->D)->E)
 
 m = one
 n = one
@@ -214,3 +216,53 @@ Run and check rules:
 - one - pre-translate the macro by editing the AST
 - two - expand them in the translation using a DSL-generator
 - three - make equivalent macros in translation
+
+
+## Example
+
+### Implicit facts
+
+Let m and n be multiplicities
+
+```
+sig B {}
+sig C {}
+sig A {
+    f : B m -> n C
+}
+```
+
+becomes
+
+```
+all this: A | this.f in B m -> n C
+```
+
+[Source: Green Book, p97]
+
+```
+sig A {
+    f : B -> C -> D -> E
+}
+```
+
+1) A -> (((B->C)->D)->E)  [explicit left-associative]
+2) ((((A->B)->C)->D)->E)  [total left-associative]
+3) A -> (B->(C->(D->E)))  [total right-associative]
+4) (A->B)->((C->D)->E)
+
+
+To test this, consider this model:
+
+```
+sig B {}
+sig C {}
+sig A {
+    f : B one -> one C
+}
+
+run {} for exactly 1 B, 1 C, 2 A
+```
+
+1) `A set -> set (B one -> one C)` expected: 2 instances
+2) `(A set -> set B) one -> one C` expected: 0 instances 
