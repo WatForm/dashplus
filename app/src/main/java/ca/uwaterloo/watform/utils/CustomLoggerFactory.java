@@ -5,18 +5,19 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-public class CustomFileLogger {
+public class CustomLoggerFactory {
 
-    public final Logger logger;
     private static int UID = 0;
 
-    public CustomFileLogger(String fileName) {
-        this.logger = Logger.getLogger("" + UID);
+    public static Logger make(String fileName, boolean debug) {
+        Logger logger = Logger.getLogger("" + UID);
         UID += 1;
 
         fileName = fileName + ".log";
 
-        this.logger.setUseParentHandlers(false); // remove ability to access console
+        logger.setUseParentHandlers(false); // remove ability to access console
+
+        if (!debug) return logger;
 
         File file = new File(fileName);
         if (file.getParentFile() != null) {
@@ -25,9 +26,10 @@ public class CustomFileLogger {
         try {
             FileHandler fh = new FileHandler(fileName);
             fh.setFormatter(new SimpleFormatter());
-            this.logger.addHandler(fh);
+            logger.addHandler(fh);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return logger;
     }
 }
