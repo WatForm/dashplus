@@ -2,25 +2,27 @@
     Defaults for multiplicities are chosen at parsing.
     An AlloyDecl must have explicit multiplicities when created.
 
+    in name:expr, expr is a bounding expression.
+
     The defaults chosen by the parsing phase are:
     * In a Sig field name:expr
-        ONE if expr is an AlloyVarName (unary set - see p. 77 Jackson Green book)
-        SET if expr is an AlloyArrowExpr (clearly arity >1 - Jackson Green book p. 77
-         says no arity is supposed to be there at all, but th AA allows a multiplicity)
-        throw an error is no mul provided and it is any other kind of expr (e.g. a dot join)
+        - ONE if expr is an AlloyVarName (clearly a unary set - see p. 77 Jackson Green book)
+        - SET if expr is an AlloyArrowExpr (clearly arity >1 - Jackson Green book p. 77
+         says no arity is supposed to be there at all, but the AA allows a multiplicity here in the grammar)
+        - throw an error is no mul provided and it is any other kind of expr (e.g. a dot join)
+         b/c we aren't determining the arity of expr during parsing
     * In a pred var decl p[a:A]
         default is p[a: one A]
     * In a quantified var some a:A | ...
         default is some a:one A | ...
         (A could be any expression)
+        If we chose a different default, the quantification would become higher order.
     * In a set comprehension: {a : A | ...}
         default is {a : one A | ...}
 
-    * there are the following kinds of AlloyDecls in parser now:
-        AlloyDeclInSig
-        AlloyDeclInArg
-        AlloyDeclInQuantifiedVar
-        AlloyDeclInComp
+    * the parser has separate rules for a decl within a sig (the first case above) 
+     and a decl with default mul ONE (the second, third, and fourth cases above)
+
 */
 
 package ca.uwaterloo.watform.alloyast.expr.misc;
