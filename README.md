@@ -23,6 +23,24 @@ Run with the desired entry point:
 - TLA Translation:                    `java -cp app/build/libs/watform-dashplus.jar ca.uwaterloo.watform.dashtotla.Main <args>`
 - Predicate Abstraction:              `java -cp app/build/libs/watform-dashplus.jar ca.uwaterloo.watform.predabstraction.Main <args>`
 
+### Using Nix:
+
+For systems with the nix package manager, there is an alternate set-up that automates the installation of external dependencies, like java, gradle and alloy. This process assumes that one has nix with flakes enabled on one's system (nix-darwin on Mac, nix on generic linux systems).
+
+1) Clone this repository and navigate to the root:
+
+```
+git clone https://github.com/WatForm/dashplus
+cd ./dashplus
+```
+
+2) Start a nix shell from the provided flake:
+```
+nix develop ./nix
+```
+
+This opens a bash shell with all the dependencies installed just within that shell, along with a few convenient aliases and useful tools. There is no need to install java or gradle globally, or switch java verisons - nix handles everything. Upon exiting the shell, the system goes back to its initial state.
+
 ## Instructions for Contributors:
 
 - If an IDE is used, please ensure that IDE-generated files are not present in any of the commits. This can be done by including such files in the .gitignore
