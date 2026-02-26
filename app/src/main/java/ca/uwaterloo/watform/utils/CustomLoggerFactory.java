@@ -48,7 +48,7 @@ public class CustomLoggerFactory {
             file.getParentFile().mkdirs();
         }
         try {
-            FileHandler fh = new FileHandler(fileName);
+            FileHandler fh = new FileHandler(fileName, true);
             fh.setFormatter(new SimpleFormatter());
             logger.addHandler(fh);
         } catch (Exception e) {
