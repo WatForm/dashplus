@@ -137,7 +137,7 @@ public final class Solution {
 
     public void writeXML(String filename) {
         this.throwErrorIfUnsat();
-        System.out.println(filename);
+        // System.out.println(filename);
         // this was added b/c of problems with writeXML
         // in newly compiled Alloy jar
         validateWritableFile(filename);

@@ -43,12 +43,15 @@ public class AlloyInterface {
     private static Solution executeCommand(String alloyCode, int cmdnum) {
         // this will put in a cmd 0: run {} if there are no other cmds
         CompModule alloy = parse(alloyCode);
-        A4Reporter rep = new A4Reporter();
+        A4Reporter rep = new A4Reporter(); 
         Command cmd = alloy.getAllCommands().get(cmdnum);
         dashOutput("Executing cmd " + String.valueOf(cmdnum) + ": " + cmd.toString());
+        // turn off kodkod stuff going to screen
+        System.setProperty("org.slf4j.simpleLogger.log.kodkod.engine.config", "warn");
         A4Solution ans =
                 TranslateAlloyToKodkod.execute_command(
                         rep, alloy.getAllReachableSigs(), cmd, new A4Options());
+
         dashOutput("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
         return new Solution(ans, alloy);
     }
@@ -103,6 +106,7 @@ public class AlloyInterface {
             String instanceFileName, // should not include .xml at end
             Integer maxInstances) {
         assert (!instanceFileName.contains(".xml"));
+
         Solution soln = executeCommand(am, cmdNum);
         int c;
         for (c = 0; c < maxInstances; c++) {
