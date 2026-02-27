@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.predabstraction;
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyNegExpr;
@@ -25,7 +26,7 @@ public class PredicateAbstraction {
     public DashModel absModel;
     // public int cmdnum;
     public AlloyCmdPara cmd;
-    private AlloyCmdPara.CommandDecl.Scope scope;
+    protected AlloyCmdPara.CommandDecl.Scope scope;
     public String abvNamePre = "B";
     public String cafDepPredPre = "caf_dep_";
     protected AlloyModel queryModel; // queryModel
@@ -40,7 +41,9 @@ public class PredicateAbstraction {
         this.concreteModel = concreteModel;
         this.exprTranslator = new ExprTranslatorVis(concreteModel);
         this.dsl = new DSL(false);
-        // this.cmdnum = 0;
+        this.scope =
+                new AlloyCmdPara.CommandDecl.Scope(
+                        new AlloyCmdPara.CommandDecl.Scope.Typescope(false, 4, 4, 0, "__Snapshot"));
     }
 
     public PredicateAbstraction(DashModel concreteModel, int n) {
@@ -53,10 +56,10 @@ public class PredicateAbstraction {
     }
 
     public void createABVmap() {
-        // for every init, invariant, pred, guard, and action in concreteModel, break it down by !,
-        // &,
-        // |, =>, <=>
-        // add each subexp to a set and populate ABVNameCAFMap with B0:exp0, B1:exp1, etc.
+        // for every init, invariant, pred, guard, and action in concreteModel,
+        // break it down by !, &, |, =>, <=>
+        // add each subexp to a set and
+        // populate ABVNameCAFMap with B0:exp0, B1:exp1, etc.
         Set<AlloyExpr> preds = new HashSet<AlloyExpr>();
         for (AlloyExpr e : concreteModel.initsR()) {
             preds.addAll((new AlloyExprDecomposer()).decompose(e));
@@ -67,6 +70,9 @@ public class PredicateAbstraction {
         List<String> allTransNames = concreteModel.allTransNames();
         for (String tfqn : allTransNames) {
             preds.addAll((new AlloyExprDecomposer()).decompose(concreteModel.whenR(tfqn)));
+        }
+        if (preds.contains(emptySet())) {
+            preds.remove(emptySet());
         }
         int ctr = 0;
         for (AlloyExpr e : preds) {
@@ -134,7 +140,7 @@ public class PredicateAbstraction {
         /*
             pred query_i [s: __Snapshot] {
                 expr
-                caf_i / ! caf_i
+                caf_i / !caf_i
             }
         */
         List<AlloyExpr> exprABVs = new ArrayList<>();
@@ -165,6 +171,13 @@ public class PredicateAbstraction {
 
     public AlloyExpr createAbsTransDo(String tfqn) {
         // used to abstract transition actions that may have primed vars in them
+        /*
+            pred query_i [s: __Snapshot] {
+                trans_guard
+                trans_action
+                caf_i / !caf_i
+            }
+        */
         AlloyExpr guard = exprTranslator.translateExpr(concreteModel.whenR(tfqn));
         AlloyExpr action = exprTranslator.translateExpr(concreteModel.doR(tfqn));
         Set<AlloyExpr> cmdBody = new HashSet<AlloyExpr>();
@@ -197,6 +210,7 @@ public class PredicateAbstraction {
     }
 
     public void addABVsToAbsModel() {
+        // adds all the B0,... Bn as boolean variables to the root state of absModel
         for (String vname : ABVNameCAFMap.keySet()) {
             String vfqn = DashFQN.fqn(concreteModel.rootName, vname);
             if (envABVs.contains(vname)) {
@@ -204,12 +218,14 @@ public class PredicateAbstraction {
                         vfqn,
                         DashStrings.IntEnvKind.ENV,
                         emptyList(),
+                        AlloyQtEnum.ONE,
                         AlloyVar(AlloyStrings.boolName));
             } else {
                 absModel.addVar(
                         vfqn,
                         DashStrings.IntEnvKind.INT,
                         emptyList(),
+                        AlloyQtEnum.ONE,
                         AlloyVar(AlloyStrings.boolName));
             }
         }
