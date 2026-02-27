@@ -15,7 +15,7 @@ This creates a file called <filename>.log, which is ignored by git
 If debug is false, the logger does not print or write any of the produced logs.
 The filename can be reused with other loggers, each logger annotates the logs it writes with the part of the source code it is being used in
 
-Logger l = CustomLoggerFactory.make("<filename>",debug);
+Logger l = CustomLoggerFactory.make("<filename>.log",debug);
 
 l.info("test info message");
 l.warning("test warning message");
@@ -26,7 +26,9 @@ l.config("test config message");
 further documentation: https://docs.oracle.com/javase/8/docs/api/java/util/logging/Logger.html
 
 A logger does not have to be threaded through multiple files.  If multiple loggers have the same
-filename, they will write to the same file.
+filename, they will write to the same file, since they will share the same fileHandler
+
+Having multiple fileHandlers share the same file results in strange behavior, since a handler, when unable to acquire a lock on the file (which may be held by another handler), the logger writes to <filename>.log.1, <filename>.log.2 etc. This behavior is ideally never seen, but as a failsafe, this pattern is included in the .gitignore
 
 */
 
