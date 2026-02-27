@@ -11,8 +11,10 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import ca.uwaterloo.watform.utils.CustomLoggerFactory;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class SigHierarchy {
 
@@ -32,6 +34,9 @@ public class SigHierarchy {
     public static void translate(AlloyModel alloyModel, TlaModel tlaModel) {
 
         List<String> sortedSigs = alloyModel.topoSortedSigs();
+
+        Logger l = CustomLoggerFactory.make("AlloyToTla", true);
+        l.info("logging from within Sig Hierarchy test");
 
         tlaModel.addDefn(
                 TlaDefn(

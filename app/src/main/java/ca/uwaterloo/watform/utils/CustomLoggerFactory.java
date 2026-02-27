@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.utils;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -33,6 +34,8 @@ public class CustomLoggerFactory {
 
     private static int UID = 0;
 
+    private static HashMap<String, FileHandler> handlerTable = new HashMap<>();
+
     public static Logger make(String fileName, boolean debug) {
         Logger logger = Logger.getLogger("" + UID);
         UID += 1;
@@ -43,6 +46,16 @@ public class CustomLoggerFactory {
 
         if (!debug) return logger;
 
+        if(!handlerTable.containsKey(fileName))
+            makeNewFileAndHandler(fileName);
+
+        logger.addHandler(handlerTable.get(fileName));
+
+        return logger;
+    }
+
+    private static void makeNewFileAndHandler(String fileName)
+    {
         File file = new File(fileName);
         if (file.getParentFile() != null) {
             file.getParentFile().mkdirs();
@@ -50,10 +63,10 @@ public class CustomLoggerFactory {
         try {
             FileHandler fh = new FileHandler(fileName);
             fh.setFormatter(new SimpleFormatter());
-            logger.addHandler(fh);
+            handlerTable.put(fileName, fh);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return logger;
+
     }
 }

@@ -5,6 +5,7 @@ bin/
 
 # Logging
 *.log
+*.log.*
 
 # Metals
 .metals/
