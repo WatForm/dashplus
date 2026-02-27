@@ -210,6 +210,9 @@ public class Main implements Callable<Integer> {
                     // this is a dash file
                     dashOutput("Input: " + fullFileName);
                     DashModel dm = (DashModel) parseToModel(absolutePath);
+                    if (dm.getParas(AlloyCmdPara.class).size() == 0) {
+                        dashOutputBold("Warning: no command in input .dsh file");
+                    }
                     if (vis) {
                         runVis(dm, outputFileNamePrefix);
                     } else if (tla) {
