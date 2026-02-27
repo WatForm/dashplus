@@ -1,11 +1,11 @@
 /*
- 	Everything added to a DashModel must be
- 	fully resolved.
+    Everything added to a DashModel must be
+    fully resolved.
 
- 	Inv and Init can only be added at the top-level (not in substates).
+    Inv and Init can only be added at the top-level (not in substates).
 
-	Have to get a new ExprRefResolver for each addition
-	b/c a previous add may have added something new.
+    Have to get a new ExprRefResolver for each addition
+    b/c a previous add may have added something new.
 
     All model setters should be methods (not directly setting an attribute)
 
@@ -15,6 +15,7 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
@@ -65,9 +66,14 @@ public class DashModel extends ResolveDM {
         return;
     }
 
-    public void addVar(String vfqn, DashStrings.IntEnvKind k, List<DashParam> prms, AlloyExpr t) {
+    public void addVar(
+            String vfqn,
+            DashStrings.IntEnvKind k,
+            List<DashParam> prms,
+            AlloyQtEnum mul,
+            AlloyExpr t) {
         // TODO what if prms don't exist??
-        addVar(vfqn, k, prms, t);
+        super.addVar(vfqn, k, prms, mul, t);
         return;
     }
 
