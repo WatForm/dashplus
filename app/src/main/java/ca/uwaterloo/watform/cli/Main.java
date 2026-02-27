@@ -211,7 +211,8 @@ public class Main implements Callable<Integer> {
                     dashOutput("Input: " + fullFileName);
                     DashModel dm = (DashModel) parseToModel(absolutePath);
                     if (dm.getParas(AlloyCmdPara.class).size() == 0) {
-                        dashOutputBold("Warning: no command in input .dsh file");
+                        dashOutputBold(
+                                "Warning: no command in input .dsh file -> using default scopes for run {}");
                     }
                     if (vis) {
                         runVis(dm, outputFileNamePrefix);
