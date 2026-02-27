@@ -6,9 +6,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.extractItemsOfClass;
 import static ca.uwaterloo.watform.utils.GeneralUtil.extractOneFromList;
 
 import antlr.generated.*;
-import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.dashast.dashref.DashExprParseVis;
@@ -57,19 +55,23 @@ public final class DashStateItemParseVis extends DashBaseVisitor<DashStateItem> 
 
     @Override
     public DashVarDecls visitDashVarDecls(DashParser.DashVarDeclsContext ctx) {
-        AlloyQtEnum mul = AlloyQtEnum.ONE;
-        if (null != ctx.multiplicity()) {
-            mul = exprParseVis.parseMultiplicity(ctx.multiplicity());
-        }
-        AlloyExpr expr = exprParseVis.visit(ctx.expr1());
 
-        if (mul != null && expr instanceof AlloyArrowExpr) mul = AlloyQtEnum.SET;
-        return new DashVarDecls(
-                new Pos(ctx),
-                this.extractNames(ctx.names()),
-                mul,
-                expr,
-                null != ctx.ENV() ? DashStrings.IntEnvKind.ENV : DashStrings.IntEnvKind.INT);
+        AlloyExpr expr = exprParseVis.visit(ctx.expr1());
+        if (null != ctx.multiplicity()) {
+            return new DashVarDecls(
+                    new Pos(ctx),
+                    this.extractNames(ctx.names()),
+                    exprParseVis.parseMultiplicity(ctx.multiplicity()),
+                    expr,
+                    null != ctx.ENV() ? DashStrings.IntEnvKind.ENV : DashStrings.IntEnvKind.INT);
+        } else {
+            // default multiplicity will be chosen in DashVarDecl AST node
+            return new DashVarDecls(
+                    new Pos(ctx),
+                    this.extractNames(ctx.names()),
+                    expr,
+                    null != ctx.ENV() ? DashStrings.IntEnvKind.ENV : DashStrings.IntEnvKind.INT);
+        }
     }
 
     @Override
