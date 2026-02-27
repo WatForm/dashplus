@@ -20,7 +20,7 @@
     * In a set comprehension: {a : A | ...}
         default is {a : one A | ...}
 
-    * the parser has separate rules for a decl within a sig (the first case above) 
+    * the parser has separate rules for a decl within a sig (the first case above)
      and a decl with default mul ONE (the second, third, and fourth cases above)
 
 */

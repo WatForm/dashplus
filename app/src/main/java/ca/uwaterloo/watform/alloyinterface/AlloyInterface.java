@@ -8,11 +8,11 @@
 
 package ca.uwaterloo.watform.alloyinterface;
 
+import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.utils.ImplementationError;
+import ca.uwaterloo.watform.cli.Constants;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.ast.Command;
@@ -21,11 +21,8 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
-import java.util.Optional;
 
 public class AlloyInterface {
-
-    public static final int NOCMD = -1;
 
     public static CompModule parse(String alloyCode) throws Err {
         return CompUtil.parseEverything_fromString(new A4Reporter(), alloyCode);
@@ -48,22 +45,22 @@ public class AlloyInterface {
         CompModule alloy = parse(alloyCode);
         A4Reporter rep = new A4Reporter();
         Command cmd = alloy.getAllCommands().get(cmdnum);
-        blue("Executing cmd " + String.valueOf(cmdnum) + ": " + cmd.toString());
+        dashOutput("Executing cmd " + String.valueOf(cmdnum) + ": " + cmd.toString());
         A4Solution ans =
                 TranslateAlloyToKodkod.execute_command(
                         rep, alloy.getAllReachableSigs(), cmd, new A4Options());
-        blue("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
+        dashOutput("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
         return new Solution(ans, alloy);
     }
 
     public static Solution executeCommand(AlloyModel am, int cmdnum) {
+        // assumes this is a valid cmd or NOCMD
         String alloyCode = am.toString();
-        Optional<AlloyCmdPara> cmd = am.getCmdNum(cmdnum);
-        if (cmd.isEmpty()) {
-            printStackTrace();
-            throw ImplementationError.shouldNotReach();
+        if (cmdnum == Constants.noCmdValue) {
+            return checkModelSatisfiability(am);
+        } else {
+            return AlloyInterface.executeCommand(alloyCode, cmdnum);
         }
-        return AlloyInterface.executeCommand(alloyCode, cmdnum);
     }
 
     public static Solution checkModelSatisfiability(AlloyModel am) {
@@ -74,6 +71,7 @@ public class AlloyInterface {
         return AlloyInterface.executeCommand(alloyCode, 0);
     }
 
+    /*
     // returns a String
     public static String executeCommandToString(AlloyModel am, int cmdnum) {
         Solution soln = executeCommand(am, cmdnum);
@@ -84,6 +82,7 @@ public class AlloyInterface {
         if (soln.isSat()) return result + "\nSATISFIABLE\n" + soln.toString();
         else return result + "\nUNSATISFIABLE\n";
     }
+    */
 
     /*
         write up to maxInstances of satisfying solutions of
@@ -104,8 +103,7 @@ public class AlloyInterface {
             String instanceFileName, // should not include .xml at end
             Integer maxInstances) {
         assert (!instanceFileName.contains(".xml"));
-        Solution soln =
-                (cmdNum == NOCMD) ? checkModelSatisfiability(am) : executeCommand(am, cmdNum);
+        Solution soln = executeCommand(am, cmdNum);
         int c;
         for (c = 0; c < maxInstances; c++) {
             // c is how many instances that we have written
@@ -121,6 +119,6 @@ public class AlloyInterface {
             AlloyModel am,
             String instanceFileName, // should not include .xml at end
             Integer maxInstances) {
-        return writeInstancesToXML(am, NOCMD, instanceFileName, maxInstances);
+        return writeInstancesToXML(am, Constants.noCmdValue, instanceFileName, maxInstances);
     }
 }

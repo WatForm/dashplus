@@ -87,6 +87,7 @@ public class DashToAlloy extends StutterD2A {
             e.printStackTrace();
             System.exit(1);
         }
+
         return this.am;
     }
 

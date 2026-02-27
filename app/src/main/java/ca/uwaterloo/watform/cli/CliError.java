@@ -11,6 +11,10 @@ public final class CliError extends DashPlusException {
         return new CliError("Invalid parameters. Please see cli helper message. ");
     }
 
+    public static CliError invalidParams(String s) {
+        return new CliError("Invalid parameters. " + s);
+    }
+
     public static CliError invalidFile(String filename) {
         return new CliError("Input file must end with .dsh or .als: " + filename);
     }

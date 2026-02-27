@@ -38,8 +38,8 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     public AlloyQuantificationExpr visitQuantificationExpr(
             DashParser.QuantificationExprContext ctx) {
         List<AlloyDecl> decls =
-                null != ctx.decls()
-                        ? visitAll(ctx.decls().declDefaultOne(), this, AlloyDecl.class)
+                null != ctx.declsDefaultOne()
+                        ? visitAll(ctx.declsDefaultOne().declDefaultOne(), this, AlloyDecl.class)
                         : Collections.emptyList();
         if (null != ctx.ALL()) {
             return new AlloyQuantificationExpr(
@@ -758,7 +758,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     // Decl
     // ============================
     @Override
-    public AlloyDecl visitDeclSig(DashParser.DeclSigContext ctx) {
+    public AlloyDecl visitDeclDefaultOneOrSet(DashParser.DeclDefaultOneOrSetContext ctx) {
         return (AlloyDecl) this.visit(ctx.getChild(0));
     }
 
@@ -827,8 +827,9 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         AlloyExpr expr = exprParseVis.visit(ctx.expr1());
         AlloyQtEnum mul;
         if (expr instanceof AlloyVarExpr) mul = AlloyQtEnum.ONE;
-        else if (expr instanceof AlloyArrowExpr) mul = AlloyQtEnum.SET;
-        else
+        else if (expr instanceof AlloyArrowExpr) {
+            mul = AlloyQtEnum.SET;
+        } else
             throw AlloyASTImplError.invalidAlloyQtEnum(
                     expr.toString() + " must be given a multiplicity explicitly");
 
@@ -857,7 +858,6 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
                 isDisj2 = true;
             }
         }
-
         return new AlloyDecl(
                 new Pos(ctx),
                 isVar,

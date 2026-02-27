@@ -12,7 +12,6 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -263,31 +262,5 @@ public class AlloyExprFactory {
         else if (cond.equals(AlloyFalseCond())) return alt;
         else if (conseq.equals(alt)) return conseq;
         else return new AlloyIteExpr(cond, conseq, alt);
-    }
-
-    public static AlloyQtEnum QtQuantToDeclQuant(AlloyQtEnum quant) {
-        // nothing give an output of AlloyQtEnum.EXACTLY
-        return switch (quant) {
-            case AlloyQtEnum.SOME -> AlloyQtEnum.SOME;
-            case AlloyQtEnum.LONE -> AlloyQtEnum.LONE;
-            case AlloyQtEnum.ONE -> AlloyQtEnum.ONE;
-            case AlloyQtEnum.SET -> AlloyQtEnum.SET;
-            case AlloyQtEnum.ALL, AlloyQtEnum.NO, AlloyQtEnum.SEQ ->
-                    throw ImplementationError.notSupported();
-            default -> throw ImplementationError.shouldNotReach();
-        };
-    }
-
-    public static AlloyQtEnum QtQuantToArrowQuant(AlloyQtEnum quant) {
-        // returns all possible values of AlloyQtEnum
-        return switch (quant) {
-            case AlloyQtEnum.SOME -> AlloyQtEnum.SOME;
-            case AlloyQtEnum.LONE -> AlloyQtEnum.LONE;
-            case AlloyQtEnum.ONE -> AlloyQtEnum.ONE;
-            case AlloyQtEnum.SET -> AlloyQtEnum.SET;
-            case AlloyQtEnum.ALL, AlloyQtEnum.NO, AlloyQtEnum.SEQ ->
-                    throw ImplementationError.notSupported();
-            default -> throw ImplementationError.shouldNotReach();
-        };
     }
 }

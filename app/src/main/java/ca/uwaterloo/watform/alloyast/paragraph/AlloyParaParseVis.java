@@ -68,7 +68,7 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
                         ? visitAll(ctx.qnames().qname(), exprParseVis, AlloyQnameExpr.class)
                         : Collections.emptyList(),
                 null != ctx.sigRel() ? new AlloySigRelParseVis().visit(ctx.sigRel()) : null,
-                visitAll(ctx.declSig(), exprParseVis, AlloyDecl.class),
+                visitAll(ctx.declDefaultOneOrSet(), exprParseVis, AlloyDecl.class),
                 null != ctx.block() ? (AlloyBlock) exprParseVis.visit(ctx.block()) : null);
     }
 
@@ -113,10 +113,10 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     public AlloyPredPara visitPredPara(DashParser.PredParaContext ctx) {
         List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
-            if (null != ctx.arguments().decls()) {
+            if (null != ctx.arguments().declsDefaultOneOrSet()) {
                 decls =
                         visitAll(
-                                ctx.arguments().decls().declDefaultOne(),
+                                ctx.arguments().declsDefaultOneOrSet().declDefaultOneOrSet(),
                                 exprParseVis,
                                 AlloyDecl.class);
             }
@@ -138,10 +138,10 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     public AlloyFunPara visitFunPara(DashParser.FunParaContext ctx) {
         List<AlloyDecl> decls = Collections.emptyList();
         if (null != ctx.arguments()) {
-            if (null != ctx.arguments().decls()) {
+            if (null != ctx.arguments().declsDefaultOneOrSet()) {
                 decls =
                         visitAll(
-                                ctx.arguments().decls().declDefaultOne(),
+                                ctx.arguments().declsDefaultOneOrSet().declDefaultOneOrSet(),
                                 exprParseVis,
                                 AlloyDecl.class);
             }

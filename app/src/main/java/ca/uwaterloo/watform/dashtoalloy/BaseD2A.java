@@ -8,10 +8,13 @@
 
 package ca.uwaterloo.watform.dashtoalloy;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.*;
 
 public class BaseD2A {
@@ -19,7 +22,8 @@ public class BaseD2A {
     public enum Options {
         electrum,
         traces,
-        tcmc
+        tcmc,
+        nothing
     }
 
     protected DashModel dm; // input
@@ -32,7 +36,6 @@ public class BaseD2A {
     protected BaseD2A(DashModel dm, Options opt) {
         this.dm = dm;
 
-        System.out.println(opt);
         switch (opt) {
             case Options.electrum:
                 this.isElectrum = true;
@@ -43,10 +46,9 @@ public class BaseD2A {
             case Options.tcmc:
                 this.isTcmc = true;
                 break;
+            default:
+                throw ImplementationError.shouldNotReach();
         }
-        System.out.println("isElectrum: " + this.isElectrum);
-        System.out.println("isTraces: " + this.isTraces);
-        System.out.println("isTcmc: " + this.isTcmc);
         this.dsl = new DSL(isElectrum);
     }
 

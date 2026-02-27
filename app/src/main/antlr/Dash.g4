@@ -81,7 +81,7 @@ moduleArg       : (EXACTLY? qname ) ;
 
 importPara      : PRIVATE? OPEN qname ( LBRACK sigRefs? RBRACK )? ( AS qname )? ;
 
-sigPara         : sigQualifier* SIG qnames sigRel? LBRACE COMMA? (declSig ( COMMA* declSig )*)? COMMA? RBRACE block? ;
+sigPara         : sigQualifier* SIG qnames sigRel? LBRACE COMMA? (declDefaultOneOrSet ( COMMA* declDefaultOneOrSet )*)? COMMA? RBRACE block? ;
 sigQualifier    : VAR | ABSTRACT | PRIVATE | LONE | ONE | SOME ;
 sigRel			: EXTENDS sigRef 					# extendSigIn
 				| IN sigRef (PLUS sigRef)* 			# inSigIn
@@ -97,8 +97,8 @@ factPara        : FACT (qname | STRING_LITERAL)? block ;
 predPara        : PRIVATE? PRED ( sigRef DOT)? qname arguments? block ;
 
 funPara         : PRIVATE? FUN ( sigRef DOT)?  qname arguments? COLON multiplicity? expr1 block;
-arguments       : LPAREN ( decls COMMA? )? RPAREN
-                | LBRACK ( decls COMMA? )? RBRACK
+arguments       : LPAREN ( declsDefaultOneOrSet COMMA? )? RPAREN
+                | LBRACK ( declsDefaultOneOrSet COMMA? )? RBRACK
                 ;
 
 assertPara      : ASSERT (qname | STRING_LITERAL)? block ;
@@ -119,7 +119,7 @@ typescope       : EXACTLY? number (DOT DOT (number (COLON number)?)?)?
 // Expr
 
 bind			: LET assignment ( COMMA assignment )* body 										# let
-				| (ALL | NO | SOME | LONE | ONE | SUM) decls body 									# quantificationExpr
+				| (ALL | NO | SOME | LONE | ONE | SUM) declsDefaultOne body 						# quantificationExpr
 				;
 
 expr1			: bind																				# bindExpr
@@ -214,8 +214,9 @@ expr2			: baseExpr																					# baseExprFromExpr2
 
 block           : LBRACE expr1* RBRACE ;
 
-// decl in a sig field
-declSig         : declWithMul
+// decl in a sig field or argument to pred/fun
+declDefaultOneOrSet         
+				: declWithMul
 				| declNoMulSigDefault
 				| declExact
 				;
@@ -236,10 +237,12 @@ declNoMulDefaultOne
 
 declExact		: PRIVATE? qnames EQUAL expr1 ; // EXACTLYOF
 
-// only used by arguments, bind
-decls			: declDefaultOne (COMMA declDefaultOne)* ;
+// only used by bind
+declsDefaultOne	: declDefaultOne (COMMA declDefaultOne)* ;
 
-
+// only used by bind
+declsDefaultOneOrSet	
+				: declDefaultOneOrSet (COMMA declDefaultOneOrSet)* ;
 
 // ____________________________________
 // Expr Helpers
