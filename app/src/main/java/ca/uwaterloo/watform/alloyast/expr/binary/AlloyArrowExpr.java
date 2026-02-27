@@ -1,3 +1,10 @@
+/*
+    defaults:
+        in A m->n B
+        if either m or n are not explicitly given, they are replaced  
+        by multiplicity SET during parsing
+*/
+
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.*;

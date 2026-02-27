@@ -5,14 +5,12 @@
     in name:expr, expr is a bounding expression.
 
     The defaults chosen by the parsing phase are:
-    * In a Sig field name:expr
+    * In a Sig field name:expr or in a pred var decl p[a:A]
         - ONE if expr is an AlloyVarName (clearly a unary set - see p. 77 Jackson Green book)
         - SET if expr is an AlloyArrowExpr (clearly arity >1 - Jackson Green book p. 77
          says no arity is supposed to be there at all, but the AA allows a multiplicity here in the grammar)
         - throw an error is no mul provided and it is any other kind of expr (e.g. a dot join)
          b/c we aren't determining the arity of expr during parsing
-    * In a pred var decl p[a:A]
-        default is p[a: one A]
     * In a quantified var some a:A | ...
         default is some a:one A | ...
         (A could be any expression)
