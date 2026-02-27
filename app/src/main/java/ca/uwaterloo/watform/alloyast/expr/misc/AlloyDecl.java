@@ -54,24 +54,6 @@ public final class AlloyDecl extends AlloyExpr {
     public final AlloyQtEnum mul;
     public final AlloyExpr expr;
 
-    private static AlloyQtEnum defaultMul(Pos pos, AlloyExpr expr) {
-        if (expr instanceof AlloyVarExpr) return AlloyQtEnum.ONE;
-        else if (expr instanceof AlloyArrowExpr) return AlloyQtEnum.SET;
-        else
-            // @53 this is not throwing an error msg with a pos
-            throw AlloyASTImplError.invalidAlloyQtEnum(
-                    pos, expr.toString() + " must be given a multiplicity explicitly");
-    }
-
-    private static AlloyQtEnum defaultMul(AlloyExpr expr) {
-        if (expr instanceof AlloyVarExpr) return AlloyQtEnum.ONE;
-        else if (expr instanceof AlloyArrowExpr) return AlloyQtEnum.SET;
-        else {
-            throw AlloyASTImplError.invalidAlloyQtEnum(
-                    expr.toString() + " must be given a multiplicity explicitly");
-        }
-    }
-
     public AlloyDecl(
             Pos pos,
             boolean isVar,

@@ -46,16 +46,14 @@ public class CustomLoggerFactory {
 
         if (!debug) return logger;
 
-        if(!handlerTable.containsKey(fileName))
-            makeNewFileAndHandler(fileName);
+        if (!handlerTable.containsKey(fileName)) makeNewFileAndHandler(fileName);
 
         logger.addHandler(handlerTable.get(fileName));
 
         return logger;
     }
 
-    private static void makeNewFileAndHandler(String fileName)
-    {
+    private static void makeNewFileAndHandler(String fileName) {
         File file = new File(fileName);
         if (file.getParentFile() != null) {
             file.getParentFile().mkdirs();
@@ -67,6 +65,5 @@ public class CustomLoggerFactory {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
