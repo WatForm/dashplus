@@ -1,7 +1,7 @@
 /*
     defaults:
         in A m->n B
-        if either m or n are not explicitly given, they are replaced  
+        if either m or n are not explicitly given, they are replaced
         by multiplicity SET during parsing
 */
 

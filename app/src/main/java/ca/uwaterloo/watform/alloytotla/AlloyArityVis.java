@@ -1,10 +1,7 @@
 package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
-import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -16,6 +13,9 @@ import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 
 public class AlloyArityVis implements AlloyExprVis<Integer> {
+
+    public static final Integer BOOLEAN_ARITY = Integer.valueOf(0);
+    public static final Integer UNKNOWN_ARITY = Integer.valueOf(-1);
 
     @Override
     public Integer visit(DashRef dashRef) {
@@ -37,30 +37,28 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
 
         Integer answer =
                 switch (binExpr) {
-                    case AlloyAndExpr _ -> el; //Integer.valueOf(0);
-                    case AlloyArrowExpr _ -> el+er;
-                    case AlloyCmpExpr exp -> Integer.valueOf(0);
+                    case AlloyAndExpr _ -> BOOLEAN_ARITY;
+                    case AlloyArrowExpr _ -> el + er;
+                    case AlloyCmpExpr exp -> BOOLEAN_ARITY;
                     case AlloyDiffExpr _ -> el;
-                    case AlloyDomRestrExpr _ -> el; //_DOMAIN_RESTRICTION(el, er);
-                    case AlloyDotExpr _ -> el; //Integer.valueOf(el.v);
-                    case AlloyEqualsExpr _ -> Integer.valueOf(0);
-                    case AlloyIffExpr _ -> Integer.valueOf(0);
-                    case AlloyImpliesExpr _ -> Integer.valueOf(0);
+                    case AlloyDomRestrExpr _ -> er - 1;
+                    case AlloyDotExpr _ -> el + er - 2;
+                    case AlloyEqualsExpr _ -> BOOLEAN_ARITY;
+                    case AlloyIffExpr _ -> BOOLEAN_ARITY;
+                    case AlloyImpliesExpr _ -> BOOLEAN_ARITY;
                     case AlloyIntersExpr _ -> el;
                     case AlloyNotEqualsExpr _ -> Integer.valueOf(0);
-                    case AlloyOrExpr _ -> Integer.valueOf(0);
-                    case AlloyRelOvrdExpr _ -> el; //_RELATIONAL_OVERRIDE(el, er);
-                    case AlloyRngRestrExpr _ -> el; //_RANGE_RESTRICTION(el, er);
+                    case AlloyOrExpr _ -> BOOLEAN_ARITY;
+                    case AlloyRelOvrdExpr _ -> el;
+                    case AlloyRngRestrExpr _ -> el - 1;
                     case AlloyUnionExpr _ -> el;
-                    default -> null; /* case  _ -> (el, er); */
+                    default -> null;
                 };
 
-		return Integer.valueOf(0);
+        if (answer != null) return answer;
 
-        // if (answer != null) return answer;
-
-        // throw ImplementationError.notSupported(
-        //        "non-translatable expression: " + binExpr.toString());
+        throw ImplementationError.notSupported(
+                "non-translatable expression: " + binExpr.toString());
     }
 
     @Override
@@ -68,31 +66,31 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
 
         Integer e = visit(unaryExpr.sub);
 
-		/*
-        TlaExp answer =
-                switch (unaryExpr) {
-                    case AlloyCardExpr _ -> TlaStdLibs.Cardinality(e);
-                    case AlloyNegExpr _ -> TlaNot(e);
-                    case AlloyQtExpr exp ->
-                            switch (exp.qt) {
-                                case AlloyQtEnum.SOME -> _SOME(e);
-                                case AlloyQtEnum.LONE -> _LONE(e);
-                                case AlloyQtEnum.NO -> _NO(e);
-                                case AlloyQtEnum.ONE -> _ONE(e);
-                                case AlloyQtEnum.ALL -> TlaTrue();
-                                default -> null;
-                            };
-                    case AlloyTransExpr _ -> _TRANSPOSE(e);
-                    default -> null;
-                };
-		*/
+        /*
+              TlaExp answer =
+                      switch (unaryExpr) {
+                          case AlloyCardExpr _ -> TlaStdLibs.Cardinality(e);
+                          case AlloyNegExpr _ -> TlaNot(e);
+                          case AlloyQtExpr exp ->
+                                  switch (exp.qt) {
+                                      case AlloyQtEnum.SOME -> _SOME(e);
+                                      case AlloyQtEnum.LONE -> _LONE(e);
+                                      case AlloyQtEnum.NO -> _NO(e);
+                                      case AlloyQtEnum.ONE -> _ONE(e);
+                                      case AlloyQtEnum.ALL -> TlaTrue();
+                                      default -> null;
+                                  };
+                          case AlloyTransExpr _ -> _TRANSPOSE(e);
+                          default -> null;
+                      };
+        */
 
-        //if (answer != null) 
-		// 
-		return Integer.valueOf(0);
+        // if (answer != null)
+        //
+        return Integer.valueOf(0);
 
         // throw ImplementationError.notSupported(
-                // "non-translatable expression: " + unaryExpr.toString());
+        // "non-translatable expression: " + unaryExpr.toString());
     }
 
     @Override
