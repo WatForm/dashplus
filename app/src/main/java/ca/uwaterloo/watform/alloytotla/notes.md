@@ -266,3 +266,49 @@ run {} for exactly 1 B, 1 C, 2 A
 
 1) `A set -> set (B one -> one C)` expected: 2 instances
 2) `(A set -> set B) one -> one C` expected: 0 instances 
+
+## Testing associativity:
+
+```
+sig A {}
+sig B {}
+sig C {}
+
+fact sanity {
+
+    // run with one A
+    one A
+}
+
+fact test {
+
+    some (A one -> one A)
+}
+
+fact test2 {
+
+    some (A one -> one A one -> one A)
+}
+
+fact test3 {
+
+    // run with one A and 2 B
+    some (A one -> one A set -> set B)
+}
+fact test4 {
+
+    // run with one A and 2 B and one C
+    some (A one -> one B set -> set C)
+}
+
+fact test5
+```
+
+
+Temp:
+
+context for . and [], vs representing predicates as sets, propagation down the tree
+nothing i discourse
+tla+ no performance diff, or way to type dynamically
+test cases for thing
+logging changes
