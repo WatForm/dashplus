@@ -10,9 +10,12 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class DashToTla {
 
-        public static void translate(DashModel dashModel, TlaModel tlaModel, boolean verbose,
-            boolean debug, boolean singleEnvInput)
-        {
+    public static void translate(
+            DashModel dashModel,
+            TlaModel tlaModel,
+            boolean verbose,
+            boolean debug,
+            boolean singleEnvInput) {
 
         AlloyToTla.translate(dashModel, tlaModel, verbose, debug);
 
@@ -62,7 +65,7 @@ public class DashToTla {
 
         tlaModel.addComment("Next relation", verbose);
         NextDefn.translate(dashModel, tlaModel, singleEnvInput);
-        }
+    }
 
     public static TlaModel translate(
             DashModel dashModel,

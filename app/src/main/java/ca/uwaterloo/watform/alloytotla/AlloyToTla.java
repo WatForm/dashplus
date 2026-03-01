@@ -5,13 +5,11 @@ import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import ca.uwaterloo.watform.utils.CustomLoggerFactory;
-import java.util.logging.Logger;
 
 public class AlloyToTla {
 
-    public static void translate(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug)
-    {
+    public static void translate(
+            AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
         StdLibDefns.translate(alloyModel, tlaModel);
 
         tlaModel.addComment("Translation macros", verbose);
