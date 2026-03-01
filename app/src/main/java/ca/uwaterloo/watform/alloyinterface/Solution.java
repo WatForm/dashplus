@@ -211,6 +211,11 @@ public final class Solution {
         return Optional.empty();
     }
 
+    // temporary
+    public A4Solution getA4Solution() {
+        return this.a4Solution;
+    }
+
     public record EvalRes(Integer intVal, Boolean boolVal, Set<List<String>> setVal) {
         public static EvalRes of(int integer) {
             return new EvalRes(integer, null, null);

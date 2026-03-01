@@ -1,12 +1,12 @@
 package ca.uwaterloo.watform.cli;
 
-import static ca.uwaterloo.watform.alloyinterface.AlloyInterface.*;
 import static ca.uwaterloo.watform.cli.CliError.*;
 import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.alloytotla.AlloyToTla;
@@ -187,7 +187,10 @@ public class Main implements Callable<Integer> {
                 String fullFileName = absolutePath.toString();
                 String outputFileNamePrefix =
                         fullFileName.substring(0, fullFileName.lastIndexOf("."));
-
+                if (!Files.exists(absolutePath)) {
+                    dashOutput("File does not exist: " + fullFileName);
+                    break;
+                }
                 Reporter.INSTANCE.reset();
                 Reporter.INSTANCE.popPath();
                 Reporter.INSTANCE.pushPath(absolutePath);
@@ -210,26 +213,10 @@ public class Main implements Callable<Integer> {
                     // this is a dash file
                     dashOutput("Input: " + fullFileName);
                     DashModel dm = (DashModel) parseToModel(absolutePath);
-                    if (dm.getParas(AlloyCmdPara.class).size() == 0) {
-                        dashOutputBold(
-                                "Warning: no command in input .dsh file -> using default scopes for run {}");
-                    }
-                    if (vis) {
-                        runVis(dm, outputFileNamePrefix);
-                    } else if (tla) {
-                        runDashToTla(dm, outputFileNamePrefix, cliConf.verbose, cliConf.debug);
-                    } else if (predAbs) {
-                        runPredAbs(dm, cmdIdx);
-                    } else if (gen) {
-                        AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
-                        // same function as used for Alloy file above
-                        runGenInstances(
-                                am,
-                                cmdIdx,
-                                outputFileNamePrefix + "-" + d2aOptions,
-                                cliConf.instanceNum);
-                    } else if (xml) {
-                        if (alloyPresent || !tla) {
+                    if (xml) {
+                        if (vis) {
+                            runVis(dm, outputFileNamePrefix);
+                        } else if (alloyPresent || !tla) {
                             AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
                             runCheckInstanceAlloy(am, cliConf.xmlFileName);
                         } else if (tla) {
@@ -237,7 +224,24 @@ public class Main implements Callable<Integer> {
                             runCheckInstanceTla(cliConf.xmlFileName);
                         }
                     } else {
-                        runDashToAlloy(dm, d2aOptions, outputFileNamePrefix, write, cmdIdx);
+                        if (dm.getParas(AlloyCmdPara.class).size() == 0 && cmd) {
+                            dashOutputBold(
+                                    "Warning: no command in input .dsh file -> using default scopes for run {}");
+                        } else if (tla) {
+                            runDashToTla(dm, outputFileNamePrefix, cliConf.verbose, cliConf.debug);
+                        } else if (predAbs) {
+                            runPredAbs(dm, cmdIdx);
+                        } else if (gen) {
+                            AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
+                            // same function as used for Alloy file above
+                            runGenInstances(
+                                    am,
+                                    cmdIdx,
+                                    outputFileNamePrefix + "-" + d2aOptions,
+                                    cliConf.instanceNum);
+                        } else {
+                            runDashToAlloy(dm, d2aOptions, outputFileNamePrefix, write, cmdIdx);
+                        }
                     }
                 }
                 // Reporter.INSTANCE.exitIfHasErrors();
@@ -271,7 +275,7 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         int exitCode = new CommandLine(new Main()).execute(args);
         System.exit(exitCode);
     }
@@ -279,16 +283,16 @@ public class Main implements Callable<Integer> {
     private static void runAlloy(AlloyModel am, Integer cmdIdx) {
         int num_cmds_in_file = am.getParas(AlloyCmdPara.class).size();
         if (cmdIdx < num_cmds_in_file) {
-            executeCommand(am, cmdIdx);
+            AlloyInterface.executeCommand(am, cmdIdx);
         } else if (num_cmds_in_file == 0) {
             // if there are no commands in the file
             // and there was no cmd arg
             // TODO: look for default .ver cmd in directory!
-            Solution soln = checkModelSatisfiability(am);
+            Solution soln = AlloyInterface.checkModelSatisfiability(am);
         } else {
             // execute all commands
             for (int i = Constants.firstCmdIdx; i < num_cmds_in_file; i++) {
-                executeCommand(am, i);
+                AlloyInterface.executeCommand(am, i);
             }
         }
     }
@@ -365,11 +369,14 @@ public class Main implements Callable<Integer> {
     private static void runGenInstances(
             AlloyModel am, Integer cmdIdx, String outputFileNamePrefix, Integer numInstances) {
         // executes and writes numInstances instances of model with cmd cmdIdx
-        int count = writeInstancesToXML(am, cmdIdx, outputFileNamePrefix, numInstances);
+        int count =
+                AlloyInterface.writeInstancesToXML(am, cmdIdx, outputFileNamePrefix, numInstances);
         dashOutput("Wrote " + String.valueOf(count) + " instance(s).");
     }
 
-    private static void runCheckInstanceAlloy(AlloyModel am, String xmlFileName) {
+    private static void runCheckInstanceAlloy(AlloyModel am, String xmlFileName)
+            throws IOException {
+        AlloyInterface.runCheckInstance(am, xmlFileName, 0);
         dashOutput("check instance in Alloy not yet implemented");
     }
 
