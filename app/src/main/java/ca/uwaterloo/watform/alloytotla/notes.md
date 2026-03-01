@@ -261,7 +261,7 @@ sig A {
     f : B one -> one C
 }
 
-run {} for exactly 1 B, 1 C, 2 A
+run {} for exactly 1 B, exactly 1 C, exactly 2 A
 ```
 
 1) `A set -> set (B one -> one C)` expected: 2 instances

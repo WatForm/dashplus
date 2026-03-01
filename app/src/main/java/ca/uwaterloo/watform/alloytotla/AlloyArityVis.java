@@ -15,6 +15,8 @@ import ca.uwaterloo.watform.utils.ImplementationError;
 
 public class AlloyArityVis implements AlloyExprVis<Integer> {
 
+    // this is half-finished - the other half, integration with field table and dynamic lookups, is yet to be completed. This is shelved for now
+
     public static final Integer BOOLEAN_ARITY = Integer.valueOf(0);
     public static final Integer UNKNOWN_ARITY = Integer.valueOf(-1);
 
