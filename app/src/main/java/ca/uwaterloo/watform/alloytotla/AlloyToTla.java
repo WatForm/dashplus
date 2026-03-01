@@ -9,17 +9,9 @@ import ca.uwaterloo.watform.utils.CustomLoggerFactory;
 import java.util.logging.Logger;
 
 public class AlloyToTla {
-    public static TlaModel translate(
-            AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
 
-        Logger log = CustomLoggerFactory.make("AlloyToTla", debug);
-
-        log.info("beginning the translation");
-
-        TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
-
-        log.info("created model");
-
+    public static void translate(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug)
+    {
         StdLibDefns.translate(alloyModel, tlaModel);
 
         tlaModel.addComment("Translation macros", verbose);
@@ -44,6 +36,14 @@ public class AlloyToTla {
 
         tlaModel.addComment("NEXT relation", verbose);
         NextDefn.translate(alloyModel, tlaModel);
+    }
+
+    public static TlaModel translate(
+            AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
+
+        TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
+
+        translate(alloyModel, tlaModel, verbose, debug);
 
         return tlaModel;
     }
