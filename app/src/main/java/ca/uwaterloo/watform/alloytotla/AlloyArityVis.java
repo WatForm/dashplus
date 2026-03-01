@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 
+import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -13,6 +14,8 @@ import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 
 public class AlloyArityVis implements AlloyExprVis<Integer> {
+
+    // this is half-finished - the other half, integration with field table and dynamic lookups, is yet to be completed. This is shelved for now
 
     public static final Integer BOOLEAN_ARITY = Integer.valueOf(0);
     public static final Integer UNKNOWN_ARITY = Integer.valueOf(-1);
@@ -66,31 +69,27 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
 
         Integer e = visit(unaryExpr.sub);
 
-        /*
-              TlaExp answer =
-                      switch (unaryExpr) {
-                          case AlloyCardExpr _ -> TlaStdLibs.Cardinality(e);
-                          case AlloyNegExpr _ -> TlaNot(e);
-                          case AlloyQtExpr exp ->
-                                  switch (exp.qt) {
-                                      case AlloyQtEnum.SOME -> _SOME(e);
-                                      case AlloyQtEnum.LONE -> _LONE(e);
-                                      case AlloyQtEnum.NO -> _NO(e);
-                                      case AlloyQtEnum.ONE -> _ONE(e);
-                                      case AlloyQtEnum.ALL -> TlaTrue();
-                                      default -> null;
-                                  };
-                          case AlloyTransExpr _ -> _TRANSPOSE(e);
-                          default -> null;
-                      };
-        */
+        Integer answer =
+                switch (unaryExpr) {
+                    case AlloyCardExpr _ -> BOOLEAN_ARITY;
+                    case AlloyNegExpr _ -> BOOLEAN_ARITY;
+                    case AlloyQtExpr exp ->
+                            switch (exp.qt) {
+                                case AlloyQtEnum.SOME -> BOOLEAN_ARITY;
+                                case AlloyQtEnum.LONE -> BOOLEAN_ARITY;
+                                case AlloyQtEnum.NO -> BOOLEAN_ARITY;
+                                case AlloyQtEnum.ONE -> BOOLEAN_ARITY;
+                                case AlloyQtEnum.ALL -> BOOLEAN_ARITY;
+                                default -> null;
+                            };
+                    case AlloyTransExpr _ -> e;
+                    default -> null;
+                };
 
-        // if (answer != null)
-        //
-        return Integer.valueOf(0);
+        if (answer != null) return Integer.valueOf(0);
 
-        // throw ImplementationError.notSupported(
-        // "non-translatable expression: " + unaryExpr.toString());
+        throw ImplementationError.notSupported(
+                "non-translatable expression: " + unaryExpr.toString());
     }
 
     @Override

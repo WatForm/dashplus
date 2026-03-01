@@ -2,20 +2,19 @@ package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
+import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.alloytotla.Boilerplate;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class DashToTla {
-    public static TlaModel translate(
-            DashModel dashModel,
-            String moduleName,
-            boolean singleEnvInput,
-            boolean verbose,
-            boolean debug) {
 
-        TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
+        public static void translate(DashModel dashModel, TlaModel tlaModel, boolean verbose,
+            boolean debug, boolean singleEnvInput)
+        {
+
+        AlloyToTla.translate(dashModel, tlaModel, verbose, debug);
 
         StdLibDefns.translate(dashModel, tlaModel);
         if (debug) System.out.println("translated libraries");
@@ -63,6 +62,18 @@ public class DashToTla {
 
         tlaModel.addComment("Next relation", verbose);
         NextDefn.translate(dashModel, tlaModel, singleEnvInput);
+        }
+
+    public static TlaModel translate(
+            DashModel dashModel,
+            String moduleName,
+            boolean singleEnvInput,
+            boolean verbose,
+            boolean debug) {
+
+        TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
+
+        translate(dashModel, tlaModel, singleEnvInput, verbose, debug);
 
         return tlaModel;
     }
