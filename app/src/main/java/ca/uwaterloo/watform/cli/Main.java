@@ -376,7 +376,7 @@ public class Main implements Callable<Integer> {
 
     private static void runCheckInstanceAlloy(AlloyModel am, String xmlFileName)
             throws IOException {
-        AlloyInterface.runCheckInstance(am, xmlFileName, 0);
+        // AlloyInterface.runCheckInstance(am, xmlFileName, 0);
         dashOutput("check instance in Alloy not yet implemented");
     }
 

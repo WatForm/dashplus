@@ -17,24 +17,13 @@ import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.alloy4.XMLNode;
 import edu.mit.csail.sdg.ast.Command;
-import edu.mit.csail.sdg.ast.Sig;
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.A4SolutionReader;
-import edu.mit.csail.sdg.translator.ScopeComputer;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-import kodkod.ast.Formula;
-import kodkod.ast.Relation;
-import kodkod.instance.Instance;
 
 public class AlloyInterface {
 
@@ -165,6 +154,7 @@ public class AlloyInterface {
         Return true if cmdIdx in AlloyModel am is true in the instance found
         within the file xmlFileName
     */
+    /*
     public static boolean runCheckInstance(AlloyModel am, String xmlFileName, Integer cmdIdx)
             throws IOException {
 
@@ -254,4 +244,5 @@ public class AlloyInterface {
 
         return soln.evalModel(cmd, opt);
     }
+    */
 }
