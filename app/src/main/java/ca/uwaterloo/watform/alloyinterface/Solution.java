@@ -66,9 +66,10 @@ public final class Solution {
         return this.map.getOrDefault(name, Collections.emptySet());
     }
 
-    public List<String> getSolnMapKeys() {
+    public Set<String> getSolnMapKeys() {
         this.throwErrorIfUnsat();
-        return List.of(this.map.keySet());
+        Set<String> keys = new HashSet<>(this.map.keySet());
+        return keys;
     }
 
     public void next() {
