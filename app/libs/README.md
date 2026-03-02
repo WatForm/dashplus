@@ -3,7 +3,7 @@ srcs at
 
 https://github.com/AlloyTools/org.alloytools.alloy/releases/tag/v6.2.0
 
-Built on 2026-02-20
+Built on 2026-02-20; compiled with Java 17.0.16
 
 
 The only modification to the Alloy 6 Jar is the addition of the following Dash util files:
