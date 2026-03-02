@@ -213,10 +213,10 @@ public class Main implements Callable<Integer> {
                     // this is a dash file
                     dashOutput("Input: " + fullFileName);
                     DashModel dm = (DashModel) parseToModel(absolutePath);
-                    if (xml) {
-                        if (vis) {
-                            runVis(dm, outputFileNamePrefix);
-                        } else if (alloyPresent || !tla) {
+                    if (vis) {
+                        runVis(dm, outputFileNamePrefix);
+                    } else if (xml) {
+                        if (alloyPresent || !tla) {
                             AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
                             runCheckInstanceAlloy(am, cliConf.xmlFileName);
                         } else if (tla) {
@@ -227,7 +227,9 @@ public class Main implements Callable<Integer> {
                         if (dm.getParas(AlloyCmdPara.class).size() == 0 && cmd) {
                             dashOutputBold(
                                     "Warning: no command in input .dsh file -> using default scopes for run {}");
-                        } else if (tla) {
+                        }
+                        if (tla) {
+                            // needs to take cmdIdx
                             runDashToTla(dm, outputFileNamePrefix, cliConf.verbose, cliConf.debug);
                         } else if (predAbs) {
                             runPredAbs(dm, cmdIdx);
@@ -316,7 +318,7 @@ public class Main implements Callable<Integer> {
         String prefix = outputFileNamePrefix + "-" + ControlStateHierarchyVisualizer.DEFAULT_PREFIX;
         // Rocky: could the visualization pass back a string that is output here?
         // visualizer.visualize(dm, outputDir, prefix);
-        dashOutput("Visualization output: " + prefix + ".dot");
+        dashOutput("Visualization output: NOT YET WORKING" + prefix + ".dot");
         Reporter.INSTANCE.print();
     }
 
