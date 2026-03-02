@@ -7,6 +7,8 @@ import ca.uwaterloo.watform.alloytotla.Boilerplate;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import ca.uwaterloo.watform.utils.CustomLoggerFactory;
+import java.util.logging.Logger;
 
 public class DashToTla {
 
@@ -73,6 +75,10 @@ public class DashToTla {
             boolean singleEnvInput,
             boolean verbose,
             boolean debug) {
+
+        Logger l = CustomLoggerFactory.make("AlloyToTla", debug);
+
+        l.info("making TLA model with name: " + moduleName);
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 

@@ -12,6 +12,9 @@ public class AlloyToTla {
             AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
         StdLibDefns.translate(alloyModel, tlaModel);
 
+        Logger log = CustomLoggerFactory.make("AlloyToTla", debug);
+        log.info("top-level Alloy to Tla translate called, translating to " + tlaModel.name);
+
         tlaModel.addComment("Translation macros", verbose);
         Boilerplate.translate(alloyModel, tlaModel);
 
@@ -34,10 +37,16 @@ public class AlloyToTla {
 
         tlaModel.addComment("NEXT relation", verbose);
         NextDefn.translate(alloyModel, tlaModel);
+
+        log.info("translation complete for " + tlaModel.name);
     }
 
     public static TlaModel translate(
             AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
+
+        Logger l = CustomLoggerFactory.make("AlloyToTla", debug);
+
+        l.info("making TLA model with name: " + moduleName);
 
         TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
