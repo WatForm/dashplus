@@ -66,6 +66,11 @@ public final class Solution {
         return this.map.getOrDefault(name, Collections.emptySet());
     }
 
+    public List<String> getSolnMapKeys() {
+        this.throwErrorIfUnsat();
+        return List.of(this.map.keySet());
+    }
+
     public void next() {
         this.throwErrorIfUnsat();
         this.a4Solution = this.a4Solution.next();
