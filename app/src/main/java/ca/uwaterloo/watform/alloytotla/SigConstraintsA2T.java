@@ -5,30 +5,30 @@ import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SigConstraintsA2T extends SigHierarchyA2T
-{
+public class SigConstraintsA2T extends SigHierarchyA2T {
 
-	public SigConstraintsA2T(AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
-		super(alloyModel, moduleName, verbose, debug);
-		translate();
-	}
-	public SigConstraintsA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-		super(alloyModel, tlaModel, verbose, debug);
-		translate();
-	}
-	
-	public void translate()
-	{
-		List<TlaAppl> explicitConstraints = new ArrayList<>();
+    public SigConstraintsA2T(
+            AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
+        super(alloyModel, moduleName, verbose, debug);
+        translate();
+    }
+
+    public SigConstraintsA2T(
+            AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+        super(alloyModel, tlaModel, verbose, debug);
+        translate();
+    }
+
+    public void translate() {
+        List<TlaAppl> explicitConstraints = new ArrayList<>();
 
         alloyModel
                 .allSigs()
@@ -43,9 +43,9 @@ public class SigConstraintsA2T extends SigHierarchyA2T
                         });
 
         tlaModel.addDefn(TlaDefn(ALL_SIG_CONSTRAINTS, repeatedAnd(explicitConstraints)));
-	}
+    }
 
-	private List<TlaExp> constraints(String sig, AlloyModel alloyModel) {
+    private List<TlaExp> constraints(String sig, AlloyModel alloyModel) {
         List<TlaExp> constraints = new ArrayList<>();
 
         alloyModel
@@ -80,5 +80,4 @@ public class SigConstraintsA2T extends SigHierarchyA2T
 
         return constraints;
     }
-	
 }

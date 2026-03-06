@@ -1,8 +1,5 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
@@ -16,21 +13,25 @@ import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.Arrays;
+import java.util.List;
 
 public class BoilerplateA2T extends StdLibsA2T {
 
-	public BoilerplateA2T(AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
-		super(alloyModel, moduleName, verbose, debug);
-		translate();
-	}
-	public BoilerplateA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-		super(alloyModel, tlaModel, verbose, debug);
-		translate();
-	}
-	
-	public void translate()
-	{
-		List<TlaConst> setConsts = mapBy(alloyModel.topLevelSigs(), s -> TlaConst(sigSet(s)));
+    public BoilerplateA2T(
+            AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
+        super(alloyModel, moduleName, verbose, debug);
+        translate();
+    }
+
+    public BoilerplateA2T(
+            AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+        super(alloyModel, tlaModel, verbose, debug);
+        translate();
+    }
+
+    public void translate() {
+        List<TlaConst> setConsts = mapBy(alloyModel.topLevelSigs(), s -> TlaConst(sigSet(s)));
 
         tlaModel.addDefn(univ(setConsts));
         tlaModel.addDefn(none());
@@ -46,9 +47,9 @@ public class BoilerplateA2T extends StdLibsA2T {
         tlaModel.addDefn(inner_product_filter());
         tlaModel.addDefn(inner_product());
         tlaModel.addDefn(relational_override());
-	}
+    }
 
-	private static final TlaVar S() {
+    private static final TlaVar S() {
         return TlaVar(SPECIAL + "S");
     }
 
@@ -226,5 +227,4 @@ public class BoilerplateA2T extends StdLibsA2T {
                 TlaDecl(NO, Arrays.asList(S())),
                 allEqual(S(), X(), Y()).AND(S().EQUALS(TlaNullSet())));
     }
-	
 }
