@@ -5,6 +5,8 @@ import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import ca.uwaterloo.watform.utils.CustomLoggerFactory;
+import java.util.logging.Logger;
 
 public class AlloyToTla {
 

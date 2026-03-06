@@ -317,7 +317,7 @@ logging changes
 
 
 ```
-sig B {}
+~sig B {}
 sig C {}
 sig D {}
 sig A {
@@ -334,6 +334,7 @@ sig D {}
 sig A {
     f : (B one -> one C) set -> set D
 }
+run {} for exactly 1 B, exactly 1 C, exactly 2 A, exactly 3 D
 ```
 
 ```
