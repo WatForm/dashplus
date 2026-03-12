@@ -4,6 +4,9 @@ import static ca.uwaterloo.watform.parser.Parser.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.parser.Parser;
 import ca.uwaterloo.watform.test.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
@@ -99,5 +102,27 @@ public class ParseVisTest {
         for (Path path : paths) {
             assertThrows(RuntimeException.class, () -> parse(path));
         }
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Can parse string and return AlloyCmdPara")
+    public void parseCmd() {
+        String s = "run cmdDeclName predA for 1 .. 9:1 someQname, 1 .. 9:1 someQname";
+        AlloyCmdPara cmd = Parser.parseCmd(s);
+        AlloyCmdPara oracle =
+                new AlloyCmdPara(
+                        new AlloyCmdPara.CommandDecl(
+                                AlloyCmdPara.CommandDecl.CmdType.RUN,
+                                new AlloyQnameExpr("cmdDeclName"),
+                                new AlloyQnameExpr("predA"),
+                                null,
+                                new AlloyCmdPara.CommandDecl.Scope(
+                                        List.of(
+                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
+                                                        false, 1, 9, 1, "someQname"),
+                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
+                                                        false, 1, 9, 1, "someQname")))));
+        assertEquals(oracle, cmd);
     }
 }

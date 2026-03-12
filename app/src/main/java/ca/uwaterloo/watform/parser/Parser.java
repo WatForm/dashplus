@@ -1,9 +1,12 @@
 package ca.uwaterloo.watform.parser;
 
 import antlr.generated.DashBaseVisitor;
+import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyParaParseVis;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.dashast.DashFile;
@@ -128,5 +131,22 @@ public class Parser {
             throw ImplementationError.failedCast(
                     "Failed to cast an item to " + targetType.getSimpleName() + " in visitAll.");
         }
+    }
+
+    public static AlloyCmdPara parseCmd(String s) {
+        CharStream input = CharStreams.fromString(s);
+        BailLexer lexer = new BailLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        BailParser parser = new BailParser(tokens);
+        ParseTree antlrAST = parser.commandPara();
+        AlloyParaParseVis afpv = new AlloyParaParseVis();
+        AlloyCmdPara cmd = null;
+        try {
+            cmd = afpv.visitCommandPara((DashParser.CommandParaContext) antlrAST);
+        } catch (AlloyCtorError alloyCtorError) {
+            Reporter.INSTANCE.addError(alloyCtorError);
+        }
+        Reporter.INSTANCE.exitIfHasErrors();
+        return cmd;
     }
 }

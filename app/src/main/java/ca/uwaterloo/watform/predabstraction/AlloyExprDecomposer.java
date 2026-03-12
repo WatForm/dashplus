@@ -1,7 +1,9 @@
 package ca.uwaterloo.watform.predabstraction;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
+import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -15,9 +17,11 @@ public class AlloyExprDecomposer implements AlloyExprVis<AlloyExpr> {
     private Set<AlloyExpr> subexprs;
 
     public Set<AlloyExpr> decompose(AlloyExpr e) {
-        subexprs = new HashSet<AlloyExpr>();
-        this.visit(e);
-        return subexprs;
+        this.subexprs = new HashSet<AlloyExpr>();
+        if (e != null) {
+            this.visit(e);
+        }
+        return this.subexprs;
     }
 
     @Override
@@ -52,17 +56,36 @@ public class AlloyExprDecomposer implements AlloyExprVis<AlloyExpr> {
 
     @Override
     public AlloyExpr visit(AlloyBinaryExpr binExpr) {
-        subexprs.add(this.visit(binExpr.left));
-        subexprs.add(this.visit(binExpr.right));
-        return binExpr.rebuild(binExpr.left, binExpr.right);
+        // List<String> binOps = List.of(AND, AND_AMP, OR, OR_BAR, RFATARROW, IMPLIES, IFF,
+        // IFF_ARR);
+        // if (binOps.contains(binExpr.op)) {
+        //     subexprs.add(this.visit(binExpr.left));
+        //     subexprs.add(this.visit(binExpr.right));
+        //     return binExpr.rebuild(binExpr.left, binExpr.right);
+        // } else {
+        //     return binExpr;
+        // }
+        if (binExpr instanceof AlloyAndExpr
+                || binExpr instanceof AlloyOrExpr
+                || binExpr instanceof AlloyImpliesExpr
+                || binExpr instanceof AlloyIffExpr) {
+            subexprs.add(this.visit(binExpr.left));
+            subexprs.add(this.visit(binExpr.right));
+        } else {
+            subexprs.add(binExpr);
+        }
+        return binExpr;
     }
     ;
 
     @Override
     public AlloyExpr visit(AlloyUnaryExpr unaryExpr) {
-        if (unaryExpr instanceof AlloyNegExpr) subexprs.add(this.visit(unaryExpr.sub));
-        else subexprs.add(unaryExpr);
-        return unaryExpr.rebuild(unaryExpr.sub);
+        if (unaryExpr instanceof AlloyNegExpr) {
+            subexprs.add(this.visit(unaryExpr.sub));
+        } else {
+            subexprs.add(unaryExpr);
+        }
+        return unaryExpr;
     }
     ;
 
@@ -70,7 +93,9 @@ public class AlloyExprDecomposer implements AlloyExprVis<AlloyExpr> {
 
     @Override
     public AlloyExpr visit(AlloyBlock block) {
-        subexprs.add(block);
+        for (AlloyExpr e : block.exprs) {
+            subexprs.add(this.visit(e));
+        }
         return block;
     }
     ;

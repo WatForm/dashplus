@@ -10,6 +10,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
+import java.io.*;
 import java.util.*;
 
 public class PredAbsUtil {
@@ -29,16 +30,18 @@ public class PredAbsUtil {
 
     private static void backtrack(
             List<AlloyExpr> loe, int idx, List<AlloyExpr> path, List<List<AlloyExpr>> combos) {
-        AlloyExpr e = loe.get(idx);
+
         if (loe.size() == 1) {
-            combos.add(List.of(e));
-            combos.add(List.of(AlloyNot(e)));
+            combos.add(List.of(loe.get(0)));
+            combos.add(List.of(AlloyNot(loe.get(0))));
             return;
         }
-        if (idx == loe.size()) {
+        if (idx <= loe.size()) {
             combos.add(new ArrayList<>(path));
             return;
         }
+
+        AlloyExpr e = loe.get(idx);
 
         path.add(e);
         backtrack(loe, idx + 1, path, combos);
@@ -67,16 +70,25 @@ public class PredAbsUtil {
         if (cached != null) {
             return cached;
         } else {
-            String pname = "query_" + Integer.toString(cache.size());
+            String pname = "" + "query_" + Integer.toString(cache.size());
             DSL dsl = new DSL(false);
             if (snReqd) {
                 am.addPred(pname, dsl.curNextDecls(), setToList(exprs));
             } else {
                 am.addPred(pname, dsl.curDecls(), setToList(exprs));
             }
-            int cmdIdx = addRunCmd(pname, am, scope);
-            Solution sol = executeCommand(am, cmdIdx);
-            return sol.isSat();
+            int cmdIdx = addRunCmd(pname, am, scope) - 1;
+            try {
+                Solution sol = executeCommand(am, cmdIdx);
+                cache.put(key, sol.isSat());
+                return sol.isSat();
+            } catch (Exception e) {
+                System.out.println("*********MODEL*********");
+                System.out.println(am.toString());
+                System.out.println("***********************");
+                printStackTrace();
+                return cached;
+            }
         }
     }
 

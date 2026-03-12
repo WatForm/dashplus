@@ -357,8 +357,14 @@ public class Main implements Callable<Integer> {
         } else {
             pa = new PredicateAbstraction(dm, cmdIdx);
         }
-        DashModel absModel = pa.createAbstractModel();
-        dashOutput("Abstract model created.");
+        try {
+            DashModel absModel = pa.createAbstractModel();
+            dashOutput("Abstract model created.");
+            dashOutput(absModel.toString());
+        } catch (Exception e) {
+            dashOutput("Query Model:\n\n" + pa.getQueryModelString());
+            printStackTrace();
+        }
     }
 
     private static void runGenInstances(

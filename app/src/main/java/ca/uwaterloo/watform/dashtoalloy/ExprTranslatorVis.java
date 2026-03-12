@@ -38,6 +38,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
     public ExprTranslatorVis(DashModel dm) {
         this.dm = dm;
         this.isElectrum = false;
+        this.dsl = new DSL(this.isElectrum);
     }
 
     public AlloyExpr translateExpr(AlloyExpr e, boolean onlyGetName) {
