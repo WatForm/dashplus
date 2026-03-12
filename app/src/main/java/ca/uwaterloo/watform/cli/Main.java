@@ -202,8 +202,6 @@ public class Main implements Callable<Integer> {
                         runAlloyToTla(am, outputFileNamePrefix, cliConf.verbose, cliConf.debug);
                     } else if (gen) {
                         runGenInstances(am, cmdIdx, outputFileNamePrefix, cliConf.instanceNum);
-                    } else if (xml) {
-                        runCheckInstanceAlloy(am, cliConf.xmlFileName);
                     } else {
                         runAlloy(am, cmdIdx);
                     }
@@ -216,13 +214,8 @@ public class Main implements Callable<Integer> {
                     if (vis) {
                         runVis(dm, outputFileNamePrefix);
                     } else if (xml) {
-                        if (alloyPresent || !tla) {
-                            AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
-                            runCheckInstanceAlloy(am, cliConf.xmlFileName);
-                        } else if (tla) {
-                            // Mathew
-                            runCheckInstanceTla(cliConf.xmlFileName);
-                        }
+                        // Mathew
+                        runCheckInstanceTla(cliConf.xmlFileName);
                     } else {
                         if (dm.getParas(AlloyCmdPara.class).size() == 0 && cmd) {
                             dashOutputBold(
@@ -374,12 +367,6 @@ public class Main implements Callable<Integer> {
         int count =
                 AlloyInterface.writeInstancesToXML(am, cmdIdx, outputFileNamePrefix, numInstances);
         dashOutput("Wrote " + String.valueOf(count) + " instance(s).");
-    }
-
-    private static void runCheckInstanceAlloy(AlloyModel am, String xmlFileName)
-            throws IOException {
-        // AlloyInterface.runCheckInstance(am, xmlFileName, 0);
-        dashOutput("check instance in Alloy not yet implemented");
     }
 
     private static void runCheckInstanceTla(String xmlFileName) {

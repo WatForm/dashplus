@@ -17,24 +17,13 @@ import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.alloy4.XMLNode;
 import edu.mit.csail.sdg.ast.Command;
-import edu.mit.csail.sdg.ast.Sig;
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.A4SolutionReader;
-import edu.mit.csail.sdg.translator.ScopeComputer;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-import kodkod.ast.Formula;
-import kodkod.ast.Relation;
-import kodkod.instance.Instance;
 
 public class AlloyInterface {
 
@@ -159,99 +148,5 @@ public class AlloyInterface {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /*
-        Return true if cmdIdx in AlloyModel am is true in the instance found
-        within the file xmlFileName
-    */
-    public static boolean runCheckInstance(AlloyModel am, String xmlFileName, Integer cmdIdx)
-            throws IOException {
-
-        A4Options opt = new A4Options(); // use the default ones
-        A4Reporter rep = new A4Reporter();
-
-        Path path = Paths.get(xmlFileName);
-        Path absolutePath = path.toAbsolutePath();
-        if (!Files.exists(absolutePath)) {
-            dashOutput("File does not exist: " + xmlFileName);
-            return false;
-        }
-        String fullFileName = absolutePath.toString();
-
-        // soln from the xml file
-        A4Solution soln = A4SolutionReader.read(null, new XMLNode(new File(xmlFileName)));
-
-        // cm is the CompModule for AlloyModel am
-        CompModule cm = toAlloy(am);
-
-        // cmd in cm that we want to check is true in soln
-        // note: cmd.formula contains that facts of the model that cmd is from
-        // plus the cmd itself.
-        Command cmd = cm.getAllCommands().get(cmdIdx);
-
-        // check the cm and the soln have the same set of sig/field names
-        // we assume there are no duplicates within the cm or soln individually
-        Set<String> cmAllNames = new HashSet<String>();
-        for (Sig s : cm.getAllReachableSigs()) {
-            cmAllNames.add(s.label);
-            for (Sig.Field f : s.getFields()) {
-                cmAllNames.add(f.label);
-            }
-        }
-        Set<String> solnAllNames = new HashSet<String>();
-        Instance instance = soln.debugExtractKInstance();
-        for (Relation r : instance.relations()) {
-            solnAllNames.add(r.name());
-        }
-
-        if (!(cmAllNames).equals(solnAllNames)) {
-            dashOutput("Solution and Alloy model do not have same set of signatures/fields.");
-            return false;
-        }
-
-        // check the soln and the cmd have compatible scopes
-        ScopeComputer scoper = ScopeComputer.compute(rep, opt, cm.getAllReachableSigs(), cmd).b;
-
-        // we don't need to check for sizes of fields
-        // because they can't be given scopes in a cmd
-        Integer sSizeInSoln, sScopeInCmd;
-        for (Sig s : cm.getAllReachableSigs()) {
-            // s must exist in both because we checked above
-            sSizeInSoln = instance.tuples(s.label).size();
-            sScopeInCmd = scoper.sig2scope(s);
-            if (scoper.isExact(s) && sSizeInSoln != sScopeInCmd
-                    || !scoper.isExact(s) && sSizeInSoln > sScopeInCmd) {
-                dashOutput("Solution and Alloy model do not have compatible scopes.");
-                return false;
-            }
-        }
-
-        // create a TranslateAlloyToKodkod instance
-        // soln and cmd are useless args for our purposes
-        TranslateAlloyToKodkod tr = new TranslateAlloyToKodkod(soln, cmd);
-
-        // makeFacts create a formula within tr that is the
-        // per sig facts from the model of cmd +
-        // the facts of the mode +
-        // the formula of the cmd itself
-        tr.makeFacts(cmd.formula);
-
-        // a frame is an A4solution
-        // this is the formula that includes the cmd + facts + per sig facts
-        Formula f = tr.frame.getFullFormula();
-
-        // before running evalModel() we have to call solve
-        // this doesn't actually call the solver or do any solving,
-        // but it sets the "solved" state to true
-        // inside soln (which is necessary for evaluating)
-        // soln.solve(A4Reporter.NOP, null, 0) call doesn't touch the
-        // formulas inside the A4Solution and just creates an evaluator
-        // out of the sig/field instances, which is what we want,
-        // so there shouldn't be any effect from having the extra formulas in it.
-        // (Not to be confused with the other overload of solve)
-        soln.solve(A4Reporter.NOP, null, 0);
-
-        return soln.evalModel(cmd, opt);
     }
 }
