@@ -48,33 +48,42 @@ Notes:
 ```sig A {
 	f: one B → C
 }
-``` It seems possible to give this a meaning.
+```
+It seems possible to give this a meaning.
 
 ### QtExpr
+
 ```
 set_quant Expr
 ```
+
 Rules: 4 for Expr
 - no defaults required because set_quant must be present to make it a formula (rather than a set value)
 
 ### QuantificationExpr
+
 ```
 formula_quant x:mul Expr | Expr2
 ```
+
 Rules: 1,2,3,5,6
 - if Expr is a relation, this is higher-order and the AA will reject it 
 
 ### Set Comprehension Declarations
+
 ```
 { a: Expr | Expr2 }
 ```
+
 Rules: 4, 7, 2(?)
 - no multiplicity/quantification before Expr
 
 ### Predicate Argument Declarations
+
 ```
 pred p[a: mul Expr] { Expr2 }
 ```
+
 References:
 - https://alloytools.org/spec.html "The constraints implicit in the declarations of arguments of functions and predicates are conjoined to the body constraint when a function or predicate is run. When a function or predicate is invoked (that is, used within another function or predicate but not run directly), however, these implicit constraints are ignored. You should therefore not rely on such declaration constraints to have a semantic effect; they are intended as redundant documentation. A future version of Alloy may include a checking scheme that determines whether actual expressions have values compatible with the declaration constraints of formals.", which means
 	- when a pred p is used directly in a `check` command, the constraints in `mul Expr` ` are added to the pred
