@@ -4,19 +4,19 @@ This document described any differences between the Alloy language supported by 
 Additionally, we document any notes or assumptions we make about defaults and meaning of parts of the Alloy language.
 
 ## Differences from AA
-- overloading of function/predicate/field names for different types of arguments is not supported
+* overloading of function/predicate/field names for different types of arguments is not supported (TODO)
 
 ## Alloy Declarations and Arrow Expression Multiplicities 
-- → is right associative (Associativity is only relevant with multiplicities). We note that right associativity for → contradicts the Alloy cheat sheet at [https://esb-dev.github.io/mat/alloy-cheatsheet.pdf](https://esb-dev.github.io/mat/alloy-cheatsheet.pdf), which says all binary operators besides implication associate left. Although, the point is not addressed in the declarations section of the cheat sheet.
+* → is right associative (Associativity is only relevant with multiplicities). We note that right associativity for → contradicts the Alloy cheat sheet at [https://esb-dev.github.io/mat/alloy-cheatsheet.pdf](https://esb-dev.github.io/mat/alloy-cheatsheet.pdf), which says all binary operators besides implication associate left. Although, the point is not addressed in the declarations section of the cheat sheet.
 
-In the following,
+* In the following,
 - in `f: mul Expr`,  `mul Expr` is the declaration formula
 - `mul` in { `set`, `some`, `lone`, `one`} (not `all` or `no`)
 - `limiting_mul` = {`some`, `lone`, `one`} (a subset of `mul` that does not include `set`)
 - `set_quant` in { `no`, `some`, `one`, `lone`} (not `set` or `all`)
 - `formula_quant` in { `all`, `some`, `one`, `lone`, `no`} (not `set`)
 
-General patterns in rules that appear below (some rules can be used together):
+* General patterns in rules that appear below (some rules can be used together):
 1. if `mul` in `limiting_mul`, the Expr must be unary set (depends on arity)
 2. if no `mul` with a unary set Expr, value of `mul` is `one` (p. 77 Jackson book) (depends on arity)
 3. a missing mul in an arrow expression is  `set` (syntax)
