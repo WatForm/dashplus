@@ -27,7 +27,7 @@ Additionally, we document any notes or assumptions we make about defaults and me
 
 ### Arrow Expressions NOT used in Alloy Declarations 
 e.g., ` ...+ a → b + ...`
-Rules: 3, 4
+* Rules: 3, 4
 
 ### Field Declarations
 ```
@@ -35,8 +35,7 @@ sig A {
 	f: mul Expr
 }
 ```
-References:
-* Jackson's Software Abstractions book says: `f: A m→n B` means  `all a:A | n (a.f)` `all b:B | m (f.b)`
+* Reference: Jackson's Software Abstractions book says: `f: A m→n B` means  `all a:A | n (a.f)` `all b:B | m (f.b)`
 * Rules: 1, 2, 3, 5, 6
 * Meaning:
 	- general case `f:  A → B → ((C→D) m→n (E→F))→G→H`
@@ -58,8 +57,8 @@ It seems possible to give this a meaning.
 set_quant Expr
 ```
 
-Rules: 4 for Expr
-- no defaults required because set_quant must be present to make it a formula (rather than a set value)
+* Rules: 4 for Expr
+* no defaults required because set_quant must be present to make it a formula (rather than a set value)
 
 ### QuantificationExpr
 
@@ -67,8 +66,8 @@ Rules: 4 for Expr
 formula_quant x:mul Expr | Expr2
 ```
 
-Rules: 1,2,3,5,6
-- if Expr is a relation, this is higher-order and the AA will reject it 
+* Rules: 1,2,3,5,6
+* if Expr is a relation, this is higher-order and the AA will reject it 
 
 ### Set Comprehension Declarations
 
@@ -76,8 +75,8 @@ Rules: 1,2,3,5,6
 { a: Expr | Expr2 }
 ```
 
-Rules: 4, 7, 2(?)
-- no multiplicity/quantification before Expr
+* Rules: 4, 7, 2(?)
+* no multiplicity/quantification before Expr
 
 ### Predicate Argument Declarations
 
@@ -85,22 +84,19 @@ Rules: 4, 7, 2(?)
 pred p[a: mul Expr] { Expr2 }
 ```
 
-References:
-- https://alloytools.org/spec.html "The constraints implicit in the declarations of arguments of functions and predicates are conjoined to the body constraint when a function or predicate is run. When a function or predicate is invoked (that is, used within another function or predicate but not run directly), however, these implicit constraints are ignored. You should therefore not rely on such declaration constraints to have a semantic effect; they are intended as redundant documentation. A future version of Alloy may include a checking scheme that determines whether actual expressions have values compatible with the declaration constraints of formals.", which means
+* Reference: https://alloytools.org/spec.html "The constraints implicit in the declarations of arguments of functions and predicates are conjoined to the body constraint when a function or predicate is run. When a function or predicate is invoked (that is, used within another function or predicate but not run directly), however, these implicit constraints are ignored. You should therefore not rely on such declaration constraints to have a semantic effect; they are intended as redundant documentation. A future version of Alloy may include a checking scheme that determines whether actual expressions have values compatible with the declaration constraints of formals.", which means
 	- when a pred p is used directly in a `check` command, the constraints in `mul Expr` ` are added to the pred
 	- when a pred p is invoked with a fact or another pred of the model, these constraints are not used
-Rules: 1, 2(?), 3, 5
-Meaning:
-- p[x] in a command means:
+
+* Rules: 1, 2(?), 3, 5
+* Meaning: p[x] in a command means:
 ```
 mul x
 x in Expr
 Expr2[x/a]
 ```
 
-Best practice:
-- disallow any `mul Expr` in predicate declarations? (but that will affect current Alloy models)
 
 ### Fact Argument Declarations
 
-- how are these combined with facts since this returns a value?
+* how are these combined with facts since this returns a value?
