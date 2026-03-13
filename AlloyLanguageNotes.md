@@ -1,5 +1,6 @@
 # Alloy Language
 This document described any differences between the Alloy language supported by the Alloy Analyzer (AA) and the Alloy language supported in the Dash+ tools.  
+
 Additionally, we document any notes or assumptions we make about defaults and meaning of parts of the Alloy language.
 
 ## Differences from AA
