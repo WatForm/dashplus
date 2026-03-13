@@ -36,16 +36,15 @@ sig A {
 }
 ```
 References:
-- Jackson's Software Abstractions book says: `f: A m→n B` means  `all a:A | n (a.f)` `all b:B | m (f.b)`
-Rules: 1, 2, 3, 5, 6
-Meaning:
-- general case `f:  A → B → ((C→D) m→n (E→F))→G→H`
-- for every non-set n the type, it means: `all a:A,b:B, c:C, d:D, g:G, h:H | n ( (d.(c.(b.(a.f))).g.h)` for every a, b, c, d, g, h tuple in f, there are n distinct (e,f) pair(s) allowed
-- for every non-set m the `type`, it means: `all a:A,b:B, e:E, f:F, g:G, h:H | m ( (b.(a.f)).h.g.f.e )` for every a, b, e, f, g, h tuple in f, there are m distinct (c,d) pair(s) allowed.
-- higher order quantification is not useful because  `all a:A,b:B, ef:E→F, g:G, h:H | m ( (b.(a.f)).h.g.(ef) )` is not possible to write in Alloy; join must be on one column only.
-- For `f: A →(B→one C)→ D`, the following is not correct: `all b:B | one (b.((A.f).D))` in this one if A or D are empty, then this cannot be true because the `one` multiplicity is outside the quantification over elements in A and D, whereas in `all a:A, b:B, d:D | one ((b.(a.f)).d)` if A or D are empty, the above is true because there is nothing to quantify over.
-Notes:
-- it is not clear, why a multiplicity is not allowed before a multi-arity type, as in:  
+* Jackson's Software Abstractions book says: `f: A m→n B` means  `all a:A | n (a.f)` `all b:B | m (f.b)`
+* Rules: 1, 2, 3, 5, 6
+* Meaning:
+	- general case `f:  A → B → ((C→D) m→n (E→F))→G→H`
+	- for every non-set n the type, it means: `all a:A,b:B, c:C, d:D, g:G, h:H | n ( (d.(c.(b.(a.f))).g.h)` for every a, b, c, d, g, h tuple in f, there are n distinct (e,f) pair(s) allowed
+	- for every non-set m the `type`, it means: `all a:A,b:B, e:E, f:F, g:G, h:H | m ( (b.(a.f)).h.g.f.e )` for every a, b, e, f, g, h tuple in f, there are m distinct (c,d) pair(s) allowed.
+	- higher order quantification is not useful because  `all a:A,b:B, ef:E→F, g:G, h:H | m ( (b.(a.f)).h.g.(ef) )` is not possible to write in Alloy; join must be on one column only.
+	- For `f: A →(B→one C)→ D`, the following is not correct: `all b:B | one (b.((A.f).D))` in this one if A or D are empty, then this cannot be true because the `one` multiplicity is outside the quantification over elements in A and D, whereas in `all a:A, b:B, d:D | one ((b.(a.f)).d)` if A or D are empty, the above is true because there is nothing to quantify over.
+* it is not clear, why a multiplicity is not allowed before a multi-arity type, as in:  
 ```
 sig A {
 	f: one B → C
