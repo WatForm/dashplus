@@ -45,6 +45,7 @@ Meaning:
 - For `f: A →(B→one C)→ D`, the following is not correct: `all b:B | one (b.((A.f).D))` in this one if A or D are empty, then this cannot be true because the `one` multiplicity is outside the quantification over elements in A and D, whereas in `all a:A, b:B, d:D | one ((b.(a.f)).d)` if A or D are empty, the above is true because there is nothing to quantify over.
 Notes:
 - it is not clear, why a multiplicity is not allowed before a multi-arity type, as in:
+  
 ```sig A {
 	f: one B → C
 }
@@ -99,4 +100,5 @@ Best practice:
 - disallow any `mul Expr` in predicate declarations? (but that will affect current Alloy models)
 
 ### Fact Argument Declarations
+
 - how are these combined with facts since this returns a value?
