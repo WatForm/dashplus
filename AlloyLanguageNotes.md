@@ -10,20 +10,20 @@ Additionally, we document any notes or assumptions we make about defaults and me
 * → is right associative (Associativity is only relevant with multiplicities). We note that right associativity for → contradicts the Alloy cheat sheet at [https://esb-dev.github.io/mat/alloy-cheatsheet.pdf](https://esb-dev.github.io/mat/alloy-cheatsheet.pdf), which says all binary operators besides implication associate left. Although, the point is not addressed in the declarations section of the cheat sheet.
 
 * In the following,
-- in `f: mul Expr`,  `mul Expr` is the declaration formula
-- `mul` in { `set`, `some`, `lone`, `one`} (not `all` or `no`)
-- `limiting_mul` = {`some`, `lone`, `one`} (a subset of `mul` that does not include `set`)
-- `set_quant` in { `no`, `some`, `one`, `lone`} (not `set` or `all`)
-- `formula_quant` in { `all`, `some`, `one`, `lone`, `no`} (not `set`)
+	- in `f: mul Expr`,  `mul Expr` is the declaration formula
+	- `mul` in { `set`, `some`, `lone`, `one`} (not `all` or `no`)
+	- `limiting_mul` = {`some`, `lone`, `one`} (a subset of `mul` that does not include `set`)
+	- `set_quant` in { `no`, `some`, `one`, `lone`} (not `set` or `all`)
+	- `formula_quant` in { `all`, `some`, `one`, `lone`, `no`} (not `set`)
 
 * General patterns in rules that appear below (some rules can be used together):
-1. if `mul` in `limiting_mul`, the Expr must be unary set (depends on arity)
-2. if no `mul` with a unary set Expr, value of `mul` is `one` (p. 77 Jackson book) (depends on arity)
-3. a missing mul in an arrow expression is  `set` (syntax)
-4. an arrow expression can contain only `set` multiplicities (syntax)
-5. an arrow expression can contain `limiting_mu`l, but not below a non-arrow operator, in which case rule#4 applies (syntax)
-6. if Expr is not a unary set, `mul` is not allowed explicitly and its value is `set` ( p. 77 Jackson book p. 77 says no mul is supposed to be there at all, but the AA allows a multiplicity of `set` here but no other mul (depends on arity)
-7. Expr must be a unary set (depends on arity)
+	1. if `mul` in `limiting_mul`, the Expr must be unary set (depends on arity)
+	2. if no `mul` with a unary set Expr, value of `mul` is `one` (p. 77 Jackson book) (depends on arity)
+	3. a missing mul in an arrow expression is  `set` (syntax)
+	4. an arrow expression can contain only `set` multiplicities (syntax)
+	5. an arrow expression can contain `limiting_mu`l, but not below a non-arrow operator, in which case rule#4 applies (syntax)
+	6. if Expr is not a unary set, `mul` is not allowed explicitly and its value is `set` ( p. 77 Jackson book p. 77 says no mul is supposed to be there at all, but the AA allows a multiplicity of `set` here but no other mul (depends on arity)
+	7. Expr must be a unary set (depends on arity)
 
 ### Arrow Expressions NOT used in Alloy Declarations 
 e.g., ` ...+ a → b + ...`
