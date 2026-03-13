@@ -91,11 +91,13 @@ References:
 	- when a pred p is invoked with a fact or another pred of the model, these constraints are not used
 Rules: 1, 2(?), 3, 5
 Meaning:
-- p[x] in a command means: ```
+- p[x] in a command means:
+```
 mul x
 x in Expr
 Expr2[x/a]
 ```
+
 Best practice:
 - disallow any `mul Expr` in predicate declarations? (but that will affect current Alloy models)
 
