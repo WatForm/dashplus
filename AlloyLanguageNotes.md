@@ -44,9 +44,9 @@ Meaning:
 - higher order quantification is not useful because  `all a:A,b:B, ef:E→F, g:G, h:H | m ( (b.(a.f)).h.g.(ef) )` is not possible to write in Alloy; join must be on one column only.
 - For `f: A →(B→one C)→ D`, the following is not correct: `all b:B | one (b.((A.f).D))` in this one if A or D are empty, then this cannot be true because the `one` multiplicity is outside the quantification over elements in A and D, whereas in `all a:A, b:B, d:D | one ((b.(a.f)).d)` if A or D are empty, the above is true because there is nothing to quantify over.
 Notes:
-- it is not clear, why a multiplicity is not allowed before a multi-arity type, as in:
-  
-```sig A {
+- it is not clear, why a multiplicity is not allowed before a multi-arity type, as in:  
+```
+sig A {
 	f: one B → C
 }
 ```
