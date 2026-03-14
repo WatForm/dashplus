@@ -182,6 +182,8 @@ expr2			: baseExpr																					# baseExprFromExpr2
 				| expr2 DOMRESTR bind																		# domBindExpr
 				| <assoc=right> expr2 arrow expr2															# arrowExpr
 				// Contrary to Alloy Documentation, arrow has right associativity
+				// Below is Alloy's CUP grammar on the RelationExpr
+				// RelationExprB only occurs on the right hand side of the RelOp(->) 
 				// RelationExprA ::= DomainExprA:a                         {: RESULT=a;                          :};
 				// RelationExprA ::= DomainExprB:a RelOp:o Bind:b          {: RESULT=o.b.make(o.a, null, a, b);  :};
  				// RelationExprB ::= DomainExprB:a                         {: RESULT=a;                          :};

@@ -9,7 +9,13 @@ Additionally, we document any notes or assumptions we make about defaults and me
 
 ## Alloy Declarations and Arrow Expression Multiplicities 
 * → is right associative (Associativity is only relevant with multiplicities). We note that right associativity for → contradicts the Alloy cheat sheet at [https://esb-dev.github.io/mat/alloy-cheatsheet.pdf](https://esb-dev.github.io/mat/alloy-cheatsheet.pdf), which says all binary operators besides implication associate left. Although, the point is not addressed in the declarations section of the cheat sheet.
-
+    * Below is Alloy's CUP grammar on the RelationExpr. RelationExprB only occurs on the right hand side of RelOp(→), so the only way to chain → is to nest it on the right. 
+     ```
+     RelationExprA ::= DomainExprA:a                         {: RESULT=a;                          :};
+     RelationExprA ::= DomainExprB:a RelOp:o Bind:b          {: RESULT=o.b.make(o.a, null, a, b);  :};
+     RelationExprB ::= DomainExprB:a                         {: RESULT=a;                          :};
+     RelationExprB ::= DomainExprB:a RelOp:o RelationExprB:b {: RESULT=o.b.make(o.a, null, a, b);  :};
+    ```
 * In the following,
 	- in `f: mul Expr`,  `mul Expr` is the declaration formula
 	- `mul` in { `set`, `some`, `lone`, `one`} (not `all` or `no`)
