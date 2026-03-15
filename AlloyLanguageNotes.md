@@ -5,6 +5,7 @@ Additionally, we document any notes or assumptions we make about defaults and me
 
 ## Differences from AA
 * overloading of function/predicate/field names for different types of arguments is not supported (TODO)
+* dashplus does not restrict relations to be less than arity 5
 
 ## Alloy Declarations and Arrow Expression Multiplicities 
 * → is right associative (Associativity is only relevant with multiplicities). We note that right associativity for → contradicts the Alloy cheat sheet at [https://esb-dev.github.io/mat/alloy-cheatsheet.pdf](https://esb-dev.github.io/mat/alloy-cheatsheet.pdf), which says all binary operators besides implication associate left. Although, the point is not addressed in the declarations section of the cheat sheet.
