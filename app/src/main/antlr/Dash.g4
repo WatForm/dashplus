@@ -201,7 +201,7 @@ expr2			: baseExpr																					# baseExprFromExpr2
 				| expr2 (PLUS | MINUS | FUNADD | FUNSUB) bind												# plusMinusBindExpr
 				| expr2 (SHL | SHR | SHA) expr2																# shiftExpr
 				| expr2 (SHL | SHR | SHA) bind																# shiftBindExpr
-				| (ALL | NO | multiplicity | SEQ ) expr2													# quantifiedExpr
+				| (ALL | NO | LONE | ONE | SOME | SEQ ) expr2												# quantifiedExpr
 				| expr2 comparison  expr2																	# compExpr
 				| (NOT_EXCL | NOT | ALWAYS | EVENTUALLY | AFTER | HISTORICALLY | ONCE | BEFORE) expr2		# unTempExpr
 				| (NOT_EXCL | NOT | ALWAYS | EVENTUALLY | AFTER | HISTORICALLY | ONCE | BEFORE) bind		# unTempBindExpr

@@ -586,18 +586,20 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
     @Override
     public AlloyQtExpr visitQuantifiedExpr(DashParser.QuantifiedExprContext ctx) {
         AlloyQtEnum qt = null;
-        if (null != ctx.multiplicity()) {
-            qt = parseMultiplicity(ctx.multiplicity());
+        if (null != ctx.ALL()) {
+            qt = AlloyQtEnum.ALL;
+        } else if (null != ctx.NO()) {
+            qt = AlloyQtEnum.NO;
+        } else if (null != ctx.SOME()) {
+            qt = AlloyQtEnum.SOME;
+        } else if (null != ctx.LONE()) {
+            qt = AlloyQtEnum.LONE;
+        } else if (null != ctx.ONE()) {
+            qt = AlloyQtEnum.ONE;
+        } else if (null != ctx.SEQ()) {
+            qt = AlloyQtEnum.SEQ;
         } else {
-            if (null != ctx.ALL()) {
-                qt = AlloyQtEnum.ALL;
-            } else if (null != ctx.NO()) {
-                qt = AlloyQtEnum.NO;
-            } else if (null != ctx.SEQ()) {
-                qt = AlloyQtEnum.SEQ;
-            } else {
-                throw AlloyASTImplError.invalidCase(new Pos(ctx));
-            }
+            throw AlloyASTImplError.invalidCase(new Pos(ctx));
         }
         return new AlloyQtExpr(new Pos(ctx), qt, this.visit(ctx.expr2()));
     }
@@ -769,7 +771,8 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
 
     @Override
     public AlloyDecl visitDeclWithMul(DashParser.DeclWithMulContext ctx) {
-        // declWithMul      : VAR? PRIVATE? DISJ? qnames COLON DISJ? multiplicity expr1
+        // declWithMul : VAR? PRIVATE? DISJ? qnames COLON DISJ?
+        // multiplicity expr1
         AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
 
         final boolean isVar = null != ctx.VAR() ? true : false;
@@ -865,7 +868,8 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
                 isDisj1,
                 qnames,
                 isDisj2,
-                AlloyQtEnum.ONE, // defaults for mulitplicity of comp, arguments, quantified vars
+                AlloyQtEnum.ONE, // defaults for mulitplicity of comp, arguments,
+                // quantified vars
                 exprParseVis.visit(ctx.expr1()));
     }
 
