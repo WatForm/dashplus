@@ -83,9 +83,9 @@ public class PredAbsUtil {
                 cache.put(key, sol.isSat());
                 return sol.isSat();
             } catch (Exception e) {
-                System.out.println("*********MODEL*********");
-                System.out.println(am.toString());
-                System.out.println("***********************");
+                // System.out.println("*********MODEL*********");
+                // System.out.println(am.toString());
+                // System.out.println("***********************");
                 printStackTrace();
                 return cached;
             }

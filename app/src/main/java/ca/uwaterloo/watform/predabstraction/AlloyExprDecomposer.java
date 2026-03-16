@@ -12,12 +12,15 @@ import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import java.util.*;
 
-public class AlloyExprDecomposer implements AlloyExprVis<AlloyExpr> {
+public class AlloyExprDecomposer implements AlloyExprVis<Void> {
 
     private Set<AlloyExpr> subexprs;
 
-    public Set<AlloyExpr> decompose(AlloyExpr e) {
+    public AlloyExprDecomposer() {
         this.subexprs = new HashSet<AlloyExpr>();
+    }
+
+    public Set<AlloyExpr> decompose(AlloyExpr e) {
         if (e != null) {
             this.visit(e);
         }
@@ -25,37 +28,37 @@ public class AlloyExprDecomposer implements AlloyExprVis<AlloyExpr> {
     }
 
     @Override
-    public AlloyExpr visit(DashRef dashRef) {
+    public Void visit(DashRef dashRef) {
         subexprs.add(dashRef);
-        return (AlloyExpr) dashRef;
+        return null;
     }
 
     @Override
-    public AlloyExpr visit(AlloyPrimeExpr expr) {
+    public Void visit(AlloyPrimeExpr expr) {
         subexprs.add(expr);
-        return expr;
+        return null;
     }
 
     // ones from Dash
 
     @Override
-    public AlloyExpr visit(DashParam dashParam) {
+    public Void visit(DashParam dashParam) {
         subexprs.add(dashParam.asAlloyVar());
-        return dashParam.asAlloyVar();
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyVarExpr varExpr) {
+    public Void visit(AlloyVarExpr varExpr) {
         subexprs.add(varExpr);
-        return varExpr;
+        return null;
     }
     ;
 
     // below this line are recursive ones
 
     @Override
-    public AlloyExpr visit(AlloyBinaryExpr binExpr) {
+    public Void visit(AlloyBinaryExpr binExpr) {
         // List<String> binOps = List.of(AND, AND_AMP, OR, OR_BAR, RFATARROW, IMPLIES, IFF,
         // IFF_ARR);
         // if (binOps.contains(binExpr.op)) {
@@ -69,85 +72,85 @@ public class AlloyExprDecomposer implements AlloyExprVis<AlloyExpr> {
                 || binExpr instanceof AlloyOrExpr
                 || binExpr instanceof AlloyImpliesExpr
                 || binExpr instanceof AlloyIffExpr) {
-            subexprs.add(this.visit(binExpr.left));
-            subexprs.add(this.visit(binExpr.right));
+            this.visit(binExpr.left);
+            this.visit(binExpr.right); // just do this.visit
         } else {
             subexprs.add(binExpr);
         }
-        return binExpr;
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyUnaryExpr unaryExpr) {
+    public Void visit(AlloyUnaryExpr unaryExpr) {
         if (unaryExpr instanceof AlloyNegExpr) {
-            subexprs.add(this.visit(unaryExpr.sub));
+            this.visit(unaryExpr.sub);
         } else {
             subexprs.add(unaryExpr);
         }
-        return unaryExpr;
+        return null;
     }
     ;
 
     // misc exprs
 
     @Override
-    public AlloyExpr visit(AlloyBlock block) {
+    public Void visit(AlloyBlock block) {
         for (AlloyExpr e : block.exprs) {
-            subexprs.add(this.visit(e));
+            this.visit(e);
         }
-        return block;
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyBracketExpr bracketExpr) {
+    public Void visit(AlloyBracketExpr bracketExpr) {
         subexprs.add(bracketExpr);
-        return bracketExpr;
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyCphExpr comprehensionExpr) {
+    public Void visit(AlloyCphExpr comprehensionExpr) {
         subexprs.add(comprehensionExpr);
-        return comprehensionExpr;
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyDecl decl) {
+    public Void visit(AlloyDecl decl) {
         subexprs.add(decl);
-        return decl;
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyIteExpr iteExpr) {
-        subexprs.add(this.visit(iteExpr.cond));
-        subexprs.add(this.visit(iteExpr.conseq));
-        subexprs.add(this.visit(iteExpr.alt));
-        return iteExpr;
+    public Void visit(AlloyIteExpr iteExpr) {
+        this.visit(iteExpr.cond);
+        this.visit(iteExpr.conseq);
+        this.visit(iteExpr.alt);
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyLetExpr letExpr) {
-        subexprs.add(this.visit(letExpr.body));
-        return letExpr;
+    public Void visit(AlloyLetExpr letExpr) {
+        this.visit(letExpr.body);
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyParenExpr parenExpr) {
-        subexprs.add(this.visit(parenExpr.sub));
-        return parenExpr;
+    public Void visit(AlloyParenExpr parenExpr) {
+        this.visit(parenExpr.sub);
+        return null;
     }
     ;
 
     @Override
-    public AlloyExpr visit(AlloyQuantificationExpr quantificationExpr) {
-        subexprs.add(this.visit(quantificationExpr.body));
-        return quantificationExpr;
+    public Void visit(AlloyQuantificationExpr quantificationExpr) {
+        this.visit(quantificationExpr.body);
+        return null;
     }
     ;
 }

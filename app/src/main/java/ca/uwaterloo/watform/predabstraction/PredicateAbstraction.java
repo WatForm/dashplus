@@ -84,7 +84,7 @@ public class PredicateAbstraction {
             ABVNameCAFMap.put(abvName, exprTranslator.translateExpr(e));
         }
 
-        System.out.println("\nABV map created:");
+        System.out.println("\nIn createABVMap(): ABV map created:");
         for (String k : ABVNameCAFMap.keySet()) {
             AlloyExpr v = ABVNameCAFMap.get(k);
             System.out.println(k + " : " + v.toString());
@@ -95,7 +95,9 @@ public class PredicateAbstraction {
     public void addCAFDepInvs() {
         try {
             // adds CAF Dependency invariants to the abstract model
+
             int ctr = 0;
+
             List<List<AlloyExpr>> cafPowSet =
                     getNonEmptySubsets(Set.copyOf(ABVNameCAFMap.values()));
             List<List<AlloyExpr>> unsatList = new ArrayList<>();
@@ -109,9 +111,15 @@ public class PredicateAbstraction {
                             break;
                         }
                     }
+
+                    ctr += 1;
+
                     if (!uflag) {
                         if (!PredAbsUtil.checkSAT(listToSet(combo), queryModel, false, scope)) {
                             unsatList.add(combo);
+                            System.out.println(
+                                    "In addCAFDepInvs(): CAF Dependency Check:\n\n"
+                                            + queryModel.toString());
                         }
                     } else {
                         unsatList.add(combo);
@@ -125,6 +133,12 @@ public class PredicateAbstraction {
 
             HashMap<AlloyExpr, String> ABVReverseMap = new HashMap<>();
             ABVNameCAFMap.forEach((k, v) -> ABVReverseMap.put(v, k));
+
+            int i = 0;
+            System.out.println(
+                    "\nIn addCAFDepInvs(): Number of CAFs: " + ABVNameCAFMap.values().size());
+            System.out.println("In addCAFDepInvs(): Number of combos checked: " + ctr);
+            System.out.println("In addCAFDepInvs(): Number of UNSAT combos: " + unsatList.size());
 
             for (List<AlloyExpr> u : unsatList) {
                 // List<AlloyExpr> uVars = mapBy(u, e -> AlloyVar(ABVReverseMap.get(e)));
@@ -143,6 +157,9 @@ public class PredicateAbstraction {
                 }
                 AlloyExpr invBody = AlloyNot(AlloyAndList(uVars));
                 absModel.addInv(invBody);
+
+                i += 1;
+                System.out.println("Invariant" + Integer.toString(i) + ": " + invBody.toString());
             }
         } catch (Exception e) {
             handleException(e);
@@ -266,10 +283,10 @@ public class PredicateAbstraction {
         absModel.cloneEventTableOf(concreteModel);
 
         addABVsToAbsModel();
-        System.out.println("\nABVs added to abstract model.");
+        System.out.println("\nIn createAbstractModel(): ABVs added to abstract model.");
 
         addCAFDepInvs();
-        System.out.println("\nCAF Dependency invariants added.");
+        System.out.println("\nIn createAbstractModel():CAF Dependency invariants added.");
 
         for (AlloyExpr init : concreteModel.initsR()) {
             absModel.addInit(createAbsExpr(init));
@@ -294,8 +311,10 @@ public class PredicateAbstraction {
                     absDoR);
         }
 
-        System.out.println("\nAbstract model:\n");
-        System.out.println(absModel.toString());
+        System.out.println("\nIn createAbstractModel(), Abstract model:\n");
+        DashToAlloy absd2a = new DashToAlloy(absModel);
+        AlloyModel absAlloy = absd2a.translate();
+        System.out.println(absAlloy.toString());
 
         return absModel;
     }
