@@ -347,3 +347,45 @@ sig A {
 
 run {} for exactly 1 B, exactly 1 C, exactly 2 A, exactly 3 D
 ```
+
+
+Translating cph exprs:
+
+
+```
+
+{x : A+B | exp}
+
+```
+
+becomes
+
+```
+{x \in A+B : exp}
+
+```
+
+
+```
+
+{x : A+B | exp}
+
+```
+
+becomes
+
+```
+{x \in A+B : exp}
+
+```
+
+The AlloyDecl here is a subset with no special arrows, how does it translate post-refactoring?
+
+No need for additional variables
+
+List of quantopheads handles multiple variables
+
+separate class for arrowexpresions and augmented arrowexpressions
+
+
+quantifiers - just a composition of a multiplicity with a comprehension set

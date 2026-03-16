@@ -1,0 +1,320 @@
+package ca.uwaterloo.watform.dashtotla;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlamodel.TlaModel;
+
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.CONF;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.ENVIRONMENTAL_EVENTS;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.EVENTS;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.INTERNAL_EVENTS;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.NONE_TRANSITION_LITERAL;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.SCOPES_USED;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.STABLE;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.TRANS_TAKEN;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.EVENTS;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.NONE_TRANSITION;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.SCOPES_USED;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
+public class TransDefnsD2T extends StateDefnsD2T {
+
+	public TransDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+		super(dashModel, tlaModel, verbose, debug);
+	}
+
+	protected void translateTransDefns()
+	{
+		List<String> transFQNs = dashModel.allTransNames();
+
+        transFQNs.forEach(
+                transFQN ->
+                        tlaModel.addDefn(
+                                // taken_<trans-name> == "<transFQN>"
+                                TlaDefn(takenTransTlaFQN(transFQN), TlaStringLiteral(transFQN))));
+
+        tlaModel.addDefn(
+                // _none_transition == "[none]"
+                TlaDefn(NONE_TRANSITION, NONE_TRANSITION_LITERAL()));
+
+        if (!dashModel.hasOnlyOneState()) {
+
+            tlaModel.addComment(
+                    "parameterized formulae to check if transitions are enabled", verbose);
+            // _enabled_<transFQN> == <body>
+            transFQNs.forEach(x -> TransEnabledDefn(x));
+
+            tlaModel.addComment("negation of disjunction of enabled-formulae", verbose);
+            NextIsStableDefn();
+        }
+
+        if (debug) System.out.println("translated enabled definitions");
+
+        transFQNs.forEach(
+                transFQN -> {
+                    // pre, post, and body
+
+                    tlaModel.addComment("Translation of transition " + transFQN, verbose);
+                    PreTransDefn(transFQN);
+                    PostTransDefn(transFQN);
+                    TransDefn(transFQN);
+                    if (debug) System.out.println("translated transition " + transFQN);
+                });
+	}
+
+	private static List<String> varNames(DashModel dashModel) {
+        // names of variables that are parameterized
+        List<String> names = new ArrayList<>();
+        if (dashModel.hasConcurrency()) names.add(SCOPES_USED);
+        if (dashModel.hasEvents()) names.add(EVENTS);
+        return names;
+    }
+
+    private List<TlaVar> enabledParams() {
+
+        // list of parameters for enabledTransition formulae
+
+        return mapBy(varNames(dashModel), v -> TlaVar(paramVar(v)));
+    }
+
+    public List<TlaVar> enabledArgs() {
+
+        // list of arguments for enabledTransition formulae, using the current variables
+
+        return mapBy(varNames(dashModel), v -> TlaVar(v));
+    }
+
+    public void NextIsStableDefn() {
+
+        List<TlaExp> notEnabledTrans =
+                mapBy(
+                        dashModel.allTransNames(),
+                        tFQN ->
+                                TlaNot(
+                                        TlaAppl(
+                                                enabledTransTlaFQN(tFQN),
+                                                enabledParams())));
+
+        tlaModel.addDefn(
+                // _next_is_stable(args) = /\ (~ enabled_after_step_ti(args) ...)
+                TlaDefn(
+                        TlaDecl(NEXT_IS_STABLE, enabledParams()),
+                        repeatedAnd(notEnabledTrans)));
+    }
+
+    public void PreTransDefn(String transFQN) {
+
+        TlaAppl fromState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).name));
+
+        List<TlaExp> exps = new ArrayList<>();
+
+        if (!dashModel.hasOnlyOneState())
+            exps.add(
+                    // _conf \intersection <fromState> \= {}
+                    CONF().INTERSECTION(fromState).NOT_EQUALS(TlaNullSet()));
+
+        if (dashModel.hasConcurrency()) {
+            // has a scope orthogonal to the scopes used
+            List<TlaAppl> nonOrthogonalScopes =
+                    mapBy(
+                            dashModel.nonOrthogonalScopesOf(transFQN),
+                            dashRef -> TlaAppl(tlaFQN(dashRef.name)));
+
+            nonOrthogonalScopes.forEach(
+                    scope ->
+                            exps.add(
+                                    // (<non-orthogonal-scope-i> \notin _scopes_used)
+                                    scope.INTERSECTION(SCOPES_USED()).EQUALS(TlaNullSet())));
+        }
+
+        if (dashModel.hasEvents()) {
+            if (dashModel.onR(transFQN) != null) {
+                TlaAppl onEvent = TlaAppl(tlaFQN(dashModel.onR(transFQN).name));
+
+                TlaExp stableCase = onEvent.IN(EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS()));
+                TlaExp unstableCase = onEvent.IN(EVENTS());
+
+                // IF stable
+                // THEN <on-event> \in  _events \intersect _all_env_events
+                // ELSE <on-event> \in _events
+
+                if (!dashModel.hasOnlyOneState())
+                    exps.add(new TlaIfThenElse(STABLE(), stableCase, unstableCase));
+                else exps.add(stableCase);
+            }
+        }
+
+        tlaModel.addDefn(TlaDefn(preTransTlaFQN(transFQN), repeatedAnd(exps)));
+    }
+
+    public void PostTransDefn(String transFQN) {
+
+        List<TlaExp> exps = new ArrayList<>();
+
+        exps.add(
+                // _trans_taken' = <taken-trans-formula>
+                TRANS_TAKEN().PRIME().EQUALS(TlaAppl(takenTransTlaFQN(transFQN))));
+
+        if (!dashModel.hasOnlyOneState()) {
+            List<TlaAppl> entered =
+                    mapBy(dashModel.entered(transFQN), s -> TlaAppl(tlaFQN(s.name)));
+            List<TlaAppl> exited = mapBy(dashModel.exited(transFQN), s -> TlaAppl(tlaFQN(s.name)));
+            exps.add(
+                    // _conf' = conf \ (union <exited>...) union (union <entered>...)
+                    CONF().PRIME()
+                            .EQUALS(
+                                    CONF().DIFF(repeatedUnion(exited))
+                                            .UNION(repeatedUnion(entered))));
+        }
+
+        TlaExp sentEvents = TlaNullSet();
+        if (dashModel.onR(transFQN) != null)
+            sentEvents = TlaSet(TlaAppl((tlaFQN(dashModel.onR(transFQN).name))));
+
+        if (!dashModel.hasOnlyOneState()) {
+
+            List<TlaExp> nextStableExps = new ArrayList<>();
+            nextStableExps.add(STABLE().PRIME().EQUALS(TlaTrue()));
+            if (dashModel.hasConcurrency())
+                nextStableExps.add(SCOPES_USED().PRIME().EQUALS(TlaNullSet()));
+
+            if (dashModel.hasEvents()) {
+                TlaExp stableCase =
+                        EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents);
+                TlaExp unstableCase =
+                        EVENTS().PRIME()
+                                .INTERSECTION(INTERNAL_EVENTS())
+                                .EQUALS(sentEvents.UNION(EVENTS().INTERSECTION(INTERNAL_EVENTS())));
+
+                nextStableExps.add(new TlaIfThenElse(STABLE(), stableCase, unstableCase));
+            }
+
+            List<TlaExp> nextUnstableExps = new ArrayList<>();
+            nextUnstableExps.add(STABLE().PRIME().EQUALS(TlaFalse()));
+
+            List<TlaExp> stableExps = new ArrayList<>();
+            List<TlaExp> unstableExps = new ArrayList<>();
+            if (dashModel.hasConcurrency()) {
+                TlaExp scopesUsed =
+                        repeatedUnion(
+                                mapBy(
+                                        dashModel.scopesUsed(transFQN),
+                                        dr -> TlaAppl(tlaFQN(dr.name))));
+
+                stableExps.add(SCOPES_USED().PRIME().EQUALS(scopesUsed));
+
+                unstableExps.add(SCOPES_USED().PRIME().EQUALS(SCOPES_USED().UNION(scopesUsed)));
+            }
+            if (dashModel.hasEvents()) {
+                stableExps.add(EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents));
+
+                stableExps.add(
+                        EVENTS().PRIME()
+                                .INTERSECTION(ENVIRONMENTAL_EVENTS())
+                                .EQUALS(EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS())));
+
+                unstableExps.add(EVENTS().PRIME().EQUALS(EVENTS().UNION(sentEvents)));
+            }
+
+            nextUnstableExps.add(
+                    new TlaIfThenElse(
+                            STABLE(), repeatedAnd(stableExps), repeatedAnd(unstableExps)));
+
+            exps.add(
+                    new TlaIfThenElse(
+                            TlaDecl(NEXT_IS_STABLE, enabledArgs()),
+                            repeatedAnd(nextStableExps),
+                            repeatedAnd(nextUnstableExps)));
+
+        } else {
+
+            // every snapshot is stable
+            if (dashModel.hasConcurrency()) exps.add(TlaUnchanged(SCOPES_USED()));
+
+            if (dashModel.hasEvents())
+                exps.add(EVENTS().PRIME().INTERSECTION(INTERNAL_EVENTS()).EQUALS(sentEvents));
+        }
+
+        tlaModel.addDefn(TlaDefn(postTransTlaFQN(transFQN), repeatedAnd(exps)));
+
+        // TODO add stuff
+    }
+
+    public void TransEnabledDefn(String transFQN) {
+
+        List<TlaExp> exps = new ArrayList<>();
+
+        if (!dashModel.hasOnlyOneState()) {
+            TlaAppl sourceState = TlaAppl(tlaFQN(dashModel.fromR(transFQN).name));
+            exps.add(sourceState.INTERSECTION(CONF().PRIME()).NOT_EQUALS(TlaNullSet()));
+        }
+
+        List<TlaExp> stableExps = new ArrayList<>();
+        List<TlaExp> unstableExps = new ArrayList<>();
+
+        if (dashModel.hasConcurrency()) {
+            List<TlaAppl> nonOrthogonalScopes =
+                    mapBy(
+                            dashModel.nonOrthogonalScopesOf(transFQN),
+                            dashRef -> TlaAppl(tlaFQN(dashRef.name)));
+
+            nonOrthogonalScopes.forEach(
+                    s ->
+                            stableExps.add(
+                                    s.INTERSECTION(TlaVar(paramVar(SCOPES_USED)))
+                                            .EQUALS(TlaNullSet())));
+
+            nonOrthogonalScopes.forEach(
+                    s ->
+                            unstableExps.add(
+                                    s.INTERSECTION(
+                                                    SCOPES_USED()
+                                                            .UNION(TlaVar(paramVar(SCOPES_USED))))
+                                            .EQUALS(TlaNullSet())));
+        }
+
+        if (dashModel.hasEvents() && dashModel.onR(transFQN) != null) {
+
+            TlaExp sentEvents = TlaSet(TlaAppl((tlaFQN(dashModel.onR(transFQN).name))));
+
+            stableExps.add(
+                    sentEvents
+                            .INTERSECTION(
+                                    EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS())
+                                            .UNION(TlaVar(paramVar(EVENTS))))
+                            .NOT_EQUALS(TlaNullSet()));
+
+            unstableExps.add(
+                    sentEvents
+                            .INTERSECTION(EVENTS().UNION(TlaVar(paramVar(EVENTS))))
+                            .NOT_EQUALS(TlaNullSet()));
+        }
+
+        if (!dashModel.hasOnlyOneState())
+            exps.add(
+                    new TlaIfThenElse(
+                            STABLE(), repeatedAnd(stableExps), repeatedAnd(unstableExps)));
+        else exps.addAll(stableExps);
+
+        tlaModel.addDefn(
+                TlaDefn(
+                        TlaDecl(enabledTransTlaFQN(transFQN), enabledParams()),
+                        repeatedAnd(exps)));
+    }
+
+    public void TransDefn(String transFQN) {
+
+        TlaAppl preTrans = TlaAppl(preTransTlaFQN(transFQN));
+        TlaAppl postTrans = TlaAppl(postTransTlaFQN(transFQN));
+        tlaModel.addDefn(
+                // body == pre /\ post
+                TlaDefn(tlaFQN(transFQN), preTrans.AND(postTrans)));
+    }
+	
+}

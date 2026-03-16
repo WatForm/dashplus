@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.dashtotla;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
 import ca.uwaterloo.watform.alloytotla.AlloyToTla;
+import ca.uwaterloo.watform.alloytotla.AlloyToTlaAux;
 import ca.uwaterloo.watform.alloytotla.Boilerplate;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -19,7 +20,9 @@ public class DashToTla {
             boolean debug,
             boolean singleEnvInput) {
 
-        AlloyToTla.translate(dashModel, tlaModel, verbose, debug);
+
+        AlloyToTlaAux alloyTranslator = new AlloyToTlaAux(dashModel, tlaModel, verbose, debug);
+        alloyTranslator.translate();
 
         StdLibDefns.translate(dashModel, tlaModel);
         if (debug) System.out.println("translated libraries");

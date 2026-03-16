@@ -14,9 +14,9 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.Arrays;
 import java.util.List;
 
-public class SigHierarchyA2T extends SigVarsA2T {
+public class SigHierarchyA2T extends SigConstsA2T {
 
-    /*
+	/*
     let S be a sig
     if S is top-level, we get
     S \in SUBSET {<<x>> : x \in S_set}
@@ -26,33 +26,28 @@ public class SigHierarchyA2T extends SigVarsA2T {
     to do this, the set of all sigs needs to be topologically sorted
     */
 
-    public SigHierarchyA2T(
-            AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
-        super(alloyModel, moduleName, verbose, debug);
-        translate();
-    }
+	
+	public SigHierarchyA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+		super(alloyModel, tlaModel, verbose, debug);
+	}
 
-    public SigHierarchyA2T(
-            AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(alloyModel, tlaModel, verbose, debug);
-        translate();
-    }
-
-    public void translate() {
-        List<String> sortedSigs = alloyModel.topoSortedSigs();
+	
+	protected void addSigHierarchy()
+	{
+		List<String> sortedSigs = alloyModel.topoSortedSigs();
 
         tlaModel.addDefn(
                 TlaDefn(
                         SIG_SETS_UNPRIMED,
-                        repeatedAnd(mapBy(sortedSigs, sn -> sigSetClause(sn, false)))));
+                        repeatedAnd(mapBy(sortedSigs, sn -> sigSetClause(sn,false)))));
 
         tlaModel.addDefn(
                 TlaDefn(
                         SIG_SETS_PRIMED,
-                        repeatedAnd(mapBy(sortedSigs, sn -> sigSetClause(sn, true)))));
-    }
+                        repeatedAnd(mapBy(sortedSigs, sn -> sigSetClause(sn,true)))));
+	}
 
-    private TlaExp sigSetClause(String sn, boolean primed) {
+	private TlaExp sigSetClause(String sn, boolean primed) {
         TlaExp v = primed ? TlaVar(sn).PRIME() : TlaVar(sn);
         if (alloyModel.isTopLevelSig(sn))
             return v.IN(
@@ -68,4 +63,5 @@ public class SigHierarchyA2T extends SigVarsA2T {
                                             alloyModel.allParentsOfSig(sn),
                                             psn -> primed ? TlaVar(psn).PRIME() : TlaVar(psn)))));
     }
+	
 }
