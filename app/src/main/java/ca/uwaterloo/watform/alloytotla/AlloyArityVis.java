@@ -2,7 +2,10 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 
+import java.util.HashMap;
+
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -20,6 +23,25 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
 
     public static final Integer BOOLEAN_ARITY = Integer.valueOf(0);
     public static final Integer UNKNOWN_ARITY = Integer.valueOf(-1);
+
+    protected final HashMap<AlloyQnameExpr, AlloyExpr> exprTable;
+    protected final HashMap<AlloyQnameExpr, Integer> arityTable;
+
+    protected static HashMap<AlloyQnameExpr, AlloyExpr> buildExprTable(AlloyFile alloyFile)
+    {
+        return null;
+    }
+    protected static HashMap<AlloyQnameExpr, Integer> buildArityTable(AlloyFile alloyFile)
+    {
+        return null;
+    }
+
+    public AlloyArityVis(AlloyFile alloyFile)
+    {
+        this.exprTable = buildExprTable(alloyFile);
+        this.arityTable = buildArityTable(alloyFile);
+    }
+
 
     @Override
     public Integer visit(DashRef dashRef) {
@@ -51,13 +73,16 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
                     case AlloyIffExpr _ -> BOOLEAN_ARITY;
                     case AlloyImpliesExpr _ -> BOOLEAN_ARITY;
                     case AlloyIntersExpr _ -> el;
-                    case AlloyNotEqualsExpr _ -> Integer.valueOf(0);
+                    case AlloyNotEqualsExpr _ -> BOOLEAN_ARITY;
                     case AlloyOrExpr _ -> BOOLEAN_ARITY;
                     case AlloyRelOvrdExpr _ -> el;
                     case AlloyRngRestrExpr _ -> el - 1;
                     case AlloyUnionExpr _ -> el;
                     default -> null;
                 };
+
+        if(binExpr.getClass() == AlloyAndExpr.class)
+            if(el!=er)
 
         if (answer != null) return answer;
 
