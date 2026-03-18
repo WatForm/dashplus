@@ -1,12 +1,5 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaast.*;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.CONF;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.ENVIRONMENTAL_EVENTS;
@@ -23,15 +16,20 @@ import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.SCOPES_USED;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransDefnsD2T extends StateDefnsD2T {
 
-	public TransDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-		super(dashModel, tlaModel, verbose, debug);
-	}
+    public TransDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+        super(dashModel, tlaModel, verbose, debug);
+    }
 
-	protected void translateTransDefns()
-	{
-		List<String> transFQNs = dashModel.allTransNames();
+    protected void translateTransDefns() {
+        List<String> transFQNs = dashModel.allTransNames();
 
         transFQNs.forEach(
                 transFQN ->
@@ -66,9 +64,9 @@ public class TransDefnsD2T extends StateDefnsD2T {
                     TransDefn(transFQN);
                     if (debug) System.out.println("translated transition " + transFQN);
                 });
-	}
+    }
 
-	private static List<String> varNames(DashModel dashModel) {
+    private static List<String> varNames(DashModel dashModel) {
         // names of variables that are parameterized
         List<String> names = new ArrayList<>();
         if (dashModel.hasConcurrency()) names.add(SCOPES_USED);
@@ -95,17 +93,11 @@ public class TransDefnsD2T extends StateDefnsD2T {
         List<TlaExp> notEnabledTrans =
                 mapBy(
                         dashModel.allTransNames(),
-                        tFQN ->
-                                TlaNot(
-                                        TlaAppl(
-                                                enabledTransTlaFQN(tFQN),
-                                                enabledParams())));
+                        tFQN -> TlaNot(TlaAppl(enabledTransTlaFQN(tFQN), enabledParams())));
 
         tlaModel.addDefn(
                 // _next_is_stable(args) = /\ (~ enabled_after_step_ti(args) ...)
-                TlaDefn(
-                        TlaDecl(NEXT_IS_STABLE, enabledParams()),
-                        repeatedAnd(notEnabledTrans)));
+                TlaDefn(TlaDecl(NEXT_IS_STABLE, enabledParams()), repeatedAnd(notEnabledTrans)));
     }
 
     public void PreTransDefn(String transFQN) {
@@ -303,9 +295,7 @@ public class TransDefnsD2T extends StateDefnsD2T {
         else exps.addAll(stableExps);
 
         tlaModel.addDefn(
-                TlaDefn(
-                        TlaDecl(enabledTransTlaFQN(transFQN), enabledParams()),
-                        repeatedAnd(exps)));
+                TlaDefn(TlaDecl(enabledTransTlaFQN(transFQN), enabledParams()), repeatedAnd(exps)));
     }
 
     public void TransDefn(String transFQN) {
@@ -316,5 +306,4 @@ public class TransDefnsD2T extends StateDefnsD2T {
                 // body == pre /\ post
                 TlaDefn(tlaFQN(transFQN), preTrans.AND(postTrans)));
     }
-	
 }

@@ -1,28 +1,26 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlaast.TlaDefn;
+import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ValidDefnsD2T extends TransDefnsD2T {
 
-	public ValidDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-		super(dashModel, tlaModel, verbose, debug);
-	}
+    public ValidDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+        super(dashModel, tlaModel, verbose, debug);
+    }
 
-	protected void translateValidDefns()
-	{
-		// these are separate functions since the presence of the variables themselves are subject
+    protected void translateValidDefns() {
+        // these are separate functions since the presence of the variables themselves are subject
         // to optimization
 
         List<String> vars = new ArrayList<>();
@@ -91,13 +89,12 @@ public class ValidDefnsD2T extends TransDefnsD2T {
                                                 TlaAppl(
                                                         validDefn(varName),
                                                         Arrays.asList(TlaVar(varName).PRIME()))))));
-	}
+    }
 
-	private static TlaDefn generateValid(String varName, TlaExp exp) {
+    private static TlaDefn generateValid(String varName, TlaExp exp) {
         /*
         returns  valid_v(_arg) == _arg \in exp
         */
         return TlaDefn(TlaDecl(validDefn(varName), Arrays.asList(ARGUMENT())), ARGUMENT().IN(exp));
     }
-	
 }

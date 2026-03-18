@@ -1,23 +1,21 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
+import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StandardVarsD2T extends SmallStepDefnD2T {
 
-	public StandardVarsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-		super(dashModel, tlaModel, verbose, debug);
-	}
+    public StandardVarsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+        super(dashModel, tlaModel, verbose, debug);
+    }
 
-	protected void translateStandardVars()
-	{
-		// this is subject to optimizations, and should remain its own function
+    protected void translateStandardVars() {
+        // this is subject to optimizations, and should remain its own function
 
         // _conf - stores the leaf states of the snapshot
         // _trans_taken - does not affect model execution, stored the transition taken to get to the
@@ -38,6 +36,5 @@ public class StandardVarsD2T extends SmallStepDefnD2T {
 
         // VARIABLES _conf, _trans_taken, _scopes_used, _stable
         vars.forEach(v -> tlaModel.addVar(TlaVar(v)));
-	}
-	
+    }
 }

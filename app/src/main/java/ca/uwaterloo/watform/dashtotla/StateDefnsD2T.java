@@ -1,26 +1,24 @@
 package ca.uwaterloo.watform.dashtotla;
 
-import java.util.Collections;
-import java.util.List;
-
-import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-
 import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlaast.TlaAppl;
+import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.Collections;
+import java.util.List;
+
 public class StateDefnsD2T extends StandardVarsD2T {
 
-	public StateDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-		super(dashModel, tlaModel, verbose, debug);
-	}
+    public StateDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+        super(dashModel, tlaModel, verbose, debug);
+    }
 
-	protected void translateStateDefns()
-	{
-		if (dashModel.hasOnlyOneState()) return;
+    protected void translateStateDefns() {
+        if (dashModel.hasOnlyOneState()) return;
         List<String> stateFQNs = dashModel.allStateNames(); // dashModel.st.getAllNames();
 
         depthSort(stateFQNs);
@@ -33,9 +31,9 @@ public class StateDefnsD2T extends StandardVarsD2T {
                             if (dashModel.isLeaf(stateFQN)) LeafStateDefn(stateFQN);
                             else nonLeafStateDefn(stateFQN);
                         });
-	}
+    }
 
-	public static void depthSort(List<String> stateFQNs) {
+    public static void depthSort(List<String> stateFQNs) {
         Collections.sort(
                 stateFQNs, (a, b) -> occurrences(a, QUALIFIER) - occurrences(b, QUALIFIER));
     }
@@ -55,5 +53,4 @@ public class StateDefnsD2T extends StandardVarsD2T {
                 // <state-formula-name> = union <child_i-formula-name>...
                 TlaDefn(tlaFQN(stateFQN), repeatedUnion(childStates)));
     }
-	
 }

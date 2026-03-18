@@ -2,8 +2,6 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 
-import java.util.HashMap;
-
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -15,16 +13,17 @@ import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
+import java.util.HashMap;
 
 /*
  * Plan
- * 1) create exprTable: Qname of a field -> its Expr 
- * 2) create arityTale: Qname of a field or sig-> Arity 
- * 3) check for cycles using exprTable 
- * 		- @Nancy Is there a visitor that returns a list of Qnames used in an AlloyExpr? We didn't find one. 
+ * 1) create exprTable: Qname of a field -> its Expr
+ * 2) create arityTale: Qname of a field or sig-> Arity
+ * 3) check for cycles using exprTable
+ * 		- @Nancy Is there a visitor that returns a list of Qnames used in an AlloyExpr? We didn't find one.
  * 		- need new exprVis that returns a list Qnames used in an AlloyExpr
  * 		- DFS with recursion stack can do this in linear time
- * 4) fill in arityTable by iterating through exprTable, 
+ * 4) fill in arityTable by iterating through exprTable,
  * 		- at each field, recursively find all the arity it needs to know
  * 		- this is linear
  *
@@ -33,7 +32,7 @@ import ca.uwaterloo.watform.utils.ImplementationError;
  * 		- But we also need the AST to calculate arity
  * 		- The AST is immutable
  * 		- We thought we could do this:
- * 			- ANTLR -> our AST -> Calculate Arity 
+ * 			- ANTLR -> our AST -> Calculate Arity
  * 				-> run another visitor on the origial AST with arity info to produce a new AST -> new AST with defaults filled
  * 			- We need copy constructors for more AlloyAST
  */
@@ -49,21 +48,18 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
     protected final HashMap<AlloyQnameExpr, AlloyExpr> exprTable;
     protected final HashMap<AlloyQnameExpr, Integer> arityTable;
 
-    protected static HashMap<AlloyQnameExpr, AlloyExpr> buildExprTable(AlloyFile alloyFile)
-    {
-        return null;
-    }
-    protected static HashMap<AlloyQnameExpr, Integer> buildArityTable(AlloyFile alloyFile)
-    {
+    protected static HashMap<AlloyQnameExpr, AlloyExpr> buildExprTable(AlloyFile alloyFile) {
         return null;
     }
 
-    public AlloyArityVis(AlloyFile alloyFile)
-    {
+    protected static HashMap<AlloyQnameExpr, Integer> buildArityTable(AlloyFile alloyFile) {
+        return null;
+    }
+
+    public AlloyArityVis(AlloyFile alloyFile) {
         this.exprTable = buildExprTable(alloyFile);
         this.arityTable = buildArityTable(alloyFile);
     }
-
 
     @Override
     public Integer visit(DashRef dashRef) {
@@ -103,10 +99,8 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
                     default -> null;
                 };
 
-        if(binExpr.getClass() == AlloyAndExpr.class)
-            if(el!=er)
-
-        if (answer != null) return answer;
+        if (binExpr.getClass() == AlloyAndExpr.class)
+            if (el != er) if (answer != null) return answer;
 
         throw ImplementationError.notSupported(
                 "non-translatable expression: " + binExpr.toString());

@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.dashtotla;
 
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
-import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.alloytotla.AlloyToTlaAux;
 import ca.uwaterloo.watform.alloytotla.Boilerplate;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -19,7 +18,6 @@ public class DashToTla {
             boolean verbose,
             boolean debug,
             boolean singleEnvInput) {
-
 
         AlloyToTlaAux alloyTranslator = new AlloyToTlaAux(dashModel, tlaModel, verbose, debug);
         alloyTranslator.translate();

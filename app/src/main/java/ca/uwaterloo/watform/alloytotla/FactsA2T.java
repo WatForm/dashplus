@@ -1,34 +1,31 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
-import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
+import java.util.List;
+
 public class FactsA2T extends BoilerplateA2T {
 
-	
-	public FactsA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-		super(alloyModel, tlaModel, verbose, debug);
-	}
+    public FactsA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+        super(alloyModel, tlaModel, verbose, debug);
+    }
 
-	static int count = 0; // used to number un-named facts
+    static int count = 0; // used to number un-named facts
 
     public static String generateFactName() {
         count += 1;
         return unnamedFact(count);
     }
-	
-	protected void addFacts()
-	{
-		List<String> factNames = new ArrayList<>();
+
+    protected void addFacts() {
+        List<String> factNames = new ArrayList<>();
         List<String> comments = new ArrayList<>();
         List<AlloyFactPara> factParas = alloyModel.getParas(AlloyFactPara.class);
 
@@ -45,6 +42,5 @@ public class FactsA2T extends BoilerplateA2T {
         tlaModel.addDefn(TlaDefn(ALL_FACTS, repeatedAnd(mapBy(factNames, fn -> TlaAppl(fn)))));
 
         comments.forEach(c -> tlaModel.addComment(c, verbose));
-	}
-	
+    }
 }

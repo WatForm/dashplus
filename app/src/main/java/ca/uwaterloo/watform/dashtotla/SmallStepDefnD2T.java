@@ -1,29 +1,28 @@
 package ca.uwaterloo.watform.dashtotla;
 
+import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
+import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaSubsetUnary;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-
-import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.*;
-import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
-import static ca.uwaterloo.watform.utils.GeneralUtil.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SmallStepDefnD2T extends SingleEnvEventD2T {
 
-	public SmallStepDefnD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-		super(dashModel, tlaModel, verbose, debug);
-	}
+    public SmallStepDefnD2T(
+            DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+        super(dashModel, tlaModel, verbose, debug);
+    }
 
-	protected void translateSmallStepDefn()
-	{
-		List<String> transFQNs = dashModel.allTransNames();
+    protected void translateSmallStepDefn() {
+        List<String> transFQNs = dashModel.allTransNames();
         List<TlaAppl> preTransitions = mapBy(transFQNs, tFQN -> TlaAppl(preTransTlaFQN(tFQN)));
         List<TlaAppl> transitions = mapBy(transFQNs, tFQN -> TlaAppl(tlaFQN(tFQN)));
 
@@ -42,8 +41,6 @@ public class SmallStepDefnD2T extends SingleEnvEventD2T {
                 TlaDefn(
                         SMALL_STEP,
                         SOME_TRANSITION().OR(STUTTER().AND(TlaNot(SOME_PRE_TRANSITION())))));
-
-        
     }
 
     private void StutterDefn() {
@@ -71,6 +68,5 @@ public class SmallStepDefnD2T extends SingleEnvEventD2T {
                     TlaUnchanged(unchangedVars));
 
         tlaModel.addDefn(TlaDefn(STUTTER, repeatedAnd(expressions)));
-	}
-	
+    }
 }
