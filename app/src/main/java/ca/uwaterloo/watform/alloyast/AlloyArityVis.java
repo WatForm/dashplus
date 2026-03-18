@@ -3,28 +3,33 @@ package ca.uwaterloo.watform.alloytotla;
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
+import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.HashMap;
+import java.util.List;
 
 /*
  * Plan
- * 1) create exprTable: Qname of a field -> its Expr
+ * 1) create declTable: Qname of a field -> its Decl
  * 2) create arityTale: Qname of a field or sig-> Arity
- * 3) check for cycles using exprTable
- * 		- @Nancy Is there a visitor that returns a list of Qnames used in an AlloyExpr? We didn't find one.
+ * 3) check for cycles using declTable
+ * 		- @Nancy Is there a visitor that returns a list of Qnames used in an
+ * AlloyExpr? We didn't find one.
  * 		- need new exprVis that returns a list Qnames used in an AlloyExpr
  * 		- DFS with recursion stack can do this in linear time
- * 4) fill in arityTable by iterating through exprTable,
- * 		- at each field, recursively find all the arity it needs to know via AlloyArityVis
+ * 4) fill in arityTable by iterating through declTable,
+ * 		- at each field, recursively find all the arity it needs to know via
+ * AlloyArityVis
  * 			- visit(AlloyQname) has access to arityTable b/c it's a field
  * 		- this is linear time
  *
@@ -34,23 +39,40 @@ import java.util.HashMap;
  * 		- The AST is immutable
  * 		- We thought we could do this:
  * 			- ANTLR -> our AST -> Calculate Arity
- * 				-> run another visitor on the origial AST with arity info to produce a new AST -> new AST with defaults filled
+ * 				-> run another visitor on the origial AST with arity info to
+ * produce a new AST -> new AST with defaults filled
  * 			- We need copy constructors for more AlloyAST
  */
 
 public class AlloyArityVis implements AlloyExprVis<Integer> {
 
-    // this is half-finished - the other half, integration with field table and dynamic lookups, is
-    // yet to be completed. This is shelved for now
+    // this is half-finished - the other half, integration with field table and
+    // dynamic lookups, is yet to be completed. This is shelved for now
 
     public static final Integer BOOLEAN_ARITY = Integer.valueOf(0);
     public static final Integer UNKNOWN_ARITY = Integer.valueOf(-1);
 
-    protected final HashMap<AlloyQnameExpr, AlloyExpr> exprTable;
+    protected final HashMap<AlloyQnameExpr, AlloyDecl> declTable;
+    // hold the entire Decl
     protected final HashMap<AlloyQnameExpr, Integer> arityTable;
 
-    protected static HashMap<AlloyQnameExpr, AlloyExpr> buildExprTable(AlloyFile alloyFile) {
-        return null;
+    protected static HashMap<AlloyQnameExpr, AlloyDecl> buildExprTable(AlloyFile alloyFile) {
+        HashMap<AlloyQnameExpr, AlloyDecl> declTable = new HashMap<>();
+        for (AlloyPara para : alloyFile.paras) {
+            if (!(para instanceof AlloySigPara)) continue;
+            AlloySigPara sig = (AlloySigPara) para;
+            for (AlloyDecl field : sig.fields) {
+                List<AlloyDecl> expandedFields = field.expand();
+                for (AlloyDecl expandedField : expandedFields) {
+                    AlloyQnameExpr qname = expandedField.qnames.getFirst();
+                    if (declTable.containsKey(qname)) {
+                        AlloyModelError.duplicateName(declTable.get(qname).pos, qname.pos);
+                    }
+                    declTable.put(qname, expandedField);
+                }
+            }
+        }
+        return declTable;
     }
 
     protected static HashMap<AlloyQnameExpr, Integer> buildArityTable(AlloyFile alloyFile) {
@@ -58,7 +80,7 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
     }
 
     public AlloyArityVis(AlloyFile alloyFile) {
-        this.exprTable = buildExprTable(alloyFile);
+        this.declTable = buildExprTable(alloyFile);
         this.arityTable = buildArityTable(alloyFile);
     }
 
