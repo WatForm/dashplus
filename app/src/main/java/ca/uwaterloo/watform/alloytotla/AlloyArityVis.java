@@ -24,8 +24,9 @@ import java.util.HashMap;
  * 		- need new exprVis that returns a list Qnames used in an AlloyExpr
  * 		- DFS with recursion stack can do this in linear time
  * 4) fill in arityTable by iterating through exprTable,
- * 		- at each field, recursively find all the arity it needs to know
- * 		- this is linear
+ * 		- at each field, recursively find all the arity it needs to know via AlloyArityVis
+ * 			- visit(AlloyQname) has access to arityTable b/c it's a field
+ * 		- this is linear time
  *
  * Integration into pipeline:
  * 		- We need arity to fill in defaults for the AST, like Decl
