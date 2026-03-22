@@ -141,15 +141,6 @@ public final class Solution {
         return Collections.emptySet();
     }
 
-    public void writeXML(String filename) {
-        this.throwErrorIfUnsat();
-        // System.out.println(filename);
-        // this was added b/c of problems with writeXML
-        // in newly compiled Alloy jar
-        validateWritableFile(filename);
-        this.a4Solution.writeXML(filename);
-    }
-
     @Override
     public String toString() {
         this.throwErrorIfUnsat();
@@ -215,11 +206,6 @@ public final class Solution {
             }
         }
         return Optional.empty();
-    }
-
-    // temporary
-    public A4Solution getA4Solution() {
-        return this.a4Solution;
     }
 
     public record EvalRes(Integer intVal, Boolean boolVal, Set<List<String>> setVal) {
