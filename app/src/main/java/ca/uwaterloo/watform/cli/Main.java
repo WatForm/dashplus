@@ -56,44 +56,41 @@ import picocli.CommandLine.Mixin;
             "",
             "@|bold,underline USAGE MODES|@",
             "",
-            // Alloy Files
-            "  @|bold 1) dashplus f.als < -cmd | -cmd=n > < -v > < -d > |@",
-            "     (execute cmd n on alloy file)",
-            "     @|italic DEFAULT:|@ dashplus f.als means dashplus f.als -cmd (execute all cmds)",
-            "",
-            // Alloy Files
-            "  @|bold 2) dashplus f.als -tla < -v > < -d > |@",
-            "     (translate alloy to tla)",
-            "",
-
             // Dash -> Alloy
-            "  @|bold 3) dashplus f.dsh -alloy=< traces | tcmc | electrum >|@",
+            "  @|bold 1) dashplus f.dsh -alloy=< traces | tcmc | electrum >|@",
             "              @|bold < -cmd | -cmd=n | -write  < -v > < -d > |@",
-            "     (translate to alloy, execute cmd(s) or -write .als file in same dir)",
+            "     (translate dash to alloy, execute cmd(s) or -write .als file in same dir)",
             "     @|italic DEFAULT:|@ dashplus f.dsh means dashplus f.dsh -alloy=traces ",
             "",
+
             // Dash -> TLA
-            "  @|bold 4) dashplus f.dsh/.als -tla < -v > < -d > |@",
-            "     (translate to tla)",
+            "  @|bold 2) dashplus f.dsh/f.als -tla < -cmd | -cmd =n > < -v > < -d > |@",
+            "     (translate dash or alloy to tla)",
             "",
+
             // Predicate Abstraction
-            "  @|bold 5) dashplus f.dsh -predAbs < -cmd | -cmd=n > < -v > < -d >  |@",
+            "  @|bold 3) dashplus f.dsh -predAbs < -cmd | -cmd=n > < -v > < -d >  |@",
             "     (pred abstraction)",
             "",
-            // XML Instance Check
-            "  @|bold 6) dashplus f.dsh/.als -xml=instance.xml < -v > < -d > |@",
-            "     (check if instance is instance of (translated) alloy)",
-            "",
+
             // Visualization
-            "  @|bold 7) dashplus f.dsh -vis < -v > < -d > |@",
+            "  @|bold 4) dashplus f.dsh -vis < -v > < -d > |@",
             "     (create a .dot file graphic of dash model)",
             "",
-            // Generate XML Instances
-            "  @|bold 8) dashplus f.dsh/.als -gen=n < -v > < -d > |@",
-            "     (generate n instances in XML of (translated) model (default=5))",
+
+            // TLA XML Instance Check
+            "  @|bold 5) dashplus f.dsh/f.als -xml=instance.xml <-tla> < -v > < -d > |@",
+            "     (translate f to tla with additions that check if XML is instance of it)",
             "",
+
+            // Alloy Files
+            "  @|bold 6) dashplus f.als < -cmd | -cmd=n > < -v > < -d > |@",
+            "     (execute cmd(s) of alloy file)",
+            "",
+
             // General Flags
             "@|bold,underline GENERAL FLAGS|@",
+            "  @|bold -cmd=n|@   translate/execute cmd n; if just -cmd it means execute all cmds; if not present, translate/execute with no commands",
             "  @|bold -v|@   for verbose output - this adds in comments",
             "  @|bold -d|@   debug mode, where the translator writes things during translation to stdout",
             ""
@@ -109,67 +106,75 @@ public class Main implements Callable<Integer> {
     @Override
     public Integer call() {
 
+        /*
+        Modes                      Optional Parameters
+        -alloy      .als    .dsh                    -cmd    -write  -verbose    -debug
+        -tla        .als    .dsh        -xml=f.xml  -cmd            -verbose    -debug
+        -xml=f.xml  .als    .dsh   -tla                             -verbose    -debug
+        -predAbs            .dsh                    -cmd        -verbose    -debug
+        -vis        .dsh                                        -verbose    -debug
+        */
+
         // flags to guide possible combinations
         Boolean alloyPresent = Constants.alloyPresent(cliConf.d2aOptions);
         Boolean tla = cliConf.tla;
         Boolean xml = Constants.xmlPresent(cliConf.xmlFileName);
         Boolean predAbs = cliConf.predAbs;
         Boolean vis = cliConf.vis;
-        Boolean gen = Constants.genPresent(cliConf.instanceNum);
         Boolean cmd = Constants.cmdPresent(cliConf.cmdIdx);
         Boolean write = cliConf.write;
+        Boolean verbose = cliConf.verbose;
+        Boolean debug = cliConf.debug;
 
         Boolean alsInputFile =
                 someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")));
+
         // alloy is the default command
-        Boolean alloy =
-                !(tla || xml || predAbs || vis || gen || alsInputFile); // might also have a -alloy=
+        Boolean translateToAlloy =
+                !(tla || xml || predAbs || vis || alsInputFile); // might also have a -alloy=
 
         // set the default options to be traces for anything that translates to alloy
         DashToAlloy.Options d2aOptions =
-                ((alloy || gen || xml) && !alloyPresent)
+                (translateToAlloy && !alloyPresent)
                         ? DashToAlloy.Options.traces
                         : cliConf.d2aOptions;
+
         // set a default value for cmd in case this arg is not given
+        // cmdIdx = Constants.noCmdValue means no cmd value given so run all commands
+        // cmdIdx = Constants.intArgNotPresent means no cmd so run for satisfiability only
         Integer cmdIdx =
                 (cmd && Constants.cmdIdxUseful(cliConf.cmdIdx))
                         ? cliConf.cmdIdx
                         : Constants.noCmdValue;
 
         // rule out bad combinations of CLI options
+        // tla and xml are okay together
         long count1 = Stream.of(alloyPresent, tla, predAbs, vis).filter(b -> b).count();
-        long count2 = Stream.of(gen, tla, predAbs, vis).filter(b -> b).count();
-        long count3 = Stream.of(xml, predAbs, vis).filter(b -> b).count();
+        long count2 = Stream.of(alloyPresent, xml, predAbs, vis).filter(b -> b).count();
 
         if (count1 >= 2) {
-            // mutually exclusive: alloy, tla, alloy, predAbs, vis (alloy is default if others
-            // aren't present)
             Reporter.INSTANCE.addError(
-                    invalidParams("-tla, -alloy, -vis, -predAbs cannot be combined"));
+                    invalidParams("-alloy, -tla, -predAbs, -vis cannot be combined"));
         } else if (count2 >= 2) {
-            // mutually exclusive: gen, tla, alloy, predAbs, vis (alloy is default if others
-            // aren't present)
             Reporter.INSTANCE.addError(
-                    invalidParams("-tla, -gen, -vis, -predAbs cannot be combined"));
-        } else if (count3 >= 2) {
-            // mutually exclusive: xml, predAbs, vis (alloy is default if others
-            // aren't present)
-            Reporter.INSTANCE.addError(invalidParams("-xml, -vis, -predAbs cannot be combined"));
+                    invalidParams("-alloy, -xml, -predAbs, -vis cannot be combined"));
         } else if ((alloyPresent | predAbs | vis)
                 && someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")))) {
             // no alloy files for these options
             Reporter.INSTANCE.addError(
                     invalidParams("for -alloy, -predAbs, -vis only dash files can be arguments"));
-        } else if (tla && cmd) {
-            // tla takes no cmds
-            Reporter.INSTANCE.addError(invalidParams("-tla takes no cmd argument"));
-        } else if (write && !alloy) {
+        } else if (write && !translateToAlloy) {
             // write can only be used with alloy
             Reporter.INSTANCE.addError(
                     invalidParams("only -alloy can be written and input file must be .dsh"));
         } else if (xml && cliConf.fileNames.size() != 1) {
             // -xml can only have one input .dsh/.als filename
-            Reporter.INSTANCE.addError(invalidParams("for -xml, there can be only one input file"));
+            Reporter.INSTANCE.addError(
+                    invalidParams("for -xml, there can be only one input model"));
+        } else if (xml && cmd) {
+            Reporter.INSTANCE.addError(invalidParams("for -xml, there cannot be a command"));
+        } else if (vis && cmd) {
+            Reporter.INSTANCE.addError(invalidParams("for -vis, there cannot be a command"));
         }
         // stop if any errors from above check on combinations
         // Reporter.INSTANCE.exitIfHasErrors();
@@ -198,10 +203,10 @@ public class Main implements Callable<Integer> {
                 if (fullFileName.endsWith(".als")) {
                     dashOutput("Input: " + fullFileName);
                     AlloyModel am = parseToModel(absolutePath);
-                    if (tla) {
-                        runAlloyToTla(am, outputFileNamePrefix, cliConf.verbose, cliConf.debug);
-                    } else if (gen) {
-                        runGenInstances(am, cmdIdx, outputFileNamePrefix, cliConf.instanceNum);
+                    if (tla && !xml) {
+                        runAlloyToTla(am, outputFileNamePrefix, cmdIdx, verbose, debug);
+                    } else if (xml) {
+                        runCheckAlloyInstanceTla(am, cliConf.xmlFileName);
                     } else {
                         runAlloy(am, cmdIdx);
                     }
@@ -214,8 +219,7 @@ public class Main implements Callable<Integer> {
                     if (vis) {
                         runVis(dm, outputFileNamePrefix);
                     } else if (xml) {
-                        // Mathew
-                        runCheckInstanceTla(cliConf.xmlFileName);
+                        runCheckDashInstanceTla(dm, cliConf.xmlFileName);
                     } else {
                         if (dm.getParas(AlloyCmdPara.class).size() == 0 && cmd) {
                             dashOutputBold(
@@ -223,17 +227,9 @@ public class Main implements Callable<Integer> {
                         }
                         if (tla) {
                             // needs to take cmdIdx
-                            runDashToTla(dm, outputFileNamePrefix, cliConf.verbose, cliConf.debug);
+                            runDashToTla(dm, outputFileNamePrefix, cmdIdx, verbose, debug);
                         } else if (predAbs) {
                             runPredAbs(dm, cmdIdx);
-                        } else if (gen) {
-                            AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
-                            // same function as used for Alloy file above
-                            runGenInstances(
-                                    am,
-                                    cmdIdx,
-                                    outputFileNamePrefix + "-" + d2aOptions,
-                                    cliConf.instanceNum);
                         } else {
                             runDashToAlloy(dm, d2aOptions, outputFileNamePrefix, write, cmdIdx);
                         }
@@ -275,27 +271,15 @@ public class Main implements Callable<Integer> {
         System.exit(exitCode);
     }
 
-    private static void runAlloy(AlloyModel am, Integer cmdIdx) {
-        int num_cmds_in_file = am.getParas(AlloyCmdPara.class).size();
-        if (cmdIdx < num_cmds_in_file) {
-            AlloyInterface.executeCommand(am, cmdIdx);
-        } else if (num_cmds_in_file == 0) {
-            // if there are no commands in the file
-            // and there was no cmd arg
-            // TODO: look for default .ver cmd in directory!
-            Solution soln = AlloyInterface.checkModelSatisfiability(am);
-        } else {
-            // execute all commands
-            for (int i = Constants.firstCmdIdx; i < num_cmds_in_file; i++) {
-                AlloyInterface.executeCommand(am, i);
-            }
-        }
-    }
-
     private static void runAlloyToTla(
-            AlloyModel am, String outputFileNamePrefix, Boolean verbose, Boolean debug)
+            AlloyModel am,
+            String outputFileNamePrefix,
+            Integer cmdIdx,
+            Boolean verbose,
+            Boolean debug)
             throws IOException {
         // outputFileNamePrefix is the module name
+        // TODO MKJ - this should take the cmd
         TlaModel tlaModel = AlloyToTla.translate(am, outputFileNamePrefix, verbose, debug);
 
         String tlaFileName = outputFileNamePrefix + ".tla";
@@ -305,42 +289,55 @@ public class Main implements Callable<Integer> {
         dashOutput("Output:\n" + tlaFileName + "\n" + cfgFileName);
     }
 
+    private static void runCheckAlloyInstanceTla(AlloyModel am, String xmlFileName) {
+        // TODO MKJ
+        dashOutput("check Alloy instance in TLA not yet implemented");
+    }
+
+    private static void runAlloy(AlloyModel am, Integer cmdIdx) {
+        int num_cmds_in_file = am.getParas(AlloyCmdPara.class).size();
+        if (cmdIdx < num_cmds_in_file) {
+            AlloyInterface.executeCommand(am, cmdIdx);
+        } else if (num_cmds_in_file == 0) {
+            // if there are no commands in the file
+            // and there was no cmd arg
+            Solution soln = AlloyInterface.checkModelSatisfiability(am);
+        } else {
+            // execute all commands if no value for cmd or cmd # out of range
+            for (int i = Constants.firstCmdIdx; i < num_cmds_in_file; i++) {
+                AlloyInterface.executeCommand(am, i);
+            }
+        }
+    }
+
     private static void runVis(DashModel dm, String outputFileNamePrefix) {
 
         ControlStateHierarchyVisualizer visualizer = new ControlStateHierarchyVisualizer();
         String prefix = outputFileNamePrefix + "-" + ControlStateHierarchyVisualizer.DEFAULT_PREFIX;
-        // Rocky: could the visualization pass back a string that is output here?
+        // TODO Rocky: could the visualization pass back a string that is output here?
         // visualizer.visualize(dm, outputDir, prefix);
         dashOutput("Visualization output: NOT YET WORKING" + prefix + ".dot");
         Reporter.INSTANCE.print();
     }
 
-    private static void runDashToAlloy(
-            DashModel dm,
-            DashToAlloy.Options opt,
-            String outputFileNamePrefix,
-            Boolean writeOnly,
-            Integer cmdIdx)
-            throws IOException {
-        AlloyModel am = new DashToAlloy(dm, opt).translate();
-        if (writeOnly) {
-            String alloyFileName = outputFileNamePrefix + "-" + opt + ".als";
-            Files.writeString(fileFromString(alloyFileName), am.toString());
-            dashOutput("Output: " + alloyFileName);
-        } else {
-            // we don't need to write the file
-            runAlloy(am, cmdIdx);
-        }
+    private static void runCheckDashInstanceTla(DashModel dm, String xmlFileName) {
+        // TODO MKJ
+        dashOutput("check Dash instance in TLA not yet implemented");
     }
 
     private static void runDashToTla(
-            DashModel dm, String outputFileNamePrefix, Boolean verbose, Boolean debug)
+            DashModel dm,
+            String outputFileNamePrefix,
+            Integer cmdIdx,
+            Boolean verbose,
+            Boolean debug)
             throws IOException {
 
         // Mathew - drop "true" as an argument to this function b/c we no longer need the single
         // input assumption flag
 
         // outputFileNamePrefix is the module name
+        // TODO MKJ add cmd as argument here
         TlaModel tlaModel = DashToTla.translate(dm, outputFileNamePrefix, true, verbose, debug);
         String tlaFileName = outputFileNamePrefix + ".tla";
         String cfgFileName = outputFileNamePrefix + ".cfg";
@@ -367,16 +364,22 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    private static void runGenInstances(
-            AlloyModel am, Integer cmdIdx, String outputFileNamePrefix, Integer numInstances) {
-        // executes and writes numInstances instances of model with cmd cmdIdx
-        int count =
-                AlloyInterface.writeInstancesToXML(am, cmdIdx, outputFileNamePrefix, numInstances);
-        dashOutput("Wrote " + String.valueOf(count) + " instance(s).");
-    }
-
-    private static void runCheckInstanceTla(String xmlFileName) {
-        dashOutput("check instance in TLA not yet implemented");
+    private static void runDashToAlloy(
+            DashModel dm,
+            DashToAlloy.Options opt,
+            String outputFileNamePrefix,
+            Boolean writeOnly,
+            Integer cmdIdx)
+            throws IOException {
+        AlloyModel am = new DashToAlloy(dm, opt).translate();
+        if (writeOnly) {
+            String alloyFileName = outputFileNamePrefix + "-" + opt + ".als";
+            Files.writeString(fileFromString(alloyFileName), am.toString());
+            dashOutput("Output: " + alloyFileName);
+        } else {
+            // we don't need to write the file
+            runAlloy(am, cmdIdx);
+        }
     }
 
     private static Path fileFromString(String fname) {

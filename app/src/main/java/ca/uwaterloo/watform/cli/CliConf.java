@@ -73,17 +73,6 @@ public class CliConf {
             description = "Predicate abstraction")
     public boolean predAbs = false;
 
-    // 0 indexed
-    @Option(
-            names = {"-gen"},
-            arity = "0..1", // Makes it optional (0 or 1 occurrence)
-            defaultValue =
-                    "-100", // Constants.intArgNotPresent value if -gen is not on the cmd line
-            fallbackValue = "5", // value if -gen is on the cmd line w/o a value
-            paramLabel = "<instanceNum>",
-            description = "Generate instanceNum XML instances of Dash model (Default: 5).")
-    public int instanceNum;
-
     @Option(
             names = {"-vis"},
             description = "create .dot file of Dash model")
