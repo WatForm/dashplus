@@ -15,15 +15,12 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.cli.Constants;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
-import edu.mit.csail.sdg.alloy4.XMLNode;
 import edu.mit.csail.sdg.ast.Command;
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
-import edu.mit.csail.sdg.translator.A4SolutionReader;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
-import java.io.File;
 
 public class AlloyInterface {
 
@@ -94,59 +91,4 @@ public class AlloyInterface {
     }
     */
 
-    /*
-        write up to maxInstances of satisfying solutions of
-        AlloyModel am (run {} cmd) to files called
-        instanceFileName1, instanceFilename2, etc.
-        Returns how many solutions are written (0 if unsat)
-    */
-    public static Integer writeInstanceToXML(
-            AlloyModel am, Integer cmdNum, String instanceFileName // should not include .xml at end
-            ) {
-        return writeInstancesToXML(am, cmdNum, instanceFileName, 1);
-    }
-
-    // returns number of instances written to file(s)
-    public static Integer writeInstancesToXML(
-            AlloyModel am,
-            Integer cmdNum,
-            String instanceFileName, // should not include .xml at end
-            Integer maxInstances) {
-        assert (!instanceFileName.contains(".xml"));
-
-        Solution soln = executeCommand(am, cmdNum);
-        int c;
-        for (c = 0; c < maxInstances; c++) {
-            // c is how many instances that we have written
-            if (!(soln.isSat() && c < maxInstances)) break;
-            soln.writeXML(instanceFileName + String.valueOf(c + 1) + ".xml");
-            soln.next();
-        }
-        return c;
-    }
-
-    // returns number of instances written to file(s)
-    public static Integer writeInstancesToXML(
-            AlloyModel am,
-            String instanceFileName, // should not include .xml at end
-            Integer maxInstances) {
-        return writeInstancesToXML(am, Constants.noCmdValue, instanceFileName, maxInstances);
-    }
-
-    public static Solution readXMLInstance(String xmlFileName) {
-        try {
-            A4Solution sol = A4SolutionReader.read(null, new XMLNode(new File(xmlFileName)));
-            return new Solution(sol, null);
-        } catch (Err e) {
-            // TODO: clean this up
-            System.err.println("Alloy error:");
-            System.err.println(e.toString());
-            e.printStackTrace();
-            return null;
-        } catch (Exception e) {
-            System.err.println("Unexpected error:");
-            e.printStackTrace();
-            return null;
-        }
-    }
 }
