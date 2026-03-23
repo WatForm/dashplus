@@ -110,10 +110,7 @@ public class AlloyModelInitialize {
         return this.toString(false);
     }
 
-    public String toString(boolean withCmds) {
-        StringWriter sw = new StringWriter();
-        PrintContext pCtx = new PrintContext(sw);
-
+    private List<AlloyPara> getAllParas(boolean withCmds) {
         List<AlloyPara> allParas = new ArrayList<AlloyPara>();
 
         // first two must come before the rest
@@ -128,8 +125,18 @@ public class AlloyModelInitialize {
         allParas.addAll(this.facts.getAllParas());
         allParas.addAll(this.asserts.getAllParas());
         if (withCmds) allParas.addAll(this.commands.getAllParas());
+        return allParas;
+    }
 
-        AlloyFile newAlloyFile = new AlloyFile(allParas);
+    public AlloyFile toAlloyFile(boolean withCmds) {
+        return new AlloyFile(this.getAllParas(withCmds));
+    }
+
+    public String toString(boolean withCmds) {
+        StringWriter sw = new StringWriter();
+        PrintContext pCtx = new PrintContext(sw);
+
+        AlloyFile newAlloyFile = this.toAlloyFile(withCmds);
         newAlloyFile.ppNewBlock(pCtx);
         return sw.toString();
     }
