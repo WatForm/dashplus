@@ -245,7 +245,7 @@ public class PredicateAbstraction {
     public void addABVsToAbsModel() {
         // adds all the B0,... Bn as boolean variables to the root state of absModel
         for (String vname : ABVNameCAFMap.keySet()) {
-            String vfqn = DashFQN.fqn(concreteModel.rootName, vname);
+            String vfqn = DashFQN.fqn(concreteModel.rootName(), vname);
             if (envABVs.contains(vname)) {
                 absModel.addVar(
                         vfqn,
@@ -320,7 +320,7 @@ public class PredicateAbstraction {
     }
 
     private AlloyExpr getVarDashRef(String vname) {
-        String vfqn = DashFQN.fqn(concreteModel.rootName, vname);
+        String vfqn = DashFQN.fqn(concreteModel.rootName(), vname);
         return new VarDashRef(vfqn, emptyList());
     }
 
