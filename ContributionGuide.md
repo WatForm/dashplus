@@ -29,5 +29,58 @@ DashModel dashModel = (DashModel) Parser.parseToModel(inPath);
 - When making a new package, include a README.md file in it, to explain the features of the package at a high-level
 
 
-R - post-resolved objects
-P - post-parsing
+
+
+
+## Notes on Code
+
+* the parser can create a DashRef. It is later resolved.  Which means that printing should not chopPrefixFQN.
+	- does our parser make it an AlloyQname and break it up??
+
+* transition are not added to table until resolution so entries can be final.  We walk over the state hierarchy again to add these in.
+
+* in functions for accessing transition parts:
+	- ...R means post-resolved objects
+	- ...P means post-parsing
+
+* run dashplus with -ea option to see assertions that fail
+
+* all parts of Alloy model are loaded before Dash parts so resolution can check for name clashes with Alloy sigs/fields
+
+* vars not mentioned in action do not change is built in to semantics now
+
+* all of dash-to-alloy translation is currently wrapped in try-catch so get stacktrace for exceptions
+
+* A m -> n B in decls means   FIX !!!
+	- each member of A maps to n members of B 
+	- each member of B maps to m members of A
+	- A and B can be relations also
+	all a:A | n a.r
+	all b:B | m r.b
+* if only x: B, default multiplicity is "one" x: one B
+* need a script to run all models and make sure can generate instances (run_cmd_on_all_models.py)
+
+* In Dash, a var decl x : one Y produces
+DashVarDecls("x", "one",  "Y") as is done in AlloyDecl
+
+* in var decls, we support  FIX !!!
+	x: m A, where "m A" is an AlloyQtExpr and A" is an AlloyQnameVar or AlloyIntExpr
+	or
+	x: A m -> n B, "A m -> n B" is an AlloyArrowExpr
+	- generally supporting any AlloyDecl would be too much b/c of fields like var, disj, private
+
+
+* translating VarDM
+	- could have x: Int
+	- Var Table:
+		state S {
+			x: one X ("x", Quant.ONE, AlloyQname "X")
+			y: set (X -> Y) ("y", Quant.SET, AlloyArrowExpr)
+			a: one (X + Y) ("a", Quant.ONE, AlloyUnionExpr)
+		}
+		sig Snapshot {
+			x: set (PID set->one X)
+			y: set (PID set -> set (X -> Y))
+			a: set (PID set -> one (X + Y))
+		}
+

@@ -21,7 +21,6 @@ public class BaseDM extends AlloyModel {
     }
 
     public BaseDM(DashFile d) {
-        // addModelSatCmd
         super((AlloyFile) d);
     }
 

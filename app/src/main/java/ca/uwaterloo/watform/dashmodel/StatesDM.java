@@ -31,7 +31,7 @@ import java.util.List;
 public class StatesDM extends TransDM {
 
     protected HashMap<String, StateEntry> st = new HashMap<String, StateEntry>();
-    public String rootName;
+    protected String rootName;
 
     // this the maximum depth of parameters in the state hierarchy
     protected int maxDepthParams = 0;
@@ -134,7 +134,7 @@ public class StatesDM extends TransDM {
     }
 
     public List<DashParam> allParams() {
-        return this.allParams;
+        return new ArrayList(this.allParams);
     }
 
     protected Boolean containsState(String sfqn) {

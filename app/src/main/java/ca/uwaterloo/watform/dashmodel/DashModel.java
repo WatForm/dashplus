@@ -94,6 +94,10 @@ public class DashModel extends ResolveDM {
 
     public void cloneStateTableOf(DashModel dm) {
         // this will overwrite any existing EventTable in dm
+        // TODO: copy other stuff also
         this.st = new HashMap<>(dm.st);
+        this.rootName = dm.rootName();
+        this.maxDepthParams = dm.maxDepthParams();
+        this.allParams = dm.allParams();
     }
 }
