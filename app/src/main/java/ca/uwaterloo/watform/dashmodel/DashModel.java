@@ -22,7 +22,7 @@ import ca.uwaterloo.watform.dashast.DashStrings;
 import java.util.HashMap;
 import java.util.List;
 
-public class DashModel extends ResolveDM {
+public class DashModel extends DashFileDM {
 
     public DashModel(DashFile d) {
         super(d);

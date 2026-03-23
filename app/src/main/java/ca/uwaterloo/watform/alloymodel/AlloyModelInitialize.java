@@ -110,7 +110,33 @@ public class AlloyModelInitialize {
         return this.toString(false);
     }
 
-    private List<AlloyPara> getAllParas(boolean withCmds) {
+    @SuppressWarnings("unchecked")
+    protected <T extends AlloyPara> AlloyModelTable<T> patternMatch(Class<T> typeToken) {
+        if (typeToken.equals(AlloyModulePara.class)) {
+            return (AlloyModelTable<T>) modules;
+        } else if (typeToken.equals(AlloyImportPara.class)) {
+            return (AlloyModelTable<T>) imports;
+        } else if (typeToken.equals(AlloyMacroPara.class)) {
+            return (AlloyModelTable<T>) macros;
+        } else if (typeToken.equals(AlloySigPara.class)) {
+            return (AlloyModelTable<T>) sigs;
+        } else if (typeToken.equals(AlloyEnumPara.class)) {
+            return (AlloyModelTable<T>) enums;
+        } else if (typeToken.equals(AlloyFactPara.class)) {
+            return (AlloyModelTable<T>) facts;
+        } else if (typeToken.equals(AlloyFunPara.class)) {
+            return (AlloyModelTable<T>) funs;
+        } else if (typeToken.equals(AlloyPredPara.class)) {
+            return (AlloyModelTable<T>) preds;
+        } else if (typeToken.equals(AlloyAssertPara.class)) {
+            return (AlloyModelTable<T>) asserts;
+        } else if (typeToken.equals(AlloyCmdPara.class)) {
+            return (AlloyModelTable<T>) commands;
+        }
+        throw ImplementationError.missingCase("AlloyModel.patternMatch");
+    }
+
+    public List<AlloyPara> getAllParas(boolean withCmds) {
         List<AlloyPara> allParas = new ArrayList<AlloyPara>();
 
         // first two must come before the rest
@@ -139,31 +165,5 @@ public class AlloyModelInitialize {
         AlloyFile newAlloyFile = this.toAlloyFile(withCmds);
         newAlloyFile.ppNewBlock(pCtx);
         return sw.toString();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T extends AlloyPara> AlloyModelTable<T> patternMatch(Class<T> typeToken) {
-        if (typeToken.equals(AlloyModulePara.class)) {
-            return (AlloyModelTable<T>) modules;
-        } else if (typeToken.equals(AlloyImportPara.class)) {
-            return (AlloyModelTable<T>) imports;
-        } else if (typeToken.equals(AlloyMacroPara.class)) {
-            return (AlloyModelTable<T>) macros;
-        } else if (typeToken.equals(AlloySigPara.class)) {
-            return (AlloyModelTable<T>) sigs;
-        } else if (typeToken.equals(AlloyEnumPara.class)) {
-            return (AlloyModelTable<T>) enums;
-        } else if (typeToken.equals(AlloyFactPara.class)) {
-            return (AlloyModelTable<T>) facts;
-        } else if (typeToken.equals(AlloyFunPara.class)) {
-            return (AlloyModelTable<T>) funs;
-        } else if (typeToken.equals(AlloyPredPara.class)) {
-            return (AlloyModelTable<T>) preds;
-        } else if (typeToken.equals(AlloyAssertPara.class)) {
-            return (AlloyModelTable<T>) asserts;
-        } else if (typeToken.equals(AlloyCmdPara.class)) {
-            return (AlloyModelTable<T>) commands;
-        }
-        throw ImplementationError.missingCase("AlloyModel.patternMatch");
     }
 }
