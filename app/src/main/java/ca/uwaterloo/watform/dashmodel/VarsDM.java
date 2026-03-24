@@ -45,6 +45,10 @@ public class VarsDM extends StatesDM {
         return (this.vt.get(vfqn).kind == IntEnvKind.ENV);
     }
 
+    public IntEnvKind varKind(String vfqn) {
+        return this.vt.get(vfqn).kind;
+    }
+
     public List<DashParam> varParams(String vfqn) {
         return this.vt.get(vfqn).params;
     }

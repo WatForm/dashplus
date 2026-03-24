@@ -1,8 +1,8 @@
 /*
-	The purpose of this function is to translate from DashModule tables back to a
-	syntactic DashState for printing of a DashModel.
+	The purpose of this function is to turn a DashModel back to a
+	DashState for printing of a DashModel.
 
-	This is tricky because the DashTables contain resolved "names" for everything, meaning
+    The DashModel tables contain resolved "names" for everything, meaning
 	the names are fully qualified names (FQNs) and have all parameters attached.
 
 	We can find the states within a state.  We can't print these FQNs
@@ -24,8 +24,11 @@
 package ca.uwaterloo.watform.dashmodel;
 
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara;
-import ca.uwaterloo.watform.dashast.DashFile;
-import ca.uwaterloo.watform.dashast.DashState;
+import ca.uwaterloo.watform.dashast.*;
+import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
+import ca.uwaterloo.watform.utils.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DashFileDM extends ResolveDM {
@@ -45,130 +48,112 @@ public class DashFileDM extends ResolveDM {
         return new DashFile(ap);
     }
 
-    private DashState stateRecurse(String stateFQN) {
-        return null;
-        /*
+    private DashState stateRecurse(String sfqn) {
+
         List<Object> itemList = new ArrayList<Object>();
-        if (!this.isLeaf(stateFQN)) {
-        	for (String childFQN: this.immChildren(stateFQN)) {
-        		itemList.add(stateRecurse(childFQN));
-        	}
+        if (!this.isLeaf(sfqn)) {
+            for (String childFQN : this.immChildren(sfqn)) {
+                itemList.add(stateRecurse(childFQN));
+            }
         } else {
-        	itemList = DashState.noSubstates();
+            itemList = DashState.noSubstates();
         }
 
         // add var decls
         // just one at a time (in original might have been multiple vars
         // declared with same type)
-        // use FQN, but no parameters in declarations
+        // parameters in declarations
         // parameters are determined by position in state hierarchy
-        for (String varName: d.vt.getVarsOfState(stateName)) {
-        	itemList.add(new DashVarDecls(
-        		Pos.UNKNOWN,
-        		// list of size 1
-        		new ArrayList<String>(Arrays.asList(DashFQN.translateFQN(varName))),
-        		d.vt.getVarType(varName),
-        		d.vt.getIntEnvKind(varName)
-        	));
+        for (String vfqn : this.varsOfState(sfqn)) {
+            itemList.add(
+                    new DashVarDecls(
+                            Pos.UNKNOWN,
+                            // list of size 1
+                            new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(vfqn))),
+                            this.varTyp(vfqn),
+                            this.varKind(vfqn)));
         }
+
         // add buffer decls
         // just one at a time (in original might have been multiple vars
         // declared with same type)
-        // use FQN, but no parameters in declarations
+        // no parameters in declarations
         // parameters are determined by position in state hierarchy
-        for (String bufName: d.vt.getBuffersOfState(stateName)) {
-        	itemList.add(new DashBufferDecls(
-        		Pos.UNKNOWN,
-        		// list of size 1
-        		new ArrayList<String>(Arrays.asList(DashFQN.translateFQN(bufName))),
-        		d.vt.getBufferElement(bufName),
-        		d.vt.getIntEnvKind(bufName),
-        		//since we are doing one buffer at a time
-        		// start and end index will be the same
-        		// TODO: not certain about this
-        		d.vt.getBufferIndex(bufName), // startIndex
-        		d.vt.getBufferIndex(bufName) // endIndex
-        	));
+        for (String bfqn : this.buffersOfState(sfqn)) {
+            itemList.add(
+                    new DashBufferDecls(
+                            Pos.UNKNOWN,
+                            // list of size 1
+                            new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(bfqn))),
+                            this.bufferElement(bfqn),
+                            this.bufferKind(bfqn)));
         }
+
         // add event decls
         // just one at a time
-        // use FQN, but no parameters in declarations
+        // no parameters in declarations
         // parameters are determined by position in state hierarchy
-        for (String evName: d.et.getEventsOfState(stateName)) {
-        	itemList.add(new DashEventDecls(
-        		Pos.UNKNOWN,
-        		// list of size 1
-        		new ArrayList<String>(Arrays.asList(DashFQN.translateFQN(evName))),
-        		d.et.getIntEnvKind(evName)
-        	));
+        for (String efqn : this.eventsOfState(sfqn)) {
+            itemList.add(
+                    new DashEventDecls(
+                            Pos.UNKNOWN,
+                            // list of size 1
+                            new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(efqn))),
+                            this.eventKind(efqn)));
         }
-
 
         // collect trans
-        // fqn name of trans will tell us where it was declared
-        // use FQN, but no parameters in declarations
+        // fqn name of trans tells us where it was declared
+        // no parameters in declarations
         // parameters are determined by position in state hierarchy
-        for (String transName: d.tt.getTransOfState(stateName)) {
-        	List<Object> transItemList = new ArrayList<Object>();
-        	// these will be the resolved ones
-        	// TODO: will parameters be printed in expressions??
-        	// getSrc returns a DashRef
-        	// DashFrom needs an expression
+        for (String tfqn : this.transOfState(sfqn)) {
 
-        	// src -- cannot be null when in TransTable
-        	transItemList.add(
-        		new DashFrom(Pos.UNKNOWN, d.tt.getSrc(transName)));
+            // these will be the resolved ones
+            // getSrc returns a DashRef
+            // DashFrom needs an expression,
+            // but a DashRef is a form of expression
 
-        	// when
-        	if (d.tt.getWhen(transName) != null) {
-        		transItemList.add(
-        			new DashWhen(Pos.UNKNOWN, ((Expr) d.tt.getWhen(transName))));
-        	}
+            // src -- cannot be null when in TransTable
+            DashFrom fromR = new DashFrom(Pos.UNKNOWN, this.fromR(tfqn));
 
-        	// on
-        	if (d.tt.getOn(transName) != null) {
-        		transItemList.add(
-        			new DashOn(Pos.UNKNOWN, ((Expr) d.tt.getOn(transName))));
-        	}
+            DashWhen whenR =
+                    (this.whenR(tfqn) != null) ? new DashWhen(Pos.UNKNOWN, this.whenR(tfqn)) : null;
 
-        	// do
-        	if (d.tt.getDo(transName) != null) {
-        		transItemList.add(
-        			new DashDo(Pos.UNKNOWN, ((Expr) d.tt.getDo(transName))));
-        	}
-        	// send
-        	if (d.tt.getSend(transName) != null) {
-        		transItemList.add(
-        			new DashSend(Pos.UNKNOWN, ((Expr) d.tt.getSend(transName))));
-        	}
+            DashOn onR = (this.onR(tfqn) != null) ? new DashOn(Pos.UNKNOWN, this.onR(tfqn)) : null;
 
-        	// dest -- cannot be null when in TransTable
-        	transItemList.add(
-        		new DashGoto(Pos.UNKNOWN, ((Expr) d.tt.getDest(transName))));
+            DashDo doR = (this.doR(tfqn) != null) ? new DashDo(Pos.UNKNOWN, this.doR(tfqn)) : null;
+            DashSend sendR =
+                    (this.sendR(tfqn) != null) ? new DashSend(Pos.UNKNOWN, this.sendR(tfqn)) : null;
 
-        	itemList.add(new DashTrans(
-        		Pos.UNKNOWN,
-        		// list of size 1
-        		DashFQN.translateFQN(transName),
-        		transItemList
-        	));
+            // dest -- cannot be null when in TransTable
+            DashGoto gotoR = new DashGoto(Pos.UNKNOWN, this.gotoR(tfqn));
+
+            itemList.add(
+                    new DashTrans(
+                            Pos.UNKNOWN,
+                            DashFQN.chopNameFromFQN(tfqn),
+                            fromR,
+                            gotoR,
+                            onR,
+                            sendR,
+                            whenR,
+                            doR));
         }
-
+        /*
         // get invariants -- note that these are the original versions
         // so they aren't resolved, which makes them easy to print
         for (DashInv inv: d.st.getOrigInvariants(stateName)) itemList.add(inv);
         // get inits -- note that these are the original versions
         // so they aren't resolved, which makes them easy to print
         for (DashInit init: d.st.getOrigInits(stateName)) itemList.add(init);
-
+        */
         // statenames are all FQNs
         return new DashState(
-        		Pos.UNKNOWN,
-        		DashFQN.translateFQN(stateName),
-        		d.st.getParam(stateName),
-        		d.st.getKind(stateName),
-        		d.st.getDef(stateName),
-        		itemList) ;
-        	*/
+                Pos.UNKNOWN,
+                DashFQN.chopNameFromFQN(sfqn),
+                this.stateParam(sfqn).paramSig,
+                this.stateKind(sfqn),
+                this.def(sfqn),
+                itemList);
     }
 }

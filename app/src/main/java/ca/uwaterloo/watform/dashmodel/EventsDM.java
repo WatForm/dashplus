@@ -38,6 +38,10 @@ public class EventsDM extends BuffersDM {
         return (this.et.get(efqn).kind == IntEnvKind.INT);
     }
 
+    public IntEnvKind eventKind(String efqn) {
+        return this.et.get(efqn).kind;
+    }
+
     public List<DashParam> eventParams(String efqn) {
         return this.et.get(efqn).params;
     }

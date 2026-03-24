@@ -83,6 +83,10 @@ public class StatesDM extends TransDM {
         return (this.getStateEntry(s).kind == StateKind.AND);
     }
 
+    public StateKind stateKind(String sfqn) {
+        return this.getStateEntry(sfqn).kind;
+    }
+
     public DashParam stateParam(String sfqn) {
         return this.st.get(sfqn).param;
     }
@@ -102,8 +106,12 @@ public class StatesDM extends TransDM {
         return !stateParams(sfqn).isEmpty();
     }
 
-    public boolean isDefault(String s) {
-        return (this.getStateEntry(s).def == DefKind.DEFAULT);
+    public boolean isDefault(String sfqn) {
+        return (this.getStateEntry(sfqn).def == DefKind.DEFAULT);
+    }
+
+    public DefKind def(String sfqn) {
+        return this.getStateEntry(sfqn).def;
     }
 
     public String parent(String sfqn) {
@@ -552,7 +560,7 @@ public class StatesDM extends TransDM {
         public StateEntry(
                 Pos p,
                 DashStrings.StateKind k,
-                DashParam prm,
+                DashParam prm, // could be null
                 List<DashParam> prms,
                 DashStrings.DefKind def,
                 String parent,

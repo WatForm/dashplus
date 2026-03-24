@@ -36,6 +36,18 @@ public class DashState extends DashPara implements DashStateItem {
         this.items = Collections.unmodifiableList(i);
     }
 
+    public DashState(
+            String n, String prm, DashStrings.StateKind k, DashStrings.DefKind d, List<Object> i) {
+        super(Pos.UNKNOWN);
+        assert (n != null);
+        assert (i != null);
+        this.name = n;
+        this.param = prm;
+        this.kind = k;
+        this.def = d;
+        this.items = Collections.unmodifiableList(i);
+    }
+
     // to sort the items in a state for display
     // this order is very arbitrary
 

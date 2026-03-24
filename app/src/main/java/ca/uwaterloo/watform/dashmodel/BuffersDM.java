@@ -36,6 +36,10 @@ public class BuffersDM extends VarsDM {
         return this.bt.get(bfqn).kind == IntEnvKind.ENV;
     }
 
+    public IntEnvKind bufferKind(String bfqn) {
+        return this.bt.get(bfqn).kind;
+    }
+
     public List<DashParam> bufferParams(String bfqn) {
         return this.bt.get(bfqn).params;
     }
