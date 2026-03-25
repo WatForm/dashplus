@@ -1,8 +1,7 @@
-package ca.uwaterloo.watform.alloytotla;
+package ca.uwaterloo.watform.alloyast;
 
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 
-import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -76,7 +75,23 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
     }
 
     protected static HashMap<AlloyQnameExpr, Integer> buildArityTable(AlloyFile alloyFile) {
-        return null;
+        HashMap<AlloyQnameExpr, Integer> arityTable = new HashMap<>();
+        for (AlloyPara para : alloyFile.paras) {
+            if (!(para instanceof AlloySigPara)) continue;
+            AlloySigPara sig = (AlloySigPara) para;
+            for (AlloyQnameExpr sigName : sig.qnames) {
+                arityTable.put(sigName, Integer.valueOf(1));
+            }
+            for (AlloyDecl field : sig.fields) {
+                List<AlloyDecl> expandedFields = field.expand();
+                for (AlloyDecl expandedField : expandedFields) {
+                    AlloyQnameExpr qname = expandedField.qnames.getFirst();
+                    // don't check for duplication again here; already checked in buildExprTable
+                    arityTable.put(qname, Integer.valueOf(-1));
+                }
+            }
+        }
+        return arityTable;
     }
 
     public AlloyArityVis(AlloyFile alloyFile) {
