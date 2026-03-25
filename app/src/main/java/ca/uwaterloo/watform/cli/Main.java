@@ -83,8 +83,13 @@ import picocli.CommandLine.Mixin;
             "     (translate f to tla with additions that check if XML is instance of it)",
             "",
 
+            // Write Dash file
+            "  @|bold 6) dashplus f.dsh/f.als -write < -v > < -d > |@",
+            "     (output the input dash file with expressions resolved)",
+            "",
+
             // Alloy Files
-            "  @|bold 6) dashplus f.als < -cmd | -cmd=n > < -v > < -d > |@",
+            "  @|bold 7) dashplus f.als < -cmd | -cmd=n > < -v > < -d > |@",
             "     (execute cmd(s) of alloy file)",
             "",
 
@@ -111,8 +116,9 @@ public class Main implements Callable<Integer> {
         -alloy      .als    .dsh                    -cmd    -write  -verbose    -debug
         -tla        .als    .dsh        -xml=f.xml  -cmd            -verbose    -debug
         -xml=f.xml  .als    .dsh   -tla                             -verbose    -debug
-        -predAbs            .dsh                    -cmd        -verbose    -debug
-        -vis        .dsh                                        -verbose    -debug
+        -predAbs            .dsh                    -cmd            -verbose    -debug
+        -vis                .dsh                                    -verbose    -debug
+        -write              .dsh
         */
 
         // flags to guide possible combinations
@@ -218,6 +224,9 @@ public class Main implements Callable<Integer> {
                     DashModel dm = (DashModel) parseToModel(absolutePath);
                     if (vis) {
                         runVis(dm, outputFileNamePrefix);
+                    } else if (write && !alloyPresent) {
+                        runWriteResolvedDash(dm, outputFileNamePrefix);
+
                     } else if (xml) {
                         runCheckDashInstanceTla(dm, cliConf.xmlFileName);
                     } else {
@@ -318,6 +327,13 @@ public class Main implements Callable<Integer> {
         // visualizer.visualize(dm, outputDir, prefix);
         dashOutput("Visualization output: NOT YET WORKING" + prefix + ".dot");
         Reporter.INSTANCE.print();
+    }
+
+    private static void runWriteResolvedDash(DashModel dm, String outputFileNamePrefix)
+            throws IOException {
+        String resolvedDshFileName = outputFileNamePrefix + "-resolved.dsh";
+        Files.writeString(fileFromString(resolvedDshFileName), dm.toDashFile().toString());
+        dashOutput("Output:\n" + resolvedDshFileName + "\n");
     }
 
     private static void runCheckDashInstanceTla(DashModel dm, String xmlFileName) {

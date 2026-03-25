@@ -23,6 +23,8 @@
 
 package ca.uwaterloo.watform.dashmodel;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
@@ -70,6 +72,7 @@ public class DashFileDM extends ResolveDM {
                             Pos.UNKNOWN,
                             // list of size 1
                             new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(vfqn))),
+                            this.mul(vfqn),
                             this.varTyp(vfqn),
                             this.varKind(vfqn)));
         }
@@ -139,19 +142,15 @@ public class DashFileDM extends ResolveDM {
                             whenR,
                             doR));
         }
-        /*
-        // get invariants -- note that these are the original versions
-        // so they aren't resolved, which makes them easy to print
-        for (DashInv inv: d.st.getOrigInvariants(stateName)) itemList.add(inv);
-        // get inits -- note that these are the original versions
-        // so they aren't resolved, which makes them easy to print
-        for (DashInit init: d.st.getOrigInits(stateName)) itemList.add(init);
-        */
-        // statenames are all FQNs
+
+        // an init/inv is always an AlloyBlock
+        itemList.addAll(mapBy(this.initsOfState(sfqn), x -> new DashInit(Pos.UNKNOWN, x)));
+        itemList.addAll(mapBy(this.invsOfState(sfqn), x -> new DashInv(Pos.UNKNOWN, x)));
+
         return new DashState(
                 Pos.UNKNOWN,
                 DashFQN.chopNameFromFQN(sfqn),
-                this.stateParam(sfqn).paramSig,
+                this.stateParam(sfqn) != null ? this.stateParam(sfqn).paramSig : null,
                 this.stateKind(sfqn),
                 this.def(sfqn),
                 itemList);

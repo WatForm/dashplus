@@ -25,14 +25,10 @@ public final class DashInv extends DashNamedExpr implements DashStateItem {
 
     @Override
     public void pp(PrintContext pCtx) {
-        pCtx.append(invName + SPACE);
+        String s = invName + SPACE;
         if (!this.name.isEmpty()) {
-            pCtx.append(name + SPACE);
+            s += name + SPACE;
         }
-        pCtx.append(LBRACE);
-        pCtx.brkNoSpace();
-        exp.ppNewBlock(pCtx);
-        pCtx.brkNoSpaceNoIndent();
-        pCtx.append(RBRACE);
+        super.pp(pCtx, s);
     }
 }

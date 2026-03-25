@@ -84,8 +84,8 @@ public class ResolveDM extends ResolverVisDM {
         // the resolvers
         List<DashParam> sparams = new ArrayList<>(stateParams(sfqn));
 
-        this.initsR.addAll(mapBy(s.inits(), i -> resolveVar(i.exp, sfqn)));
-        this.invsR.addAll(mapBy(s.invs(), i -> resolveVar(i.exp, sfqn)));
+        this.addInit(sfqn, mapBy(s.inits(), i -> resolveVar(i.exp, sfqn)));
+        this.addInv(sfqn, mapBy(s.invs(), i -> resolveVar(i.exp, sfqn)));
 
         for (DashTrans t : s.trans()) {
 

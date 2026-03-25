@@ -62,7 +62,7 @@ public class DashModel extends DashFileDM {
 
     public void addEvent(String efqn, DashStrings.IntEnvKind k, List<DashParam> prms) {
         // TODO check if prefix name is an existing state with the same prms
-        addEvent(efqn, k, prms);
+        super.addEvent(efqn, k, prms);
         return;
     }
 
@@ -77,13 +77,18 @@ public class DashModel extends DashFileDM {
         return;
     }
 
+    public void addInv(String sfqn, AlloyExpr inv) {
+        super.addInv(sfqn, inv);
+        return;
+    }
+
     public void addInv(AlloyExpr inv) {
-        invsR.add(inv);
+        super.addInv(this.rootName(), inv);
         return;
     }
 
     public void addInit(AlloyExpr init) {
-        initsR.add(init);
+        super.addInit(this.rootName(), init);
         return;
     }
 

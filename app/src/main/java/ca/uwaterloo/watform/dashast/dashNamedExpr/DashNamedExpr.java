@@ -9,7 +9,6 @@ package ca.uwaterloo.watform.dashast.dashNamedExpr;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.utils.*;
 
 public abstract class DashNamedExpr extends ASTNode {
@@ -29,10 +28,6 @@ public abstract class DashNamedExpr extends ASTNode {
     public final void pp(PrintContext pCtx, String name) {
         pCtx.append(name);
         pCtx.append(SPACE);
-        if (AlloyBlock.class.isInstance(this.exp)) pCtx.append(LBRACE);
-        pCtx.brkNoSpace();
-        exp.ppNewBlock(pCtx);
-        pCtx.brkNoSpaceNoIndent();
-        if (AlloyBlock.class.isInstance(this.exp)) pCtx.append(RBRACE);
+        exp.pp(pCtx); // will put braces around it if it is a block
     }
 }
