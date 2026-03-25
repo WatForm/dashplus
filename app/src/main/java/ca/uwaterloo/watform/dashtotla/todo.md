@@ -67,6 +67,9 @@
 |User-defined vars|declaration|❔|❔|❕|
 |User-defined vars|type definition|❔|❔|❕|
 |User-defined vars|sync with config|❔|❔|❔|
+|User-defined vars|extend visitor|❔|❔|❔|
+|User-defined vars|do blocks post-condition|❔|❔|❔|
+|User-defined vars|when blocks pre-condition|❔|❔|❔|
 
 ## Core Alloy
 
@@ -94,20 +97,20 @@
 |multiplicities Arrow|one|❌|❌|❔|
 |multiplicities Arrow|some|❌|❌|❔|
 |multiplicities Arrow|set|❌|❌|❔|
-|multiplicities Cmp|lone|❌|❌|❔|
-|multiplicities Cmp|one|❌|❌|❔|
-|multiplicities Cmp|some|❌|❌|❔|
-|multiplicities Cmp|set|❌|❌|❔|
-|multiplicities Cmp|all|❌|❌|❔|
+|multiplicities Cmp|lone|✅|❌|❔|
+|multiplicities Cmp|one|✅|❌|❔|
+|multiplicities Cmp|some|✅|❌|❔|
+|multiplicities Cmp|set|✅|❌|❔|
+|multiplicities Cmp|all|✅|❌|❔|
 |fields|vars|✅|✅|❔|
 |fields|type|❔|❔|❔|
 |fields|basic (A->B)|❔|❔|❔|
 |fields|with multiplicities (A->lone B)|❔|❔|❔|
 |fields|complex (A->B->C)|❔|❔|❔|
 |fields|arbitrary expressions (A+B)|❔|❔|❔|
-|operator|dot join a.b|❔|❔|❔|
+|operator|dot join a.b|✅|❔|❔|
 |operator|inv dot join a;b|❔|❔|❔|
-|operator|box join a\[b\]|❔|❔|❔|
+|operator|box join a\[b\]|✅|❔|❔|
 |operator|domain restriction s <: a|✅|✅|❔|
 |operator|range restriction s :> a|✅|✅|❔|
 |operator|transpose ~r|✅|✅|❔|
@@ -148,6 +151,7 @@
 |function|parameterized|❔|❔|❔|
 |predicate|unparameterized|❔|❔|❔|
 |predicate|parameterized|❔|❔|❔|
+|function/predicate|alternate representation|❔|❔|❔|
 
 
 - run commands

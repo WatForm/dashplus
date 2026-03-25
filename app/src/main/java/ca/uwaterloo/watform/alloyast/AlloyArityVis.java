@@ -1,7 +1,9 @@
 package ca.uwaterloo.watform.alloyast;
 
 import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -14,6 +16,7 @@ import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -116,6 +119,15 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
 
         Integer el = this.visit(binExpr.left);
         Integer er = this.visit(binExpr.right);
+
+        filterBy(
+                        Arrays.asList(
+                                AlloyUnionExpr.class,
+                                AlloyDiffExpr.class,
+                                AlloyRelOvrdExpr.class,
+                                AlloyIntersExpr.class),
+                        c -> c.isInstance(binExpr))
+                .forEach(c -> equalityCheck(binExpr.left, binExpr.right));
 
         Integer answer =
                 switch (binExpr) {
@@ -229,5 +241,14 @@ public class AlloyArityVis implements AlloyExprVis<Integer> {
     public Integer visit(AlloyDecl decl) {
 
         throw ImplementationError.notSupported("Unimplemented method 'visit' for decl");
+    }
+
+    private void equalityCheck(AlloyExpr el, AlloyExpr er) {
+        if (visit(el) != visit(er))
+            throw new ImplementationError(
+                    "Arities are not equal in left: "
+                            + el.toString()
+                            + " and right: "
+                            + er.toString());
     }
 }
