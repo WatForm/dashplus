@@ -39,7 +39,7 @@ dashFile: paragraph* ;
 // ____________________________________
 // stateRoot
 
-stateRoot 	: STATE name LBRACE stateItem* RBRACE ;
+stateRoot 	: DEF? STATE name LBRACE stateItem* RBRACE ;
 
 stateItem 	: ENV? EVENT qnames LBRACE RBRACE									# dashEventDecls
 			| ENV? names COLON multiplicity? expr1 								# dashVarDecls

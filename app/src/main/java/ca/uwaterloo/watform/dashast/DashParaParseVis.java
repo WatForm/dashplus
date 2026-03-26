@@ -19,7 +19,9 @@ public final class DashParaParseVis extends AlloyParaParseVis {
                 this.exprParseVis.visit(ctx.name()).toString(),
                 DashState.noParam(),
                 DashStrings.StateKind.OR,
-                DashStrings.DefKind.NOTDEFAULT,
+                DashStrings.DefKind
+                        .DEFAULT, // root state is a default state whether it is labelled as such or
+                // not
                 visitAll(ctx.stateItem(), new DashStateItemParseVis(), Object.class));
     }
 }

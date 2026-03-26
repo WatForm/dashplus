@@ -74,8 +74,10 @@ public class DashState extends DashPara implements DashStateItem {
         }
         if (kind == StateKind.AND) {
             pCtx.append(concName + SPACE);
+        } else {
+            pCtx.append(stateName + SPACE);
         }
-        pCtx.append(stateName + SPACE + name + SPACE);
+        pCtx.append(name + SPACE);
         if (items.isEmpty()) {
             pCtx.append(LBRACE + RBRACE);
         } else {

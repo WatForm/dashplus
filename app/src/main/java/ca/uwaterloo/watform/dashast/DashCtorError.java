@@ -18,6 +18,6 @@ public class DashCtorError extends RuntimeException {
     // DashFile
     // ====================================================================================
     public static DashCtorError exactlyOneStateRoot() {
-        return new DashCtorError("A dash file should contain exactly one state root. ");
+        return new DashCtorError("A dash file should contain exactly one root state. ");
     }
 }
