@@ -143,7 +143,8 @@ public class DashFileDM extends ResolveDM {
                             doR));
         }
 
-        // an init/inv is always an AlloyBlock
+        // an init/inv is not always an AlloyBlock; it could be a single expression
+        // but then it creates multiple init/inv
         itemList.addAll(mapBy(this.initsOfState(sfqn), x -> new DashInit(Pos.UNKNOWN, x)));
         itemList.addAll(mapBy(this.invsOfState(sfqn), x -> new DashInv(Pos.UNKNOWN, x)));
 
