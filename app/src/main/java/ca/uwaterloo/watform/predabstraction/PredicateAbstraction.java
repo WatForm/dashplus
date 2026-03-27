@@ -220,10 +220,14 @@ public class PredicateAbstraction {
                 caf_i / !caf_i
             }
         */
-        AlloyExpr guard = exprTranslator.translateExpr(concreteModel.whenR(tfqn));
-        AlloyExpr action = exprTranslator.translateExpr(concreteModel.doR(tfqn));
+        AlloyExpr concGuard = concreteModel.whenR(tfqn);
+        AlloyExpr concAction = concreteModel.doR(tfqn);
+        AlloyExpr action = exprTranslator.translateExpr(concAction);
         Set<AlloyExpr> cmdBody = new HashSet<AlloyExpr>();
-        cmdBody.add(guard);
+        if (concGuard != null) {
+            AlloyExpr guard = exprTranslator.translateExpr(concGuard);
+            cmdBody.add(guard);
+        }
         cmdBody.add(action);
         List<AlloyExpr> exprABVs = new ArrayList<>();
         for (String vname : ABVNameCAFTransMap.keySet()) {
@@ -281,6 +285,7 @@ public class PredicateAbstraction {
       */
 
     public DashModel createAbstractModel() {
+        printTransTableOfConcModel();
         createABVmap();
         DashToAlloy d2a = new DashToAlloy(concreteModel);
 
@@ -301,13 +306,33 @@ public class PredicateAbstraction {
             absModel.addInit(createAbsExpr(init));
         }
 
+        System.out.println("\nIn createAbstractModel(): abstract init added.");
+
         for (AlloyExpr inv : concreteModel.invsR()) {
             absModel.addInv(createAbsExpr(inv));
         }
 
+        System.out.println("\nIn createAbstractModel(): abstract invariant added.");
+
         for (String tfqn : concreteModel.allTransNames()) {
-            AlloyExpr absWhenR = createAbsExpr(concreteModel.whenR(tfqn));
-            AlloyExpr absDoR = createAbsTransDo(tfqn);
+            AlloyExpr guard = concreteModel.whenR(tfqn);
+            AlloyExpr action = concreteModel.doR(tfqn);
+            AlloyExpr absWhenR;
+            AlloyExpr absDoR;
+            if (guard != null) {
+                absWhenR = createAbsExpr(concreteModel.whenR(tfqn));
+                System.out.println(
+                        "\nIn createAbstractModel(): transition " + tfqn + " guard abstracted.");
+            } else {
+                absWhenR = null;
+            }
+            if (action != null) {
+                absDoR = createAbsTransDo(tfqn);
+                System.out.println(
+                        "\nIn createAbstractModel(): transition " + tfqn + " action abstracted.");
+            } else {
+                absDoR = null;
+            }
             absModel.addTrans(
                     Pos.UNKNOWN,
                     tfqn,
@@ -423,4 +448,13 @@ public class PredicateAbstraction {
 
         return result;
     }
+
+    private void printTransTableOfConcModel() {
+        System.out.println("CONCRETE MODEL\n*********\n");
+        System.out.println(concreteModel.ttToString());
+    }
+
+    // private void nextSnapshotVarsSame() {
+
+    // }
 }
