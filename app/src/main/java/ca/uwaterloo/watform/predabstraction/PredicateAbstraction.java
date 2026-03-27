@@ -12,8 +12,10 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashast.dashref.VarDashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashtoalloy.CollectDashRefVis;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtoalloy.ExprTranslatorVis;
@@ -34,9 +36,12 @@ public class PredicateAbstraction {
     protected AlloyModel queryModel; // queryModel
     protected ExprTranslatorVis exprTranslator;
     protected DSL dsl;
+    protected CollectDashRefVis dashRefCollector = new CollectDashRefVis();
 
     // ABV: Abstract Boolean Variable, CAF: Concrete Atomic Formula
-    public HashMap<String, AlloyExpr> ABVNameCAFMap = new HashMap<String, AlloyExpr>();
+    public HashMap<String, AlloyExpr> ABVNameCAFTransMap = new HashMap<String, AlloyExpr>();
+    protected HashMap<String, AlloyExpr> ABVDashCAFMap = new HashMap<>();
+
     public List<String> envABVs = new ArrayList<>();
 
     public PredicateAbstraction(DashModel concreteModel) {
@@ -62,7 +67,7 @@ public class PredicateAbstraction {
         // for every init, invariant, pred, guard, and action in concreteModel,
         // break it down by !, &, |, =>, <=>
         // add each subexp to a set and
-        // populate ABVNameCAFMap with B0:exp0, B1:exp1, etc.
+        // populate ABVNameCAFTransMap with B0:exp0, B1:exp1, etc.
         Set<AlloyExpr> preds = new HashSet<AlloyExpr>();
         for (AlloyExpr e : concreteModel.initsR()) {
             preds.addAll((new AlloyExprDecomposer()).decompose(e));
@@ -81,12 +86,13 @@ public class PredicateAbstraction {
         for (AlloyExpr e : preds) {
             String abvName = abvNamePre + Integer.toString(ctr);
             ctr++;
-            ABVNameCAFMap.put(abvName, exprTranslator.translateExpr(e));
+            ABVDashCAFMap.put(abvName, e);
+            ABVNameCAFTransMap.put(abvName, exprTranslator.translateExpr(e));
         }
 
         System.out.println("\nIn createABVMap(): ABV map created:");
-        for (String k : ABVNameCAFMap.keySet()) {
-            AlloyExpr v = ABVNameCAFMap.get(k);
+        for (String k : ABVNameCAFTransMap.keySet()) {
+            AlloyExpr v = ABVNameCAFTransMap.get(k);
             System.out.println(k + " : " + v.toString());
         }
         System.out.println("*********");
@@ -95,34 +101,38 @@ public class PredicateAbstraction {
     public void addCAFDepInvs() {
         try {
             // adds CAF Dependency invariants to the abstract model
-
-            int ctr = 0;
-
-            List<List<AlloyExpr>> cafPowSet =
-                    getNonEmptySubsets(Set.copyOf(ABVNameCAFMap.values()));
+            Set<Set<AlloyExpr>> cafClusters = createCAFClusters();
             List<List<AlloyExpr>> unsatList = new ArrayList<>();
-            for (List<AlloyExpr> subset : cafPowSet) {
-                List<List<AlloyExpr>> subCombos = PredAbsUtil.generatePolarityCombos(subset);
-                for (List<AlloyExpr> combo : subCombos) {
-                    boolean uflag = false;
-                    for (List<AlloyExpr> u : unsatList) {
-                        if (combo.containsAll(u)) {
-                            uflag = true;
-                            break;
-                        }
-                    }
 
-                    ctr += 1;
+            for (Set<AlloyExpr> cluster : cafClusters) {
 
-                    if (!uflag) {
-                        if (!PredAbsUtil.checkSAT(listToSet(combo), queryModel, false, scope)) {
-                            unsatList.add(combo);
-                            System.out.println(
-                                    "In addCAFDepInvs(): CAF Dependency Check:\n\n"
-                                            + queryModel.toString());
+                List<List<AlloyExpr>> cafPowSet = getNonEmptySubsets(cluster);
+                for (List<AlloyExpr> subset : cafPowSet) {
+                    if (subset.size() <= 4) {
+                        List<List<AlloyExpr>> subCombos =
+                                PredAbsUtil.generatePolarityCombos(subset);
+                        for (List<AlloyExpr> combo : subCombos) {
+                            boolean uflag = false;
+                            for (List<AlloyExpr> u : unsatList) {
+                                if (combo.containsAll(u)) {
+                                    uflag = true;
+                                    unsatList.add(combo);
+                                    break;
+                                }
+                            }
+
+                            if (!uflag) {
+                                if (!PredAbsUtil.checkSAT(
+                                        listToSet(combo), queryModel, false, scope)) {
+                                    unsatList.add(combo);
+                                    System.out.println(
+                                            "In addCAFDepInvs(): CAF Dependency Check, added UNSAT combo");
+                                }
+                            }
                         }
                     } else {
-                        unsatList.add(combo);
+                        System.out.println("Stopped at subset size 4");
+                        break;
                     }
                 }
             }
@@ -132,12 +142,11 @@ public class PredicateAbstraction {
             // invariant: !(B0.boolean/isTrue && B2.boolean/isFalse && B4.boolean/isTrue)
 
             HashMap<AlloyExpr, String> ABVReverseMap = new HashMap<>();
-            ABVNameCAFMap.forEach((k, v) -> ABVReverseMap.put(v, k));
+            ABVNameCAFTransMap.forEach((k, v) -> ABVReverseMap.put(v, k));
 
             int i = 0;
             System.out.println(
-                    "\nIn addCAFDepInvs(): Number of CAFs: " + ABVNameCAFMap.values().size());
-            System.out.println("In addCAFDepInvs(): Number of combos checked: " + ctr);
+                    "\nIn addCAFDepInvs(): Number of CAFs: " + ABVNameCAFTransMap.values().size());
             System.out.println("In addCAFDepInvs(): Number of UNSAT combos: " + unsatList.size());
 
             for (List<AlloyExpr> u : unsatList) {
@@ -179,8 +188,8 @@ public class PredicateAbstraction {
         Set<AlloyExpr> cmdBody = new HashSet<AlloyExpr>();
         AlloyExpr tExpr = exprTranslator.translateExpr(expr);
         cmdBody.add(tExpr);
-        for (String vname : ABVNameCAFMap.keySet()) {
-            AlloyExpr caf = ABVNameCAFMap.get(vname);
+        for (String vname : ABVNameCAFTransMap.keySet()) {
+            AlloyExpr caf = ABVNameCAFTransMap.get(vname);
             AlloyExpr v = getVarDashRef(vname);
             // DashRef.asAlloyVar ??;; new VarDashRef -- subclass of DashRef
             cmdBody.add(caf);
@@ -217,8 +226,8 @@ public class PredicateAbstraction {
         cmdBody.add(guard);
         cmdBody.add(action);
         List<AlloyExpr> exprABVs = new ArrayList<>();
-        for (String vname : ABVNameCAFMap.keySet()) {
-            AlloyExpr caf = ABVNameCAFMap.get(vname);
+        for (String vname : ABVNameCAFTransMap.keySet()) {
+            AlloyExpr caf = ABVNameCAFTransMap.get(vname);
             AlloyExpr v = ((VarDashRef) getVarDashRef(vname)).makeNext();
             cmdBody.add(caf);
             if (!PredAbsUtil.checkSAT(cmdBody, queryModel, true, scope)) {
@@ -244,7 +253,7 @@ public class PredicateAbstraction {
 
     public void addABVsToAbsModel() {
         // adds all the B0,... Bn as boolean variables to the root state of absModel
-        for (String vname : ABVNameCAFMap.keySet()) {
+        for (String vname : ABVNameCAFTransMap.keySet()) {
             String vfqn = DashFQN.fqn(concreteModel.rootName(), vname);
             if (envABVs.contains(vname)) {
                 absModel.addVar(
@@ -285,8 +294,8 @@ public class PredicateAbstraction {
         addABVsToAbsModel();
         System.out.println("\nIn createAbstractModel(): ABVs added to abstract model.");
 
-        addCAFDepInvs();
-        System.out.println("\nIn createAbstractModel():CAF Dependency invariants added.");
+        // addCAFDepInvs();
+        // System.out.println("\nIn createAbstractModel():CAF Dependency invariants added.");
 
         for (AlloyExpr init : concreteModel.initsR()) {
             absModel.addInit(createAbsExpr(init));
@@ -330,5 +339,88 @@ public class PredicateAbstraction {
         } else {
             return "";
         }
+    }
+
+    protected void addCAFPredstoConcrete() {
+        for (String vname : ABVNameCAFTransMap.keySet()) {
+            AlloyExpr caf = ABVNameCAFTransMap.get(vname);
+            String predname = "caf_" + vname;
+            concreteModel.addPred(predname, dsl.curDecls(), List.of(caf));
+            // queryModel.addPred(predname, dsl.curDecls(), List.of(caf));
+        }
+    }
+
+    public Set<Set<AlloyExpr>> createCAFClusters() {
+        // returning empty dashrefs because CAF is not a DashRef; do clustering before translation
+        HashMap<String, Set<DashRef>> exprToDashRefs = new HashMap<>();
+        for (String cafName : ABVDashCAFMap.keySet()) {
+            AlloyExpr caf = ABVDashCAFMap.get(cafName);
+            Set<DashRef> dashRefs = dashRefCollector.collect(caf);
+            exprToDashRefs.put(cafName, dashRefs);
+            System.out.print(caf.toString() + " : { ");
+            for (DashRef dr : dashRefs) {
+                System.out.print(dr.name + ", ");
+            }
+            System.out.print(" }\n");
+        }
+
+        HashMap<String, Set<String>> cafGraph = new HashMap<>();
+
+        for (String e : exprToDashRefs.keySet()) {
+            cafGraph.put(e, new HashSet<>());
+        }
+
+        List<String> cafNames = new ArrayList<>(exprToDashRefs.keySet());
+
+        for (int i = 0; i < ABVDashCAFMap.size(); i++) {
+            for (int j = i + 1; j < ABVDashCAFMap.size(); j++) {
+                String v1 = cafNames.get(i);
+                String v2 = cafNames.get(j);
+                AlloyExpr e1 = ABVDashCAFMap.get(v1);
+                AlloyExpr e2 = ABVDashCAFMap.get(v2);
+
+                Set<DashRef> s1 = exprToDashRefs.get(e1);
+                Set<DashRef> s2 = exprToDashRefs.get(e2);
+
+                if (s1 != null && s2 != null) {
+                    if (!Collections.disjoint(s1, s2)) {
+                        cafGraph.get(v1).add(v2);
+                        cafGraph.get(v2).add(v1);
+                    }
+                }
+            }
+        }
+
+        Set<String> visited = new HashSet<>();
+        Set<Set<AlloyExpr>> result = new HashSet<>();
+
+        for (String cafName : cafGraph.keySet()) {
+            if (!visited.contains(cafName)) {
+                Set<AlloyExpr> component = new HashSet<>();
+                Deque<String> stack = new ArrayDeque<>();
+                stack.push(cafName);
+
+                while (!stack.isEmpty()) {
+                    String curr = stack.pop();
+                    if (visited.add(curr)) {
+                        component.add(ABVDashCAFMap.get(curr));
+                        stack.addAll(cafGraph.get(curr));
+                    }
+                }
+                result.add(component);
+            }
+        }
+
+        int ctr = 1;
+        for (Set<AlloyExpr> cluster : result) {
+            System.out.print("Cluster " + ctr + ": { ");
+            for (AlloyExpr e : cluster) {
+                System.out.print(e.toString() + ", ");
+            }
+            System.out.print(" }\n");
+            ctr++;
+        }
+
+        return result;
     }
 }

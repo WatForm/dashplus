@@ -66,9 +66,8 @@ public class PredAbsUtil {
             boolean snReqd,
             AlloyCmdPara.CommandDecl.Scope scope) {
         Object key = canonicalKey(exprs);
-        Boolean cached = cache.get(key);
-        if (cached != null) {
-            return cached;
+        if (cache.containsKey(key)) {
+            return cache.get(key);
         } else {
             String pname = "" + "query_" + Integer.toString(cache.size());
             DSL dsl = new DSL(false);
@@ -87,7 +86,7 @@ public class PredAbsUtil {
                 // System.out.println(am.toString());
                 // System.out.println("***********************");
                 printStackTrace();
-                return cached;
+                return false;
             }
         }
     }

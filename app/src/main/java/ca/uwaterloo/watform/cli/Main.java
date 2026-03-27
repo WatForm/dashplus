@@ -238,7 +238,7 @@ public class Main implements Callable<Integer> {
                             // needs to take cmdIdx
                             runDashToTla(dm, outputFileNamePrefix, cmdIdx, verbose, debug);
                         } else if (predAbs) {
-                            runPredAbs(dm, cmdIdx);
+                            runPredAbs(fullFileName, dm, cmdIdx);
                         } else {
                             runDashToAlloy(dm, d2aOptions, outputFileNamePrefix, write, cmdIdx);
                         }
@@ -363,7 +363,8 @@ public class Main implements Callable<Integer> {
         dashOutput("Output:\n" + tlaFileName + "\n" + cfgFileName);
     }
 
-    private static void runPredAbs(DashModel dm, Integer cmdIdx) {
+    private static void runPredAbs(String fullFileName, DashModel dm, Integer cmdIdx)
+            throws IOException {
         PredicateAbstraction pa;
         if (cmdIdx == Constants.noCmdValue) {
             pa = new PredicateAbstraction(dm);
@@ -373,9 +374,17 @@ public class Main implements Callable<Integer> {
         try {
             DashModel absModel = pa.createAbstractModel();
             dashOutput("Abstract model created.");
-            dashOutput(absModel.toString());
+            dashOutput(absModel.toDashFile().toString());
         } catch (Exception e) {
-            dashOutput("Query Model:\n\n" + pa.getQueryModelString());
+            // dashOutput("Query Model:\n\n" + pa.getQueryModelString());
+            String fname =
+                    fullFileName.substring(0, fullFileName.length() - 4) + "-query_model_error.als";
+            Files.writeString(fileFromString(fname), pa.getQueryModelString());
+            dashOutput("Query Model written to: " + fname);
+            Path path = Paths.get(fname).toAbsolutePath();
+            AlloyModel qm = parseToModel(path);
+            dashOutput("Parsed " + fname + " to AlloyModel.");
+            runAlloy(qm, qm.getParas(AlloyCmdPara.class).size() - 1);
             printStackTrace();
         }
     }
