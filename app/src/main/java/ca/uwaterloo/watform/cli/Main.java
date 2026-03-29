@@ -240,7 +240,13 @@ public class Main implements Callable<Integer> {
                         }
                         if (tla) {
                             // needs to take cmdIdx
-                            runDashToTla(dm, outputFileNamePrefix, cmdIdx, verbose, debug);
+                            runDashToTla(
+                                    dm,
+                                    outputFileNamePrefix,
+                                    tlaModuleName,
+                                    cmdIdx,
+                                    verbose,
+                                    debug);
                         } else if (predAbs) {
                             runPredAbs(fullFileName, dm, cmdIdx);
                         } else {
@@ -350,6 +356,7 @@ public class Main implements Callable<Integer> {
     private static void runDashToTla(
             DashModel dm,
             String outputFileNamePrefix,
+            String moduleName,
             Integer cmdIdx,
             Boolean verbose,
             Boolean debug)
@@ -360,7 +367,7 @@ public class Main implements Callable<Integer> {
 
         // outputFileNamePrefix is the module name
         // TODO MKJ add cmd as argument here
-        TlaModel tlaModel = DashToTla.translate(dm, outputFileNamePrefix, true, verbose, debug);
+        TlaModel tlaModel = DashToTla.translate(dm, moduleName, true, verbose, debug);
         String tlaFileName = outputFileNamePrefix + ".tla";
         String cfgFileName = outputFileNamePrefix + ".cfg";
         Files.writeString(fileFromString(tlaFileName), tlaModel.moduleCode());
