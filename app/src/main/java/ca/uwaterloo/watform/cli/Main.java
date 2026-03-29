@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -199,7 +198,9 @@ public class Main implements Callable<Integer> {
                 String fullFileName = absolutePath.toString();
                 String outputFileNamePrefix =
                         fullFileName.substring(0, fullFileName.lastIndexOf("."));
-                String tlaFileNamePrefix = absolutePath.getFileName().toString();
+                String tlaModuleNameGen = absolutePath.getFileName().toString();
+                String tlaModuleName =
+                        tlaModuleNameGen.substring(0, tlaModuleNameGen.lastIndexOf("."));
                 if (!Files.exists(absolutePath)) {
                     dashOutput("File does not exist: " + fullFileName);
                     break;
@@ -212,7 +213,8 @@ public class Main implements Callable<Integer> {
                     dashOutput("Input: " + fullFileName);
                     AlloyModel am = parseToModel(absolutePath);
                     if (tla && !xml) {
-                        runAlloyToTla(am, tlaFileNamePrefix, cmdIdx, verbose, debug);
+                        runAlloyToTla(
+                                am, outputFileNamePrefix, tlaModuleName, cmdIdx, verbose, debug);
                     } else if (xml) {
                         runCheckAlloyInstanceTla(am, cliConf.xmlFileName);
                     } else {
@@ -238,7 +240,7 @@ public class Main implements Callable<Integer> {
                         }
                         if (tla) {
                             // needs to take cmdIdx
-                            runDashToTla(dm, tlaFileNamePrefix, cmdIdx, verbose, debug);
+                            runDashToTla(dm, outputFileNamePrefix, cmdIdx, verbose, debug);
                         } else if (predAbs) {
                             runPredAbs(fullFileName, dm, cmdIdx);
                         } else {
@@ -285,6 +287,7 @@ public class Main implements Callable<Integer> {
     private static void runAlloyToTla(
             AlloyModel am,
             String outputFileNamePrefix,
+            String moduleName,
             Integer cmdIdx,
             Boolean verbose,
             Boolean debug)
@@ -292,10 +295,7 @@ public class Main implements Callable<Integer> {
         // outputFileNamePrefix is the module name
         // TODO MKJ - this should take the cmd
 
-        Logger l = CustomLoggerFactory.make("AlloyToTla", debug);
-        l.info("Outputfilename: " + outputFileNamePrefix);
-
-        TlaModel tlaModel = AlloyToTlaOld.translate(am, outputFileNamePrefix, verbose, debug);
+        TlaModel tlaModel = AlloyToTlaOld.translate(am, moduleName, verbose, debug);
 
         String tlaFileName = outputFileNamePrefix + ".tla";
         String cfgFileName = outputFileNamePrefix + ".cfg";
