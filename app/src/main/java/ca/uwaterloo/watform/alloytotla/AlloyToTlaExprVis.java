@@ -133,18 +133,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyCphExpr comprehensionExpr) {
 
-
-        List<TlaVar> vars = mapBy(comprehensionExpr.decls, d -> TlaVar(d.qnames.get(0).toString()));
-        List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> visit(d.expr));
-        TlaQuantOpHead head = new TlaQuantOpHead(TlaQuantOpHead.Type.TUPLE, vars, repeatedProductSet(expressions));
-
-        var condition = new AtomicReference<TlaExp>(TlaTrue());
-        comprehensionExpr.body.ifPresent(e -> condition.set(visit(e)));
-        return TlaSetFilter(head, condition.get());
-
-
-        // throw ImplementationError.notSupported("Unimplemented method 'visit' for cph");
-
         /*
         alloy:
         {x1: e1, x2: e2, ... | F}
@@ -159,6 +147,17 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         {x1: e1 | F} is translated into {x1 \in e1 : F}
         {x1: e1, x2 : e2 | F} translated into {<<x1,x2>> \in e1 \X e2 : F}
         */
+
+        var vars = mapBy(comprehensionExpr.decls, d -> TlaVar(d.qnames.get(0).toString()));
+        List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> visit(d.expr));
+
+        var head = new TlaQuantOpHead(TlaQuantOpHead.Type.TUPLE, vars, repeatedProductSet(expressions));
+
+        var condition = new AtomicReference<TlaExp>(TlaTrue());
+        comprehensionExpr.body.ifPresent(e -> condition.set(visit(e)));
+
+        return TlaSetFilter(head, condition.get());
+
     }
 
     @Override
