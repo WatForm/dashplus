@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.AlloyId;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
@@ -16,9 +17,17 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public final class AlloyModelSigTable extends AlloyModelTable<AlloySigPara> {
     private final Map<String, AlloyDecl> fields;
+
+    private final List<String> inParents = null;
+    private final Optional<String> extendsParent = null;
+    private final List<String> inChildren = null;
+    private final List<String> extendsChildren = null;
+    private final List<String> descs = null; // null when not resolved
+    private final List<String> ances = null;
 
     public AlloyModelSigTable(AlloyFile alloyFile) {
         fields = new HashMap<>();
