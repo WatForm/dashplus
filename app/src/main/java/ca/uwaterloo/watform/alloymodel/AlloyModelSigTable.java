@@ -17,17 +17,9 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public final class AlloyModelSigTable extends AlloyModelTable<AlloySigPara> {
     private final Map<String, AlloyDecl> fields;
-
-    private final List<String> inParents = null;
-    private final Optional<String> extendsParent = null;
-    private final List<String> inChildren = null;
-    private final List<String> extendsChildren = null;
-    private final List<String> descs = null; // null when not resolved
-    private final List<String> ances = null;
 
     public AlloyModelSigTable(AlloyFile alloyFile) {
         fields = new HashMap<>();
