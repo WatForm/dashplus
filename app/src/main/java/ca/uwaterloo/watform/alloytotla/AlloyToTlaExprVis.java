@@ -4,6 +4,9 @@ import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -13,6 +16,7 @@ import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaast.tlaquantops.TlaQuantOp.TlaQuantOpHead;
 import ca.uwaterloo.watform.utils.ImplementationError;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
@@ -129,7 +133,17 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyCphExpr comprehensionExpr) {
 
-        throw ImplementationError.notSupported("Unimplemented method 'visit' for cph");
+
+        List<TlaVar> vars = mapBy(comprehensionExpr.decls, d -> TlaVar(d.qnames.get(0).toString()));
+        List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> visit(d.expr));
+        TlaQuantOpHead head = new TlaQuantOpHead(TlaQuantOpHead.Type.TUPLE, vars, repeatedProductSet(expressions));
+
+        var condition = new AtomicReference<TlaExp>(TlaTrue());
+        comprehensionExpr.body.ifPresent(e -> condition.set(visit(e)));
+        return TlaSetFilter(head, condition.get());
+
+
+        // throw ImplementationError.notSupported("Unimplemented method 'visit' for cph");
 
         /*
         alloy:
@@ -137,7 +151,13 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         F is optional, if it is null then it is a tautology
         F is a boolean condition
         it results in the set of tuples (x1,x2...) where x1 is drawn from e1, x2 from e2 and so on, such that F is true
-        
+
+        TLA:
+        set map {exp : v \in S}
+        set filter  {v \in S : exp}
+
+        {x1: e1 | F} is translated into {x1 \in e1 : F}
+        {x1: e1, x2 : e2 | F} translated into {<<x1,x2>> \in e1 \X e2 : F}
         */
     }
 
