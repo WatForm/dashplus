@@ -130,6 +130,15 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     public TlaExp visit(AlloyCphExpr comprehensionExpr) {
 
         throw ImplementationError.notSupported("Unimplemented method 'visit' for cph");
+
+        /*
+        alloy:
+        {x1: e1, x2: e2, ... | F}
+        F is optional, if it is null then it is a tautology
+        F is a boolean condition
+        it results in the set of tuples (x1,x2...) where x1 is drawn from e1, x2 from e2 and so on, such that F is true
+        
+        */
     }
 
     @Override
