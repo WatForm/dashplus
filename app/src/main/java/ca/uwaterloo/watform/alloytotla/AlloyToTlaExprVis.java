@@ -13,7 +13,6 @@ import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
-import ca.uwaterloo.watform.tlaast.tlaquantops.TlaQuantOp.TlaQuantOpHead;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -153,8 +152,9 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         var product = repeatedProductSet(expressions);
 
         var head =
-                new TlaQuantOpHead(
-                        TlaQuantOpHead.Type.TUPLE, vars, repeatedProductSet(expressions));
+                vars.size() == 1
+                        ? TlaQuantOpHeadFlat(vars, product)
+                        : TlaQuantOpHeadTuple(vars, product);
 
         var condition = new AtomicReference<TlaExp>(TlaTrue());
         comprehensionExpr.body.ifPresent(e -> condition.set(visit(e)));
