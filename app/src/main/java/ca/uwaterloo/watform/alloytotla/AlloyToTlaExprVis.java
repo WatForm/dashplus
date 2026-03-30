@@ -150,6 +150,8 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         var vars = mapBy(comprehensionExpr.decls, d -> TlaVar(d.qnames.get(0).toString()));
         List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> visit(d.expr));
 
+        var product = repeatedProductSet(expressions);
+
         var head =
                 new TlaQuantOpHead(
                         TlaQuantOpHead.Type.TUPLE, vars, repeatedProductSet(expressions));
