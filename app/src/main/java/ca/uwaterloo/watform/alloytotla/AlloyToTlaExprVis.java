@@ -4,9 +4,6 @@ import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -18,6 +15,8 @@ import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.tlaast.tlaquantops.TlaQuantOp.TlaQuantOpHead;
 import ca.uwaterloo.watform.utils.ImplementationError;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
@@ -151,13 +150,14 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         var vars = mapBy(comprehensionExpr.decls, d -> TlaVar(d.qnames.get(0).toString()));
         List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> visit(d.expr));
 
-        var head = new TlaQuantOpHead(TlaQuantOpHead.Type.TUPLE, vars, repeatedProductSet(expressions));
+        var head =
+                new TlaQuantOpHead(
+                        TlaQuantOpHead.Type.TUPLE, vars, repeatedProductSet(expressions));
 
         var condition = new AtomicReference<TlaExp>(TlaTrue());
         comprehensionExpr.body.ifPresent(e -> condition.set(visit(e)));
 
         return TlaSetFilter(head, condition.get());
-
     }
 
     @Override
