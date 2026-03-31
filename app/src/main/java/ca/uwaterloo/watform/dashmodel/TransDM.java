@@ -170,7 +170,7 @@ public class TransDM extends InitsInvsDM {
 
     private class TransEntry {
 
-        // empty if no params
+        // empty list if no params
         public final List<DashParam> params;
 
         public final DashRef fromR;
@@ -190,7 +190,7 @@ public class TransDM extends InitsInvsDM {
                 DashRef s,
                 AlloyExpr d) {
             this.params = prms;
-            // this.paramsIdx = prmsIdx;
+            assert (prms != null);
             this.fromR = f;
             this.onR = o;
             this.whenR = w;

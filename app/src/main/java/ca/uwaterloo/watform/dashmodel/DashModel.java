@@ -34,19 +34,6 @@ public class DashModel extends DashFileDM {
 
     // a couple of cross-table functions
 
-    public List<String> namesOfState(String sfqn) {
-        List<String> x = varsOfState(sfqn);
-        x.addAll(buffersOfState(sfqn));
-        return x;
-    }
-
-    public List<String> varAndBufferNames() {
-        // vars plus buffers
-        List<String> x = allVarNames();
-        x.addAll(allBufferNames());
-        return x;
-    }
-
     // setters
 
     public void addState(
@@ -104,5 +91,9 @@ public class DashModel extends DashFileDM {
         this.rootName = dm.rootName();
         this.maxDepthParams = dm.maxDepthParams();
         this.allParams = dm.allParams();
+    }
+
+    public String toString() {
+        return this.toDashFile().toString();
     }
 }

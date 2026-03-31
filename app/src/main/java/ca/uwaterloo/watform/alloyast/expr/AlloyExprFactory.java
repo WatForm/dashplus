@@ -149,7 +149,7 @@ public class AlloyExprFactory {
     }
 
     // e0 + e1 + e2
-    public static AlloyExpr AlloyUnionList(List<AlloyExpr> elist) {
+    public static AlloyExpr AlloyUnion(List<AlloyExpr> elist) {
         AlloyExpr ret = null;
         assert (elist != null);
         ret = elist.get(0);

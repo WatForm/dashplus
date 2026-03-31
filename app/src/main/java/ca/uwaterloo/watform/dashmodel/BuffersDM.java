@@ -1,3 +1,7 @@
+/*
+    Need something here about why buffers need an index
+*/
+
 package ca.uwaterloo.watform.dashmodel;
 
 import static ca.uwaterloo.watform.dashast.DashStrings.*;
@@ -26,7 +30,26 @@ public class BuffersDM extends VarsDM {
         super(d);
     }
 
+    /*
+    protected boolean equal(BuffersDM other) {
+        return
+            boolean check =
+                equals(this.super(), other.super()) &&
+                this.numBuffers == other.numBuffers &&
+                this.bt.keySet() == other.bt.keySet();
+            if (!check) return false;
+            for (String bfqn: this.bt.keySet()) {
+                if (!equal(this.bt.get(bfqn), other.bt.get(bfqn)))
+                    return false;
+            }
+            return true;
+    }
+    */
     // individual buffer non-complex getters/testers
+
+    public Pos bufferPos(String bfqn) {
+        return this.bt.get(bfqn).pos;
+    }
 
     public boolean isIntBuffer(String bfqn) {
         return this.bt.get(bfqn).kind == IntEnvKind.INT;
@@ -66,7 +89,7 @@ public class BuffersDM extends VarsDM {
         return (!this.bt.isEmpty());
     }
 
-    public boolean contains(String bfqn) {
+    public boolean containsBuffer(String bfqn) {
         return (this.bt.containsKey(bfqn));
     }
 
@@ -112,8 +135,8 @@ public class BuffersDM extends VarsDM {
         public final Pos pos;
         public final IntEnvKind kind;
         public final List<DashParam> params;
-        public final String element;
-        public final Integer index;
+        public final String element; // should be a sig
+        public final Integer index; // a number b/c each buffer has to have a different index
 
         public BufferEntry(Pos p, IntEnvKind k, List<DashParam> prms, String e) {
             assert (prms != null);
@@ -132,6 +155,14 @@ public class BuffersDM extends VarsDM {
             s += "element: " + element.toString() + "\n";
             s += "index:" + index;
             return s;
+        }
+
+        public boolean equal(BufferEntry other) {
+            return this.kind == other.kind
+                    && this.params == other.params
+                    && this.element == other.element
+                    && this.index == other.index;
+            // this might not be the same if read in a diff order?
         }
     }
 }

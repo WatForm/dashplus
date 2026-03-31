@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class EventsDM extends BuffersDM {
+public class EventsDM extends VarsBuffersDM {
 
     protected HashMap<String, EventEntry> et = new HashMap<String, EventEntry>();
 
@@ -27,6 +27,21 @@ public class EventsDM extends BuffersDM {
     protected EventsDM(DashFile d) {
         super(d);
     }
+
+    /*
+    protected boolean equal(BuffersDM other) {
+        return
+            boolean check =
+                equals(this.super(), other.super()) &&
+                this.bt.keySet() == other.bt.keySet();
+            if (!check) return false;
+            for (String efqn: this.et.keySet()) {
+                if (!equal(this.et.get(efqn), other.et.get(efqn)))
+                    return false;
+            }
+            return true;
+    }
+    */
 
     // individual event non-complex getters
 

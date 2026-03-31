@@ -3,6 +3,10 @@ package ca.uwaterloo.watform.dashtoalloy;
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyImportPara;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.List;
@@ -18,6 +22,7 @@ public class SpaceSigsD2A extends BaseD2A {
     /*
         abstract sig Statelabel {}
         abstract sig Root extends StateLabel {}
+
         abstract sig Scopes {}
         one sig Root extends Scopes {}
 
@@ -28,8 +33,11 @@ public class SpaceSigsD2A extends BaseD2A {
         abstract sig TransLabel {}
         one sig tfqn extends TransLabel {}
 
-        abstract sig Identifiers {}
-        sig param extends Identifiers {}
+        // assume user declares sig param1 {}, etc
+        sig Identifiers in param1 + param2 + param3 {}
+        fact {
+            Identiers = parma1 + param2 + param3
+        }
 
         abstract sig Events {}
         abstract sig IntEvents extends Events {}
@@ -46,6 +54,7 @@ public class SpaceSigsD2A extends BaseD2A {
         this.addTransSpaceSigs();
         this.addParamSpaceSigs();
         this.addEventSpaceSigs();
+        this.addBufferSpaceSigs(); // Identifiers
         // no space sigs needs to be added for variables
 
     }
@@ -70,16 +79,11 @@ public class SpaceSigsD2A extends BaseD2A {
 
     private void recurseCreateStateSpaceSigs(String parent) {
         for (String child : this.dm.immChildren(parent)) {
-            // for scopes Used
             // Root node can be used for both conf and scopesUsed
             // but o/w concurrent nodes are abstract for conf
             // and one sigs for scopesUsed
-            if (this.dm.hasConcurrency() && this.dm.isAnd(child))
-                // one sig childScope extends Scopes {}
-                this.am.addOneExtendsSig(
-                        DashFQN.translateFQN(child) + D2AStrings.scopeSuffix,
-                        D2AStrings.scopeLabelName);
-            // for conf
+
+            // conf
             if (!this.dm.hasOnlyOneState()) {
                 if (this.dm.isLeaf(child))
                     // one child extends parent {}
@@ -91,6 +95,13 @@ public class SpaceSigsD2A extends BaseD2A {
                             DashFQN.translateFQN(child), DashFQN.translateFQN(parent));
                 }
             }
+            // scopesUsed
+            if (this.dm.hasConcurrency() && this.dm.isAnd(child))
+                // one sig childScope extends Scopes {}
+                this.am.addOneExtendsSig(
+                        DashFQN.translateFQN(child) + D2AStrings.scopeSuffix,
+                        D2AStrings.scopeLabelName);
+
             if (!this.dm.isLeaf(child)) recurseCreateStateSpaceSigs(child);
         }
     }
@@ -108,14 +119,19 @@ public class SpaceSigsD2A extends BaseD2A {
     public void addParamSpaceSigs() {
         if (!this.isElectrum && this.dm.maxDepthParams() != 0) {
             // if this model has parametrized components
-            // abstract sig Identifiers {}
-            this.am.addAbstractSig(D2AStrings.identifierName);
-            for (String s : mapBy(this.dm.allParams(), i -> i.paramSig))
-                // sig param extends Identifiers {}
-                this.am.addExtendsSig(s, D2AStrings.identifierName);
-            // the alternative would be for conf1, etc to be fields in
-            // sig Identifiers, but the creation of conf1, etc is in
-            // SnapshotSignatures
+
+            AlloyExpr identifiersVar = AlloyVar(D2AStrings.identifierName);
+            // the next two lines were very tricky to get the types for
+            // sig Identifiers extends param1 + param2 + etc. {}
+            this.am.addInSig(
+                    D2AStrings.identifierName,
+                    mapBy(this.dm.allParams(), x -> AlloyVar(x.paramSig)));
+            // Identifiers = param1 + param2 + etc
+            this.am.addFact(
+                    D2AStrings.paramsFact,
+                    AlloyEqual(
+                            identifiersVar,
+                            AlloyUnion(mapBy(this.dm.allParams(), x -> AlloyVar(x.paramSig)))));
         }
     }
 
@@ -157,17 +173,31 @@ public class SpaceSigsD2A extends BaseD2A {
             // buffers with parameters
             // every buffer has a different index
             // so just one decl per sig
-            List<String> allbfqns = this.dm.allBufferNames();
-            for (String b : allbfqns) {
+            for (String bfqn : this.dm.allBufferNames()) {
                 if (this.isElectrum) {
-                    if (this.dm.bufferParams(b).size() != 0)
+                    if (this.dm.bufferParams(bfqn).size() != 0)
                         // because buffer is declared under param
                         // o/w declared with buffer index in Snapshot stuff
                         // sig BufIdx0 {}
-                        this.am.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
+                        this.am.addSig(this.dsl.bufferIndexSig(this.dm.bufferIndex(bfqn)));
                 } else
                     // sig BufIndex5 {}
-                    this.am.addSig(D2AStrings.bufferIndexName + this.dm.bufferIndex(b));
+                    this.am.addSig(this.dsl.bufferIndexSig(this.dm.bufferIndex(bfqn)));
+
+                // import util/buffer[BufIdx, elem]
+                this.am.addPara(
+                        new AlloyImportPara(
+                                false,
+                                new AlloyQnameExpr(
+                                        List.of(
+                                                new AlloyNameExpr(D2AStrings.utilName),
+                                                new AlloyNameExpr(
+                                                        D2AStrings.utilBufferName))), // util/buffer
+                                List.of(
+                                        this.dsl.bufferIndexVar(this.dm.bufferIndex(bfqn)),
+                                        AlloyVar(this.dm.bufferElement(bfqn))), // [BufIdx, elem]
+                                null // no "as"
+                                ));
             }
         }
     }

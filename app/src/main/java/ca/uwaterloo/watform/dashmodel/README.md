@@ -11,6 +11,7 @@ Inheritance Sequence for decomposition of DM functionality:
 (below all has public accessors to these parts)
 * PredsDM
 * EventsDM
+* VarsBuffersDM
 * BuffersDM
 * VarsDM 
 * StatesDM

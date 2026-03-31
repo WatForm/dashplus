@@ -19,6 +19,7 @@ public final class AlloyImportPara extends AlloyPara {
     public final List<AlloySigRefExpr> sigRefs;
     public final Optional<AlloyQnameExpr> asQname;
 
+    // import qname [sigName1, sigName2] as asQname {}
     public AlloyImportPara(
             Pos pos,
             boolean isPrivate,
@@ -33,6 +34,7 @@ public final class AlloyImportPara extends AlloyPara {
         reqNonNull(nullField(pos, this), this.qname, this.sigRefs, this.asQname);
     }
 
+    // import qname [sigName1, sigName2] as asQname {}
     public AlloyImportPara(
             boolean isPrivate,
             AlloyQnameExpr qname,

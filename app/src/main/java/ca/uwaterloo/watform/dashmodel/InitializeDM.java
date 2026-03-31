@@ -198,6 +198,7 @@ public class InitializeDM extends PredsDM {
         List<DashVarDecls> varDeclsList = s.varDecls();
 
         // put in var table with FQN
+
         for (DashVarDecls v : varDeclsList) {
             for (String x : v.getNames()) {
                 if (DashFQN.isFQN(x)) {

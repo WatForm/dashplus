@@ -40,7 +40,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             // scopesUsed0, scopeUsed1, etc
             if (dm.hasConcurrency()) {
                 decls.add(
-                        // scopesUsedi: p0 -> p1 -> p2 -> set Scopes
+                        // scopesUsedi: p0 -> p1 -> p2 -> set StateLabel
                         this.dsl.AlloyDeclArrowStringList(
                                 this.dsl.nameNum(D2AStrings.scopesUsedName, i),
                                 // p0 -> p1 -> p2 -> set Scopes
@@ -49,7 +49,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                                         cop,
                                         // some Scopes
                                         // has to be "set", b/c default is "one"
-                                        D2AStrings.scopeLabelName)));
+                                        D2AStrings.stateLabelName)));
             }
             // conf0, conf1, etc.
             if (!dm.hasOnlyOneState()) {
@@ -99,8 +99,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         }
 
         decls.addAll(this.varFieldsTraces());
-        // TODO add this functionality
-        // decls.addAll(this.bufferFieldsTraces());
+        decls.addAll(this.bufferFieldsTraces());
 
         // add the snapshot signature
         this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
@@ -110,7 +109,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         if (!this.isElectrum) {
             List<AlloyDecl> decls = this.dsl.emptyDeclList();
             decls.addAll(varFieldsTraces());
-            // decls.addAll(bufferFieldsTraces());
+            decls.addAll(bufferFieldsTraces());
             // add the snapshot signature
             this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
         }
@@ -120,23 +119,21 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
     private List<AlloyDecl> varFieldsTraces() {
 
         List<AlloyDecl> decls = this.dsl.emptyDeclList();
-        for (String vfqn : dm.allVarNames()) {
+        for (String vfqn : this.dm.allVarNames()) {
 
             String vfqnName = DashFQN.translateFQN(vfqn);
-            AlloyQtEnum mul = dm.mul(vfqn); // ONE/LONE etc
-            AlloyExpr varTyp = this.translateExprOnlyGetName(dm.varTyp(vfqn));
+            AlloyQtEnum mul = this.dm.mul(vfqn); // ONE/LONE etc
+            AlloyExpr varTyp = this.translateExprOnlyGetName(this.dm.varTyp(vfqn));
 
-            if (dm.varParams(vfqn).isEmpty()) {
+            if (this.dm.params(vfqn).isEmpty()) {
                 // no params
                 decls.add(new AlloyDecl(vfqnName, mul, varTyp));
             } else {
                 // if params
-                // -> is left assoc
-                // vfqn: set ( (PID1 set->set PID2) set->set PID3 ) set->mul (varType)
-
-                // dm.varParams(vfqn) is [DashParam (stateName, PID), ...]
+                // this.dm.params(vfqn) is [DashParam (stateName, PID), ...]
                 // arrowList is [AlloyVar(PID), ...]
-                List<AlloyExpr> PIDList = mapBy(dm.varParams(vfqn), i -> AlloyVar(i.paramSig));
+                // decl is vfqn: set (((PID1 set->set PID2) set->set PID3)  set->mul (varType))
+                List<AlloyExpr> PIDList = mapBy(this.dm.params(vfqn), i -> AlloyVar(i.paramSig));
                 AlloyExpr arrow = PIDList.get(0); // PID1
                 for (int i = 1; i < PIDList.size(); i++) {
                     //  (PID1 set->set PID2) set->set PID3
@@ -153,21 +150,43 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
     }
 
     // TODO: check for issues above in mul of buffer
-    /*
+
     private List<AlloyDecl> bufferFieldsTraces() {
 
         List<AlloyDecl> decls = this.dsl.emptyDeclList();
-        for (String bfqn : dm.allBufferNames()) {
-            List<AlloyExpr> arrow_list = mapBy(dm.bufferParams(bfqn), i -> AlloyVar(i.paramSig));
-
-            arrow_list.add(this.dsl.bufferIndexVar(dm.bufferIndex(bfqn)));
-            arrow_list.add(AlloyVar(dm.bufferElement(bfqn)));
-
-            decls.add(AlloyDecl(DashFQN.translateFQN(bfqn), AlloyArrowExprList(arrow_list)));
+        for (String bfqn : this.dm.allBufferNames()) {
+            String bfqnName = DashFQN.translateFQN(bfqn);
+            // set (bufferIndex set->set bufferElement)
+            AlloyExpr bufferTyp =
+                    new AlloyArrowExpr(
+                            this.dsl.bufferIndexVar(this.dm.bufferIndex(bfqn)),
+                            AlloyQtEnum.SET,
+                            AlloyQtEnum.SET,
+                            AlloyVar(dm.bufferElement(bfqn)));
+            if (this.dm.params(bfqn).isEmpty()) {
+                // no params
+                // decl is bfqn: set (bufferIndex set->set bufferElement)
+                decls.add(new AlloyDecl(bfqnName, AlloyQtEnum.SET, bufferTyp));
+            } else {
+                // if params
+                // this.dm.params(vfqn) is [DashParam (stateName, PID), ...]
+                // arrowList is [AlloyVar(PID), ...]
+                // decl is bfqn: set (((PID1 set->set PID2) set->set PID3)  set->set (set
+                // (bufferIndex set->set bufferElement) )
+                List<AlloyExpr> PIDList = mapBy(dm.bufferParams(bfqn), i -> AlloyVar(i.paramSig));
+                AlloyExpr arrow = PIDList.get(0); // PID1
+                for (int i = 1; i < PIDList.size(); i++) {
+                    //  (PID1 set->set PID2) set->set PID3
+                    arrow =
+                            new AlloyArrowExpr(
+                                    arrow, AlloyQtEnum.SET, AlloyQtEnum.SET, PIDList.get(i));
+                }
+                arrow = new AlloyArrowExpr(arrow, AlloyQtEnum.SET, AlloyQtEnum.SET, bufferTyp);
+                decls.add(new AlloyDecl(bfqnName, AlloyQtEnum.SET, arrow));
+            }
         }
         return decls;
     }
-    */
 
     private void addSnapshotSigElectrum() {
         /* TODO

@@ -33,9 +33,8 @@ public class ResolveDM extends ResolverVisDM {
         // myprint("==== BEFORE RESOLUTION ====");
         // this.debug();
         resolveVarTable();
+        resolveBufferTable();
         stateRecurseForTransInitsInvs(d.stateRoot, null);
-        // buffer table does not need resolving
-        // because buf[element] has no expression in it
 
         // event table does not need resolving
         // because it has no expressions in it
@@ -56,7 +55,7 @@ public class ResolveDM extends ResolverVisDM {
             String sfqn = DashFQN.chopPrefixFromFQN(vfqn);
             // setter
 
-            // Do resolve the varTyp for parameters;
+            // resolve the varTyp for parameters;
             // varTyp reference other var decls that
             // will be in the snapshot
             // however when we TRANSLATE, this has to
@@ -67,6 +66,15 @@ public class ResolveDM extends ResolverVisDM {
             // x:   .... y ...
             // but we do have to put y in terms of its FQN
             setVarTyp(vfqn, resolveVar(varTyp(vfqn), sfqn));
+        }
+    }
+
+    private void resolveBufferTable() {
+        for (String bfqn : allBufferNames()) {
+            // no resolving needed, but it must be a sig in Alloy
+            if (!this.containsSig(this.bufferElement(bfqn))) {
+                Error.bufferElementMustBeSig(this.bufferPos(bfqn), this.bufferElement(bfqn));
+            }
         }
     }
 
@@ -265,6 +273,10 @@ public class ResolveDM extends ResolverVisDM {
 
         public static void nameOverlap(List<String> s) {
             throw new Reporter.ErrorUser("Same name used for multiple purposes: " + s);
+        }
+
+        public static void bufferElementMustBeSig(Pos pos, String bufferElement) {
+            throw new Reporter.ErrorUser(pos + " buffer element must be a sig: " + bufferElement);
         }
     }
 }

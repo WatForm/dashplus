@@ -85,9 +85,9 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                     mapBy(filterBy(exited, x -> x.hasNumParams(j)), y -> y.asAlloyArrow());
             // both ent and exi could be empty at this level
             AlloyExpr e;
-            if (!exi.isEmpty()) e = AlloyDiff(this.dsl.curConf(i), AlloyUnionList(exi));
+            if (!exi.isEmpty()) e = AlloyDiff(this.dsl.curConf(i), AlloyUnion(exi));
             else e = this.dsl.curConf(i);
-            if (!ent.isEmpty()) e = AlloyUnion(e, AlloyUnionList(ent));
+            if (!ent.isEmpty()) e = AlloyUnion(e, AlloyUnion(ent));
             body.add(AlloyEqual(this.dsl.nextConf(i), e));
         }
     }
@@ -158,8 +158,8 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             decls = this.dsl.emptyDeclList();
             args = this.dsl.emptyExprList();
 
-            List<DashParam> params = this.dm.varParams(x);
-            // buffer params?
+            List<DashParam> params = this.dm.params(x);
+
             for (DashParam p : params) {
                 decls.add(p.asAlloyDecl());
                 args.add(p.asAlloyVar());
@@ -187,7 +187,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         for (String x : intVarsBuffersThatDontChange) {
             decls = this.dsl.emptyDeclList();
             args = this.dsl.emptyExprList();
-            for (DashParam p : this.dm.varParams(x)) {
+            for (DashParam p : this.dm.params(x)) {
                 decls.add(p.asAlloyDecl());
                 args.add(p.asAlloyVar());
             }
@@ -310,8 +310,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                         mapBy(
                                 filterBy(sU, x -> x.hasNumParams(j)),
                                 y -> this.dsl.asScope(y).asAlloyArrow());
-                if (!u.isEmpty())
-                    case3.add(AlloyEqual(this.dsl.nextScopesUsed(i), AlloyUnionList(u)));
+                if (!u.isEmpty()) case3.add(AlloyEqual(this.dsl.nextScopesUsed(i), AlloyUnion(u)));
             }
         }
         return AlloyAndList(case3);
@@ -360,7 +359,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                                 filterBy(sU, x -> x.hasNumParams(j)),
                                 y -> this.dsl.asScope(y).asAlloyArrow());
                 e = this.dsl.curScopesUsed(i);
-                if (!u.isEmpty()) e = AlloyUnion(e, AlloyUnionList(u));
+                if (!u.isEmpty()) e = AlloyUnion(e, AlloyUnion(u));
                 case4.add(AlloyEqual(this.dsl.nextScopesUsed(i), e));
             }
         }
@@ -374,7 +373,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // might just return true if allVarBuffers is empty
         return AlloyAndList(
                 mapBy(
-                        filterBy(allVarBuffers, x -> !this.dm.isIntVar(x)),
+                        filterBy(allVarBuffers, x -> !this.dm.isInt(x)),
                         y -> this.AlloyVarDoesNotChange(y)));
     }
 
@@ -439,11 +438,11 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                 AlloyEqual(
                         AlloyJoinList(
                                 newListWithOneMore(
-                                        this.dsl.curParamVars(this.dm.varParams(x)),
+                                        this.dsl.curParamVars(this.dm.params(x)),
                                         AlloyVar(DashFQN.translateFQN(x)))),
                         AlloyJoinList(
                                 newListWithOneMore(
-                                        this.dsl.nextParamVars(this.dm.varParams(x)),
+                                        this.dsl.nextParamVars(this.dm.params(x)),
                                         AlloyVar(DashFQN.translateFQN(x)))));
         if (this.dm.varParams(x).isEmpty()) return e;
         else return AlloyAllVars(this.dsl.paramDecls(this.dm.allParams()), e);
@@ -504,9 +503,10 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
     }
 
     private boolean hasSpecificParamValues(DashRef r) {
-        // only for variables for now
+        // only for variables or buffers
         List<? extends AlloyExpr> actualPValues = r.paramValues;
-        List<AlloyExpr> genericPValues = this.dsl.paramVars(this.dm.varParams(r.name));
+        List<AlloyExpr> genericPValues = this.dsl.paramVars(this.dm.params(r.name));
+        ;
 
         assert (genericPValues.size() == actualPValues.size());
 

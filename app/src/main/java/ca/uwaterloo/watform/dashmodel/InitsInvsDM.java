@@ -24,6 +24,26 @@ public class InitsInvsDM extends BaseDM {
         super(d);
     }
 
+    /*
+    protected boolean equal(InitsInvsDM other) {
+        return
+            boolean check =
+                equals(this.super(), other.super()) &&
+                this.initsR.keySet() == other.initsR.keySet() &&
+                this.invsR.keySet() == other.invsR.keySet();
+            if (!check) return false;
+            for (String ifqn: this.initsR.keySet()) {
+                if (!equal(this.initsR.get(ifqn), other.initsR.get(ifqn)))
+                    return false;
+            }
+            for (String ifqn: this.invsR.keySet()) {
+                if (!equal(this.invsR.get(ifqn), other.invsR.get(ifqn)))
+                    return false;
+            }
+            return true;
+    }
+    */
+
     public List<AlloyExpr> initsR() {
         // returns all of them from all states
         return initsR.values().stream().flatMap(Collection::stream).collect(Collectors.toList());

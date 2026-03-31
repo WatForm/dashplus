@@ -15,7 +15,7 @@ public final class AlloyQnameExpr extends AlloyVarExpr
         implements AlloySigRefExpr, AlloyScopableExpr {
     public final List<AlloyVarExpr> vars;
 
-    public AlloyQnameExpr(Pos pos, List<AlloyVarExpr> vars) {
+    public AlloyQnameExpr(Pos pos, List<? extends AlloyVarExpr> vars) {
         super(pos, vars.stream().map(v -> v.label).collect(Collectors.joining(SLASH)));
         this.vars = Collections.unmodifiableList(vars);
         if (!vars.isEmpty()) {
@@ -34,7 +34,7 @@ public final class AlloyQnameExpr extends AlloyVarExpr
         reqNonNull(nullField(pos, this), this.vars);
     }
 
-    public AlloyQnameExpr(List<AlloyVarExpr> vars) {
+    public AlloyQnameExpr(List<? extends AlloyVarExpr> vars) {
         this(Pos.UNKNOWN, vars);
     }
 

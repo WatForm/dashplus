@@ -86,6 +86,10 @@ public class AlloyModelInitialize {
                 || commands.contains(alloyId);
     }
 
+    public boolean containsSig(String name) {
+        return sigs.contains(new AlloyId(name));
+    }
+
     public <T extends AlloyPara> List<T> getParas(Class<T> typeToken) {
         return this.patternMatch(typeToken).getAllParas();
     }

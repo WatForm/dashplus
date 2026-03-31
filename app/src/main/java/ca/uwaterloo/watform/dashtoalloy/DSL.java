@@ -129,6 +129,11 @@ public class DSL {
         return AlloyVar(D2AStrings.bufferIndexName + i);
     }
 
+    // bufIdex0
+    public String bufferIndexSig(int i) {
+        return D2AStrings.bufferIndexName + i;
+    }
+
     // stable
     public AlloyQnameExpr stable() {
         return AlloyVar(D2AStrings.stableName);

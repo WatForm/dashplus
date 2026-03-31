@@ -22,6 +22,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -106,12 +107,28 @@ public class AlloyModel extends AlloyModelResolve {
                         null));
     }
 
+    // adding: sig child in parent {}
+    public void addInSig(String child, List<AlloySigRefExpr> parentExprs) {
+        this.addPara(
+                new AlloySigPara(
+                        Collections.emptyList(),
+                        List.of(new AlloyQnameExpr(child)),
+                        new AlloySigPara.In(parentExprs),
+                        Collections.emptyList(),
+                        null));
+    }
+
     public void addPred(String name, List<AlloyDecl> decls, List<AlloyExpr> eList) {
         this.addPara(new AlloyPredPara(new AlloyQnameExpr(name), decls, new AlloyBlock(eList)));
     }
 
     public void addFact(String name, List<AlloyExpr> eList) {
         this.addPara(new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(eList)));
+    }
+
+    public void addFact(String name, AlloyExpr expr) {
+        this.addPara(
+                new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(Arrays.asList(expr))));
     }
 
     public void addImport(List<String> names, String sigName, String asName) {

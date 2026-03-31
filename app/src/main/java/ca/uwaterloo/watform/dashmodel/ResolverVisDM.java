@@ -210,7 +210,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         }
         // something defined as a predicate with the Dash module
         // TODO: check on this logic
-        if (containsPred(m)) {
+        if (this.containsPred(m)) {
             // best match is a predicate name
             // has to be treated a little differently
             // because does not have params and have to put its exp
@@ -223,12 +223,14 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             return ret;
         }
 
-        // now m is one match from var/state/event table
+        // now m is one match from var/buffer/state/event table
         List<DashParam> m_params;
         if (kind == DashRefKind.STATE) m_params = stateParams(m);
         else if (kind == DashRefKind.EVENT) m_params = eventParams(m);
-        else m_params = varParams(m);
-
+        else {
+            // buffer or var
+            m_params = this.params(m);
+        }
         // parameters from enclosing state of this element
         List<? extends AlloyExpr> sfqn_param_vals = mapBy(stateParams(sfqn), x -> x.asAlloyVar());
         // these must be values p_Statename
@@ -302,12 +304,12 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // TODO: this may be repetitive as the same
             // states are declared within multiple regions
             for (String x : region(sfqn)) {
-                region.addAll(eventsWithinState(x));
+                region.addAll(this.eventsWithinState(x));
             }
         } else if (kind == DashStrings.DashRefKind.VAR) {
             for (String x : region(sfqn)) {
-                region.addAll(varsOfState(x));
-                region.addAll(buffersOfState(x));
+                region.addAll(this.varsOfState(x));
+                region.addAll(this.buffersOfState(x));
             }
             region.addAll(allPredNames());
         }
@@ -364,7 +366,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     @Override
     public AlloyExpr visit(AlloyUnaryExpr unaryExpr) {
         if (unaryExpr.op == AlloyStrings.PRIME) {
-            // can only apply a prime to a var
+            // can only apply a prime to a var or a buffer
             // this should be not allowed in parsing
             assert (unaryExpr.sub instanceof AlloyQnameExpr || unaryExpr.sub instanceof VarDashRef);
             if (!this.nextOk) {
@@ -376,7 +378,13 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // must be an internal VarDashRef (no other kind of
             // value can be primed)
             if (!(newExpr instanceof DashRef)) cantNextNonDynamicVarError(unaryExpr);
-            else if (isEnvVar(((DashRef) newExpr).name)) cantNextEnvVarError(newExpr);
+            else {
+                // is DashRef
+                String name = ((DashRef) newExpr).name;
+                if (this.containsVar(name) && this.isEnvVar(name)) cantNextEnvVarBufError(newExpr);
+                else if (this.containsBuffer(name) && this.isEnvBuffer(name))
+                    cantNextEnvVarBufError(newExpr);
+            }
             // return DashRef(..., isNext)
             return ((VarDashRef) newExpr).makeNext();
         }
@@ -570,7 +578,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
                 "Src/Dest of trans is unknown: " + "trans " + tfqn + " " + t + " " + x);
     }
 
-    public void cantNextEnvVarError(AlloyExpr expr) {
+    public void cantNextEnvVarBufError(AlloyExpr expr) {
         throw new Reporter.ErrorUser(
                 expr.pos, " Env var/buffer cannot be primed: " + expr.toString());
     }

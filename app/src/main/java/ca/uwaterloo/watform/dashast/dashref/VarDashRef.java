@@ -1,3 +1,7 @@
+/*
+    for vars or buffers -- DashRefs used in expressions
+*/
+
 package ca.uwaterloo.watform.dashast.dashref;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;

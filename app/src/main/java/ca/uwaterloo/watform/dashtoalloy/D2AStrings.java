@@ -10,7 +10,7 @@ public final class D2AStrings {
     // used for translation to Alloy
 
     // public static final String utilOrderingName = "util/ordering";
-    // public static final String utilName = "util";
+    public static final String utilName = "util";
     public static final String tracesName = "traces";
     // public static final String booleanName = "traces";
     // public static final String utilTracesName = "util/traces";
@@ -19,7 +19,7 @@ public final class D2AStrings {
     public static final String tracesLastName = "last";
     public static final String tracesBackName = "back";
 
-    public static final String utilBufferName = "util/buffer";
+    public static final String utilBufferName = "buffer";
 
     public static final String tcmcName = "tcmc";
     public static final String utilTcmcPathName = "util/tcmc";
@@ -65,7 +65,7 @@ public final class D2AStrings {
     // public static final String noTransName = "NO_TRANS";
     public static final String identifierName = DshPrefix + "Ids";
     public static final String bufferName = DshPrefix + "Buffer";
-    public static final String scopeSuffix = "Scope";
+    public static final String scopeSuffix = "_Scope";
 
     // field names
     public static final String confName = dsh_prefix + "conf";
@@ -74,12 +74,12 @@ public final class D2AStrings {
     public static final String transTakenName = dsh_prefix + "taken";
     // predicate names
     // public static final String tName = "dsh_t";
-    public static final String preName = "_pre";
-    public static final String postName = "_post";
+    public static final String preName = dsh_prefix + "_pre";
+    public static final String postName = dsh_prefix + "_post";
     // public static final String semanticsName = "_semantics";
-    public static final String testIfNextStableName = "_nextIsStable";
-    public static final String enabledAfterStepName = "_enabledAfterStep";
-    public static final String allSnapshotsDiffName = "allSnapshotsDiff";
+    public static final String testIfNextStableName = dsh_prefix + "_nextIsStable";
+    public static final String enabledAfterStepName = dsh_prefix + "_enabledAfterStep";
+    public static final String allSnapshotsDiffName = dsh_prefix + "allSnapshotsDiff";
     // variable/parameter names
     // how to name parameter variables
     public static final String curName = "s";
@@ -91,6 +91,8 @@ public final class D2AStrings {
 
     // strings used internally
     public static final String processRef = "$$PROCESSREF$$";
+
+    public static final String paramsFact = dsh_prefix + "paramsFact";
 
     public static final String prime(final String a) {
         return a + "'";

@@ -262,6 +262,7 @@ public class StatesDM extends TransDM {
 
     public List<DashRef> rootLeafStatesEntered() {
         List<AlloyExpr> x = new ArrayList<AlloyExpr>();
+        // empty parameter list for root state
         return leafStatesEntered(new StateDashRef(this.rootName, x));
     }
 
@@ -454,18 +455,19 @@ public class StatesDM extends TransDM {
         if (isLeaf(s.name)) r.add(s);
         else {
             // enter every default below
-            // if enter one c/p state enter all
-            // might be one (if o) or many (if c/p)
+            // if enter one con/par state enter all
+            // might be one (if or) or many (if con/par)
             List<String> defaults = defaults(s.name);
             assert (defaults != null);
-            for (String ch : defaults) {
+            for (String deffqn : defaults) {
                 // System.out.println(ch);
                 // enter all copies of the param if a parameterized state
                 List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.paramValues);
-                if (stateHasParams(ch))
-                    for (DashParam p : stateParams(ch))
-                        newParamValues.add(new AlloyNameExpr(s.pos, p.paramSig));
-                r.addAll(leafStatesEntered(new StateDashRef(ch, newParamValues)));
+                if (stateHasParam(deffqn))
+                    // this is basically a paramVar, but since this function
+                    // is in DashModel, we don't want to use our DSL
+                    newParamValues.add(this.stateParam(deffqn).asAlloyVar());
+                r.addAll(leafStatesEntered(new StateDashRef(deffqn, newParamValues)));
             }
         }
         return r;

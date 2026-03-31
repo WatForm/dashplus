@@ -113,6 +113,7 @@ public class VarsDM extends StatesDM {
 
     public void addVar(
             String vfqn, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
+        System.out.println("added: " + vfqn);
         addVar(Pos.UNKNOWN, vfqn, k, prms, mul, t);
     }
 

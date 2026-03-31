@@ -397,6 +397,7 @@ public class Main implements Callable<Integer> {
             Integer cmdIdx)
             throws IOException {
         AlloyModel am = new DashToAlloy(dm, opt).translate();
+
         if (writeOnly) {
             String alloyFileName = outputFileNamePrefix + "-" + opt + ".als";
             Files.writeString(fileFromString(alloyFileName), am.toString());
