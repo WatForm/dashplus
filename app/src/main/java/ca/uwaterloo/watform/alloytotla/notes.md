@@ -389,3 +389,10 @@ separate class for arrowexpresions and augmented arrowexpressions
 
 
 quantifiers - just a composition of a multiplicity with a comprehension set
+
+## Cross products:
+
+- everythig is treated as a list, for flatness
+
+
+NOTE: ignore when => is used after a command, assume the list length is one
