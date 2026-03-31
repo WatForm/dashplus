@@ -2,7 +2,7 @@
 set -e  
 
 echo "Downloading zip"
-rm catalyst-corpus.zip
+rm -f catalyst-corpus.zip
 curl -L -o catalyst-corpus.zip https://github.com/WatForm/dashplus/releases/download/catalyst-corpus-v1/catalyst-corpus.zip
 
 echo "Unzipping"
