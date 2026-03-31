@@ -9,7 +9,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloytotla.AlloyToTla;
+import ca.uwaterloo.watform.alloytotla.AlloyToTlaOld;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtotla.*;
@@ -198,6 +198,9 @@ public class Main implements Callable<Integer> {
                 String fullFileName = absolutePath.toString();
                 String outputFileNamePrefix =
                         fullFileName.substring(0, fullFileName.lastIndexOf("."));
+                String tlaModuleNameGen = absolutePath.getFileName().toString();
+                String tlaModuleName =
+                        tlaModuleNameGen.substring(0, tlaModuleNameGen.lastIndexOf("."));
                 if (!Files.exists(absolutePath)) {
                     dashOutput("File does not exist: " + fullFileName);
                     break;
@@ -210,7 +213,8 @@ public class Main implements Callable<Integer> {
                     dashOutput("Input: " + fullFileName);
                     AlloyModel am = parseToModel(absolutePath);
                     if (tla && !xml) {
-                        runAlloyToTla(am, outputFileNamePrefix, cmdIdx, verbose, debug);
+                        runAlloyToTla(
+                                am, outputFileNamePrefix, tlaModuleName, cmdIdx, verbose, debug);
                     } else if (xml) {
                         runCheckAlloyInstanceTla(am, cliConf.xmlFileName);
                     } else {
@@ -236,7 +240,13 @@ public class Main implements Callable<Integer> {
                         }
                         if (tla) {
                             // needs to take cmdIdx
-                            runDashToTla(dm, outputFileNamePrefix, cmdIdx, verbose, debug);
+                            runDashToTla(
+                                    dm,
+                                    outputFileNamePrefix,
+                                    tlaModuleName,
+                                    cmdIdx,
+                                    verbose,
+                                    debug);
                         } else if (predAbs) {
                             runPredAbs(fullFileName, dm, cmdIdx);
                         } else {
@@ -283,13 +293,15 @@ public class Main implements Callable<Integer> {
     private static void runAlloyToTla(
             AlloyModel am,
             String outputFileNamePrefix,
+            String moduleName,
             Integer cmdIdx,
             Boolean verbose,
             Boolean debug)
             throws IOException {
         // outputFileNamePrefix is the module name
         // TODO MKJ - this should take the cmd
-        TlaModel tlaModel = AlloyToTla.translate(am, outputFileNamePrefix, verbose, debug);
+
+        TlaModel tlaModel = AlloyToTlaOld.translate(am, moduleName, verbose, debug);
 
         String tlaFileName = outputFileNamePrefix + ".tla";
         String cfgFileName = outputFileNamePrefix + ".cfg";
@@ -344,6 +356,7 @@ public class Main implements Callable<Integer> {
     private static void runDashToTla(
             DashModel dm,
             String outputFileNamePrefix,
+            String moduleName,
             Integer cmdIdx,
             Boolean verbose,
             Boolean debug)
@@ -354,7 +367,7 @@ public class Main implements Callable<Integer> {
 
         // outputFileNamePrefix is the module name
         // TODO MKJ add cmd as argument here
-        TlaModel tlaModel = DashToTla.translate(dm, outputFileNamePrefix, true, verbose, debug);
+        TlaModel tlaModel = DashToTla.translate(dm, moduleName, true, verbose, debug);
         String tlaFileName = outputFileNamePrefix + ".tla";
         String cfgFileName = outputFileNamePrefix + ".cfg";
         Files.writeString(fileFromString(tlaFileName), tlaModel.moduleCode());

@@ -29,6 +29,12 @@ public class CreateHelper {
         return foldLeft(operands.subList(1, n), TlaUnionSet::new, operands.get(0));
     }
 
+    public static TlaExp repeatedProductSet(List<? extends TlaExp> operands) {
+        int n = operands.size();
+        if (n == 0) return TlaNullSet();
+        return foldLeft(operands.subList(1, n), TlaProductSet::new, operands.get(0));
+    }
+
     public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
         if (operands.size() == 0) return TlaTrue();
         return TlaAndList(operands);

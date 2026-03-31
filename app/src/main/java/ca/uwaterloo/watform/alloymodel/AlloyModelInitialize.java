@@ -1,6 +1,9 @@
 package ca.uwaterloo.watform.alloymodel;
 
+import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
+
 import ca.uwaterloo.watform.alloyast.AlloyFile;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyAssertPara;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyEnumPara;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
@@ -103,6 +106,18 @@ public class AlloyModelInitialize {
         List<AlloyCmdPara> cmdParas = this.getParas(AlloyCmdPara.class);
         if (n < 0 || n >= cmdParas.size()) return Optional.empty();
         else return Optional.of(cmdParas.get(n));
+    }
+
+    public Optional<AlloyQnameExpr> getModuleName() {
+        List<AlloyModulePara> module = this.modules.getAllParas();
+        if (module.size() > 1) {
+            throw moduleMustBeUnique(module.get(0).pos, module.get(1).pos);
+        }
+        if (module.size() == 0) {
+            return Optional.empty();
+        } else {
+            return Optional.of(module.getFirst().qname);
+        }
     }
 
     @Override

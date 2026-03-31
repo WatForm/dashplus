@@ -23,4 +23,9 @@ public final class AlloyModelError extends DashPlusException {
     public static AlloyModelError paraDNE(String name) {
         return new AlloyModelError("The paragraph with " + name + " does not exist. ");
     }
+
+    public static AlloyModelError moduleMustBeUnique(Pos pos1, Pos pos2) {
+        return new AlloyModelError(
+                List.of(pos1, pos2), "AlloyModel can only contain one Module declaration: ");
+    }
 }

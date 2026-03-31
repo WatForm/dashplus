@@ -1,10 +1,12 @@
 package ca.uwaterloo.watform.alloymodel;
 
+import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.AlloyId;
+import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -52,6 +54,9 @@ public class AlloyModelTable<T extends AlloyPara> {
      * @param para
      */
     public void addPara(T para) {
+        if (para instanceof AlloyModulePara && !this.mp.isEmpty()) {
+            throw moduleMustBeUnique(para.pos, this.getAllParas().getFirst().pos);
+        }
         AlloyId alloyId = para.getId();
         if (alloyId.name == null || alloyId.name.isBlank()) {
             this.li.add(para);

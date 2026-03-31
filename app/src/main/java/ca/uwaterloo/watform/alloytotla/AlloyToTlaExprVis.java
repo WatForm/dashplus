@@ -14,6 +14,8 @@ import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
 
@@ -129,7 +131,35 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
     @Override
     public TlaExp visit(AlloyCphExpr comprehensionExpr) {
 
-        throw ImplementationError.notSupported("Unimplemented method 'visit' for cph");
+        /*
+        alloy:
+        {x1: e1, x2: e2, ... | F}
+        F is optional, if it is null then it is a tautology
+        F is a boolean condition
+        it results in the set of tuples (x1,x2...) where x1 is drawn from e1, x2 from e2 and so on, such that F is true
+
+        TLA:
+        set map {exp : v \in S}
+        set filter  {v \in S : exp}
+
+        {x1: e1 | F} is translated into {x1 \in e1 : F}
+        {x1: e1, x2 : e2 | F} translated into {<<x1,x2>> \in e1 \X e2 : F}
+        */
+
+        var vars = mapBy(comprehensionExpr.decls, d -> TlaVar(d.qnames.get(0).toString()));
+        List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> visit(d.expr));
+
+        var product = repeatedProductSet(expressions);
+
+        var head =
+                vars.size() == 1
+                        ? TlaQuantOpHeadFlat(vars, product)
+                        : TlaQuantOpHeadTuple(vars, product);
+
+        var condition = new AtomicReference<TlaExp>(TlaTrue());
+        comprehensionExpr.body.ifPresent(e -> condition.set(visit(e)));
+
+        return TlaSetFilter(head, condition.get());
     }
 
     @Override

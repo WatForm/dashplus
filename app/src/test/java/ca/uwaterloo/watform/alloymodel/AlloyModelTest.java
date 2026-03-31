@@ -13,6 +13,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.*;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.*;
@@ -360,5 +362,21 @@ public class AlloyModelTest {
         DashModel dm = (DashModel) parseToModel(p);
         assertTrue(!dm.toString().strip().isEmpty());
         assertTrue(dm.copy().toString().strip().isEmpty());
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("AlloyModel.getModuleName()")
+    public void test14() {
+        AlloyModel model = new AlloyModel();
+        Optional<AlloyQnameExpr> qname = model.getModuleName();
+        assertTrue(qname.isEmpty());
+        String label = "mod1";
+        AlloyModulePara module =
+                new AlloyModulePara(new AlloyQnameExpr(label), Collections.emptyList());
+        model.addPara(module);
+        qname = model.getModuleName();
+        assertEquals(qname.get().label, label);
+        assertThrows(AlloyModelError.class, () -> model.addPara(module));
     }
 }
