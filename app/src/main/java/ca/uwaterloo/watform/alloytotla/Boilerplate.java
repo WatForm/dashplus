@@ -62,6 +62,7 @@ public class Boilerplate {
         tlaModel.addDefn(inner_product_filter());
         tlaModel.addDefn(inner_product());
         tlaModel.addDefn(relational_override());
+        tlaModel.addDefn(cross());
     }
 
     public static TlaAppl _SOME(TlaExp e) {
@@ -111,6 +112,20 @@ public class Boilerplate {
 
     public static TlaAppl _INNER_PRODUCT(TlaExp r1, TlaExp r2) {
         return TlaAppl(INNER_PRODUCT, Arrays.asList(r1, r2));
+    }
+
+    public static TlaAppl _CROSS(TlaExp r1, TlaExp r2) {
+        return TlaAppl(CROSS, Arrays.asList(r1, r2));
+    }
+
+    private static TlaDefn cross() {
+        // _cross(R1,R2) = {e1 \o e2 : <<e1,e2>> \in R1 \X R2}
+        TlaExp body =
+                TlaSetMap(
+                        TlaQuantOpHeadTuple(Arrays.asList(E1(), E2()), TlaProductSet(R1(), R2())),
+                        TlaConcatSeq(E1(), E2()));
+
+        return new TlaDefn(TlaDecl(CROSS, Arrays.asList(R1(), R2())), body);
     }
 
     private static TlaDefn range_restriction() {

@@ -37,6 +37,7 @@ public class AlloyToTlaStrings {
     public static final String INNER_PRODUCT_FILTER =
             SPECIAL + "inner" + SPECIAL + "product" + SPECIAL + "filter";
     public static final String TRANSPOSE = SPECIAL + "transpose";
+    public static final String CROSS = SPECIAL + "cross";
 
     public static final String DOLLAR = "$";
 
