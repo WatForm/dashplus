@@ -830,7 +830,7 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         AlloyExpr expr = exprParseVis.visit(ctx.expr1());
         AlloyQtEnum mul;
         if (expr instanceof AlloyVarExpr) mul = AlloyQtEnum.ONE;
-        else
+        else 
             // this will change to optional with new arity charity
             mul = AlloyQtEnum.SET;
 

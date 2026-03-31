@@ -247,10 +247,7 @@ public class StatesDM extends TransDM {
                 // siblings
                 for (String ch : andChildren) {
                     nP = new ArrayList<AlloyExpr>(d.paramValues);
-                    if (stateHasParams(ch))
-                        // add the entire param set
-                        // make a Var
-                        nP.add(new AlloyNameExpr(dest.pos, stateParam(ch).stateName));
+                    if (stateHasParam(ch)) nP.add(stateParam(ch));
                     r.addAll(leafStatesEntered(new StateDashRef(ch, nP)));
                 }
             }
@@ -466,7 +463,7 @@ public class StatesDM extends TransDM {
                 if (stateHasParam(deffqn))
                     // this is basically a paramVar, but since this function
                     // is in DashModel, we don't want to use our DSL
-                    newParamValues.add(this.stateParam(deffqn).asAlloyVar());
+                    newParamValues.add(this.stateParam(deffqn));
                 r.addAll(leafStatesEntered(new StateDashRef(deffqn, newParamValues)));
             }
         }

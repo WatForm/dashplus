@@ -21,6 +21,11 @@
     * the parser has separate rules for a decl within a sig (the first case above)
      and a decl with default mul ONE (the second, third, and fourth cases above)
 
+    * sig A {
+        f: seq J
+    }
+    the decl for f cannot have a multiplicity.
+
 */
 
 package ca.uwaterloo.watform.alloyast.expr.misc;
@@ -49,7 +54,7 @@ public final class AlloyDecl extends AlloyExpr {
     public final boolean isDisj1;
     public final List<AlloyQnameExpr> qnames;
     public final boolean isDisj2;
-    public final AlloyQtEnum mul;
+    public final Optional<AlloyQtEnum> mul;
     public final AlloyExpr expr;
 
     public AlloyDecl(
@@ -67,15 +72,16 @@ public final class AlloyDecl extends AlloyExpr {
         this.isDisj1 = isDisj1;
         this.qnames = Collections.unmodifiableList(qnames);
         this.isDisj2 = isDisj2;
-        this.mul = mul;
+        this.mul = Optional.ofNullable(mul);
         this.expr = expr;
-        if (this.mul == AlloyQtEnum.EXACTLY) {
+        if (this.mul.orElse(null) == AlloyQtEnum.EXACTLY) {
             if (isVar || isDisj1 || isDisj2) {
                 throw AlloyCtorError.declExactlyCannotHaveDisj(pos);
             }
         }
         reqNonNull(nullField(pos, this), this.qnames, this.mul, this.expr);
-        if (!AlloyQtEnum.MUL.contains(this.mul) && this.mul != AlloyQtEnum.EXACTLY) {
+        if (!AlloyQtEnum.MUL.contains(this.mul.orElse(null))
+                && this.mul.orElse(null) != AlloyQtEnum.EXACTLY) {
             throw AlloyASTImplError.invalidAlloyQtEnum(
                     pos,
                     this.getClass().getSimpleName()
@@ -100,6 +106,10 @@ public final class AlloyDecl extends AlloyExpr {
 
     public AlloyDecl(AlloyQnameExpr qname, AlloyQtEnum mul, AlloyExpr expr) {
         this(Pos.UNKNOWN, false, false, false, Collections.singletonList(qname), false, mul, expr);
+    }
+
+    public AlloyDecl(AlloyQnameExpr qname, AlloyExpr expr) {
+        this(Pos.UNKNOWN, false, false, false, Collections.singletonList(qname), false, null, expr);
     }
 
     public AlloyDecl(String qname, AlloyQtEnum mul, AlloyExpr expr) {
@@ -139,7 +149,7 @@ public final class AlloyDecl extends AlloyExpr {
                             this.isDisj1,
                             Collections.singletonList(qname),
                             this.isDisj2,
-                            this.mul,
+                            this.mul.orElse(null),
                             this.expr));
         }
         return expandedLi;
@@ -152,7 +162,7 @@ public final class AlloyDecl extends AlloyExpr {
         pCtx.append((this.isDisj1 ? DISJ + SPACE : ""));
         pCtx.appendList(this.qnames, COMMA);
         pCtx.append(SPACE);
-        if (this.mul == AlloyQtEnum.EXACTLY) {
+        if (this.mul.orElse(null) == AlloyQtEnum.EXACTLY) {
             pCtx.append(EQUAL);
             pCtx.brk();
         } else {
@@ -161,13 +171,14 @@ public final class AlloyDecl extends AlloyExpr {
             if (this.isDisj2) {
                 pCtx.append(DISJ + SPACE);
             }
-            pCtx.append(this.mul.toString() + SPACE);
+            this.mul.ifPresent(v -> pCtx.append(v.toString() + SPACE));
         }
         this.expr.pp(pCtx);
     }
 
     public AlloyDecl withExpr(AlloyExpr newExpr) {
-        return new AlloyDecl(pos, isVar, isPrivate, isDisj1, qnames, isDisj2, mul, newExpr);
+        return new AlloyDecl(
+                pos, isVar, isPrivate, isDisj1, qnames, isDisj2, mul.orElse(null), newExpr);
     }
 
     @Override
