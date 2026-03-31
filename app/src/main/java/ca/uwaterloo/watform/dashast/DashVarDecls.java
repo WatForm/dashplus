@@ -7,7 +7,6 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
@@ -22,10 +21,8 @@ public final class DashVarDecls extends ASTNode implements DashStateItem {
 
     private static AlloyQtEnum defaultMul(Pos pos, AlloyExpr expr) {
         if (expr instanceof AlloyVarExpr) return AlloyQtEnum.ONE;
-        else if (expr instanceof AlloyArrowExpr) return AlloyQtEnum.SET;
-        else {
-            throw DashASTImplError.missingMul(pos, expr);
-        }
+        // this will change
+        else return AlloyQtEnum.SET;
     }
 
     public DashVarDecls(

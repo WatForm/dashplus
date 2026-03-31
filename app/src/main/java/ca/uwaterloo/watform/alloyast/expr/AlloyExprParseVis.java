@@ -830,11 +830,9 @@ public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
         AlloyExpr expr = exprParseVis.visit(ctx.expr1());
         AlloyQtEnum mul;
         if (expr instanceof AlloyVarExpr) mul = AlloyQtEnum.ONE;
-        else if (expr instanceof AlloyArrowExpr) {
+        else
+            // this will change to optional with new arity charity
             mul = AlloyQtEnum.SET;
-        } else
-            throw AlloyASTImplError.invalidAlloyQtEnum(
-                    expr.toString() + " must be given a multiplicity explicitly");
 
         return new AlloyDecl(new Pos(ctx), isVar, isPrivate, isDisj1, qnames, isDisj2, mul, expr);
     }

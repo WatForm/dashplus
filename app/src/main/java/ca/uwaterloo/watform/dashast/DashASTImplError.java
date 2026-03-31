@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.dashast;
 
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import ca.uwaterloo.watform.utils.Pos;
 
@@ -23,7 +22,9 @@ public final class DashASTImplError extends ImplementationError {
      * @param className
      * @return AlloyASTImplError
      */
+    /*
     public static DashASTImplError missingMul(Pos pos, AlloyExpr expr) {
         return new DashASTImplError(pos, expr.toString() + "must be given a multiplicity.");
     }
+    */
 }
