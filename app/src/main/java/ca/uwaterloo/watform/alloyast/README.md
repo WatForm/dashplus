@@ -1,3 +1,8 @@
+
+# Restrictions compared to Alloy Analyzer (AA)
+- There cannot be more than one command declaration in a command.  The AA accepts run {} ... => check {} ..., but it is not clear what this should mean in terms of command execution.
+
+
 # AlloyCtorError
 - Alloy AST constructors can throw exceptions if the instance are not well-formed
 - These errors can be caught by the caller to treat as feedback for the user (Parser Visitor)

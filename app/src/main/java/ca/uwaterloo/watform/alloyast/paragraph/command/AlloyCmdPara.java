@@ -29,6 +29,9 @@ public final class AlloyCmdPara extends AlloyPara {
         super(pos);
         this.cmdDecls = Collections.unmodifiableList(cmdDecls);
         reqNonNull(nullField(pos, this), this.cmdDecls);
+        if (cmdDecls.size() == 1) {
+            throw new Reporter.ErrorUser(pos, "cannot have more than one command in a paragraph");
+        }
     }
 
     public AlloyCmdPara(List<CommandDecl> cmdDecls) {
