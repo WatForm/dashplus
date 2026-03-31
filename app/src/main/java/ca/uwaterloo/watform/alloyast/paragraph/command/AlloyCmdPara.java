@@ -89,7 +89,7 @@ public final class AlloyCmdPara extends AlloyPara {
         public final Optional<AlloyBlock> constrBlock;
 
         public final Optional<Scope> scope;
-        public final Optional<AlloyNumExpr> number;
+        public final Optional<AlloyNumExpr> expect;
 
         public CommandDecl(
                 Pos pos,
@@ -98,14 +98,14 @@ public final class AlloyCmdPara extends AlloyPara {
                 AlloyQnameExpr invoQname,
                 AlloyBlock constrBlock,
                 Scope scope,
-                AlloyNumExpr number) {
+                AlloyNumExpr expect) {
             super(pos);
             this.cmdType = cmdType;
             this.declQname = Optional.ofNullable(declQname);
             this.invoQname = Optional.ofNullable(invoQname);
             this.constrBlock = Optional.ofNullable(constrBlock);
             this.scope = Optional.ofNullable(scope);
-            this.number = Optional.ofNullable(number);
+            this.expect = Optional.ofNullable(expect);
             if (!this.invoQname.isEmpty() && !this.constrBlock.isEmpty()) {
                 throw AlloyASTImplError.xorFields(
                         pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
@@ -121,7 +121,7 @@ public final class AlloyCmdPara extends AlloyPara {
                     this.invoQname,
                     this.constrBlock,
                     this.scope,
-                    this.number);
+                    this.expect);
         }
 
         public CommandDecl(
@@ -130,8 +130,8 @@ public final class AlloyCmdPara extends AlloyPara {
                 AlloyQnameExpr invoQname,
                 AlloyBlock constrBlock,
                 Scope scope,
-                AlloyNumExpr number) {
-            this(Pos.UNKNOWN, cmdType, declQname, invoQname, constrBlock, scope, number);
+                AlloyNumExpr expect) {
+            this(Pos.UNKNOWN, cmdType, declQname, invoQname, constrBlock, scope, expect);
         }
 
         public CommandDecl(
@@ -174,9 +174,9 @@ public final class AlloyCmdPara extends AlloyPara {
                 this.scope.get().toString(sb, indent);
                 sb.append(AlloyStrings.SPACE);
             }
-            if (!this.number.isEmpty()) {
+            if (!this.expect.isEmpty()) {
                 sb.append(AlloyStrings.EXPECT + AlloyStrings.SPACE);
-                this.number.get().toString(sb, indent);
+                this.expect.get().toString(sb, indent);
             }
         }
 
@@ -200,9 +200,9 @@ public final class AlloyCmdPara extends AlloyPara {
                 this.scope.get().pp(pCtx);
                 pCtx.append(SPACE);
             }
-            if (this.number.isPresent()) {
+            if (this.expect.isPresent()) {
                 pCtx.append(AlloyStrings.EXPECT + AlloyStrings.SPACE);
-                this.number.get().pp(pCtx);
+                this.expect.get().pp(pCtx);
             }
         }
 
@@ -234,7 +234,7 @@ public final class AlloyCmdPara extends AlloyPara {
                     this.invoQname,
                     this.constrBlock,
                     this.scope,
-                    this.number);
+                    this.expect);
         }
 
         @Override
@@ -256,9 +256,9 @@ public final class AlloyCmdPara extends AlloyPara {
             if (scope == null) {
                 if (other.scope != null) return false;
             } else if (!scope.equals(other.scope)) return false;
-            if (number == null) {
-                if (other.number != null) return false;
-            } else if (!number.equals(other.number)) return false;
+            if (expect == null) {
+                if (other.expect != null) return false;
+            } else if (!expect.equals(other.expect)) return false;
             return true;
         }
 
