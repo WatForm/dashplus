@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.alloyinterface.AlloyInterface.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -100,9 +99,16 @@ public class PredAbsUtil {
         am.addPara(
                 new AlloyCmdPara(
                         new AlloyCmdPara.CommandDecl(
-                                AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                new AlloyQnameExpr(pname),
-                                scope)));
+                                AlloyCmdPara.CommandDecl.CmdType.RUN, AlloyVar(pname), scope)));
+        return am.getParas(AlloyCmdPara.class).size();
+    }
+
+    public static int addCheckCmd(
+            String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
+        am.addPara(
+                new AlloyCmdPara(
+                        new AlloyCmdPara.CommandDecl(
+                                AlloyCmdPara.CommandDecl.CmdType.CHECK, AlloyVar(pname), scope)));
         return am.getParas(AlloyCmdPara.class).size();
     }
 }
