@@ -49,7 +49,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                                         cop,
                                         // some Scopes
                                         // has to be "set", b/c default is "one"
-                                        D2AStrings.stateLabelName)));
+                                        D2AStrings.scopeLabelName)));
             }
             // conf0, conf1, etc.
             if (!dm.hasOnlyOneState()) {
