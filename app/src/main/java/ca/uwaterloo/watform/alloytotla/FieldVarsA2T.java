@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.fieldVar;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
@@ -15,9 +15,6 @@ public class FieldVarsA2T extends FactsA2T {
         alloyModel
                 .allSigs()
                 .forEach(
-                        sn ->
-                                alloyModel
-                                        .fieldNames(sn)
-                                        .forEach(fn -> tlaModel.addVar(fieldVar(fn, sn))));
+                        sn -> alloyModel.fieldNames(sn).forEach(fn -> tlaModel.addVar(TlaVar(fn))));
     }
 }

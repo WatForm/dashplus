@@ -8,9 +8,10 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.Qual;
 import ca.uwaterloo.watform.alloytotla.QnameExtractVis;
-
+import ca.uwaterloo.watform.utils.CustomLoggerFactory;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class AlloyModelResolve extends AlloyModelInitialize {
 
@@ -110,7 +111,9 @@ public class AlloyModelResolve extends AlloyModelInitialize {
 
     public List<String> fieldNames(String signame) {
 
-        return new ArrayList<>();
+        Logger l = CustomLoggerFactory.make("AlloyToTla", true);
+        l.info(signame + ": fields are " + sigTable.get(signame).fields);
+        return sigTable.get(signame).fields;
     }
 
     public AlloyModelResolve() {
@@ -196,12 +199,14 @@ public class AlloyModelResolve extends AlloyModelInitialize {
         resolveFieldsInSigs();
     }
 
-    private void resolveFieldsInSigs()
-    {
-        this.fieldTable.keySet().forEach(f -> {
-            var data = fieldTable.get(f);
-            sigTable.get(data.sigParent).fields.add(f);
-        });
+    private void resolveFieldsInSigs() {
+        this.fieldTable
+                .keySet()
+                .forEach(
+                        f -> {
+                            var data = fieldTable.get(f);
+                            sigTable.get(data.sigParent).fields.add(f);
+                        });
     }
 
     private void resolveFields() {
@@ -212,7 +217,8 @@ public class AlloyModelResolve extends AlloyModelInitialize {
                                     f -> {
                                         String sigParent = sp.qnames.get(0).toString();
                                         fieldTable.put(
-                                                f.toString(), new FieldData(sigParent, f.expr));
+                                                f.qnames.get(0).toString(),
+                                                new FieldData(sigParent, f.expr));
                                     });
                         });
     }
