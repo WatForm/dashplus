@@ -5,7 +5,7 @@ import static ca.uwaterloo.watform.dashtotla.DashToTlaHelpers.EVENTS;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
-import ca.uwaterloo.watform.alloytotla.Boilerplate;
+import ca.uwaterloo.watform.alloytotla.BoilerplateA2T;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
@@ -23,7 +23,7 @@ public class SingleEnvEvent {
 
         TlaExp body = TlaTrue();
         if (dashModel.hasEvents())
-            body = Boilerplate._ONE(EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS()));
+            body = BoilerplateA2T._ONE(EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS()));
 
         tlaModel.addDefn(TlaDefn(SINGLE_ENV_INPUT, body));
     }

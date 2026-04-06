@@ -1,6 +1,6 @@
 package ca.uwaterloo.watform.alloyast;
 
-import static ca.uwaterloo.watform.alloytotla.Boilerplate.*;
+import static ca.uwaterloo.watform.alloytotla.BoilerplateA2T.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;

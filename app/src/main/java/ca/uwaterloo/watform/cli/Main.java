@@ -9,7 +9,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloytotla.AlloyToTlaOld;
+import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtotla.*;
@@ -291,7 +291,7 @@ public class Main implements Callable<Integer> {
     }
 
     private static void runAlloyToTla(
-            AlloyModel am,
+            AlloyModel alloyModel,
             String outputFileNamePrefix,
             String moduleName,
             Integer cmdIdx,
@@ -301,7 +301,9 @@ public class Main implements Callable<Integer> {
         // outputFileNamePrefix is the module name
         // TODO MKJ - this should take the cmd
 
-        TlaModel tlaModel = AlloyToTlaOld.translate(am, moduleName, verbose, debug);
+        TlaModel tlaModel = AlloyToTla.getBlankModel(moduleName);
+        AlloyToTla alloyTranslator = new AlloyToTla(alloyModel, tlaModel, verbose, debug);
+        alloyTranslator.translate();
 
         String tlaFileName = outputFileNamePrefix + ".tla";
         String cfgFileName = outputFileNamePrefix + ".cfg";

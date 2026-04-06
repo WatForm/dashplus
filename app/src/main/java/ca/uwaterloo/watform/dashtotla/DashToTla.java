@@ -3,7 +3,6 @@ package ca.uwaterloo.watform.dashtotla;
 import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 
 import ca.uwaterloo.watform.alloytotla.AlloyToTla;
-import ca.uwaterloo.watform.alloytotla.Boilerplate;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
@@ -27,8 +26,6 @@ public class DashToTla {
 
         StandardVars.translate(dashModel, tlaModel);
         if (debug) System.out.println("translated variables");
-
-        Boilerplate.translate(dashModel, tlaModel);
 
         tlaModel.addComment(
                 "State literals, represented as sets of strings. Leaf-states become strings and non-leaf states are composed of their descendants",
