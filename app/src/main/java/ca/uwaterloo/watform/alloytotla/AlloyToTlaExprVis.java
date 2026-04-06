@@ -107,6 +107,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
                     case AlloyUnivExpr _ -> _UNIV();
                     case AlloyIdenExpr _ -> _IDEN();
                     case AlloyNoneExpr _ -> _NONE();
+                    case AlloyQnameExpr e -> TlaAppl(e.label);
                     default -> null;
                 };
 

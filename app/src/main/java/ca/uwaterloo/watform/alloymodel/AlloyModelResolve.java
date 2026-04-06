@@ -7,6 +7,8 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.Qual;
+import ca.uwaterloo.watform.alloytotla.QnameExtractVis;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -107,6 +109,7 @@ public class AlloyModelResolve extends AlloyModelInitialize {
     }
 
     public List<String> fieldNames(String signame) {
+
         return new ArrayList<>();
     }
 
@@ -138,6 +141,7 @@ public class AlloyModelResolve extends AlloyModelInitialize {
         List<String> extendsChildren = null;
         List<String> descs = null; // null when not resolved
         List<String> ances = null;
+        List<String> fields = new ArrayList<>();
 
         @Override
         public String toString() {
@@ -164,10 +168,12 @@ public class AlloyModelResolve extends AlloyModelInitialize {
     private static class FieldData {
         String sigParent;
         AlloyExpr expr;
+        List<String> parentFields;
 
         FieldData(String sigParent, AlloyExpr expr) {
             this.sigParent = sigParent;
             this.expr = expr;
+            this.parentFields = new QnameExtractVis().visit(expr);
         }
 
         @Override
@@ -187,6 +193,15 @@ public class AlloyModelResolve extends AlloyModelInitialize {
         populateParentsChildren(); // second pass, to populate the parents and children
         populateAncestorsDescendants(); // recursive pass, transitively fill table, with memoization
         resolveFields();
+        resolveFieldsInSigs();
+    }
+
+    private void resolveFieldsInSigs()
+    {
+        this.fieldTable.keySet().forEach(f -> {
+            var data = fieldTable.get(f);
+            sigTable.get(data.sigParent).fields.add(f);
+        });
     }
 
     private void resolveFields() {

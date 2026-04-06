@@ -170,7 +170,7 @@ public class BoilerplateA2T extends BaseA2T {
     private static TlaDefn inner_product_filter() {
 
         // e1[Len(e1)] = e2[1]
-        
+
         return new TlaDefn(
                 TlaDecl(INNER_PRODUCT_FILTER, Arrays.asList(E1(), E2())),
                 E1().INDEX(TlaStdLibs.Len(E1())).EQUALS(E2().INDEX(TlaIntLiteral(1))));

@@ -1,7 +1,5 @@
 package ca.uwaterloo.watform.alloytotla;
 
-
-
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.CustomLoggerFactory;
