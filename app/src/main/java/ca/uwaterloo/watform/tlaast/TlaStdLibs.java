@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ca.uwaterloo.watform.utils.ImplementationError;
-
 public class TlaStdLibs extends TlaExp { // enums used for extensibility
 
     /*
@@ -38,14 +36,12 @@ public class TlaStdLibs extends TlaExp { // enums used for extensibility
     @Override
     public String toTLAPlusSnippetCore() {
 
-        return switch(library)
-        {
-            case LIBRARIES.STL_FiniteSets -> TlaStrings.FINITE_SETS ;
+        return switch (library) {
+            case LIBRARIES.STL_FiniteSets -> TlaStrings.FINITE_SETS;
             case LIBRARIES.STL_Naturals -> TlaStrings.NATURALS;
             case LIBRARIES.STL_Integers -> TlaStrings.INTEGERS;
             case LIBRARIES.STL_Sequences -> TlaStrings.SEQUENCES;
         };
-
     }
 
     public static TlaAppl Cardinality(TlaExp arg) {

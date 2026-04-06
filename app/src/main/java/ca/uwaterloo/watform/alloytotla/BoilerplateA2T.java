@@ -45,6 +45,14 @@ public class BoilerplateA2T extends BaseA2T {
         return TlaVar(SPECIAL + "e2");
     }
 
+    public static final TlaVar F1() {
+        return TlaVar(SPECIAL + "f1");
+    }
+
+    public static final TlaVar F2() {
+        return TlaVar(SPECIAL + "f2");
+    }
+
     public static final TlaVar R() {
         return TlaVar(SPECIAL + "R");
     }
@@ -147,14 +155,11 @@ public class BoilerplateA2T extends BaseA2T {
         return new TlaDefn(TlaDecl(DOMAIN_RESTRICTION, Arrays.asList(S(), R())), body);
     }
 
-    /*
-        _ip_map(e1,e2) == SubSeq(e1,1,Len(e1)-1) \o SubSeq(e2,2,Len(e2))
-        _ip_filter(e1,e2) == e1[Len(e1)] = e2[1]
-        _inner_product(R1,R2) == {_join(e1,e2) : <<e1,e2>> \in {<<f1,f2>> \in R1 \X R2 : _ip_filter(f1,f2) } }
-    */
-
     private static TlaDefn inner_product() {
-        TlaExp inner = TlaNullSet(); // todo fill this out
+        TlaExp inner =
+                TlaSetFilter(
+                        TlaQuantOpHeadTuple(Arrays.asList(F1(), F2()), TlaProductSet(R1(), R2())),
+                        TlaAppl(INNER_PRODUCT_FILTER, Arrays.asList(F1(), F2())));
         return new TlaDefn(
                 TlaDecl(INNER_PRODUCT, Arrays.asList(R1(), R2())),
                 TlaSetMap(
@@ -164,12 +169,16 @@ public class BoilerplateA2T extends BaseA2T {
 
     private static TlaDefn inner_product_filter() {
 
+        // e1[Len(e1)] = e2[1]
+        
         return new TlaDefn(
                 TlaDecl(INNER_PRODUCT_FILTER, Arrays.asList(E1(), E2())),
                 E1().INDEX(TlaStdLibs.Len(E1())).EQUALS(E2().INDEX(TlaIntLiteral(1))));
     }
 
     private static TlaDefn inner_product_map() {
+
+        // SubSeq(e1,1,Len(e1)-1) \o SubSeq(e2,2,Len(e2))
         TlaExp left =
                 TlaStdLibs.SubSeq(
                         E1(),
