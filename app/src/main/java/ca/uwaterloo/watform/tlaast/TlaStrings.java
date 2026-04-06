@@ -102,6 +102,7 @@ public final class TlaStrings extends CommonStrings {
     public static final String APPEND = "Append";
     public static final String CONCATENATE = "\\o";
     public static final String CARDINALITY = "Cardinality";
+    public static final String SUBSEQ = "SubSeq";
 
     // Standard Modules
     public static final String BAGS = "Bags";

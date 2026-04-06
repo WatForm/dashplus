@@ -6,40 +6,15 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaConst;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaStdLibs;
-import ca.uwaterloo.watform.tlaast.TlaVar;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.Arrays;
-import java.util.List;
+import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlamodel.*;
+import java.util.*;
 
 public class BoilerplateA2T extends BaseA2T {
 
     public BoilerplateA2T(
             AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
         super(alloyModel, tlaModel, verbose, debug);
-    }
-
-    protected void addBoilerplate() {
-        List<TlaConst> setConsts = mapBy(alloyModel.topLevelSigs(), s -> TlaConst(sigSet(s)));
-
-        tlaModel.addDefn(univ(setConsts));
-        tlaModel.addDefn(none());
-        tlaModel.addDefn(iden());
-        tlaModel.addDefn(some());
-        tlaModel.addDefn(lone());
-        tlaModel.addDefn(one());
-        tlaModel.addDefn(no());
-        tlaModel.addDefn(transpose());
-        tlaModel.addDefn(domain_restriction());
-        tlaModel.addDefn(range_restriction());
-        tlaModel.addDefn(inner_product_map());
-        tlaModel.addDefn(inner_product_filter());
-        tlaModel.addDefn(inner_product());
-        tlaModel.addDefn(relational_override());
     }
 
     private static final TlaVar S() {
@@ -72,6 +47,27 @@ public class BoilerplateA2T extends BaseA2T {
 
     public static final TlaVar R() {
         return TlaVar(SPECIAL + "R");
+    }
+
+    public void addBoilerplate() {
+
+        List<TlaConst> setConsts = mapBy(alloyModel.topLevelSigs(), s -> TlaConst(sigSet(s)));
+
+        tlaModel.addDefn(univ(setConsts));
+        tlaModel.addDefn(none());
+        tlaModel.addDefn(iden());
+        tlaModel.addDefn(some());
+        tlaModel.addDefn(lone());
+        tlaModel.addDefn(one());
+        tlaModel.addDefn(no());
+        tlaModel.addDefn(transpose());
+        tlaModel.addDefn(domain_restriction());
+        tlaModel.addDefn(range_restriction());
+        tlaModel.addDefn(inner_product_map());
+        tlaModel.addDefn(inner_product_filter());
+        tlaModel.addDefn(inner_product());
+        tlaModel.addDefn(relational_override());
+        tlaModel.addDefn(cross());
     }
 
     public static TlaAppl _SOME(TlaExp e) {
@@ -123,6 +119,20 @@ public class BoilerplateA2T extends BaseA2T {
         return TlaAppl(INNER_PRODUCT, Arrays.asList(r1, r2));
     }
 
+    public static TlaAppl _CROSS(TlaExp r1, TlaExp r2) {
+        return TlaAppl(CROSS, Arrays.asList(r1, r2));
+    }
+
+    private static TlaDefn cross() {
+        // _cross(R1,R2) = {e1 \o e2 : <<e1,e2>> \in R1 \X R2}
+        TlaExp body =
+                TlaSetMap(
+                        TlaQuantOpHeadTuple(Arrays.asList(E1(), E2()), TlaProductSet(R1(), R2())),
+                        TlaConcatSeq(E1(), E2()));
+
+        return new TlaDefn(TlaDecl(CROSS, Arrays.asList(R1(), R2())), body);
+    }
+
     private static TlaDefn range_restriction() {
 
         // _range_restrict(R,S) : {e \in R : e[Len(e)] \in S}
@@ -137,6 +147,12 @@ public class BoilerplateA2T extends BaseA2T {
         return new TlaDefn(TlaDecl(DOMAIN_RESTRICTION, Arrays.asList(S(), R())), body);
     }
 
+    /*
+        _ip_map(e1,e2) == SubSeq(e1,1,Len(e1)-1) \o SubSeq(e2,2,Len(e2))
+        _ip_filter(e1,e2) == e1[Len(e1)] = e2[1]
+        _inner_product(R1,R2) == {_join(e1,e2) : <<e1,e2>> \in {<<f1,f2>> \in R1 \X R2 : _ip_filter(f1,f2) } }
+    */
+
     private static TlaDefn inner_product() {
         TlaExp inner = TlaNullSet(); // todo fill this out
         return new TlaDefn(
@@ -147,14 +163,21 @@ public class BoilerplateA2T extends BaseA2T {
     }
 
     private static TlaDefn inner_product_filter() {
+
         return new TlaDefn(
                 TlaDecl(INNER_PRODUCT_FILTER, Arrays.asList(E1(), E2())),
                 E1().INDEX(TlaStdLibs.Len(E1())).EQUALS(E2().INDEX(TlaIntLiteral(1))));
     }
 
     private static TlaDefn inner_product_map() {
+        TlaExp left =
+                TlaStdLibs.SubSeq(
+                        E1(),
+                        TlaIntLiteral(1),
+                        TlaSubtract(TlaStdLibs.Len(E1()), TlaIntLiteral(1)));
+        TlaExp right = TlaStdLibs.SubSeq(E2(), TlaIntLiteral(2), TlaStdLibs.Len(E2()));
         return new TlaDefn(
-                TlaDecl(INNER_PRODUCT_MAP, Arrays.asList(E1(), E2())), TlaConcatSeq(E1(), E2()));
+                TlaDecl(INNER_PRODUCT_MAP, Arrays.asList(E1(), E2())), TlaConcatSeq(left, right));
     }
 
     private static TlaDefn relational_override() {

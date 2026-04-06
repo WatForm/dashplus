@@ -67,4 +67,8 @@ public class TlaStdLibs extends TlaExp { // enums used for extensibility
 
         return new TlaAppl(TlaStrings.APPEND, Arrays.asList(sequence, element));
     }
+
+    public static TlaAppl SubSeq(TlaExp sequence, TlaExp start, TlaExp end) {
+        return new TlaAppl(TlaStrings.SUBSEQ, Arrays.asList(sequence, start, end));
+    }
 }
