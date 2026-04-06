@@ -40,7 +40,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         TlaExp answer =
                 switch (binExpr) {
                     case AlloyAndExpr _ -> TlaAnd(el, er);
-                    case AlloyArrowExpr _ -> TlaProductSet(el, er);
+                    case AlloyArrowExpr _ -> _CROSS(el, er);
                     case AlloyCmpExpr exp ->
                             switch (exp.comp) {
                                 case AlloyCmpExpr.Comp.EQUAL_LESS -> TlaLesserEq(el, er);
