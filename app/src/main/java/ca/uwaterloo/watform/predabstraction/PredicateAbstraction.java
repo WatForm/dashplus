@@ -7,12 +7,15 @@ import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyQuantificationExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyNegExpr;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyNumExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyAssertPara;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashStrings;
@@ -20,6 +23,7 @@ import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashast.dashref.VarDashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.CollectDashRefVis;
+import ca.uwaterloo.watform.dashtoalloy.D2AStrings;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtoalloy.ExprTranslatorVis;
@@ -203,7 +207,7 @@ public class PredicateAbstraction {
         }
     }
 
-    public AlloyExpr createAbsExpr(AlloyExpr expr) {
+    public AlloyExpr createAbsExpr(AlloyExpr expr, boolean cmdflag) {
         // Used to abstract inits, invs, and guards (AlloyExprs in the model that do not have primed
         // vars)
         /*
@@ -219,16 +223,22 @@ public class PredicateAbstraction {
         for (String vname : ABVNameCAFTransMap.keySet()) {
             AlloyExpr caf = ABVNameCAFTransMap.get(vname);
             AlloyExpr v = getVarDashRef(vname);
-            // DashRef.asAlloyVar ??;; new VarDashRef -- subclass of DashRef
             cmdBody.add(caf);
-            if (!PredAbsUtil.checkSAT(
-                    cmdBody, queryModel, false, scope)) { // queryModel, no need for concreteModel
-                exprABVs.add(dsl.AlloyIsFalse(v));
+            if (!PredAbsUtil.checkSAT(cmdBody, queryModel, false, scope)) {
+                if (cmdflag) {
+                    exprABVs.add(exprTranslator.translateExpr(dsl.AlloyIsFalse(v)));
+                } else {
+                    exprABVs.add(dsl.AlloyIsFalse(v));
+                }
             } else {
                 cmdBody.remove(caf);
                 cmdBody.add(AlloyNot(caf));
                 if (!PredAbsUtil.checkSAT(cmdBody, queryModel, false, scope)) {
-                    exprABVs.add(dsl.AlloyIsTrue(v));
+                    if (cmdflag) {
+                        exprABVs.add(exprTranslator.translateExpr(dsl.AlloyIsTrue(v)));
+                    } else {
+                        exprABVs.add(dsl.AlloyIsTrue(v));
+                    }
                 }
             }
         }
@@ -305,6 +315,95 @@ public class PredicateAbstraction {
         }
     }
 
+    private AlloyExpr getCmdBodyExpr() {
+        if (this.cmd == null) {
+            return null;
+        } else {
+            try {
+                AlloyCmdPara.CommandDecl cmdDecl = this.cmd.cmdDecls.get(0);
+                AlloyQnameExpr cmdBodyQname = cmdDecl.invoQname.orElse(null);
+                if (cmdBodyQname == null) {
+                    System.out.println("Unable to get cmd body expr.");
+                    return null;
+                }
+                String vname = cmdBodyQname.vars.get(0).label;
+                if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
+                    AlloyAssertPara p = this.concreteModel.getPara(AlloyAssertPara.class, vname);
+                    return p.block;
+                } else {
+                    AlloyPredPara p = this.concreteModel.getPara(AlloyPredPara.class, vname);
+                    return p.block;
+                }
+            } catch (Exception e) {
+                System.out.println("Unable to get cmd body expr.");
+                return null;
+            }
+        }
+    }
+
+    private int addAbstractCmd() {
+        if (this.cmd != null) {
+            try {
+                AlloyCmdPara.CommandDecl cmdDecl = this.cmd.cmdDecls.get(0);
+                AlloyQnameExpr cmdBodyQname = cmdDecl.invoQname.orElse(null);
+                String vname = cmdBodyQname.vars.get(0).label;
+
+                List<AlloyCmdPara.CommandDecl.Scope.Typescope> ts = this.scope.typescopes;
+                List<AlloyCmdPara.CommandDecl.Scope.Typescope> absTs = new ArrayList<>();
+                for (AlloyCmdPara.CommandDecl.Scope.Typescope t : ts) {
+                    if (t.scopableExpr instanceof AlloyQnameExpr) {
+                        AlloyQnameExpr e = (AlloyQnameExpr) t.scopableExpr;
+                        if (e.vars.get(0).label == D2AStrings.snapshotName) {
+                            absTs.add(t);
+                        }
+                    }
+                }
+                AlloyCmdPara.CommandDecl.Scope absScope;
+                if (absTs.isEmpty()) {
+                    absScope = new AlloyCmdPara.CommandDecl.Scope(new AlloyNumExpr(8), emptyList());
+                } else {
+                    absScope = new AlloyCmdPara.CommandDecl.Scope(absTs);
+                }
+
+                if (cmdBodyQname == null) {
+                    System.out.println("Unable to get cmd body expr: cmdBodyQname is null.");
+                    return -1;
+                }
+
+                if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
+                    AlloyAssertPara p = this.concreteModel.getPara(AlloyAssertPara.class, vname);
+                    List<AlloyExpr> absEList = new ArrayList<>();
+                    for (AlloyExpr e : p.block.exprs) {
+                        if (e instanceof AlloyQuantificationExpr) {
+                            AlloyExpr absE =
+                                    ((AlloyQuantificationExpr) e)
+                                            .rebuild(
+                                                    createAbsExpr(
+                                                            ((AlloyQuantificationExpr) e).body,
+                                                            true));
+                            absEList.add(absE);
+                        }
+                    }
+                    AlloyBlock absBody = new AlloyBlock(absEList);
+                    AlloyAssertPara absP = new AlloyAssertPara(AlloyVar(vname), absBody);
+                    this.absModel.addPara(absP);
+                    return PredAbsUtil.addCheckCmd(vname, this.absModel, absScope);
+                } else {
+                    AlloyPredPara p = this.concreteModel.getPara(AlloyPredPara.class, vname);
+                    AlloyBlock absBody = new AlloyBlock(createAbsExpr(p.block, true));
+                    AlloyPredPara absP = new AlloyPredPara(AlloyVar(vname), p.arguments, absBody);
+                    this.absModel.addPara(absP);
+                    return PredAbsUtil.addRunCmd(vname, this.absModel, absScope);
+                }
+            } catch (Exception e) {
+                System.out.println("Unable to get cmd body expr.");
+                handleException(e);
+                return -1;
+            }
+        }
+        return -1;
+    }
+
     /*
     Assumptions:
           - All commands in the .dsh file that refer to a property for m/c must be in ACTL*, meaning `check`
@@ -321,6 +420,7 @@ public class PredicateAbstraction {
         queryModel = d2a.translateVarBufferSigsOnly();
 
         absModel = new DashModel();
+        absModel.addImport(List.of(AlloyStrings.utilName, AlloyStrings.booleanName));
         absModel.cloneStateTableOf(concreteModel);
         absModel.cloneEventTableOf(concreteModel);
 
@@ -331,13 +431,13 @@ public class PredicateAbstraction {
         // System.out.println("\nIn createAbstractModel():CAF Dependency invariants added.");
 
         for (AlloyExpr init : concreteModel.initsR()) {
-            absModel.addInit(createAbsExpr(init));
+            absModel.addInit(createAbsExpr(init, false));
         }
 
         System.out.println("\nIn createAbstractModel(): abstract init added.");
 
         for (AlloyExpr inv : concreteModel.invsR()) {
-            absModel.addInv(createAbsExpr(inv));
+            absModel.addInv(createAbsExpr(inv, false));
         }
 
         System.out.println("\nIn createAbstractModel(): abstract invariant added.");
@@ -348,7 +448,7 @@ public class PredicateAbstraction {
             AlloyExpr absWhenR;
             AlloyExpr absDoR;
             if (guard != null) {
-                absWhenR = createAbsExpr(concreteModel.whenR(tfqn));
+                absWhenR = createAbsExpr(concreteModel.whenR(tfqn), false);
                 System.out.println(
                         "\nIn createAbstractModel(): transition " + tfqn + " guard abstracted.");
             } else {
@@ -373,12 +473,17 @@ public class PredicateAbstraction {
                     absDoR);
         }
 
-        addAbstractCmd();
+        int cmdIdx = addAbstractCmd();
 
         System.out.println("\nIn createAbstractModel(), Abstract model:\n");
         DashToAlloy absd2a = new DashToAlloy(absModel);
         AlloyModel absAlloy = absd2a.translate();
         System.out.println(absAlloy.toString());
+
+        if (cmdIdx > 0) {
+            System.out.println("Running abstract command.");
+            AlloyInterface.executeCommand(absAlloy, cmdIdx);
+        }
 
         return absModel;
     }
@@ -482,60 +587,6 @@ public class PredicateAbstraction {
     private void printTransTableOfConcModel() {
         System.out.println("CONCRETE MODEL\n*********\n");
         System.out.println(concreteModel.ttToString());
-    }
-
-    private AlloyExpr getCmdBodyExpr() {
-        if (this.cmd == null) {
-            return null;
-        } else {
-            try {
-                AlloyCmdPara.CommandDecl cmdDecl = this.cmd.cmdDecls.get(0);
-                AlloyQnameExpr cmdBodyQname = cmdDecl.invoQname.orElse(null);
-                if (cmdBodyQname == null) {
-                    System.out.println("Unable to get cmd body expr.");
-                    return null;
-                }
-                String vname = cmdBodyQname.vars.get(0).label;
-                if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
-                    AlloyAssertPara p = this.concreteModel.getPara(AlloyAssertPara.class, vname);
-                    return p.block;
-                } else {
-                    AlloyPredPara p = this.concreteModel.getPara(AlloyPredPara.class, vname);
-                    return p.block;
-                }
-            } catch (Exception e) {
-                System.out.println("Unable to get cmd body expr.");
-                return null;
-            }
-        }
-    }
-
-    private void addAbstractCmd() {
-        if (this.cmd != null) {
-            try {
-                AlloyCmdPara.CommandDecl cmdDecl = this.cmd.cmdDecls.get(0);
-                AlloyQnameExpr cmdBodyQname = cmdDecl.invoQname.orElse(null);
-                if (cmdBodyQname == null) {
-                    System.out.println("Unable to get cmd body expr.");
-                }
-                String vname = cmdBodyQname.vars.get(0).label;
-                if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
-                    AlloyAssertPara p = this.concreteModel.getPara(AlloyAssertPara.class, vname);
-                    AlloyBlock absBody = new AlloyBlock(createAbsExpr(p.block));
-                    AlloyAssertPara absP = new AlloyAssertPara(AlloyVar(vname), absBody);
-                    this.absModel.addPara(absP);
-                    PredAbsUtil.addCheckCmd(vname, this.absModel, this.scope);
-                } else {
-                    AlloyPredPara p = this.concreteModel.getPara(AlloyPredPara.class, vname);
-                    AlloyBlock absBody = new AlloyBlock(createAbsExpr(p.block));
-                    AlloyPredPara absP = new AlloyPredPara(AlloyVar(vname), p.arguments, absBody);
-                    this.absModel.addPara(absP);
-                    PredAbsUtil.addRunCmd(vname, this.absModel, this.scope);
-                }
-            } catch (Exception e) {
-                System.out.println("Unable to get cmd body expr.");
-            }
-        }
     }
 
     // private void nextSnapshotVarsSame() {
