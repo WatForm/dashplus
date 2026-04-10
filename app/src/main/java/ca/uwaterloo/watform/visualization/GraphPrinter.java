@@ -35,6 +35,15 @@ public class GraphPrinter {
         graphBuilder.append("\n");
     }
 
+    public String toDotString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("digraph G {");
+        sb.append("compound=true \n");
+        sb.append(graphBuilder);
+        sb.append("\n}").append("\n");
+        return sb.toString();
+    }
+
     public void print(String prefix) {
         try {
             if ("control_states".equals(prefix)) {

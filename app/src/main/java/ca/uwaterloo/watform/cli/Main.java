@@ -336,11 +336,8 @@ public class Main implements Callable<Integer> {
     private static void runVis(DashModel dm, String outputFileNamePrefix) {
 
         ControlStateHierarchyVisualizer visualizer = new ControlStateHierarchyVisualizer();
-        String prefix = outputFileNamePrefix + "-" + ControlStateHierarchyVisualizer.DEFAULT_PREFIX;
-        // TODO Rocky: could the visualization pass back a string that is output here?
-        // visualizer.visualize(dm, outputDir, prefix);
-        dashOutput("Visualization output: NOT YET WORKING" + prefix + ".dot");
-        Reporter.INSTANCE.print();
+        String dotString = visualizer.toDotString(dm);
+        dashOutput(dotString);
     }
 
     private static void runWriteResolvedDash(DashModel dm, String outputFileNamePrefix)

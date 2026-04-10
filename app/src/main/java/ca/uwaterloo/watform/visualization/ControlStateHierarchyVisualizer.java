@@ -33,6 +33,18 @@ public class ControlStateHierarchyVisualizer {
         gp.generateJson(prefix);
     }
 
+    public String toDotString(DashModel dm) {
+        return toDotString(dm, null);
+    }
+
+    public String toDotString(DashModel dm, List<String> highlightedStates) {
+        GraphPrinter gp = new GraphPrinter();
+        Set<String> highlighted = normalizeHighlights(highlightedStates);
+        buildHierarchy(dm, dm.rootName(), gp, highlighted);
+        addTransitions(dm, gp);
+        return gp.toDotString();
+    }
+
     private void buildHierarchy(
             DashModel dm, String nodeName, GraphPrinter gp, Set<String> highlightedStates) {
         String formattedName = formatString(nodeName);
