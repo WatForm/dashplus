@@ -63,5 +63,7 @@ This opens a bash shell with all the dependencies installed just within that she
 
 - [Feature list for TLA+ translator](./app/src/main/java/ca/uwaterloo/watform/dashtotla/todo.md)
 
+- [Description of the translation Alloy TLA+ translation](./app/src/main/java/ca/uwaterloo/watform/alloytotla/translation.md)
+
 
 
