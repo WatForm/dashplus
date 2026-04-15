@@ -122,6 +122,13 @@ INIT Init
 NEXT Next
 ```
 
+
+- This is functionally no different from the base scheme 
+- Properties are evaluated over traces
+- Since Next is unchanged, the size of the trace is always one
+- If the property is evaluated after each trace is identified, then this scheme is no different from the base scheme, in terms of computation
+- In terms of logic, this specification of this scheme is the same as the base scheme
+
 ## Force SC in Init scheme
 
 ```
