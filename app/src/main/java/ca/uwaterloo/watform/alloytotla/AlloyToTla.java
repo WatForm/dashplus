@@ -31,6 +31,9 @@ public class AlloyToTla extends StdLibsA2T {
         tlaModel.addComment("signature constraints", verbose);
         addSigConstraints();
 
+        tlaModel.addComment("scope constraints", verbose);
+        addScopeConstraints();
+
         tlaModel.addComment("facts", verbose);
         addFacts();
 

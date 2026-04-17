@@ -17,9 +17,9 @@ public class FactsA2T extends BoilerplateA2T {
         super(alloyModel, tlaModel, verbose, debug);
     }
 
-    static int count = 0; // used to number un-named facts
+    private int count = 0; // used to number un-named facts
 
-    public static String generateFactName() {
+    public String generateFactName() {
         count += 1;
         return unnamedFact(count);
     }

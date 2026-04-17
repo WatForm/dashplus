@@ -13,7 +13,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SigConstraintsA2T extends NextDefnA2T {
+public class SigConstraintsA2T extends ScopeConstraintsA2T {
 
     public SigConstraintsA2T(
             AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {

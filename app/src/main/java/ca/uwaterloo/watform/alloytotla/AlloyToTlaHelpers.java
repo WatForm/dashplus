@@ -19,6 +19,14 @@ public class AlloyToTlaHelpers {
         return UNNAMED_FACT_PREFIX + n;
     }
 
+    public static String runCmd(int n) {
+        return RUN_COMMAND_PREFIX + n;
+    }
+
+    public static String checkCmd(int n) {
+        return CHECK_COMMAND_PREFIX + n;
+    }
+
     public static TlaAppl SIG_SETS_PRIMED() {
         return TlaAppl(SIG_SETS_PRIMED);
     }
