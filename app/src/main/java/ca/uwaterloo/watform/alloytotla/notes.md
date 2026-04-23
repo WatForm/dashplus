@@ -396,3 +396,30 @@ quantifiers - just a composition of a multiplicity with a comprehension set
 
 
 NOTE: ignore when => is used after a command, assume the list length is one
+
+## Expect in commands
+
+
+```
+We introduced the expect clause to support a kind of regression test script: expect N would mean that when you run the command, you expect N solutions. It turned out that counting solutions was too dependent on symmetry and other settings, so we reverted to 1 and 0 as the options. So expect 1 means that the command is expected to produce an instance; expect 0 means that no instances are expected.
+
+```
+
+- Daniel Jackson, Alloy discourse
+
+- Expect can be two int literals 1 or 0, nothing else
+- Expect cannot be an alloy expression
+- Expect refers to the number of instances supposed to be produced after a run
+- There is a dualism with run and check:
+
+```
+run p expect 1
+```
+
+is the same as
+
+```
+run ~p expect 0
+```
+
+This dovetails in with the dualism of run and check.
