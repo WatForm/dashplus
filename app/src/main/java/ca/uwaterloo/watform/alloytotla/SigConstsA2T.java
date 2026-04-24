@@ -24,7 +24,9 @@ public class SigConstsA2T extends SigConstraintsA2T {
     protected void makeSigSet(String sigName, int n) {
         // S_set = {"S$0","S$1","S$2"...}
         List<TlaStringLiteral> strings = new ArrayList<>();
-        for (int i = 0; i < n; i++) strings.add(TlaStringLiteral(sigSetString(sigName, i)));
+        for (int i = 0; i < n; i++) {
+            strings.add(TlaStringLiteral(sigSetString(sigName, i)));
+        }
 
         tlaModel.addConst(TlaConst(sigSet(sigName)), TlaSet(strings));
     }

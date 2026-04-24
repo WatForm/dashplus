@@ -12,6 +12,8 @@ public class SigVarsA2T extends SigHierarchyA2T {
     }
 
     protected void addSigVars() {
-        for (String sigName : alloyModel.allSigs()) tlaModel.addVar(TlaVar(sigName));
+        for (var sigName : alloyModel.allSigs()) {
+            tlaModel.addVar(TlaVar(sigName));
+        }
     }
 }

@@ -45,6 +45,5 @@ public class AlloyToTlaStrings {
     public static final String SIG_SET_SUFFIX = SPECIAL + "set";
     public static final String SIG_CONSTRAINT_SUFFIX = SPECIAL + "sig" + SPECIAL + "constraints";
     public static final String UNNAMED_FACT_PREFIX = SPECIAL + "fact" + SPECIAL;
-    public static final String RUN_COMMAND_PREFIX = SPECIAL + "run" + SPECIAL;
-    public static final String CHECK_COMMAND_PREFIX = SPECIAL + "check" + SPECIAL;
+    public static final String COMMAND_PREFIX = SPECIAL + "command" + SPECIAL;
 }

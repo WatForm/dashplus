@@ -29,15 +29,14 @@ public class FactsA2T extends BoilerplateA2T {
         List<String> comments = new ArrayList<>();
         List<AlloyFactPara> factParas = alloyModel.getParas(AlloyFactPara.class);
 
-        factParas.forEach(
-                fp -> {
-                    String factName = generateFactName();
-                    factNames.add(factName);
-                    fp.qname.ifPresent(n -> comments.add(factName + " -> " + n));
-                    fp.strLit.ifPresent(str -> comments.add(factName + " -> " + str));
+        for (var fp : factParas) {
+            String factName = generateFactName();
+            factNames.add(factName);
+            fp.qname.ifPresent(n -> comments.add(factName + " -> " + n));
+            fp.strLit.ifPresent(str -> comments.add(factName + " -> " + str));
 
-                    tlaModel.addDefn(TlaDefn(factName, new AlloyToTlaExprVis().visit(fp.block)));
-                });
+            tlaModel.addDefn(TlaDefn(factName, new AlloyToTlaExprVis().visit(fp.block)));
+        }
 
         tlaModel.addDefn(TlaDefn(ALL_FACTS, repeatedAnd(mapBy(factNames, fn -> TlaAppl(fn)))));
 

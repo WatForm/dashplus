@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph.command;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.CommonStrings.SPACE;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
@@ -84,7 +85,20 @@ public final class AlloyCmdPara extends AlloyPara {
     }
 
     public static final class CommandDecl extends ASTNode {
-        public final CmdType cmdType;
+
+        /*
+        consider the following command:
+
+        run {p} for 3 A, exactly 5 B expect 1
+
+        "run" refers to the cmdType, which is an enum with two possible values for run and check
+        {p} is an example of constrBlock, which is an AlloyBlock
+        "for 3 A, exactly 5 B" lives in the scope
+        "expect 1" -> this is captured in expect.value (which is an int)
+
+        */
+
+        public final CmdType cmdType; // this
         public final Optional<AlloyQnameExpr> declQname;
 
         // mutually exclusive fields, has exactly one
@@ -266,8 +280,9 @@ public final class AlloyCmdPara extends AlloyPara {
         }
 
         public static final class Scope extends ASTNode {
-            public final Optional<AlloyNumExpr> num;
-            public final List<Typescope> typescopes;
+            public final Optional<AlloyNumExpr>
+                    num; // this is filled only in the case of "for x but y sig" with x
+            public final List<Typescope> typescopes; // this is a list of numbers and sigs
 
             public Scope(Pos pos, AlloyNumExpr num, List<Typescope> typescopes) {
                 super(pos);
