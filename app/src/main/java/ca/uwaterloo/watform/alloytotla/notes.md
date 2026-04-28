@@ -440,3 +440,19 @@ This dovetails in with the dualism of run and check.
 - `properties()` - returns the set of constraints listed under the properties of the .cfg file
 
 - `invariants()` - returns the set of constraints listed under the invariants of the .cfg file
+
+- `equals(state1,state2)` - returns true if the hash of state1 equals the has of state2 (this accounts for the collision probability reported by TLC)
+
+- `generate_states()` - returns the set of all states possible from the variables of the model
+
+
+## Guess pseudocode:
+
+
+```
+state_queue = []
+
+
+
+
+```
