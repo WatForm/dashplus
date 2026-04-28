@@ -445,12 +445,28 @@ This dovetails in with the dualism of run and check.
 
 - `generate_states()` - returns the set of all states possible from the variables of the model
 
+- `reachable(state,formula)` - returns all states reachable from the given state, where the formula holds
+
+- `next()` - returns the canonical Next formula
+
+- `init()` - returns the canonical Init formula
+
+
 
 ## Guess pseudocode:
 
 
 ```
+
+all_states = generate_states()
 state_queue = []
+valid_states = []
+
+// step 1: getting the init states
+
+for state in all_states:
+    if check(state,init()):
+        state_queue <- state_queue::state
 
 
 
