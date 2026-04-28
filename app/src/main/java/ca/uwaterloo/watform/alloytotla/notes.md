@@ -451,6 +451,8 @@ This dovetails in with the dualism of run and check.
 
 - `init()` - returns the canonical Init formula
 
+- `exit()` - stop the model-checking immediately
+
 
 
 ## Guess pseudocode:
@@ -468,6 +470,11 @@ for state in all_states:
     if check(state,init()):
         state_queue <- state_queue::state
 
+// step 2: getting states reachable by next
+
+while(state_queue != [])
+
+    // decision procedure goes here
 
 
 
