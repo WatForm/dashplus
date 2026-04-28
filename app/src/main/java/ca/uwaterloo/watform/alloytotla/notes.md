@@ -427,3 +427,16 @@ This dovetails in with the dualism of run and check.
 
 ## Working of TLC+
 
+### Key
+
+- `state` - a valuation for the state variables
+
+- `constraint` - a symbolic representation of a formula in TLC
+
+- `get_state(space)` - picks a random state from the states in `space`
+
+- `check(state,constraint)` - returns true if an only if the state satisfies the constraint
+
+- `properties()` - returns the set of constraints listed under the properties of the .cfg file
+
+- `invariants()` - returns the set of constraints listed under the invariants of the .cfg file
