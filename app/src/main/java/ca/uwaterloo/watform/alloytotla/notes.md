@@ -463,18 +463,30 @@ This dovetails in with the dualism of run and check.
 all_states = generate_states()
 state_queue = []
 valid_states = []
+visited_states = []
 
 // step 1: getting the init states
 
 for state in all_states:
     if check(state,init()):
-        state_queue <- state_queue::state
+        for inv in invariants():
+            if not check(state,inv):
+                exit()
+        push(state_queue,state)
 
 // step 2: getting states reachable by next
 
 while(state_queue != [])
+    state = pop(state_queue)
+    visited_states.push(state)
+    for state' in reachable_states(state,next()):
+        for inv in invariants():
+            if not check(state',inv):
+                exit()
+        if state' not in visited_states or state_queue:
+            state_queue.push(state')
 
-    // decision procedure goes here
+
 
 
 
@@ -780,7 +792,7 @@ for every sig s in S:
     // error case for extends sigs
     if s is in C:
         if s is an extends sig and ancestor(s) not in C:
-            error
+            error 
 
     // error case for one sigs
     if s is a one sig and s is in C:
