@@ -1,4 +1,4 @@
-
+    
 ## Translation
 
 
@@ -491,6 +491,80 @@ while(state_queue != [])
 
 
 ```
+
+
+## Guess pseudocode V2
+
+- `state` - a valuation for the state variables
+
+- `write(state)` - writes a state to memory, impure function
+
+- `constraint` - a formula, which is either true or false, when evaluated on a pair of states s and s'
+
+- `check(constraint,s,s')` - returns true if the constraint holds, false otherwise
+
+- `check(constraint,s)` - as above, but for constraints which don't have primed variables
+
+- `membership(constraint)` - returns the part of the constraint to do with the membership of the variables
+
+- `logic(constraint)` - returns the part of the constraint other than the membership part
+
+- `get_states(constraint)` - returns all states which are true for the given constraint
+
+other symbols inherit from the main section
+
+
+```
+
+all_states <- []
+state_queue <- []
+
+add_state(state):
+    all_states <- all_states::state
+    write(state)
+
+Init_MC <- membership(init())
+Init_LC <- logic(init())
+
+# getting all valid init states
+
+for state in get_states(Init_MC):
+    if not check(Init_LC,state):
+        continue
+    for inv in invariants()
+        if not check(inv,state):
+            exit("invariant violation")
+    add_state(state)
+    push(state_queue,state)
+
+# model-checking with next:
+
+while(state_queue != []):
+
+    current_state = pop(state_queue)
+    possible_states <- get_states(membership(next()))
+    
+    some_state = false
+    for state in possible_states:
+        if check(logic(next()),current_state,state)
+            for inv in invariants()
+                if not check(inv,state):
+                    exit("invariant violation")
+            some_state = true
+            if state not in all_states:
+                add_state(state)
+                push(state_queue,state)
+    if DEADLOCK_EXIT and not some_state:
+        exit("deadlock reached")
+
+
+
+exit("success")
+
+
+```
+
+
 
 ## Summary of scope resolution:
 
