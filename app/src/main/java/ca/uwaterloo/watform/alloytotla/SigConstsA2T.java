@@ -11,17 +11,17 @@ import java.util.List;
 
 public class SigConstsA2T extends SigConstraintsA2T {
 
-    public SigConstsA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(alloyModel, tlaModel, verbose, debug);
+    public SigConstsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+        super(alloyModel, verbose, debug);
     }
 
-    protected void addSigConsts() {
-        for (String name : alloyModel.topLevelSigs()) {
-            makeSigSet(name, 4);
-        }
+    protected void addSigConsts(TlaModel tlaModel) {
+        // for (String name : alloyModel.topLevelSigs()) {
+        //     makeSigSet(tlaModel, name, 4);
+        // }
     }
 
-    protected void makeSigSet(String sigName, int n) {
+    protected void makeSigSet(TlaModel tlaModel, String sigName, int n) {
         // S_set = {"S$0","S$1","S$2"...}
         List<TlaStringLiteral> strings = new ArrayList<>();
         for (int i = 0; i < n; i++) {

@@ -13,8 +13,8 @@ import java.util.List;
 
 public class FactsA2T extends BoilerplateA2T {
 
-    public FactsA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(alloyModel, tlaModel, verbose, debug);
+    public FactsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+        super(alloyModel, verbose, debug);
     }
 
     private int count = 0; // used to number un-named facts
@@ -24,7 +24,7 @@ public class FactsA2T extends BoilerplateA2T {
         return unnamedFact(count);
     }
 
-    protected void addFacts() {
+    protected void addFacts(TlaModel tlaModel) {
         List<String> factNames = new ArrayList<>();
         List<String> comments = new ArrayList<>();
         List<AlloyFactPara> factParas = alloyModel.getParas(AlloyFactPara.class);

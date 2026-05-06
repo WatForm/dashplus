@@ -12,9 +12,8 @@ import java.util.*;
 
 public class BoilerplateA2T extends BaseA2T {
 
-    public BoilerplateA2T(
-            AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(alloyModel, tlaModel, verbose, debug);
+    public BoilerplateA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+        super(alloyModel, verbose, debug);
     }
 
     private static final TlaVar S() {
@@ -57,11 +56,11 @@ public class BoilerplateA2T extends BaseA2T {
         return TlaVar(SPECIAL + "R");
     }
 
-    public void addBoilerplate() {
+    public void addBoilerplate(TlaModel tlaModel) {
 
-        List<TlaConst> setConsts = mapBy(alloyModel.topLevelSigs(), s -> TlaConst(sigSet(s)));
+        List<TlaVar> setVars = mapBy(alloyModel.topLevelSigs(), s -> TlaVar(s));
 
-        tlaModel.addDefn(univ(setConsts));
+        tlaModel.addDefn(univ(setVars));
         tlaModel.addDefn(none());
         tlaModel.addDefn(iden());
         tlaModel.addDefn(some());
@@ -220,9 +219,9 @@ public class BoilerplateA2T extends BaseA2T {
         return TlaDefn(IDEN, TlaSetMap(TlaQuantOpHead(X(), _UNIV()), TlaTuple(X(), X())));
     }
 
-    private static TlaDefn univ(List<TlaConst> setConsts) {
-        // _univ == A_set \\union B_set... where A, B... are top-level sigs
-        return TlaDefn(UNIV, repeatedUnion(setConsts));
+    private static TlaDefn univ(List<TlaVar> setVars) {
+        // _univ == A \\union B... where A, B... are top-level sigs
+        return TlaDefn(UNIV, repeatedUnion(setVars));
     }
 
     private static TlaExp allEqual(TlaVar v, TlaVar v1, TlaVar v2) {

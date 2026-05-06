@@ -37,8 +37,13 @@ public class TlaConfig {
     }
 
     private String invariantsString() {
-        // TODO do this
-        return TlaStrings.INVARIANTS + TlaStrings.SPACE + "";
+
+        StringBuilder answer = new StringBuilder(TlaStrings.INVARIANTS);
+        if (this.invariants.isEmpty()) return answer.toString();
+        answer.append(TlaStrings.NEWLINE);
+        for (TlaExp e : this.invariants)
+            answer.append(e.toTLAPlusSnippetCore() + TlaStrings.NEWLINE);
+        return answer.toString();
     }
 
     private String propertiesString() {

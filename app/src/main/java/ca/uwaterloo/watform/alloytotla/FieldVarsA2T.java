@@ -7,11 +7,11 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class FieldVarsA2T extends FactsA2T {
 
-    public FieldVarsA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(alloyModel, tlaModel, verbose, debug);
+    public FieldVarsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+        super(alloyModel, verbose, debug);
     }
 
-    protected void addFieldVars() {
+    protected void addFieldVars(TlaModel tlaModel) {
         alloyModel
                 .allSigs()
                 .forEach(

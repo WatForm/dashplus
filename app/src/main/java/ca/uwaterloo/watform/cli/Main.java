@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 import picocli.CommandLine;
@@ -214,7 +215,12 @@ public class Main implements Callable<Integer> {
                     AlloyModel am = parseToModel(absolutePath);
                     if (tla && !xml) {
                         runAlloyToTla(
-                                am, outputFileNamePrefix, tlaModuleName, cmdIdx, verbose, debug);
+                                am,
+                                absolutePath.getParent().toString(),
+                                tlaModuleName,
+                                cmdIdx,
+                                verbose,
+                                debug);
                     } else if (xml) {
                         runCheckAlloyInstanceTla(am, cliConf.xmlFileName);
                     } else {
@@ -292,24 +298,26 @@ public class Main implements Callable<Integer> {
 
     private static void runAlloyToTla(
             AlloyModel alloyModel,
-            String outputFileNamePrefix,
+            String outputFileNamePrefix, // path to parent file
             String moduleName,
             Integer cmdIdx,
             Boolean verbose,
             Boolean debug)
             throws IOException {
-        // outputFileNamePrefix is the module name
+
         // TODO MKJ - this should take the cmd
+        // Is this necessary?
 
-        TlaModel tlaModel = AlloyToTla.getBlankModel(moduleName);
-        AlloyToTla alloyTranslator = new AlloyToTla(alloyModel, tlaModel, verbose, debug);
-        alloyTranslator.translate();
+        AlloyToTla alloyTranslator = new AlloyToTla(alloyModel, verbose, debug);
+        List<TlaModel> tlaModels = alloyTranslator.translate(moduleName);
+        for (var tlaModel : tlaModels) {
+            Path tlaPath = Paths.get(outputFileNamePrefix).resolve(tlaModel.name + ".tla");
+            Path cfgPath = Paths.get(outputFileNamePrefix).resolve(tlaModel.name + ".cfg");
 
-        String tlaFileName = outputFileNamePrefix + ".tla";
-        String cfgFileName = outputFileNamePrefix + ".cfg";
-        Files.writeString(fileFromString(tlaFileName), tlaModel.moduleCode());
-        Files.writeString(fileFromString(cfgFileName), tlaModel.configCode());
-        dashOutput("Output:\n" + tlaFileName + "\n" + cfgFileName);
+            Files.writeString(tlaPath, tlaModel.moduleCode());
+            Files.writeString(cfgPath, tlaModel.configCode());
+            dashOutput("Output:\n" + tlaPath.toString() + "\n" + cfgPath.toString());
+        }
     }
 
     private static void runCheckAlloyInstanceTla(AlloyModel am, String xmlFileName) {
