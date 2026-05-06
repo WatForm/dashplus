@@ -1,3 +1,20 @@
+/*
+	AlloyComparisonExpr
+	Syntax Example:
+	sig A {}
+
+	sig B in A {} (means B is a subset of A)
+
+	fact {
+		some a: A | a ! in B
+		B != A
+		#B < #A
+		#B ! > #A
+		#A ! <= #B
+		#A ! =< #B
+		#B ! >= #A
+	}
+*/
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
@@ -9,7 +26,6 @@ import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
-// AlloyComparisonExpr
 public final class AlloyCmpExpr extends AlloyBinaryExpr {
     public static enum Comp {
         IN(AlloyStrings.IN),

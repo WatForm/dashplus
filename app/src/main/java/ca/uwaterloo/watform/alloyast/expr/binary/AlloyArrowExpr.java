@@ -3,6 +3,18 @@
         in A m->n B
         if either m or n are not explicitly given, they are replaced
         by multiplicity SET during parsing
+
+	Syntax Example:
+	sig A, B{}
+	sig C {
+		f: A -> B -> B
+	}
+	pred p[a: A -> A] {
+		...
+	}
+	fact {
+		C.f in A -> B -> B
+	}
 */
 
 package ca.uwaterloo.watform.alloyast.expr.binary;

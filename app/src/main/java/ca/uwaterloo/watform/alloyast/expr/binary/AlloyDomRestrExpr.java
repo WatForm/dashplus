@@ -1,3 +1,16 @@
+/*
+	Syntax Example:
+	sig Person {
+		friends: set Person
+	}
+
+	sig Student extends Person {}
+
+	fact {
+		let studentFriends = Student <: friends |
+			#studentFriends > 0
+	}
+*/
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;

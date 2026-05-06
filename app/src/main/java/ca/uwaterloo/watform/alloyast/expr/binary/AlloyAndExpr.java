@@ -1,3 +1,10 @@
+/*
+	Syntax Example:
+	fact {
+		#A = 1 and #B = 2
+	}
+*/
+
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
