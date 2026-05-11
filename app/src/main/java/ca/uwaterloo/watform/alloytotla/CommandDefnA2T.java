@@ -10,8 +10,6 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CommandDefnA2T extends NextDefnA2T {
 
@@ -19,11 +17,14 @@ public class CommandDefnA2T extends NextDefnA2T {
         super(alloyModel, verbose, debug);
     }
 
+    private TlaExp augmentedTrue() {
+        String dummy = alloyModel.allSigs().get(0);
+        return TlaVar(dummy).EQUALS(TlaVar(dummy));
+    }
+
     public TlaDefn cmdConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
         tlaModel.addComment(cmdDecl.toString(), verbose);
-
-        List<TlaExp> conditions = new ArrayList<>();
 
         /*
         [run/check] {block} for [num but] ([exactly] num sig)* [expect 1/0]
@@ -45,17 +46,17 @@ public class CommandDefnA2T extends NextDefnA2T {
         // var expect = cmdDecl.expect.map(e -> e.value).orElse(0);
         // boolean is1 = expect == 1;
 
+        // if (!is1 && isRun || is1 && !isRun) block = TlaNot(block);
+
         // TODO invokeQname, which is an alternative for the block
 
         TlaExp block =
                 cmdDecl.constrBlock.map(b -> (new AlloyToTlaExprVis().visit(b))).orElse(TlaTrue());
 
-        // if (!is1 && isRun || is1 && !isRun) block = TlaNot(block);
-
+        block = block.AND(augmentedTrue());
         if (isRun) block = TlaNot(block);
-        conditions.add(block);
 
-        return TlaDefn(COMMAND, TlaAndList(conditions));
+        return TlaDefn(COMMAND, block);
     }
 
     public void addScopeConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
