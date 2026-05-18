@@ -14,17 +14,14 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SigConstraintsA2T extends NextDefnA2T {
+public class SigConstraintsA2T extends CommandDefnA2T {
 
-    public SigConstraintsA2T(
-            AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(alloyModel, tlaModel, verbose, debug);
+    public SigConstraintsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+        super(alloyModel, verbose, debug);
     }
 
-    // Mathew - I rewrote some of this code to work with the
-    // rearranged AlloyModel. - NAD
+    protected void addSigConstraints(TlaModel tlaModel) {
 
-    protected void addSigConstraints() {
         List<TlaAppl> explicitConstraints = new ArrayList<>();
 
         alloyModel

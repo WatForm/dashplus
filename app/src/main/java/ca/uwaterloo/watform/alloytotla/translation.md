@@ -122,6 +122,13 @@ INIT Init
 NEXT Next
 ```
 
+
+- This is functionally no different from the base scheme 
+- Properties are evaluated over traces
+- Since Next is unchanged, the size of the trace is always one
+- If the property is evaluated after each trace is identified, then this scheme is no different from the base scheme, in terms of computation
+- In terms of logic, this specification of this scheme is the same as the base scheme
+
 ## Force SC in Init scheme
 
 ```
@@ -141,6 +148,13 @@ Next == UNCHANGED V
 INIT Init
 NEXT Next
 ```
+
+- This scheme has no INVARIANT or PROPERTY, the special constraint is folded into the definition of Init
+- In a case where there are no Init states, TLC reports an error, saying that Init is unsatisfiable
+- In a case where there are Init states, TLC has to write all valid states to disk
+- This scheme tends to work well for cases where the special constraint is such that no models exist
+- No claims are made about the amount of time taken to determine that no Init state exists
+- If no Init state exists, the memory used in disk is zero
 
 ## Valid transition scheme
 

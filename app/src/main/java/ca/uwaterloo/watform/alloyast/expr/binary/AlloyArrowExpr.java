@@ -1,3 +1,18 @@
+/*
+
+	Syntax Example:
+	sig A, B{}
+	sig C {
+		f: A -> B -> B
+	}
+	pred p[a: A -> A] {
+		...
+	}
+	fact {
+		C.f in A -> B -> B
+	}
+*/
+
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.*;

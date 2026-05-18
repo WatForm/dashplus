@@ -61,6 +61,10 @@ public class TlaModel {
         this.module.body.add(d);
     }
 
+    public void addInvariant(TlaAppl d) {
+        this.cfg.invariants.add(d);
+    }
+
     public void addComment(String c, boolean verbose) {
         if (verbose) this.module.body.add(new TlaComment(c));
     }

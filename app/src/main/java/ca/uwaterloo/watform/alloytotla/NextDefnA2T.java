@@ -12,14 +12,14 @@ import java.util.List;
 
 public class NextDefnA2T extends InitDefnA2T {
 
-    public NextDefnA2T(AlloyModel alloyModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(alloyModel, tlaModel, verbose, debug);
+    public NextDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+        super(alloyModel, verbose, debug);
     }
 
-    protected void addNextDefn() {
+    protected void addNextDefn(TlaModel tlaModel) {
         List<TlaVar> unchanged = new ArrayList<>();
 
-        alloyModel.allSigs().forEach(sigName -> unchanged.add(new TlaVar(sigName)));
+        alloyModel.allSigs().forEach(sigName -> unchanged.add(TlaVar(sigName)));
 
         /*
         alloyModel

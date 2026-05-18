@@ -1,3 +1,18 @@
+/*
+	Syntax Example:
+	sig A {}
+
+	sig B in A {}
+
+	fact {
+		no b: B | b in A-B
+
+		#A != 0
+		#B != 0
+		#A > #B
+	}
+*/
+
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
