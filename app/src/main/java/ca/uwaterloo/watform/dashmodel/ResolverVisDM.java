@@ -198,15 +198,14 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         }
 
         if (matches.isEmpty()) {
-            if (!v_param_vals.isEmpty()) unknownElementWithParamsError(varExpr);
+            if (!v_param_vals.isEmpty())
+                throw DashModelError.unknownElementWithParamsError(varExpr);
             else return varExpr; /* TODO: add this back? unknownError(varExpr);*/
-            return null;
         }
 
         String m = chooseMatch(matches);
         if (m == null) {
-            ambiguousRefError(varExpr);
-            return null;
+            throw DashModelError.ambiguousRefError(varExpr);
         }
         // something defined as a predicate with the Dash module
         // TODO: check on this logic
@@ -232,9 +231,9 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             m_params = this.params(m);
         }
         // parameters from enclosing state of this element
-        List<? extends AlloyExpr> sfqn_param_vals = mapBy(stateParams(sfqn), x -> x.asAlloyVar());
+        List<? extends AlloyExpr> sfqn_param_vals = mapBy(stateParams(sfqn), x -> x.asIndexValue());
         // these must be values p_Statename
-        List<? extends AlloyExpr> m_param_vals = mapBy(m_params, x -> x.asAlloyVar());
+        List<? extends AlloyExpr> m_param_vals = mapBy(m_params, x -> x.asIndexValue());
         List<? extends AlloyExpr> final_param_vals = new ArrayList<AlloyExpr>();
 
         // v_param_vals is the parameter expressions (as Expr) provided
@@ -248,8 +247,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             if (m_param_vals.size() > sfqn_param_vals.size()) {
                 // thing found by getRegion as match does
                 // not have the same parameter values
-                wrongNumberParamsError(varExpr);
-                return null;
+                throw DashModelError.wrongNumberParamsError(varExpr);
             } else {
                 // this element might only use a subset of the
                 // parameters of sfqn b/c it actually is from somewhere else
@@ -261,8 +259,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // TODO could paramValues b less than mParams????
             // and paramValues be a suffix of mParams???
             // since the fqn name can be a suffix
-            wrongNumberParamsError(varExpr);
-            return null;
+            throw DashModelError.wrongNumberParamsError(varExpr);
         } else {
             // it was used with the right number of parameters
             final_param_vals = v_param_vals;
@@ -357,7 +354,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
         // can't use a withLeft, withRight here
         // because this is a parent class
         if (!this.supportedBinaryExpr(binExpr))
-            DashModelErrors.unsupportedExpr(
+            throw DashModelError.unsupportedExpr(
                     binExpr.pos, binExpr.getClass().getSimpleName(), binExpr.toString());
         return binExpr.rebuild(this.visit(binExpr.left), this.visit(binExpr.right));
     }
@@ -370,27 +367,29 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             // this should be not allowed in parsing
             assert (unaryExpr.sub instanceof AlloyQnameExpr || unaryExpr.sub instanceof VarDashRef);
             if (!this.nextOk) {
-                noNextVarsError(unaryExpr);
+                throw DashModelError.noNextVarsError(unaryExpr);
             }
             AlloyExpr newExpr = this.visit(unaryExpr.sub);
 
             // if it is primed, the returned value
             // must be an internal VarDashRef (no other kind of
             // value can be primed)
-            if (!(newExpr instanceof DashRef)) cantNextNonDynamicVarError(unaryExpr);
+            if (!(newExpr instanceof DashRef))
+                throw DashModelError.cantNextNonDynamicVarError(unaryExpr);
             else {
                 // is DashRef
                 String name = ((DashRef) newExpr).name;
-                if (this.containsVar(name) && this.isEnvVar(name)) cantNextEnvVarBufError(newExpr);
+                if (this.containsVar(name) && this.isEnvVar(name))
+                    throw DashModelError.cantNextEnvVarBufError(newExpr);
                 else if (this.containsBuffer(name) && this.isEnvBuffer(name))
-                    cantNextEnvVarBufError(newExpr);
+                    throw DashModelError.cantNextEnvVarBufError(newExpr);
             }
             // return DashRef(..., isNext)
             return ((VarDashRef) newExpr).makeNext();
         }
         if (!this.supportedUnaryExpr(unaryExpr))
             // throw exception
-            DashModelErrors.unsupportedExpr(
+            throw DashModelError.unsupportedExpr(
                     unaryExpr.pos, unaryExpr.getClass().getSimpleName(), unaryExpr.toString());
 
         // otherwise we visit the sub expression
@@ -407,7 +406,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
             if (this.supportedBuiltinVarExpr(varExpr)) return varExpr;
             if (!(varExpr instanceof AlloyQnameExpr))
                 // throws exception
-                DashModelErrors.unsupportedExpr(
+                throw DashModelError.unsupportedExpr(
                         varExpr.pos, varExpr.getClass().getSimpleName(), varExpr.toString());
         }
 
@@ -432,11 +431,11 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
                 if (ps.size() == 1)
                     // any "thisState" use must be for a state with only one param
                     // this is already an Expr
-                    return ps.get(0).asAlloyVar();
-                else ambiguousUseOfThisError(varExpr);
+                    return ps.get(0).asIndexValue();
+                else throw DashModelError.ambiguousUseOfThisError(varExpr);
             } else if (matches.size() == 1 && !stateHasParams(firstMatch))
-                nonParamUseOfThisError(varExpr);
-            else if (matches.size() > 1) ambiguousUseOfThisError(varExpr);
+                throw DashModelError.nonParamUseOfThisError(varExpr);
+            else if (matches.size() > 1) throw DashModelError.ambiguousUseOfThisError(varExpr);
         }
         /* else we carry on with it as a regular var name with no params yet */
         // v_params is empty
@@ -507,7 +506,7 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
 
     @Override
     public AlloyExpr visit(AlloyDecl decl) {
-        return decl.withExpr(this.visit(decl.expr));
+        return decl.rebuild(this.visit(decl.expr));
     }
 
     public AlloyExpr visit(AlloyParenExpr parenExpr) {
@@ -536,70 +535,11 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     }
     ;
 
+    /*
     @Override
     public AlloyExpr visit(DashParam dashParam) {
         throw ImplementationError.methodShouldNotBeCalled(
                 "there should not be any DashParams in the parsed input");
     }
-
-    // errors methods cannot be grouped in a subclass
-    // or be static because they reference attributes
-    // of the class
-
-    public void unknownError(AlloyExpr expr) {
-        if (kind == DashStrings.DashRefKind.STATE)
-            throw new Reporter.ErrorUser(expr.pos, "state does not exist: " + expr.toString());
-        else if (kind == DashStrings.DashRefKind.EVENT)
-            throw new Reporter.ErrorUser(expr.pos, "event does not exist: " + expr.toString());
-        else throw new Reporter.ErrorUser(expr.pos, "variable does not exist: " + expr.toString());
-    }
-
-    public void wrongNumberParamsError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(
-                expr.pos, "Incorrect number of parameters: " + expr.toString());
-    }
-
-    public void ambiguousRefError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(expr.pos, " Name not unique: " + expr.toString());
-    }
-
-    public void unknownElementWithParamsError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(
-                expr.pos, " " + "Unknown Dash element with params: " + expr.toString());
-    }
-
-    public void cantNextNonVarError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(
-                expr.pos, " " + " Non-var/buffer cannot be primed: " + expr.toString());
-    }
-
-    public void unknownSrcDestError(String x, String t, String tfqn) {
-        throw new Reporter.ErrorUser(
-                "Src/Dest of trans is unknown: " + "trans " + tfqn + " " + t + " " + x);
-    }
-
-    public void cantNextEnvVarBufError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(
-                expr.pos, " Env var/buffer cannot be primed: " + expr.toString());
-    }
-
-    public void noNextVarsError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(
-                expr.pos, "Primed variables are not allowed in: " + expr.toString());
-    }
-
-    public void cantNextNonDynamicVarError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(
-                expr.pos,
-                "Cannot prime something that is not a dynamic variable: " + expr.toString());
-    }
-
-    public void ambiguousUseOfThisError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(expr.pos, "Ambiguous use of 'this' " + expr.toString());
-    }
-
-    public void nonParamUseOfThisError(AlloyExpr expr) {
-        throw new Reporter.ErrorUser(
-                expr.pos, " 'this' must refer to a parametrized state: " + expr.toString());
-    }
+    */
 }

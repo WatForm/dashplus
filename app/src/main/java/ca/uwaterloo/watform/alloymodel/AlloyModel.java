@@ -22,139 +22,78 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.utils.PrintContext;
+import java.io.StringWriter;
+import java.util.*;
 
-public class AlloyModel extends AlloyModelResolve {
+public class AlloyModel extends AMCmds {
 
     public AlloyModel() {
-        super(new AlloyFile(Collections.emptyList()));
-    }
-
-    private AlloyModel(AlloyModel other) {
-        super(other);
+        this(new AlloyFile(Collections.emptyList()));
     }
 
     public AlloyModel copy() {
         return new AlloyModel(this);
     }
 
+    // we need copies of these two constructors in every parent class
     public AlloyModel(AlloyFile alloyFile) {
         super(alloyFile);
     }
 
-    /**
-     * Adds a new paragraph to the model *after* initial construction. This method sorts the
-     * paragraph into the correct type-safe table.
-     *
-     * @param alloyPara The paragraph to add.
-     */
-    public void addPara(AlloyPara alloyPara) {
-        if (alloyPara == null) return;
-        AlloyModelTable<?> table = this.patternMatch(alloyPara.getClass());
-        @SuppressWarnings("unchecked")
-        AlloyModelTable<AlloyPara> castedTable = (AlloyModelTable<AlloyPara>) table;
-        castedTable.addPara(alloyPara);
+    public AlloyModel(AlloyModel other) {
+        super(other);
     }
 
-    // adding: sig "n" {}
-    public void addSig(String n) {
-        this.addPara(new AlloySigPara(n));
+    public void resolve() {
+        super.resolve();
     }
 
-    // adding: abstract sig "n" {}
-    public void addAbstractSig(String n) {
-        this.addPara(
-                new AlloySigPara(
-                        List.of(AlloySigPara.Qual.ABSTRACT),
-                        List.of(new AlloyQnameExpr(n)),
-                        null,
-                        Collections.emptyList(),
-                        null));
+    public List<AlloyPara> getAllParas(boolean withCmds) {
+        List<AlloyPara> allParas = new ArrayList<AlloyPara>();
+
+        // first two must come before the rest
+        allParas.addAll(this.allModuleParas());
+        allParas.addAll(this.allImportParas());
+
+        allParas.addAll(this.allEnumParas());
+        allParas.addAll(this.allSigParas());
+        allParas.addAll(this.allMacroParas());
+        allParas.addAll(this.allFunParas());
+        allParas.addAll(this.allPredParas());
+        allParas.addAll(this.allFactParas());
+        allParas.addAll(this.allAssertParas());
+        if (withCmds) allParas.addAll(this.allCmdParas());
+        return allParas;
     }
 
-    // adding: abstract sig "child" extends "parent" {}
-    public void addAbstractExtendsSig(String child, String parent) {
-        this.addPara(
-                new AlloySigPara(
-                        List.of(AlloySigPara.Qual.ABSTRACT),
-                        List.of(new AlloyQnameExpr(child)),
-                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
-                        Collections.emptyList(),
-                        null));
+    private AlloyFile toAlloyFile(boolean withCmds) {
+        return new AlloyFile(this.getAllParas(withCmds));
     }
 
-    // adding: one sig child extends parent {}
-    public void addOneExtendsSig(String child, String parent) {
-        this.addPara(
-                new AlloySigPara(
-                        List.of(AlloySigPara.Qual.ONE),
-                        List.of(new AlloyQnameExpr(child)),
-                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
-                        Collections.emptyList(),
-                        null));
+    public AlloyFile toAlloyFile() {
+        return new AlloyFile(this.getAllParas(true));
     }
 
-    // adding: sig child extends parent {}
-    public void addExtendsSig(String child, String parent) {
-        this.addPara(
-                new AlloySigPara(
-                        Collections.emptyList(),
-                        List.of(new AlloyQnameExpr(child)),
-                        new AlloySigPara.Extends(new AlloyQnameExpr(parent)),
-                        Collections.emptyList(),
-                        null));
+    public AlloyFile toAlloyFileNoCmds() {
+        return new AlloyFile(this.getAllParas(false));
     }
 
-    // adding: sig child in parent {}
-    public void addInSig(String child, List<AlloySigRefExpr> parentExprs) {
-        this.addPara(
-                new AlloySigPara(
-                        Collections.emptyList(),
-                        List.of(new AlloyQnameExpr(child)),
-                        new AlloySigPara.In(parentExprs),
-                        Collections.emptyList(),
-                        null));
+    private String toString(boolean withCmds) {
+        StringWriter sw = new StringWriter();
+        PrintContext pCtx = new PrintContext(sw);
+
+        AlloyFile newAlloyFile = this.toAlloyFile(withCmds);
+        newAlloyFile.ppNewBlock(pCtx);
+        return sw.toString();
     }
 
-    public void addPred(String name, List<AlloyDecl> decls, List<AlloyExpr> eList) {
-        this.addPara(new AlloyPredPara(new AlloyQnameExpr(name), decls, new AlloyBlock(eList)));
+    public String toString() {
+        return this.toString(true);
     }
 
-    public void addFact(String name, List<AlloyExpr> eList) {
-        this.addPara(new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(eList)));
-    }
-
-    public void addFact(String name, AlloyExpr expr) {
-        this.addPara(
-                new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(Arrays.asList(expr))));
-    }
-
-    public void addImport(List<String> names, String sigName, String asName) {
-        this.addPara(
-                new AlloyImportPara(
-                        false,
-                        new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
-                        List.of(new AlloyQnameExpr(sigName)),
-                        new AlloyQnameExpr(asName)));
-    }
-
-    public void addImport(List<String> names, String sigName) {
-        this.addPara(
-                new AlloyImportPara(
-                        false,
-                        new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
-                        List.of(new AlloyQnameExpr(sigName)),
-                        null));
-    }
-
-    public void addImport(List<String> names) {
-        this.addPara(
-                new AlloyImportPara(
-                        false,
-                        new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
-                        emptyList(),
-                        null));
+    public String toStringNoCmds() {
+        return this.toString(false);
     }
 }

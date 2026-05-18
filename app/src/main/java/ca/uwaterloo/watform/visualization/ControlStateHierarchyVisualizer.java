@@ -1,9 +1,9 @@
 package ca.uwaterloo.watform.visualization;
 
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;

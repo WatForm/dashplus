@@ -8,7 +8,6 @@ import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyParaParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloymodel.AlloyModelError;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashFileParseVis;
 import ca.uwaterloo.watform.dashmodel.DashModel;
@@ -46,7 +45,7 @@ public class Parser {
      * @param filePath
      * @return
      */
-    public static AlloyFile parse(Path filePath) {
+    private static AlloyFile parse(Path filePath) {
         if (!filePath.getFileName().toString().endsWith(".als")
                 && !filePath.getFileName().toString().endsWith(".dsh")) {
             throw new Reporter.ErrorUser("File extension must be .dsh or .als");
@@ -63,58 +62,75 @@ public class Parser {
         }
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BailParser parser = new BailParser(tokens);
+        // Remove default console error listener
+        parser.removeErrorListeners();
+
+        // Add custom one
+        parser.addErrorListener(
+                new BaseErrorListener() {
+                    @Override
+                    public void syntaxError(
+                            Recognizer<?, ?> recognizer,
+                            Object offendingSymbol,
+                            int line,
+                            int charPositionInLine,
+                            String msg,
+                            RecognitionException e) {
+
+                        Token t = (Token) offendingSymbol;
+
+                        System.err.println("Error at line " + line + ":" + charPositionInLine);
+                        System.err.println("Found token: " + t.getText());
+                        System.err.println("Expected: " + msg);
+                    }
+                });
+
         if (filePath.getFileName().toString().endsWith(".als")) {
             ParseTree antlrAST = parser.alloyFile();
             AlloyFileParseVis afpv = new AlloyFileParseVis(filePath);
             AlloyFile alloyFile = null;
-            try {
-                alloyFile = afpv.visit(antlrAST);
-                alloyFile.filename = filePath.toString();
-            } catch (AlloyCtorError alloyCtorError) {
-                Reporter.INSTANCE.addError(alloyCtorError);
-            }
-            Reporter.INSTANCE.exitIfHasErrors();
+            alloyFile = afpv.visit(antlrAST);
+            alloyFile.filename = filePath.toString();
             return alloyFile;
         } else {
             ParseTree antlrAST = parser.dashFile();
             DashFileParseVis dfpv = new DashFileParseVis(filePath);
             DashFile dashFile = null;
-            try {
-                dashFile = dfpv.visit(antlrAST);
-                dashFile.filename = filePath.toString();
-            } catch (AlloyCtorError alloyCtorError) {
-                Reporter.INSTANCE.addError(alloyCtorError);
-            }
-            Reporter.INSTANCE.exitIfHasErrors();
+            dashFile = dfpv.visit(antlrAST);
+            dashFile.filename = filePath.toString();
             return dashFile;
         }
     }
 
     // Use this function for parsing both dash and alloy files
     public static AlloyModel parseToModel(Path filePath) {
-        AlloyFile file = Parser.parse(filePath);
-        if (null == file) {
-            // This happens when
-            // 1) Parser.parse found UserError
-            // 2) Reporter.INSTANCE.exitFunction has been swapped for testing
-            // We don't want to continue
-            return null;
-        }
         AlloyModel model = null;
-        if (file instanceof DashFile) {
-            // System.out.println(file);
-            model = new DashModel((DashFile) file);
-            Reporter.INSTANCE.exitIfHasErrors();
-            return model;
-        } else {
-            try {
-                model = new AlloyModel(file);
-            } catch (AlloyModelError alloyModelError) {
-                Reporter.INSTANCE.addError(alloyModelError);
+        try {
+            // this could be errors in the Reporter
+            // but continues on after these errors
+            AlloyFile file = Parser.parse(filePath);
+            if (null == file) {
+                // This happens when
+                // 1) Parser.parse found UserError
+                // 2) Reporter.INSTANCE.exitFunction has been swapped for testing
+                // We don't want to continue
+                return null;
             }
-            Reporter.INSTANCE.exitIfHasErrors();
-            return model;
+            if (file instanceof DashFile) {
+                // System.out.println(file);
+                model = new DashModel((DashFile) file);
+            } else {
+                model = new AlloyModel(file);
+            }
+        } catch (UserOrImplError error) {
+            // this is an error from the phase of putting
+            // the AST into the AlloyModel or DashModel
+            Reporter.INSTANCE.addError(error);
         }
+        // could have errors that are caught at parser
+        // so can continue parsing
+        Reporter.INSTANCE.exitIfHasErrors();
+        return model;
     }
 
     public static <C extends ParseTree, T> List<T> visitAll(

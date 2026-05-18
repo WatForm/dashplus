@@ -88,4 +88,8 @@ public final class AlloyIteExpr extends AlloyExpr {
     public int getPrec() {
         return AlloyExpr.ITE_PREC;
     }
+
+    public AlloyIteExpr rebuild(AlloyExpr cond, AlloyExpr conseq, AlloyExpr alt) {
+        return new AlloyIteExpr(this.pos, cond, conseq, alt);
+    }
 }

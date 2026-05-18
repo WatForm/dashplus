@@ -40,7 +40,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             // scopesUsed0, scopeUsed1, etc
             if (dm.hasConcurrency()) {
                 decls.add(
-                        // scopesUsedi: p0 -> p1 -> p2 -> set StateLabel
+                        // scopesUsedi: p0 -> p1 -> p2 -> set Scopes
                         this.dsl.AlloyDeclArrowStringList(
                                 this.dsl.nameNum(D2AStrings.scopesUsedName, i),
                                 // p0 -> p1 -> p2 -> set Scopes
@@ -48,7 +48,6 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                                         // p0, p1, p2
                                         cop,
                                         // some Scopes
-                                        // has to be "set", b/c default is "one"
                                         D2AStrings.scopeLabelName)));
             }
             // conf0, conf1, etc.
@@ -102,7 +101,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         decls.addAll(this.bufferFieldsTraces());
 
         // add the snapshot signature
-        this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+        this.am.addSigPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
     }
 
     public void varsBuffersOnlySnapshotSig() {
@@ -111,7 +110,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             decls.addAll(varFieldsTraces());
             decls.addAll(bufferFieldsTraces());
             // add the snapshot signature
-            this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+            this.am.addSigPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
         }
         // TODO add case for Electrum
     }

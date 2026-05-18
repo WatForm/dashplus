@@ -9,7 +9,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashFile;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.DashStrings.IntEnvKind;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
@@ -142,9 +141,9 @@ public class EventsDM extends VarsBuffersDM {
     public void addEvent(Pos pos, String efqn, IntEnvKind k, List<DashParam> prms) {
         assert (prms != null);
         if (et.containsKey(efqn)) {
-            DashModelErrors.duplicateName(pos, "event", efqn);
+            throw DashModelError.duplicateName(pos, "event", efqn);
         } else if (hasPrime(efqn)) {
-            DashModelErrors.nameShouldNotBePrimed(pos, efqn);
+            throw DashModelError.nameShouldNotBePrimed(pos, efqn);
         } else {
             et.put(efqn, new EventEntry(pos, k, prms));
         }

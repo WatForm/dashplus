@@ -1,3 +1,5 @@
+/* unused
+
 package ca.uwaterloo.watform.alloytotla;
 
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
@@ -113,3 +115,4 @@ public class QnameExtractVis implements AlloyExprVis<List<String>> {
         throw new UnsupportedOperationException("Unimplemented method 'visit'");
     }
 }
+*/

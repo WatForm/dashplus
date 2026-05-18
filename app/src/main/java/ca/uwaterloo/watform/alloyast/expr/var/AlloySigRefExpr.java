@@ -7,4 +7,7 @@ public sealed interface AlloySigRefExpr
                 AlloyStepsExpr,
                 AlloySigIntExpr,
                 AlloySeqIntExpr,
-                AlloyNoneExpr {}
+                AlloyNoneExpr {
+
+    String getName();
+}

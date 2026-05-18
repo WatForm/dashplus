@@ -20,6 +20,10 @@ import java.util.Optional;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara.*;
 
+
+NAD: This code is confusing as there are three sealed interfaces later in the code
+that contain critical info about creating AlloySigParas - docm is needed.
+
  */
 public final class AlloySigPara extends AlloyPara {
     public final List<Qual> quals;
@@ -28,7 +32,7 @@ public final class AlloySigPara extends AlloyPara {
     public final List<AlloyDecl> fields; // sig's fields
     public final Optional<AlloyBlock> block;
 
-    // pos: [one] sig qnames extends/in { fields } block
+    // pos: [quals such as `one`] `sig` qnames `extends`/`in` { fields } block
     public AlloySigPara(
             Pos pos,
             List<Qual> quals,
@@ -207,8 +211,9 @@ public final class AlloySigPara extends AlloyPara {
         }
     }
 
+    /*
     @Override
-    public AlloyId getId() {
+    public String getName() {
         if (qnames.size() > 1) {
             throw ImplementationError.methodShouldNotBeCalled(
                     this.pos,
@@ -217,6 +222,15 @@ public final class AlloySigPara extends AlloyPara {
                             + "Do AlloySigPara.expand() first. ");
         }
         return new AlloyId(qnames.get(0).toString());
+    }
+    */
+
+    public String getName() {
+        return qnames.get(0).toString();
+    }
+
+    public AlloyId getId() {
+        return new AlloyId(this.getName());
     }
 
     /**
@@ -261,6 +275,11 @@ public final class AlloySigPara extends AlloyPara {
 
     public boolean isVar() {
         return this.quals.contains(Qual.VAR);
+    }
+
+    public AlloySigPara rebuild(List<AlloyDecl> newFields, AlloyBlock newBlock) {
+        return new AlloySigPara(
+                this.pos, this.quals, this.qnames, this.rel.orElse(null), newFields, newBlock);
     }
 
     @Override

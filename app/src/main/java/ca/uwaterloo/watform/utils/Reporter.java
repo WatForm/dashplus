@@ -25,7 +25,11 @@ public final class Reporter {
         paths.pop();
     }
 
-    public void addError(DashPlusException error) {
+    public void addError(UserOrImplError error) {
+        errors.add(error);
+    }
+
+    public void addError(UserError error) {
         errors.add(error);
     }
 

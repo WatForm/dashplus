@@ -27,7 +27,7 @@ public class FactsA2T extends BoilerplateA2T {
     protected void addFacts() {
         List<String> factNames = new ArrayList<>();
         List<String> comments = new ArrayList<>();
-        List<AlloyFactPara> factParas = alloyModel.getParas(AlloyFactPara.class);
+        List<AlloyFactPara> factParas = alloyModel.allFactParas();
 
         factParas.forEach(
                 fp -> {

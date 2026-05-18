@@ -328,10 +328,10 @@ public class PredicateAbstraction {
                 }
                 String vname = cmdBodyQname.vars.get(0).label;
                 if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
-                    AlloyAssertPara p = this.concreteModel.getPara(AlloyAssertPara.class, vname);
+                    AlloyAssertPara p = this.concreteModel.getAssertPara(vname);
                     return p.block;
                 } else {
-                    AlloyPredPara p = this.concreteModel.getPara(AlloyPredPara.class, vname);
+                    AlloyPredPara p = this.concreteModel.getPredPara(vname);
                     return p.block;
                 }
             } catch (Exception e) {
@@ -371,7 +371,7 @@ public class PredicateAbstraction {
                 }
 
                 if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
-                    AlloyAssertPara p = this.concreteModel.getPara(AlloyAssertPara.class, vname);
+                    AlloyAssertPara p = this.concreteModel.getAssertPara(vname);
                     List<AlloyExpr> absEList = new ArrayList<>();
                     for (AlloyExpr e : p.block.exprs) {
                         if (e instanceof AlloyQuantificationExpr) {
@@ -386,13 +386,13 @@ public class PredicateAbstraction {
                     }
                     AlloyBlock absBody = new AlloyBlock(absEList);
                     AlloyAssertPara absP = new AlloyAssertPara(AlloyVar(vname), absBody);
-                    this.absModel.addPara(absP);
+                    this.absModel.addAssertPara(absP);
                     return PredAbsUtil.addCheckCmd(vname, this.absModel, absScope);
                 } else {
-                    AlloyPredPara p = this.concreteModel.getPara(AlloyPredPara.class, vname);
+                    AlloyPredPara p = this.concreteModel.getPredPara(vname);
                     AlloyBlock absBody = new AlloyBlock(createAbsExpr(p.block, true));
                     AlloyPredPara absP = new AlloyPredPara(AlloyVar(vname), p.arguments, absBody);
-                    this.absModel.addPara(absP);
+                    this.absModel.addPredPara(absP);
                     return PredAbsUtil.addRunCmd(vname, this.absModel, absScope);
                 }
             } catch (Exception e) {

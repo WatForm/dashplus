@@ -116,8 +116,28 @@ public final class AlloyStrings extends CommonStrings {
     public static final String booleanName = "boolean";
 
     public static final String boolName = "boolean/Bool";
+    public static final String shortBoolName = "Bool";
+
     public static final String trueName = "boolean/True";
+    public static final String shortTrueName = "True";
+
     public static final String falseName = "boolean/False";
+    public static final String shortFalseName = "False";
+
     public static final String isTrue = "boolean/isTrue";
+    public static final String shortIsTrue = "isTrue";
+
     public static final String isFalse = "boolean/isFalse";
+    public static final String shortIsFalse = "isFalse";
+
+    public static final String util_plus = "plus";
+    public static final String util_minus = "minus";
+    public static final String util_lt = "lt";
+
+    public static final String shortMaxName = "max";
+    public static final String shortMinName = "min";
+
+    // util/sequniv.als
+    // https://github.com/AlloyTools/org.alloytools.alloy/blob/master/org.alloytools.alloy.core/src/main/resources/models/util/sequniv.als
+    public static final String shortSeqUnivDelete = "delete";
 }

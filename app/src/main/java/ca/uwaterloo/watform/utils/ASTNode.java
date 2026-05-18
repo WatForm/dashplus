@@ -51,12 +51,7 @@ public abstract class ASTNode {
         }
         var iterator = items.iterator();
         while (iterator.hasNext()) {
-            try {
-                ((ASTNode) iterator.next()).toString(sb, indent);
-            } catch (ClassCastException e) {
-                throw ImplementationError.failedCast(
-                        "Cannot cast to ASTNode in ASTNode.join. \n" + e.toString());
-            }
+            ((ASTNode) iterator.next()).toString(sb, indent);
             if (iterator.hasNext()) {
                 sb.append(separator);
             }

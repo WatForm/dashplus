@@ -22,6 +22,8 @@ public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
             try {
                 paragraphs.add(ppv.visit(parCtx));
             } catch (AlloyCtorError alloyCtorError) {
+                // caught here, because we will let it
+                // continue on other paragraphs
                 Reporter.INSTANCE.addError(alloyCtorError);
             }
         }

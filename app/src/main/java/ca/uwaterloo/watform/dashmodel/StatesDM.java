@@ -15,7 +15,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings.DefKind;
 import ca.uwaterloo.watform.dashast.DashStrings.StateKind;
@@ -228,7 +227,7 @@ public class StatesDM extends TransDM {
                     nP = new ArrayList<AlloyExpr>(allButLast(chOfDest.paramValues));
                     // all param values
                     // make a var
-                    e1 = new AlloyNameExpr(dest.pos, stateParam(chOfDest.name).stateName);
+                    e1 = stateParam(chOfDest.name).asWholeSet();
                     e2 = lastElement(chOfDest.paramValues);
                     if (!e1.equals(e2)) {
                         nP.add(new AlloyDiffExpr(dest.pos, e1, e2));
@@ -247,7 +246,7 @@ public class StatesDM extends TransDM {
                 // siblings
                 for (String ch : andChildren) {
                     nP = new ArrayList<AlloyExpr>(d.paramValues);
-                    if (stateHasParam(ch)) nP.add(stateParam(ch));
+                    if (stateHasParam(ch)) nP.add(stateParam(ch).asWholeSet());
                     r.addAll(leafStatesEntered(new StateDashRef(ch, nP)));
                 }
             }
@@ -291,7 +290,9 @@ public class StatesDM extends TransDM {
                 // because if earlier condition is true,
                 // this defaults to a simpler case
                 equals = AlloyAnd(equals, AlloyEqual(s, d));
-                scopeParams.add(new AlloyIteExpr(equals, s, stateParams(sc).get(i))); // whole set
+                scopeParams.add(
+                        new AlloyIteExpr(
+                                equals, s, stateParams(sc).get(i).asWholeSet())); // whole set
             }
         }
         StateDashRef x = new StateDashRef(sc, scopeParams); // no pos possible
@@ -440,7 +441,7 @@ public class StatesDM extends TransDM {
             for (String ch : immChildren(s.name)) {
                 // exit all copies of the params
                 List<AlloyExpr> newParamValues = new ArrayList<AlloyExpr>(s.paramValues);
-                if (stateHasParam(ch)) newParamValues.add(stateParam(ch));
+                if (stateHasParam(ch)) newParamValues.add(stateParam(ch).asWholeSet());
                 r.addAll(leafStatesExited(new StateDashRef(ch, newParamValues)));
             }
             return r;
@@ -463,7 +464,7 @@ public class StatesDM extends TransDM {
                 if (stateHasParam(deffqn))
                     // this is basically a paramVar, but since this function
                     // is in DashModel, we don't want to use our DSL
-                    newParamValues.add(this.stateParam(deffqn));
+                    newParamValues.add(this.stateParam(deffqn).asWholeSet());
                 r.addAll(leafStatesEntered(new StateDashRef(deffqn, newParamValues)));
             }
         }
@@ -509,9 +510,9 @@ public class StatesDM extends TransDM {
     public void addState(Pos pos, String fqn) {
         assert (!fqn.isEmpty());
         if (this.st.containsKey(fqn)) {
-            DashModelErrors.duplicateName(pos, "state", fqn);
+            throw DashModelError.duplicateName(pos, "state", fqn);
         } else if (hasPrime(fqn)) {
-            DashModelErrors.nameShouldNotBePrimed(pos, fqn);
+            throw DashModelError.nameShouldNotBePrimed(pos, fqn);
         } else {
             this.st.put(fqn, null);
         }
@@ -528,9 +529,9 @@ public class StatesDM extends TransDM {
             List<String> iChildren) {
         assert (!sfqn.isEmpty());
         if (this.st.containsKey(sfqn)) {
-            DashModelErrors.duplicateName(pos, "state", sfqn);
+            throw DashModelError.duplicateName(pos, "state", sfqn);
         } else if (hasPrime(sfqn)) {
-            DashModelErrors.nameShouldNotBePrimed(pos, sfqn);
+            throw DashModelError.nameShouldNotBePrimed(pos, sfqn);
         } else {
             this.st.put(sfqn, new StateEntry(pos, k, prm, prms, def, parent, iChildren));
         }

@@ -9,7 +9,6 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
@@ -25,11 +24,13 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         throw ImplementationError.notSupported("dashref inside pure AlloyVis");
     }
 
+    /*
     @Override
     public TlaExp visit(DashParam dashParam) {
 
         throw ImplementationError.notSupported("dashParam inside pure AlloyVis");
     }
+    */
 
     @Override
     public TlaExp visit(AlloyBinaryExpr binExpr) {

@@ -1,0 +1,57 @@
+# README
+
+## AlloyModel Chain of Classes
+
+These all store parts of the Alloy Model:
+AMFieldTable
+AMSigTable
+AMPredTable
+AMArity
+	- everything below this has arity fcn passed down in resolve
+
+AMEnums
+AMSigs
+AMPreds
+AMModules
+AMImports
+AMMacros
+AMFuns
+
+AMFacts
+AMAsserts
+AMCmds
+AlloyModel
+
+All AMxxx are initialized with an empty list so that a model can be created completely through the API.
+
+Any API additions of paragraphs are immediately checked for arity and default multiplicities so additional paragraphs must have sig declarations added before being used in another paragraph.
+
+### Initalization
+
+When creating via an AlloyFile, copy of another AlloyModel, or through the API, all tables, and lists are initialized, but default muls and arities are not yet calculated.  This becauses pred/sigs/fields can be used before they are declared.
+
+### Resolving
+
+In the use of an Alloy Model, it must be resolved before it is final.
+
+Done in CLI when parse Alloy File.
+
+Done in Dash2Alloy at very end.
+
+Should be done in predAbs or DashToTla
+
+
+
+## Additional Classes
+
+* CalcAritySetMulDefaultsExprVis is an instance of AlloyExprVis that walks over expressions and determines their arity and set mul defaults.  If choosing an arity is not possible, it throws an exception.
+
+## Errors
+
+Two kinds of errors are thrown in this package:
+
+* AlloyModelError (all described in AlloyModelError.java)
+These are errors in the model, which could be caused by something in the AlloyFile loaded or by a programmer using the API so these are caught in parseToModel, which records them in the Reporter as user errors.
+
+* AlloyModelImplError (all in AlloyModelImplError.java) or its parent ImplementationError
+These are programming errors that caught and output in Main.java .

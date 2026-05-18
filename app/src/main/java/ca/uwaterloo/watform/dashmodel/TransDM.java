@@ -149,9 +149,9 @@ public class TransDM extends InitsInvsDM {
         assert (!tfqn.isEmpty());
         assert (params != null);
         if (tt.containsKey(tfqn)) {
-            DashModelErrors.duplicateName(pos, "trans", tfqn);
+            throw DashModelError.duplicateName(pos, "trans", tfqn);
         } else if (hasPrime(tfqn)) {
-            DashModelErrors.nameShouldNotBePrimed(pos, tfqn);
+            throw DashModelError.nameShouldNotBePrimed(pos, tfqn);
         } else {
             this.tt.put(tfqn, new TransEntry(params, fromR, onR, whenR, gotoR, sendR, doR));
         }

@@ -100,4 +100,8 @@ public final class AlloyBlock extends AlloyExpr {
     public int getPrec() {
         return AlloyExpr.NO_PAREN;
     }
+
+    public AlloyBlock rebuild(List<AlloyExpr> exprs) {
+        return new AlloyBlock(this.pos, exprs);
+    }
 }

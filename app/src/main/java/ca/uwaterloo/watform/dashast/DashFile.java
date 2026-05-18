@@ -16,7 +16,7 @@ public final class DashFile extends AlloyFile {
         List<DashPara> dashParas = extractItemsOfClass(paragraphs, DashPara.class);
         if (1 != dashParas.size()) {
             System.out.println(dashParas);
-            throw DashCtorError.exactlyOneStateRoot();
+            throw DashASTError.exactlyOneStateRoot();
         }
         this.stateRoot = (DashState) dashParas.get(0);
     }

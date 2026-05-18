@@ -1,3 +1,8 @@
+/*
+    defaults are to just visit all subexpressions
+    and rebuild
+*/
+
 package ca.uwaterloo.watform.exprvisitor;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
@@ -5,7 +10,6 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 
 public interface AlloyExprVis<T> {
@@ -17,7 +21,7 @@ public interface AlloyExprVis<T> {
     T visit(DashRef dashRef);
 
     // ones from Dash
-    T visit(DashParam dashParam);
+    // T visit(DashParam dashParam);
 
     // Abstract ones that need implementation in extensions
     T visit(AlloyBinaryExpr binExpr);
@@ -40,6 +44,14 @@ public interface AlloyExprVis<T> {
 
     T visit(AlloyQuantificationExpr quantificationExpr);
 
+    // AlloyDecl can never be an expression by itself
+    // but it is often convenient to group an action
+    // into something on the Decl itself rather than
+    // scattering the action throughout the place that
+    // a Decl can appear in an expr
+    // in places where it can never be reached by itself,
+    // its implementation can be left as throwing a
+    // code should not reach this point error
     T visit(AlloyDecl decl);
 
     default T visit(AlloyParenExpr parenExpr) {

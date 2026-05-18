@@ -1,8 +1,13 @@
+/*
+    Errors that can occur in Main.java
+    and added directly to the Reporter in Main.java.
+*/
+
 package ca.uwaterloo.watform.cli;
 
-import ca.uwaterloo.watform.utils.DashPlusException;
+import ca.uwaterloo.watform.utils.UserError;
 
-public final class CliError extends DashPlusException {
+public final class CliError extends UserError {
     private CliError(String msg) {
         super(msg);
     }

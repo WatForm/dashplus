@@ -203,4 +203,16 @@ public final class AlloyFunPara extends AlloyPara {
         } else if (!block.equals(other.block)) return false;
         return true;
     }
+
+    public AlloyFunPara rebuild(List<AlloyDecl> arguments, AlloyExpr sub, AlloyBlock block) {
+        return new AlloyFunPara(
+                this.pos,
+                this.isPrivate,
+                this.sigRef.orElse(null),
+                this.qname,
+                arguments,
+                this.mul,
+                sub,
+                block);
+    }
 }

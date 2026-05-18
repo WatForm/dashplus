@@ -70,4 +70,8 @@ public final class AlloyParenExpr extends AlloyExpr {
         return AlloyExpr.NO_PAREN;
         // paren already included in pp
     }
+
+    public AlloyParenExpr rebuild(AlloyExpr sub) {
+        return new AlloyParenExpr(this.pos, sub);
+    }
 }

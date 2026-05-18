@@ -38,9 +38,9 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashast.DashFQN;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
 public class TransIsEnabledAfterStepD2A extends TransPreD2A {
@@ -74,7 +74,7 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
             body.add(
                     AlloySome(
                             AlloyInter(
-                                    this.dm.fromR(tfqn).asAlloyArrow(),
+                                    this.translateDashRefToArrowExpr(this.dm.fromR(tfqn)),
                                     this.dsl.nextConf(prs.size()))));
 
         // primed guard condition is true
@@ -92,7 +92,7 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
             List<AlloyExpr> u =
                     mapBy(
                             filterBy(nonO, x -> x.hasNumParams(j)),
-                            y -> this.dsl.asScope(y).asAlloyArrow());
+                            y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
             // o1: forall i. not(t1_nonOrthScopei in scopesi)
             for (AlloyExpr x : u) orth1.add(AlloyNot(AlloyIn(x, this.dsl.scopeVar(i))));
         }
@@ -107,7 +107,7 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
             List<AlloyExpr> u =
                     mapBy(
                             filterBy(nonO, x -> x.hasNumParams(j)),
-                            y -> this.dsl.asScope(y).asAlloyArrow());
+                            y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
             // o2: forall i. not(t1_nonOrthScopei in scopesi + s'.scopesUsedi)
             for (AlloyExpr x : u)
                 orth2.add(
@@ -131,7 +131,7 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
                 // ev1: t1_on  in (s.eventsi :> EnvEvents) + genEventsi
                 ev1 =
                         AlloyIn(
-                                ev.asAlloyArrow(),
+                                this.translateDashRefToArrowExpr(ev),
                                 AlloyUnion(
                                         this.dsl.RangeResLevel(
                                                 this.dsl.curEvents(level),
@@ -141,12 +141,15 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
             } else {
                 // no env events so just
                 // ev1: t1_on  in genEventsi
-                ev1 = AlloyIn(ev.asAlloyArrow(), this.dsl.genEventVar(ev.paramValues.size()));
+                ev1 =
+                        AlloyIn(
+                                this.translateDashRefToArrowExpr(ev),
+                                this.dsl.genEventVar(ev.paramValues.size()));
             }
             // ev2: t1_on  in s.eventsi  + genEventsi
             ev2 =
                     AlloyIn(
-                            ev.asAlloyArrow(),
+                            this.translateDashRefToArrowExpr(ev),
                             AlloyUnion(
                                     this.dsl.curEvents(ev.paramValues.size()),
                                     this.dsl.genEventVar(ev.paramValues.size())));
@@ -159,6 +162,6 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
             body.add(AlloyIte(this.dsl.curStableTrue(), AlloyAnd(o1, ev1), AlloyAnd(o2, ev2)));
         else body.add(AlloyAnd(o1, ev1));
 
-        this.am.addPred(tout + D2AStrings.enabledAfterStepName, decls, body);
+        this.am.addPred(D2AStrings.enabledAfterStepName(tout), decls, body);
     }
 }

@@ -4,16 +4,13 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
-import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.utils.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class AlloyMacroPara extends AlloyPara {
     public final boolean isPrivate;
@@ -37,10 +34,10 @@ public final class AlloyMacroPara extends AlloyPara {
         this.block = Optional.ofNullable(block);
         this.sub = Optional.ofNullable(sub);
         if (!this.block.isEmpty() && !this.sub.isEmpty()) {
-            throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
+            throw AlloyCtorError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
         if (this.block.isEmpty() && this.sub.isEmpty()) {
-            throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
+            throw AlloyCtorError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
         reqNonNull(nullField(pos, this), this.qname, this.qnames, this.block, this.sub);
     }
@@ -100,7 +97,7 @@ public final class AlloyMacroPara extends AlloyPara {
             sb.append(AlloyStrings.SPACE);
             this.sub.get().toString(sb, indent);
         } else {
-            throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
+            throw AlloyCtorError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
     }
 
@@ -126,7 +123,7 @@ public final class AlloyMacroPara extends AlloyPara {
             pCtx.brk();
             this.sub.get().pp(pCtx);
         } else {
-            throw AlloyASTImplError.xorFields(pos, "block", "sub", "AlloyMacroPara");
+            throw AlloyCtorError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
     }
 
@@ -160,5 +157,9 @@ public final class AlloyMacroPara extends AlloyPara {
             if (other.sub != null) return false;
         } else if (!sub.equals(other.sub)) return false;
         return true;
+    }
+
+    public AlloyMacroPara rebuild(AlloyBlock block, AlloyExpr sub) {
+        return new AlloyMacroPara(this.pos, this.isPrivate, this.qname, this.qnames, block, sub);
     }
 }

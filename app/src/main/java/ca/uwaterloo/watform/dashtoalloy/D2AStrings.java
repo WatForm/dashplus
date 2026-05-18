@@ -60,7 +60,7 @@ public final class D2AStrings {
     public static final String stateLabelName = DshPrefix + "States";
     public static final String scopeLabelName = DshPrefix + "Scopes";
     // public static final String systemStateName = "SystemState";
-    public static final String transLabelName = "Transitions";
+    public static final String transLabelName = DshPrefix + "Transitions";
     // 2024-02-21 NAD we can just set the set of transitions to empty
     // public static final String noTransName = "NO_TRANS";
     public static final String identifierName = DshPrefix + "Ids";
@@ -72,13 +72,28 @@ public final class D2AStrings {
     public static final String scopesUsedName = dsh_prefix + "sc_used";
     public static final String eventsName = dsh_prefix + "events";
     public static final String transTakenName = dsh_prefix + "taken";
+
     // predicate names
     // public static final String tName = "dsh_t";
-    public static final String preName = dsh_prefix + "_pre";
-    public static final String postName = dsh_prefix + "_post";
+    public static String preName(String s) {
+        return dsh_prefix + s + "_pre";
+    }
+
+    public static String postName(String s) {
+        return dsh_prefix + s + "_post";
+    }
+
+    public static String transName(String s) {
+        return dsh_prefix + s + "_trans";
+    }
+
     // public static final String semanticsName = "_semantics";
-    public static final String testIfNextStableName = dsh_prefix + "_nextIsStable";
-    public static final String enabledAfterStepName = dsh_prefix + "_enabledAfterStep";
+    public static final String testIfNextStableName = dsh_prefix + "nextIsStable";
+
+    public static String enabledAfterStepName(String s) {
+        return dsh_prefix + s + "_enabledAfterStep";
+    }
+
     public static final String allSnapshotsDiffName = dsh_prefix + "allSnapshotsDiff";
     // variable/parameter names
     // how to name parameter variables

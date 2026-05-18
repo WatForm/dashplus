@@ -7,8 +7,8 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashast.DashFQN;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
 public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
@@ -47,7 +47,7 @@ public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
             if (!this.isElectrum) args.addAll(this.dsl.curNextVars());
 
             for (DashParam p : this.dm.transParams(tfqn)) {
-                args.add(p.asAlloyVar());
+                args.add(p.asIndexValue());
             }
 
             for (int i = 0; i <= maxDepthParams; i++) {
@@ -58,7 +58,7 @@ public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
             }
 
             String tout = DashFQN.translateFQN(tfqn);
-            body.add(AlloyNot(AlloyPredCall(tout + D2AStrings.enabledAfterStepName, args)));
+            body.add(AlloyNot(AlloyPredCall(D2AStrings.enabledAfterStepName(tout), args)));
         }
         this.am.addPred(D2AStrings.testIfNextStableName, decls, body);
     }

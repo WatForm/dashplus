@@ -85,6 +85,10 @@ public final class AlloyLetExpr extends AlloyExpr {
         return true;
     }
 
+    public AlloyLetExpr rebuild(List<AlloyLetAsn> asns, AlloyExpr body) {
+        return new AlloyLetExpr(this.pos, asns, body);
+    }
+
     @Override
     public int getPrec() {
         return AlloyExpr.LET_PREC;
@@ -105,12 +109,16 @@ public final class AlloyLetExpr extends AlloyExpr {
             this(Pos.UNKNOWN, qname, expr);
         }
 
-        public AlloyQnameExpr getName() {
-            return this.qname;
+        public String getName() {
+            return this.qname.toString();
         }
 
         public AlloyExpr getExpr() {
             return expr;
+        }
+
+        public AlloyLetAsn rebuild(AlloyExpr expr) {
+            return new AlloyLetAsn(this.pos, this.qname, expr);
         }
 
         @Override

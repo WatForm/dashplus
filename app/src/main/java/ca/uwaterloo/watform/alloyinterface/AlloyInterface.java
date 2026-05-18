@@ -32,6 +32,7 @@ public class AlloyInterface {
         return parse(am.toString());
     }
 
+    // testing function
     public static Boolean canParse(String alloyCode) {
         try {
             parse(alloyCode);

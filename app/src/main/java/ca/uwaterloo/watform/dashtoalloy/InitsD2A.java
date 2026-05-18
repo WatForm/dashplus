@@ -6,10 +6,11 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.List;
+import ca.uwaterloo.watform.dashmodel.DashParam;
+import java.util.*;
 
 public class InitsD2A extends SnapshotSigD2A {
 
@@ -36,10 +37,11 @@ public class InitsD2A extends SnapshotSigD2A {
             for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
                 // Java required local var used in lambda to be final
                 final int numParams = i;
+                // entered comes back in terms of DashRefs and DashParams
                 List<AlloyExpr> ent =
                         mapBy(
                                 filterBy(entered, x -> x.hasNumParams(numParams)),
-                                y -> y.asAlloyArrow());
+                                y -> this.translateDashRefToArrowExpr(y));
                 if (!ent.isEmpty()) body.add(AlloyEqual(this.dsl.curConf(i), AlloyUnion(ent)));
                 else body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.noneArrow(i)));
             }
@@ -77,15 +79,36 @@ public class InitsD2A extends SnapshotSigD2A {
         List<AlloyDecl> decls;
         if (!body.isEmpty()) {
             if (!prs.isEmpty()) {
+
+                e = AlloyAndList(body);
+
+                // this is a bit awkward (same as in InvsD2A.java)::
+                // Expr e is an AlloyVar of the param name, but we need the Decl of the param
+                List<String> prmStateNames = mapBy(prs, p -> p.asIndexValue().getName());
+
+                // System.out.println(e.toString());
+                // System.out.println(prmStateNames);
+                // get the param stateNames used in the expression
+                Set<String> prsUsed =
+                        this.dsl.testAndCollect(
+                                x -> prmStateNames.contains(((AlloyQnameExpr) x).getName()), e);
+                // System.out.println("params used: " + prsUsed.toString());
+
                 // all param1. all param3. ... body
                 // but all the parameters are not used in init
+                // now get the Decls associated with those stateNames
                 decls = this.dsl.emptyDeclList();
-                e = AlloyAndList(body);
                 for (int i = 0; i < prs.size(); i++) {
-                    if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
+                    if (prsUsed.contains(prs.get(i).asIndexValue().getName())) {
+                        // if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
                         decls.add(prs.get(i).asAlloyDecl());
                     }
                 }
+                // System.out.println(decls);
+                // there is certainly a more efficient way to do the above
+                // but as there are only ever 1-2 parameters,
+                // it is not worth it to make it more efficient
+
                 if (!decls.isEmpty()) {
                     e = AlloyAllVars(decls, e);
                     body = this.dsl.emptyExprList();

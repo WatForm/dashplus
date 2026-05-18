@@ -23,8 +23,12 @@ public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
         for (DashParser.ParagraphContext parCtx : ctx.paragraph()) {
             try {
                 paragraphs.add(ppv.visit(parCtx));
+                // catch and continue
+                // for other paragraphs
             } catch (AlloyCtorError alloyCtorError) {
                 Reporter.INSTANCE.addError(alloyCtorError);
+            } catch (DashASTError dashASTError) {
+                Reporter.INSTANCE.addError(dashASTError);
             }
         }
         if (paragraphs.isEmpty()) {

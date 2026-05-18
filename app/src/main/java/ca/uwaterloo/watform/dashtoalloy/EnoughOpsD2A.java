@@ -19,8 +19,8 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashast.DashFQN;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
 public class EnoughOpsD2A extends AllSnapshotsDiffD2A {
@@ -44,12 +44,15 @@ public class EnoughOpsD2A extends AllSnapshotsDiffD2A {
                     body.add(
                             AlloySomeVars(
                                     this.dsl.curNextDecls(),
-                                    AlloyPredCall(tout, this.dsl.curNextVars())));
+                                    AlloyPredCall(
+                                            D2AStrings.transName(tout), this.dsl.curNextVars())));
             } else {
                 body.add(
                         AlloySomeVars(
                                 this.dsl.curNextParamsDecls(prms),
-                                AlloyPredCall(tout, this.dsl.curNextParamVars(prms))));
+                                AlloyPredCall(
+                                        D2AStrings.transName(tout),
+                                        this.dsl.curNextParamVars(prms))));
             }
         }
         List<AlloyDecl> nodecls = this.dsl.emptyDeclList();

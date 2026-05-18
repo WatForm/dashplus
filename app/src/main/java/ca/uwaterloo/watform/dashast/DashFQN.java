@@ -143,8 +143,7 @@ public class DashFQN {
         List<String> s = splitFQN(fqn);
         if (s.size() < 2) {
             printStackTrace();
-            Errors.chopPrefixFromFQNwithNoPrefix(fqn);
-            return null;
+            throw DashASTImplError.chopPrefixFromFQNwithNoPrefix(fqn);
         } else return fqn(allButLast(splitFQN(fqn)));
     }
 
@@ -205,8 +204,7 @@ public class DashFQN {
             // dest must be longer than ances
             return fqn(splitFQN(dest).subList(0, splitFQN(ances).size() + 1));
         else {
-            Errors.ancesNotPrefix(ances, dest);
-            return null;
+            throw DashASTImplError.ancesNotPrefix(ances + " " + dest);
         }
     }
 
@@ -251,19 +249,5 @@ public class DashFQN {
             }
         }
         return false;
-    }
-
-    public class Errors {
-        public static String ancesNotPrefixMsg = " must be a prefix of ";
-
-        public static void ancesNotPrefix(String a, String d) throws ImplementationError {
-            throw new ImplementationError(a + ancesNotPrefixMsg + d);
-        }
-
-        public static String chopPrefixFromFQNwithNoPrefixMsg = "chopPrefixFromFQNwithNoPrefix: ";
-
-        public static void chopPrefixFromFQNwithNoPrefix(String s) throws ImplementationError {
-            throw new ImplementationError(chopPrefixFromFQNwithNoPrefixMsg + s);
-        }
     }
 }

@@ -117,21 +117,27 @@ public class SpaceSigsD2A extends BaseD2A {
     }
 
     public void addParamSpaceSigs() {
+
+        // the user declares the parameter sigs
+
         if (!this.isElectrum && this.dm.maxDepthParams() != 0) {
             // if this model has parametrized components
 
             AlloyExpr identifiersVar = AlloyVar(D2AStrings.identifierName);
+
+            // there might be duplicate sigs in the list of allParams if a
+            // sig is used to index more than one state
+
+            List<String> paramSigNames =
+                    setToList(listToSet(mapBy(this.dm.allParams(), x -> x.paramSig)));
+
             // the next two lines were very tricky to get the types for
             // sig Identifiers extends param1 + param2 + etc. {}
-            this.am.addInSig(
-                    D2AStrings.identifierName,
-                    mapBy(this.dm.allParams(), x -> AlloyVar(x.paramSig)));
+            this.am.addInSig(D2AStrings.identifierName, mapBy(paramSigNames, x -> AlloyVar(x)));
             // Identifiers = param1 + param2 + etc
             this.am.addFact(
                     D2AStrings.paramsFact,
-                    AlloyEqual(
-                            identifiersVar,
-                            AlloyUnion(mapBy(this.dm.allParams(), x -> AlloyVar(x.paramSig)))));
+                    AlloyEqual(identifiersVar, AlloyUnion(mapBy(paramSigNames, x -> AlloyVar(x)))));
         }
     }
 
@@ -185,7 +191,7 @@ public class SpaceSigsD2A extends BaseD2A {
                     this.am.addSig(this.dsl.bufferIndexSig(this.dm.bufferIndex(bfqn)));
 
                 // import util/buffer[BufIdx, elem]
-                this.am.addPara(
+                this.am.addImportPara(
                         new AlloyImportPara(
                                 false,
                                 new AlloyQnameExpr(

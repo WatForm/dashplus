@@ -5,7 +5,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyStrLiteralExpr;
 import ca.uwaterloo.watform.utils.*;
@@ -108,5 +108,14 @@ public final class AlloyAssertPara extends AlloyPara {
             if (other.strLit != null) return false;
         } else if (!strLit.equals(other.strLit)) return false;
         return true;
+    }
+
+    public AlloyAssertPara rebuild(AlloyBlock block) {
+        return new AlloyAssertPara(
+                this.pos, this.qname.orElse(null), this.strLit.orElse(null), block);
+    }
+
+    public String getName() {
+        return this.qname.toString();
     }
 }

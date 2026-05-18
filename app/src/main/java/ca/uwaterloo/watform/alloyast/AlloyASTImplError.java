@@ -22,28 +22,6 @@ public final class AlloyASTImplError extends ImplementationError {
      * @param className
      * @return AlloyASTImplError
      */
-    public static AlloyASTImplError xorFields(
-            Pos pos, String field1, String field2, String className) {
-        return new AlloyASTImplError(
-                pos,
-                field1
-                        + " and "
-                        + field2
-                        + " are mutually-exclusive fields in "
-                        + className
-                        + ". It must contain exactly one of them.");
-    }
-
-    /**
-     * A WFF error, but it cannot occur through the ANTLR parser. So it cannot occur during parsing;
-     * it must be an ImplementationError
-     *
-     * @param pos
-     * @param field1
-     * @param field2
-     * @param className
-     * @return AlloyASTImplError
-     */
     public static AlloyASTImplError bothNull(
             Pos pos, String field1, String field2, String className) {
         return new AlloyASTImplError(
@@ -70,17 +48,7 @@ public final class AlloyASTImplError extends ImplementationError {
         return new AlloyASTImplError(pos, "AlloyFile should not contain a DashParagraph. ");
     }
 
-    // ====================================================================================
-    // AlloyQtEnum
-    // This error is not possible to come from parsing,
-    // dash.g4 enforces the correct mul; an Antlr
-    // error is thrown if it's not correct.
-    // ====================================================================================
-    public static AlloyASTImplError invalidAlloyQtEnum(Pos pos, String msg) {
-        return new AlloyASTImplError(pos, msg);
-    }
-
-    public static AlloyASTImplError invalidAlloyQtEnum(String msg) {
-        return new AlloyASTImplError(msg);
+    public static AlloyASTImplError emptyDecls(Pos pos) {
+        throw new AlloyASTImplError(pos, "Decl list of comprehension expr cannot be empty");
     }
 }

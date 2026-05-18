@@ -5,6 +5,7 @@
 package ca.uwaterloo.watform.alloyast.expr;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
@@ -12,6 +13,7 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +22,9 @@ public class AlloyExprFactory {
     private static Boolean optimizationsOn = true;
 
     // left set -> set right
+    // defaults are chosen here
     public static AlloyExpr AlloyArrow(AlloyExpr left, AlloyExpr right) {
-        return new AlloyArrowExpr(left, right);
+        return new AlloyArrowExpr(left, AlloyQtEnum.SET, AlloyQtEnum.SET, right);
     }
 
     // eList(0) set -> set (eList(1) set -> set eList(2))
@@ -31,7 +34,7 @@ public class AlloyExprFactory {
         List<AlloyExpr> reversed = reverse(eList);
         AlloyExpr o = reversed.get(0);
         for (AlloyExpr e : reversed.subList(1, reversed.size())) {
-            o = new AlloyArrowExpr(e, o);
+            o = new AlloyArrowExpr(e, AlloyQtEnum.SET, AlloyQtEnum.SET, o);
         }
         return o;
     }
@@ -232,6 +235,7 @@ public class AlloyExprFactory {
     // decls -----------
 
     public static AlloyDecl AlloyDecl(String s, AlloyQtEnum mul, AlloyExpr expr) {
+        reqNonNull(nullField(Pos.UNKNOWN, mul), mul);
         return new AlloyDecl(AlloyVar(s), mul, expr);
     }
 
@@ -262,5 +266,9 @@ public class AlloyExprFactory {
         else if (cond.equals(AlloyFalseCond())) return alt;
         else if (conseq.equals(alt)) return conseq;
         else return new AlloyIteExpr(cond, conseq, alt);
+    }
+
+    public static boolean isSeq(AlloyExpr expr) {
+        return (expr instanceof AlloyQtExpr && ((AlloyQtExpr) expr).qt.equals(AlloyQtEnum.SEQ));
     }
 }

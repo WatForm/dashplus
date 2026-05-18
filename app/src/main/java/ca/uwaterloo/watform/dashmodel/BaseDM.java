@@ -17,7 +17,7 @@ import ca.uwaterloo.watform.dashast.DashFile;
 public class BaseDM extends AlloyModel {
 
     public BaseDM() {
-        super(null);
+        super();
     }
 
     public BaseDM(DashFile d) {

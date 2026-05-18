@@ -21,12 +21,12 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.dashref.*;
-import ca.uwaterloo.watform.exprvisitor.ContainsVarExprVis;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import ca.uwaterloo.watform.dashmodel.DashParam;
+import ca.uwaterloo.watform.exprvisitor.TestAndCollectVarsExprVis;
+import java.util.*;
+import java.util.function.Function;
 
 public class DSL {
 
@@ -63,7 +63,7 @@ public class DSL {
     // [p0_AID,p1_AID,...]
     public List<AlloyExpr> paramVars(List<DashParam> prs) {
         List<AlloyExpr> o = this.emptyExprList();
-        for (DashParam p : prs) o.add(p.asAlloyVar());
+        for (DashParam p : prs) o.add(p.asIndexValue());
         return o;
     }
 
@@ -175,6 +175,24 @@ public class DSL {
             return primedVarExpr((AlloyQnameExpr) e);
         } else {
             return new AlloyDotExpr(nextVar(), e);
+        }
+    }
+
+    public AlloyExpr curJoinVar(String x) {
+        AlloyQnameExpr varExpr = new AlloyQnameExpr(DashFQN.translateFQN(x));
+        if (this.isElectrum) {
+            return varExpr;
+        } else {
+            return new AlloyDotExpr(curVar(), varExpr);
+        }
+    }
+
+    public AlloyExpr nextJoinVar(String x) {
+        AlloyQnameExpr varExpr = new AlloyQnameExpr(DashFQN.translateFQN(x));
+        if (this.isElectrum) {
+            return primedVarExpr(varExpr);
+        } else {
+            return new AlloyDotExpr(nextVar(), varExpr);
         }
     }
 
@@ -354,13 +372,26 @@ public class DSL {
         }
     }
 
+    public Set<String> testAndCollect(Function<AlloyExpr, Boolean> test, AlloyExpr expr) {
+        return new TestAndCollectVarsExprVis(test).visit(expr);
+    }
+
     public boolean containsVar(AlloyExpr expr, AlloyQnameExpr varToFind) {
-        return new ContainsVarExprVis(varToFind).visit(expr);
+        Function<AlloyExpr, Boolean> test =
+                x ->
+                        ((x instanceof AlloyQnameExpr
+                                        && ((AlloyQnameExpr) x)
+                                                .getName()
+                                                .equals(varToFind.getName()))
+                                || (x instanceof DashRef
+                                        && (((DashRef) x).name.equals(varToFind.getName()))));
+        return (new TestAndCollectVarsExprVis(test).visit(expr)).isEmpty();
     }
 
     public boolean containsVar(List<AlloyExpr> exprs, AlloyQnameExpr varToFind) {
-        ContainsVarExprVis cvis = new ContainsVarExprVis(varToFind);
-        return someTrue(mapBy(exprs, e -> cvis.visit(e)));
+        TestAndCollectVarsExprVis cvis =
+                new TestAndCollectVarsExprVis(x -> x.equals(varToFind.getName()));
+        return someTrue(mapBy(exprs, e -> cvis.visit(e).isEmpty()));
     }
 
     public AlloyExpr AlloyPredCall(String predName, List<AlloyExpr> exprList) {
@@ -397,7 +428,8 @@ public class DSL {
     // Creates either
     // (list of length one) AlloyDecl(name, Quant.SET, AlloyVar(sl.get(0)))
     // or
-    // (list of length > 1) AlloyVar(sl(0)) set -> set ( AlloyVar(sl(1)) set -> set AlloyVar(sl(2))
+    // (list of length > 1) AlloyDecl(name, AlloyVar(sl(0)) set -> set ( AlloyVar(sl(1)) set -> set
+    // AlloyVar(sl(2)))
     // )
     public static AlloyDecl AlloyDeclArrowStringList(String name, List<String> sl) {
         assert (name != null && name != "" && sl != null && !sl.isEmpty());

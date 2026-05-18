@@ -18,7 +18,7 @@ public final class AlloyQtExpr extends AlloyUnaryExpr {
         this.qt = qt;
         reqNonNull(nullField(pos, this), this.qt);
         if (this.qt == AlloyQtEnum.EXACTLY) {
-            throw AlloyASTImplError.invalidAlloyQtEnum(
+            throw AlloyCtorError.invalidAlloyQtEnum(
                     pos, this.getClass().getSimpleName() + ".qt cannot be AlloyQtEnum.EXACTLY. ");
         }
     }

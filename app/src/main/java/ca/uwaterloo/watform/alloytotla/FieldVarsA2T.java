@@ -12,9 +12,15 @@ public class FieldVarsA2T extends FactsA2T {
     }
 
     protected void addFieldVars() {
+        /*
         alloyModel
                 .allSigs()
                 .forEach(
-                        sn -> alloyModel.fieldNames(sn).forEach(fn -> tlaModel.addVar(TlaVar(fn))));
+                        sn ->
+                                alloyModel
+                                        .fieldNamesOfSig(sn)
+                                        .forEach(fn -> tlaModel.addVar(TlaVar(fn))));
+        */
+        alloyModel.allFields().forEach(fn -> tlaModel.addVar(TlaVar(fn)));
     }
 }

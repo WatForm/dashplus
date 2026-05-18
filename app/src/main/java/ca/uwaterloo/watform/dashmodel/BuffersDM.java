@@ -9,7 +9,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashFile;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,9 +108,9 @@ public class BuffersDM extends VarsDM {
 
     public void addBuffer(Pos pos, String bfqn, IntEnvKind k, List<DashParam> prms, String el) {
         assert (prms != null);
-        if (bt.containsKey(bfqn)) DashModelErrors.duplicateName(pos, "buffer", bfqn);
+        if (bt.containsKey(bfqn)) throw DashModelError.duplicateName(pos, "buffer", bfqn);
         else if (hasPrime(bfqn)) {
-            DashModelErrors.nameShouldNotBePrimed(pos, bfqn);
+            throw DashModelError.nameShouldNotBePrimed(pos, bfqn);
         } else {
             this.bt.put(bfqn, new BufferEntry(pos, k, prms, el));
         }

@@ -1,40 +1,10 @@
-/*
-    Defaults for multiplicities are chosen at parsing.
-    An AlloyDecl must have explicit multiplicities when created.
-
-    in name:expr, expr is a bounding expression.
-
-    The defaults chosen by the parsing phase are:
-    * In a Sig field name:expr or in a pred var decl p[a:A]
-        - ONE if expr is an AlloyVarName (clearly a unary set - see p. 77 Jackson Green book)
-        - SET if expr is an AlloyArrowExpr (clearly arity >1 - Jackson Green book p. 77
-         says no arity is supposed to be there at all, but the AA allows a multiplicity here in the grammar)
-        - throw an error is no mul provided and it is any other kind of expr (e.g. a dot join)
-         b/c we aren't determining the arity of expr during parsing
-    * In a quantified var some a:A | ...
-        default is some a:one A | ...
-        (A could be any expression)
-        If we chose a different default, the quantification would become higher order.
-    * In a set comprehension: {a : A | ...}
-        default is {a : one A | ...}
-
-    * the parser has separate rules for a decl within a sig (the first case above)
-     and a decl with default mul ONE (the second, third, and fourth cases above)
-
-    * sig A {
-        f: seq J
-    }
-    the decl for f cannot have a multiplicity.
-
-*/
-
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.AlloyASTImplError;
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.*;
@@ -80,12 +50,25 @@ public final class AlloyDecl extends AlloyExpr {
             }
         }
         reqNonNull(nullField(pos, this), this.qnames, this.mul, this.expr);
-        if (!AlloyQtEnum.MUL.contains(this.mul.orElse(null))
-                && this.mul.orElse(null) != AlloyQtEnum.EXACTLY) {
-            throw AlloyASTImplError.invalidAlloyQtEnum(
+        // System.out.println(expr);
+        // System.out.println(expr.getClass());
+        // System.out.println(this.mul);
+        if (qnames.isEmpty())
+            // must be non-empty
+            // would be unreachable from parser
+            throw AlloyCtorError.emptyAlloyDeclNames(pos);
+        // with x: seq A, mul field is empty
+        if (isSeq(this.expr) && !this.mul.isEmpty()) {
+            throw AlloyCtorError.seqWithMul(pos, this.expr.toString());
+        }
+        if (!this.mul.isEmpty()
+                && !AlloyQtEnum.MUL.contains(this.mul.orElse(null))
+                && this.mul.orElse(null) != AlloyQtEnum.EXACTLY
+                && this.mul.orElse(null) != AlloyQtEnum.SEQ) {
+            throw AlloyCtorError.invalidAlloyQtEnum(
                     pos,
                     this.getClass().getSimpleName()
-                            + ".mul must be LONE, ONE, SOME, SET or EXACTLY. ");
+                            + ".mul must be LONE, ONE, SOME, SET, SEQ, or EXACTLY. ");
         }
     }
 
@@ -124,7 +107,7 @@ public final class AlloyDecl extends AlloyExpr {
                 expr);
     }
 
-    public Optional<String> getName() {
+    public String getName() {
         if (this.qnames.size() > 1) {
             throw ImplementationError.methodShouldNotBeCalled(
                     this.pos,
@@ -132,7 +115,7 @@ public final class AlloyDecl extends AlloyExpr {
                             + "decl doesn't have a single name, but multiple. "
                             + "See AlloyDecl.expand(). ");
         }
-        return Optional.of(this.qnames.get(0).toString());
+        return this.qnames.get(0).toString();
     }
 
     public List<AlloyDecl> expand() {
@@ -176,9 +159,28 @@ public final class AlloyDecl extends AlloyExpr {
         this.expr.pp(pCtx);
     }
 
-    public AlloyDecl withExpr(AlloyExpr newExpr) {
+    public AlloyDecl rebuild(AlloyExpr newExpr) {
         return new AlloyDecl(
-                pos, isVar, isPrivate, isDisj1, qnames, isDisj2, mul.orElse(null), newExpr);
+                this.pos,
+                this.isVar,
+                this.isPrivate,
+                this.isDisj1,
+                this.qnames,
+                this.isDisj2,
+                this.mul.orElse(null),
+                newExpr);
+    }
+
+    public AlloyDecl rebuild(AlloyQtEnum mul, AlloyExpr newExpr) {
+        return new AlloyDecl(
+                this.pos,
+                this.isVar,
+                this.isPrivate,
+                this.isDisj1,
+                this.qnames,
+                this.isDisj2,
+                mul,
+                newExpr);
     }
 
     @Override
@@ -211,9 +213,7 @@ public final class AlloyDecl extends AlloyExpr {
             if (other.qnames != null) return false;
         } else if (!qnames.equals(other.qnames)) return false;
         if (isDisj2 != other.isDisj2) return false;
-        if (mul == null) {
-            if (other.mul != null) return false;
-        } else if (!mul.equals(other.mul)) return false;
+        if (this.mul != other.mul) return false;
         if (expr == null) {
             if (other.expr != null) return false;
         } else if (!expr.equals(other.expr)) return false;

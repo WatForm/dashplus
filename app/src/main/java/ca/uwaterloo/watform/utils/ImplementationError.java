@@ -12,13 +12,15 @@ public class ImplementationError extends DashPlusException {
         super(pos, msg);
     }
 
+    /*
     public ImplementationError(DashPlusException other) {
         super(other.posList, other.getMessage());
     }
+    */
 
     // missing cases in the code
     public static ImplementationError missingCase(String x) throws ImplementationError {
-        return new ImplementationError("missing case " + x);
+        return new ImplementationError("missing case: " + x);
     }
 
     // failed dynamic cast; incorrect assumption about object's runtime type

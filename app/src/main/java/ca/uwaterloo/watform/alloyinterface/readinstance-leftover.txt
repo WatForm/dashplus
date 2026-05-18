@@ -1,0 +1,18 @@
+
+
+    public static Solution readXMLInstance(String xmlFileName) {
+        try {
+            A4Solution sol = A4SolutionReader.read(null, new XMLNode(new File(xmlFileName)));
+            return new Solution(sol, null);
+        } catch (Err e) {
+            // TODO: clean this up
+            System.err.println("Alloy error:");
+            System.err.println(e.toString());
+            e.printStackTrace();
+            return null;
+        } catch (Exception e) {
+            System.err.println("Unexpected error:");
+            e.printStackTrace();
+            return null;
+        }
+    }

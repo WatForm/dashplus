@@ -1,42 +1,104 @@
 # Error Handling
-* Try to group dir specific exceptions together (could be in class)
+
+
+## TL;DR
+
+* determine if the potential error situation is definitely an implementation error or could be caused by user input (parsing, CLI)
+
+* if it is definitely an implementation error
+    a) see if there is a generic version of the error in ImplementationError.java
+    b) see if there is a package version of it in XImplError.java (extension of ImplementationError), where X is the package 
+    c) add it to XImplError.java as a static method 
+    d) throw this method as the error situation in your code
+
+* if it **could** be a user error (result of parsing or CLI)
+    a) see if there is a package version of it in XError.java (extension of UserOrImplError), where X is the package 
+    b) add it to XError.java as a static method 
+    c) throw this method as the error situation in your code
+
+* if the error is definitely a user error (e.g., file not found)
+    a) see if there is a generic version of it in UserError.java
+    b) see if there is a package version of it in XUserError.java (extension of UserOrImplError), where X is the package 
+    b) add it to XUserError.java as a static method 
+    c) throw this method as the error situation in your code
+
+* exceptions that are UserOrImplError error will be caught and added to the Reporter for elegant output
+
+* any other exceptions are caught in main and printed with stack trace (-debug) or without
+
+* we make little effort to catch Java exceptions as these are usually implementation errors.  We do catch IOExceptions for files not found.
+
+
+## Intro
+
+* This file describes error handling via exceptions used in this codebase.
+
+* Class Structure for exceptions
+    - Err (from AlloyAnalyzer)
+    - DashPlusException
+        - ImplementationError (file per package)
+            - AlloyModelImplError 
+            - etc.
+        - UserOrImplError (file per package)
+            - AlloyCtorError (within alloyast)
+            - AlloyModelError (within alloyast)
+            - AssumptionError (within alloyast)
+            - etc.
+        - UserError 
+            - CliError
+
+* Reporter is a class for collecting user error messages and warnings.
+
 * Use Pos whenever possible to make error messages more informative
 
-### [DashPlusException](/app/src/main/java/ca/uwaterloo/watform/utils/DashPlusException.java)
-- an instance of DashPlusException is either an error caused by user input or an implementation error
-- ex: [AlloyCtorError](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyCtorError.java)
+* within package exception constructors are private
 
-### [ImplementationError](/app/src/main/java/ca/uwaterloo/watform/utils/ImplementationError.java)
-- ImplementationError reflect an error in code (not user input)
-- Throw ImplementationError directly
-- These should not be caught and it should propagate directly to Main to exit with the corresponding exit code
-    - ex: [cli.Main](/app/src/main/java/ca/uwaterloo/watform/cli/Main.java)
 
-### [Reporter.ErrorUser](/app/src/main/java/ca/uwaterloo/watform/utils/Reporter.java)
-- There are a few places where UserErrors can be thrown: AST construction, AlloyModel, DashModel, and maybe more in the future
-- These should all be caught and added to Reporter; see the example below
-- If they are not caught earlier, they should be at least caught in Main
-    - ex: [cli.Main](/app/src/main/java/ca/uwaterloo/watform/cli/Main.java)
-- Reporter.exitIfHasError will throw AbortSignal if the Reporter has collected Errors
-    - the AbortSignal should only be caught in Main, and we can exit with the corresponding exit code
-    - ex: [cli.Main](/app/src/main/java/ca/uwaterloo/watform/cli/Main.java)
+## Err
 
-### Example: Handling [AlloyCtorError](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyCtorError.java)
-- These are well-formedness errors that are thrown at construction time of ASTs
-- During parsing, these should be caught and collected as user feedback by adding them into the Reporter
-- AST construction can also occur during Dash to Alloy translation
-    - AlloyCtorError are not caught and allowed to propagate to crash the program in Main
-    - Because this reflects erroneous implementation, not bad user input
-- This is an example of a DashPlusException that is treated as UserError (if generated during parsing) or as ImplementationError (if generated during translation)
+* these are exceptions thrown by the **Alloy Analyzer** code base
+* Main.java catches these exceptions and prints them (with stacktrace if -debug)
+* they don't appear anywhere in this codebase except Main.java and AlloyInterface.java
 
-#### AlloyCtorError generated during parsing
-- Throw AlloyCtorError.redundantExactly(pos) [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/paragraph/command/AlloyCmdPara.java)
-- Choose where to catch it to control how far to trace back and continue if wanted
-   - In this [example](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyFileParseVis.java), we choose to continue parsing the other paragraphs
-- Add into Reporter [(example)](/app/src/main/java/ca/uwaterloo/watform/alloyast/AlloyFileParseVis.java)
-- To see this example in action, run the jar on [badCmd.als](/app/src/test/resources/reporter/badCmd.als)
 
-#### AlloyCtorError generated during parsing
-- Translation not implemented yet Dec 1, 2025
-- But essentially not catch AlloyCtorError will result in the AlloyCtorError bubbling up to Main to exit with exit code
+## [DashPlusException](/app/src/main/java/ca/uwaterloo/watform/utils/DashPlusException.java)
+
+* every exception thrown in this codebase is in a **subclass** of DashPlusException
+* DashPlusException extends RuntimeException
+* DashPlusException is **never thrown directly** only through subclasses
+
+
+## [ImplementationError](/app/src/main/java/ca/uwaterloo/watform/utils/ImplementationError.java)
+
+* ImplementationErrors reflect an **error in code** (definitely NOT caused user input)
+* a subclass of DashPlusException
+* some general ones in utils/ImplementationError.java
+* some **organized into a file within a package** as a subclasses of ImplementationError, e.g., AlloyModelImplError.java
+* These should not be caught and should propagate directly to Main to exit with the corresponding exit code.
+    - [cli.Main](/app/src/main/java/ca/uwaterloo/watform/cli/Main.java)
+
+
+### [UserOrImplError] (/app/src/main/java/ca/uwaterloo/watform/utils/UserOrImplError.java)
+)
+* errors that **could be user errors or implementation errors**
+* a subclass of DashPlusException
+* never thrown directly, only through subclasses 
+
+
+### [UserError](/app/src/main/java/ca/uwaterloo/watform/utils/UserError.java)
+
+* errors that are definitely user errors
+* currently only used in CliError to catch parameter errors, which are caught in Main.java
+
+### [Reporter](/app/src/main/java/ca/uwaterloo/watform/utils/Reporter.java)
+
+- Wherever a UserOrImplError is a user error it is caught and added to Reporter
+```
+catch (AlloyCtorError alloyCtorError) {
+    Reporter.INSTANCE.addError(alloyCtorError);
+}
+```
+- `Reporter.exitIfHasError()` will throw a Java AbortSignal exception if the Reporter has collected Errors
+
+- '-debug' will not print a stacktrace for these errors
 

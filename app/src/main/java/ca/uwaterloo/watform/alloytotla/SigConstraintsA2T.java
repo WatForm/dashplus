@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaExp;
@@ -20,40 +21,44 @@ public class SigConstraintsA2T extends NextDefnA2T {
         super(alloyModel, tlaModel, verbose, debug);
     }
 
+    // Mathew - I rewrote some of this code to work with the
+    // rearranged AlloyModel. - NAD
+
     protected void addSigConstraints() {
         List<TlaAppl> explicitConstraints = new ArrayList<>();
 
         alloyModel
-                .allSigs()
+                .allSigParas()
                 .forEach(
-                        sig -> {
-                            List<TlaExp> constraints = constraints(sig, alloyModel);
+                        sigPara -> {
+                            List<TlaExp> constraints = constraints(sigPara, alloyModel);
                             if (constraints.size() != 0) {
                                 tlaModel.addDefn(
-                                        TlaDefn(sigConstraint(sig), repeatedAnd(constraints)));
-                                explicitConstraints.add(TlaAppl(sigConstraint(sig)));
+                                        TlaDefn(
+                                                sigConstraint(sigPara.getName()),
+                                                repeatedAnd(constraints)));
+                                explicitConstraints.add(TlaAppl(sigConstraint(sigPara.getName())));
                             }
                         });
 
         tlaModel.addDefn(TlaDefn(ALL_SIG_CONSTRAINTS, repeatedAnd(explicitConstraints)));
     }
 
-    private List<TlaExp> constraints(String sig, AlloyModel alloyModel) {
+    private List<TlaExp> constraints(AlloySigPara sigPara, AlloyModel alloyModel) {
         List<TlaExp> constraints = new ArrayList<>();
 
-        alloyModel
-                .alloyBlockOfSig(sig)
-                .ifPresent(
-                        b -> {
-                            // universal quantification for facts
-                            constraints.add(new AlloyToTlaExprVis().visit(b));
-                        });
+        sigPara.block.ifPresent(
+                b -> {
+                    // universal quantification for facts
+                    constraints.add(new AlloyToTlaExprVis().visit(b));
+                });
 
-        if (alloyModel.isOneSig(sig)) constraints.add(_ONE(TlaVar(sig)));
-        if (alloyModel.isLoneSig(sig)) constraints.add(_LONE(TlaVar(sig)));
-        if (alloyModel.isSomeSig(sig)) constraints.add(_SOME(TlaVar(sig)));
+        String sigName = sigPara.getName();
+        if (alloyModel.isOneSig(sigName)) constraints.add(_ONE(TlaVar(sigName)));
+        if (alloyModel.isLoneSig(sigName)) constraints.add(_LONE(TlaVar(sigName)));
+        if (alloyModel.isSomeSig(sigName)) constraints.add(_SOME(TlaVar(sigName)));
 
-        List<String> extendsChildNames = alloyModel.extendsChildrenOfSig(sig);
+        List<String> extendsChildNames = alloyModel.extendsChildren(sigName);
 
         // pairwise disjoint sets for sigs that extend the same sig
         int n = extendsChildNames.size();
@@ -66,9 +71,9 @@ public class SigConstraintsA2T extends NextDefnA2T {
             }
 
         // abstract sigs
-        if (alloyModel.isAbstractSig(sig))
+        if (alloyModel.isAbstractSig(sigName))
             constraints.add(
-                    TlaVar(sig)
+                    TlaVar(sigName)
                             .EQUALS(repeatedUnion(mapBy(extendsChildNames, ecn -> TlaVar(ecn)))));
 
         return constraints;

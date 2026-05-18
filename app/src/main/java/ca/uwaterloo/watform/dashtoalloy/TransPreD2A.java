@@ -6,9 +6,9 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashFQN;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
 public class TransPreD2A extends InvsD2A {
@@ -50,7 +50,7 @@ public class TransPreD2A extends InvsD2A {
             body.add(
                     AlloySome(
                             AlloyInter(
-                                    this.dm.fromR(tfqn).asAlloyArrow(),
+                                    this.translateDashRefToArrowExpr(this.dm.fromR(tfqn)),
                                     this.dsl.curConf(params.size()))));
 
         if (this.dm.whenR(tfqn) != null) body.add(this.translateExpr(this.dm.whenR(tfqn)));
@@ -63,7 +63,7 @@ public class TransPreD2A extends InvsD2A {
                 List<AlloyExpr> u =
                         mapBy(
                                 filterBy(nonO, x -> x.hasNumParams(j)),
-                                x -> this.dsl.asScope(x).asAlloyArrow());
+                                x -> this.translateDashRefToArrowExpr(this.dsl.asScope(x)));
                 for (AlloyExpr x : u) body.add(AlloyNot(AlloyIn(x, this.dsl.curScopesUsed(i))));
             }
         }
@@ -82,17 +82,18 @@ public class TransPreD2A extends InvsD2A {
             } else {
                 AlloyExpr ifBranch =
                         AlloyIn(
-                                ev.asAlloyArrow(),
+                                this.translateDashRefToArrowExpr(ev),
                                 this.dsl.RangeResLevel(
                                         this.dsl.curEvents(sz), this.dsl.allEnvEventsVar(), sz));
 
-                AlloyExpr elseBranch = AlloyIn(ev.asAlloyArrow(), this.dsl.curEvents(sz));
+                AlloyExpr elseBranch =
+                        AlloyIn(this.translateDashRefToArrowExpr(ev), this.dsl.curEvents(sz));
                 body.add(AlloyIte(this.dsl.curStableTrue(), ifBranch, elseBranch));
             }
         } else if (this.dm.onR(tfqn) != null) {
             DashRef ev = this.dm.onR(tfqn);
             int sz = ev.paramValues.size();
-            body.add(AlloyIn(ev.asAlloyArrow(), this.dsl.curEvents(sz)));
+            body.add(AlloyIn(this.translateDashRefToArrowExpr(ev), this.dsl.curEvents(sz)));
         }
 
         // not a higher priority transition enabled
@@ -103,9 +104,9 @@ public class TransPreD2A extends InvsD2A {
             // so its parameters must be a subset of the current parameters
             // and we don't need to quantify over them
             args = this.dsl.curParamVars(this.dm.transParams(t));
-            body.add(AlloyNot(AlloyPredCall(DashFQN.translateFQN(t) + D2AStrings.preName, args)));
+            body.add(AlloyNot(AlloyPredCall(D2AStrings.preName(DashFQN.translateFQN(t)), args)));
         }
 
-        this.am.addPred(tout + D2AStrings.preName, this.dsl.curParamsDecls(params), body);
+        this.am.addPred(D2AStrings.preName(tout), this.dsl.curParamsDecls(params), body);
     }
 }

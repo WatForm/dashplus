@@ -62,8 +62,7 @@ public class DashState extends DashPara implements DashStateItem {
         else if (DashState.class.isInstance(i)) return 7;
         else if (DashPred.class.isInstance(i)) return 8;
         else {
-            System.out.println(i.getClass());
-            throw ImplementationError.missingCase("itemToInt");
+            throw ImplementationError.missingCase("itemToInt " + i.getClass());
         }
     }
 
@@ -94,12 +93,8 @@ public class DashState extends DashPara implements DashStateItem {
                     pCtx.nlNoIndent();
                 } else {
                     for (Object item : itemsCopy) {
-                        try {
-                            ASTNode astNode = (ASTNode) item;
-                            astNode.ppNewBlock(pCtx);
-                        } catch (ClassCastException e) {
-                            throw failedCast("DashState.pp");
-                        }
+                        ASTNode astNode = (ASTNode) item;
+                        astNode.ppNewBlock(pCtx);
                         if (item != itemsCopy.getLast()) {
                             pCtx.nl();
                             pCtx.nl();

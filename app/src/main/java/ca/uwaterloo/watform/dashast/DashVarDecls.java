@@ -36,7 +36,7 @@ public final class DashVarDecls extends ASTNode implements DashStateItem {
         // no limits on the classes of varType
         // translator does not care what they are
         if (!AlloyQtEnum.MUL.contains(this.mul)) {
-            throw new ImplementationError(
+            throw DashASTError.invalidAlloyQtEnum(
                     pos, this.getClass().getSimpleName() + ".mul must be LONE, ONE, SOME or SET. ");
         }
         reqNonNull(nullField(pos, this), this.names, this.typ, this.mul, this.kind);
@@ -52,8 +52,7 @@ public final class DashVarDecls extends ASTNode implements DashStateItem {
         // no limits on the classes of varType
         // translator does not care what they are
         if (!AlloyQtEnum.MUL.contains(this.mul)) {
-            throw new ImplementationError(
-                    pos, this.getClass().getSimpleName() + ".mul must be LONE, ONE, SOME or SET. ");
+            throw DashASTError.invalidAlloyQtEnum(pos, this.getClass().getSimpleName());
         }
         reqNonNull(nullField(pos, this), this.names, this.typ, this.mul, this.kind);
     }

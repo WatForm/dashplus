@@ -72,7 +72,7 @@ public class PredsDM extends EventsDM {
 
     public void addPred(Pos pos, String pfqn, AlloyExpr e) {
         if (pt.containsKey(pfqn)) {
-            DashModelErrors.duplicateName(pos, "pred", pfqn);
+            throw DashModelError.duplicateName(pos, "pred", pfqn);
         } else {
             pt.put(pfqn, new PredEntry(pos, e));
         }

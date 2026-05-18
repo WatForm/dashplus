@@ -68,15 +68,19 @@ public abstract class DashRef extends AlloyExpr {
         return new ArrayList<AlloyExpr>();
     }
 
+    /*
     public AlloyExpr asAlloyArrow() {
         // p1 -> p2 -> fqn
         // used for initialization and
         // checking elements in conf/events
         assert (!(this instanceof VarDashRef) || !((VarDashRef) this).isNext);
+        // TODO: paramValues need to be converted to AlloyVars
+        System.out.println("PARAM VALUES: " + this.paramValues);
         List<AlloyExpr> ll = reverse(this.paramValues);
         ll.add(AlloyVar(DashFQN.translateFQN(this.name)));
         return AlloyArrowExprList(ll);
     }
+    */
 
     @Override
     public void pp(PrintContext pCtx) {
@@ -102,6 +106,7 @@ public abstract class DashRef extends AlloyExpr {
             s += this.name;
         }
         pCtx.append(s);
+        /*
         if (s.equals(
                 "System/Elevator/MovingUp[PID, System/Elevator/MovingUp[PID]/MovingUp]/MovingUp")) {
             System.out.println(this.name);
@@ -109,6 +114,7 @@ public abstract class DashRef extends AlloyExpr {
             printStackTrace();
             System.exit(1);
         }
+        */
     }
 
     public boolean hasNumParams(int i) {

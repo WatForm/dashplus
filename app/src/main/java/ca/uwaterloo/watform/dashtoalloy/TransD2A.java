@@ -12,8 +12,8 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashFQN;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
 public class TransD2A extends TransPostD2A {
@@ -31,15 +31,15 @@ public class TransD2A extends TransPostD2A {
 
         if (this.isElectrum) {
             // pre_transName[ p0, p1, p2] -> p2.p1.p0.pre_transName
-            body.add(AlloyPredCall(tout + D2AStrings.preName, this.dsl.paramVars(prs)));
+            body.add(AlloyPredCall(D2AStrings.preName(tout), this.dsl.paramVars(prs)));
             // p2.p1.p0.post_transName
-            body.add(AlloyPredCall(tout + D2AStrings.postName, this.dsl.paramVars(prs)));
+            body.add(AlloyPredCall(D2AStrings.postName(tout), this.dsl.paramVars(prs)));
         } else {
             // pre_transName[s, p0, p1, p2] -> p2.p1.p0.s.pre_transName
-            body.add(AlloyPredCall(tout + D2AStrings.preName, this.dsl.curParamVars(prs)));
+            body.add(AlloyPredCall(D2AStrings.preName(tout), this.dsl.curParamVars(prs)));
             // p2.p1.p0.s'.s.post_transName
-            body.add(AlloyPredCall(tout + D2AStrings.postName, this.dsl.curNextParamVars(prs)));
+            body.add(AlloyPredCall(D2AStrings.postName(tout), this.dsl.curNextParamVars(prs)));
         }
-        this.am.addPred(tout, this.dsl.curNextParamsDecls(prs), body);
+        this.am.addPred(D2AStrings.transName(tout), this.dsl.curNextParamsDecls(prs), body);
     }
 }

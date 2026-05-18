@@ -137,6 +137,12 @@ public class GeneralUtil {
         return items.stream().map(mapFn).collect(Collectors.toList());
     }
 
+    // from ChatGPT
+    public static <T, R> Set<R> mapBy(Set<T> input, Function<T, R> mapFn) {
+
+        return input.stream().map(mapFn).collect(Collectors.toSet());
+    }
+
     // https://en.wikipedia.org/wiki/Fold_(higher-order_function)#Linear_vs._tree-like_folds
     // f: S -> T -> T
     public static <S, T> T foldRight(List<? extends S> items, BiFunction<S, T, T> f, T defaultVal) {
@@ -158,6 +164,22 @@ public class GeneralUtil {
 
     public static <T> List<T> filterBy(List<T> items, Predicate<T> filterFn) {
         return items.stream().filter(filterFn).collect(Collectors.toList());
+    }
+
+    public static <T> List<T> concat(List<T> list1, List<T> list2) {
+        List<T> result = new ArrayList<>(list1);
+        result.addAll(list2);
+        return result;
+    }
+
+    // from chatGPT
+    public static <T> List<T> flatten(List<List<T>> listOfLists) {
+        return listOfLists.stream().flatMap(List::stream).toList();
+    }
+
+    // from chatGPT
+    public static <T> Set<T> flatten(Set<Set<T>> nested) {
+        return nested.stream().flatMap(Set::stream).collect(Collectors.toSet());
     }
 
     public static <T> List<T> reverse(List<T> ll) {
@@ -200,6 +222,17 @@ public class GeneralUtil {
             }
         }
         return true;
+    }
+
+    // from ChatGPT
+    public static <T> Set<T> mergeSets(Set<T> a, Set<T> b) {
+        Set<T> result = new HashSet<>(a);
+        result.addAll(b);
+        return result;
+    }
+
+    public static <T> Set<T> diffSets(Set<T> set1, Set<T> set2) {
+        return set1.stream().filter(element -> !set2.contains(element)).collect(Collectors.toSet());
     }
 
     public static boolean allTrue(List<Boolean> blist) {

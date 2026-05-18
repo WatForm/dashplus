@@ -56,9 +56,11 @@ public class InitializeDM extends PredsDM {
                 root, null, emptyList(), DefKind.DEFAULT, 0);
     }
 
+    /*
     private void addToParamsList(DashParam p) {
         allParams.add(p);
     }
+    */
 
     private void stateRecurseToInitializeStatesVarsEventsBuffers(
             DashState s, String parentFQN, List<DashParam> parentParams, DefKind def, int depth) {
@@ -67,7 +69,7 @@ public class InitializeDM extends PredsDM {
         // but its parent is in the st
 
         // figure out its sfqn and its parent's fqn
-        if (DashFQN.isFQN(s.name)) Error.nameCantBeFQN(s.pos, s.name);
+        if (DashFQN.isFQN(s.name)) throw DashModelError.nameCantBeFQN(s.pos, s.name);
         String sfqn;
         if (parentFQN != null) {
             sfqn = DashFQN.fqn(parentFQN, s.name);
@@ -94,7 +96,7 @@ public class InitializeDM extends PredsDM {
 
         List<DashTrans> transList = s.trans();
         for (DashTrans t : transList) {
-            if (DashFQN.isFQN(t.name)) Error.nameCantBeFQN(t.pos, t.name);
+            if (DashFQN.isFQN(t.name)) throw DashModelError.nameCantBeFQN(t.pos, t.name);
         }
 
         // have to make a copy so that recursion does not just
@@ -134,16 +136,16 @@ public class InitializeDM extends PredsDM {
 
             // first throw any errors
             if (orListDefaults.size() > 1)
-                Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
+                throw DashModelError.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
             else if (orListDefaults.size() >= 1 && andListDefaults.size() > 0)
-                Error.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
+                throw DashModelError.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
             else if (andList.size() > 1
                     && andListDefaults.size() != 0
                     && andList.size() != andListDefaults.size())
-                Error.allAndDefaults(andList.get(0).pos, sfqn);
+                throw DashModelError.allAndDefaults(andList.get(0).pos, sfqn);
             else if (givenDefaultsList.size() == 0
                     && (orList.size() > 1 || (orList.size() == 1 && andList.size() >= 1)))
-                Error.missingDefault(substatesList.get(0).pos, sfqn);
+                throw DashModelError.missingDefault(substatesList.get(0).pos, sfqn);
 
             // defaults on the list are correct (but might be none)
             List<String> defList = new ArrayList<String>();
@@ -186,7 +188,7 @@ public class InitializeDM extends PredsDM {
         for (DashEventDecls e : eventDeclsList) {
             for (String x : e.getNames()) {
                 if (DashFQN.isFQN(x)) {
-                    Error.nameCantBeFQN(e.pos, x);
+                    throw DashModelError.nameCantBeFQN(e.pos, x);
                 } else {
                     String efqn = DashFQN.fqn(sfqn, x);
                     this.addEvent(e.pos, efqn, e.kind, newParams);
@@ -202,14 +204,14 @@ public class InitializeDM extends PredsDM {
         for (DashVarDecls v : varDeclsList) {
             for (String x : v.getNames()) {
                 if (DashFQN.isFQN(x)) {
-                    Error.nameCantBeFQN(v.pos, x);
+                    throw DashModelError.nameCantBeFQN(v.pos, x);
                 } else {
                     // if already a sig in Alloy part of model
                     // can't declare it again
                     // TODO: add this back?????
                     // if (this.containsId(x))
                     // raises an exception
-                    // DashModelErrors.duplicateName(v.pos, "var", x);
+                    // DashModelthrow DashModelError.duplicateName(v.pos, "var", x);
                     String vfqn = DashFQN.fqn(sfqn, x);
                     // v.typ will have to be resolved later
                     this.addVar(v.pos, vfqn, v.kind, newParams, v.mul, v.typ);
@@ -224,7 +226,7 @@ public class InitializeDM extends PredsDM {
         for (DashBufferDecls b : bufferDeclsList) {
             for (String x : b.getNames()) {
                 if (DashFQN.isFQN(x)) {
-                    Error.nameCantBeFQN(b.pos, x);
+                    throw DashModelError.nameCantBeFQN(b.pos, x);
                 } else {
                     String bfqn = DashFQN.fqn(sfqn, x);
                     this.addBuffer(b.pos, bfqn, b.kind, newParams, b.element);
@@ -238,48 +240,11 @@ public class InitializeDM extends PredsDM {
         // put in var table with FQN
         for (DashPred p : predsList) {
             if (DashFQN.isFQN(p.name)) {
-                Error.nameCantBeFQN(p.pos, p.name);
+                throw DashModelError.nameCantBeFQN(p.pos, p.name);
             } else {
                 String nfqn = DashFQN.fqn(sfqn, p.name);
                 this.addPred(p.pos, nfqn, p.exp);
             }
-        }
-    }
-
-    private class Error {
-
-        private static void notDashModel() throws Reporter.ErrorUser {
-            throw new Reporter.ErrorUser("No Dash state in this model.");
-        }
-
-        public static void allAndDefaults(Pos pos, String sfqn) throws Reporter.ErrorUser {
-            throw new Reporter.ErrorUser(
-                    pos,
-                    "All conc children of state must be defaults if one is a default: " + sfqn);
-        }
-
-        public static void missingDefault(Pos pos, String fqn) throws Reporter.ErrorUser {
-            throw new Reporter.ErrorUser(pos, "State does not have default state: " + fqn);
-        }
-
-        public static void tooManyDefaults(Pos pos, String fqn) throws Reporter.ErrorUser {
-            throw new Reporter.ErrorUser(pos, "Too many default states in state: " + fqn);
-        }
-
-        public static void duplicateStateName(Pos pos, String fqn) throws Reporter.ErrorUser {
-            throw new Reporter.ErrorUser(pos, fqn + "is a duplicate state name");
-        }
-
-        public static void onlyOneState(Pos pos) throws Reporter.ErrorUser {
-            throw new Reporter.ErrorUser(pos, "Dash model can only have one 'state' section");
-        }
-
-        public static void nameCantBeFQN(Pos pos, String name) throws Reporter.ErrorUser {
-            throw new Reporter.ErrorUser(pos, "When declared, name cannot have slash: " + name);
-        }
-
-        public static void dupNames(Pos pos, String dups) throws Reporter.ErrorUser {
-            throw new Reporter.ErrorUser(pos, "Duplicate names: " + dups);
         }
     }
 }

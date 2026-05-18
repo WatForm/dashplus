@@ -1,0 +1,48 @@
+   /*
+        write up to maxInstances of satisfying solutions of
+        AlloyModel am (run {} cmd) to files called
+        instanceFileName1, instanceFilename2, etc.
+        Returns how many solutions are written (0 if unsat)
+    */
+    public static Integer writeInstanceToXML(
+            AlloyModel am, Integer cmdNum, String instanceFileName // should not include .xml at end
+            ) {
+        return writeInstancesToXML(am, cmdNum, instanceFileName, 1);
+    }
+
+    // returns number of instances written to file(s)
+    public static Integer writeInstancesToXML(
+            AlloyModel am,
+            Integer cmdNum,
+            String instanceFileName, // should not include .xml at end
+            Integer maxInstances) {
+        assert (!instanceFileName.contains(".xml"));
+
+        Solution soln = executeCommand(am, cmdNum);
+        int c;
+        for (c = 0; c < maxInstances; c++) {
+            // c is how many instances that we have written
+            if (!(soln.isSat() && c < maxInstances)) break;
+            soln.writeXML(instanceFileName + String.valueOf(c + 1) + ".xml");
+            soln.next();
+        }
+        return c;
+    }
+
+    // returns number of instances written to file(s)
+    public static Integer writeInstancesToXML(
+            AlloyModel am,
+            String instanceFileName, // should not include .xml at end
+            Integer maxInstances) {
+        return writeInstancesToXML(am, Constants.noCmdValue, instanceFileName, maxInstances);
+    }
+
+
+        public void writeXML(String filename) {
+        this.throwErrorIfUnsat();
+        // System.out.println(filename);
+        // this was added b/c of problems with writeXML
+        // in newly compiled Alloy jar
+        validateWritableFile(filename);
+        this.a4Solution.writeXML(filename);
+    }

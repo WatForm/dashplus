@@ -22,72 +22,69 @@ public class DashToAlloy extends StutterD2A {
     }
 
     public AlloyModel translate() {
-        try {
-            // copy all Alloy stuff from dm into am
-            this.am = dm.copy();
 
-            if (this.dm.hasConcurrency())
-                // open util/boolean
-                this.am.addImport(List.of(AlloyStrings.utilName, AlloyStrings.booleanName));
+        // copy all Alloy stuff from dm into am
+        this.am = dm.copy();
+        // System.out.println(this.am);
 
-            // state, transition, parameter, buffer spaces
-            this.addSpaceSigs();
+        if (this.dm.hasConcurrency())
+            // open util/boolean
+            this.am.addImport(List.of(AlloyStrings.utilName, AlloyStrings.booleanName));
 
-            this.addSnapshotSig();
+        // state, transition, parameter, buffer spaces
+        this.addSpaceSigs();
 
-            this.addInit();
-            this.addInvs();
+        this.addSnapshotSig();
 
-            for (String tfqn : this.dm.allTransNames()) {
-                this.addTransPre(tfqn);
-                if (this.dm.hasConcurrency()) {
-                    this.addTransIsEnabledAfterStep(tfqn);
-                }
-                this.addTransPost(tfqn);
-                this.addTrans(tfqn);
+        this.addInit();
+        this.addInvs();
+
+        for (String tfqn : this.dm.allTransNames()) {
+            this.addTransPre(tfqn);
+            if (this.dm.hasConcurrency()) {
+                this.addTransIsEnabledAfterStep(tfqn);
             }
-
-            // one of these for the whole model
-            if (this.dm.hasConcurrency()) this.addTestIfNextStable();
-
-            this.addSmallStep();
-
-            if (this.isTcmc) {
-                // next two are required
-                this.addStutter();
-                this.addTcmcFact();
-                this.addAllSnapshotsDiffFact();
-
-                // next ones can be used along with property checking
-                this.addStrongNoStutter();
-                // only useful for Tcmc and is a fact
-                this.addReachability();
-
-            } else if (this.isTraces) {
-                // next two are required
-                this.addStutter();
-                this.addTracesFact();
-                this.addAllSnapshotsDiffFact();
-                // everything in traces is reachable b/c it
-                // starts from initial state and only takes steps
-                // it can reach
-
-            } else if (this.isElectrum) {
-                // this one is required
-                // all snapshots are automatically different in electrum
-                this.addElectrumFact();
-            }
-
-            // these predicates may be useful in any of the above
-            this.addSingleEventInput();
-            this.addCompleteBigSteps();
-            this.addEnoughOps();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
+            this.addTransPost(tfqn);
+            this.addTrans(tfqn);
         }
 
+        // one of these for the whole model
+        if (this.dm.hasConcurrency()) this.addTestIfNextStable();
+
+        this.addSmallStep();
+
+        if (this.isTcmc) {
+            // next two are required
+            this.addStutter();
+            this.addTcmcFact();
+            this.addAllSnapshotsDiffFact();
+
+            // next ones can be used along with property checking
+            this.addStrongNoStutter();
+            // only useful for Tcmc and is a fact
+            this.addReachability();
+
+        } else if (this.isTraces) {
+            // next two are required
+            this.addStutter();
+            this.addTracesFact();
+            this.addAllSnapshotsDiffFact();
+            // everything in traces is reachable b/c it
+            // starts from initial state and only takes steps
+            // it can reach
+
+        } else if (this.isElectrum) {
+            // this one is required
+            // all snapshots are automatically different in electrum
+            this.addElectrumFact();
+        }
+
+        // these predicates may be useful in any of the above
+        this.addSingleEventInput();
+        this.addCompleteBigSteps();
+        this.addEnoughOps();
+        // System.out.println(this.am);
+        this.am.resolve();
         return this.am;
     }
 

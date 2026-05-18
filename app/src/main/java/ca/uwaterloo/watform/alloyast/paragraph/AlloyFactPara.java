@@ -109,4 +109,9 @@ public final class AlloyFactPara extends AlloyPara {
         } else if (!strLit.equals(other.strLit)) return false;
         return true;
     }
+
+    public AlloyFactPara rebuild(AlloyBlock blockExpr) {
+        return new AlloyFactPara(
+                this.pos, this.qname.orElse(null), this.strLit.orElse(null), blockExpr);
+    }
 }

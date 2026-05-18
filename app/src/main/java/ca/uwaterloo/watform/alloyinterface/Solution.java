@@ -89,7 +89,7 @@ public final class Solution {
         } catch (ErrorFatal alloyJarErrFatal) {
             throw new ImplementationError(alloyJarErrFatal.toString());
         } catch (Err alloyJarErr) {
-            throw AlloyInterfaceError.solutionEvalErr(
+            throw AlloyInterfaceImplError.solutionEvalErr(
                     new Pos(alloyJarErr.pos), alloyJarErr.toString());
         }
 
@@ -125,7 +125,7 @@ public final class Solution {
     public Set<List<String>> eval(AlloySigPara sigPara, AlloyDecl fieldDecl) {
         this.throwErrorIfUnsat();
         String sigName = AlloyStrings.THIS + AlloyStrings.SLASH + sigPara.getId().name;
-        String fieldName = fieldDecl.getName().get();
+        String fieldName = fieldDecl.getName();
         if (!this.contains(sigName)) {
             return Collections.emptySet();
         }

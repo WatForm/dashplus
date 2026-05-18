@@ -30,7 +30,7 @@ public final class AlloyCmdPara extends AlloyPara {
         this.cmdDecls = Collections.unmodifiableList(cmdDecls);
         reqNonNull(nullField(pos, this), this.cmdDecls);
         if (cmdDecls.size() != 1) {
-            throw new Reporter.ErrorUser(pos, "cannot have more than one command in a paragraph");
+            throw AssumptionError.cantHaveMultipleCmdDecls(pos, cmdDecls.toString());
         }
     }
 
@@ -110,11 +110,11 @@ public final class AlloyCmdPara extends AlloyPara {
             this.scope = Optional.ofNullable(scope);
             this.expect = Optional.ofNullable(expect);
             if (!this.invoQname.isEmpty() && !this.constrBlock.isEmpty()) {
-                throw AlloyASTImplError.xorFields(
+                throw AlloyCtorError.xorFields(
                         pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
             if (this.invoQname.isEmpty() && this.constrBlock.isEmpty()) {
-                throw AlloyASTImplError.xorFields(
+                throw AlloyCtorError.xorFields(
                         pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
             reqNonNull(
@@ -125,6 +125,17 @@ public final class AlloyCmdPara extends AlloyPara {
                     this.constrBlock,
                     this.scope,
                     this.expect);
+        }
+
+        public CommandDecl rebuild(AlloyBlock constrBlock) {
+            return new CommandDecl(
+                    this.pos,
+                    this.cmdType,
+                    this.declQname.orElse(null),
+                    this.invoQname.orElse(null),
+                    constrBlock,
+                    this.scope.orElse(null),
+                    this.expect.orElse(null));
         }
 
         public CommandDecl(
@@ -169,7 +180,7 @@ public final class AlloyCmdPara extends AlloyPara {
             } else if (!this.constrBlock.isEmpty()) {
                 this.constrBlock.get().toString(sb, indent);
             } else {
-                throw AlloyASTImplError.xorFields(
+                throw AlloyCtorError.xorFields(
                         pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
             sb.append(AlloyStrings.SPACE);
@@ -195,7 +206,7 @@ public final class AlloyCmdPara extends AlloyPara {
             } else if (this.constrBlock.isPresent()) {
                 this.constrBlock.get().pp(pCtx);
             } else {
-                throw AlloyASTImplError.xorFields(
+                throw AlloyCtorError.xorFields(
                         pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
             }
             pCtx.brk();

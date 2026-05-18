@@ -6,9 +6,10 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.dashast.DashParam;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.List;
+import ca.uwaterloo.watform.dashmodel.DashParam;
+import java.util.*;
 
 public class InvsD2A extends InitsD2A {
 
@@ -40,8 +41,24 @@ public class InvsD2A extends InitsD2A {
             if (!prs.isEmpty()) {
                 // all parameters are not used in inv
                 e = AlloyAndList(body);
+
+                // this is a bit awkward (same as in InitsD2A.java):
+                // Expr e uses the stateName of the param, but we need the Decl of the param
+                List<String> prmStateNames = mapBy(prs, p -> p.asIndexValue().getName());
+
+                // get the param stateNames used in the expression
+                Set<String> prsUsed =
+                        this.dsl.testAndCollect(
+                                x -> prmStateNames.contains(((AlloyQnameExpr) x).getName()), e);
+
+                // now get the Decls associated with those stateNames
+
+                // there is certainly a more efficient way to do the above
+                // but as there are only ever 1-2 parameters,
+                // it is not worth it to make it more efficient
+
                 for (int i = 0; i < prs.size(); i++) {
-                    if (this.dsl.containsVar(e, prs.get(i).asAlloyVar())) {
+                    if (prsUsed.contains(prs.get(i).asIndexValue().getName())) {
                         decls.add(prs.get(i).asAlloyDecl());
                     }
                 }

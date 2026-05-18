@@ -9,7 +9,6 @@ import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashFile;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.DashStrings.IntEnvKind;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
@@ -103,9 +102,9 @@ public class VarsDM extends StatesDM {
             AlloyExpr t) {
         assert (prms != null);
         if (this.vt.containsKey(vfqn)) {
-            DashModelErrors.duplicateName(pos, "var", vfqn);
+            throw DashModelError.duplicateName(pos, "var", vfqn);
         } else if (hasPrime(vfqn)) {
-            DashModelErrors.nameShouldNotBePrimed(pos, vfqn);
+            throw DashModelError.nameShouldNotBePrimed(pos, vfqn);
         } else {
             this.vt.put(vfqn, new VarEntry(pos, k, prms, mul, t));
         }
@@ -113,7 +112,7 @@ public class VarsDM extends StatesDM {
 
     public void addVar(
             String vfqn, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
-        System.out.println("added: " + vfqn);
+        // System.out.println("added: " + vfqn);
         addVar(Pos.UNKNOWN, vfqn, k, prms, mul, t);
     }
 

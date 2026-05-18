@@ -57,7 +57,7 @@ public final class CEValidation {
         // ---------------------------------------
         // add sigs
         for (String renamedSnap : renamedSnaps) {
-            alloyModel.addPara(
+            alloyModel.addSigPara(
                     new AlloySigPara(
                             List.of(AlloySigPara.Qual.ONE),
                             List.of(new AlloyQnameExpr(renamedSnap)),
@@ -66,7 +66,7 @@ public final class CEValidation {
                             new AlloyBlock()));
         }
 
-        alloyModel.addPara(
+        alloyModel.addPredPara(
                 new AlloyPredPara(
                         renamedSnaps.getFirst() + "Pred",
                         new AlloyBlock(
@@ -78,7 +78,7 @@ public final class CEValidation {
                                                                 renamedSnaps.getFirst())))))));
 
         for (int i = 1; i < renamedSnaps.size(); i++) {
-            alloyModel.addPara(
+            alloyModel.addPredPara(
                     new AlloyPredPara(
                             renamedSnaps.get(i) + "Pred",
                             new AlloyBlock(

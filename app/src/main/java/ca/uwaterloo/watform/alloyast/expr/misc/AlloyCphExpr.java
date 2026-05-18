@@ -23,6 +23,10 @@ public final class AlloyCphExpr extends AlloyExpr {
         this.decls = Collections.unmodifiableList(decls);
         this.body = Optional.ofNullable(body);
         reqNonNull(nullField(pos, this), this.decls, this.body);
+        // parser should never allow this
+        if (decls.isEmpty()) {
+            AlloyASTImplError.emptyDecls(pos);
+        }
     }
 
     public AlloyCphExpr(List<AlloyDecl> decls, AlloyExpr body) {
@@ -70,6 +74,10 @@ public final class AlloyCphExpr extends AlloyExpr {
     @Override
     public int hashCode() {
         return Objects.hash(this.decls, this.body);
+    }
+
+    public AlloyExpr rebuild(List<AlloyDecl> decls, AlloyExpr body) {
+        return new AlloyCphExpr(this.pos, decls, body);
     }
 
     @Override

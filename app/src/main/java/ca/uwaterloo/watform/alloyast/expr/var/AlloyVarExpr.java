@@ -26,6 +26,10 @@ public abstract class AlloyVarExpr extends AlloyExpr {
         sb.append(label);
     }
 
+    public String getName() {
+        return this.label;
+    }
+
     @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(label);

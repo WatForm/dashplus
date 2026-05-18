@@ -55,7 +55,7 @@ public class SigHierarchyA2T extends SigConstsA2T {
                     TlaSubsetUnary(
                             repeatedUnion(
                                     mapBy(
-                                            alloyModel.allParentsOfSig(sn),
+                                            alloyModel.allParents(sn),
                                             psn -> primed ? TlaVar(psn).PRIME() : TlaVar(psn)))));
     }
 }

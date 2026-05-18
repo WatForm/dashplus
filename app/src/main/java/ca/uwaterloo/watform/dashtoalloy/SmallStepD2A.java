@@ -20,8 +20,8 @@ import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashFQN;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
 public class SmallStepD2A extends TransD2A {
@@ -40,9 +40,16 @@ public class SmallStepD2A extends TransD2A {
             String tout = DashFQN.translateFQN(tfqn);
             // p3.p2.p1.t for parameters of this transition
             if (this.isElectrum)
-                e.add(AlloyPredCall(tout, this.dsl.paramVars(this.dm.transParams(tfqn))));
+                e.add(
+                        AlloyPredCall(
+                                D2AStrings.transName(tout),
+                                this.dsl.paramVars(this.dm.transParams(tfqn))));
             // p3.p2.p1.s'.s.t for parameters of this transition
-            else e.add(AlloyPredCall(tout, this.dsl.curNextParamVars(this.dm.transParams(tfqn))));
+            else
+                e.add(
+                        AlloyPredCall(
+                                D2AStrings.transName(tout),
+                                this.dsl.curNextParamVars(this.dm.transParams(tfqn))));
         }
         AlloyExpr transIsTaken;
         if (this.dm.allParams().isEmpty()) transIsTaken = AlloyOrList(e);
@@ -59,7 +66,7 @@ public class SmallStepD2A extends TransD2A {
             else
                 e.add(
                         AlloyPredCall(
-                                tout + D2AStrings.preName,
+                                D2AStrings.preName(tout),
                                 this.dsl.curParamVars(this.dm.transParams(tfqn))));
         }
         AlloyExpr transIsNotEnabled;

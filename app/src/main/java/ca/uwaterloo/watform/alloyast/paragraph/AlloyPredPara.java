@@ -142,4 +142,13 @@ public final class AlloyPredPara extends AlloyPara {
         } else if (!block.equals(other.block)) return false;
         return true;
     }
+
+    public AlloyPredPara rebuild(List<AlloyDecl> arguments, AlloyBlock block) {
+        return new AlloyPredPara(
+                this.pos, this.isPrivate, this.sigRef.orElse(null), this.qname, arguments, block);
+    }
+
+    public String getName() {
+        return this.qname.toString();
+    }
 }

@@ -92,6 +92,8 @@ public class ResolveDM extends ResolverVisDM {
         // the resolvers
         List<DashParam> sparams = new ArrayList<>(stateParams(sfqn));
 
+        // primed vars are not allowed in either inits or invs
+        // this is checked in resolveVar (which has nextOkInPrmExprs as false)
         this.addInit(sfqn, mapBy(s.inits(), i -> resolveVar(i.exp, sfqn)));
         this.addInv(sfqn, mapBy(s.invs(), i -> resolveVar(i.exp, sfqn)));
 
@@ -104,14 +106,14 @@ public class ResolveDM extends ResolverVisDM {
                     (t.fromP == null)
                             // loop on root
                             // these must be parameter VALUES
-                            ? (new StateDashRef(sfqn, mapBy(sparams, x -> x.asAlloyVar())))
+                            ? (new StateDashRef(sfqn, mapBy(sparams, x -> x.asIndexValue())))
                             : resolveState(t.fromP.exp, sfqn);
 
             DashRef gotoR =
                     (t.gotoP == null)
                             // loop on root
                             // these must be parameter values
-                            ? (new StateDashRef(sfqn, mapBy(sparams, x -> x.asAlloyVar())))
+                            ? (new StateDashRef(sfqn, mapBy(sparams, x -> x.asIndexValue())))
                             : resolveState(t.gotoP.exp, sfqn);
 
             DashRef onR = (t.onP == null) ? null : resolveEvent(t.onP.exp, sfqn);

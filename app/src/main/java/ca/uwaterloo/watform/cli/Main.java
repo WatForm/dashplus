@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -17,6 +16,7 @@ import ca.uwaterloo.watform.predabstraction.PredicateAbstraction;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.visualization.ControlStateHierarchyVisualizer;
+import edu.mit.csail.sdg.alloy4.Err;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -160,27 +160,31 @@ public class Main implements Callable<Integer> {
 
         if (count1 >= 2) {
             Reporter.INSTANCE.addError(
-                    invalidParams("-alloy, -tla, -predAbs, -vis cannot be combined"));
+                    CliError.invalidParams("-alloy, -tla, -predAbs, -vis cannot be combined"));
         } else if (count2 >= 2) {
             Reporter.INSTANCE.addError(
-                    invalidParams("-alloy, -xml, -predAbs, -vis cannot be combined"));
+                    CliError.invalidParams("-alloy, -xml, -predAbs, -vis cannot be combined"));
         } else if ((alloyPresent | predAbs | vis)
                 && someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")))) {
             // no alloy files for these options
             Reporter.INSTANCE.addError(
-                    invalidParams("for -alloy, -predAbs, -vis only dash files can be arguments"));
+                    CliError.invalidParams(
+                            "for -alloy, -predAbs, -vis only dash files can be arguments"));
         } else if (write && !translateToAlloy) {
             // write can only be used with alloy
             Reporter.INSTANCE.addError(
-                    invalidParams("only -alloy can be written and input file must be .dsh"));
+                    CliError.invalidParams(
+                            "only -alloy can be written and input file must be .dsh"));
         } else if (xml && cliConf.fileNames.size() != 1) {
             // -xml can only have one input .dsh/.als filename
             Reporter.INSTANCE.addError(
-                    invalidParams("for -xml, there can be only one input model"));
+                    CliError.invalidParams("for -xml, there can be only one input model"));
         } else if (xml && cmd) {
-            Reporter.INSTANCE.addError(invalidParams("for -xml, there cannot be a command"));
+            Reporter.INSTANCE.addError(
+                    CliError.invalidParams("for -xml, there cannot be a command"));
         } else if (vis && cmd) {
-            Reporter.INSTANCE.addError(invalidParams("for -vis, there cannot be a command"));
+            Reporter.INSTANCE.addError(
+                    CliError.invalidParams("for -vis, there cannot be a command"));
         }
         // stop if any errors from above check on combinations
         // Reporter.INSTANCE.exitIfHasErrors();
@@ -212,6 +216,13 @@ public class Main implements Callable<Integer> {
                 if (fullFileName.endsWith(".als")) {
                     dashOutput("Input: " + fullFileName);
                     AlloyModel am = parseToModel(absolutePath);
+                    // alloy model is complete
+                    try {
+                        am.resolve();
+                    } catch (UserOrImplError err) {
+                        Reporter.INSTANCE.addError(err);
+                        Reporter.INSTANCE.exitIfHasErrors();
+                    }
                     if (tla && !xml) {
                         runAlloyToTla(
                                 am, outputFileNamePrefix, tlaModuleName, cmdIdx, verbose, debug);
@@ -226,15 +237,16 @@ public class Main implements Callable<Integer> {
                     // this is a dash file
                     dashOutput("Input: " + fullFileName);
                     DashModel dm = (DashModel) parseToModel(absolutePath);
+                    dm.resolve();
+
                     if (vis) {
                         runVis(dm, outputFileNamePrefix);
                     } else if (write && !alloyPresent) {
                         runWriteResolvedDash(dm, outputFileNamePrefix);
-
                     } else if (xml) {
                         runCheckDashInstanceTla(dm, cliConf.xmlFileName);
                     } else {
-                        if (dm.getParas(AlloyCmdPara.class).size() == 0 && cmd) {
+                        if (dm.getNumCmds() == 0 && cmd) {
                             dashOutputBold(
                                     "Warning: no command in input .dsh file -> using default scopes for run {}");
                         }
@@ -250,37 +262,44 @@ public class Main implements Callable<Integer> {
                         } else if (predAbs) {
                             runPredAbs(fullFileName, dm, cmdIdx);
                         } else {
+
                             runDashToAlloy(dm, d2aOptions, outputFileNamePrefix, write, cmdIdx);
                         }
                     }
                 }
                 // Reporter.INSTANCE.exitIfHasErrors();
             }
+
             Reporter.INSTANCE.print();
             return 0;
 
-        } catch (Reporter.ErrorUser errorUser) {
-            // User error exit code: 1
-            Reporter.INSTANCE.addError(errorUser);
-            Reporter.INSTANCE.print();
-            return 1;
         } catch (Reporter.AbortSignal abortSignal) {
+            // already printed Reporter if it issued an AbortSignal
             return 1;
-        } catch (ImplementationError implementationError) {
+        } catch (ImplementationError implError) {
             // Implementation Error exit code: 2
-            System.err.println(implementationError);
-            if (cliConf.debug) implementationError.printStackTrace();
+            if (cliConf.debug) implError.printStackTrace();
+            else System.err.println(implError);
             return 2;
-        } catch (DashPlusException dashPlusError) {
-            // DashPlusException bubbled up here are treated ImplementationError
+        } catch (UserOrImplError implError) {
+            // bubbled up here so these are ImplementationError
             // see ErrorHandling.md
-            System.err.println(dashPlusError);
-            if (cliConf.debug) dashPlusError.printStackTrace();
+            if (cliConf.debug) implError.printStackTrace();
+            else System.err.println(implError);
             return 2;
+        } catch (Err e) {
+            // error that comes from a call the Alloy Analyzer code base
+            // probably a user error but might not be
+            System.err.println("Error message from Alloy Analyzer (regarding an Alloy model)");
+            System.out.println(e.getMessage());
+            System.out.println("Line: " + e.pos.y);
+            System.out.println("Column: " + e.pos.x);
+            return 1;
         } catch (Exception e) {
             // Unexpected Error exit code: 3
-            System.err.println("Unexpected error: " + e.getMessage());
+            System.err.println("Unexpected error: ");
             if (cliConf.debug) e.printStackTrace();
+            else System.err.println(e);
             return 3;
         }
     }
@@ -318,7 +337,7 @@ public class Main implements Callable<Integer> {
     }
 
     private static void runAlloy(AlloyModel am, Integer cmdIdx) {
-        int num_cmds_in_file = am.getParas(AlloyCmdPara.class).size();
+        int num_cmds_in_file = am.getNumCmds();
         if (cmdIdx < num_cmds_in_file) {
             AlloyInterface.executeCommand(am, cmdIdx);
         } else if (num_cmds_in_file == 0) {
@@ -396,7 +415,7 @@ public class Main implements Callable<Integer> {
             Path path = Paths.get(fname).toAbsolutePath();
             AlloyModel qm = parseToModel(path);
             dashOutput("Parsed " + fname + " to AlloyModel.");
-            runAlloy(qm, qm.getParas(AlloyCmdPara.class).size() - 1);
+            runAlloy(qm, qm.getNumCmds() - 1);
             printStackTrace();
         }
     }
@@ -408,8 +427,20 @@ public class Main implements Callable<Integer> {
             Boolean writeOnly,
             Integer cmdIdx)
             throws IOException {
-        AlloyModel am = new DashToAlloy(dm, opt).translate();
 
+        AlloyModel am;
+        try {
+
+            am = new DashToAlloy(dm, opt).translate();
+
+            // DashToAlloy does a resolve at the end
+            // am.resolve();
+        } catch (UserOrImplError err) {
+            am = null;
+            Reporter.INSTANCE.addError(err);
+            Reporter.INSTANCE.exitIfHasErrors();
+        }
+        // System.out.println("here68");
         if (writeOnly) {
             String alloyFileName = outputFileNamePrefix + "-" + opt + ".als";
             Files.writeString(fileFromString(alloyFileName), am.toString());

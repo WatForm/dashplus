@@ -24,8 +24,8 @@ import java.util.List;
 
 public class DashModel extends DashFileDM {
 
-    public DashModel(DashFile d) {
-        super(d);
+    public DashModel(DashFile dashFile) {
+        super(dashFile);
     }
 
     public DashModel() {

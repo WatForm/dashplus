@@ -21,9 +21,16 @@ public class NextDefnA2T extends InitDefnA2T {
 
         alloyModel.allSigs().forEach(sigName -> unchanged.add(new TlaVar(sigName)));
 
+        /*
         alloyModel
                 .allSigs()
-                .forEach(sn -> alloyModel.fieldNames(sn).forEach(fn -> unchanged.add(TlaVar(fn))));
+                .forEach(
+                        sn ->
+                                alloyModel
+                                        .fieldNamesOfSig(sn)
+                                        .forEach(fn -> unchanged.add(TlaVar(fn))));
+        */
+        alloyModel.allFields().forEach(fn -> unchanged.add(TlaVar(fn)));
 
         tlaModel.addDefn(TlaDefn(NEXT, TlaUnchanged(unchanged)));
     }

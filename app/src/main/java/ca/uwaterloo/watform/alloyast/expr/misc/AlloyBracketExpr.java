@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+// p[a,b,c]
 // another way of writing a dot join
 public final class AlloyBracketExpr extends AlloyExpr {
     public final AlloyExpr expr;
@@ -74,5 +75,9 @@ public final class AlloyBracketExpr extends AlloyExpr {
     @Override
     public int getPrec() {
         return AlloyExpr.BRACKET_PREC;
+    }
+
+    public AlloyBracketExpr rebuild(AlloyExpr expr, List<AlloyExpr> exprs) {
+        return new AlloyBracketExpr(this.pos, expr, exprs);
     }
 }

@@ -3,12 +3,23 @@ package ca.uwaterloo.watform.alloymodel;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyModelImplError extends ImplementationError {
+
+    private AlloyModelImplError(String msg) {
+        super(msg);
+    }
+
     private AlloyModelImplError(Pos pos, String msg) {
         super(pos, msg);
     }
 
-    private AlloyModelImplError(String msg) {
-        super(msg);
+    public static AlloyModelImplError builtinNotFound(String s) {
+        return new AlloyModelImplError(
+                "Trying to look up the arity of a symbol that is not builtin: " + s);
+    }
+
+    public static AlloyModelImplError predNotFound(String s) {
+        return new AlloyModelImplError(
+                "Trying to look up the arity of a symbol that is not a pred: " + s);
     }
 
     public static AlloyModelImplError lookUpWithNoName() {
