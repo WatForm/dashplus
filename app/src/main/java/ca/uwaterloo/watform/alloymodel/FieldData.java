@@ -12,6 +12,7 @@ public class FieldData {
 
     // probably we don't need these two because fieldName is the key to the table
     // and the parent of a field is not used anywhere currently
+    // MKJ: We do need sigParent
     public final String fieldName;
     public final String sigParent;
 

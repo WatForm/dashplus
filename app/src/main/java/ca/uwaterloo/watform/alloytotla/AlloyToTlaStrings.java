@@ -9,6 +9,7 @@ public class AlloyToTlaStrings {
     public static final String NEXT = SPECIAL + "Next";
     public static final String SIG_SETS_UNPRIMED =
             SPECIAL + "sig" + SPECIAL + "sets" + SPECIAL + "unprimed";
+    public static final String FIELD_TYPES = SPECIAL + "field" + SPECIAL + "types";
     public static final String SIG_SETS_PRIMED =
             SPECIAL + "sig" + SPECIAL + "sets" + SPECIAL + "primed";
     public static final String ALL_SIG_CONSTRAINTS =

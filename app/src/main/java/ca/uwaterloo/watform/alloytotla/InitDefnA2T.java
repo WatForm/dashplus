@@ -6,7 +6,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
@@ -16,7 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class InitDefnA2T extends FieldVarsA2T {
+public class InitDefnA2T extends FieldsA2T {
 
     public InitDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
         super(alloyModel, verbose, debug);
@@ -40,7 +39,7 @@ public class InitDefnA2T extends FieldVarsA2T {
         var scopes = new HashMap<String, Integer>();
         var exact = new HashMap<String, Boolean>();
 
-        for (var signame : alloyModel.allSigs()) {
+        for (var signame : alloyModel.topLevelSigs()) {
             scopes.put(signame, defaultScope);
             exact.put(signame, false);
         }
@@ -72,6 +71,8 @@ public class InitDefnA2T extends FieldVarsA2T {
     protected void addInitDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
         List<TlaExp> exps = membershipConstraintsTopLevelSigs(cmdDecl);
 
+        exps.add(TlaAppl(SIG_SETS_UNPRIMED));
+        exps.add(TlaAppl(FIELD_TYPES));
         exps.add(TlaAppl(ALL_SIG_CONSTRAINTS));
         exps.add(TlaAppl(ALL_FACTS));
 

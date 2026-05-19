@@ -56,6 +56,9 @@ public class AlloyToTla extends StdLibsA2T {
         tlaModel.addComment("signature hierarchy", verbose);
         addSigHierarchy(tlaModel);
 
+        tlaModel.addComment("field types", verbose);
+        addFieldTypes(tlaModel);
+
         tlaModel.addComment("signature constraints", verbose);
         addSigConstraints(tlaModel);
 

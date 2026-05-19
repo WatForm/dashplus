@@ -1,9 +1,6 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.SIG_SETS_PRIMED;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.SIG_SETS_UNPRIMED;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -51,10 +48,6 @@ public class SigHierarchyA2T extends SigConstsA2T {
     }
 
     private TlaExp sigSetClauseNonTopLevel(String signame, boolean primed) {
-
-        l.info(signame + ":");
-        l.info("extends parents: " + alloyModel.extendsParent(signame));
-        l.info("in-parents: " + alloyModel.inParents(signame));
 
         TlaExp v = primed ? TlaVar(signame).PRIME() : TlaVar(signame);
         List<TlaExp> parents =

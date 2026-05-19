@@ -24,14 +24,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         throw ImplementationError.notSupported("dashref inside pure AlloyVis");
     }
 
-    /*
-    @Override
-    public TlaExp visit(DashParam dashParam) {
-
-        throw ImplementationError.notSupported("dashParam inside pure AlloyVis");
-    }
-    */
-
     @Override
     public TlaExp visit(AlloyBinaryExpr binExpr) {
 
