@@ -5,6 +5,8 @@ import static ca.uwaterloo.watform.alloyinterface.AlloyInterface.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -76,6 +78,7 @@ public class PredAbsUtil {
                 am.addPred(pname, dsl.curDecls(), setToList(exprs));
             }
             int cmdIdx = addRunCmd(pname, am, scope) - 1;
+            am.resolve();
             try {
                 Solution sol = executeCommand(am, cmdIdx);
                 cache.put(key, sol.isSat());
@@ -110,5 +113,28 @@ public class PredAbsUtil {
                         new AlloyCmdPara.CommandDecl(
                                 AlloyCmdPara.CommandDecl.CmdType.CHECK, AlloyVar(pname), scope)));
         return am.getNumCmds();
+    }
+
+    public static String getPredNameFromCmd(AlloyModel am, int cmdIdx) {
+        return getPredNameFromCmd(am.getCmdNum(cmdIdx).orElse(null));
+    }
+
+    public static String getPredNameFromCmd(AlloyCmdPara cmd) {
+        if (cmd == null) return null;
+        AlloyQnameExpr predName = cmd.cmdDecls.get(0).invoQname.orElse(null);
+        if (predName != null) {
+            return predName.vars.get(0).label;
+        } else {
+            return null;
+        }
+    }
+
+    public static AlloyBlock getFormulaFromCmd(AlloyModel am, int cmdIdx) {
+        return getFormulaFromCmd(am.getCmdNum(cmdIdx).orElse(null));
+    }
+
+    public static AlloyBlock getFormulaFromCmd(AlloyCmdPara cmd) {
+        if (cmd == null) return null;
+        return cmd.cmdDecls.get(0).constrBlock.orElse(null);
     }
 }

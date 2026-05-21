@@ -21,6 +21,11 @@ public class DashFQN {
         return n.replace(DashStrings.internalQualChar, DashStrings.outputQualChar);
     }
 
+    // to go from Alloy FQN to Dash+ FQN
+    public static String translateToDashFQN(String n) {
+        return n.replace(DashStrings.outputQualChar, DashStrings.internalQualChar);
+    }
+
     // testing inputs from parsing
     public static Boolean isFQN(String n) {
         return n.contains(DashStrings.inputQualChar);

@@ -12,7 +12,7 @@ import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtotla.*;
-import ca.uwaterloo.watform.predabstraction.PredicateAbstraction;
+import ca.uwaterloo.watform.predabstraction.PAMain;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.visualization.ControlStateHierarchyVisualizer;
@@ -404,26 +404,15 @@ public class Main implements Callable<Integer> {
 
     private static void runPredAbs(String fullFileName, DashModel dm, Integer cmdIdx)
             throws IOException {
-        PredicateAbstraction pa;
+        PAMain pa;
         if (cmdIdx == Constants.noCmdValue) {
-            pa = new PredicateAbstraction(dm);
+            pa = new PAMain(dm);
         } else {
-            pa = new PredicateAbstraction(dm, cmdIdx);
+            pa = new PAMain(dm, cmdIdx);
         }
         try {
-            DashModel absModel = pa.createAbstractModel();
-            dashOutput("Abstract model created.");
-            dashOutput(absModel.toDashFile().toString());
+            pa.runCEGARLoop();
         } catch (Exception e) {
-            // dashOutput("Query Model:\n\n" + pa.getQueryModelString());
-            String fname =
-                    fullFileName.substring(0, fullFileName.length() - 4) + "-query_model_error.als";
-            Files.writeString(fileFromString(fname), pa.getQueryModelString());
-            dashOutput("Query Model written to: " + fname);
-            Path path = Paths.get(fname).toAbsolutePath();
-            AlloyModel qm = parseToModel(path);
-            dashOutput("Parsed " + fname + " to AlloyModel.");
-            runAlloy(qm, qm.getNumCmds() - 1);
             printStackTrace();
         }
     }

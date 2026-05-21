@@ -50,7 +50,7 @@ public class Main implements Callable<Integer> {
             System.out.println(solution.toString());
 
             AlloyModel alloyModel = new AlloyModel();
-            CEValidation.initAndNext(alloyModel, solution);
+            // CEValidation.initAndNext(alloyModel, solution);
 
             System.out.println(alloyModel);
 
