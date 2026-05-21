@@ -35,8 +35,6 @@ public class CERefinement extends CEValidation {
         // all of its B values
 
         List<AlloyExpr> abvConjList = new ArrayList<>();
-        abvConjList.add(origAbsGuard);
-
         HashMap<String, String> varVals = snapshotVarVals.get(spuriousTransSrc);
         for (String v : varVals.keySet()) {
             AlloyExpr abv = getVarDashRef(getABVfqn(v));
@@ -47,7 +45,7 @@ public class CERefinement extends CEValidation {
             }
         }
 
-        AlloyExpr refinedGuard = AlloyAndList(abvConjList);
+        AlloyExpr refinedGuard = AlloyAnd(origAbsGuard, AlloyNot(AlloyAndList(abvConjList)));
         absModel.setWhenR(tfqnSpurious, refinedGuard);
     }
 }
