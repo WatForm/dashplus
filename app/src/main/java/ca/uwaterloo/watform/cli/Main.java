@@ -243,7 +243,7 @@ public class Main implements Callable<Integer> {
                     // this is a dash file
                     dashOutput("Input: " + fullFileName);
                     DashModel dm = (DashModel) parseToModel(absolutePath);
-                    dm.resolve();
+                    // dm.resolve();
 
                     if (vis) {
                         runVis(dm, outputFileNamePrefix);
