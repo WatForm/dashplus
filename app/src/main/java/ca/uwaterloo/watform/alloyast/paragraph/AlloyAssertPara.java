@@ -116,6 +116,11 @@ public final class AlloyAssertPara extends AlloyPara {
     }
 
     public String getName() {
-        return this.qname.toString();
+        AlloyQnameExpr e = this.qname.orElse(null);
+        if (e != null) {
+            return e.vars.get(0).getName();
+        } else {
+            return null;
+        }
     }
 }

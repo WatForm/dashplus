@@ -134,6 +134,15 @@ public class InitializePA {
                         AlloyAssertPara ass = concreteModel.getAssertPara(pname);
                         if (ass != null) return ass.block;
                         else {
+                            System.out.println("List of all pred paras of concrete dash model: ");
+                            for (AlloyPredPara p : concreteModel.allPredParas()) {
+                                System.out.println(p.qname);
+                            }
+                            System.out.println("List of all assert paras of concrete dash model: ");
+                            for (AlloyAssertPara p : concreteModel.allAssertParas()) {
+                                System.out.println(p.qname);
+                            }
+                            System.out.println("Tried to find \"" + pname + "\" and failed.");
                             System.out.println(
                                     "Command is trying to access a pred or assert that does not exist.");
                             return null;

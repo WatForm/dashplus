@@ -125,6 +125,7 @@ public class PredAbsUtil {
         if (predName != null) {
             return predName.vars.get(0).label;
         } else {
+            System.out.println("In PredAbsUtil.getPredNameFromCmd(): predName is null.");
             return null;
         }
     }
