@@ -37,12 +37,13 @@ public class AlloyModel extends AMCmds {
         return new AlloyModel(this);
     }
 
-    public AlloyModel copyImports() {
-        AlloyModel m = new AlloyModel();
-        for (AlloyImportPara ip : this.allImportParas()) {
-            m.addImportPara(ip);
-        }
-        return m;
+    public AlloyModel copyImportsAndSigs() {
+        List<AlloyPara> paras = new ArrayList<AlloyPara>();
+        paras.addAll(this.allModuleParas());
+        paras.addAll(this.allImportParas());
+        paras.addAll(this.allSigParas());
+        AlloyFile af = new AlloyFile(paras);
+        return new AlloyModel(af);
     }
 
     // we need copies of these two constructors in every parent class

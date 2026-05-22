@@ -89,7 +89,7 @@ public class DashToAlloy extends StutterD2A {
     }
 
     public AlloyModel translateVarBufferSigsOnly() {
-        this.am = dm.copyImports();
+        this.am = dm.copyImportsAndSigs();
         this.addParamSpaceSigs();
         this.varsBuffersOnlySnapshotSig();
         return this.am;
