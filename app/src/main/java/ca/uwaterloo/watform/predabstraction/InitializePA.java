@@ -81,28 +81,28 @@ public class InitializePA {
             preds.remove(emptySet());
         }
 
-        List<AlloyExpr> predList = setToList(preds);
-        for (int i = 0; i < predList.size(); i++) {
+        Set<AlloyExpr> translatedPreds = new HashSet<>();
+
+        for (AlloyExpr e : preds) {
+            translatedPreds.add(exprTranslator.translateExpr(e));
+        }
+
+        List<AlloyExpr> predList = setToList(translatedPreds);
+        for (int i = 0; i < predList.size() - 1; i++) {
             for (int j = i + 1; j < predList.size(); j++) {
                 AlloyExpr e1 = predList.get(i);
                 AlloyExpr e2 = predList.get(j);
                 AlloyExpr iff = AlloyIff(e1, e2);
                 AlloyExpr iff2 = AlloyIff(AlloyNot(e1), e2);
                 if (PredAbsUtil.checkSAT(Set.of(iff), queryModel, false, this.scope)) {
-                    preds.remove(e2);
+                    translatedPreds.remove(e2);
                 } else if (PredAbsUtil.checkSAT(Set.of(iff2), queryModel, false, this.scope)) {
-                    preds.remove(e2);
+                    translatedPreds.remove(e2);
                 }
             }
         }
 
         int ctr = 0;
-        Set<AlloyExpr> translatedPreds = new HashSet<>();
-
-        for (AlloyExpr e : preds) {
-            translatedPreds.add(exprTranslator.translateExpr(e));
-            // ABVNameCAFTransMap.put(abvName, exprTranslator.translateExpr(e));
-        }
 
         for (AlloyExpr e : translatedPreds) {
             String abvName = abvNamePre + Integer.toString(ctr);

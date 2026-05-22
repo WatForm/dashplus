@@ -37,6 +37,14 @@ public class AlloyModel extends AMCmds {
         return new AlloyModel(this);
     }
 
+    public AlloyModel copyImports() {
+        AlloyModel m = new AlloyModel();
+        for (AlloyImportPara ip : this.allImportParas()) {
+            m.addImportPara(ip);
+        }
+        return m;
+    }
+
     // we need copies of these two constructors in every parent class
     public AlloyModel(AlloyFile alloyFile) {
         super(alloyFile);
