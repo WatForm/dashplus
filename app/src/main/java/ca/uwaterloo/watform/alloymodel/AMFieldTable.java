@@ -23,7 +23,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.exprvisitor.TestAndCollectVarsExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class AMFieldTable {
 
@@ -49,7 +49,8 @@ public class AMFieldTable {
     // might be allFields (on initialization) or some fields from sigs added (on addSig)
     // sets arities in fieldTable and default mul in field Types
     protected void resolve(
-            Function<AlloyExpr, CalcAritySetMulDefaultsExprVis.Result> arityAndSetMul) {
+            BiFunction<AlloyExpr, String, CalcAritySetMulDefaultsExprVis.Result>
+                    fieldArityAndSetMul) {
 
         // set up for getChildren function
         TestAndCollectVarsExprVis collect =
@@ -74,7 +75,9 @@ public class AMFieldTable {
             // throws an error if it can't calculate it and set defaults
             // System.out.println(fieldName);
             // System.out.println(fieldExpr);
-            CalcAritySetMulDefaultsExprVis.Result result = arityAndSetMul.apply(fieldExpr);
+            // this is a field expression so we need the Boolean arg to arityAndSetMul to be True
+            CalcAritySetMulDefaultsExprVis.Result result =
+                    fieldArityAndSetMul.apply(fieldExpr, this.fieldParent(fieldName));
 
             // fields have +1 in arity than returned here b/c of sig
             int fieldArity = result.arity.map(b -> b + 1).orElse(null);
@@ -126,6 +129,11 @@ public class AMFieldTable {
     protected Optional<Integer> fieldArity(String name) {
         // TODO: check it exists
         return this.fieldTable.get(name).fieldArity();
+    }
+
+    protected String fieldParent(String name) {
+        // TODO: check it exists
+        return this.fieldTable.get(name).fieldParent();
     }
 
     // checks

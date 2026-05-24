@@ -8,7 +8,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class AMPredTable extends AMSigTable {
 
@@ -25,7 +25,7 @@ public class AMPredTable extends AMSigTable {
     }
 
     protected void resolve(
-            Function<AlloyExpr, CalcAritySetMulDefaultsExprVis.Result> arityAndSetMul) {
+            BiFunction<AlloyExpr, String, CalcAritySetMulDefaultsExprVis.Result> arityAndSetMul) {
         super.resolve(arityAndSetMul);
         // TODO: getting arity of arguments
         // TODO: checking if predicate calling is in a cycle

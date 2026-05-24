@@ -53,4 +53,8 @@ public class FieldData {
     public Optional<Integer> fieldArity() {
         return this.fieldArity;
     }
+
+    public String fieldParent() {
+        return this.sigParent;
+    }
 }

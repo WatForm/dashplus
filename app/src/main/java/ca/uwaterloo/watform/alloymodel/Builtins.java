@@ -29,7 +29,8 @@ public class Builtins {
                     Map.entry(AlloyStrings.util_lt, 3),
                     Map.entry(AlloyStrings.shortMaxName, 2),
                     Map.entry(AlloyStrings.shortMinName, 2),
-                    Map.entry(AlloyStrings.shortSeqUnivDelete, 3),
+                    // util/sequniv.als takes two args and returns a seq, which has arity 2
+                    Map.entry(AlloyStrings.shortSeqUnivDelete, 4),
                     Map.entry("idx", 2),
                     Map.entry("gte", 3),
                     Map.entry("lte", 3),
@@ -38,7 +39,8 @@ public class Builtins {
                     Map.entry("firstElem", 2),
                     Map.entry("first", 2),
                     Map.entry("next", 2),
-                    Map.entry("__Snapshot/next", 2));
+                    Map.entry("__Snapshot/next", 2),
+                    Map.entry("isEmpty", 2));
 
     protected static Boolean isBuiltin(String name) {
         return builtinsArity.containsKey(name);

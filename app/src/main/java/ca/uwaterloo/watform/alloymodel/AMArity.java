@@ -20,11 +20,14 @@ public class AMArity extends AMPredTable {
 
     protected void resolve() {
         // arityAndSetMul is not available to AMs below this in the hierarchy
-        super.resolve(this::arityAndSetMul);
+        super.resolve(this::fieldArityAndSetMul);
     }
 
     // must go before arityAndMulCalcVis private attritube
-    protected Optional<Integer> symbolArity(String symbolName) {
+    // if sigParent has a value, we must be checking a field bounding expression
+    // if the symbolName has a parent == sigParent, then that's allowed
+    // but the arity of the symbol is reduced by 1
+    protected Optional<Integer> symbolArity(String symbolName, Optional<String> sigParent) {
         // enums will be in allSigs
         // System.out.println("symbolArity " + symbolName);
         if (this.allSigs().contains(symbolName)) {
@@ -32,7 +35,22 @@ public class AMArity extends AMPredTable {
             return Optional.of(1);
         } else if (this.allFields().contains(symbolName)) {
             // System.out.println("here2");
-            return this.fieldArity(symbolName);
+            // if symbol has same parent sig as the field we are checking
+            // it is allowed but the arity is not -1 the arity returned from the fieldTable
+            if (sigParent.isPresent())
+                // make sure the symbol has the same
+                if (!this.fieldParent(symbolName).equals(sigParent.get())) {
+                    throw AlloyModelError.cannotRefFieldInBoundingExprOutsideOfItsSig(
+                            symbolName, sigParent.get());
+                } else {
+                    // implicitly the sigParent is already joined to the fieldName so we subtract 1
+                    // if the field name has
+                    // an arity
+                    return this.fieldArity(symbolName).map(b -> b - 1);
+                }
+            else {
+                return this.fieldArity(symbolName);
+            }
         } else if (Builtins.isBuiltin(symbolName)) {
             // System.out.println("here3");
             return Optional.of(Builtins.builtinArity(symbolName));
@@ -52,8 +70,8 @@ public class AMArity extends AMPredTable {
             new CalcAritySetMulDefaultsExprVis(this::symbolArity);
 
     // this is used when we are getting back arity for the fieldTable
-    CalcAritySetMulDefaultsExprVis.Result arityAndSetMul(AlloyExpr e) {
-        return arityAndMulCalcVis.visit(e);
+    CalcAritySetMulDefaultsExprVis.Result fieldArityAndSetMul(AlloyExpr e, String sigParent) {
+        return arityAndMulCalcVis.fieldArityAndSetMul(e, sigParent);
     }
 
     // the following is useful for setting default multiplicity
@@ -61,7 +79,7 @@ public class AMArity extends AMPredTable {
     // i.e., we are not trying to calculate arity to be recorded
     // in the fieldTable
     AlloyExpr setMul(AlloyExpr e) {
-        return arityAndMulCalcVis.visit(e).exp;
+        return arityAndMulCalcVis.setMul(e).exp;
     }
 
     public void localEnvPush(List<AlloyDecl> decls) {

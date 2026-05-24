@@ -13,7 +13,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.AlloyEnumPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class AMSigTable extends AMFieldTable {
 
@@ -31,8 +31,9 @@ public class AMSigTable extends AMFieldTable {
     }
 
     protected void resolve(
-            Function<AlloyExpr, CalcAritySetMulDefaultsExprVis.Result> arityAndSetMul) {
-        super.resolve(arityAndSetMul);
+            BiFunction<AlloyExpr, String, CalcAritySetMulDefaultsExprVis.Result>
+                    fieldArityAndSetMul) {
+        super.resolve(fieldArityAndSetMul);
         // done after all sigs and enums are added
         DetectCycles.topoOrderCycleDetector(this.allSigs(), x -> this.allChildren(x));
     }

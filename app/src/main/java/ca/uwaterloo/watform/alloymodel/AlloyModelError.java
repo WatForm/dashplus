@@ -85,4 +85,13 @@ public final class AlloyModelError extends UserOrImplError {
         return new AlloyModelError(
                 pos, "No mul given and cannot be calculated: " + expr.toString());
     }
+
+    public static AlloyModelError cannotRefFieldInBoundingExprOutsideOfItsSig(
+            String symbolName, String sigParent) {
+        return new AlloyModelError(
+                "Cannot reference: "
+                        + symbolName
+                        + " in a bounding expression outside of its signature: "
+                        + sigParent);
+    }
 }

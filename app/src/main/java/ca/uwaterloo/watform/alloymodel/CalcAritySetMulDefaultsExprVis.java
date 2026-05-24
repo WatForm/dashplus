@@ -37,14 +37,15 @@ import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import ca.uwaterloo.watform.utils.Reporter;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class CalcAritySetMulDefaultsExprVis
         implements AlloyExprVis<CalcAritySetMulDefaultsExprVis.Result> {
 
     // provided function on initialization
     // gets the arity for an individual name
-    private Function<String, Optional<Integer>> symbolArity;
+    private BiFunction<String, Optional<String>, Optional<Integer>> symbolArity;
+    private Optional<String> sigParent = Optional.empty();
 
     // ---------
     // need a context of arities for let expressions, quantified variables, etc.
@@ -90,7 +91,9 @@ public class CalcAritySetMulDefaultsExprVis
 
     // -------
 
-    public CalcAritySetMulDefaultsExprVis(Function<String, Optional<Integer>> symbolArity) {
+    // constructor
+    public CalcAritySetMulDefaultsExprVis(
+            BiFunction<String, Optional<String>, Optional<Integer>> symbolArity) {
         // set up empty stack for localArities
         this.localArities = new ArrayDeque<>();
         // this is the symbol table for arities of symbols
@@ -98,9 +101,21 @@ public class CalcAritySetMulDefaultsExprVis
         this.symbolArity = symbolArity;
     }
 
+    // one kind of top-level call
+    public Result fieldArityAndSetMul(AlloyExpr e, String sigParent) {
+        this.sigParent = Optional.of(sigParent);
+        return this.visit(e);
+    }
+
+    // other top-level call
+    public Result setMul(AlloyExpr e) {
+        this.sigParent = Optional.empty();
+        return this.visit(e);
+    }
+
     private Optional<Integer> arity(String n) {
         Optional<Integer> x = localLookup(n);
-        return x.isPresent() ? x : this.symbolArity.apply(n);
+        return x.isPresent() ? x : this.symbolArity.apply(n, this.sigParent);
     }
 
     // for use by a predicate or function paragraphs in Alloy
@@ -573,7 +588,7 @@ public class CalcAritySetMulDefaultsExprVis
         // seq is weird
         if (isSeq(unaryExpr)) {
             if (!subArity.equals(UNKNOWN_ARITY)) {
-                return new Result(Optional.of(subArity.get() + 1), subExp);
+                return new Result(Optional.of(subArity.get() + 1), unaryExpr.rebuild(subExp));
             } else {
                 throw AlloyModelError.unknownArity(unaryExpr.pos, unaryExpr.toString());
             }
