@@ -8,7 +8,6 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -97,28 +96,39 @@ public class CEValidation extends AbstractMC {
 
         addABVtoCAFPreds();
 
+        System.out.println("Added ABV to CAF predicates to concrete Alloy.");
+        // System.out.println("Abstract solution map keySet: ");
+        // for (String s : solution.getSolnMapKeys()) {
+        //     System.out.println(s);
+        // }
+
         // Get the next relation on the Snapshots
         Set<List<String>> nextRelSnapSet =
-                solution.get(
-                        D2AStrings.snapshotName
-                                + DashStrings.SLASH
-                                + "Ord"
-                                + AlloyStrings.DOMRESTR
-                                + "Next");
+                solution.get(D2AStrings.snapshotName + DashStrings.SLASH + "Ord.Next");
         Map<String, String> nextRelSnapMap = new HashMap<>();
-        for (List<String> pair : nextRelSnapSet) {
-            nextRelSnapMap.put(pair.get(1), pair.getLast());
+        if (nextRelSnapSet == null) {
+            System.out.println(
+                    D2AStrings.snapshotName
+                            + DashStrings.SLASH
+                            + "Ord.Next is not a valid key in the solution map");
+        } else {
+            for (List<String> pair : nextRelSnapSet) {
+                nextRelSnapMap.put(pair.getFirst(), pair.getLast());
+            }
         }
 
         // Get the first Snapshot
         Set<List<String>> firstSnapSet =
-                solution.get(
-                        D2AStrings.snapshotName
-                                + DashStrings.SLASH
-                                + "Ord"
-                                + AlloyStrings.DOMRESTR
-                                + ".First");
-        String firstSnap = Iterables.getOnlyElement(firstSnapSet).getFirst();
+                solution.get(D2AStrings.snapshotName + DashStrings.SLASH + "Ord.First");
+        String firstSnap = "";
+        if (firstSnapSet == null) {
+            System.out.println(
+                    D2AStrings.snapshotName
+                            + DashStrings.SLASH
+                            + "Ord.First is not a valid key in the solution map");
+        } else {
+            firstSnap = Iterables.getOnlyElement(firstSnapSet).getFirst();
+        }
 
         // Get the boolean variable values
         // [{"__Snapshot$0" : "boolean/True$0", ...},
@@ -135,25 +145,23 @@ public class CEValidation extends AbstractMC {
                             AlloyStrings.THIS
                                     + DashStrings.SLASH
                                     + D2AStrings.snapshotName
-                                    + AlloyStrings.DOMRESTR
+                                    + AlloyStrings.DOT
                                     + vfqn);
-            // HashMap<String, String> valMap = new HashMap<>();
-            for (List<String> pair : val) {
-                // valMap.put(pair.getFirst(), pair.getLast());
-
-                String snapName = pair.getFirst();
-                String varVal = pair.getLast();
-                if (snapshotVarVals.containsKey(snapName)) {
-                    HashMap<String, String> varValMap = snapshotVarVals.get(snapName);
-                    varValMap.put(vname, varVal);
-                    snapshotVarVals.put(snapName, varValMap);
-                } else {
-                    HashMap<String, String> varValMap = new HashMap<>();
-                    varValMap.put(vname, varVal);
-                    snapshotVarVals.put(snapName, varValMap);
+            if (val != null) {
+                for (List<String> pair : val) {
+                    String snapName = pair.getFirst();
+                    String varVal = pair.getLast();
+                    if (snapshotVarVals.containsKey(snapName)) {
+                        HashMap<String, String> varValMap = snapshotVarVals.get(snapName);
+                        varValMap.put(vname, varVal);
+                        snapshotVarVals.put(snapName, varValMap);
+                    } else {
+                        HashMap<String, String> varValMap = new HashMap<>();
+                        varValMap.put(vname, varVal);
+                        snapshotVarVals.put(snapName, varValMap);
+                    }
                 }
             }
-            // abvValues.add(valMap);
         }
 
         // Rename snapshots; DshSnapshot$0 may not be the first snapshot and
@@ -178,14 +186,17 @@ public class CEValidation extends AbstractMC {
         // ---------------------------------------
         // add one sigs for each renamed snapshot
         for (String renamedSnap : renamedSnaps) {
-            concreteAlloy.addSigPara(
-                    new AlloySigPara(
-                            List.of(AlloySigPara.Qual.ONE),
-                            List.of(new AlloyQnameExpr(renamedSnap)),
-                            new AlloySigPara.Extends(new AlloyQnameExpr(D2AStrings.snapshotName)),
-                            Collections.emptyList(),
-                            new AlloyBlock()));
+            // concreteAlloy.addSigPara(
+            //         new AlloySigPara(
+            //                 List.of(AlloySigPara.Qual.ONE),
+            //                 List.of(AlloyVar(renamedSnap)),
+            //                 new AlloySigPara.Extends(AlloyVar(D2AStrings.snapshotName)),
+            //                 Collections.emptyList(),
+            //                 new AlloyBlock()));
+            concreteAlloy.addOneExtendsSig(renamedSnap, D2AStrings.snapshotName);
         }
+
+        System.out.println("In validateCE(): added snapshot sigs to concreteAlloy.");
 
         // add an alloy pred called "CEVal_ctr" where
         // pred CEVal_0 {
@@ -195,27 +206,27 @@ public class CEValidation extends AbstractMC {
         //  S1.caf0 && S1.caf1 && ... // based on S1
         // }
 
-        List<AlloyExpr> ceVal0Body = new ArrayList<>();
+        List<AlloyExpr> body = new ArrayList<>();
 
         // __initial[S0]
-        ceVal0Body.add(
-                AlloyPredCall(
-                        D2AStrings.initPredName,
-                        List.of(new AlloyQnameExpr(renamedSnaps.getFirst()))));
+        body.add(
+                AlloyPredCall(D2AStrings.initPredName, List.of(AlloyVar(renamedSnaps.getFirst()))));
 
         // __small_step[S0, S1]
-        ceVal0Body.add(
+        body.add(
                 AlloyPredCall(
                         D2AStrings.snapshotName + DashStrings.SLASH + D2AStrings.tracesNextName,
                         List.of(AlloyVar(renamedSnaps.get(0)), AlloyVar(renamedSnaps.get(1)))));
 
         // B's of S0
-        ceVal0Body.add(generateCAFConj(renamedSnaps.getFirst()));
+        body.add(generateCAFConj(renamedSnaps.getFirst()));
 
         // B's of S1
-        ceVal0Body.add(generateCAFConj(renamedSnaps.get(1)));
+        body.add(generateCAFConj(renamedSnaps.get(1)));
         concreteAlloy.addPredPara(
-                new AlloyPredPara(ceValPrefix + String.valueOf(0), new AlloyBlock(ceVal0Body)));
+                new AlloyPredPara(ceValPrefix + String.valueOf(0), new AlloyBlock(body)));
+
+        System.out.println("In validateCE(): Added first predicate for CE validation");
 
         // pred CEVal_i {
         //  CEVal_{i-1}
@@ -224,7 +235,7 @@ public class CEValidation extends AbstractMC {
         //  S_{i+1}.caf0 && S_{i+1}.caf1 && ... // based on S_{i+1}
 
         for (int i = 1; i < renamedSnaps.size() - 1; i++) {
-            List<AlloyExpr> body = new ArrayList<>();
+            body = new ArrayList<>();
             body.add(AlloyPredCall(ceValPrefix + Integer.toString(i - 1), emptyList()));
             body.add(
                     AlloyPredCall(
@@ -236,12 +247,18 @@ public class CEValidation extends AbstractMC {
             body.add(generateCAFConj(renamedSnaps.get(i + 1)));
             concreteAlloy.addPredPara(
                     new AlloyPredPara(ceValPrefix + Integer.toString(i), new AlloyBlock(body)));
+            System.out.println("In validateCE(): Added predicate " + String.valueOf(i));
         }
 
         int cmdIdx = PredAbsUtil.addRunCmd(ceValPrefix + String.valueOf(0), concreteAlloy, scope);
+        System.out.println("In validateCE(): Added first command for CE validation");
         for (int i = 1; i < renamedSnaps.size() - 1; i++) {
             PredAbsUtil.addRunCmd(ceValPrefix + Integer.toString(i), concreteAlloy, scope);
+            System.out.println("In validateCE(): Added command " + String.valueOf(i));
         }
+
+        System.out.println("\n\nConcrete Alloy with CE Validation queries:\n");
+        System.out.println(concreteAlloy.toString());
 
         boolean flag = true;
         Solution sol = null;
@@ -267,7 +284,7 @@ public class CEValidation extends AbstractMC {
                                 AlloyStrings.THIS
                                         + DashStrings.SLASH
                                         + D2AStrings.snapshotName
-                                        + AlloyStrings.DOMRESTR
+                                        + AlloyStrings.DOT
                                         + D2AStrings.transTakenName
                                         + String.valueOf(0));
                 for (List<String> pair : transTaken) {

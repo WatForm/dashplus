@@ -7,7 +7,6 @@ import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyQuantificationExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyNumExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyAssertPara;
@@ -29,6 +28,7 @@ public class AbstractBuildPA extends InitializePA {
     public DashModel absModel;
     protected AlloyModel absAlloy;
     public int absCmdIdx;
+    public boolean isAbsCmdCheck = true;
 
     public AbstractBuildPA(DashModel input) {
         super(input);
@@ -163,6 +163,9 @@ public class AbstractBuildPA extends InitializePA {
                 AlloyCmdPara.CommandDecl cmdDecl = this.cmd.cmdDecls.get(0);
                 AlloyQnameExpr cmdBodyQname = cmdDecl.invoQname.orElse(null);
                 String vname = cmdBodyQname.vars.get(0).label;
+                CAF2ABVReplacer replacer =
+                        new CAF2ABVReplacer(
+                                ABVNameCAFTransMap, discardedCAFMap, concreteModel.rootName());
 
                 List<AlloyCmdPara.CommandDecl.Scope.Typescope> ts = this.scope.typescopes;
                 List<AlloyCmdPara.CommandDecl.Scope.Typescope> absTs = new ArrayList<>();
@@ -188,27 +191,19 @@ public class AbstractBuildPA extends InitializePA {
 
                 if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
                     AlloyAssertPara p = this.concreteModel.getAssertPara(vname);
-                    List<AlloyExpr> absEList = new ArrayList<>();
-                    for (AlloyExpr e : p.block.exprs) {
-                        if (e instanceof AlloyQuantificationExpr) {
-                            AlloyExpr absE =
-                                    ((AlloyQuantificationExpr) e)
-                                            .rebuild(
-                                                    createAbsExpr(
-                                                            ((AlloyQuantificationExpr) e).body,
-                                                            true));
-                            absEList.add(absE);
-                        }
-                    }
-                    AlloyBlock absBody = new AlloyBlock(absEList);
-                    AlloyAssertPara absP = new AlloyAssertPara(AlloyVar(vname), absBody);
+                    AlloyExpr absBody = replacer.replaceWithABVs((AlloyExpr) p.block);
+                    AlloyAssertPara absP =
+                            new AlloyAssertPara(AlloyVar(vname), (AlloyBlock) absBody);
                     this.absModel.addAssertPara(absP);
+                    this.isAbsCmdCheck = true;
                     return PredAbsUtil.addCheckCmd(vname, this.absModel, absScope);
                 } else {
                     AlloyPredPara p = this.concreteModel.getPredPara(vname);
-                    AlloyBlock absBody = new AlloyBlock(createAbsExpr(p.block, true));
-                    AlloyPredPara absP = new AlloyPredPara(AlloyVar(vname), p.arguments, absBody);
+                    AlloyExpr absBody = replacer.replaceWithABVs((AlloyExpr) p.block);
+                    AlloyPredPara absP =
+                            new AlloyPredPara(AlloyVar(vname), p.arguments, (AlloyBlock) absBody);
                     this.absModel.addPredPara(absP);
+                    this.isAbsCmdCheck = false;
                     return PredAbsUtil.addRunCmd(vname, this.absModel, absScope);
                 }
             } catch (Exception e) {
@@ -223,13 +218,17 @@ public class AbstractBuildPA extends InitializePA {
     public void createAbstractModel() {
 
         List<AlloyExpr> absInits = new ArrayList<>();
-        for (AlloyExpr init : concreteModel.initsR()) {
-            absInits.add(createAbsExpr(init, false));
+        if (concreteModel.initsR().size() > 0) {
+            for (AlloyExpr init : concreteModel.initsR()) {
+                absInits.add(createAbsExpr(init, false));
+            }
         }
 
         List<AlloyExpr> absInvs = new ArrayList<>();
-        for (AlloyExpr inv : concreteModel.invsR()) {
-            absInvs.add(createAbsExpr(inv, false));
+        if (concreteModel.invsR().size() > 0) {
+            for (AlloyExpr inv : concreteModel.invsR()) {
+                absInvs.add(createAbsExpr(inv, false));
+            }
         }
 
         HashMap<String, AlloyExpr> absGuards = new HashMap<>();

@@ -29,6 +29,7 @@ public class PAMain extends CERefinement {
         this.createAbstractModel();
 
         System.out.println("\nIn createAbstractModel(), Abstract model:\n");
+        System.out.println(this.absModel.toString());
         DashToAlloy absd2a = new DashToAlloy(this.absModel);
         this.absAlloy = absd2a.translate();
         System.out.println("\nAbstract Alloy:\n" + this.absAlloy.toString());
@@ -38,7 +39,8 @@ public class PAMain extends CERefinement {
         if (this.solution == null) {
             System.out.println("Abstract model checking failed. No solution generated.");
         } else {
-            if (this.solution.isSat()) {
+            if ((!this.solution.isSat() && this.isAbsCmdCheck)
+                    || (this.solution.isSat() && !this.isAbsCmdCheck)) {
                 System.out.println("Abstract model verified the abstract property.");
             } else {
                 this.validateCE();

@@ -24,7 +24,7 @@ public class AbstractMC extends AbstractBuildPA {
     }
 
     public void executeAbsCmd() {
-        if (absCmdIdx > 0) {
+        if (absCmdIdx >= 0) {
             System.out.println("Running abstract command.");
             this.solution = AlloyInterface.executeCommand(absAlloy, absCmdIdx);
         }

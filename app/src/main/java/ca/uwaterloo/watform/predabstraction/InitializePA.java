@@ -11,6 +11,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashtoalloy.D2AStrings;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtoalloy.ExprTranslatorVis;
@@ -30,7 +31,8 @@ public class InitializePA {
     protected AlloyModel queryModel;
 
     // ABV: Abstract Boolean Variable, CAF: Concrete Atomic Formula
-    public HashMap<String, AlloyExpr> ABVNameCAFTransMap = new HashMap<String, AlloyExpr>();
+    public HashMap<String, AlloyExpr> ABVNameCAFTransMap = new HashMap<>();
+    public HashMap<AlloyExpr, AlloyExpr> discardedCAFMap = new HashMap<>();
 
     public InitializePA(DashModel input) {
         this.concreteModel = input;
@@ -84,6 +86,12 @@ public class InitializePA {
         Set<AlloyExpr> translatedPreds = new HashSet<>();
 
         for (AlloyExpr e : preds) {
+            String eStr = e.toString();
+            if (eStr.contains(D2AStrings.confName)
+                    || eStr.contains(D2AStrings.transTakenName)
+                    || eStr.contains(D2AStrings.eventsName)) {
+                continue;
+            }
             translatedPreds.add(exprTranslator.translateExpr(e));
         }
 
@@ -94,9 +102,11 @@ public class InitializePA {
                 AlloyExpr e2 = predList.get(j);
                 AlloyExpr iff = AlloyIff(e1, e2);
                 AlloyExpr iff2 = AlloyIff(AlloyNot(e1), e2);
-                if (PredAbsUtil.checkSAT(Set.of(iff), queryModel, false, this.scope)) {
+                if (!PredAbsUtil.checkSAT(Set.of(iff), queryModel, false, this.scope)) {
+                    discardedCAFMap.put(e2, e1);
                     translatedPreds.remove(e2);
-                } else if (PredAbsUtil.checkSAT(Set.of(iff2), queryModel, false, this.scope)) {
+                } else if (!PredAbsUtil.checkSAT(Set.of(iff2), queryModel, false, this.scope)) {
+                    discardedCAFMap.put(e2, AlloyNot(e1));
                     translatedPreds.remove(e2);
                 }
             }

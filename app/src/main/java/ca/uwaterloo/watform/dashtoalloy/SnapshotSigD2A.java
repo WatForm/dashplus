@@ -146,7 +146,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             }
         }
         // the default multiplicities for what's in the varTyp of the
-        // var type of the var get filled in within the Alloy model in 
+        // var type of the var get filled in within the Alloy model in
         // its resolve phase
         return decls;
     }
