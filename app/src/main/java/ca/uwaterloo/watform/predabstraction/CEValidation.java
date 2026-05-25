@@ -8,6 +8,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
+// import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -88,19 +89,13 @@ public class CEValidation extends AbstractMC {
     }
 
     public void validateCE() {
-        System.out.println("Abstract counterexample:\n" + solution.toString());
+        // System.out.println("Abstract counterexample:\n" + solution.toString());
 
         // translate concrete Dash model to Alloy
         DashToAlloy d2a = new DashToAlloy(concreteModel);
         this.concreteAlloy = d2a.translate();
 
         addABVtoCAFPreds();
-
-        System.out.println("Added ABV to CAF predicates to concrete Alloy.");
-        // System.out.println("Abstract solution map keySet: ");
-        // for (String s : solution.getSolnMapKeys()) {
-        //     System.out.println(s);
-        // }
 
         // Get the next relation on the Snapshots
         Set<List<String>> nextRelSnapSet =
@@ -135,10 +130,8 @@ public class CEValidation extends AbstractMC {
         //  {"__Snapshot$0" : "boolean/False$0", ...}, ...]
         // where the map stored at the ith index belongs to the ABV "Bi"
 
-        // List<HashMap<String, String>> abvValues = new ArrayList<HashMap<String, String>>();
-
         for (int i = 0; i < ABVNameCAFTransMap.size(); i++) {
-            String vname = "B" + Integer.toString(i);
+            String vname = abvNamePre + Integer.toString(i);
             String vfqn = getABVfqn(vname);
             Set<List<String>> val =
                     solution.get(
@@ -171,7 +164,7 @@ public class CEValidation extends AbstractMC {
         renamedSnaps = new ArrayList<>(); // ordered by the next relation
         renamedSnaps.add(this.snShot + String.valueOf(0));
 
-        int count = 0;
+        int count = 1;
         String currSnap = firstSnap;
 
         while (nextRelSnapMap.containsKey(currSnap)) {
@@ -185,17 +178,10 @@ public class CEValidation extends AbstractMC {
 
         // ---------------------------------------
         // add one sigs for each renamed snapshot
+
         for (String renamedSnap : renamedSnaps) {
-            // concreteAlloy.addSigPara(
-            //         new AlloySigPara(
-            //                 List.of(AlloySigPara.Qual.ONE),
-            //                 List.of(AlloyVar(renamedSnap)),
-            //                 new AlloySigPara.Extends(AlloyVar(D2AStrings.snapshotName)),
-            //                 Collections.emptyList(),
-            //                 new AlloyBlock()));
             concreteAlloy.addOneExtendsSig(renamedSnap, D2AStrings.snapshotName);
         }
-
         System.out.println("In validateCE(): added snapshot sigs to concreteAlloy.");
 
         // add an alloy pred called "CEVal_ctr" where
@@ -215,7 +201,7 @@ public class CEValidation extends AbstractMC {
         // __small_step[S0, S1]
         body.add(
                 AlloyPredCall(
-                        D2AStrings.snapshotName + DashStrings.SLASH + D2AStrings.tracesNextName,
+                        D2AStrings.smallStepName,
                         List.of(AlloyVar(renamedSnaps.get(0)), AlloyVar(renamedSnaps.get(1)))));
 
         // B's of S0
@@ -239,7 +225,7 @@ public class CEValidation extends AbstractMC {
             body.add(AlloyPredCall(ceValPrefix + Integer.toString(i - 1), emptyList()));
             body.add(
                     AlloyPredCall(
-                            D2AStrings.snapshotName + DashStrings.SLASH + D2AStrings.tracesNextName,
+                            D2AStrings.smallStepName,
                             List.of(
                                     AlloyVar(renamedSnaps.get(i)),
                                     AlloyVar(renamedSnaps.get(i + 1)))));
@@ -278,7 +264,6 @@ public class CEValidation extends AbstractMC {
             if (failTransSrcSnap != null) {
                 System.out.println(
                         "Counterexample is not valid. Check snapshot: " + failTransSrcSnap);
-                // this/__Snapshot<:__taken0
                 Set<List<String>> transTaken =
                         solution.get(
                                 AlloyStrings.THIS
@@ -287,6 +272,7 @@ public class CEValidation extends AbstractMC {
                                         + AlloyStrings.DOT
                                         + D2AStrings.transTakenName
                                         + String.valueOf(0));
+                boolean f = false;
                 for (List<String> pair : transTaken) {
                     if (pair.getFirst() == failTransSrcSnap) {
                         String failTransName = removeDollarSuffix(pair.getLast());
@@ -297,23 +283,23 @@ public class CEValidation extends AbstractMC {
                         this.spuriousTFQN =
                                 Optional.ofNullable(DashFQN.translateToDashFQN(failTransName));
                         this.spuriousSnapName = Optional.ofNullable(failTransSrcSnap);
+                        f = true;
+                        break;
                     }
                 }
-
-                System.out.println(
-                        "Snapshot "
-                                + failTransSrcSnap
-                                + " is not a source of any transitions in __taken0");
-                this.isCEValid = false;
+                if (!f) {
+                    System.out.println(
+                            "Snapshot "
+                                    + failTransSrcSnap
+                                    + " is not a source of any transitions in __taken0");
+                    this.isCEValid = false;
+                }
             } else {
                 System.out.println(
                         "renamedSnapToOrig.get(renamedSnaps.get(idx - xmdIdx)) failed in validateCE().");
             }
 
         } else {
-            // System.out.println("The abstract counterexample is valid. The real counterexample
-            // is:\n");
-            // System.out.println(sol.toString());
             this.isCEValid = true;
             this.realConcreteCE = Optional.ofNullable(sol);
         }

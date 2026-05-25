@@ -59,6 +59,7 @@ public class PAMain extends CERefinement {
                             if (this.solution.isSat()) {
                                 System.out.println(
                                         "Abstract model verified the abstract property.");
+                                break;
                             } else {
                                 this.validateCE();
                                 if (this.isCEValid) {
@@ -75,7 +76,7 @@ public class PAMain extends CERefinement {
                             }
                         }
                     }
-                    System.out.println("5 loops of CEGAR done!");
+                    System.out.println(String.valueOf(count) + " loops of CEGAR done!");
                 }
             }
         }
