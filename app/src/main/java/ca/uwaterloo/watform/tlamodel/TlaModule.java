@@ -6,8 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TlaModule {
+
+    public record TlaVarDecl(TlaVar var, TlaTypes.Type type) {}
+
+    public record TlaConstDecl(TlaConst var, TlaTypes.Type type) {}
+
     public final List<TlaConst> constants;
-    public final List<TlaVar> variables;
+    public final List<TlaVarDecl> variables;
     public final List<TlaStdLibs> extended_libraries;
     public final List<ASTNode> body;
 
@@ -48,6 +53,15 @@ public class TlaModule {
         return sb.toString();
     }
 
+    private static String variableString(List<TlaVarDecl> varDecls) {
+        StringBuilder sb = new StringBuilder(TlaStrings.VARIABLES + TlaStrings.NEWLINE);
+        for (var v : varDecls) {
+            sb.append(v.type.annotation() + TlaStrings.NEWLINE);
+            sb.append(v.var.toTLAPlusSnippetCore() + TlaStrings.NEWLINE);
+        }
+        return sb.toString();
+    }
+
     public String bodyString() {
         StringBuilder sb = new StringBuilder();
         for (ASTNode f : this.body) {
@@ -62,7 +76,7 @@ public class TlaModule {
                 + "\n"
                 + TlaModule.simpleBuilder(TlaStrings.CONSTANTS, this.constants)
                 + "\n"
-                + TlaModule.simpleBuilder(TlaStrings.VARIABLES, this.variables)
+                + TlaModule.variableString(this.variables)
                 + "\n"
                 + this.bodyString()
                 + TlaStrings.BODY_DELIMITER;

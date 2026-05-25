@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.TlaTypes;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.List;
@@ -32,7 +33,7 @@ public class FieldsA2T extends FactsA2T {
     protected void addFieldVars(TlaModel tlaModel) {
 
         for (String field : alloyModel.allFields()) {
-            tlaModel.addVar(TlaVar(field));
+            tlaModel.addVar(TlaVar(field), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
         }
     }
 

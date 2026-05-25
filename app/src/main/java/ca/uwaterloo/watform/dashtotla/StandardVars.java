@@ -4,9 +4,8 @@ import static ca.uwaterloo.watform.dashtotla.DashToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.tlaast.TlaTypes;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.ArrayList;
-import java.util.List;
 
 class StandardVars {
 
@@ -23,17 +22,16 @@ class StandardVars {
         // big-step semantics
         // _stable - boolean variable, true if the current snapshot is stable
 
-        List<String> vars = new ArrayList<>();
-
-        vars.add(TRANS_TAKEN);
-        if (!dashModel.hasOnlyOneState()) vars.add(CONF);
-        if (dashModel.hasConcurrency()) {
-            vars.add(SCOPES_USED);
-            vars.add(STABLE);
-        }
-        if (dashModel.hasEvents()) vars.add(EVENTS);
-
         // VARIABLES _conf, _trans_taken, _scopes_used, _stable
-        vars.forEach(v -> tlaModel.addVar(TlaVar(v)));
+
+        tlaModel.addVar(TlaVar(TRANS_TAKEN), TlaTypes.Str());
+        if (!dashModel.hasOnlyOneState())
+            tlaModel.addVar(TlaVar(CONF), TlaTypes.Set(TlaTypes.Str()));
+
+        if (dashModel.hasConcurrency()) {
+            tlaModel.addVar(TlaVar(SCOPES_USED), TlaTypes.Set(TlaTypes.Str()));
+            tlaModel.addVar(TlaVar(STABLE), TlaTypes.Bool());
+        }
+        if (dashModel.hasEvents()) tlaModel.addVar(TlaVar(EVENTS), TlaTypes.Set(TlaTypes.Str()));
     }
 }

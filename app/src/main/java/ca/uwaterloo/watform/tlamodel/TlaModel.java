@@ -5,11 +5,9 @@ import ca.uwaterloo.watform.tlaast.TlaComment;
 import ca.uwaterloo.watform.tlaast.TlaConst;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaSimpleExp;
 import ca.uwaterloo.watform.tlaast.TlaStdLibs;
+import ca.uwaterloo.watform.tlaast.TlaTypes;
 import ca.uwaterloo.watform.tlaast.TlaVar;
-import ca.uwaterloo.watform.utils.GeneralUtil;
-import java.util.List;
 
 public class TlaModel {
     // top-level class to handle modules and associated configs
@@ -31,25 +29,12 @@ public class TlaModel {
         return this.cfg.code();
     }
 
-    private static boolean UniqueSimpleCheck(List<? extends TlaSimpleExp> l) {
-        return GeneralUtil.uniqueness(
-                l, (u, v) -> u.toTLAPlusSnippetCore().equals(v.toTLAPlusSnippetCore()));
-    }
-
-    public boolean UniqueVarsCheck() {
-        return UniqueSimpleCheck(this.module.variables);
-    }
-
-    public boolean UniqueConstsCheck() {
-        return UniqueSimpleCheck(this.module.variables);
-    }
-
     public void addSTL(TlaStdLibs stl) {
         this.module.extended_libraries.add(stl);
     }
 
-    public void addVar(TlaVar v) {
-        this.module.variables.add(v);
+    public void addVar(TlaVar v, TlaTypes.Type t) {
+        this.module.variables.add(new TlaModule.TlaVarDecl(v, t));
     }
 
     public void addConst(TlaConst c, TlaExp value) {
