@@ -1,3 +1,38 @@
+/*
+	Relational Join (Dot) Operator Usage:
+
+	1. Field Access:
+	sig Name {}
+	sig Person { name: Name }
+	fact { all p: Person | some p.name }
+
+	2. Function/Predicate Application:
+	sig A {}
+	pred p[a: A] {
+		some a
+	}
+	fact {
+		some a: A | a.p
+	}
+
+	3. Relational Join:
+	sig Country {}
+
+	sig City {
+		locatedIn: Country
+	}
+
+	sig Person {
+		livesIn: City
+	}
+
+	pred show {
+		some livesIn . locatedIn
+	}
+
+	run show for 3
+*/
+
 package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
