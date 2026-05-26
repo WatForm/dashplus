@@ -41,4 +41,12 @@ public final class AlloyModelImplError extends ImplementationError {
                         + "lists of the same length; relations of "
                         + "same arity");
     }
+
+    public static AlloyModelImplError tryingToAccessNonExistentSig(String s) {
+        return new AlloyModelImplError("Trying to access a sig that does not exist: " + s);
+    }
+
+    public static AlloyModelImplError tryingToAccessNonExistentField(String s) {
+        return new AlloyModelImplError("Trying to access a field that does not exist: " + s);
+    }
 }

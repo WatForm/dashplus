@@ -38,12 +38,12 @@ public class AMSigTable extends AMFieldTable {
         DetectCycles.topoOrderCycleDetector(this.allSigs(), x -> this.allChildren(x));
     }
 
-    protected void addToSigTable(AlloySigPara sigPara) {
-        // TODO: assumes not a multi-sig!!!
-        assert (sigPara.qnames.size() == 1);
-        String sigName = sigPara.getName();
-        this.entry(sigPara.pos, sigName, new SigData(sigPara));
-        this.addToFieldTable(sigPara.fields, sigName);
+    protected void addToSigTable(AlloySigPara multiSigPara) {
+        for (AlloySigPara sigPara : multiSigPara.expand()) {
+            String sigName = sigPara.getName();
+            this.entry(sigPara.pos, sigName, new SigData(sigPara));
+            this.addToFieldTable(sigPara.fields, sigName);
+        }
     }
 
     protected void addToSigTable(AlloyEnumPara enumPara) {
@@ -93,11 +93,17 @@ public class AMSigTable extends AMFieldTable {
         // but nothing in previously existing sigs can have
         // children in this list of sigNames
         for (String sigName : sigNames) {
-            for (String inParent : sigTable.get(sigName).inParents()) {
-                sigTable.get(inParent).addInChild(sigName);
+            if (!this.containsSig(sigName))
+                throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+            else {
+                for (String inParent : sigTable.get(sigName).inParents()) {
+                    sigTable.get(inParent).addInChild(sigName);
+                }
+                if (sigTable.get(sigName).extendsParent().isPresent()) {
+                    sigTable.get(sigTable.get(sigName).extendsParent().get())
+                            .addExtendsChild(sigName);
+                }
             }
-            if (sigTable.get(sigName).extendsParent().isPresent())
-                sigTable.get(sigTable.get(sigName).extendsParent().get()).addExtendsChild(sigName);
         }
     }
 
@@ -118,48 +124,70 @@ public class AMSigTable extends AMFieldTable {
     // individual getters
 
     public List<String> inParents(String sigName) {
-        return this.sigTable.get(sigName).inParents();
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).inParents();
     }
 
     public List<String> inChildren(String sigName) {
-        return this.sigTable.get(sigName).inChildren();
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).inChildren();
     }
 
     public Optional<String> extendsParent(String sigName) {
-        return this.sigTable.get(sigName).extendsParent();
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).extendsParent();
     }
 
     public List<String> extendsChildren(String sigName) {
-        return this.sigTable.get(sigName).extendsChildren();
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).extendsChildren();
     }
 
     public List<String> allChildren(String sigName) {
-        return this.sigTable.get(sigName).allChildren();
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).allChildren();
     }
 
     public List<String> allParents(String sigName) {
-        return this.sigTable.get(sigName).allParents();
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).allParents();
     }
 
     // individual testers
 
     public boolean isTopLevelSig(String sigName) {
-        return this.sigTable.get(sigName).isTopLevelSig;
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).isTopLevelSig;
     }
 
     public boolean isAbstractSig(String sigName) {
-        return this.sigTable.get(sigName).isAbstractSig;
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).isAbstractSig;
     }
 
     public boolean isOneSig(String sigName) {
-        return this.sigTable.get(sigName).isOneSig;
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).isOneSig;
     }
 
     public boolean isSomeSig(String sigName) {
-        return this.sigTable.get(sigName).isSomeSig;
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).isSomeSig;
     }
 
     public boolean isLoneSig(String sigName) {
-        return this.sigTable.get(sigName).isLoneSig;
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).isLoneSig;
     }
 }

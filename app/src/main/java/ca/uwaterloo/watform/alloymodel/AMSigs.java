@@ -77,7 +77,8 @@ public class AMSigs extends AMEnums {
             for (AlloySigPara sigPara : multi_sig.expand()) {
                 // System.out.println("one para:");
                 // System.out.println(sigPara);
-                this.addToSigTable(sigPara);
+                this.addToSigTable(
+                        sigPara); // this can handle multi_sig para, even if we aren't asking it to
                 this.sigs.add(sigPara);
             }
         }

@@ -46,6 +46,10 @@ public class AMFieldTable {
         return setToList(this.fieldTable.keySet());
     }
 
+    public Boolean containsField(String s) {
+        return this.allFields().contains(s);
+    }
+
     // might be allFields (on initialization) or some fields from sigs added (on addSig)
     // sets arities in fieldTable and default mul in field Types
     protected void resolve(
@@ -56,7 +60,7 @@ public class AMFieldTable {
         TestAndCollectVarsExprVis collect =
                 new TestAndCollectVarsExprVis(
                         // test if AlloyQnameVar's name is a fieldName
-                        n -> this.allFields().contains(n));
+                        n -> this.containsField(((AlloyVarExpr) n).getName()));
 
         // throws error if cycles
         // otherwise returns topoOrder
@@ -100,7 +104,7 @@ public class AMFieldTable {
                 for (AlloyVarExpr var : qname.vars) {
                     String fieldName = var.getName();
                     AlloyExpr fieldExpr = field.expr;
-                    if (this.allFields().contains(fieldName)) {
+                    if (this.containsField(fieldName)) {
                         throw AlloyModelError.sigNameIsFieldName(field.pos, field.toString());
                     } else {
                         this.entry(
@@ -114,28 +118,27 @@ public class AMFieldTable {
     }
 
     private void entry(Pos p, String fieldName, FieldData fd) {
-        if (this.allFields().contains(fieldName))
-            throw AlloyModelError.duplicateFieldName(p, fieldName);
+        if (this.containsField(fieldName)) throw AlloyModelError.duplicateFieldName(p, fieldName);
         else this.fieldTable.put(fieldName, fd);
     }
 
     // individual getters
 
-    protected AlloyExpr fieldExpr(String name) {
-        // TODO: check it exists
-        return this.fieldTable.get(name).fieldExpr();
+    protected AlloyExpr fieldExpr(String fieldName) {
+        if (!this.containsField(fieldName))
+            throw AlloyModelImplError.tryingToAccessNonExistentField(fieldName);
+        else return this.fieldTable.get(fieldName).fieldExpr();
     }
 
-    protected Optional<Integer> fieldArity(String name) {
-        // TODO: check it exists
-        return this.fieldTable.get(name).fieldArity();
+    protected Optional<Integer> fieldArity(String fieldName) {
+        if (!this.containsField(fieldName))
+            throw AlloyModelImplError.tryingToAccessNonExistentField(fieldName);
+        else return this.fieldTable.get(fieldName).fieldArity();
     }
 
-    protected String fieldParent(String name) {
-        // TODO: check it exists
-        return this.fieldTable.get(name).fieldParent();
+    protected String fieldParent(String fieldName) {
+        if (!this.containsField(fieldName))
+            throw AlloyModelImplError.tryingToAccessNonExistentField(fieldName);
+        else return this.fieldTable.get(fieldName).fieldParent();
     }
-
-    // checks
-
 }
