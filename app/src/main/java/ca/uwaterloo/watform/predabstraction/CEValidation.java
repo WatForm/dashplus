@@ -30,7 +30,7 @@ public class CEValidation extends AbstractMC {
     protected List<String> renamedSnaps;
     protected Map<String, String> renamedSnapToOrig;
 
-    public boolean isCEValid;
+    public boolean isCEValid = false;
 
     // if isCEValid == false:
     public Optional<String> spuriousTFQN;
@@ -66,7 +66,7 @@ public class CEValidation extends AbstractMC {
                 cafList.add(AlloyNot(caf));
             }
         }
-        return AlloyAndList(cafList);
+        return new AlloyBlock(AlloyAndList(cafList));
     }
 
     private void addABVtoCAFPreds() {
@@ -212,8 +212,6 @@ public class CEValidation extends AbstractMC {
         concreteAlloy.addPredPara(
                 new AlloyPredPara(ceValPrefix + String.valueOf(0), new AlloyBlock(body)));
 
-        System.out.println("In validateCE(): Added first predicate for CE validation");
-
         // pred CEVal_i {
         //  CEVal_{i-1}
         //  __small_step[S_i, S_{i+1}]
@@ -233,14 +231,11 @@ public class CEValidation extends AbstractMC {
             body.add(generateCAFConj(renamedSnaps.get(i + 1)));
             concreteAlloy.addPredPara(
                     new AlloyPredPara(ceValPrefix + Integer.toString(i), new AlloyBlock(body)));
-            System.out.println("In validateCE(): Added predicate " + String.valueOf(i));
         }
 
         int cmdIdx = PredAbsUtil.addRunCmd(ceValPrefix + String.valueOf(0), concreteAlloy, scope);
-        System.out.println("In validateCE(): Added first command for CE validation");
         for (int i = 1; i < renamedSnaps.size() - 1; i++) {
             PredAbsUtil.addRunCmd(ceValPrefix + Integer.toString(i), concreteAlloy, scope);
-            System.out.println("In validateCE(): Added command " + String.valueOf(i));
         }
 
         System.out.println("\n\nConcrete Alloy with CE Validation queries:\n");
@@ -293,6 +288,8 @@ public class CEValidation extends AbstractMC {
                                     + failTransSrcSnap
                                     + " is not a source of any transitions in __taken0");
                     this.isCEValid = false;
+                    this.spuriousSnapName = Optional.ofNullable(failTransSrcSnap);
+                    this.spuriousTFQN = null;
                 }
             } else {
                 System.out.println(

@@ -266,7 +266,7 @@ public class Main implements Callable<Integer> {
                                     verbose,
                                     debug);
                         } else if (predAbs) {
-                            runPredAbs(fullFileName, dm, cmdIdx);
+                            runPredAbs(fullFileName, dm, cmdIdx, write);
                         } else {
 
                             runDashToAlloy(dm, d2aOptions, outputFileNamePrefix, write, cmdIdx);
@@ -402,7 +402,7 @@ public class Main implements Callable<Integer> {
         dashOutput("Output:\n" + tlaFileName + "\n" + cfgFileName);
     }
 
-    private static void runPredAbs(String fullFileName, DashModel dm, Integer cmdIdx)
+    private static void runPredAbs(String fullFileName, DashModel dm, Integer cmdIdx, Boolean write)
             throws IOException {
         PAMain pa;
         if (cmdIdx == Constants.noCmdValue) {
@@ -412,6 +412,9 @@ public class Main implements Callable<Integer> {
         }
         try {
             pa.runCEGARLoop();
+            if (write) {
+                pa.writeAllModels(fullFileName);
+            }
         } catch (Exception e) {
             printStackTrace();
         }

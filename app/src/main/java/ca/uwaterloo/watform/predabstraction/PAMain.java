@@ -55,7 +55,8 @@ public class PAMain extends CERefinement {
                     int count = 1;
                     while (count < 5) {
                         this.executeAbsCmd();
-                        if (this.solution != null) {
+                        if ((!this.solution.isSat() && this.isAbsCmdCheck)
+                                || (this.solution.isSat() && !this.isAbsCmdCheck)) {
                             if (this.solution.isSat()) {
                                 System.out.println(
                                         "Abstract model verified the abstract property.");
@@ -69,8 +70,15 @@ public class PAMain extends CERefinement {
                                     break;
                                 } else {
                                     this.refineAbsModel();
-                                    System.out.println(
-                                            "Refined abstract model:\n" + this.absModel.toString());
+                                    if (this.spuriousSnapName != null) {
+                                        System.out.println(
+                                                "Refined abstract model:\n"
+                                                        + this.absModel.toString());
+                                    } else {
+                                        System.out.println(
+                                                "Could not refine the abstract model with the counterexample.");
+                                        break;
+                                    }
                                     count++;
                                 }
                             }
@@ -80,5 +88,10 @@ public class PAMain extends CERefinement {
                 }
             }
         }
+    }
+
+    public void writeAllModels(String fullFileName) {
+        String fileNamePrefix = fullFileName.substring(0, fullFileName.length() - 4);
+        // File f = new File()
     }
 }
