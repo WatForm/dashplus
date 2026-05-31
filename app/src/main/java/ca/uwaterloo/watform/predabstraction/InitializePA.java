@@ -32,6 +32,7 @@ public class InitializePA {
 
     // ABV: Abstract Boolean Variable, CAF: Concrete Atomic Formula
     public HashMap<String, AlloyExpr> ABVNameCAFTransMap = new HashMap<>();
+    protected HashMap<String, AlloyExpr> untranslatedCAFMap = new HashMap<>();
     public HashMap<AlloyExpr, AlloyExpr> discardedCAFMap = new HashMap<>();
 
     public InitializePA(DashModel input) {
@@ -83,7 +84,7 @@ public class InitializePA {
             preds.remove(emptySet());
         }
 
-        Set<AlloyExpr> translatedPreds = new HashSet<>();
+        HashMap<AlloyExpr, AlloyExpr> translatedPreds = new HashMap<>();
 
         for (AlloyExpr e : preds) {
             String eStr = e.toString();
@@ -92,10 +93,11 @@ public class InitializePA {
                     || eStr.contains(D2AStrings.eventsName)) {
                 continue;
             }
-            translatedPreds.add(exprTranslator.translateExpr(e));
+            translatedPreds.put(exprTranslator.translateExpr(e), e);
         }
 
-        List<AlloyExpr> predList = setToList(translatedPreds);
+        List<AlloyExpr> predList = new ArrayList<AlloyExpr>(translatedPreds.keySet());
+        Set<AlloyExpr> CAFs = new HashSet<>(translatedPreds.keySet());
         for (int i = 0; i < predList.size() - 1; i++) {
             for (int j = i + 1; j < predList.size(); j++) {
                 AlloyExpr e1 = predList.get(i);
@@ -104,20 +106,23 @@ public class InitializePA {
                 AlloyExpr iff2 = AlloyIff(AlloyNot(e1), e2);
                 if (!PredAbsUtil.checkSAT(Set.of(iff), queryModel, false, this.scope)) {
                     discardedCAFMap.put(e2, e1);
-                    translatedPreds.remove(e2);
+                    CAFs.remove(e2);
                 } else if (!PredAbsUtil.checkSAT(Set.of(iff2), queryModel, false, this.scope)) {
                     discardedCAFMap.put(e2, AlloyNot(e1));
-                    translatedPreds.remove(e2);
+                    CAFs.remove(e2);
                 }
             }
         }
 
         int ctr = 0;
 
-        for (AlloyExpr e : translatedPreds) {
+        for (AlloyExpr e : CAFs) {
             String abvName = abvNamePre + Integer.toString(ctr);
             ctr++;
             ABVNameCAFTransMap.put(abvName, e);
+            if (translatedPreds.containsKey(e)) {
+                untranslatedCAFMap.put(abvName, translatedPreds.get(e));
+            }
         }
     }
 
@@ -144,14 +149,6 @@ public class InitializePA {
                         AlloyAssertPara ass = concreteModel.getAssertPara(pname);
                         if (ass != null) return ass.block;
                         else {
-                            System.out.println("List of all pred paras of concrete dash model: ");
-                            for (AlloyPredPara p : concreteModel.allPredParas()) {
-                                System.out.println(p.qname);
-                            }
-                            System.out.println("List of all assert paras of concrete dash model: ");
-                            for (AlloyAssertPara p : concreteModel.allAssertParas()) {
-                                System.out.println(p.qname);
-                            }
                             System.out.println("Tried to find \"" + pname + "\" and failed.");
                             System.out.println(
                                     "Command is trying to access a pred or assert that does not exist.");

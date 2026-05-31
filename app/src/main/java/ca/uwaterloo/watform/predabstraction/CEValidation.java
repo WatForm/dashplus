@@ -33,11 +33,11 @@ public class CEValidation extends AbstractMC {
     public boolean isCEValid = false;
 
     // if isCEValid == false:
-    public Optional<String> spuriousTFQN;
-    protected Optional<String> spuriousSnapName;
+    public String spuriousTFQN = null;
+    protected String spuriousSnapName = null;
 
     // if isCEValid == true:
-    public Optional<Solution> realConcreteCE;
+    public Solution realConcreteCE = null;
 
     // the following map stores {SnapshotName: {varName: value}} eg. __Snapshot$0 : {B0:
     // boolean/True$0}
@@ -182,7 +182,6 @@ public class CEValidation extends AbstractMC {
         for (String renamedSnap : renamedSnaps) {
             concreteAlloy.addOneExtendsSig(renamedSnap, D2AStrings.snapshotName);
         }
-        System.out.println("In validateCE(): added snapshot sigs to concreteAlloy.");
 
         // add an alloy pred called "CEVal_ctr" where
         // pred CEVal_0 {
@@ -238,8 +237,8 @@ public class CEValidation extends AbstractMC {
             PredAbsUtil.addRunCmd(ceValPrefix + Integer.toString(i), concreteAlloy, scope);
         }
 
-        System.out.println("\n\nConcrete Alloy with CE Validation queries:\n");
-        System.out.println(concreteAlloy.toString());
+        // System.out.println("\n\nConcrete Alloy with CE Validation queries:\n");
+        // System.out.println(concreteAlloy.toString());
 
         boolean flag = true;
         Solution sol = null;
@@ -255,10 +254,10 @@ public class CEValidation extends AbstractMC {
         }
 
         if (!flag) {
-            String failTransSrcSnap = renamedSnapToOrig.get(renamedSnaps.get(idx - cmdIdx));
+            this.isCEValid = false;
+            int failCmdIdx = idx - cmdIdx;
+            String failTransSrcSnap = renamedSnapToOrig.get(renamedSnaps.get(failCmdIdx));
             if (failTransSrcSnap != null) {
-                System.out.println(
-                        "Counterexample is not valid. Check snapshot: " + failTransSrcSnap);
                 Set<List<String>> transTaken =
                         solution.get(
                                 AlloyStrings.THIS
@@ -267,29 +266,43 @@ public class CEValidation extends AbstractMC {
                                         + AlloyStrings.DOT
                                         + D2AStrings.transTakenName
                                         + String.valueOf(0));
-                boolean f = false;
+                HashMap<String, String> takenMap = new HashMap<>();
                 for (List<String> pair : transTaken) {
-                    if (pair.getFirst() == failTransSrcSnap) {
-                        String failTransName = removeDollarSuffix(pair.getLast());
+                    takenMap.put(pair.getFirst(), removeDollarSuffix(pair.getLast()));
+                }
+
+                boolean f = false;
+
+                if (failCmdIdx == 0) {
+                    String snap = failTransSrcSnap;
+                    int ctr = renamedSnaps.size();
+                    while (ctr > 0) {
+                        if (!takenMap.containsKey(snap)) {
+                            failTransSrcSnap = snap;
+                            snap = nextRelSnapMap.get(snap);
+                            ctr--;
+                        } else {
+                            f = true;
+                            break;
+                        }
+                    }
+                    if (f) {
+                        this.spuriousSnapName = snap;
+                        this.spuriousTFQN = DashFQN.translateToDashFQN(takenMap.get(snap));
+                    } else {
+                        System.out.println("In validateCE(): CE does not have any __taken0.");
+                    }
+                } else {
+                    if (takenMap.containsKey(failTransSrcSnap)) {
+                        this.spuriousTFQN =
+                                DashFQN.translateToDashFQN(takenMap.get(failTransSrcSnap));
+                        this.spuriousSnapName = failTransSrcSnap;
                         System.out.println(
                                 "The abstract Dash transition that causes the spurious behaviour is: "
-                                        + failTransName);
-                        this.isCEValid = false;
-                        this.spuriousTFQN =
-                                Optional.ofNullable(DashFQN.translateToDashFQN(failTransName));
-                        this.spuriousSnapName = Optional.ofNullable(failTransSrcSnap);
-                        f = true;
-                        break;
+                                        + spuriousTFQN);
+                    } else {
+                        System.out.println("In validateCE(): Could not find spurious transition.");
                     }
-                }
-                if (!f) {
-                    System.out.println(
-                            "Snapshot "
-                                    + failTransSrcSnap
-                                    + " is not a source of any transitions in __taken0");
-                    this.isCEValid = false;
-                    this.spuriousSnapName = Optional.ofNullable(failTransSrcSnap);
-                    this.spuriousTFQN = null;
                 }
             } else {
                 System.out.println(
@@ -298,7 +311,7 @@ public class CEValidation extends AbstractMC {
 
         } else {
             this.isCEValid = true;
-            this.realConcreteCE = Optional.ofNullable(sol);
+            this.realConcreteCE = sol;
         }
     }
 }

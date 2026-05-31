@@ -171,7 +171,7 @@ public class Main implements Callable<Integer> {
             Reporter.INSTANCE.addError(
                     CliError.invalidParams(
                             "for -alloy, -predAbs, -vis only dash files can be arguments"));
-        } else if (write && !translateToAlloy) {
+        } else if (write && !translateToAlloy && !predAbs) {
             // write can only be used with alloy
             Reporter.INSTANCE.addError(
                     CliError.invalidParams(
@@ -247,7 +247,7 @@ public class Main implements Callable<Integer> {
 
                     if (vis) {
                         runVis(dm, outputFileNamePrefix);
-                    } else if (write && !alloyPresent) {
+                    } else if (write && !alloyPresent && !predAbs) {
                         runWriteResolvedDash(dm, outputFileNamePrefix);
                     } else if (xml) {
                         runCheckDashInstanceTla(dm, cliConf.xmlFileName);
