@@ -52,7 +52,7 @@ public class PAMain extends CERefinement {
                     System.out.println(this.realConcreteCE.toString());
                 } else {
                     try {
-                        for (int i = 1; i <= 10; i++) {
+                        for (int i = 1; i <= 5; i++) {
                             this.solution.next();
                             this.validateCE();
                             this.refineAbsModel();
@@ -66,7 +66,7 @@ public class PAMain extends CERefinement {
                     // System.out.println("Refined abstract model:\n" + this.absModel.toString());
 
                     int count = 1;
-                    while (count < 10) {
+                    while (count < 20) {
                         this.executeAbsCmd();
                         if (this.solution == null) {
                             break;
@@ -83,7 +83,7 @@ public class PAMain extends CERefinement {
                                 break;
                             } else {
                                 try {
-                                    for (int i = 1; i <= 10; i++) {
+                                    for (int i = 1; i <= 5; i++) {
                                         this.solution.next();
                                         this.validateCE();
                                         this.refineAbsModel();

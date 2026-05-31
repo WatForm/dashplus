@@ -7,6 +7,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.exprvisitor.ReplaceExprVis;
 import java.io.*;
 import java.util.*;
 
@@ -50,10 +51,15 @@ public class CERefinement extends CEValidation {
             AlloyExpr refineBody = AlloyNot(AlloyAndList(abvConjList));
 
             if (spuriousTFQN != null) {
-                AlloyExpr origAbsGuard = absModel.whenR(spuriousTFQN);
-                AlloyExpr refinedGuard = AlloyAnd(origAbsGuard, refineBody);
-                absModel.setWhenR(spuriousTFQN, refinedGuard);
-                System.out.println("Refined the guard of " + spuriousTFQN);
+                AlloyExpr origAbsAct = absModel.doR(spuriousTFQN);
+                AlloyExpr actConstraints =
+                        (new ReplaceExprVis(
+                                        AbstractBuildPA::isVarDashRef, AbstractBuildPA::makeNext))
+                                .visit(refineBody);
+                AlloyExpr refinedAct = AlloyAnd(origAbsAct, actConstraints);
+                absModel.setDoR(spuriousTFQN, refinedAct);
+                System.out.println("Refined the action of " + spuriousTFQN);
+
                 refineBody = exprTranslator.translateExpr(refineBody);
                 AlloyExpr takenExpr =
                         AlloyIn(AlloyVar(DashFQN.translateFQN(spuriousTFQN)), dsl.curTransTaken(0));
@@ -66,6 +72,7 @@ public class CERefinement extends CEValidation {
                     System.out.println("In refineAbsModel: added a refinement fact.");
                     this.numRefines++;
                 }
+                System.out.println("Refined Model:\n\n" + absModel.toString());
             }
         } else {
             System.out.println(

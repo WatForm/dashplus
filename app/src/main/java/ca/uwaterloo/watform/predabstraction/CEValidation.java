@@ -186,9 +186,7 @@ public class CEValidation extends AbstractMC {
         // add an alloy pred called "CEVal_ctr" where
         // pred CEVal_0 {
         //  __initial[S0]
-        //  __small_step[S0, S1]
         //  S0.caf0 && !S0.caf1 && ... // based on S0.B0, S0.B1 ...
-        //  S1.caf0 && S1.caf1 && ... // based on S1
         // }
 
         List<AlloyExpr> body = new ArrayList<>();
@@ -198,47 +196,46 @@ public class CEValidation extends AbstractMC {
                 AlloyPredCall(D2AStrings.initPredName, List.of(AlloyVar(renamedSnaps.getFirst()))));
 
         // __small_step[S0, S1]
-        body.add(
-                AlloyPredCall(
-                        D2AStrings.smallStepName,
-                        List.of(AlloyVar(renamedSnaps.get(0)), AlloyVar(renamedSnaps.get(1)))));
+        // body.add(
+        //         AlloyPredCall(
+        //                 D2AStrings.smallStepName,
+        //                 List.of(AlloyVar(renamedSnaps.get(0)), AlloyVar(renamedSnaps.get(1)))));
 
         // B's of S0
         body.add(generateCAFConj(renamedSnaps.getFirst()));
 
         // B's of S1
-        body.add(generateCAFConj(renamedSnaps.get(1)));
+        // body.add(generateCAFConj(renamedSnaps.get(1)));
         concreteAlloy.addPredPara(
                 new AlloyPredPara(ceValPrefix + String.valueOf(0), new AlloyBlock(body)));
 
         // pred CEVal_i {
         //  CEVal_{i-1}
-        //  __small_step[S_i, S_{i+1}]
+        //  __small_step[S_{i-1}, S_{i}]
         //  S_i.caf0 && !S_i.caf1 && ... // based on S_i.B0, S_i.B1 ...
-        //  S_{i+1}.caf0 && S_{i+1}.caf1 && ... // based on S_{i+1}
 
-        for (int i = 1; i < renamedSnaps.size() - 1; i++) {
+        for (int i = 1; i < renamedSnaps.size(); i++) {
             body = new ArrayList<>();
             body.add(AlloyPredCall(ceValPrefix + Integer.toString(i - 1), emptyList()));
             body.add(
                     AlloyPredCall(
                             D2AStrings.smallStepName,
                             List.of(
-                                    AlloyVar(renamedSnaps.get(i)),
-                                    AlloyVar(renamedSnaps.get(i + 1)))));
+                                    AlloyVar(renamedSnaps.get(i - 1)),
+                                    AlloyVar(renamedSnaps.get(i)))));
             body.add(generateCAFConj(renamedSnaps.get(i)));
-            body.add(generateCAFConj(renamedSnaps.get(i + 1)));
+            // body.add(generateCAFConj(renamedSnaps.get(i + 1)));
             concreteAlloy.addPredPara(
                     new AlloyPredPara(ceValPrefix + Integer.toString(i), new AlloyBlock(body)));
         }
 
         int cmdIdx = PredAbsUtil.addRunCmd(ceValPrefix + String.valueOf(0), concreteAlloy, scope);
-        for (int i = 1; i < renamedSnaps.size() - 1; i++) {
+        for (int i = 1; i < renamedSnaps.size(); i++) {
             PredAbsUtil.addRunCmd(ceValPrefix + Integer.toString(i), concreteAlloy, scope);
         }
 
-        // System.out.println("\n\nConcrete Alloy with CE Validation queries:\n");
-        // System.out.println(concreteAlloy.toString());
+        System.out.println("\n\nConcrete Alloy with CE Validation queries:\n");
+        System.out.println(concreteAlloy.toString());
 
         boolean flag = true;
         Solution sol = null;

@@ -227,4 +227,18 @@ public class TransDM extends InitsInvsDM {
                         entry.sendR,
                         entry.doR));
     }
+
+    public void setDoR(String tfqn, AlloyExpr exp) {
+        TransEntry entry = this.tt.get(tfqn);
+        this.tt.put(
+                tfqn,
+                new TransEntry(
+                        entry.params,
+                        entry.fromR,
+                        entry.onR,
+                        entry.whenR,
+                        entry.gotoR,
+                        entry.sendR,
+                        exp));
+    }
 }
