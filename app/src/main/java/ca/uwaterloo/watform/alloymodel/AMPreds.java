@@ -58,6 +58,12 @@ public class AMPreds extends AMSigs {
         this.preds.add(predPara);
     }
 
+    public void removePredPara(String predName) {
+        // remember that model must be resolved after this
+        this.preds.removeIf(p -> p.getName().equals(predName));
+        this.removeFromPredTable(predName);
+    }
+
     public List<AlloyPredPara> allPredParas() {
         // just to be safe, make a copy
         return new ArrayList<AlloyPredPara>(this.preds);

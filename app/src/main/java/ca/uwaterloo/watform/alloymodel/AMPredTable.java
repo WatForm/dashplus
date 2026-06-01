@@ -65,4 +65,13 @@ public class AMPredTable extends AMSigTable {
         // System.out.println("Adding to pred table: " + predName + Integer.toString(numArgs + 1));
         entry(predPara.pos, predName, numArgs + 1);
     }
+
+    public void removeFromPredTable(String predName) {
+        // this won't work well for overloading
+        if (!this.allPreds().contains(predName)) {
+            throw AlloyModelImplError.predNotFound(predName);
+        } else {
+            this.predTable.remove(predName);
+        }
+    }
 }
