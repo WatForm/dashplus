@@ -416,6 +416,7 @@ public class Main implements Callable<Integer> {
                 pa.writeAllModels(fullFileName);
             }
         } catch (Exception e) {
+            System.out.println("Query Model:\n" + pa.getQueryModelString());
             printStackTrace();
         }
     }

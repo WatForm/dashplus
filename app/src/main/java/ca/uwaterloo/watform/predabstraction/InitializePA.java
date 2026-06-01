@@ -1,17 +1,20 @@
 package ca.uwaterloo.watform.predabstraction;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import static ca.uwaterloo.watform.dashtoalloy.D2AStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyAssertPara;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.dashast.DashFQN;
+import ca.uwaterloo.watform.dashast.dashref.VarDashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.dashtoalloy.D2AStrings;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtoalloy.ExprTranslatorVis;
@@ -24,7 +27,8 @@ public class InitializePA {
     public DashModel concreteModel;
     public AlloyCmdPara cmd;
     public String abvNamePre = "B";
-    public String cafDepPredPre = "caf_dep_";
+    // public String cafDepPredPre = "caf_dep_";
+    public String bPredPrefix = "CAF_";
     protected AlloyCmdPara.CommandDecl.Scope scope;
     protected ExprTranslatorVis exprTranslator;
     protected DSL dsl = new DSL(false);
@@ -34,6 +38,8 @@ public class InitializePA {
     public HashMap<String, AlloyExpr> ABVNameCAFTransMap = new HashMap<>();
     protected HashMap<String, AlloyExpr> untranslatedCAFMap = new HashMap<>();
     public HashMap<AlloyExpr, AlloyExpr> discardedCAFMap = new HashMap<>();
+    protected Set<AlloyExpr> propPreds = new HashSet<>();
+    ;
 
     public InitializePA(DashModel input) {
         this.concreteModel = input;
@@ -66,31 +72,39 @@ public class InitializePA {
         // populate ABVNameCAFTransMap with B0:exp0, B1:exp1, etc.
         Set<AlloyExpr> preds = new HashSet<AlloyExpr>();
         AlloyExprDecomposer exprDecomp = new AlloyExprDecomposer();
+
         AlloyExpr cmdBody = getCmdBodyExpr();
+        this.propPreds = new HashSet<>();
         if (cmdBody != null) {
-            preds.addAll(exprDecomp.decompose(cmdBody));
+            propPreds.addAll(exprDecomp.decompose(cmdBody));
+            preds.addAll(propPreds);
         }
+
+        Set<AlloyExpr> initPreds = new HashSet<>();
         for (AlloyExpr e : concreteModel.initsR()) {
-            preds.addAll(exprDecomp.decompose(e));
+            initPreds.addAll(exprDecomp.decompose(e));
+            preds.addAll(initPreds);
         }
+
+        Set<AlloyExpr> invPreds = new HashSet<>();
         for (AlloyExpr e : concreteModel.invsR()) {
-            preds.addAll(exprDecomp.decompose(e));
+            invPreds.addAll(exprDecomp.decompose(e));
+            preds.addAll(initPreds);
         }
+        Set<AlloyExpr> guardPreds = new HashSet<>();
         List<String> allTransNames = concreteModel.allTransNames();
         for (String tfqn : allTransNames) {
-            preds.addAll(exprDecomp.decompose(concreteModel.whenR(tfqn)));
-        }
-        if (preds.contains(emptySet())) {
-            preds.remove(emptySet());
+            guardPreds.addAll(exprDecomp.decompose(concreteModel.whenR(tfqn)));
+            preds.addAll(guardPreds);
         }
 
         HashMap<AlloyExpr, AlloyExpr> translatedPreds = new HashMap<>();
 
         for (AlloyExpr e : preds) {
             String eStr = e.toString();
-            if (eStr.contains(D2AStrings.confName)
-                    || eStr.contains(D2AStrings.transTakenName)
-                    || eStr.contains(D2AStrings.eventsName)) {
+            if (eStr.contains(confName)
+                    || eStr.contains(transTakenName)
+                    || eStr.contains(eventsName)) {
                 continue;
             }
             translatedPreds.put(exprTranslator.translateExpr(e), e);
@@ -98,12 +112,17 @@ public class InitializePA {
 
         List<AlloyExpr> predList = new ArrayList<AlloyExpr>(translatedPreds.keySet());
         Set<AlloyExpr> CAFs = new HashSet<>(translatedPreds.keySet());
+        System.out.println("CAFs (size = " + String.valueOf(CAFs.size()) + "): " + CAFs.toString());
         for (int i = 0; i < predList.size() - 1; i++) {
             for (int j = i + 1; j < predList.size(); j++) {
+                VarNameCollector vc = new VarNameCollector();
                 AlloyExpr e1 = predList.get(i);
                 AlloyExpr e2 = predList.get(j);
-                AlloyExpr iff = AlloyIff(e1, e2);
-                AlloyExpr iff2 = AlloyIff(AlloyNot(e1), e2);
+                if (Collections.disjoint(vc.getVarNames(e1), vc.getVarNames(e2))) {
+                    continue;
+                }
+                AlloyExpr iff = AlloyNot(AlloyIff(e1, e2));
+                AlloyExpr iff2 = AlloyNot(AlloyIff(AlloyNot(e1), e2));
                 if (!PredAbsUtil.checkSAT(Set.of(iff), queryModel, false, this.scope)) {
                     discardedCAFMap.put(e2, e1);
                     CAFs.remove(e2);
@@ -124,6 +143,7 @@ public class InitializePA {
                 untranslatedCAFMap.put(abvName, translatedPreds.get(e));
             }
         }
+        addCAFPreds();
     }
 
     private AlloyExpr getCmdBodyExpr() throws AlloyCtorError {
@@ -161,6 +181,77 @@ public class InitializePA {
                 e.printStackTrace();
                 return null;
             }
+        }
+    }
+
+    protected AlloyExpr getVarDashRef(String vname) {
+        String vfqn = DashFQN.fqn(concreteModel.rootName(), vname);
+        return new VarDashRef(vfqn, emptyList());
+    }
+
+    protected List<AlloyExpr> getCAFDepInvs() {
+        // List<AlloyExpr> cafList = new ArrayList<>(ABVNameCAFTransMap.values());
+        HashMap<AlloyExpr, AlloyExpr> cafMap = new HashMap<>();
+        for (Map.Entry<String, AlloyExpr> entry : ABVNameCAFTransMap.entrySet()) {
+            cafMap.put(entry.getValue(), getVarDashRef(entry.getKey()));
+        }
+        List<AlloyExpr> retList = new ArrayList<>();
+        for (int i = 0; i < ABVNameCAFTransMap.size() - 1; i++) {
+            for (int j = i + 1; j < ABVNameCAFTransMap.size(); j++) {
+                VarNameCollector vc = new VarNameCollector();
+                String iname = abvNamePre + String.valueOf(i);
+                String jname = abvNamePre + String.valueOf(j);
+                AlloyExpr caf_i = AlloyPredCall(bPredPrefix + iname, List.of(dsl.curVar()));
+                AlloyExpr caf_j = AlloyPredCall(bPredPrefix + jname, List.of(dsl.curVar()));
+                // AlloyExpr caf_i = cafList.get(i);
+                // AlloyExpr caf_j = cafList.get(j);
+                if (Collections.disjoint(
+                        vc.getVarNames(ABVNameCAFTransMap.get(iname)),
+                        vc.getVarNames(ABVNameCAFTransMap.get(jname)))) {
+                    continue;
+                }
+                AlloyExpr i_imp_j = AlloyNot(AlloyImplies(caf_i, caf_j));
+                AlloyExpr i_imp_not_j = AlloyNot(AlloyImplies(caf_i, AlloyNot(caf_j)));
+                AlloyExpr j_imp_i = AlloyNot(AlloyImplies(caf_j, caf_i));
+                AlloyExpr not_j_imp_i = AlloyNot(AlloyImplies(AlloyNot(caf_j), caf_i));
+                if (!PredAbsUtil.checkSAT(Set.of(i_imp_j), queryModel, false, this.scope)) {
+                    retList.add(
+                            AlloyImplies(
+                                    dsl.AlloyIsTrue(getVarDashRef(iname)),
+                                    dsl.AlloyIsTrue(getVarDashRef(jname))));
+                }
+                if (!PredAbsUtil.checkSAT(Set.of(i_imp_not_j), queryModel, false, this.scope)) {
+                    retList.add(
+                            AlloyImplies(
+                                    dsl.AlloyIsTrue(getVarDashRef(iname)),
+                                    dsl.AlloyIsFalse(getVarDashRef(jname))));
+                }
+                if (!PredAbsUtil.checkSAT(Set.of(j_imp_i), queryModel, false, this.scope)) {
+                    retList.add(
+                            AlloyImplies(
+                                    dsl.AlloyIsTrue(getVarDashRef(jname)),
+                                    dsl.AlloyIsTrue(getVarDashRef(iname))));
+                }
+                if (!PredAbsUtil.checkSAT(Set.of(not_j_imp_i), queryModel, false, this.scope)) {
+                    retList.add(
+                            AlloyImplies(
+                                    dsl.AlloyIsFalse(getVarDashRef(jname)),
+                                    dsl.AlloyIsTrue(getVarDashRef(iname))));
+                }
+            }
+        }
+        // System.out.println("In getCAFDepInvs, invList: " + retList.toString());
+        return retList;
+    }
+
+    private void addCAFPreds() {
+        for (String v : ABVNameCAFTransMap.keySet()) {
+            AlloyExpr caf = ABVNameCAFTransMap.get(v);
+            queryModel.addPredPara(
+                    new AlloyPredPara(
+                            new AlloyQnameExpr(bPredPrefix + v),
+                            dsl.curDecls(),
+                            new AlloyBlock(List.of(caf))));
         }
     }
 }

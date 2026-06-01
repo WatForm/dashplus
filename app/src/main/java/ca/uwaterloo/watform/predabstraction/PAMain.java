@@ -25,7 +25,8 @@ public class PAMain extends CERefinement {
         System.out.println("\nABV map created:");
         for (String k : this.ABVNameCAFTransMap.keySet()) {
             AlloyExpr v = this.ABVNameCAFTransMap.get(k);
-            System.out.println(k + " : " + v.toString());
+            VarNameCollector vc = new VarNameCollector();
+            System.out.println(k + " : " + v.toString() + "\t" + vc.getVarNames(v).toString());
         }
         System.out.println("*********");
 
@@ -41,6 +42,7 @@ public class PAMain extends CERefinement {
 
         if (this.solution == null) {
             System.out.println("Abstract model checking failed. No solution generated.");
+            System.out.println("Abstract model:\n\n" + absModel.toString());
         } else {
             if (!this.hasInstance()) {
                 System.out.println("Abstract model verified the abstract property.");
@@ -51,22 +53,23 @@ public class PAMain extends CERefinement {
                             "The abstract counterexample is valid. The real counterexample is:\n");
                     System.out.println(this.realConcreteCE.toString());
                 } else {
-                    try {
-                        for (int i = 1; i <= 5; i++) {
-                            this.solution.next();
-                            this.validateCE();
-                            this.refineAbsModel();
-                        }
-                    } catch (Exception e) {
-                        System.out.println(
-                                "In runCEGARLoop: solution.next and ce refinement did not work.");
-                    }
-                    // this.refineAbsModel();
+                    // try {
+                    //     for (int i = 1; i <= 5; i++) {
+                    //         this.solution.next();
+                    //         this.validateCE();
+                    //         this.refineAbsModel();
+                    //     }
+                    // } catch (Exception e) {
+                    //     System.out.println(
+                    //             "In runCEGARLoop: solution.next and ce refinement did not
+                    // work.");
+                    // }
+                    this.refineAbsModel();
                     System.out.println("In runCEGARLoop, refined the abstract model");
-                    // System.out.println("Refined abstract model:\n" + this.absModel.toString());
+                    System.out.println("Refined abstract model:\n" + this.absModel.toString());
 
                     int count = 1;
-                    while (count < 20) {
+                    while (count < 5) {
                         this.executeAbsCmd();
                         if (this.solution == null) {
                             break;
@@ -82,17 +85,18 @@ public class PAMain extends CERefinement {
                                 System.out.println(this.realConcreteCE.toString());
                                 break;
                             } else {
-                                try {
-                                    for (int i = 1; i <= 5; i++) {
-                                        this.solution.next();
-                                        this.validateCE();
-                                        this.refineAbsModel();
-                                    }
-                                } catch (Exception e) {
-                                    System.out.println(
-                                            "In runCEGARLoop: solution.next and ce refinement did not work.");
-                                }
-                                // this.refineAbsModel();
+                                // try {
+                                //     for (int i = 1; i <= 5; i++) {
+                                //         this.solution.next();
+                                //         this.validateCE();
+                                //         this.refineAbsModel();
+                                //     }
+                                // } catch (Exception e) {
+                                //     System.out.println(
+                                //             "In runCEGARLoop: solution.next and ce refinement did
+                                // not work.");
+                                // }
+                                this.refineAbsModel();
                                 if (this.spuriousSnapName != null) {
                                     System.out.println(
                                             "In runCEGARLoop, refined the abstract model for the "
@@ -145,5 +149,9 @@ public class PAMain extends CERefinement {
         System.out.println(
                 "Writing Concrete Translated Alloy Model (with CE Validation) to " + concAlloyFN);
         Files.writeString(concAlloyFile.toPath(), this.concreteAlloy.toString());
+    }
+
+    public String getQueryModelString() {
+        return this.queryModel.toString();
     }
 }

@@ -34,6 +34,7 @@ public class AbstractMC extends AbstractBuildPA {
                 this.solution = AlloyInterface.executeCommand(absAlloy, absCmdIdx);
             } else {
                 System.out.println("The abstract model is not satisfiable.");
+                AlloyInterface.executeCommand(absAlloy, absCmdIdx);
                 this.solution = null;
             }
         }

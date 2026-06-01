@@ -43,7 +43,7 @@ public class CERefinement extends CEValidation {
                 AlloyExpr abv = getVarDashRef(v);
                 if (varVals.get(v).contains("True")) {
                     abvConjList.add(dsl.AlloyIsTrue(abv));
-                } else {
+                } else if (varVals.get(v).contains("False")) {
                     abvConjList.add(dsl.AlloyIsFalse(abv));
                 }
             }
@@ -51,28 +51,45 @@ public class CERefinement extends CEValidation {
             AlloyExpr refineBody = AlloyNot(AlloyAndList(abvConjList));
 
             if (spuriousTFQN != null) {
-                AlloyExpr origAbsAct = absModel.doR(spuriousTFQN);
-                AlloyExpr actConstraints =
-                        (new ReplaceExprVis(
-                                        AbstractBuildPA::isVarDashRef, AbstractBuildPA::makeNext))
-                                .visit(refineBody);
-                AlloyExpr refinedAct = AlloyAnd(origAbsAct, actConstraints);
-                absModel.setDoR(spuriousTFQN, refinedAct);
-                System.out.println("Refined the action of " + spuriousTFQN);
+                if (this.isFirstFail) {
+                    AlloyExpr actConstraints =
+                            (new ReplaceExprVis(
+                                            AbstractBuildPA::isVarDashRef,
+                                            AbstractBuildPA::makeNext))
+                                    .visit(refineBody);
+                    AlloyExpr origAct = absModel.doR(spuriousTFQN);
+                    if (origAct != null) {
+                        absModel.setDoR(
+                                spuriousTFQN, AlloyAnd(absModel.doR(spuriousTFQN), actConstraints));
+                    } else {
+                        absModel.setDoR(spuriousTFQN, actConstraints);
+                    }
+                    refineBody = exprTranslator.translateExpr(refineBody);
+                    AlloyExpr takenExpr =
+                            AlloyIn(
+                                    AlloyVar(DashFQN.translateFQN(spuriousTFQN)),
+                                    dsl.curTransTaken(0));
+                    refineBody = AlloyImplies(takenExpr, refineBody);
+                    List<AlloyDecl> decls = dsl.emptyDeclList();
+                    decls.add(dsl.curDecl());
+                    refineBody = AlloyAllVars(decls, refineBody);
+                    if (!refinementFacts.contains(refineBody)) {
+                        absModel.addFact("refinement_" + String.valueOf(numRefines), refineBody);
+                        System.out.println("In refineAbsModel: added a refinement fact.");
+                        this.numRefines++;
+                    }
+                } else {
+                    AlloyExpr origAbsGuard = absModel.whenR(spuriousTFQN);
 
-                refineBody = exprTranslator.translateExpr(refineBody);
-                AlloyExpr takenExpr =
-                        AlloyIn(AlloyVar(DashFQN.translateFQN(spuriousTFQN)), dsl.curTransTaken(0));
-                refineBody = AlloyImplies(takenExpr, refineBody);
-                List<AlloyDecl> decls = dsl.emptyDeclList();
-                decls.add(dsl.curDecl());
-                refineBody = AlloyAllVars(decls, refineBody);
-                if (!refinementFacts.contains(refineBody)) {
-                    absModel.addFact("refinement_" + String.valueOf(numRefines), refineBody);
-                    System.out.println("In refineAbsModel: added a refinement fact.");
-                    this.numRefines++;
+                    if (origAbsGuard != null) {
+                        absModel.setWhenR(spuriousTFQN, AlloyAnd(origAbsGuard, refineBody));
+                    } else {
+                        absModel.setWhenR(spuriousTFQN, refineBody);
+                    }
+                    System.out.println("Refined the guard of " + spuriousTFQN);
                 }
-                System.out.println("Refined Model:\n\n" + absModel.toString());
+
+                // System.out.println("Refined Model:\n\n" + absModel.toString());
             }
         } else {
             System.out.println(

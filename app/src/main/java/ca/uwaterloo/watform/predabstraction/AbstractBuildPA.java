@@ -8,6 +8,7 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyAssertPara;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
@@ -17,6 +18,7 @@ import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashast.dashref.VarDashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.D2AStrings;
+import ca.uwaterloo.watform.dashtoalloy.DSL;
 import ca.uwaterloo.watform.exprvisitor.ReplaceExprVis;
 import ca.uwaterloo.watform.utils.Pos;
 import java.io.*;
@@ -97,10 +99,19 @@ public class AbstractBuildPA extends InitializePA {
             VarNameCollector vc = new VarNameCollector();
             Set<AlloyExpr> cmdBody = new HashSet<AlloyExpr>();
             AlloyExpr caf = untranslatedCAFMap.get(vname);
-            AlloyExpr cafNext =
-                    (new ReplaceExprVis(AbstractBuildPA::isVarDashRef, AbstractBuildPA::makeNext))
-                            .visit(caf);
-            AlloyExpr cafNextTr = exprTranslator.translateExpr(cafNext);
+            AlloyExpr cafNextTr;
+            if (propPreds.contains(caf)) {
+                cafNextTr =
+                        (new ReplaceExprVis(
+                                        AbstractBuildPA::hasCurName, AbstractBuildPA::makeNextName))
+                                .visit(caf);
+            } else {
+                AlloyExpr cafNext =
+                        (new ReplaceExprVis(
+                                        AbstractBuildPA::isVarDashRef, AbstractBuildPA::makeNext))
+                                .visit(caf);
+                cafNextTr = exprTranslator.translateExpr(cafNext);
+            }
             AlloyExpr v = ((VarDashRef) getVarDashRef(vname)).makeNext();
 
             Set<String> cafVNames = vc.getVarNames(cafNextTr);
@@ -261,21 +272,22 @@ public class AbstractBuildPA extends InitializePA {
     public void createAbstractModel() {
 
         CAF2ABVReplacer replacer =
-                new CAF2ABVReplacer(untranslatedCAFMap, discardedCAFMap, concreteModel);
+                new CAF2ABVReplacer(ABVNameCAFTransMap, discardedCAFMap, concreteModel, true);
+
+        List<AlloyExpr> absInvs = new ArrayList<>();
+        absInvs.addAll(getCAFDepInvs());
+        if (concreteModel.invsR().size() > 0) {
+            for (AlloyExpr inv : concreteModel.invsR()) {
+                // absInvs.add(createAbsExpr(inv, false));
+                absInvs.add(replacer.replaceWithABVs(exprTranslator.translateExpr(inv)));
+            }
+        }
 
         List<AlloyExpr> absInits = new ArrayList<>();
         if (concreteModel.initsR().size() > 0) {
             for (AlloyExpr init : concreteModel.initsR()) {
-                absInits.add(createAbsExpr(init, false));
-                // absInits.add(replacer.replaceWithABVs(init));
-            }
-        }
-
-        List<AlloyExpr> absInvs = new ArrayList<>();
-        if (concreteModel.invsR().size() > 0) {
-            for (AlloyExpr inv : concreteModel.invsR()) {
-                absInvs.add(createAbsExpr(inv, false));
-                // absInvs.add(replacer.replaceWithABVs(inv));
+                // absInits.add(createAbsExpr(init, false));
+                absInits.add(replacer.replaceWithABVs(exprTranslator.translateExpr(init)));
             }
         }
 
@@ -288,8 +300,8 @@ public class AbstractBuildPA extends InitializePA {
             AlloyExpr absWhenR;
             AlloyExpr absDoR;
             if (guard != null) {
-                absWhenR = createAbsExpr(concreteModel.whenR(tfqn), false);
-                // absWhenR = replacer.replaceWithABVs(guard);
+                // absWhenR = createAbsExpr(concreteModel.whenR(tfqn), false);
+                absWhenR = replacer.replaceWithABVs(exprTranslator.translateExpr(guard));
             } else {
                 absWhenR = null;
             }
@@ -328,11 +340,6 @@ public class AbstractBuildPA extends InitializePA {
         // }
     }
 
-    protected AlloyExpr getVarDashRef(String vname) {
-        String vfqn = DashFQN.fqn(concreteModel.rootName(), vname);
-        return new VarDashRef(vfqn, emptyList());
-    }
-
     public static Boolean isVarDashRef(AlloyExpr e) {
         return (e instanceof VarDashRef);
     }
@@ -340,6 +347,23 @@ public class AbstractBuildPA extends InitializePA {
     public static AlloyExpr makeNext(AlloyExpr e) {
         if (e instanceof VarDashRef) {
             return ((VarDashRef) e).makeNext();
+        } else {
+            return e;
+        }
+    }
+
+    public static Boolean hasCurName(AlloyExpr e) {
+        if (e instanceof AlloyVarExpr) {
+            return D2AStrings.curName.equals(((AlloyVarExpr) e).label);
+        } else {
+            return false;
+        }
+    }
+
+    public static AlloyExpr makeNextName(AlloyExpr e) {
+        DSL dsl_local = new DSL(false);
+        if (hasCurName(e)) {
+            return dsl_local.nextVar();
         } else {
             return e;
         }

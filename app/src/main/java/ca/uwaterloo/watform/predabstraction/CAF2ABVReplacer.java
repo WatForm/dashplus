@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.predabstraction;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -10,6 +11,7 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.dashast.dashref.VarDashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
 import ca.uwaterloo.watform.dashtoalloy.ExprTranslatorVis;
@@ -26,15 +28,22 @@ public class CAF2ABVReplacer implements AlloyExprVis<AlloyExpr> {
     private ExprTranslatorVis exprTranslator;
 
     public CAF2ABVReplacer(
-            HashMap<String, AlloyExpr> cafMap, HashMap<AlloyExpr, AlloyExpr> dmap, DashModel dm) {
+            HashMap<String, AlloyExpr> cafMap,
+            HashMap<AlloyExpr, AlloyExpr> dmap,
+            DashModel dm,
+            boolean translate) {
         cafReplacementMap = new HashMap<AlloyExpr, AlloyExpr>();
         exprTranslator = new ExprTranslatorVis(dm);
         for (String vname : cafMap.keySet()) {
             AlloyExpr caf = cafMap.get(vname);
             DSL dsl = new DSL(false);
             String vfqn = DashFQN.translateFQN(DashFQN.fqn(dm.rootName(), vname));
-            AlloyExpr varIsTrue = dsl.AlloyIsTrue(dsl.curJoinExpr(AlloyVar(vfqn)));
-            this.cafReplacementMap.put(caf, varIsTrue);
+            if (translate) {
+                this.cafReplacementMap.put(caf, dsl.AlloyIsTrue(new VarDashRef(vfqn, emptyList())));
+            } else {
+                AlloyExpr varIsTrue = dsl.AlloyIsTrue(dsl.curJoinExpr(AlloyVar(vfqn)));
+                this.cafReplacementMap.put(caf, varIsTrue);
+            }
         }
         for (AlloyExpr d : dmap.keySet()) {
             AlloyExpr e = dmap.get(d);
@@ -49,6 +58,11 @@ public class CAF2ABVReplacer implements AlloyExprVis<AlloyExpr> {
                 }
             }
         }
+    }
+
+    public CAF2ABVReplacer(
+            HashMap<String, AlloyExpr> cafMap, HashMap<AlloyExpr, AlloyExpr> dmap, DashModel dm) {
+        this(cafMap, dmap, dm, false);
     }
 
     public AlloyExpr replaceWithABVs(AlloyExpr e) {

@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.predabstraction;
 
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -23,6 +24,7 @@ public class AlloyExprDecomposer implements AlloyExprVis<Void> {
         if (e != null) {
             this.visit(e);
         }
+        this.subexprs.remove(emptySet());
         return this.subexprs;
     }
 
