@@ -39,6 +39,7 @@ public final class D2AStrings {
     public static final String smallStepName = dsh_prefix + "small_step";
     public static final String stableName = dsh_prefix + "stable";
     public static final String stutterName = dsh_prefix + "stutter";
+    public static final String noVarChange = dsh_prefix + "noVarChange_post";
     public static final String strongNoStutterName = dsh_prefix + "strong_no_stutter";
     // public static final String equalsName = "equals";
     public static final String isEnabled = dsh_prefix + "isEnabled";
