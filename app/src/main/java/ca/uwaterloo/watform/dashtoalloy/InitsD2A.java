@@ -23,49 +23,19 @@ public class InitsD2A extends SnapshotSigD2A {
     }
 
     public void addInit() {
+        this.addInit(true);
+    }
+
+    public void addInitVarsOnly() {
+        this.addInit(false);
+    }
+
+    private void addInit(Boolean addConfAndScopeAndStable) {
 
         List<DashParam> prs = this.dm.allParams();
         List<AlloyExpr> body = this.dsl.emptyExprList();
 
-        if (!this.dm.hasOnlyOneState()) {
-            // forall i. confi = default entries
-            List<DashRef> entered = this.dm.rootLeafStatesEntered();
-            if (entered.isEmpty())
-                // everything must have a default in initialization of state table
-                // so this should be impossible
-                shouldNotReach();
-            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-                // Java required local var used in lambda to be final
-                final int numParams = i;
-                // entered comes back in terms of DashRefs and DashParams
-                List<AlloyExpr> ent =
-                        mapBy(
-                                filterBy(entered, x -> x.hasNumParams(numParams)),
-                                y -> this.translateDashRefToArrowExpr(y));
-                if (!ent.isEmpty()) body.add(AlloyEqual(this.dsl.curConf(i), AlloyUnion(ent)));
-                else body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.noneArrow(i)));
-            }
-        }
-        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-
-            // scopesUsedi = none
-            if (this.dm.hasConcurrency())
-                body.add(AlloyEqual(this.dsl.curScopesUsed(i), this.dsl.noneArrow(i)));
-
-            body.add(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.noneArrow(i)));
-
-            // no limits on initial set of events except that they must be environmental
-            // s.events1 :> internalEvents = none -> none
-            if (this.dm.hasIntEventsAti(i))
-                // s.events0 inter IntEvents = none
-                // or
-                // s.event1 :> IntEvents = none -> none
-                body.add(
-                        AlloyEqual(
-                                this.dsl.RangeResLevel(
-                                        this.dsl.curEvents(i), this.dsl.allIntEventsVar(), i),
-                                this.dsl.noneArrow(i)));
-        }
+        if (addConfAndScopeAndStable) body.addAll(this.addConfAndScopeAndStable());
 
         // even if these are empty we need this predicate to exist
         for (AlloyExpr i : this.dm.initsR())
@@ -116,7 +86,6 @@ public class InitsD2A extends SnapshotSigD2A {
                 }
             }
         }
-        if (this.dm.hasConcurrency()) body.add(this.dsl.curStableTrue());
 
         // init is a reserved word in Electrum
         if (this.isElectrum) {
@@ -126,5 +95,51 @@ public class InitsD2A extends SnapshotSigD2A {
             // because it is used in conf (every model has at least one state)
             this.am.addPred(D2AStrings.initPredName, this.dsl.curDecls(), body);
         }
+    }
+
+    private List<AlloyExpr> addConfAndScopeAndStable() {
+
+        List<AlloyExpr> body = emptyList();
+        if (!this.dm.hasOnlyOneState()) {
+            // forall i. confi = default entries
+            List<DashRef> entered = this.dm.rootLeafStatesEntered();
+            if (entered.isEmpty())
+                // everything must have a default in initialization of state table
+                // so this should be impossible
+                shouldNotReach();
+            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+                // Java required local var used in lambda to be final
+                final int numParams = i;
+                // entered comes back in terms of DashRefs and DashParams
+                List<AlloyExpr> ent =
+                        mapBy(
+                                filterBy(entered, x -> x.hasNumParams(numParams)),
+                                y -> this.translateDashRefToArrowExpr(y));
+                if (!ent.isEmpty()) body.add(AlloyEqual(this.dsl.curConf(i), AlloyUnion(ent)));
+                else body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.noneArrow(i)));
+            }
+        }
+        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+
+            // scopesUsedi = none
+            if (this.dm.hasConcurrency())
+                body.add(AlloyEqual(this.dsl.curScopesUsed(i), this.dsl.noneArrow(i)));
+
+            body.add(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.noneArrow(i)));
+
+            // no limits on initial set of events except that they must be environmental
+            // s.events1 :> internalEvents = none -> none
+            if (this.dm.hasIntEventsAti(i))
+                // s.events0 inter IntEvents = none
+                // or
+                // s.event1 :> IntEvents = none -> none
+                body.add(
+                        AlloyEqual(
+                                this.dsl.RangeResLevel(
+                                        this.dsl.curEvents(i), this.dsl.allIntEventsVar(), i),
+                                this.dsl.noneArrow(i)));
+        }
+        if (this.dm.hasConcurrency()) body.add(this.dsl.curStableTrue());
+        return body;
     }
 }

@@ -39,74 +39,86 @@ public class TransPreD2A extends InvsD2A {
         super(dm, opt);
     }
 
+    public void addTransPreVarsOnly(String tfqn) {
+        this.addTransPre(tfqn, true);
+    }
+
     public void addTransPre(String tfqn) {
+        this.addTransPre(tfqn, false);
+    }
+
+    private void addTransPre(String tfqn, Boolean addGuardOnly) {
         List<DashParam> params = this.dm.transParams(tfqn);
         List<AlloyExpr> body = this.dsl.emptyExprList();
         String tout = DashFQN.translateFQN(tfqn);
 
-        if (!this.dm.hasOnlyOneState())
-            // p3 -> p2 -> p1 -> src & s.confVar(i) != none
-            // src does not have to be a basic state
-            body.add(
-                    AlloySome(
-                            AlloyInter(
-                                    this.translateDashRefToArrowExpr(this.dm.fromR(tfqn)),
-                                    this.dsl.curConf(params.size()))));
-
+        // guard
         if (this.dm.whenR(tfqn) != null) body.add(this.translateExpr(this.dm.whenR(tfqn)));
 
-        if (this.dm.hasConcurrency()) {
-            // has a scope that is orthogonal to any scopes used
-            List<DashRef> nonO = this.dm.nonOrthogonalScopesOf(tfqn);
-            for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-                final Integer j = i;
-                List<AlloyExpr> u =
-                        mapBy(
-                                filterBy(nonO, x -> x.hasNumParams(j)),
-                                x -> this.translateDashRefToArrowExpr(this.dsl.asScope(x)));
-                for (AlloyExpr x : u) body.add(AlloyNot(AlloyIn(x, this.dsl.curScopesUsed(i))));
+        if (!addGuardOnly) {
+            if (!this.dm.hasOnlyOneState())
+                // p3 -> p2 -> p1 -> src & s.confVar(i) != none
+                // src does not have to be a basic state
+                body.add(
+                        AlloySome(
+                                AlloyInter(
+                                        this.translateDashRefToArrowExpr(this.dm.fromR(tfqn)),
+                                        this.dsl.curConf(params.size()))));
+            if (this.dm.hasConcurrency()) {
+                // has a scope that is orthogonal to any scopes used
+                List<DashRef> nonO = this.dm.nonOrthogonalScopesOf(tfqn);
+                for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+                    final Integer j = i;
+                    List<AlloyExpr> u =
+                            mapBy(
+                                    filterBy(nonO, x -> x.hasNumParams(j)),
+                                    x -> this.translateDashRefToArrowExpr(this.dsl.asScope(x)));
+                    for (AlloyExpr x : u) body.add(AlloyNot(AlloyIn(x, this.dsl.curScopesUsed(i))));
+                }
+            }
+
+            // event trigger
+            // only one triggering event
+            if (this.dm.hasConcurrency() && this.dm.onR(tfqn) != null && this.dm.hasEnvEvents()) {
+                // trig_events_t1
+                DashRef ev = this.dm.onR(tfqn);
+                int sz = ev.paramValues.size();
+                if (this.dm.isIntEvent(ev.name)) {
+                    // triggered by internal event
+                    // this transition cannot be triggered unless
+                    // not stable
+                    body.add(AlloyNot(this.dsl.curStableTrue()));
+                } else {
+                    AlloyExpr ifBranch =
+                            AlloyIn(
+                                    this.translateDashRefToArrowExpr(ev),
+                                    this.dsl.RangeResLevel(
+                                            this.dsl.curEvents(sz),
+                                            this.dsl.allEnvEventsVar(),
+                                            sz));
+
+                    AlloyExpr elseBranch =
+                            AlloyIn(this.translateDashRefToArrowExpr(ev), this.dsl.curEvents(sz));
+                    body.add(AlloyIte(this.dsl.curStableTrue(), ifBranch, elseBranch));
+                }
+            } else if (this.dm.onR(tfqn) != null) {
+                DashRef ev = this.dm.onR(tfqn);
+                int sz = ev.paramValues.size();
+                body.add(AlloyIn(this.translateDashRefToArrowExpr(ev), this.dsl.curEvents(sz)));
+            }
+
+            // not a higher priority transition enabled
+            List<String> priTrans = this.dm.higherPriTrans(tfqn);
+            List<AlloyExpr> args = this.dsl.emptyExprList();
+            for (String t : priTrans) {
+                // src must directly above this trans in the hierarchy
+                // so its parameters must be a subset of the current parameters
+                // and we don't need to quantify over them
+                args = this.dsl.curParamVars(this.dm.transParams(t));
+                body.add(
+                        AlloyNot(AlloyPredCall(D2AStrings.preName(DashFQN.translateFQN(t)), args)));
             }
         }
-
-        // event trigger
-        // only one triggering event
-        if (this.dm.hasConcurrency() && this.dm.onR(tfqn) != null && this.dm.hasEnvEvents()) {
-            // trig_events_t1
-            DashRef ev = this.dm.onR(tfqn);
-            int sz = ev.paramValues.size();
-            if (this.dm.isIntEvent(ev.name)) {
-                // triggered by internal event
-                // this transition cannot be triggered unless
-                // not stable
-                body.add(AlloyNot(this.dsl.curStableTrue()));
-            } else {
-                AlloyExpr ifBranch =
-                        AlloyIn(
-                                this.translateDashRefToArrowExpr(ev),
-                                this.dsl.RangeResLevel(
-                                        this.dsl.curEvents(sz), this.dsl.allEnvEventsVar(), sz));
-
-                AlloyExpr elseBranch =
-                        AlloyIn(this.translateDashRefToArrowExpr(ev), this.dsl.curEvents(sz));
-                body.add(AlloyIte(this.dsl.curStableTrue(), ifBranch, elseBranch));
-            }
-        } else if (this.dm.onR(tfqn) != null) {
-            DashRef ev = this.dm.onR(tfqn);
-            int sz = ev.paramValues.size();
-            body.add(AlloyIn(this.translateDashRefToArrowExpr(ev), this.dsl.curEvents(sz)));
-        }
-
-        // not a higher priority transition enabled
-        List<String> priTrans = this.dm.higherPriTrans(tfqn);
-        List<AlloyExpr> args = this.dsl.emptyExprList();
-        for (String t : priTrans) {
-            // src must directly above this trans in the hierarchy
-            // so its parameters must be a subset of the current parameters
-            // and we don't need to quantify over them
-            args = this.dsl.curParamVars(this.dm.transParams(t));
-            body.add(AlloyNot(AlloyPredCall(D2AStrings.preName(DashFQN.translateFQN(t)), args)));
-        }
-
         this.am.addPred(D2AStrings.preName(tout), this.dsl.curParamsDecls(params), body);
     }
 }
