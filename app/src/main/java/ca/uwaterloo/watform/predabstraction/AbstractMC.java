@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import java.io.*;
@@ -37,6 +38,13 @@ public class AbstractMC extends AbstractBuildPA {
                 AlloyInterface.executeCommand(absAlloy, absCmdIdx);
                 this.solution = null;
             }
+        }
+    }
+
+    public void executeAbsCmdIn(AlloyModel am) {
+        if (absCmdIdx >= 0) {
+            am.resolve();
+            this.solution = AlloyInterface.executeCommand(am, absCmdIdx);
         }
     }
 

@@ -78,7 +78,9 @@ public class PredAbsUtil {
                 am.addPred(pname, dsl.curDecls(), setToList(exprs));
             }
             int cmdIdx = addRunCmd(pname, am, scope);
-            // am.resolve();
+            am.resolve();
+            am.resolve();
+            am.resolve();
             try {
                 Solution sol = executeCommand(am, cmdIdx);
                 cache.put(key, sol.isSat());

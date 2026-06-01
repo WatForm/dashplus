@@ -31,16 +31,18 @@ public class CAF2ABVReplacer implements AlloyExprVis<AlloyExpr> {
             HashMap<String, AlloyExpr> cafMap,
             HashMap<AlloyExpr, AlloyExpr> dmap,
             DashModel dm,
-            boolean translate) {
+            boolean noTranslate) {
         cafReplacementMap = new HashMap<AlloyExpr, AlloyExpr>();
         exprTranslator = new ExprTranslatorVis(dm);
         for (String vname : cafMap.keySet()) {
             AlloyExpr caf = cafMap.get(vname);
             DSL dsl = new DSL(false);
-            String vfqn = DashFQN.translateFQN(DashFQN.fqn(dm.rootName(), vname));
-            if (translate) {
+            String vfqn;
+            if (noTranslate) {
+                vfqn = DashFQN.fqn(dm.rootName(), vname);
                 this.cafReplacementMap.put(caf, dsl.AlloyIsTrue(new VarDashRef(vfqn, emptyList())));
             } else {
+                vfqn = DashFQN.translateFQN(DashFQN.fqn(dm.rootName(), vname));
                 AlloyExpr varIsTrue = dsl.AlloyIsTrue(dsl.curJoinExpr(AlloyVar(vfqn)));
                 this.cafReplacementMap.put(caf, varIsTrue);
             }
@@ -67,7 +69,16 @@ public class CAF2ABVReplacer implements AlloyExprVis<AlloyExpr> {
 
     public AlloyExpr replaceWithABVs(AlloyExpr e) {
         if (e != null) {
-            return this.visit(e);
+            if (cafReplacementMap.containsKey(e)) {
+                return cafReplacementMap.get(e);
+            } else {
+                for (AlloyExpr k : cafReplacementMap.keySet()) {
+                    if (k.toString().equals(e.toString())) {
+                        return cafReplacementMap.get(k);
+                    }
+                }
+                return this.visit(e);
+            }
         } else {
             return null;
         }
@@ -144,11 +155,12 @@ public class CAF2ABVReplacer implements AlloyExprVis<AlloyExpr> {
             return binExpr.rebuild(this.visit(binExpr.left), this.visit(binExpr.right));
         } else {
             if (cafReplacementMap.containsKey((AlloyExpr) binExpr)) {
-                if (cafReplacementMap.containsKey(binExpr)) {
-                    return cafReplacementMap.get(binExpr);
-                } else {
-                    return cafReplacementMap.get(exprTranslator.translateExpr((AlloyExpr) binExpr));
-                }
+                // if (cafReplacementMap.containsKey(binExpr)) {
+                return cafReplacementMap.get(binExpr);
+                // } else {
+                //    return cafReplacementMap.get(exprTranslator.translateExpr((AlloyExpr)
+                // binExpr));
+                // }
             } else {
                 return (AlloyExpr) binExpr;
             }

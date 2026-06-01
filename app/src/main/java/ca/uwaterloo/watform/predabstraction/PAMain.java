@@ -20,16 +20,29 @@ public class PAMain extends CERefinement {
     }
 
     public void runCEGARLoop() {
+        // System.out.println("Concrete model:\n" + this.concreteModel.toString());
+
+        // Create the map of {B0: caf0, B1: caf1...}
         this.createABVMap();
 
-        System.out.println("\nABV map created:");
-        for (String k : this.ABVNameCAFTransMap.keySet()) {
-            AlloyExpr v = this.ABVNameCAFTransMap.get(k);
+        // Print out the ABV map
+        // System.out.println("\nABV map created (size = " + this.ABVNameCAFTransMap.size() + "):");
+        // for (String k : this.ABVNameCAFTransMap.keySet()) {
+        //     AlloyExpr v = this.ABVNameCAFTransMap.get(k);
+        //     VarNameCollector vc = new VarNameCollector();
+        //     System.out.println(k + " : " + v.toString());
+        // }
+        // System.out.println("*********");
+
+        System.out.println("\nUntranslated ABV map:");
+        for (String k : this.untranslatedCAFMap.keySet()) {
+            AlloyExpr v = this.untranslatedCAFMap.get(k);
             VarNameCollector vc = new VarNameCollector();
-            System.out.println(k + " : " + v.toString() + "\t" + vc.getVarNames(v).toString());
+            System.out.println(k + " : " + v.toString());
         }
         System.out.println("*********");
 
+        // Build the abstract model
         this.createAbstractModel();
 
         System.out.println("\nIn createAbstractModel(), Abstract model created.");
@@ -38,7 +51,10 @@ public class PAMain extends CERefinement {
         // this.absAlloy = absd2a.translate();
         // System.out.println("\nAbstract Alloy:\n" + this.absAlloy.toString());
 
+        // abstract model checking
+        System.out.println("Original abstract dash: \n\n" + this.absModel.toString());
         this.executeAbsCmd();
+        System.out.println("Abstract command executed!");
 
         if (this.solution == null) {
             System.out.println("Abstract model checking failed. No solution generated.");
@@ -47,7 +63,9 @@ public class PAMain extends CERefinement {
             if (!this.hasInstance()) {
                 System.out.println("Abstract model verified the abstract property.");
             } else {
-                this.validateCE();
+                // this.validateCE();
+                // System.out.println("Abstract c/e:\n" + solution.toString());
+                this.validateCEVarsOnly();
                 if (this.isCEValid == true) {
                     System.out.println(
                             "The abstract counterexample is valid. The real counterexample is:\n");
@@ -64,13 +82,13 @@ public class PAMain extends CERefinement {
                     //             "In runCEGARLoop: solution.next and ce refinement did not
                     // work.");
                     // }
-                    this.refineAbsModel();
+                    this.refineAbsAlloy();
                     System.out.println("In runCEGARLoop, refined the abstract model");
-                    System.out.println("Refined abstract model:\n" + this.absModel.toString());
+                    // System.out.println("Refined abstract model:\n" + this.absAlloy.toString());
 
                     int count = 1;
-                    while (count < 5) {
-                        this.executeAbsCmd();
+                    while (count < 10) {
+                        this.executeAbsCmdIn(this.absAlloy);
                         if (this.solution == null) {
                             break;
                         }
@@ -78,7 +96,8 @@ public class PAMain extends CERefinement {
                             System.out.println("Abstract model verified the abstract property.");
                             break;
                         } else {
-                            this.validateCE();
+                            // this.validateCE();
+                            this.validateCEVarsOnly();
                             if (this.isCEValid) {
                                 System.out.println(
                                         "The abstract counterexample is valid. The real counterexample is:\n");
@@ -96,8 +115,10 @@ public class PAMain extends CERefinement {
                                 //             "In runCEGARLoop: solution.next and ce refinement did
                                 // not work.");
                                 // }
-                                this.refineAbsModel();
-                                if (this.spuriousSnapName != null) {
+                                this.refineAbsAlloy();
+                                // System.out.println(
+                                //         "Refined abstract model:\n" + this.absAlloy.toString());
+                                if (this.spuriousSrcSnapName != null) {
                                     System.out.println(
                                             "In runCEGARLoop, refined the abstract model for the "
                                                     + String.valueOf(count + 1)

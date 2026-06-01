@@ -410,14 +410,10 @@ public class Main implements Callable<Integer> {
         } else {
             pa = new PAMain(dm, cmdIdx);
         }
-        try {
-            pa.runCEGARLoop();
-            if (write) {
-                pa.writeAllModels(fullFileName);
-            }
-        } catch (Exception e) {
-            System.out.println("Query Model:\n" + pa.getQueryModelString());
-            printStackTrace();
+
+        pa.runCEGARLoop();
+        if (write) {
+            pa.writeAllModels(fullFileName);
         }
     }
 

@@ -6,8 +6,10 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+// import ca.uwaterloo.watform.alloyast.expr.binary.AlloyDotExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyAssertPara;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyPredPara;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
@@ -15,6 +17,7 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.dashref.VarDashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.dashtoalloy.D2AStrings;
 import ca.uwaterloo.watform.dashtoalloy.DSL;
 import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.dashtoalloy.ExprTranslatorVis;
@@ -35,11 +38,18 @@ public class InitializePA {
     protected AlloyModel queryModel;
 
     // ABV: Abstract Boolean Variable, CAF: Concrete Atomic Formula
+    // ABVNameCAFTransMap = {"B0": translated_caf0, ...}
     public HashMap<String, AlloyExpr> ABVNameCAFTransMap = new HashMap<>();
     protected HashMap<String, AlloyExpr> untranslatedCAFMap = new HashMap<>();
-    public HashMap<AlloyExpr, AlloyExpr> discardedCAFMap = new HashMap<>();
+
+    // discardedCAFMap stores all the candidate formulas that are not added
+    // as a CAF because it is logically equivalent to another CAF or its negation
+    protected HashMap<AlloyExpr, AlloyExpr> discardedCAFMap = new HashMap<>();
+    protected HashMap<AlloyExpr, AlloyExpr> untransDiscardedCAFMap = new HashMap<>();
+
+    // propPreds stores the formulas extracted from the property
+    // these contain the only CAFs that are already translated to Alloy
     protected Set<AlloyExpr> propPreds = new HashSet<>();
-    ;
 
     public InitializePA(DashModel input) {
         this.concreteModel = input;
@@ -100,6 +110,7 @@ public class InitializePA {
 
         HashMap<AlloyExpr, AlloyExpr> translatedPreds = new HashMap<>();
 
+        // remove any formulas that contain conf, taken, events
         for (AlloyExpr e : preds) {
             String eStr = e.toString();
             if (eStr.contains(confName)
@@ -112,7 +123,14 @@ public class InitializePA {
 
         List<AlloyExpr> predList = new ArrayList<AlloyExpr>(translatedPreds.keySet());
         Set<AlloyExpr> CAFs = new HashSet<>(translatedPreds.keySet());
-        System.out.println("CAFs (size = " + String.valueOf(CAFs.size()) + "): " + CAFs.toString());
+
+        System.out.println("List of potential CAFs of size " + CAFs.size() + ":");
+        for (AlloyExpr e : CAFs) {
+            System.out.println(e.toString());
+        }
+
+        // Determine the final set of CAFs by checking every pair and seeing if they are
+        // logically equiv to each other or their negations
         for (int i = 0; i < predList.size() - 1; i++) {
             for (int j = i + 1; j < predList.size(); j++) {
                 VarNameCollector vc = new VarNameCollector();
@@ -125,9 +143,12 @@ public class InitializePA {
                 AlloyExpr iff2 = AlloyNot(AlloyIff(AlloyNot(e1), e2));
                 if (!PredAbsUtil.checkSAT(Set.of(iff), queryModel, false, this.scope)) {
                     discardedCAFMap.put(e2, e1);
+                    untransDiscardedCAFMap.put(translatedPreds.get(e2), translatedPreds.get(e1));
                     CAFs.remove(e2);
                 } else if (!PredAbsUtil.checkSAT(Set.of(iff2), queryModel, false, this.scope)) {
                     discardedCAFMap.put(e2, AlloyNot(e1));
+                    untransDiscardedCAFMap.put(
+                            translatedPreds.get(e2), AlloyNot(translatedPreds.get(e1)));
                     CAFs.remove(e2);
                 }
             }
@@ -135,6 +156,7 @@ public class InitializePA {
 
         int ctr = 0;
 
+        // populate ABVNameCAFTransMap and untranslatedCAFMap
         for (AlloyExpr e : CAFs) {
             String abvName = abvNamePre + Integer.toString(ctr);
             ctr++;
@@ -143,9 +165,19 @@ public class InitializePA {
                 untranslatedCAFMap.put(abvName, translatedPreds.get(e));
             }
         }
+
+        System.out.println("\nDiscarded CAF map created:");
+        for (AlloyExpr k : this.discardedCAFMap.keySet()) {
+            AlloyExpr v = this.discardedCAFMap.get(k);
+            System.out.println(k.toString() + " : " + v.toString());
+        }
+        System.out.println("*********");
+        // adds Alloy Preds of the form
+        // pred CAF_Bi[s: __Snapshot] {translated_caf_i}
         addCAFPreds();
     }
 
+    // gets the body of the predicate/assert that is being run by a cmd
     private AlloyExpr getCmdBodyExpr() throws AlloyCtorError {
         if (this.cmd == null) {
             System.out.println("In getCmdBodyExpr(): Command does not exist.");
@@ -184,17 +216,22 @@ public class InitializePA {
         }
     }
 
+    // function to go from "Bi" to its corresponding VarDashRefs
     protected AlloyExpr getVarDashRef(String vname) {
         String vfqn = DashFQN.fqn(concreteModel.rootName(), vname);
         return new VarDashRef(vfqn, emptyList());
     }
 
+    // returns a list of implications that get added as Dash Invs
+    // for every pair of CAFs, fi and fj, check validity of:
+    // fi => fj, fi => !fj, fj => fi, !fj => fi
     protected List<AlloyExpr> getCAFDepInvs() {
-        // List<AlloyExpr> cafList = new ArrayList<>(ABVNameCAFTransMap.values());
+        // Map the CAFs to the VarDashRef of the B
         HashMap<AlloyExpr, AlloyExpr> cafMap = new HashMap<>();
         for (Map.Entry<String, AlloyExpr> entry : ABVNameCAFTransMap.entrySet()) {
             cafMap.put(entry.getValue(), getVarDashRef(entry.getKey()));
         }
+
         List<AlloyExpr> retList = new ArrayList<>();
         for (int i = 0; i < ABVNameCAFTransMap.size() - 1; i++) {
             for (int j = i + 1; j < ABVNameCAFTransMap.size(); j++) {
@@ -203,13 +240,14 @@ public class InitializePA {
                 String jname = abvNamePre + String.valueOf(j);
                 AlloyExpr caf_i = AlloyPredCall(bPredPrefix + iname, List.of(dsl.curVar()));
                 AlloyExpr caf_j = AlloyPredCall(bPredPrefix + jname, List.of(dsl.curVar()));
-                // AlloyExpr caf_i = cafList.get(i);
-                // AlloyExpr caf_j = cafList.get(j);
+
+                // if caf_i and caf_j has no vars in common, skip this pair
                 if (Collections.disjoint(
                         vc.getVarNames(ABVNameCAFTransMap.get(iname)),
                         vc.getVarNames(ABVNameCAFTransMap.get(jname)))) {
                     continue;
                 }
+
                 AlloyExpr i_imp_j = AlloyNot(AlloyImplies(caf_i, caf_j));
                 AlloyExpr i_imp_not_j = AlloyNot(AlloyImplies(caf_i, AlloyNot(caf_j)));
                 AlloyExpr j_imp_i = AlloyNot(AlloyImplies(caf_j, caf_i));
@@ -254,4 +292,44 @@ public class InitializePA {
                             new AlloyBlock(List.of(caf))));
         }
     }
+
+    // functions for ReplaceExprVis
+
+    public static Boolean isVarDashRef(AlloyExpr e) {
+        return (e instanceof VarDashRef);
+    }
+
+    public static AlloyExpr makeNext(AlloyExpr e) {
+        if (e instanceof VarDashRef) {
+            return ((VarDashRef) e).makeNext();
+        } else {
+            return e;
+        }
+    }
+
+    public static Boolean hasCurName(AlloyExpr e) {
+        if (e instanceof AlloyVarExpr) {
+            return D2AStrings.curName.equals(((AlloyVarExpr) e).label);
+        } else {
+            return false;
+        }
+    }
+
+    public static AlloyExpr makeNextName(AlloyExpr e) {
+        DSL dsl_local = new DSL(false);
+        if (hasCurName(e)) {
+            return dsl_local.nextVar();
+        } else {
+            return e;
+        }
+    }
+
+    // public static AlloyExpr untranslate(AlloyExpr e) {
+    //     if(e instanceof AlloyDotExpr) {
+    //         AlloyDotExpr dotE = (AlloyDotExpr) e;
+    //         if(dotE.left == ((AlloyExpr) dsl.curVar())) {
+
+    //         }
+    //     }
+    // }
 }

@@ -94,4 +94,30 @@ public class DashToAlloy extends StutterD2A {
         this.varsBuffersOnlySnapshotSig();
         return this.am;
     }
+
+    public AlloyModel translateVarSlice() {
+        this.am = dm.copyImportsAndSigs();
+
+        this.addParamSpaceSigs();
+        this.varsBuffersOnlySnapshotSig();
+
+        // this.addSpaceSigs();
+
+        // this.addSnapshotSig();
+
+        this.addInitVarsOnly();
+        this.addInvs();
+
+        for (String tfqn : this.dm.allTransNames()) {
+            this.addTransPreVarsOnly(tfqn);
+            this.addTransPostVarsOnly(tfqn);
+        }
+
+        this.addTransPostNoTrans();
+
+        // these predicates may be useful in any of the above
+        // System.out.println(this.am);
+        this.am.resolve();
+        return this.am;
+    }
 }

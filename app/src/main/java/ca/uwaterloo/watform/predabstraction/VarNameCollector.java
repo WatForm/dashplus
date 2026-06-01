@@ -14,6 +14,8 @@ import java.util.*;
 public class VarNameCollector implements AlloyExprVis<Void> {
 
     private Set<String> varNames;
+
+    // set of varnames to ignore
     private Set<String> ignored = new HashSet<>();
 
     public VarNameCollector() {
