@@ -88,6 +88,7 @@ public class TransPreD2A extends InvsD2A {
                     // this transition cannot be triggered unless
                     // not stable
                     body.add(AlloyNot(this.dsl.curStableTrue()));
+                    body.add(AlloyIn(this.translateDashRefToArrowExpr(ev), this.dsl.curEvents(sz)));
                 } else {
                     AlloyExpr ifBranch =
                             AlloyIn(
