@@ -4,6 +4,7 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
+import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
@@ -26,7 +27,13 @@ public final class AlloyNegExpr extends AlloyUnaryExpr {
     @Override
     public void pp(PrintContext pCtx) {
         pCtx.append(op + SPACE);
-        pCtx.appendChild(this, this.sub);
+        if (this.sub instanceof AlloyBinaryExpr || this.sub instanceof AlloyQtExpr) {
+            pCtx.append(LPAREN);
+            this.sub.pp(pCtx);
+            pCtx.append(RPAREN);
+        } else {
+            pCtx.appendChild(this, this.sub);
+        }
     }
 
     @Override

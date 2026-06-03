@@ -6,7 +6,6 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.dashast.DashParam;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 
@@ -29,7 +28,7 @@ public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
     public AlloyExpr visit(AlloyArrowExpr arrowExpr) {
         AlloyExpr l = new AlloyQnameExpr("arrowLeft");
         AlloyExpr r = new AlloyQnameExpr("arrowRight");
-        return new AlloyArrowExpr(l, arrowExpr.mul1, AlloyQtEnum.ONE, r);
+        return new AlloyArrowExpr(l, arrowExpr.mul1.orElse(null), AlloyQtEnum.ONE, r);
     }
 
     @Override
@@ -79,11 +78,6 @@ public final class RebuildExprVis implements AlloyExprVis<AlloyExpr> {
 
     @Override
     public AlloyExpr visit(DashRef dashRef) {
-        return null;
-    }
-
-    @Override
-    public AlloyExpr visit(DashParam dashParam) {
         return null;
     }
 }
