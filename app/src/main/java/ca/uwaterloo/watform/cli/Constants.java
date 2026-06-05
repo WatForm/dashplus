@@ -8,6 +8,7 @@ public class Constants {
     public static int intArgNotPresent = -100;
     public static String stringArgNotPresent =
             String.valueOf(intArgNotPresent); // a stupid filename
+    public static final String DUMP_DIR = "out/"; // location to dump XML reports
 
     // did -alloy appear on the cmd-line
     public static boolean alloyPresent(DashToAlloy.Options o) {

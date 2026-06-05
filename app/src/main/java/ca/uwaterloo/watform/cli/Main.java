@@ -132,6 +132,7 @@ public class Main implements Callable<Integer> {
         Boolean write = cliConf.write;
         Boolean verbose = cliConf.verbose;
         Boolean debug = cliConf.debug;
+        Boolean dumpInstance = cliConf.dumpInstance;
 
         Boolean alsInputFile =
                 someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")));
@@ -156,7 +157,8 @@ public class Main implements Callable<Integer> {
 
         // rule out bad combinations of CLI options
         // tla and xml are okay together
-        long count1 = Stream.of(alloyPresent, tla, predAbs, vis).filter(b -> b).count();
+        long count1 =
+                Stream.of(alloyPresent, tla, predAbs, vis, dumpInstance).filter(b -> b).count();
         long count2 = Stream.of(alloyPresent, xml, predAbs, vis).filter(b -> b).count();
 
         if (count1 >= 2) {
@@ -234,6 +236,8 @@ public class Main implements Callable<Integer> {
                                 debug);
                     } else if (xml) {
                         runCheckAlloyInstanceTla(am, cliConf.xmlFileName);
+                    } else if (dumpInstance) {
+                        runDumpInstance(am, cmdIdx);
                     } else {
                         runAlloy(am, cmdIdx);
                     }
@@ -357,6 +361,40 @@ public class Main implements Callable<Integer> {
             for (int i = Constants.firstCmdIdx; i < num_cmds_in_file; i++) {
                 AlloyInterface.executeCommand(am, i);
             }
+        }
+    }
+
+    private static void runDumpInstance(AlloyModel am, Integer cmdIdx) {
+        int numCmds = am.getNumCmds();
+
+        dashOutput("cmdIdx: " + cmdIdx);
+        dashOutput("Dumping the alloy model");
+        XmlDumper.dumpModel(am, Constants.DUMP_DIR + "model.xml");
+
+        Solution soln = AlloyInterface.checkModelSatisfiability(am);
+        dumpOrReport(
+                soln, Constants.DUMP_DIR + "instance.xml", "default scope (no commands in file)");
+        if (Constants.firstCmdIdx <= cmdIdx && cmdIdx < numCmds) { // output specific command
+            soln = AlloyInterface.executeCommand(am, cmdIdx);
+            dumpOrReport(
+                    soln,
+                    Constants.DUMP_DIR + "instance-cmd" + cmdIdx + ".xml",
+                    "command " + cmdIdx);
+        } else {
+            for (int i = Constants.firstCmdIdx; i < numCmds; i++) {
+                soln = AlloyInterface.executeCommand(am, i);
+                dumpOrReport(
+                        soln, Constants.DUMP_DIR + "instance-cmd" + i + ".xml", "command " + i);
+            }
+        }
+    }
+
+    private static void dumpOrReport(Solution soln, String outputPath, String context) {
+        if (soln.isSat()) {
+            dashOutput("SAT — dumping instance to: " + outputPath);
+            XmlDumper.dumpInstance(soln, outputPath, context);
+        } else {
+            dashOutput("UNSAT — no instance to dump for: " + context);
         }
     }
 
