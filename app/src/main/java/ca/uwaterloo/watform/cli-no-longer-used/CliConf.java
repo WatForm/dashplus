@@ -70,4 +70,14 @@ public class CliConf {
       names = {"-predAbs"},
       description = "Predicate abstraction")
   public boolean predAbs = false;
+
+  @Option(
+      names = {"-vis"},
+      description = "create .dot file of Dash model")
+  public boolean vis = false;
+
+  @Option(
+      names = {"-dumpInstance"},
+      description = "Dump the model and a satisfiable instance for every satisfiable command")
+  public boolean dumpInstance = false;
 }
