@@ -107,7 +107,7 @@ public class Main implements Callable<Integer> {
     -write              .dsh
     */
 
-    // flags to guide possible combinations
+        // flags to guide possible combinations
     Boolean alloyPresent = Constants.alloyPresent(cliConf.d2aOptions);
     Boolean tla = cliConf.tla;
     Boolean xml = Constants.xmlPresent(cliConf.xmlFileName);
@@ -116,6 +116,7 @@ public class Main implements Callable<Integer> {
     Boolean write = cliConf.write;
     Boolean verbose = cliConf.verbose;
     Boolean debug = cliConf.debug;
+    Boolean dumpInstance = cliConf.dumpInstance;
 
     Boolean alsInputFile = someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")));
 
@@ -133,7 +134,6 @@ public class Main implements Callable<Integer> {
     // cmdIdx = Constants.intArgNotPresent means no cmd so run for satisfiability only
     Integer cmdIdx =
         (cmd && Constants.cmdIdxUseful(cliConf.cmdIdx)) ? cliConf.cmdIdx : Constants.noCmdValue;
-
     // rule out bad combinations of CLI options
     // tla and xml are okay together
     long count1 = Stream.of(alloyPresent, tla, predAbs).filter(b -> b).count();
