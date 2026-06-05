@@ -30,3 +30,6 @@ app/src/main/java/ca/uwaterloo/watform/test/catalyst/problemFiles
 
 # personal lists
 app/src/main/java/ca/uwaterloo/watform/nancy-list.md
+
+# XML dump location
+out/
