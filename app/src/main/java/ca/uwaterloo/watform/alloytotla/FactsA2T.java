@@ -35,7 +35,7 @@ public class FactsA2T extends BoilerplateA2T {
             fp.qname.ifPresent(n -> comments.add(factName + " -> " + n));
             fp.strLit.ifPresent(str -> comments.add(factName + " -> " + str));
 
-            tlaModel.addDefn(TlaDefn(factName, new AlloyToTlaExprVis().visit(fp.block)));
+            tlaModel.addDefn(TlaDefn(factName, new AlloyToTlaExprVis().visit(fp.block).extract()));
         }
 
         tlaModel.addDefn(TlaDefn(ALL_FACTS, repeatedAnd(mapBy(factNames, fn -> TlaAppl(fn)))));

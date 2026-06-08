@@ -53,6 +53,9 @@ public class AlloyToTla extends StdLibsA2T {
         tlaModel.addComment("translation macros", verbose);
         addBoilerplate(tlaModel);
 
+        tlaModel.addComment("Predicates and functions", verbose);
+        addPredicatesFunctions(tlaModel);
+
         tlaModel.addComment("signature hierarchy", verbose);
         addSigHierarchy(tlaModel);
 
@@ -62,8 +65,8 @@ public class AlloyToTla extends StdLibsA2T {
         tlaModel.addComment("signature constraints", verbose);
         addSigConstraints(tlaModel);
 
-        tlaModel.addComment("scope constraints", verbose);
-        addScopeConstraints(tlaModel, cmdDecl);
+        // tlaModel.addComment("scope constraints", verbose);
+        // addScopeConstraints(tlaModel, cmdDecl);
 
         tlaModel.addComment("facts", verbose);
         addFacts(tlaModel);
