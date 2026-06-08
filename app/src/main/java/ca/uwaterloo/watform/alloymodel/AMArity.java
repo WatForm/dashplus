@@ -8,7 +8,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import java.util.*;
 
-public class AMArity extends AMPredTable {
+public class AMArity extends AMPredFcnTable {
 
     protected AMArity(AlloyFile alloyFile) {
         super(alloyFile);

@@ -22,6 +22,11 @@ public final class AlloyModelImplError extends ImplementationError {
                 "Trying to look up the arity of a symbol that is not a pred: " + s);
     }
 
+    public static AlloyModelImplError fcnNotFound(String s) {
+        return new AlloyModelImplError(
+                "Trying to look up the result of a symbol that is not a fcn: " + s);
+    }
+
     public static AlloyModelImplError lookUpWithNoName() {
         return new AlloyModelImplError(
                 "Trying to get a nameless paragraph from "

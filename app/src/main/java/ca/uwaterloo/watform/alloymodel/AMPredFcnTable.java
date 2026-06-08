@@ -10,16 +10,16 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 import java.util.function.BiFunction;
 
-public class AMPredTable extends AMSigTable {
+public class AMPredFcnTable extends AMSigTable {
 
     // maps predicate to its number of columns: #args+1
     private Map<String, Integer> predTable = new LinkedHashMap<>();
 
-    protected AMPredTable(AlloyFile alloyFile) {
+    protected AMPredFcnTable(AlloyFile alloyFile) {
         super(alloyFile);
     }
 
-    protected AMPredTable(AMPredTable other) {
+    protected AMPredFcnTable(AMPredFcnTable other) {
         super(other);
         this.predTable = new LinkedHashMap<>(other.predTable);
     }
