@@ -206,6 +206,9 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
         info(bracketExpr);
 
+        l.info("expr " + bracketExpr.expr);
+        l.info("exprs " + bracketExpr.exprs);
+
         throw ImplementationError.notSupported("Unimplemented method 'visit' for bracket");
     }
 
