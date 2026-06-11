@@ -18,7 +18,6 @@ import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result> {
@@ -27,15 +26,19 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     public final AlloyModel am;
 
     public static sealed interface Result permits TlaExpResult, MacroResult {}
-    public static record TlaExpResult(TlaExp exp) implements Result {}
-    public static record MacroResult(int numArgs, String name, List<TlaExp> args) implements Result {}
 
-    public TlaExp extract(Result r)
-    {
-        switch(r)
-        {
-            case TlaExpResult e: return e.exp;
-            default: throw new ImplementationError("error: unexpected result "+r.toString()+" of type "+r.getClass());
+    public static record TlaExpResult(TlaExp exp) implements Result {}
+
+    public static record MacroResult(int numArgs, String name, List<TlaExp> args)
+            implements Result {}
+
+    public TlaExp extract(Result r) {
+        switch (r) {
+            case TlaExpResult e:
+                return e.exp;
+            default:
+                throw new ImplementationError(
+                        "error: unexpected result " + r.toString() + " of type " + r.getClass());
         }
     }
 
@@ -48,8 +51,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         l.info("translating: " + e.toString() + " of type:" + e.getClass());
     }
 
-    
-
     @Override
     public Result visit(DashRef dashRef) {
 
@@ -60,26 +61,25 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
         var left = extract(visit(e.left));
         var rightResult = visit(e.right);
-        switch(rightResult)
-        {
-            case TlaExpResult tlaExpResultRight: {
-                var answer = _INNER_PRODUCT(left, extract(tlaExpResultRight));
-                return new TlaExpResult(answer);
-            }
-            case MacroResult macroResultRight: {
-
-                List<TlaExp> args = new ArrayList<>();
-                args.add(left);
-                args.addAll(macroResultRight.args);
-
-                if(args.size() == macroResultRight.numArgs)
+        switch (rightResult) {
+            case TlaExpResult tlaExpResultRight:
                 {
-                    var answer = TlaAppl(macroResultRight.name, args);
+                    var answer = _INNER_PRODUCT(left, extract(tlaExpResultRight));
                     return new TlaExpResult(answer);
                 }
-                else
-                    return new MacroResult(macroResultRight.numArgs, macroResultRight.name, args);
-            }
+            case MacroResult macroResultRight:
+                {
+                    List<TlaExp> args = new ArrayList<>();
+                    args.add(left);
+                    args.addAll(macroResultRight.args);
+
+                    if (args.size() == macroResultRight.numArgs) {
+                        var answer = TlaAppl(macroResultRight.name, args);
+                        return new TlaExpResult(answer);
+                    } else
+                        return new MacroResult(
+                                macroResultRight.numArgs, macroResultRight.name, args);
+                }
         }
     }
 
@@ -88,8 +88,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
         info(binExpr);
 
-        if (binExpr.getClass() == AlloyDotExpr.class) 
-            return translateDot((AlloyDotExpr) binExpr);
+        if (binExpr.getClass() == AlloyDotExpr.class) return translateDot((AlloyDotExpr) binExpr);
 
         TlaExp el = extract(this.visit(binExpr.left));
         TlaExp er = extract(this.visit(binExpr.right));
@@ -122,11 +121,10 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
                     default -> null; /* case  _ -> (el, er); */
                 };
 
-        if (answer != null) 
-            return new TlaExpResult(answer);
-            
+        if (answer != null) return new TlaExpResult(answer);
+
         throw ImplementationError.notSupported(
-            "non-translatable expression: " + binExpr.toString());
+                "non-translatable expression: " + binExpr.toString());
     }
 
     @Override
@@ -153,27 +151,23 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
                     default -> null;
                 };
 
-        if (answer != null)
-            return new TlaExpResult(answer);
-        
+        if (answer != null) return new TlaExpResult(answer);
+
         throw ImplementationError.notSupported(
-            "non-translatable expression: " + unaryExpr.toString());
+                "non-translatable expression: " + unaryExpr.toString());
     }
 
     public Result translateQnameExpr(AlloyQnameExpr exp) {
 
-        if (!am.allPreds().contains(exp.label))
-            return new TlaExpResult(TlaAppl(exp.label));
+        if (!am.allPreds().contains(exp.label)) return new TlaExpResult(TlaAppl(exp.label));
 
         int numArgs = am.getPredPara(exp.label).arguments.size();
 
-        l.info("translating macro " + exp.label + " with "+numArgs+" args ");
+        l.info("translating macro " + exp.label + " with " + numArgs + " args ");
 
-        if (numArgs == 0) 
-            return new TlaExpResult(TlaAppl(exp.label));
+        if (numArgs == 0) return new TlaExpResult(TlaAppl(exp.label));
 
         return new MacroResult(numArgs, exp.label, new ArrayList<TlaExp>());
-
     }
 
     @Override
@@ -189,18 +183,13 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
                     default -> null;
                 };
 
-        if(answer != null)
-            return new TlaExpResult(answer);
-        
+        if (answer != null) return new TlaExpResult(answer);
 
-        if (varExpr.getClass() == AlloyQnameExpr.class) 
+        if (varExpr.getClass() == AlloyQnameExpr.class)
             return translateQnameExpr((AlloyQnameExpr) varExpr);
-        
 
         throw ImplementationError.notSupported(
-                    "non-translatable expression: " + varExpr.toString());
-
-        
+                "non-translatable expression: " + varExpr.toString());
     }
 
     @Override
@@ -210,7 +199,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
         var answer = CreateHelper.repeatedAnd(mapBy(block.exprs, e -> extract(visit(e))));
         return new TlaExpResult(answer);
-
     }
 
     @Override
@@ -241,9 +229,8 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         {x1: e1, x2 : e2 | F} translated into {<<x1,x2>> \in e1 \X e2 : F}
         */
 
-
         var vars = mapBy(comprehensionExpr.decls, d -> TlaVar(d.qnames.get(0).toString()));
-        List<TlaExp> expressions = mapBy(comprehensionExpr.decls,d -> extract(visit(d.expr)));
+        List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> extract(visit(d.expr)));
 
         var product = repeatedProductSet(expressions);
 
@@ -255,7 +242,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         var condition = comprehensionExpr.body.map(e -> extract(visit(e))).orElse(TlaTrue());
 
         var answer = TlaSetFilter(head, condition);
-        return new TlaExpResult((TlaExp)answer);
+        return new TlaExpResult((TlaExp) answer);
     }
 
     @Override
@@ -267,11 +254,9 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         var conseq = extract(this.visit(iteExpr.conseq));
         var alt = extract(this.visit(iteExpr.alt));
 
-        var answer = CreateHelper.TlaIfThenElse(
-                        condition, conseq, alt);
-        
-        return new TlaExpResult(answer);
+        var answer = CreateHelper.TlaIfThenElse(condition, conseq, alt);
 
+        return new TlaExpResult(answer);
     }
 
     @Override
