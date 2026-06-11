@@ -5,24 +5,45 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.alloytotla.AlloyToTlaExprVis.AlloyToTlaTranslationContext;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationContext> {
 
+    public final Logger l;
+    public final AlloyModel am;
+
+    public AlloyToTlaExprVis(AlloyModel am, Logger l) {
+        this.l = l;
+        this.am = am;
+    }
+
+    public void info(AlloyExpr e) {
+        l.info("translating: " + e.toString() + " of type:" + e.getClass());
+    }
+
+    public sealed interface TranslationContext permits PredicateContext {}
+
+    public record PredicateContext(int num_args, List<? extends TlaExp> args, AlloyQnameExpr pred)
+            implements TranslationContext {}
+
     public static class AlloyToTlaTranslationContext {
         public final TlaExp core;
-        public final List<AlloyASTNode> stack;
+        public final List<TranslationContext> stack;
 
         public AlloyToTlaTranslationContext(TlaExp core) {
             this.core = core;
@@ -40,8 +61,108 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
         throw ImplementationError.notSupported("dashref inside pure AlloyVis");
     }
 
+    public AlloyToTlaTranslationContext translateDot(AlloyDotExpr e) {
+
+        l.info("Dot expr translation");
+        info(e);
+        /*
+        p[x,y,z]
+        x.p[y,z]
+        x.y.p[z]
+        x.y.z.p
+
+
+        f[a,b,c]
+        g[x,y,z]
+
+        x.y.g[a.b.c.f] == x.y.(a.b.c.f).g
+
+        */
+
+        /*
+        in case of dot_expr:
+        take the right context, if the core is not null then the interesting case happens
+        if the stack is empty, then normal translation
+        if the stack is not, pick an arbitrary predicate element of the stack, ep
+        add left.core to the front of ep-args
+        if ep-args length now matches the expected length, then convert
+        */
+
+        var left = visit(e.left);
+        var right = visit(e.right);
+
+        if (right.core != null) {
+            return new AlloyToTlaTranslationContext(_INNER_PRODUCT(left.core, right.core));
+        }
+
+        try {
+            var predCtxt =
+                    (PredicateContext)
+                            (filterBy(right.stack, x -> x.getClass() == PredicateContext.class)
+                                    .get(0));
+
+            var newargs = Arrays.asList(left.core);
+            newargs.addAll(predCtxt.args());
+            l.info("new args is:" + newargs.toString());
+            l.info("num_args is:" + predCtxt.num_args);
+
+            if (newargs.size() == predCtxt.num_args) {
+
+                l.info("collapsing case:");
+
+                var answerCore = TlaAppl(predCtxt.pred.label, newargs);
+                var answer = new AlloyToTlaTranslationContext(answerCore);
+                answer.stack.addAll(left.stack);
+                answer.stack.addAll(filterBy(right.stack, x -> !x.equals(predCtxt)));
+                return answer;
+            } else {
+
+                l.info("non-collapsing case");
+
+                var answer = new AlloyToTlaTranslationContext(null);
+
+                l.info("answer made");
+
+                answer.stack.addAll(left.stack);
+
+                l.info("left added");
+
+                answer.stack.addAll(filterBy(right.stack, x -> !x.equals(predCtxt)));
+
+                l.info("right added");
+
+                var newPredCtxt = new PredicateContext(predCtxt.num_args, newargs, predCtxt.pred);
+                answer.stack.add(newPredCtxt);
+
+                l.info("new predctxt added");
+
+                l.info("new answer core: " + answer.core);
+                l.info("new answer stack: " + answer.stack);
+
+                return answer;
+            }
+        } catch (Exception exception) {
+
+            l.info("there is an error here");
+            l.info("trying to translate:" + e);
+            l.info("e.right is " + e.right);
+            l.info("e.left is: " + e.left);
+            l.info("right core is: " + right.core);
+            l.info("left core is: " + left.core);
+            throw ImplementationError.notSupported(
+                    "something went wrong with predicate arguments - "
+                            + exception.toString()
+                            + " in "
+                            + e.toString());
+        }
+    }
+
     @Override
     public AlloyToTlaTranslationContext visit(AlloyBinaryExpr binExpr) {
+
+        info(binExpr);
+
+        if (binExpr.getClass() == AlloyDotExpr.class) return translateDot((AlloyDotExpr) binExpr);
 
         var leftContext = this.visit(binExpr.left);
         var rightContext = this.visit(binExpr.right);
@@ -89,6 +210,8 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
     @Override
     public AlloyToTlaTranslationContext visit(AlloyUnaryExpr unaryExpr) {
 
+        info(unaryExpr);
+
         var context = visit(unaryExpr.sub);
         TlaExp e = context.extract();
 
@@ -116,28 +239,55 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
                     "non-translatable expression: " + unaryExpr.toString());
     }
 
+    public AlloyToTlaTranslationContext translateQnameExpr(AlloyQnameExpr exp) {
+        if (!am.allPreds().contains(exp.label))
+            return new AlloyToTlaTranslationContext(TlaAppl(exp.label));
+
+        int num_args = am.predArity(exp.label) - 1;
+
+        l.info("translating " + exp.label + " of args " + num_args);
+        // pred of arity 1 has zero args
+        if (num_args == 0) return new AlloyToTlaTranslationContext(TlaAppl(exp.label));
+
+        var answer = new AlloyToTlaTranslationContext(null);
+        answer.stack.add(new PredicateContext(num_args, new ArrayList<>(), exp));
+
+        return answer;
+    }
+
     @Override
     public AlloyToTlaTranslationContext visit(AlloyVarExpr varExpr) {
+
+        info(varExpr);
 
         TlaExp answer =
                 switch (varExpr) {
                     case AlloyUnivExpr _ -> _UNIV();
                     case AlloyIdenExpr _ -> _IDEN();
                     case AlloyNoneExpr _ -> _NONE();
-                    case AlloyQnameExpr e -> TlaAppl(e.label);
                     default -> null;
                 };
+
+        if (varExpr.getClass() == AlloyQnameExpr.class) {
+            return translateQnameExpr((AlloyQnameExpr) varExpr);
+        }
 
         if (answer != null) {
             var context = new AlloyToTlaTranslationContext(answer);
             return context;
-        } else
+        } else {
+            if (varExpr.getClass() == AlloyQnameExpr.class) {
+                return translateQnameExpr((AlloyQnameExpr) varExpr);
+            }
             throw ImplementationError.notSupported(
                     "non-translatable expression: " + varExpr.toString());
+        }
     }
 
     @Override
     public AlloyToTlaTranslationContext visit(AlloyBlock block) {
+
+        info(block);
 
         List<AlloyToTlaTranslationContext> statementContexts =
                 mapBy(block.exprs, e -> this.visit(e));
@@ -150,11 +300,15 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
     @Override
     public AlloyToTlaTranslationContext visit(AlloyBracketExpr bracketExpr) {
 
+        info(bracketExpr);
+
         throw ImplementationError.notSupported("Unimplemented method 'visit' for bracket");
     }
 
     @Override
     public AlloyToTlaTranslationContext visit(AlloyCphExpr comprehensionExpr) {
+
+        info(comprehensionExpr);
 
         /*
         alloy:
@@ -196,6 +350,8 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
     @Override
     public AlloyToTlaTranslationContext visit(AlloyIteExpr iteExpr) {
 
+        info(iteExpr);
+
         var conditionContext = this.visit(iteExpr.cond);
         var conseqContext = this.visit(iteExpr.conseq);
         var altContext = this.visit(iteExpr.alt);
@@ -214,18 +370,21 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
     @Override
     public AlloyToTlaTranslationContext visit(AlloyLetExpr letExpr) {
 
+        info(letExpr);
+
         throw ImplementationError.notSupported("Unimplemented method 'visit' for let");
     }
 
     @Override
     public AlloyToTlaTranslationContext visit(AlloyQuantificationExpr quantificationExpr) {
-
+        info(quantificationExpr);
         throw ImplementationError.notSupported("Unimplemented method 'visit' for quantification");
     }
 
     @Override
     public AlloyToTlaTranslationContext visit(AlloyDecl decl) {
 
+        info(decl);
         throw ImplementationError.notSupported("Unimplemented method 'visit' for decl");
     }
 }

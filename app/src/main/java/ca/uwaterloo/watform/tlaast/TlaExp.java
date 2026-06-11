@@ -26,6 +26,11 @@ public abstract class TlaExp extends ASTNode {
     }
 
     @Override
+    public String toString() {
+        return toTLAPlusSnippetCore();
+    }
+
+    @Override
     public void toString(StringBuilder sb, int ident) {
         sb.append(this.toTLAPlusSnippet(false));
         return;

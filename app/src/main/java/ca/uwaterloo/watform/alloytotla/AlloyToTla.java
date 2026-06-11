@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaAppl;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -23,8 +24,6 @@ public class AlloyToTla extends StdLibsA2T {
 
         List<AlloyCmdPara> paras = alloyModel.allCmdParas();
 
-        l.info(paras.toString());
-
         List<AlloyCmdPara.CommandDecl> cmdDecls = new ArrayList<>();
         for (var p : paras) {
             cmdDecls.addAll(p.cmdDecls);
@@ -45,6 +44,9 @@ public class AlloyToTla extends StdLibsA2T {
     }
 
     public void translate(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
+
+        l.info(TlaAppl("test").toTLAPlusSnippetCore());
+
         addStdLibs(tlaModel);
         addSigConsts(tlaModel);
         addSigVars(tlaModel);

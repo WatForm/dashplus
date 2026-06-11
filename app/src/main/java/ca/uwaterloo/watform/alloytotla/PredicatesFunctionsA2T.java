@@ -18,16 +18,16 @@ class PredicatesFunctionsA2T extends NextDefnA2T {
     }
 
     protected void addPredicatesFunctions(TlaModel tlaModel) {
-        testing(tlaModel);
+        // testing(tlaModel);
 
         for (var p : alloyModel.allPredParas()) {
-            TlaExp body = new AlloyToTlaExprVis().visit(p.block).extract();
+            TlaExp body = translateSnippet(p.block);
             List<TlaVar> args = mapBy(p.arguments, decl -> TlaVar(decl.getName()));
             tlaModel.addDefn(new TlaDefn(new TlaDecl(p.getName(), args), body));
         }
 
         for (var p : alloyModel.allFunParas()) {
-            TlaExp body = new AlloyToTlaExprVis().visit(p.block).extract();
+            TlaExp body = translateSnippet(p.block);
             List<TlaVar> args = mapBy(p.arguments, decl -> TlaVar(decl.getName()));
             tlaModel.addDefn(new TlaDefn(new TlaDecl(p.qname.getName(), args), body));
         }

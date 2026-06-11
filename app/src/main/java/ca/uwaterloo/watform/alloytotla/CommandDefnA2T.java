@@ -50,10 +50,7 @@ public class CommandDefnA2T extends NextDefnA2T {
 
         // TODO invokeQname, which is an alternative for the block
 
-        TlaExp block =
-                cmdDecl.constrBlock
-                        .map(b -> (new AlloyToTlaExprVis().visit(b).extract()))
-                        .orElse(TlaTrue());
+        TlaExp block = cmdDecl.constrBlock.map(b -> (translateSnippet(b))).orElse(TlaTrue());
 
         block = block.AND(augmentedTrue());
         if (isRun) block = TlaNot(block);

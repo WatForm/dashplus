@@ -68,6 +68,12 @@ public class InitDefnA2T extends FieldsA2T {
         return scopeConstraints;
     }
 
+    protected TlaExp cmdBody(AlloyCmdPara.CommandDecl cmdDecl) {
+        TlaExp core = cmdDecl.constrBlock.map(b -> translateSnippet(b)).orElse(TlaTrue());
+        if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) core = TlaNot(core);
+        return core;
+    }
+
     protected void addInitDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
         List<TlaExp> exps = membershipConstraintsTopLevelSigs(cmdDecl);
 
@@ -75,6 +81,7 @@ public class InitDefnA2T extends FieldsA2T {
         exps.add(TlaAppl(FIELD_TYPES));
         exps.add(TlaAppl(ALL_SIG_CONSTRAINTS));
         exps.add(TlaAppl(ALL_FACTS));
+        exps.add(cmdBody(cmdDecl));
 
         tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
     }
