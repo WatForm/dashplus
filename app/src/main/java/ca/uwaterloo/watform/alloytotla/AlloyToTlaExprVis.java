@@ -76,6 +76,8 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
 
         x.y.g[a.b.c.f] == x.y.(a.b.c.f).g
 
+        NOTE: this works properly
+
         */
 
         /*
