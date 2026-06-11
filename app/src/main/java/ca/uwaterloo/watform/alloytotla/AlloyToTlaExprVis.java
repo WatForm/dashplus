@@ -26,6 +26,10 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
     public final Logger l;
     public final AlloyModel am;
 
+    public static sealed interface Result permits TlaExpResult, MacroResult {}
+    public static record TlaExpResult(TlaExp e) implements Result {}
+    public static record MacroResult(int numArgs, String name, List<TlaExp> args) implements Result {}
+
     public AlloyToTlaExprVis(AlloyModel am, Logger l) {
         this.l = l;
         this.am = am;
