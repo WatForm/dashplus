@@ -17,7 +17,7 @@ public class BaseA2T {
 
         l.info("translating core:" + e.toString());
 
-        return translator.visit(e).core;
+        return translator.extract(translator.visit(e));
     }
 
     public BaseA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
