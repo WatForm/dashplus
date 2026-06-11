@@ -17,7 +17,6 @@ import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
@@ -96,13 +95,24 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
         }
 
         try {
+
+            l.info("entering try block");
+
             var predCtxt =
                     (PredicateContext)
                             (filterBy(right.stack, x -> x.getClass() == PredicateContext.class)
                                     .get(0));
 
-            var newargs = Arrays.asList(left.core);
-            newargs.addAll(predCtxt.args());
+            l.info("extracted predctxt: " + predCtxt);
+
+            var newargs = new ArrayList<TlaExp>();
+            newargs.add(left.core);
+            l.info("instantiated newargs");
+            try {
+                for (var arg : predCtxt.args) newargs.add((TlaExp) arg);
+            } catch (Exception ec) {
+                l.info("isolated the problem");
+            }
             l.info("new args is:" + newargs.toString());
             l.info("num_args is:" + predCtxt.num_args);
 
