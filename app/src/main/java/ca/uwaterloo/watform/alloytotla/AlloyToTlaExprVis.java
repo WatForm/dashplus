@@ -148,6 +148,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaTranslationCont
             l.info("e.right is " + e.right);
             l.info("e.left is: " + e.left);
             l.info("right core is: " + right.core);
+            l.info("right stack is:" + right.stack);
             l.info("left core is: " + left.core);
             throw ImplementationError.notSupported(
                     "something went wrong with predicate arguments - "
