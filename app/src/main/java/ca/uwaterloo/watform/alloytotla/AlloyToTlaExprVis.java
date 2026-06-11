@@ -70,8 +70,9 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
             case MacroResult macroResultRight:
                 {
                     List<TlaExp> args = new ArrayList<>();
-                    args.add(left);
                     args.addAll(macroResultRight.args);
+                    args.add(left);
+                    
 
                     if (args.size() == macroResultRight.numArgs) {
                         var answer = TlaAppl(macroResultRight.name, args);
@@ -205,6 +206,12 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     public Result visit(AlloyBracketExpr bracketExpr) {
 
         info(bracketExpr);
+
+        /*
+        case 1: a[b]  -  no predicates at all
+        case 2: p[x1...] - complete predicate
+        case 3: p[y1...] - incomplete predicate
+        */
 
         l.info("expr " + bracketExpr.expr);
         l.info("exprs " + bracketExpr.exprs);
