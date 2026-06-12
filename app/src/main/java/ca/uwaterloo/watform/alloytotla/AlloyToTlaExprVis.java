@@ -208,15 +208,42 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         info(bracketExpr);
 
         /*
-        case 1: a[b]  -  no predicates at all
-        case 2: p[x1...] - complete predicate
-        case 3: p[y1...] - incomplete predicate
+
+        a[b] = b.a
+        bracketExpr.expr = a
+        bracketExpr.exprs = [b]
         */
 
         l.info("expr " + bracketExpr.expr);
         l.info("exprs " + bracketExpr.exprs);
 
-        throw ImplementationError.notSupported("Unimplemented method 'visit' for bracket");
+        var leftResult = visit(bracketExpr.expr);
+
+        switch(leftResult)
+        {
+            case TlaExpResult leftTlaExpResult: {
+                if(bracketExpr.exprs.size() != 1)
+                throw new ImplementationError("malformed bracket expression: "+bracketExpr);
+                var right = bracketExpr.exprs.get(0);
+                var answer = _INNER_PRODUCT(extract(visit(right)), leftTlaExpResult.exp);
+                return new TlaExpResult(answer);
+            }
+            case MacroResult leftMacroResult: {
+                var args = new ArrayList<TlaExp>();
+                args.addAll(leftMacroResult.args);
+                args.addAll(mapBy(bracketExpr.exprs, e -> extract(visit(e))));
+                if(args.size() == leftMacroResult.numArgs)
+                {
+                    var answer = TlaAppl(leftMacroResult.name, args);
+                    return new TlaExpResult(answer);
+                }
+                else
+                {
+                    return new MacroResult(leftMacroResult.numArgs, leftMacroResult.name, args);
+                }
+            }
+        }
+
     }
 
     @Override
