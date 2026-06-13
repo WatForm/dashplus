@@ -86,6 +86,10 @@ public interface AlloyExprVis<T> {
         return visit((AlloyBinaryExpr) expr);
     }
 
+    default T visit(AlloyEqualsExpr expr) {
+        return visit((AlloyBinaryExpr) expr);
+    }
+
     default T visit(AlloyFunAddExpr expr) {
         return visit((AlloyBinaryExpr) expr);
     }
@@ -115,6 +119,10 @@ public interface AlloyExprVis<T> {
     }
 
     default T visit(AlloyIntersExpr expr) {
+        return visit((AlloyBinaryExpr) expr);
+    }
+
+    default T visit(AlloyNotEqualsExpr expr) {
         return visit((AlloyBinaryExpr) expr);
     }
 

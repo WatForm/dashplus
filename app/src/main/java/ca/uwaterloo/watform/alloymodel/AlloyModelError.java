@@ -23,8 +23,16 @@ public final class AlloyModelError extends UserOrImplError {
         return new AlloyModelError(p, "Unknown arity: " + s);
     }
 
-    public static AlloyModelError wrongNumberArgs(Pos p, String s) {
-        return new AlloyModelError(p, "Wrong number of arguments to predicate: " + s);
+    public static AlloyModelError wrongNumberArgs(Pos p, String s, Integer i, Integer j) {
+        return new AlloyModelError(
+                p,
+                "Wrong number of arguments to predicate/function (expected "
+                        + Integer.toString(i)
+                        + "): "
+                        + s
+                        + " (is "
+                        + Integer.toString(j)
+                        + ")");
     }
 
     public static AlloyModelError duplicateName(Pos pos1, String name) {
@@ -61,6 +69,25 @@ public final class AlloyModelError extends UserOrImplError {
                 pos, "Arity mismatch between: " + leftExpr + " and " + rightExpr);
     }
 
+    public static AlloyModelError arityMismatchPredFunCall(
+            Pos pos, String predFunCall, String expr, Integer expectedArity, Integer arity) {
+        return new AlloyModelError(
+                pos,
+                "Arity mismatch in arg (expecting arity "
+                        + Integer.toString(expectedArity)
+                        + ") to pred/fun "
+                        + predFunCall
+                        + ": "
+                        + expr
+                        + " (has arity: "
+                        + Integer.toString(arity)
+                        + ")");
+    }
+
+    public static AlloyModelError missingArgsToPredFunCall(Pos pos, String expr) {
+        return new AlloyModelError(pos, "Missing args to pred/fun call: " + expr);
+    }
+
     public static AlloyModelError mustBeFormula(Pos pos, String expr) {
         return new AlloyModelError(pos, "Must be formula: " + expr);
     }
@@ -70,7 +97,15 @@ public final class AlloyModelError extends UserOrImplError {
     }
 
     public static AlloyModelError mustBeUnary(Pos pos, String expr) {
-        return new AlloyModelError(pos, "Must be binary: " + expr);
+        return new AlloyModelError(pos, "Must be unary: " + expr);
+    }
+
+    public static AlloyModelError mustBeDotOrBoxJoin(Pos pos, String expr) {
+        return new AlloyModelError(pos, "Must be dot or box join: " + expr);
+    }
+
+    public static AlloyModelError predFunNeedsArgs(Pos pos, String expr) {
+        return new AlloyModelError(pos, "pred/fun needs args: " + expr);
     }
 
     public static AlloyModelError sigsInCycle(String sigs) {

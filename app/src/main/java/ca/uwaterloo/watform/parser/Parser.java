@@ -5,6 +5,9 @@ import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyParaParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -164,5 +167,39 @@ public class Parser {
         }
         Reporter.INSTANCE.exitIfHasErrors();
         return cmd;
+    }
+
+    public static AlloyExpr parseExpr(String s) {
+        CharStream input = CharStreams.fromString(s);
+        BailLexer lexer = new BailLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        BailParser parser = new BailParser(tokens);
+        ParseTree antlrAST = parser.expr1();
+        AlloyExprParseVis afpv = new AlloyExprParseVis();
+        AlloyExpr expr = null;
+        try {
+            expr = afpv.visit((DashParser.Expr1Context) antlrAST);
+        } catch (AlloyCtorError alloyCtorError) {
+            Reporter.INSTANCE.addError(alloyCtorError);
+        }
+        Reporter.INSTANCE.exitIfHasErrors();
+        return expr;
+    }
+
+    public static AlloyDecl parseDecl(String s) {
+        CharStream input = CharStreams.fromString(s);
+        BailLexer lexer = new BailLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        BailParser parser = new BailParser(tokens);
+        ParseTree antlrAST = parser.decl();
+        AlloyExprParseVis afpv = new AlloyExprParseVis();
+        AlloyDecl decl = null;
+        try {
+            decl = afpv.visitDecl((DashParser.DeclContext) antlrAST);
+        } catch (AlloyCtorError alloyCtorError) {
+            Reporter.INSTANCE.addError(alloyCtorError);
+        }
+        Reporter.INSTANCE.exitIfHasErrors();
+        return decl;
     }
 }

@@ -197,6 +197,11 @@ public class AlloyExprFactory {
         return new AlloyQtExpr(AlloyQtEnum.LONE, sub);
     }
 
+    // one sub
+    public static AlloyExpr AlloyOne(AlloyExpr sub) {
+        return new AlloyQtExpr(AlloyQtEnum.ONE, sub);
+    }
+
     // no sub
     public static AlloyExpr AlloyNo(AlloyExpr sub) {
         return new AlloyQtExpr(AlloyQtEnum.NO, sub);
@@ -270,5 +275,15 @@ public class AlloyExprFactory {
 
     public static boolean isSeq(AlloyExpr expr) {
         return (expr instanceof AlloyQtExpr && ((AlloyQtExpr) expr).qt.equals(AlloyQtEnum.SEQ));
+    }
+
+    public static boolean isSeqDecl(AlloyDecl declExpr) {
+        return (declExpr.mul.isPresent() && declExpr.mul.get().equals(AlloyQtEnum.SEQ));
+    }
+
+    // Seq is strange as a decl so make a special case for it
+    // s: seq expr (SEQ is the mul of the decl -- not the expr)
+    public static AlloyDecl AlloySeqDecl(String s, AlloyExpr expr) {
+        return new AlloyDecl(AlloyVar(s), AlloyQtEnum.SEQ, expr);
     }
 }

@@ -2,44 +2,45 @@
 
 ## AlloyModel Chain of Classes
 
-These all store parts of the Alloy Model:
+The following store info about the model beyond the paragraphs.
+For resolving these, fieldArityAndSetMul are used and info about
+arities is updated during resolve.
 AMFieldTable
 AMSigTable
-AMPredTable
-AMArity
-	- everything below this has arity fcn passed down in resolve
+AMPredFunTable
+AMArity - when the arity checking functions are set up; the collection
+          of tables below this are used in arity checking for each other
 
-AMEnums
-AMSigs
-AMPreds
+The following use only setMul because resolving them can't change 
+the multiplicites of any symbols
+AMEnums - adds to SigTable
+AMSigs - adds to SigTable, FieldTable
+AMPreds - add to PredFunTable
+AMFuns - add to PredFunTable
 AMModules
 AMImports
 AMMacros
-AMFuns
-
 AMFacts
 AMAsserts
 AMCmds
 AlloyModel
 
-All AMxxx are initialized with an empty list so that a model can be created completely through the API.
-
-Any API additions of paragraphs are immediately checked for arity and default multiplicities so additional paragraphs must have sig declarations added before being used in another paragraph.
+All AMxxx(notTable) are initialized with an empty list so that a model can be created completely through the API.
 
 ### Initalization
 
-When creating via an AlloyFile, copy of another AlloyModel, or through the API, all tables, and lists are initialized, but default muls and arities are not yet calculated.  This becauses pred/sigs/fields can be used before they are declared.
+When creating via an AlloyFile, copy of another AlloyModel, or through the API, all tables, and lists are initialized, but default muls and arities are not calculated.  
 
 ### Resolving
 
 In the use of an Alloy Model, it must be resolved before it is final.
+- Done in CLI when parse Alloy File.
+- Done in Dash2Alloy at very end.
+- Should be done in predAbs or DashToTla?
 
-Done in CLI when parse Alloy File.
+### Creating an AlloyModel through API calls
 
-Done in Dash2Alloy at very end.
-
-Should be done in predAbs or DashToTla
-
+Any API additions of paragraphs are NOT checked for arity and default multiplicities.  The "resolve" phase of an AlloyModel is a separate check that the user can call.  This is because declarations are not required before use in Alloy.
 
 
 ## Additional Classes

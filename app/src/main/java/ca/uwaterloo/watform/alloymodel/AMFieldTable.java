@@ -53,7 +53,7 @@ public class AMFieldTable {
     // might be allFields (on initialization) or some fields from sigs added (on addSig)
     // sets arities in fieldTable and default mul in field Types
     protected void resolve(
-            BiFunction<AlloyExpr, String, CalcAritySetMulDefaultsExprVis.Result>
+            BiFunction<AlloyExpr, Optional<String>, CalcAritySetMulDefaultsExprVis.Result>
                     fieldArityAndSetMul) {
 
         // set up for getChildren function
@@ -81,7 +81,7 @@ public class AMFieldTable {
             // System.out.println(fieldExpr);
             // this is a field expression so we need the Boolean arg to arityAndSetMul to be True
             CalcAritySetMulDefaultsExprVis.Result result =
-                    fieldArityAndSetMul.apply(fieldExpr, this.fieldParent(fieldName));
+                    fieldArityAndSetMul.apply(fieldExpr, Optional.of(this.fieldParent(fieldName)));
 
             // fields have +1 in arity than returned here b/c of sig
             int fieldArity = result.arity.map(b -> b + 1).orElse(null);

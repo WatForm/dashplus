@@ -8,7 +8,7 @@ import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import java.util.*;
 
-public class AMArity extends AMPredFcnTable {
+public class AMArity extends AMPredFunTable {
 
     protected AMArity(AlloyFile alloyFile) {
         super(alloyFile);
@@ -27,14 +27,12 @@ public class AMArity extends AMPredFcnTable {
     // if sigParent has a value, we must be checking a field bounding expression
     // if the symbolName has a parent == sigParent, then that's allowed
     // but the arity of the symbol is reduced by 1
-    protected Optional<Integer> symbolArity(String symbolName, Optional<String> sigParent) {
+    protected Optional<Integer> sigFieldArity(String symbolName, Optional<String> sigParent) {
         // enums will be in allSigs
         // System.out.println("symbolArity " + symbolName);
         if (this.allSigs().contains(symbolName)) {
-            // System.out.println("here1");
             return Optional.of(1);
         } else if (this.allFields().contains(symbolName)) {
-            // System.out.println("here2");
             // if symbol has same parent sig as the field we are checking
             // it is allowed but the arity is not -1 the arity returned from the fieldTable
             if (sigParent.isPresent())
@@ -52,25 +50,40 @@ public class AMArity extends AMPredFcnTable {
                 return this.fieldArity(symbolName);
             }
         } else if (Builtins.isBuiltin(symbolName)) {
-            // System.out.println("here3");
+            // TODO: this may change once we can read imports
             return Optional.of(Builtins.builtinArity(symbolName));
-        } else if (this.isPred(symbolName)) {
-            // System.out.println("here4");
-            return Optional.of(this.predArity(symbolName));
         } else {
-            // unknown arity
-            return UNKNOWN_ARITY;
-            // throw ImplementationError.missingCase("symbol " + symbolName + " not found
-            // (symbolArity) " + symbolNam);
+            // arity visitor determines if this is an error
+            return Optional.empty();
+        }
+    }
+
+    protected Optional<Integer> predFunReturnArity(String symbolName) {
+        if (this.isPred(symbolName) || this.isFun(symbolName)) {
+            return this.predFunTableReturnArity(symbolName);
+        } else {
+            // arity visitor determines if this is an error
+            return Optional.empty();
+        }
+    }
+
+    protected List<Optional<Integer>> predFunArgsArities(String symbolName) {
+        if (this.isPred(symbolName) || this.isFun(symbolName)) {
+            return this.predFunTableArgsArities(symbolName);
+        } else {
+            // arity visitor determines if this is an error
+            return emptyList();
         }
     }
 
     // same visitor object used everywhere
     private CalcAritySetMulDefaultsExprVis arityAndMulCalcVis =
-            new CalcAritySetMulDefaultsExprVis(this::symbolArity);
+            new CalcAritySetMulDefaultsExprVis(
+                    this::sigFieldArity, this::predFunReturnArity, this::predFunArgsArities);
 
     // this is used when we are getting back arity for the fieldTable
-    CalcAritySetMulDefaultsExprVis.Result fieldArityAndSetMul(AlloyExpr e, String sigParent) {
+    CalcAritySetMulDefaultsExprVis.Result fieldArityAndSetMul(
+            AlloyExpr e, Optional<String> sigParent) {
         return arityAndMulCalcVis.fieldArityAndSetMul(e, sigParent);
     }
 

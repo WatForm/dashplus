@@ -54,14 +54,14 @@ public class AMPreds extends AMSigs {
     // for adding via API
     public void addPredPara(AlloyPredPara predPara) {
 
-        this.addToPredTable(predPara);
+        this.addPredToPredFunTable(predPara);
         this.preds.add(predPara);
     }
 
     public void removePredPara(String predName) {
         // remember that model must be resolved after this
         this.preds.removeIf(p -> p.getName().equals(predName));
-        this.removeFromPredTable(predName);
+        this.removePredFromPredFunTable(predName);
     }
 
     public List<AlloyPredPara> allPredParas() {

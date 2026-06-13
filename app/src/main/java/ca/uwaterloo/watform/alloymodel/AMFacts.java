@@ -14,7 +14,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
 import java.util.*;
 
-public class AMFacts extends AMFuns {
+public class AMFacts extends AMMacros {
 
     // importParas never have names
     protected List<AlloyFactPara> facts = emptyList();

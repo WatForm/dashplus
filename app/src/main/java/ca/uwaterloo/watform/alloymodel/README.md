@@ -137,8 +137,7 @@ pred myPred(this: one S, arg1: T1, arg2: T2) {
 
 
 
-## Decl & Multiplicity
-- x : X, if X is unary relation, default multiplicity is one
+
 
 ### Typechecking
 - in sig it's a relation 

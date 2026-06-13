@@ -159,6 +159,10 @@ public final class AlloyFunPara extends AlloyPara {
         }
     }
 
+    public String getName() {
+        return this.qname.toString();
+    }
+
     @Override
     public AlloyId getId() {
         return new AlloyId(

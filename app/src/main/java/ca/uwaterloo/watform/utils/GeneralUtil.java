@@ -120,6 +120,11 @@ public class GeneralUtil {
         return ll.subList(1, ll.size());
     }
 
+    public static <T> List<T> lastn(List<T> ll, Integer n) {
+        assert (n < ll.size());
+        return ll.subList(ll.size() - n, ll.size());
+    }
+
     public static List<Integer> listOfInt(int start, int stop) {
         assert (start <= stop);
         List<Integer> x = new ArrayList<Integer>();

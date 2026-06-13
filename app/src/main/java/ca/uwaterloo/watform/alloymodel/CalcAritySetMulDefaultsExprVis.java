@@ -2,21 +2,20 @@
 
 Calculate arities and
 set default multiplicities in any expr
-* every visit function returns a Result that contains both an arity and an expr with mul defaults set within it
+* every visit function returns a Result that contains both an arity and an expr with mul defaults set within it; it may include a list of arities for arguments to a pred/fun
 * if there are arities errors or we can't calc arity enough to figure out mul defaults, an AlloyModelError exception is thrown
 
 1) Calculate arities
-* a certain about of UNKNOWN is tolerated; we can't yet know the arity of bracketExpr (p[a,b,c])
+* a certain about of UNKNOWN is tolerated, but in the future we may want to remove this
 so errors are only thrown if we NEED to know that arity to set mul defaults.
 * Booleans are treated as arity 1 (no typechecking is done) so that predicates can be processed as both p[a,b,c] and c.b.a.p
 
 2) Mul Defaults:
-* if an arrow doesn't have a mul, it becomes SET
+* if an arrow doesn't have a mul at an end, it becomes SET
 * in a decl, if expr is unary and no mul, mul becomes ONE
 * in a decl, if expr is not unary and no mul, mul becomes SET and issues a Warning
 
-Errors detected
-    - decls of a comprehension expr must be unary sets
+
 */
 
 package ca.uwaterloo.watform.alloymodel;
@@ -38,16 +37,51 @@ import ca.uwaterloo.watform.utils.ImplementationError;
 import ca.uwaterloo.watform.utils.Reporter;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class CalcAritySetMulDefaultsExprVis
         implements AlloyExprVis<CalcAritySetMulDefaultsExprVis.Result> {
 
     // provided function on initialization
     // gets the arity for an individual name
-    private BiFunction<String, Optional<String>, Optional<Integer>> symbolArity;
+    private BiFunction<String, Optional<String>, Optional<Integer>> sigFieldArity;
+    private Function<String, Optional<Integer>> predFunReturnArity;
+    private Function<String, List<Optional<Integer>>> predFunArgsArities;
     private Optional<String> sigParent = Optional.empty();
 
-    // ---------
+    // constructor
+    public CalcAritySetMulDefaultsExprVis(
+            BiFunction<String, Optional<String>, Optional<Integer>> sigFieldArity,
+            Function<String, Optional<Integer>> predFunReturnArity,
+            Function<String, List<Optional<Integer>>> predFunArgsArities) {
+
+        // set up empty stack for localArities
+        this.localArities = new ArrayDeque<>();
+        // these functions may change their answers
+        // as field arities are determined
+        // during resolve, predicate paragraphs are resolved etc.
+        this.sigFieldArity = sigFieldArity;
+        this.predFunReturnArity = predFunReturnArity;
+        this.predFunArgsArities = predFunArgsArities;
+    }
+
+    // one kind of top-level call
+    // used when walking over Tables and we want to store arities
+    // because they will be used in the future
+    public Result fieldArityAndSetMul(AlloyExpr e, Optional<String> sigParent) {
+        this.sigParent = sigParent;
+        return this.visit(e);
+    }
+
+    // another top-level call
+    // used for walking over paragraphs where we don't need to know
+    // the resulting multiplicities
+    public Result setMul(AlloyExpr e) {
+        this.sigParent = Optional.empty();
+        return this.visit(e);
+    }
+
+    // ---------------------------------------------------------
     // need a context of arities for let expressions, quantified variables, etc.
     // needs to be a stack to pop vars on and off
 
@@ -70,54 +104,14 @@ public class CalcAritySetMulDefaultsExprVis
         return Optional.empty();
     }
 
-    // visit() returns a Result
-    // instead of using Optional<Integer>, we used arity of UNKNOWN
-    // if arity is UNKNOWN then exp is empty
-
-    class Result {
-        final Optional<Integer> arity;
-        final AlloyExpr exp;
-
-        Result(Optional<Integer> arity, AlloyExpr exp) {
-            this.arity = arity;
-            this.exp = exp;
-        }
-
-        Result(AlloyExpr exp) {
-            this.arity = UNKNOWN_ARITY;
-            this.exp = exp;
-        }
-    }
-
-    // -------
-
-    // constructor
-    public CalcAritySetMulDefaultsExprVis(
-            BiFunction<String, Optional<String>, Optional<Integer>> symbolArity) {
-        // set up empty stack for localArities
-        this.localArities = new ArrayDeque<>();
-        // this is the symbol table for arities of symbols
-        // some of it may not be filled in yet
-        this.symbolArity = symbolArity;
-    }
-
-    // one kind of top-level call
-    public Result fieldArityAndSetMul(AlloyExpr e, String sigParent) {
-        this.sigParent = Optional.of(sigParent);
-        return this.visit(e);
-    }
-
-    // other top-level call
-    public Result setMul(AlloyExpr e) {
-        this.sigParent = Optional.empty();
-        return this.visit(e);
-    }
-
-    private Optional<Integer> arity(String n) {
+    // the arity of a symbol is a combination of anything in the local context
+    // and the passed in sigFieldArity function
+    private Optional<Integer> symbolArity(String n) {
         Optional<Integer> x = localLookup(n);
-        return x.isPresent() ? x : this.symbolArity.apply(n, this.sigParent);
+        return x.isPresent() ? x : this.sigFieldArity.apply(n, this.sigParent);
     }
 
+    // the following are used outside this arity checker for fun/pred paragraphs
     // for use by a predicate or function paragraphs in Alloy
     // it has local decls
     public void localEnvPush(List<AlloyDecl> decls) {
@@ -133,179 +127,527 @@ public class CalcAritySetMulDefaultsExprVis
         }
     }
 
+    // ----------------------------------------------------
+
+    // visit() returns a Result
+
+    class Result {
+        final Optional<Integer> arity;
+        final AlloyExpr exp;
+        // these are the arities of expected arguments to a pred/fun
+        final List<Optional<Integer>> argArities;
+
+        Result(Optional<Integer> arity, AlloyExpr exp) {
+            this.arity = arity;
+            this.exp = exp;
+            this.argArities = emptyList();
+        }
+
+        Result(AlloyExpr exp) {
+            this.arity = UNKNOWN_ARITY;
+            this.exp = exp;
+            this.argArities = emptyList();
+        }
+
+        Result(List<Optional<Integer>> argArities, Optional<Integer> arity, AlloyExpr exp) {
+            this.argArities = argArities;
+            this.arity = arity;
+            this.exp = exp;
+        }
+    }
+
+    // helper functions for conditions that should throw errors in arity checking
+    private void notUnknown(Result r) {
+        if (r.arity.equals(UNKNOWN_ARITY)) {
+            throw AlloyModelError.unknownArity(r.exp.pos, r.exp.toString());
+        }
+    }
+
+    private void noArgArities(Result leftResult, Result rightResult) {
+        if (!leftResult.argArities.isEmpty() || (!rightResult.argArities.isEmpty()))
+            throw AlloyModelError.mustBeDotOrBoxJoin(leftResult.exp.pos, leftResult.exp.toString());
+    }
+
+    private void noArgArities(Result result) {
+        if (!result.argArities.isEmpty())
+            throw AlloyModelError.mustBeDotOrBoxJoin(result.exp.pos, result.exp.toString());
+    }
+
+    private void equalArities(Result leftResult, Result rightResult) {
+        if (!leftResult.arity.equals(rightResult.arity)
+                && !leftResult.arity.equals(UNKNOWN_ARITY)
+                && !rightResult.arity.equals(UNKNOWN_ARITY)) {
+            // arity mismatch error
+            throw AlloyModelError.arityMismatch(
+                    leftResult.exp.pos,
+                    leftResult.exp.toString()
+                            + "("
+                            + Integer.toString(leftResult.arity.get())
+                            + ")",
+                    rightResult.exp.toString()
+                            + "("
+                            + Integer.toString(rightResult.arity.get())
+                            + ")");
+        }
+    }
+
+    // --------------------------------------------------------
+    // an instance of AlloyExprVis follows
+
     @Override
     public Result visit(DashRef dashRef) {
+        // TODO: when we resolve expressions in Dash
         throw ImplementationError.notSupported(
                 "dashref inside ArityVis yet: " + dashRef.toString());
     }
 
-    /*
-    @Override
-    public Result visit(DashParam dashParam) {
-        throw ImplementationError.notSupported(
-                "dashParam inside ArityVis yet: " + dashParam.toString());
-    }
-    */
-
     // expr.binary ----------------------------------------
+
+    // helper functions for binary expressions
+    Result binaryBooleanInOut(AlloyBinaryExpr binExpr) {
+        Result leftResult = this.visit(binExpr.left);
+        Result rightResult = this.visit(binExpr.right);
+
+        // throws an error
+        noArgArities(leftResult, rightResult);
+        // must have Boolean arity args
+        if (!leftResult.arity.equals(ONE_ARITY) && !leftResult.arity.equals(UNKNOWN_ARITY)) {
+            throw AlloyModelError.mustBeFormula(binExpr.left.pos, binExpr.left.toString());
+        } else if (!rightResult.arity.equals(ONE_ARITY)
+                && !rightResult.arity.equals(UNKNOWN_ARITY)) {
+            throw AlloyModelError.mustBeFormula(binExpr.right.pos, binExpr.right.toString());
+        }
+
+        AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
+        return new Result(ONE_ARITY, resultExpr);
+    }
+
+    Result binaryEqualArityArgsBooleanOut(AlloyBinaryExpr binExpr) {
+        Result leftResult = this.visit(binExpr.left);
+        Result rightResult = this.visit(binExpr.right);
+
+        // throws an error
+        noArgArities(leftResult, rightResult);
+        equalArities(leftResult, rightResult);
+        AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
+        return new Result(ONE_ARITY, resultExpr);
+    }
+
+    Result binaryEqualArityArgsSameOut(AlloyBinaryExpr binExpr) {
+        Result leftResult = this.visit(binExpr.left);
+        Result rightResult = this.visit(binExpr.right);
+
+        // throws an error
+        noArgArities(leftResult, rightResult);
+        equalArities(leftResult, rightResult);
+        AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
+        return new Result(leftResult.arity, resultExpr);
+    }
+
+    Result binaryNumOp(AlloyBinaryExpr binExpr) {
+        Result leftResult = this.visit(binExpr.left);
+        Result rightResult = this.visit(binExpr.right);
+        AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
+        if (!leftResult.arity.equals(ONE_ARITY))
+            throw AlloyModelError.mustBeUnary(binExpr.left.pos, binExpr.left.toString());
+        else if (!rightResult.arity.equals(ONE_ARITY))
+            throw AlloyModelError.mustBeUnary(binExpr.right.pos, binExpr.right.toString());
+        else return new Result(ONE_ARITY, resultExpr);
+    }
+
+    // binary expression visitors
 
     @Override
     public Result visit(AlloyBinaryExpr binExpr) {
+        System.out.println(binExpr.getClass().toString());
+        throw AlloyModelImplError.shouldNotReach();
+    }
 
-        Set<Class<?>> returnArityOfArg =
-                Set.of(
-                        AlloyDiffExpr.class,
-                        AlloyIntersExpr.class,
-                        AlloyRelOvrdExpr.class,
-                        AlloyUnionExpr.class,
-                        AlloyFunAddExpr.class,
-                        AlloyFunMulExpr.class,
-                        AlloyFunRemExpr.class,
-                        AlloyFunSubExpr.class);
+    @Override
+    public Result visit(AlloyAndExpr binExpr) {
+        return binaryBooleanInOut(binExpr);
+    }
 
-        Set<Class<?>> argsMustHaveEqualArity = new HashSet<>(returnArityOfArg);
-        argsMustHaveEqualArity.add(AlloyEqualsExpr.class);
-        argsMustHaveEqualArity.add(AlloyNotEqualsExpr.class);
-        argsMustHaveEqualArity.add(AlloyCmpExpr.class);
-
-        Set<Class<?>> mustHaveBooleanArgs =
-                Set.of(
-                        AlloyAndExpr.class,
-                        AlloyOrExpr.class,
-                        AlloyIffExpr.class,
-                        AlloyImpliesExpr.class,
-                        AlloyReleasesExpr.class,
-                        AlloyShAExpr.class,
-                        AlloyShLExpr.class,
-                        AlloyShRExpr.class,
-                        AlloySinceExpr.class,
-                        AlloyStateSeqExpr.class,
-                        AlloyTriggeredExpr.class,
-                        AlloyUntilExpr.class);
-
-        Set<Class<?>> returnBooleanArity = new HashSet<>(mustHaveBooleanArgs);
-        returnBooleanArity.add(AlloyEqualsExpr.class);
-        returnBooleanArity.add(AlloyNotEqualsExpr.class);
-        returnBooleanArity.add(AlloyCmpExpr.class);
+    @Override
+    public Result visit(AlloyArrowExpr binExpr) {
+        // this is the only binExpr that needs default multiplicities added
+        // if there is no mul provided, default is SET regardless of arity of args
 
         Result leftResult = this.visit(binExpr.left);
-        // System.out.println(leftResult.exp.toString() + leftResult.arity.toString());
         Result rightResult = this.visit(binExpr.right);
-        // System.out.println("right in:");
-        // System.out.println(rightResult.exp);
-        // System.out.println(rightResult.arity);
-        // System.out.println("---");
 
-        // System.out.println("LEFT " + binExpr.left.toString() + " " + leftResult.arity);
-        // System.out.println("RIGHT " + binExpr.right.toString() + " " + rightResult.arity);
-        // System.out.println(rightResult.exp.toString() + rightResult.arity.toString());
-        if (binExpr.getClass().equals(AlloyArrowExpr.class)) {
-            // this one needs default multiplicities added
-            // if there is no mul provided, default is SET regardless of arity of args
-            Optional<AlloyQtEnum> mul1 = ((AlloyArrowExpr) binExpr).mul1;
-            if (mul1.isEmpty()) {
-                mul1 = Optional.of(AlloyQtEnum.SET);
-            }
-            Optional<AlloyQtEnum> mul2 = ((AlloyArrowExpr) binExpr).mul2;
-            if (mul2.isEmpty()) {
-                mul2 = Optional.of(AlloyQtEnum.SET);
-            }
-            AlloyExpr resultExp =
-                    new AlloyArrowExpr(
-                            binExpr.pos,
-                            leftResult.exp,
-                            mul1.orElse(null),
-                            mul2.orElse(null),
-                            rightResult.exp);
+        // throws an error
+        noArgArities(leftResult, rightResult);
 
-            if (leftResult.arity.equals(UNKNOWN_ARITY)) {
-                // System.out.println("Unknown arity: " + binExpr.left.toString());
-                return new Result(resultExp);
-            }
-            if (rightResult.arity.equals(UNKNOWN_ARITY)) {
-                // System.out.println("Unknown arity: " + binExpr.right.toString());
-                return new Result(resultExp);
-            } else {
-                // System.out.println("out:");
-                // System.out.println(resultExp);
-                // System.out.println(leftResult.arity.get() + rightResult.arity.get());
-                // System.out.println("---");
-                return new Result(
-                        Optional.of(leftResult.arity.get() + rightResult.arity.get()), resultExp);
-            }
-        } else {
-            // no other binExpr need default multiplicities added
-            AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
-            if (mustHaveBooleanArgs.contains(binExpr.getClass())) {
-                if (!leftResult.arity.equals(ONE_ARITY)
-                        && !leftResult.arity.equals(UNKNOWN_ARITY)) {
-                    // System.out.println(leftResult.arity);
-                    throw AlloyModelError.mustBeFormula(binExpr.left.pos, binExpr.left.toString());
-                } else if (!rightResult.arity.equals(ONE_ARITY)
-                        && !rightResult.arity.equals(UNKNOWN_ARITY)) {
-                    throw AlloyModelError.mustBeFormula(
-                            binExpr.right.pos, binExpr.right.toString());
-                }
-            }
-            if (argsMustHaveEqualArity.contains(binExpr.getClass())) {
-                if (!leftResult.arity.equals(rightResult.arity)
-                        && !leftResult.arity.equals(UNKNOWN_ARITY)
-                        && !rightResult.arity.equals(UNKNOWN_ARITY)) {
-                    // arity mismatch error
-                    throw AlloyModelError.arityMismatch(
-                            binExpr.pos,
-                            binExpr.left.toString()
-                                    + "("
-                                    + Integer.toString(leftResult.arity.get())
-                                    + ")",
-                            binExpr.right.toString()
-                                    + "("
-                                    + Integer.toString(rightResult.arity.get())
-                                    + ")");
-                }
-            }
-            Optional<Integer> returnArity;
-            if (returnBooleanArity.contains(binExpr.getClass())) {
-                returnArity = ONE_ARITY;
-                // System.out.println(binExpr.getClass().getName());
-                // System.out.println(returnArity);
-
-            } else if (returnArityOfArg.contains(binExpr.getClass()))
-                returnArity = leftResult.arity;
-            else {
-                // System.out.println(leftResult.exp);
-                // System.out.println(leftResult.arity.get());
-                // System.out.println(rightResult.exp);
-                // System.out.println(rightResult.arity.get());
-
-                // non-standard binary operators
-                switch (binExpr) {
-                    case AlloyDomRestrExpr ignored -> {
-                        returnArity = Optional.of(rightResult.arity.get());
-                    }
-                    case AlloyDotExpr ignored -> {
-                        if (leftResult.arity.equals(UNKNOWN_ARITY)) {
-                            throw AlloyModelError.unknownArity(
-                                    binExpr.left.pos, binExpr.left.toString());
-                        } else if (rightResult.arity.equals(UNKNOWN_ARITY)) {
-                            throw AlloyModelError.unknownArity(
-                                    binExpr.right.pos, binExpr.right.toString());
-                        }
-                        returnArity =
-                                Optional.of(leftResult.arity.get() + rightResult.arity.get() - 2);
-                    }
-                    case AlloyRngRestrExpr ignored -> {
-                        returnArity = Optional.of(leftResult.arity.get());
-                    }
-                    default -> {
-                        throw ImplementationError.missingCase(
-                                "unknown expression for arity visitor: " + binExpr.toString());
-                    }
-                }
-            }
-
-            return new Result(returnArity, resultExpr);
+        Optional<AlloyQtEnum> mul1 = ((AlloyArrowExpr) binExpr).mul1;
+        if (mul1.isEmpty()) {
+            mul1 = Optional.of(AlloyQtEnum.SET);
         }
+        Optional<AlloyQtEnum> mul2 = ((AlloyArrowExpr) binExpr).mul2;
+        if (mul2.isEmpty()) {
+            mul2 = Optional.of(AlloyQtEnum.SET);
+        }
+        AlloyExpr resultExp =
+                new AlloyArrowExpr(
+                        binExpr.pos,
+                        leftResult.exp,
+                        mul1.orElse(null),
+                        mul2.orElse(null),
+                        rightResult.exp);
+
+        if (leftResult.arity.equals(UNKNOWN_ARITY)) {
+            return new Result(resultExp);
+        } else if (rightResult.arity.equals(UNKNOWN_ARITY)) {
+            return new Result(resultExp);
+        } else {
+            return new Result(
+                    Optional.of(leftResult.arity.get() + rightResult.arity.get()), resultExp);
+        }
+    }
+
+    @Override
+    public Result visit(AlloyCmpExpr binExpr) {
+        Result leftResult = this.visit(binExpr.left);
+        Result rightResult = this.visit(binExpr.right);
+
+        // throws an error
+        noArgArities(leftResult, rightResult);
+        AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
+        if (binExpr.comp.equals(AlloyCmpExpr.Comp.IN)) {
+            // subset
+            equalArities(leftResult, rightResult);
+            return new Result(ONE_ARITY, resultExpr); // Boolean
+        } else {
+            // must be numbers
+            if (!leftResult.arity.equals(ONE_ARITY))
+                throw AlloyModelError.mustBeUnary(binExpr.left.pos, binExpr.left.toString());
+            else if (!rightResult.arity.equals(ONE_ARITY))
+                throw AlloyModelError.mustBeUnary(binExpr.right.pos, binExpr.right.toString());
+            else return new Result(ONE_ARITY, resultExpr); // Boolean
+        }
+    }
+
+    @Override
+    public Result visit(AlloyDiffExpr binExpr) {
+        // R - S
+        return binaryEqualArityArgsSameOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyDomRestrExpr binExpr) {
+        // s <: r
+        Result leftResult = this.visit(binExpr.left);
+        Result rightResult = this.visit(binExpr.right);
+        // throws an error
+        noArgArities(leftResult, rightResult);
+        if (!leftResult.arity.equals(ONE_ARITY)) {
+            throw AlloyModelError.mustBeUnary(binExpr.left.pos, binExpr.left.toString());
+        }
+        Optional<Integer> returnArity = Optional.of(rightResult.arity.get());
+        AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
+        return new Result(returnArity, resultExpr);
+    }
+
+    @Override
+    public Result visit(AlloyDotExpr binExpr) {
+        // a.b
+        // b could be a pred/fun call means b[a]
+        Result leftResult = this.visit(binExpr.left);
+        Result rightResult = this.visit(binExpr.right);
+        AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
+        if (!leftResult.argArities.isEmpty())
+            throw AlloyModelError.missingArgsToPredFunCall(
+                    binExpr.left.pos, binExpr.left.toString());
+        if (rightResult.argArities.isEmpty()) {
+            // b is not a pred/fun call
+            notUnknown(leftResult);
+            notUnknown(rightResult);
+            Optional<Integer> returnArity =
+                    Optional.of(leftResult.arity.get() + rightResult.arity.get() - 2);
+            return new Result(returnArity, resultExpr);
+        } else {
+            // a.b where b is a fun or pred so "a" is the arg to the fun/pred
+            if (rightResult.argArities.get(0).isPresent()) {
+                if (leftResult.arity.isPresent()) {
+                    if (leftResult.arity.equals(rightResult.argArities.get(0))) {
+                        // go up to look for another argument if needed
+                        return new Result(
+                                tail(rightResult.argArities), rightResult.arity, resultExpr);
+                    } else {
+                        throw AlloyModelError.arityMismatchPredFunCall(
+                                binExpr.left.pos,
+                                binExpr.right.toString(),
+                                binExpr.left.toString(),
+                                rightResult.argArities.get(0).get(),
+                                leftResult.arity.get());
+                    }
+                } else {
+                    throw AlloyModelError.unknownArity(binExpr.left.pos, binExpr.left.toString());
+                }
+            } else {
+                // lack of arity for an arg
+                // this should have been caught when resolving the PredFunTable
+                throw AlloyModelImplError.shouldNotReach();
+            }
+        }
+    }
+
+    @Override
+    public Result visit(AlloyEqualsExpr binExpr) {
+        return binaryEqualArityArgsBooleanOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyFunAddExpr binExpr) {
+        // I think this is a + b
+        return binaryNumOp(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyFunDivExpr binExpr) {
+        // I think this is a / b
+        return binaryNumOp(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyFunMulExpr binExpr) {
+        // I think this is a * b
+        return binaryNumOp(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyFunRemExpr binExpr) {
+        // I think this is a % b
+        return binaryNumOp(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyFunSubExpr binExpr) {
+        // I think this is a - b
+        return binaryNumOp(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyIffExpr binExpr) {
+        return binaryBooleanInOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyImpliesExpr binExpr) {
+        return binaryBooleanInOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyIntersExpr binExpr) {
+        return binaryEqualArityArgsSameOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyNotEqualsExpr binExpr) {
+        return binaryEqualArityArgsBooleanOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyOrExpr binExpr) {
+        return binaryBooleanInOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyRelOvrdExpr binExpr) {
+        return binaryEqualArityArgsSameOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyReleasesExpr binExpr) {
+        return binaryBooleanInOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyShAExpr binExpr) {
+        throw ImplementationError.notSupported(
+                "AlloyShA inside ArityVis yet: " + binExpr.toString());
+    }
+
+    @Override
+    public Result visit(AlloyShLExpr binExpr) {
+        throw ImplementationError.notSupported(
+                "AlloyShL inside ArityVis yet: " + binExpr.toString());
+    }
+
+    @Override
+    public Result visit(AlloyShRExpr binExpr) {
+        throw ImplementationError.notSupported(
+                "AlloyShR inside ArityVis yet: " + binExpr.toString());
+    }
+
+    @Override
+    public Result visit(AlloySinceExpr binExpr) {
+        return binaryBooleanInOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyRngRestrExpr binExpr) {
+        // r :> s
+        Result leftResult = this.visit(binExpr.left);
+        Result rightResult = this.visit(binExpr.right);
+        // throws an error
+        noArgArities(leftResult, rightResult);
+        if (!rightResult.arity.equals(ONE_ARITY)) {
+            throw AlloyModelError.mustBeUnary(binExpr.left.pos, binExpr.left.toString());
+        }
+        Optional<Integer> returnArity = Optional.of(leftResult.arity.get());
+        AlloyExpr resultExpr = binExpr.rebuild(leftResult.exp, rightResult.exp);
+        return new Result(returnArity, resultExpr);
+    }
+
+    @Override
+    public Result visit(AlloyUnionExpr binExpr) {
+        return binaryEqualArityArgsSameOut(binExpr);
+    }
+
+    @Override
+    public Result visit(AlloyUntilExpr binExpr) {
+        return binaryBooleanInOut(binExpr);
+    }
+
+    // Unary -----------------------------------------
+
+    // helper functions
+    Result unaryBooleanInOut(AlloyUnaryExpr unaryExpr) {
+        Result subResult = this.visit(unaryExpr.sub);
+        // throws an error
+        noArgArities(subResult);
+        // must have Boolean arity args
+        if (!subResult.arity.equals(ONE_ARITY) && !subResult.arity.equals(UNKNOWN_ARITY)) {
+            throw AlloyModelError.mustBeFormula(unaryExpr.sub.pos, unaryExpr.sub.toString());
+        }
+        return new Result(ONE_ARITY, unaryExpr.rebuild(subResult.exp));
+    }
+
+    Result arityTwoInAndOut(AlloyUnaryExpr unaryExpr) {
+        Result subResult = this.visit(unaryExpr.sub);
+        // throws an error
+        noArgArities(subResult);
+        if (!subResult.arity.equals(TWO_ARITY))
+            throw AlloyModelError.mustBeBinary(unaryExpr.sub.pos, unaryExpr.sub.toString());
+        return new Result(TWO_ARITY, unaryExpr.rebuild(subResult.exp));
+    }
+
+    // unary visitors
+
+    @Override
+    public Result visit(AlloyUnaryExpr unaryExpr) {
+        throw AlloyModelImplError.shouldNotReach();
+    }
+
+    @Override
+    public Result visit(AlloyAfterExpr unaryExpr) {
+        return unaryBooleanInOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyAlwaysExpr unaryExpr) {
+        return unaryBooleanInOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyBeforeExpr unaryExpr) {
+        return unaryBooleanInOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyEventuallyExpr unaryExpr) {
+        return unaryBooleanInOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyHistoricallyExpr unaryExpr) {
+        return unaryBooleanInOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyNegExpr unaryExpr) {
+        return unaryBooleanInOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyCardExpr unaryExpr) {
+        // #R
+        Result subResult = this.visit(unaryExpr.sub);
+        // throws an error
+        noArgArities(subResult);
+        return new Result(ONE_ARITY, unaryExpr.rebuild(subResult.exp));
+    }
+
+    @Override
+    public Result visit(AlloyNumIntExpr unaryExpr) {
+        // int[1]: turns {1} into number 1
+        // TODO: not certain about this one
+        Result subResult = this.visit(unaryExpr.sub);
+        // throws an error
+        noArgArities(subResult);
+        if (subResult.arity.equals(ONE_ARITY))
+            return new Result(ONE_ARITY, unaryExpr.rebuild(subResult.exp));
+        else throw AlloyModelError.mustBeUnary(unaryExpr.sub.pos, unaryExpr.sub.toString());
+    }
+
+    @Override
+    public Result visit(AlloyNumSumExpr unaryExpr) {
+        // sum { x | }
+        // TODO: not certain about this one
+        Result subResult = this.visit(unaryExpr.sub);
+        // throws an error
+        noArgArities(subResult);
+        if (subResult.arity.equals(ONE_ARITY))
+            return new Result(ONE_ARITY, unaryExpr.rebuild(subResult.exp));
+        else throw AlloyModelError.mustBeUnary(unaryExpr.sub.pos, unaryExpr.sub.toString());
+    }
+
+    @Override
+    public Result visit(AlloyOnceExpr unaryExpr) {
+        return unaryBooleanInOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyPrimeExpr unaryExpr) {
+        // R'
+        Result subResult = this.visit(unaryExpr.sub);
+        // throws an error
+        noArgArities(subResult);
+        return new Result(subResult.arity, unaryExpr.rebuild(subResult.exp));
+    }
+
+    @Override
+    public Result visit(AlloyQtExpr unaryExpr) {
+        // one X
+        Result subResult = this.visit(unaryExpr.sub);
+        // throws an error
+        noArgArities(subResult);
+        // seq is weird
+        if (isSeq(unaryExpr)) {
+            notUnknown(subResult);
+            return new Result(
+                    Optional.of(subResult.arity.get() + 1), unaryExpr.rebuild(subResult.exp));
+        }
+        return new Result(ONE_ARITY, unaryExpr.rebuild(subResult.exp));
+    }
+
+    @Override
+    public Result visit(AlloyReflTransClosExpr unaryExpr) {
+        // *X
+        return arityTwoInAndOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyTransClosExpr unaryExpr) {
+        // ^X
+        return arityTwoInAndOut(unaryExpr);
+    }
+
+    @Override
+    public Result visit(AlloyTransExpr unaryExpr) {
+        // ~X
+        return arityTwoInAndOut(unaryExpr);
     }
 
     // expr.misc ------------------------
@@ -316,13 +658,14 @@ public class CalcAritySetMulDefaultsExprVis
         if (block.exprs.size() == 1) {
             // if it is a block of size 1 then it could be a singleton set expr
             Result oneR = this.visit(block.exprs.get(0));
+            noArgArities(oneR);
             return new Result(oneR.arity, new AlloyBlock(block.pos, List.of(oneR.exp)));
         } else {
             for (AlloyExpr e : block.exprs) {
                 Result r = this.visit(e);
+                noArgArities(r);
                 // let it pass if it is UNKNOWN_ARITY
                 if (!r.arity.equals(UNKNOWN_ARITY) && !r.arity.equals(ONE_ARITY)) {
-                    // System.out.println(r.arity);
                     throw AlloyModelError.mustBeFormula(e.pos, e.toString());
                 }
                 newExprs.add(r.exp);
@@ -336,33 +679,64 @@ public class CalcAritySetMulDefaultsExprVis
         // p[a,b,c]
         Result exprResult = visit(bracketExpr.expr);
         List<Result> exprsResult = mapBy(bracketExpr.exprs, i -> this.visit(i));
-        // System.out.println(bracketExpr.expr);
-        // System.out.println(exprResult.arity.get());
-        // just counting number of arguments
-        if (!exprResult.arity.equals(UNKNOWN_ARITY)) {
-            // System.out.println(bracketExpr.expr);
-            // System.out.println(exprResult.arity.get());
-            // System.out.println(exprsResult.size());
-            // TODO: this won't generalize to functions which
-            // could have a return arity
-            if (exprsResult.size() <= exprResult.arity.get() - 1) {
-                /*
-                System.out.println(
-                        "Return arity: "
-                                + Integer.toString(exprResult.arity.get() - exprsResult.size()));
-                */
-                return new Result(
-                        Optional.of(exprResult.arity.get() - exprsResult.size()),
-                        new AlloyBracketExpr(
-                                bracketExpr.pos, exprResult.exp, mapBy(exprsResult, r -> r.exp)));
-            } else {
-                throw AlloyModelError.wrongNumberArgs(bracketExpr.pos, bracketExpr.toString());
+        AlloyExpr resultExpr =
+                new AlloyBracketExpr(
+                        bracketExpr.pos, exprResult.exp, mapBy(exprsResult, r -> r.exp));
+
+        notUnknown(exprResult);
+        if (exprResult.argArities.isEmpty()) {
+            // exprResult is not a pred/fun call that needs args so
+            // this is just a regular join
+            // interpreted as c.(b.(a.p))
+            Optional<Integer> rightArity = exprResult.arity;
+            for (Result argR : exprsResult) {
+                notUnknown(argR);
+                noArgArities(argR);
+                Optional<Integer> leftArity = argR.arity;
+                if (leftArity.equals(UNKNOWN_ARITY)) {
+                    throw AlloyModelError.unknownArity(argR.exp.pos, argR.exp.toString());
+                } else {
+                    rightArity = Optional.of(leftArity.get() + rightArity.get() - 2);
+                }
             }
+            return new Result(rightArity, resultExpr);
+        } else if (exprsResult.size() > exprResult.argArities.size()) {
+            // too many args for the pred/fun
+            // can be smaller  c.b.p[a] is okay
+            throw AlloyModelError.wrongNumberArgs(
+                    bracketExpr.pos,
+                    bracketExpr.toString(),
+                    exprResult.argArities.size(),
+                    exprsResult.size());
         } else {
-            return new Result(
-                    UNKNOWN_ARITY,
-                    new AlloyBracketExpr(
-                            bracketExpr.pos, exprResult.exp, mapBy(exprsResult, r -> r.exp)));
+            // p[a,b,c]
+            // walk over expected argArities and exprsResults together
+            Integer i = 0;
+            for (Optional<Integer> argArity : exprResult.argArities) {
+                noArgArities(exprsResult.get(i));
+                notUnknown(exprsResult.get(i));
+                // not possible for argArity to be UNKNOWN
+                if (argArity.equals(exprsResult.get(i).arity)) {
+                    i++;
+                } else {
+                    throw AlloyModelError.arityMismatchPredFunCall(
+                            exprsResult.get(i).exp.pos,
+                            bracketExpr.expr.toString(),
+                            exprsResult.get(i).exp.toString(),
+                            argArity.get(),
+                            exprsResult.get(i).arity.get());
+                }
+            }
+            if (i.equals(exprsResult.size())) {
+                // got all the needed args
+                return new Result(exprResult.arity, resultExpr);
+            } else {
+                // still waiting for some args
+                return new Result(
+                        lastn(exprResult.argArities, exprsResult.size() - i),
+                        exprResult.arity,
+                        resultExpr);
+            }
         }
     }
 
@@ -420,21 +794,30 @@ public class CalcAritySetMulDefaultsExprVis
         Optional<Integer> typeArity = typeResult.arity;
         AlloyExpr newExpr = typeResult.exp;
         AlloyDecl newDecl = null;
-        // mul will be empty if it is a x: seq A
-        if (declExpr.mul.isEmpty() && !isSeq(newExpr)) {
-            if (typeArity.equals(UNKNOWN_ARITY)) {
-                throw AlloyModelError.noMulGivenAndCannotBeCalculated(
-                        declExpr.pos, declExpr.toString());
-            } else if (typeArity.equals(ONE_ARITY)) {
+        notUnknown(typeResult);
+        // TODO: is x: <emptymul> "seq A" allowed?
+        if (declExpr.mul.isEmpty()) {
+            // setting default
+            if (typeArity.equals(ONE_ARITY)) {
+                // default: if arity of declExpr is ONE
+                // then mul is ONE
                 newDecl = declExpr.rebuild(AlloyQtEnum.ONE, newExpr);
             } else {
+                // default: if arity of declExpr is ONE
+                // then mul is SET
                 newDecl = declExpr.rebuild(AlloyQtEnum.SET, newExpr);
             }
         } else {
-            // mul has already been set or it is x: seq A
+            // mul has already been set
             newDecl = declExpr.rebuild(newExpr);
         }
+        if (isSeqDecl(declExpr) || isSeq(newExpr)) {
+            // seq X is really Int -> X
+            typeArity = Optional.of(typeArity.get() + 1);
+        }
+        // TODO: checking with Jack is mul of SEQ is empty?
         if (!newDecl.mul.isEmpty()) {
+            // TODO: not sure what the purpose of this is?
             if (newDecl.mul.get().equals(AlloyQtEnum.ONE) && !typeArity.equals(ONE_ARITY)) {
                 throw AlloyModelError.mustBeUnary(declExpr.pos, declExpr.toString());
             }
@@ -533,101 +916,27 @@ public class CalcAritySetMulDefaultsExprVis
         return new Result(subResult.arity, new AlloyParenExpr(parenExpr.pos, subResult.exp));
     }
 
-    // expr.unary ----------------------------------
-
-    @Override
-    public Result visit(AlloyUnaryExpr unaryExpr) {
-
-        Set<Class> argArityBoolean =
-                Set.of(
-                        AlloyAfterExpr.class,
-                        AlloyAlwaysExpr.class,
-                        AlloyBeforeExpr.class,
-                        AlloyEventuallyExpr.class,
-                        AlloyHistoricallyExpr.class,
-                        AlloyNegExpr.class,
-                        AlloyOnceExpr.class);
-
-        Set<Class> argArityOne = Set.of(AlloyNumIntExpr.class);
-
-        Set<Class> argArityTwo =
-                Set.of(
-                        AlloyReflTransClosExpr.class,
-                        AlloyTransClosExpr.class,
-                        AlloyTransExpr.class);
-
-        // otherwise we don't care about the arg arity
-
-        Set<Class> returnBooleanArity =
-                Set.of(
-                        AlloyAfterExpr.class,
-                        AlloyAlwaysExpr.class,
-                        AlloyBeforeExpr.class,
-                        AlloyEventuallyExpr.class,
-                        AlloyHistoricallyExpr.class,
-                        AlloyNegExpr.class,
-                        AlloyOnceExpr.class,
-                        AlloyQtExpr.class); // all except Seq, which is handled specially below
-
-        Set<Class> returnArityOne =
-                Set.of(AlloyCardExpr.class, AlloyNumIntExpr.class, AlloyNumSumExpr.class);
-
-        Set<Class> returnArityTwo =
-                Set.of(
-                        AlloyReflTransClosExpr.class,
-                        AlloyTransClosExpr.class,
-                        AlloyTransExpr.class);
-
-        Set<Class> returnArityOfArg = Set.of(AlloyPrimeExpr.class);
-
-        Result subResult = visit(unaryExpr.sub);
-
-        Optional<Integer> subArity = subResult.arity;
-        AlloyExpr subExp = subResult.exp;
-
-        // seq is weird
-        if (isSeq(unaryExpr)) {
-            if (!subArity.equals(UNKNOWN_ARITY)) {
-                return new Result(Optional.of(subArity.get() + 1), unaryExpr.rebuild(subExp));
-            } else {
-                throw AlloyModelError.unknownArity(unaryExpr.pos, unaryExpr.toString());
-            }
-        }
-        // possible arity mismatch errors
-        if (argArityBoolean.contains(unaryExpr.getClass()) && !subArity.equals(ONE_ARITY)) {
-            // System.out.println(subExp);
-            // System.out.println(subArity);
-            throw AlloyModelError.mustBeFormula(unaryExpr.sub.pos, subExp.toString());
-        }
-        if (argArityOne.contains(unaryExpr.getClass()) && !subArity.equals(ONE_ARITY))
-            throw AlloyModelError.mustBeUnary(unaryExpr.sub.pos, subExp.toString());
-
-        if (argArityTwo.contains(unaryExpr.getClass()) && !subArity.equals(TWO_ARITY))
-            throw AlloyModelError.mustBeBinary(unaryExpr.sub.pos, subExp.toString());
-
-        AlloyExpr newExpr = unaryExpr.rebuild(subExp);
-
-        if (returnBooleanArity.contains(unaryExpr.getClass()))
-            return new Result(ONE_ARITY, newExpr);
-        else if (returnArityOne.contains(unaryExpr.getClass()))
-            return new Result(ONE_ARITY, newExpr);
-        else if (returnArityTwo.contains(unaryExpr.getClass()))
-            return new Result(TWO_ARITY, newExpr);
-        else if (returnArityOfArg.contains(unaryExpr.getClass()))
-            return new Result(subArity, newExpr);
-        else throw ImplementationError.missingCase("arity checker: " + unaryExpr.toString());
-    }
-
     // expr.var ----------------------------
 
     @Override
     public Result visit(AlloyVarExpr varExpr) {
         if (varExpr instanceof AlloyQnameExpr) {
-            // System.out.println(varExpr.toString());
-            // see AMSigTable.symbolArity for table of builtin strings
             String varName = varExpr.getName();
             // throws an error if not found
-            return new Result(arity(varName), varExpr);
+            Optional<Integer> arity = this.symbolArity(varName);
+            if (arity.isPresent()) {
+                return new Result(arity, varExpr);
+            } else {
+                Optional<Integer> returnArity = this.predFunReturnArity.apply(varName);
+                if (!returnArity.isPresent()) {
+                    // conservative: we haven't found the symbol
+                    // so we'll see how much works with UNKNOWN_ARITY
+                    return new Result(UNKNOWN_ARITY, varExpr);
+                } else {
+                    List<Optional<Integer>> argsArities = this.predFunArgsArities.apply(varName);
+                    return new Result(argsArities, returnArity, varExpr);
+                }
+            }
         } else {
             // other AlloyVarExpr types
             // System.out.println(varExpr.toString());
@@ -636,6 +945,7 @@ public class CalcAritySetMulDefaultsExprVis
                 case AlloyFunNextExpr q -> new Result(TWO_ARITY, varExpr);
                 case AlloySumExpr q -> new Result(UNKNOWN_ARITY, varExpr); // can be any arity
                 // most vars/literals are arity 1
+                // TODO: fix this!
                 default -> new Result(ONE_ARITY, varExpr);
             };
         }

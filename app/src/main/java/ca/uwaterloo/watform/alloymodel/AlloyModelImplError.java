@@ -54,4 +54,9 @@ public final class AlloyModelImplError extends ImplementationError {
     public static AlloyModelImplError tryingToAccessNonExistentField(String s) {
         return new AlloyModelImplError("Trying to access a field that does not exist: " + s);
     }
+
+    public static AlloyModelImplError tryingToAccessNonExistentPredFun(String s) {
+        return new AlloyModelImplError(
+                "Trying to access a pred/fun name that does not exist: " + s);
+    }
 }

@@ -12,7 +12,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
 import java.util.*;
 
-public class AMModules extends AMPreds {
+public class AMModules extends AMFuns {
 
     private List<AlloyModulePara> modules = emptyList();
 

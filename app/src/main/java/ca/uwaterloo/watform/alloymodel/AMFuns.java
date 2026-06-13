@@ -13,7 +13,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyFunPara;
 import java.util.*;
 
-public class AMFuns extends AMMacros {
+public class AMFuns extends AMPreds {
 
     // these have a name (see AlloyEnumPara.getId())
     // so we could put a table here to lookup by name
@@ -49,6 +49,7 @@ public class AMFuns extends AMMacros {
 
     // used by API also
     private void addFunPara(AlloyFunPara funPara) {
+        this.addFunToPredFunTable(funPara);
         this.funs.add(funPara);
     }
 

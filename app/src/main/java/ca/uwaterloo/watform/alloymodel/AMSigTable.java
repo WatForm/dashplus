@@ -31,7 +31,7 @@ public class AMSigTable extends AMFieldTable {
     }
 
     protected void resolve(
-            BiFunction<AlloyExpr, String, CalcAritySetMulDefaultsExprVis.Result>
+            BiFunction<AlloyExpr, Optional<String>, CalcAritySetMulDefaultsExprVis.Result>
                     fieldArityAndSetMul) {
         super.resolve(fieldArityAndSetMul);
         // done after all sigs and enums are added
