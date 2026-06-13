@@ -53,6 +53,7 @@ public class SigData {
         } else {
             this.extendsParent = Optional.empty();
             this.inParents = emptyList();
+            this.isTopLevelSig = true;
         }
         if (p.quals.contains(AlloySigPara.Qual.ABSTRACT)) this.isAbstractSig = true;
         if (p.quals.contains(AlloySigPara.Qual.ONE)) this.isOneSig = true;

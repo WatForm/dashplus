@@ -246,9 +246,7 @@ public class BoilerplateA2T extends BaseA2T {
     }
 
     private static TlaDefn no() {
-        // _one(S)
-        return new TlaDefn(
-                TlaDecl(NO, Arrays.asList(S())),
-                allEqual(S(), X(), Y()).AND(S().EQUALS(TlaNullSet())));
+        // _no(S)
+        return new TlaDefn(TlaDecl(NO, Arrays.asList(S())), S().EQUALS(TlaNullSet()));
     }
 }

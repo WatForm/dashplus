@@ -5,30 +5,94 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.alloytotla.AlloyToTlaExprVis.TlaExpResult;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
-public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
+public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result> {
+
+    public final Logger l;
+    public final AlloyModel am;
+
+    public static sealed interface Result permits TlaExpResult, MacroResult {}
+
+    public static record TlaExpResult(TlaExp exp) implements Result {}
+
+    public static record MacroResult(int numArgs, String name, List<TlaExp> args)
+            implements Result {}
+
+    public TlaExp extract(Result r) {
+        switch (r) {
+            case TlaExpResult e:
+                return e.exp;
+            default:
+                throw new ImplementationError(
+                        "error: unexpected result " + r.toString() + " of type " + r.getClass());
+        }
+    }
+
+    public AlloyToTlaExprVis(AlloyModel am, Logger l) {
+        this.l = l;
+        this.am = am;
+    }
+
+    public void info(AlloyExpr e) {
+        l.info("translating: " + e.toString() + " of type:" + e.getClass());
+    }
 
     @Override
-    public TlaExp visit(DashRef dashRef) {
+    public Result visit(DashRef dashRef) {
 
         throw ImplementationError.notSupported("dashref inside pure AlloyVis");
     }
 
-    @Override
-    public TlaExp visit(AlloyBinaryExpr binExpr) {
+    public Result translateDot(AlloyDotExpr e) {
 
-        TlaExp el = this.visit(binExpr.left);
-        TlaExp er = this.visit(binExpr.right);
+        var left = extract(visit(e.left));
+        var rightResult = visit(e.right);
+        switch (rightResult) {
+            case TlaExpResult tlaExpResultRight:
+                {
+                    var answer = _INNER_PRODUCT(left, extract(tlaExpResultRight));
+                    return new TlaExpResult(answer);
+                }
+            case MacroResult macroResultRight:
+                {
+                    List<TlaExp> args = new ArrayList<>();
+                    args.addAll(macroResultRight.args);
+                    args.add(left);
+                    
+
+                    if (args.size() == macroResultRight.numArgs) {
+                        var answer = TlaAppl(macroResultRight.name, args);
+                        return new TlaExpResult(answer);
+                    } else
+                        return new MacroResult(
+                                macroResultRight.numArgs, macroResultRight.name, args);
+                }
+        }
+    }
+
+    @Override
+    public Result visit(AlloyBinaryExpr binExpr) {
+
+        info(binExpr);
+
+        if (binExpr.getClass() == AlloyDotExpr.class) return translateDot((AlloyDotExpr) binExpr);
+
+        TlaExp el = extract(this.visit(binExpr.left));
+        TlaExp er = extract(this.visit(binExpr.right));
 
         TlaExp answer =
                 switch (binExpr) {
@@ -58,16 +122,18 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
                     default -> null; /* case  _ -> (el, er); */
                 };
 
-        if (answer != null) return answer;
+        if (answer != null) return new TlaExpResult(answer);
 
         throw ImplementationError.notSupported(
                 "non-translatable expression: " + binExpr.toString());
     }
 
     @Override
-    public TlaExp visit(AlloyUnaryExpr unaryExpr) {
+    public Result visit(AlloyUnaryExpr unaryExpr) {
 
-        TlaExp e = visit(unaryExpr.sub);
+        info(unaryExpr);
+
+        TlaExp e = extract(visit(unaryExpr.sub));
 
         TlaExp answer =
                 switch (unaryExpr) {
@@ -86,44 +152,104 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
                     default -> null;
                 };
 
-        if (answer != null) return answer;
+        if (answer != null) return new TlaExpResult(answer);
 
         throw ImplementationError.notSupported(
                 "non-translatable expression: " + unaryExpr.toString());
     }
 
+    public Result translateQnameExpr(AlloyQnameExpr exp) {
+
+        if (!am.allPreds().contains(exp.label)) return new TlaExpResult(TlaAppl(exp.label));
+
+        int numArgs = am.getPredPara(exp.label).arguments.size();
+
+        l.info("translating macro " + exp.label + " with " + numArgs + " args ");
+
+        if (numArgs == 0) return new TlaExpResult(TlaAppl(exp.label));
+
+        return new MacroResult(numArgs, exp.label, new ArrayList<TlaExp>());
+    }
+
     @Override
-    public TlaExp visit(AlloyVarExpr varExpr) {
+    public Result visit(AlloyVarExpr varExpr) {
+
+        info(varExpr);
 
         TlaExp answer =
                 switch (varExpr) {
                     case AlloyUnivExpr _ -> _UNIV();
                     case AlloyIdenExpr _ -> _IDEN();
                     case AlloyNoneExpr _ -> _NONE();
-                    case AlloyQnameExpr e -> TlaAppl(e.label);
                     default -> null;
                 };
 
-        if (answer != null) return answer;
+        if (answer != null) return new TlaExpResult(answer);
+
+        if (varExpr.getClass() == AlloyQnameExpr.class)
+            return translateQnameExpr((AlloyQnameExpr) varExpr);
 
         throw ImplementationError.notSupported(
                 "non-translatable expression: " + varExpr.toString());
     }
 
     @Override
-    public TlaExp visit(AlloyBlock block) {
+    public Result visit(AlloyBlock block) {
 
-        return CreateHelper.repeatedAnd(mapBy(block.exprs, e -> this.visit(e)));
+        info(block);
+
+        var answer = CreateHelper.repeatedAnd(mapBy(block.exprs, e -> extract(visit(e))));
+        return new TlaExpResult(answer);
     }
 
     @Override
-    public TlaExp visit(AlloyBracketExpr bracketExpr) {
+    public Result visit(AlloyBracketExpr bracketExpr) {
 
-        throw ImplementationError.notSupported("Unimplemented method 'visit' for bracket");
+        info(bracketExpr);
+
+        /*
+
+        a[b] = b.a
+        bracketExpr.expr = a
+        bracketExpr.exprs = [b]
+        */
+
+        l.info("expr " + bracketExpr.expr);
+        l.info("exprs " + bracketExpr.exprs);
+
+        var leftResult = visit(bracketExpr.expr);
+
+        switch(leftResult)
+        {
+            case TlaExpResult leftTlaExpResult: {
+                if(bracketExpr.exprs.size() != 1)
+                throw new ImplementationError("malformed bracket expression: "+bracketExpr);
+                var right = bracketExpr.exprs.get(0);
+                var answer = _INNER_PRODUCT(extract(visit(right)), leftTlaExpResult.exp);
+                return new TlaExpResult(answer);
+            }
+            case MacroResult leftMacroResult: {
+                var args = new ArrayList<TlaExp>();
+                args.addAll(leftMacroResult.args);
+                args.addAll(mapBy(bracketExpr.exprs, e -> extract(visit(e))));
+                if(args.size() == leftMacroResult.numArgs)
+                {
+                    var answer = TlaAppl(leftMacroResult.name, args);
+                    return new TlaExpResult(answer);
+                }
+                else
+                {
+                    return new MacroResult(leftMacroResult.numArgs, leftMacroResult.name, args);
+                }
+            }
+        }
+
     }
 
     @Override
-    public TlaExp visit(AlloyCphExpr comprehensionExpr) {
+    public Result visit(AlloyCphExpr comprehensionExpr) {
+
+        info(comprehensionExpr);
 
         /*
         alloy:
@@ -141,7 +267,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
         */
 
         var vars = mapBy(comprehensionExpr.decls, d -> TlaVar(d.qnames.get(0).toString()));
-        List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> visit(d.expr));
+        List<TlaExp> expressions = mapBy(comprehensionExpr.decls, d -> extract(visit(d.expr)));
 
         var product = repeatedProductSet(expressions);
 
@@ -150,34 +276,44 @@ public class AlloyToTlaExprVis implements AlloyExprVis<TlaExp> {
                         ? TlaQuantOpHeadFlat(vars, product)
                         : TlaQuantOpHeadTuple(vars, product);
 
-        var condition = new AtomicReference<TlaExp>(TlaTrue());
-        comprehensionExpr.body.ifPresent(e -> condition.set(visit(e)));
+        var condition = comprehensionExpr.body.map(e -> extract(visit(e))).orElse(TlaTrue());
 
-        return TlaSetFilter(head, condition.get());
+        var answer = TlaSetFilter(head, condition);
+        return new TlaExpResult((TlaExp) answer);
     }
 
     @Override
-    public TlaExp visit(AlloyIteExpr iteExpr) {
+    public Result visit(AlloyIteExpr iteExpr) {
 
-        return CreateHelper.TlaIfThenElse(
-                this.visit(iteExpr.cond), this.visit(iteExpr.conseq), this.visit(iteExpr.alt));
+        info(iteExpr);
+
+        var condition = extract(this.visit(iteExpr.cond));
+        var conseq = extract(this.visit(iteExpr.conseq));
+        var alt = extract(this.visit(iteExpr.alt));
+
+        var answer = CreateHelper.TlaIfThenElse(condition, conseq, alt);
+
+        return new TlaExpResult(answer);
     }
 
     @Override
-    public TlaExp visit(AlloyLetExpr letExpr) {
+    public Result visit(AlloyLetExpr letExpr) {
+
+        info(letExpr);
 
         throw ImplementationError.notSupported("Unimplemented method 'visit' for let");
     }
 
     @Override
-    public TlaExp visit(AlloyQuantificationExpr quantificationExpr) {
-
+    public Result visit(AlloyQuantificationExpr quantificationExpr) {
+        info(quantificationExpr);
         throw ImplementationError.notSupported("Unimplemented method 'visit' for quantification");
     }
 
     @Override
-    public TlaExp visit(AlloyDecl decl) {
+    public Result visit(AlloyDecl decl) {
 
+        info(decl);
         throw ImplementationError.notSupported("Unimplemented method 'visit' for decl");
     }
 }

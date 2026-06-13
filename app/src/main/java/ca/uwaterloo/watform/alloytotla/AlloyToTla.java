@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaAppl;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -23,8 +24,6 @@ public class AlloyToTla extends StdLibsA2T {
 
         List<AlloyCmdPara> paras = alloyModel.allCmdParas();
 
-        l.info(paras.toString());
-
         List<AlloyCmdPara.CommandDecl> cmdDecls = new ArrayList<>();
         for (var p : paras) {
             cmdDecls.addAll(p.cmdDecls);
@@ -45,6 +44,9 @@ public class AlloyToTla extends StdLibsA2T {
     }
 
     public void translate(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
+
+        l.info(TlaAppl("test").toTLAPlusSnippetCore());
+
         addStdLibs(tlaModel);
         addSigConsts(tlaModel);
         addSigVars(tlaModel);
@@ -52,6 +54,9 @@ public class AlloyToTla extends StdLibsA2T {
 
         tlaModel.addComment("translation macros", verbose);
         addBoilerplate(tlaModel);
+
+        tlaModel.addComment("Predicates and functions", verbose);
+        addPredicatesFunctions(tlaModel);
 
         tlaModel.addComment("signature hierarchy", verbose);
         addSigHierarchy(tlaModel);
@@ -62,8 +67,8 @@ public class AlloyToTla extends StdLibsA2T {
         tlaModel.addComment("signature constraints", verbose);
         addSigConstraints(tlaModel);
 
-        tlaModel.addComment("scope constraints", verbose);
-        addScopeConstraints(tlaModel, cmdDecl);
+        // tlaModel.addComment("scope constraints", verbose);
+        // addScopeConstraints(tlaModel, cmdDecl);
 
         tlaModel.addComment("facts", verbose);
         addFacts(tlaModel);
