@@ -72,7 +72,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
                     List<TlaExp> args = new ArrayList<>();
                     args.addAll(macroResultRight.args);
                     args.add(left);
-                    
 
                     if (args.size() == macroResultRight.numArgs) {
                         var answer = TlaAppl(macroResultRight.name, args);
@@ -219,31 +218,29 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
         var leftResult = visit(bracketExpr.expr);
 
-        switch(leftResult)
-        {
-            case TlaExpResult leftTlaExpResult: {
-                if(bracketExpr.exprs.size() != 1)
-                throw new ImplementationError("malformed bracket expression: "+bracketExpr);
-                var right = bracketExpr.exprs.get(0);
-                var answer = _INNER_PRODUCT(extract(visit(right)), leftTlaExpResult.exp);
-                return new TlaExpResult(answer);
-            }
-            case MacroResult leftMacroResult: {
-                var args = new ArrayList<TlaExp>();
-                args.addAll(leftMacroResult.args);
-                args.addAll(mapBy(bracketExpr.exprs, e -> extract(visit(e))));
-                if(args.size() == leftMacroResult.numArgs)
+        switch (leftResult) {
+            case TlaExpResult leftTlaExpResult:
                 {
-                    var answer = TlaAppl(leftMacroResult.name, args);
+                    if (bracketExpr.exprs.size() != 1)
+                        throw new ImplementationError(
+                                "malformed bracket expression: " + bracketExpr);
+                    var right = bracketExpr.exprs.get(0);
+                    var answer = _INNER_PRODUCT(extract(visit(right)), leftTlaExpResult.exp);
                     return new TlaExpResult(answer);
                 }
-                else
+            case MacroResult leftMacroResult:
                 {
-                    return new MacroResult(leftMacroResult.numArgs, leftMacroResult.name, args);
+                    var args = new ArrayList<TlaExp>();
+                    args.addAll(leftMacroResult.args);
+                    args.addAll(mapBy(bracketExpr.exprs, e -> extract(visit(e))));
+                    if (args.size() == leftMacroResult.numArgs) {
+                        var answer = TlaAppl(leftMacroResult.name, args);
+                        return new TlaExpResult(answer);
+                    } else {
+                        return new MacroResult(leftMacroResult.numArgs, leftMacroResult.name, args);
+                    }
                 }
-            }
         }
-
     }
 
     @Override
