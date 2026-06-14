@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyevaluator.FormulaEvaluator;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -133,6 +134,7 @@ public class Main implements Callable<Integer> {
         Boolean verbose = cliConf.verbose;
         Boolean debug = cliConf.debug;
         Boolean dumpInstance = cliConf.dumpInstance;
+        Boolean evalFacts = cliConf.evalFacts;
 
         Boolean alsInputFile =
                 someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")));
@@ -158,7 +160,9 @@ public class Main implements Callable<Integer> {
         // rule out bad combinations of CLI options
         // tla and xml are okay together
         long count1 =
-                Stream.of(alloyPresent, tla, predAbs, vis, dumpInstance).filter(b -> b).count();
+                Stream.of(alloyPresent, tla, predAbs, vis, dumpInstance, evalFacts)
+                        .filter(b -> b)
+                        .count();
         long count2 = Stream.of(alloyPresent, xml, predAbs, vis).filter(b -> b).count();
 
         if (count1 >= 2) {
@@ -188,6 +192,10 @@ public class Main implements Callable<Integer> {
         } else if (vis && cmd) {
             Reporter.INSTANCE.addError(
                     CliError.invalidParams("for -vis, there cannot be a command"));
+        } else if (evalFacts && !xml) {
+            Reporter.INSTANCE.addError(
+                    CliError.invalidParams(
+                            "an xml file must be provided if -evalFacts is set to true"));
         }
         // stop if any errors from above check on combinations
         // Reporter.INSTANCE.exitIfHasErrors();
@@ -234,6 +242,8 @@ public class Main implements Callable<Integer> {
                                 cmdIdx,
                                 verbose,
                                 debug);
+                    } else if (evalFacts) {
+                        runEvalFacts(am, cliConf.xmlFileName);
                     } else if (xml) {
                         runCheckAlloyInstanceTla(am, cliConf.xmlFileName);
                     } else if (dumpInstance) {
@@ -361,6 +371,26 @@ public class Main implements Callable<Integer> {
             for (int i = Constants.firstCmdIdx; i < num_cmds_in_file; i++) {
                 AlloyInterface.executeCommand(am, i);
             }
+        }
+    }
+
+    private static void runEvalFacts(AlloyModel am, String instanceFilename) {
+        dashOutput("Checking instance for " + instanceFilename);
+        var evaluator = new FormulaEvaluator(instanceFilename);
+
+        boolean satisfied = true;
+        for (var para : am.allFactParas()) {
+            dashOutput("Checking para: " + para);
+            if (!para.block.accept(evaluator)) {
+                satisfied = false;
+                break;
+            }
+        }
+
+        if (satisfied) {
+            dashOutput("The facts are satisfied");
+        } else {
+            dashOutput("The facts are not satisfied");
         }
     }
 
