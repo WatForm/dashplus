@@ -6,14 +6,11 @@ package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.alloymodel.PredFunData.*;
-import static ca.uwaterloo.watform.parser.Parser.parseDecl;
-import static ca.uwaterloo.watform.parser.Parser.parseExpr;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -32,6 +29,7 @@ public class AMPredFunTable extends AMSigTable {
         // adding in builtin preds/fun
         // is a hack until imports work
 
+        /*
         // fun removeFirst [s: seq univ] : seq univ
         this.predFunTable.put(
                 "removeFirst",
@@ -66,6 +64,7 @@ public class AMPredFunTable extends AMSigTable {
                                         "s", AlloyArrow(new AlloyIntExpr(), new AlloyUnivExpr())),
                                 AlloyDecl("e", AlloyQtEnum.ONE, new AlloyUnivExpr())),
                         new AlloyQtExpr(AlloyQtEnum.LONE, new AlloyIntExpr())));
+        */
     }
 
     protected AMPredFunTable(AlloyFile alloyFile) {
