@@ -82,4 +82,10 @@ public class CliConf {
             names = {"-dumpInstance"},
             description = "Dump the model and a satisfiable instance for every satisfiable command")
     public boolean dumpInstance = false;
+
+    @Option(
+            names = {"-evalFacts"},
+            description =
+                    "Evaluate the facts of the provided alloy file using the provided xml instance")
+    public boolean evalFacts = false;
 }
