@@ -50,3 +50,5 @@ devenv.local.yaml
 # XML dump location
 out/
 
+# Location for .als files (used for testing)
+testing-models/

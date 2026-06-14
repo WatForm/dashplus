@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.parser.AlloyParser.*;
 import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyevaluator.FormulaEvaluator;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -117,6 +118,7 @@ public class Main implements Callable<Integer> {
     Boolean verbose = cliConf.verbose;
     Boolean debug = cliConf.debug;
     Boolean dumpInstance = cliConf.dumpInstance;
+    Boolean evalFacts = cliConf.evalFacts;
 
     Boolean alsInputFile = someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")));
 
