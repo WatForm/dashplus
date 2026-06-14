@@ -33,3 +33,6 @@ app/src/main/java/ca/uwaterloo/watform/nancy-list.md
 
 # XML dump location
 out/
+
+# Location for .als files (used for testing)
+testing-models/
