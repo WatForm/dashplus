@@ -24,7 +24,7 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
-public class SmallStepD2A extends NoTransEnabledD2A {
+public class SmallStepD2A extends TransEnabledD2A {
 
     protected SmallStepD2A(DashModel dm, Options opt) {
         super(dm, opt);
@@ -57,7 +57,9 @@ public class SmallStepD2A extends NoTransEnabledD2A {
 
         AlloyExpr transIsNotEnabled =
                 AlloyAnd(
-                        AlloyPredCall(D2AStrings.noTransEnabledName, List.of(this.dsl.curVar())),
+                        AlloyNot(
+                                AlloyPredCall(
+                                        D2AStrings.transEnabledName, List.of(this.dsl.curVar()))),
                         AlloyPredCall(D2AStrings.stutterName, this.dsl.curNextVars()));
 
         e = this.dsl.emptyExprList();

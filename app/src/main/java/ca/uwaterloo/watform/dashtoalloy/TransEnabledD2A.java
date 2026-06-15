@@ -10,13 +10,13 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
-public class NoTransEnabledD2A extends TransD2A {
+public class TransEnabledD2A extends TransD2A {
 
-    protected NoTransEnabledD2A(DashModel dm, Options opt) {
+    protected TransEnabledD2A(DashModel dm, Options opt) {
         super(dm, opt);
     }
 
-    public void addNoTransEnabled() {
+    public void addTransEnabled() {
         List<AlloyExpr> e = this.dsl.emptyExprList();
         List<DashParam> prs = this.dm.allParams();
 
@@ -35,19 +35,16 @@ public class NoTransEnabledD2A extends TransD2A {
                                 D2AStrings.preName(tout),
                                 this.dsl.curParamVars(this.dm.transParams(tfqn))));
         }
-        AlloyExpr noTransEnabled;
+        AlloyExpr transEnabled;
 
         if (this.dm.allParams().isEmpty())
             // __t1_pre[s, sn, p0, p1] or __t2_pre[s, sn, p0, p1] or ...
-            noTransEnabled = AlloyOrList(e);
+            transEnabled = AlloyOrList(e);
         else
             // some p0, p2 | __t1_pre[s, sn, p0, p1] or __t2_pre[s, s', p0, p1] or ...
-            noTransEnabled = AlloySomeVars(this.dsl.paramDecls(prs), AlloyOrList(e));
+            transEnabled = AlloySomeVars(this.dsl.paramDecls(prs), AlloyOrList(e));
         // __transNotEnabled[s,sn] = some p0, p2 | __t1_pre[s, sn, p0, p1] or __t2_pre[s, s', p0,
         // p1] or ...
-        this.am.addPred(
-                D2AStrings.noTransEnabledName,
-                this.dsl.curDecls(),
-                List.of(AlloyNot(noTransEnabled)));
+        this.am.addPred(D2AStrings.transEnabledName, this.dsl.curDecls(), List.of(transEnabled));
     }
 }

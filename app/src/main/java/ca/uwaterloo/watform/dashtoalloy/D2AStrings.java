@@ -37,7 +37,7 @@ public final class D2AStrings {
     // predicate names
 
     public static final String smallStepName = dsh_prefix + "small_step";
-    public static final String noTransEnabledName = dsh_prefix + "no_trans_enabled";
+    public static final String transEnabledName = dsh_prefix + "trans_enabled";
     public static final String stableName = dsh_prefix + "stable";
     public static final String stutterName = dsh_prefix + "stutter";
     public static final String noVarChange = dsh_prefix + "noVarChange_post";
