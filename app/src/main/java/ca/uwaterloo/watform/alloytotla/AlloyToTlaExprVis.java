@@ -11,7 +11,6 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloytotla.AlloyToTlaExprVis.TlaExpResult;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.tlaast.*;
@@ -207,10 +206,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         info(bracketExpr);
 
         /*
-
         a[b] = b.a
-        bracketExpr.expr = a
-        bracketExpr.exprs = [b]
         */
 
         l.info("expr " + bracketExpr.expr);
@@ -288,7 +284,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         var conseq = extract(this.visit(iteExpr.conseq));
         var alt = extract(this.visit(iteExpr.alt));
 
-        var answer = CreateHelper.TlaIfThenElse(condition, conseq, alt);
+        var answer = TlaIfThenElse(condition, conseq, alt);
 
         return new TlaExpResult(answer);
     }
@@ -297,20 +293,103 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     public Result visit(AlloyLetExpr letExpr) {
 
         info(letExpr);
+        /*
+        note that let expressions in TLA+ can have params, but cannot in ALloy
+        let expressions are translated directly, since TLA+ has a more expressive system for let expressions
+        no de-sugaring-via-substitution occurs
+        */
 
-        throw ImplementationError.notSupported("Unimplemented method 'visit' for let");
+        var asns =
+                mapBy(
+                        letExpr.asns,
+                        asn -> TlaDefn(TlaDecl(asn.qname.label), extract(visit(asn.expr))));
+        var body = extract(visit(letExpr.body));
+        var answer = new TlaLetBinding(asns, body);
+        return new TlaExpResult(answer);
+        // throw ImplementationError.notSupported("Unimplemented method 'visit' for let");
     }
 
     @Override
     public Result visit(AlloyQuantificationExpr quantificationExpr) {
         info(quantificationExpr);
-        throw ImplementationError.notSupported("Unimplemented method 'visit' for quantification");
+
+        l.info("quant: " + quantificationExpr.quant);
+        l.info("body:" + quantificationExpr.body);
+        l.info("decls:" + quantificationExpr.decls);
+        /*
+
+        all x : T | expr
+        -> \A x \in T : expr
+
+        all x: A, y: B | expr
+        -> \A x \in A : \A y \in B : expr
+
+        no x : A | expr
+        -> ~(\E x \in A : expr)
+
+        some x : A | expr
+        -> _some({x \in A : expr})
+
+        some x : A, y : B | expr
+        -> _some({x \in A, y \in B : expr })
+        and so on, no and all are special cases
+
+        decl visitor not called
+        */
+        TlaExp answer = extract(visit(quantificationExpr.body));
+        switch (quantificationExpr.quant) {
+            case AlloyQuantificationExpr.Quant.ALL:
+                {
+                    for (var decl : quantificationExpr.decls) {
+                        var head =
+                                TlaQuantOpHead(TlaVar(decl.getName()), extract(visit(decl.expr)));
+                        answer = TlaForAll(head, answer);
+                    }
+                    break;
+                }
+            case AlloyQuantificationExpr.Quant.NO:
+                {
+                    for (var decl : quantificationExpr.decls) {
+                        var head =
+                                TlaQuantOpHead(TlaVar(decl.getName()), extract(visit(decl.expr)));
+                        answer = TlaExists(head, answer);
+                    }
+                    answer = TlaNot(answer);
+                    break;
+                }
+            case AlloyQuantificationExpr.Quant.SUM:
+                {
+                    throw ImplementationError.notSupported(
+                            "Unsupported translation for sum quantification");
+                }
+            default:
+                {
+                    List<TlaVar> headVars =
+                            mapBy(quantificationExpr.decls, decl -> TlaVar(decl.getName()));
+                    List<TlaExp> headExps =
+                            mapBy(quantificationExpr.decls, decl -> extract(visit(decl.expr)));
+                    // todo fold right and switch
+                    // var set = TlaSetFilter(TlaQuantOpHeadTuple(headVars,), answer)
+                    throw ImplementationError.notSupported(
+                            "Unimplemented method 'visit' for quantification");
+                }
+        }
+        return new TlaExpResult(answer);
     }
 
     @Override
     public Result visit(AlloyDecl decl) {
 
         info(decl);
+
+        l.info("expr " + decl.expr);
+        l.info("isDisj2 " + decl.isDisj1);
+        l.info("isDisj1 " + decl.isDisj2);
+        l.info("qnames " + decl.qnames);
+        l.info("isVar " + decl.isVar);
+        l.info("isprivate " + decl.isPrivate);
+        l.info("mul " + decl.mul);
+
         throw ImplementationError.notSupported("Unimplemented method 'visit' for decl");
     }
 }
