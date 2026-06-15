@@ -160,7 +160,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
         if (!am.allPreds().contains(exp.label)) return new TlaExpResult(TlaAppl(exp.label));
 
-        int numArgs = am.getPredPara(exp.label).arguments.size();
+        int numArgs = am.numArgs(exp.label);
 
         l.info("translating macro " + exp.label + " with " + numArgs + " args ");
 
