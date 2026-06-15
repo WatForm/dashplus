@@ -300,13 +300,13 @@ public class Main implements Callable<Integer> {
             System.out.println(e.getMessage());
             System.out.println("Line: " + e.pos.y);
             System.out.println("Column: " + e.pos.x);
-            return 1;
+            return 3;
         } catch (Exception e) {
             // Unexpected Error exit code: 3
             System.err.println("Unexpected error: ");
             if (cliConf.debug) e.printStackTrace();
             else System.err.println(e);
-            return 3;
+            return 4;
         }
     }
 

@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.parser;
 
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
 import antlr.generated.DashBaseVisitor;
 import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
@@ -48,7 +50,7 @@ public class Parser {
      * @param filePath
      * @return
      */
-    private static AlloyFile parse(Path filePath) {
+    public static AlloyFile parse(Path filePath) {
         if (!filePath.getFileName().toString().endsWith(".als")
                 && !filePath.getFileName().toString().endsWith(".dsh")) {
             throw new Reporter.ErrorUser("File extension must be .dsh or .als");
@@ -85,11 +87,13 @@ public class Parser {
                         System.err.println("Error at line " + line + ":" + charPositionInLine);
                         System.err.println("Found token: " + t.getText());
                         System.err.println("Expected: " + msg);
+                        Reporter.INSTANCE.addError(new UserError("Parsing stopped."));
                     }
                 });
 
         if (filePath.getFileName().toString().endsWith(".als")) {
             ParseTree antlrAST = parser.alloyFile();
+            Reporter.INSTANCE.exitIfHasErrors();
             AlloyFileParseVis afpv = new AlloyFileParseVis(filePath);
             AlloyFile alloyFile = null;
             alloyFile = afpv.visit(antlrAST);
