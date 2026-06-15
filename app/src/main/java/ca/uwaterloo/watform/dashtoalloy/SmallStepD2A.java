@@ -24,7 +24,7 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
-public class SmallStepD2A extends TransD2A {
+public class SmallStepD2A extends NoTransEnabledD2A {
 
     protected SmallStepD2A(DashModel dm, Options opt) {
         super(dm, opt);
@@ -55,26 +55,9 @@ public class SmallStepD2A extends TransD2A {
         if (this.dm.allParams().isEmpty()) transIsTaken = AlloyOrList(e);
         else transIsTaken = AlloySomeVars(this.dsl.paramDecls(prs), AlloyOrList(e));
 
-        // no trans is enabled
-        e = this.dsl.emptyExprList();
-        for (String tfqn : this.dm.allTransNames()) {
-            String tout = DashFQN.translateFQN(tfqn);
-            // p3.p2.p1.t for parameters of this transition
-            if (this.isElectrum)
-                e.add(AlloyPredCall(tout, this.dsl.paramVars(this.dm.transParams(tfqn))));
-            // p3.p2.p1.s'.s.t for parameters of this transition
-            else
-                e.add(
-                        AlloyPredCall(
-                                D2AStrings.preName(tout),
-                                this.dsl.curParamVars(this.dm.transParams(tfqn))));
-        }
-        AlloyExpr transIsNotEnabled;
-        if (this.dm.allParams().isEmpty()) transIsNotEnabled = AlloyOrList(e);
-        else transIsNotEnabled = AlloySomeVars(this.dsl.paramDecls(prs), AlloyOrList(e));
-        transIsNotEnabled =
+        AlloyExpr transIsNotEnabled =
                 AlloyAnd(
-                        AlloyNot(transIsNotEnabled),
+                        AlloyPredCall(D2AStrings.noTransEnabledName, List.of(this.dsl.curVar())),
                         AlloyPredCall(D2AStrings.stutterName, this.dsl.curNextVars()));
 
         e = this.dsl.emptyExprList();

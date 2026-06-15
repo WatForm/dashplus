@@ -51,6 +51,7 @@ public class DashToAlloy extends StutterD2A {
         // one of these for the whole model
         if (this.dm.hasConcurrency()) this.addTestIfNextStable();
 
+        this.addNoTransEnabled();
         this.addSmallStep();
 
         if (this.isTcmc) {

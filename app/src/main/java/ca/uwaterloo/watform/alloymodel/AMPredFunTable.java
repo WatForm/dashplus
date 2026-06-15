@@ -92,8 +92,8 @@ public class AMPredFunTable extends AMSigTable {
                 // of the decl
                 CalcAritySetMulDefaultsExprVis.Result argResult =
                         arityAndSetMul.apply(argInfo.decl, Optional.empty());
-                System.out.println(argInfo.decl);
-                System.out.println(argResult.arity);
+                // System.out.println(argInfo.decl);
+                // System.out.println(argResult.arity);
                 // changes these values in place
                 // argInfo.decl = argInfo.decl.rebuild(argResult.exp);
                 if (argResult.arity.isPresent()) {

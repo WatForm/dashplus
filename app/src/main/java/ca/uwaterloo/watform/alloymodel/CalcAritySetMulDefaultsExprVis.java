@@ -259,7 +259,7 @@ public class CalcAritySetMulDefaultsExprVis
 
     @Override
     public Result visit(AlloyBinaryExpr binExpr) {
-        System.out.println(binExpr.getClass().toString());
+        // System.out.println(binExpr.getClass().toString());
         throw AlloyModelImplError.shouldNotReach();
     }
 

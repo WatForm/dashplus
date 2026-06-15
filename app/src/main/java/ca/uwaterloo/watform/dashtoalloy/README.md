@@ -16,8 +16,9 @@ TransPreD2A
 TransIsEnabledAfterStep
 TransTestIfNextStable
 TransPostD2A
-Trans
-SmallStep
+TransD2A
+NoTransEnabledD2A
+SmallStepD2A
 
 TracesFactD2A
 TcmcFactD2A
