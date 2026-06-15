@@ -328,10 +328,16 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         -> ~(\E x \in A : expr)
 
         some x : A | expr
+        -> (\E x \in A : expr)
+
+        lone x : A | expr
+        -> (\A x \in A: \A y \in A: expr(x) /\ expr(y) -> x = y)
+
+        one x : A | expr
         -> _some({x \in A : expr})
 
-        some x : A, y : B | expr
-        -> _some({x \in A, y \in B : expr })
+        one x : A, y : B | expr
+        -> _one({<<x,y>> \in A \X B : expr })
         and so on, no and all are special cases
 
         decl visitor not called
