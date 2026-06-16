@@ -795,8 +795,8 @@ public class CalcAritySetMulDefaultsExprVis
         AlloyExpr newExpr = typeResult.exp;
         AlloyDecl newDecl = null;
         notUnknown(typeResult);
-        // TODO: is x: <emptymul> "seq A" allowed?
-        if (declExpr.mul.isEmpty()) {
+        // x: <emptymul> "seq A" is allowed
+        if (declExpr.mul.isEmpty() && !isSeq(newExpr)) {
             // setting default
             if (typeArity.equals(ONE_ARITY)) {
                 // default: if arity of declExpr is ONE
@@ -808,7 +808,7 @@ public class CalcAritySetMulDefaultsExprVis
                 newDecl = declExpr.rebuild(AlloyQtEnum.SET, newExpr);
             }
         } else {
-            // mul has already been set
+            // mul has already been set or its newExpr is seq
             newDecl = declExpr.rebuild(newExpr);
         }
         if (isSeqDecl(declExpr) || isSeq(newExpr)) {

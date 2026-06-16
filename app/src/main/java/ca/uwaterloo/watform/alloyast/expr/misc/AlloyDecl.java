@@ -1,3 +1,13 @@
+// AlloyDecl is not a stand-alone AlloyExpr, but it
+// contributes to a lot of AlloyExprs (e.g., AlloyQuantificationExpr)
+
+// an AlloyDecl comes with a mul
+// thus X: one B -> AlloyDecl("A", ONE, B) rather than AlloyDecl("A", null, "one B")
+
+// however
+// s: seq expr is AlloyDecl("s", null, 'seq expr')
+// SEQ is not a possible multiplicitiy in an AlloyDecl
+
 package ca.uwaterloo.watform.alloyast.expr.misc;
 
 import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
@@ -49,7 +59,7 @@ public final class AlloyDecl extends AlloyExpr {
                 throw AlloyCtorError.declExactlyCannotHaveDisj(pos);
             }
         }
-        reqNonNull(nullField(pos, this), this.qnames, this.mul, this.expr);
+        reqNonNull(nullField(pos, this), this.qnames, this.expr);
         // System.out.println(expr);
         // System.out.println(expr.getClass());
         // System.out.println(this.mul);
@@ -63,8 +73,7 @@ public final class AlloyDecl extends AlloyExpr {
         }
         if (!this.mul.isEmpty()
                 && !AlloyQtEnum.MUL.contains(this.mul.orElse(null))
-                && this.mul.orElse(null) != AlloyQtEnum.EXACTLY
-                && this.mul.orElse(null) != AlloyQtEnum.SEQ) {
+                && this.mul.orElse(null) != AlloyQtEnum.EXACTLY) {
             throw AlloyCtorError.invalidAlloyQtEnum(
                     pos,
                     this.getClass().getSimpleName()

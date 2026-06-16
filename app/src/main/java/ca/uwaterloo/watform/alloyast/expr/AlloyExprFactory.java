@@ -278,7 +278,7 @@ public class AlloyExprFactory {
     }
 
     public static boolean isSeqDecl(AlloyDecl declExpr) {
-        return (declExpr.mul.isPresent() && declExpr.mul.get().equals(AlloyQtEnum.SEQ));
+        return (!declExpr.mul.isPresent() && isSeq(declExpr.expr));
     }
 
     // Seq is strange as a decl so make a special case for it

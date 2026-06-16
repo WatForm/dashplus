@@ -6,6 +6,7 @@ package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.alloymodel.PredFunData.*;
+import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
@@ -29,42 +30,28 @@ public class AMPredFunTable extends AMSigTable {
         // adding in builtin preds/fun
         // is a hack until imports work
 
-        /*
         // fun removeFirst [s: seq univ] : seq univ
         this.predFunTable.put(
                 "removeFirst",
-                FunData(
-                        "removeFirst",
-                        List.of(parseDecl("s: seq univ")),
-                        // AlloySeqDecl("s", new AlloyUnivExpr())),
-                        parseExpr("seq univ")));
+                FunData("removeFirst", List.of(parseDecl("s: seq univ")), parseExpr("seq univ")));
         // fun firstElem [s: seq univ] : set univ
         this.predFunTable.put(
                 "firstElem",
-                FunData(
-                        "firstElem",
-                        List.of(AlloySeqDecl("s", new AlloyUnivExpr())),
-                        parseExpr("seq univ")));
+                FunData("firstElem", List.of(parseDecl("s: seq univ")), parseExpr("seq univ")));
         // fun delete [s: seq univ, i: Int] : seq univ
         this.predFunTable.put(
                 "delete",
                 FunData(
                         "delete",
-                        List.of(
-                                AlloySeqDecl("s", new AlloyUnivExpr()),
-                                AlloyDecl("i", AlloyQtEnum.ONE, new AlloySigIntExpr())),
+                        List.of(parseDecl("s: seq univ"), parseDecl("i: one Int")),
                         parseExpr("seq univ")));
         // fun idxOf [s: Int -> univ, e: univ] : lone Int
         this.predFunTable.put(
                 "idxOf",
                 FunData(
                         "idxOf",
-                        List.of(
-                                AlloySeqDecl(
-                                        "s", AlloyArrow(new AlloyIntExpr(), new AlloyUnivExpr())),
-                                AlloyDecl("e", AlloyQtEnum.ONE, new AlloyUnivExpr())),
-                        new AlloyQtExpr(AlloyQtEnum.LONE, new AlloyIntExpr())));
-        */
+                        List.of(parseDecl("s: set Int set->set univ"), parseDecl("e: one univ")),
+                        parseExpr("lone Int")));
     }
 
     protected AMPredFunTable(AlloyFile alloyFile) {
