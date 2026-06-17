@@ -55,6 +55,9 @@ public class AlloyToTla extends StdLibsA2T {
         tlaModel.addComment("translation macros", verbose);
         addBoilerplate(tlaModel);
 
+        tlaModel.addComment("standard alloy modules", verbose);
+        orderingModule(tlaModel);
+
         tlaModel.addComment("Predicates and functions", verbose);
         addPredicatesFunctions(tlaModel);
 

@@ -120,5 +120,6 @@ public final class TlaStrings extends CommonStrings {
     public static final String MULTI_LINE_COMMENT_END = "*)";
     public static final String SINGLE_LINE_COMMENT_START = "\\*";
 
+    public static final String DOT = ".";
     // public static final String = "";
 }
