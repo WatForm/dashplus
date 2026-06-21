@@ -236,6 +236,10 @@ public class GeneralUtil {
         return result;
     }
 
+    public static <T> Set<T> intersectSets(Set<T> set1, Set<T> set2) {
+        return set1.stream().filter(element -> set2.contains(element)).collect(Collectors.toSet());
+    }
+
     public static <T> Set<T> diffSets(Set<T> set1, Set<T> set2) {
         return set1.stream().filter(element -> !set2.contains(element)).collect(Collectors.toSet());
     }
