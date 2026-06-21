@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.utils;
 
+import ca.uwaterloo.watform.alloyinterface.Instance;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -16,16 +17,15 @@ public final class XmlReader {
 
     private XmlReader() {}
 
-    /**
-     * Convenience wrapper that converts checked exceptions into a RuntimeException, matching the
-     * style of XmlDumper.dumpInstance.
-     */
-    public static Map<String, Set<List<String>>> readInstance(String xmlPath) {
+    public static Instance readInstance(String xmlPath) {
         try {
             return readInstanceUnchecked(xmlPath);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new RuntimeException(
-                    "Failed to read instance XML from " + xmlPath + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw UtilsUserError.fileNotFound(xmlPath, e.getMessage());
+        } catch (ParserConfigurationException e) {
+            throw UtilsImplError.xmlConfigError("reading " + xmlPath, e.getMessage());
+        } catch (SAXException e) {
+            throw UtilsError.malformedXml(xmlPath, e.getMessage());
         }
     }
 
@@ -38,7 +38,7 @@ public final class XmlReader {
      *
      * <p>returns: { "this/Book.addr" -> { ["Book$0", "Name$0", "Addr$0"] } }
      */
-    private static Map<String, Set<List<String>>> readInstanceUnchecked(String xmlPath)
+    private static Instance readInstanceUnchecked(String xmlPath)
             throws ParserConfigurationException, SAXException, IOException {
 
         Document doc = DOC_FACTORY.newDocumentBuilder().parse(new File(xmlPath));
@@ -46,26 +46,30 @@ public final class XmlReader {
 
         Map<String, Set<List<String>>> result = new HashMap<>();
 
-        NodeList relations = doc.getElementsByTagName("relation");
+        NodeList relations = doc.getElementsByTagName(XmlConstants.RELATION);
         for (int i = 0; i < relations.getLength(); i++) {
             Element rel = (Element) relations.item(i);
-            String name = rel.getAttribute("name");
+            String name = rel.getAttribute(XmlConstants.RELATION_NAME_ATTR);
 
             Set<List<String>> tuples = new HashSet<>();
-            NodeList tupleNodes = rel.getElementsByTagName("tuple");
+            NodeList tupleNodes = rel.getElementsByTagName(XmlConstants.TUPLE);
             for (int j = 0; j < tupleNodes.getLength(); j++) {
                 String raw = tupleNodes.item(j).getTextContent().trim();
-                List<String> tuple =
-                        Arrays.stream(raw.split(","))
-                                .map(String::trim)
-                                .filter(s -> !s.isEmpty())
-                                .toList();
+                List<String> tuple = splitTrimmedNonEmpty(raw, ",");
                 tuples.add(tuple);
             }
 
             result.put(name, tuples);
         }
 
-        return result;
+        return new Instance(result);
+    }
+
+    // inverse of strCommaList-style joining: splits s on delim, trims each piece,
+    // and drops any pieces that are empty after trimming
+    private static List<String> splitTrimmedNonEmpty(String s, String delim) {
+        List<String> pieces = Arrays.asList(s.split(delim));
+        List<String> trimmed = GeneralUtil.mapBy(pieces, String::trim);
+        return GeneralUtil.filterBy(trimmed, piece -> !piece.isEmpty());
     }
 }
