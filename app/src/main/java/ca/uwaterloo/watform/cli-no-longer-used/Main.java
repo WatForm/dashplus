@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyevaluator.FormulaEvaluator;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
+import ca.uwaterloo.watform.alloyinterface.Instance;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 // MKJ RE-ADD import ca.uwaterloo.watform.alloytotla.AlloyToTla;
