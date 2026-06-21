@@ -1,7 +1,5 @@
 package ca.uwaterloo.watform.utils;
 
-import static ca.uwaterloo.watform.utils.CommonStrings.*;
-
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import java.io.File;
@@ -30,19 +28,9 @@ public final class XmlDumper {
         try {
             dumpInstanceUnchecked(soln, outputPath);
         } catch (ParserConfigurationException e) {
-            dashOutput(
-                    "Warning: XML configuration error while dumping "
-                            + context
-                            + ": "
-                            + e.getMessage());
+            throw UtilsImplError.xmlConfigError("dumping " + context, e.getMessage());
         } catch (TransformerException e) {
-            dashOutput("Warning: failed to write XML for " + context + ": " + e.getMessage());
-        } catch (ImplementationError e) {
-            dashOutput(
-                    "Warning: XML dump failed, the solution is unsatisfiable for "
-                            + context
-                            + ": "
-                            + e.getMessage());
+            throw UtilsImplError.xmlWriteError(context, e.getMessage());
         }
     }
 
@@ -50,9 +38,9 @@ public final class XmlDumper {
         try {
             dumpModelUnchecked(am, outputPath);
         } catch (ParserConfigurationException e) {
-            dashOutput("Warning: XML configuration error while dumping model: " + e.getMessage());
+            throw UtilsImplError.xmlConfigError("dumping model", e.getMessage());
         } catch (TransformerException e) {
-            dashOutput("Warning: failed to write XML for model: " + e.getMessage());
+            throw UtilsImplError.xmlWriteError("model", e.getMessage());
         }
     }
 
@@ -63,15 +51,15 @@ public final class XmlDumper {
         Document doc = DOC_FACTORY.newDocumentBuilder().newDocument();
         Transformer tf = TF_FACTORY.newTransformer();
 
-        Element root = doc.createElement("instance");
+        Element root = doc.createElement(XmlConstants.INSTANCE_ROOT);
         doc.appendChild(root);
 
         for (String key : soln.getSolnMapKeys()) {
-            Element rel = doc.createElement("relation");
-            rel.setAttribute("name", key);
+            Element rel = doc.createElement(XmlConstants.RELATION);
+            rel.setAttribute(XmlConstants.RELATION_NAME_ATTR, key);
             for (List<String> tuple : soln.get(key)) {
-                Element t = doc.createElement("tuple");
-                t.setTextContent(String.join(", ", tuple));
+                Element t = doc.createElement(XmlConstants.TUPLE);
+                t.setTextContent(String.join(XmlConstants.TUPLE_ATOM_SEPARATOR, tuple));
                 rel.appendChild(t);
             }
             root.appendChild(rel);
@@ -88,10 +76,10 @@ public final class XmlDumper {
         Document doc = DOC_FACTORY.newDocumentBuilder().newDocument();
         Transformer tf = TF_FACTORY.newTransformer();
 
-        Element root = doc.createElement("model");
+        Element root = doc.createElement(XmlConstants.MODEL_ROOT);
         doc.appendChild(root);
 
-        Element textNode = doc.createElement("modelText");
+        Element textNode = doc.createElement(XmlConstants.MODEL_TEXT_ATTR);
         textNode.setTextContent(model.toString());
         root.appendChild(textNode);
 

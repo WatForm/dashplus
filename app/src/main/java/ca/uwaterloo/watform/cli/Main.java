@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyevaluator.FormulaEvaluator;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
+import ca.uwaterloo.watform.alloyinterface.Instance;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.alloytotla.AlloyToTla;
@@ -95,11 +96,24 @@ import picocli.CommandLine.Mixin;
             "     (execute cmd(s) of alloy file)",
             "",
 
+            // Dump Instance
+            "  @|bold 8) dashplus f.als -dumpInstance < -dumpDir=dir > < -v > < -d > |@",
+            "     (dump the alloy model and a satisfiable instance for every satisfiable cmd;",
+            "      single .als input file only)",
+            "",
+
+            // Evaluate Facts
+            "  @|bold 9) dashplus f.als -evalFacts -xml=instance.xml < -v > < -d > |@",
+            "     (evaluate the facts of f.als against the given XML instance;",
+            "      .als input only, requires -xml)",
+            "",
+
             // General Flags
             "@|bold,underline GENERAL FLAGS|@",
             "  @|bold -cmd=n|@   translate/execute cmd n; if just -cmd it means execute all cmds; if not present, translate/execute with no commands",
             "  @|bold -v|@   for verbose output - this adds in comments",
             "  @|bold -d|@   debug mode, where the translator writes things during translation to stdout",
+            "  @|bold -dumpDir=dir|@   output directory for -dumpInstance (default: dump/), only used with -dumpInstance",
             ""
         },
 
@@ -196,6 +210,22 @@ public class Main implements Callable<Integer> {
             Reporter.INSTANCE.addError(
                     CliError.invalidParams(
                             "an xml file must be provided if -evalFacts is set to true"));
+        } else if (evalFacts && !alsInputFile) {
+            // -evalFacts only supported for .als input for now
+            Reporter.INSTANCE.addError(
+                    CliError.invalidParams("for -evalFacts, the input model must be .als"));
+        } else if (dumpInstance && !alsInputFile) {
+            // -dumpInstance only supported for .als input for now
+            Reporter.INSTANCE.addError(
+                    CliError.invalidParams("for -dumpInstance, the input model must be .als"));
+        } else if (dumpInstance && cliConf.fileNames.size() != 1) {
+            Reporter.INSTANCE.addError(
+                    CliError.invalidParams("for -dumpInstance, there can be only one input model"));
+        } else if (dumpInstance && write) {
+            // -dumpInstance always writes its own files to -dumpDir;
+            // -write is for the other translation modes and doesn't apply here
+            Reporter.INSTANCE.addError(
+                    CliError.invalidParams("-dumpInstance and -write cannot be combined"));
         }
         // stop if any errors from above check on combinations
         // Reporter.INSTANCE.exitIfHasErrors();
@@ -247,7 +277,7 @@ public class Main implements Callable<Integer> {
                     } else if (xml) {
                         runCheckAlloyInstanceTla(am, cliConf.xmlFileName);
                     } else if (dumpInstance) {
-                        runDumpInstance(am, cmdIdx);
+                        runDumpInstance(am, tlaModuleName, cliConf.dumpDir);
                     } else {
                         runAlloy(am, cmdIdx);
                     }
@@ -376,9 +406,18 @@ public class Main implements Callable<Integer> {
 
     private static void runEvalFacts(AlloyModel am, String instanceFilename) {
         dashOutput("Checking instance for " + instanceFilename);
-        var evaluator = new FormulaEvaluator(instanceFilename);
 
         boolean satisfied = true;
+        Instance instance;
+        try {
+            instance = XmlReader.readInstance(instanceFilename);
+        } catch (UserOrImplError err) {
+            Reporter.INSTANCE.addError(err);
+            Reporter.INSTANCE.exitIfHasErrors();
+            return;
+        }
+
+        var evaluator = new FormulaEvaluator(instance);
         for (var para : am.allFactParas()) {
             dashOutput("Checking para: " + para);
             if (!para.block.accept(evaluator)) {
@@ -394,28 +433,30 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    private static void runDumpInstance(AlloyModel am, Integer cmdIdx) {
+    // Dumps the alloy model and a satisfiable instance for every satisfiable command to
+    // dumpDir, using fileNamePrefix to namespace the output files.
+    private static void runDumpInstance(AlloyModel am, String fileNamePrefix, String dumpDir)
+            throws IOException {
         int numCmds = am.getNumCmds();
 
-        dashOutput("cmdIdx: " + cmdIdx);
+        // ensure the dump directory exists
+        Path dumpDirPath = Paths.get(dumpDir);
+        Files.createDirectories(dumpDirPath);
+
+        String modelPath = dumpDirPath.resolve(fileNamePrefix + "-model.xml").toString();
+        String instancePath = dumpDirPath.resolve(fileNamePrefix + "-instance.xml").toString();
+
         dashOutput("Dumping the alloy model");
-        XmlDumper.dumpModel(am, Constants.DUMP_DIR + "model.xml");
+        XmlDumper.dumpModel(am, modelPath);
 
         Solution soln = AlloyInterface.checkModelSatisfiability(am);
-        dumpOrReport(
-                soln, Constants.DUMP_DIR + "instance.xml", "default scope (no commands in file)");
-        if (Constants.firstCmdIdx <= cmdIdx && cmdIdx < numCmds) { // output specific command
-            soln = AlloyInterface.executeCommand(am, cmdIdx);
-            dumpOrReport(
-                    soln,
-                    Constants.DUMP_DIR + "instance-cmd" + cmdIdx + ".xml",
-                    "command " + cmdIdx);
-        } else {
-            for (int i = Constants.firstCmdIdx; i < numCmds; i++) {
-                soln = AlloyInterface.executeCommand(am, i);
-                dumpOrReport(
-                        soln, Constants.DUMP_DIR + "instance-cmd" + i + ".xml", "command " + i);
-            }
+        dumpOrReport(soln, instancePath, "default scope (no commands in file)");
+
+        for (int i = Constants.firstCmdIdx; i < numCmds; i++) {
+            soln = AlloyInterface.executeCommand(am, i);
+            String cmdInstancePath =
+                    dumpDirPath.resolve(fileNamePrefix + "-instance-cmd" + i + ".xml").toString();
+            dumpOrReport(soln, cmdInstancePath, "command " + i);
         }
     }
 
