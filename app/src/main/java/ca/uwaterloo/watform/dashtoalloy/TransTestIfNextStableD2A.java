@@ -5,12 +5,34 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.dashmodel.DashParam;
 import java.util.List;
 
+/*
+    __nextIsStable [
+        s : one __Snapshot,
+        sn : one __Snapshot,
+        // the following determine if another transition is enabled
+        // variable values?
+        sc0 : set __Scopes,
+        genEvs0 : set __Events,
+        sc1 : set __Ids set->set __Scopes,
+        genEvs1 : set __Ids set->set __Events
+        ...
+    ] {
+        all p0,p1, ... |
+            {
+                !t1_enabledAfterStep[s, sn, p0, p1, ..., sc0, genEvs0, sc1, genEvs1, ...]
+                !t2_enabledAfterStep[s, sn, p0, p1, ..., sc0, genEvs0, sc1, genEvs1, ...]
+                !t3_enabledAfterStep[s, sn, p0, p1, ..., sc0, genEvs0, sc1, genEvs1, ...]
+                ...
+            }
+    }
+*/
 public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
 
     protected TransTestIfNextStableD2A(DashModel dm, Options opt) {
@@ -27,9 +49,11 @@ public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
             decls.addAll(this.dsl.curNextDecls());
         }
 
+        /*
         for (DashParam p : this.dm.allParams()) {
             decls.add(p.asAlloyDecl());
         }
+        */
 
         Integer maxDepthParams = this.dm.maxDepthParams();
         for (int i = 0; i <= maxDepthParams; i++) {
@@ -60,6 +84,12 @@ public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
             String tout = DashFQN.translateFQN(tfqn);
             body.add(AlloyNot(AlloyPredCall(D2AStrings.enabledAfterStepName(tout), args)));
         }
-        this.am.addPred(D2AStrings.testIfNextStableName, decls, body);
+
+        this.am.addPred(
+                D2AStrings.testIfNextStableName,
+                decls,
+                List.of(
+                        AlloyAllVars(
+                                this.dsl.paramDecls(this.dm.allParams()), new AlloyBlock(body))));
     }
 }

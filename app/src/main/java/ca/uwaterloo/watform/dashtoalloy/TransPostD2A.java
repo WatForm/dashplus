@@ -592,6 +592,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             args.add(this.dsl.curVar());
             args.add(this.dsl.nextVar());
         }
+        /*
         // add args for parameters; has to be something or
         // none for every possible parameter in the system
         List<DashParam> paramsUsed = this.dm.transParams(tfqn);
@@ -599,6 +600,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             if (paramsUsed.contains(p)) args.add(p.asIndexValue());
             else args.add(AlloyNone());
         }
+        */
         // add scopesUsed and events parameters
         // need scopesUsed and events because the values for both depend on whether next is stable
         // or not

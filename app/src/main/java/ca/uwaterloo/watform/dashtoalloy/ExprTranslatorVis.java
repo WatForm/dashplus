@@ -26,6 +26,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
     private boolean isElectrum;
     private DashModel dm;
     protected DSL dsl;
+    private boolean mkNext = false;
 
     public ExprTranslatorVis(DashModel dm, boolean isElectrum) {
         this.dm = dm;
@@ -39,13 +40,21 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
         this.dsl = new DSL(this.isElectrum);
     }
 
-    public AlloyExpr translateExpr(AlloyExpr e, boolean onlyGetName) {
-        this.onlyGetName = onlyGetName;
+    public AlloyExpr translateExprOnlyGetName(AlloyExpr e) {
+        this.onlyGetName = true;
+        this.mkNext = false;
         return visit(e);
     }
 
     public AlloyExpr translateExpr(AlloyExpr e) {
         this.onlyGetName = false;
+        this.mkNext = false;
+        return visit(e);
+    }
+
+    public AlloyExpr translateExprAsNext(AlloyExpr e) {
+        this.onlyGetName = false;
+        this.mkNext = true;
         return visit(e);
     }
 
@@ -77,9 +86,15 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
             if (dashRef.isNext())
                 // p1.p2.(sn.v)
                 join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
-            else
-                // p1.p2.(s.v)
-                join_list.add(this.dsl.curJoinExpr((AlloyQnameExpr) v_expr));
+            else {
+                if (!this.mkNext) {
+                    // p1.p2.(s.v)
+                    join_list.add(this.dsl.curJoinExpr((AlloyQnameExpr) v_expr));
+                } else {
+                    // p1.p2.(sn.v)
+                    join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
+                }
+            }
             return AlloyJoinList(join_list);
         } else {
             // Electrum
