@@ -38,7 +38,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
             cop = Collections.nCopies(i, D2AStrings.identifierName);
             // scopesUsed0, scopeUsed1, etc
-            if (dm.hasConcurrency()) {
+            if (this.dm.hasConcurrency() && this.dm.hasScopesAti(i)) {
                 decls.add(
                         // scopesUsedi: p0 -> p1 -> p2 -> set Scopes
                         this.dsl.AlloyDeclArrowStringList(
@@ -51,7 +51,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                                         D2AStrings.scopeLabelName)));
             }
             // conf0, conf1, etc.
-            if (!dm.hasOnlyOneState() && dm.hasStatesAti(i)) {
+            if (!this.dm.hasOnlyOneState() && this.dm.hasStatesAti(i)) {
                 decls.add(
                         this.dsl.AlloyDeclArrowStringList(
                                 this.dsl.nameNum(D2AStrings.confName, i),

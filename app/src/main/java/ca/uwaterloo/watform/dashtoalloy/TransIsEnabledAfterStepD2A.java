@@ -88,13 +88,15 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
         List<DashRef> nonO = this.dm.nonOrthogonalScopesOf(tfqn);
 
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            final int j = i;
-            List<AlloyExpr> u =
-                    mapBy(
-                            filterBy(nonO, x -> x.hasNumParams(j)),
-                            y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
-            // o1: forall i. not(t1_nonOrthScopei in scopesi)
-            for (AlloyExpr x : u) orth1.add(AlloyNot(AlloyIn(x, this.dsl.scopeVar(i))));
+            if (this.dm.hasTransAti(i)) {
+                final int j = i;
+                List<AlloyExpr> u =
+                        mapBy(
+                                filterBy(nonO, x -> x.hasNumParams(j)),
+                                y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
+                // o1: forall i. not(t1_nonOrthScopei in scopesi)
+                for (AlloyExpr x : u) orth1.add(AlloyNot(AlloyIn(x, this.dsl.scopeVar(i))));
+            }
         }
         AlloyExpr o1 = AlloyAndList(orth1);
 
@@ -103,19 +105,24 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
         // used
         List<AlloyExpr> orth2 = this.dsl.emptyExprList();
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            final int j = i;
-            List<AlloyExpr> u =
-                    mapBy(
-                            filterBy(nonO, x -> x.hasNumParams(j)),
-                            y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
-            // o2: forall i. not(t1_nonOrthScopei in scopesi + s'.scopesUsedi)
-            for (AlloyExpr x : u)
-                orth2.add(
-                        AlloyNot(
-                                AlloyIn(
-                                        x,
-                                        AlloyUnion(
-                                                this.dsl.curScopesUsed(i), this.dsl.scopeVar(i)))));
+            // if there are no trans with scope at i, we don't need
+            // to rule out that higher level scope of this trans
+            if (this.dm.hasTransAti(i)) {
+                final int j = i;
+                List<AlloyExpr> u =
+                        mapBy(
+                                filterBy(nonO, x -> x.hasNumParams(j)),
+                                y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
+                // o2: forall i. not(t1_nonOrthScopei in scopesi + s'.scopesUsedi)
+                for (AlloyExpr x : u)
+                    orth2.add(
+                            AlloyNot(
+                                    AlloyIn(
+                                            x,
+                                            AlloyUnion(
+                                                    this.dsl.curScopesUsed(i),
+                                                    this.dsl.scopeVar(i)))));
+            }
         }
         AlloyExpr o2 = AlloyAndList(orth2);
 

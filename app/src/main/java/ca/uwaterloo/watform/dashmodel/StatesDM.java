@@ -274,6 +274,14 @@ public class StatesDM extends TransDM {
 
     // stuff about both states and trans
 
+    public boolean hasScopesAti(int i) {
+        for (String tfqn : this.allTransNames()) {
+            DashRef scope = this.scope(tfqn);
+            if (scope.hasNumParams(i)) return true;
+        }
+        return false;
+    }
+
     public DashRef scope(String tfqn) {
         // create a DashRef for the scope of tfqn
         // this is not necessarily an AND scope

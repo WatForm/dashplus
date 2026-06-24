@@ -124,7 +124,7 @@ public class InitsD2A extends SnapshotSigD2A {
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
 
             // scopesUsedi = none
-            if (this.dm.hasConcurrency())
+            if (this.dm.hasConcurrency() && this.dm.hasScopesAti(i))
                 body.add(AlloyEqual(this.dsl.curScopesUsed(i), this.dsl.noneArrow(i)));
 
             if (this.dm.hasTransAti(i))
