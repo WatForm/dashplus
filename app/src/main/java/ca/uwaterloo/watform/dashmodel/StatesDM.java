@@ -105,6 +105,16 @@ public class StatesDM extends TransDM {
         return !stateParams(sfqn).isEmpty();
     }
 
+    public boolean hasStatesAti(int i) {
+        // any states with i parameters
+        for (String s : allStateNames()) {
+            if (!this.isRoot(s)) {
+                if (this.stateParams(s).size() == i) return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isDefault(String sfqn) {
         return (this.getStateEntry(sfqn).def == DefKind.DEFAULT);
     }

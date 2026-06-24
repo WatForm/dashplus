@@ -73,27 +73,35 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         List<DashRef> entered = this.dm.entered(tfqn);
         List<DashRef> exited = this.dm.exited(tfqn);
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            final int j = i;
-            // states entered at level j
-            // System.out.println(tfqn);
-            List<AlloyExpr> ent =
-                    mapBy(
-                            filterBy(entered, x -> x.hasNumParams(j)),
-                            y -> this.translateDashRefToArrowExpr(y));
-            // states exited at level j
-            // System.out.println("exited: ");
-            // System.out.println(exited);
-            List<AlloyExpr> exi =
-                    mapBy(
-                            filterBy(exited, x -> x.hasNumParams(j)),
-                            y -> this.translateDashRefToArrowExpr(y));
-            // System.out.println(exi);
-            // both ent and exi could be empty at this level
-            AlloyExpr e;
-            if (!exi.isEmpty()) e = AlloyDiff(this.dsl.curConf(i), AlloyUnion(exi));
-            else e = this.dsl.curConf(i);
-            if (!ent.isEmpty()) e = AlloyUnion(e, AlloyUnion(ent));
-            body.add(AlloyEqual(this.dsl.nextConf(i), e));
+            if (this.dm.hasStatesAti(i)) {
+                final int j = i;
+                // states entered at level j
+                // System.out.println(tfqn);
+                List<AlloyExpr> ent =
+                        mapBy(
+                                filterBy(entered, x -> x.hasNumParams(j)),
+                                y -> this.translateDashRefToArrowExpr(y));
+                // states exited at level j
+                // System.out.println("exited: ");
+                // System.out.println(exited);
+                List<AlloyExpr> exi =
+                        mapBy(
+                                filterBy(exited, x -> x.hasNumParams(j)),
+                                y -> this.translateDashRefToArrowExpr(y));
+                // System.out.println(exi);
+                // both ent and exi could be empty at this level
+                AlloyExpr e;
+                if (!exi.isEmpty()) e = AlloyDiff(this.dsl.curConf(i), AlloyUnion(exi));
+                else {
+                    // no change
+                    // s.confi
+                    e = this.dsl.curConf(i);
+                }
+                if (!ent.isEmpty()) e = AlloyUnion(e, AlloyUnion(ent));
+                // could be:
+                // sn.confi = s.confi (if e )
+                body.add(AlloyEqual(this.dsl.nextConf(i), e));
+            }
         }
     }
 
@@ -105,12 +113,14 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         List<DashParam> prs = this.dm.transParams(tfqn);
 
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            if (prs.size() == i) {
-                // for convenience of methods, make it a DashRef first
-                dr = new TransDashRef(tout, mapBy(prs, x -> x.asIndexValue()));
-                ex = this.translateDashRefToArrowExpr(dr);
-            } else ex = this.dsl.noneArrow(i);
-            body.add(AlloyEqual(this.dsl.nextTransTaken(i), ex));
+            if (this.dm.hasTransAti(i)) {
+                if (prs.size() == i) {
+                    // for convenience of methods, make it a DashRef first
+                    dr = new TransDashRef(tout, mapBy(prs, x -> x.asIndexValue()));
+                    ex = this.translateDashRefToArrowExpr(dr);
+                } else ex = this.dsl.noneArrow(i);
+                body.add(AlloyEqual(this.dsl.nextTransTaken(i), ex));
+            }
         }
     }
 
@@ -592,6 +602,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             args.add(this.dsl.curVar());
             args.add(this.dsl.nextVar());
         }
+        /*
         // add args for parameters; has to be something or
         // none for every possible parameter in the system
         List<DashParam> paramsUsed = this.dm.transParams(tfqn);
@@ -599,6 +610,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             if (paramsUsed.contains(p)) args.add(p.asIndexValue());
             else args.add(AlloyNone());
         }
+        */
         // add scopesUsed and events parameters
         // need scopesUsed and events because the values for both depend on whether next is stable
         // or not

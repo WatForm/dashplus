@@ -44,6 +44,7 @@ public class Builtins {
                     Map.entry("nodeLevel/next", 2),
                     Map.entry("node/next", 2),
                     Map.entry("PID/next", 2),
+                    Map.entry("PID/prev", 2),
                     Map.entry("node/prev", 2),
                     Map.entry("prevs", 2),
                     Map.entry("__Snapshot/next", 2),

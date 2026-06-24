@@ -78,7 +78,7 @@ public class TransIsEnabledAfterStepD2A extends TransPreD2A {
                                     this.dsl.nextConf(prs.size()))));
 
         // primed guard condition is true
-        // TODO
+        if (this.dm.whenR(tfqn) != null) body.add(this.translateExprAsNext(this.dm.whenR(tfqn)));
 
         // orthogonality  ------------------
 

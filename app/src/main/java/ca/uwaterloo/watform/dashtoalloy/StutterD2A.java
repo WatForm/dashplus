@@ -32,12 +32,14 @@ public class StutterD2A extends SingleEventInputD2A {
         // all the dsh defined parts of the snapshot stay the same
         if (this.dm.hasConcurrency()) body.add(this.noChange(D2AStrings.stableName));
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            if (!this.dm.hasOnlyOneState())
+
+            if (!this.dm.hasOnlyOneState() && dm.hasStatesAti(i))
                 body.add(this.noChange(D2AStrings.confName + Integer.toString(i)));
             if (this.dm.hasConcurrency())
                 body.add(noChange(D2AStrings.scopesUsedName + Integer.toString(i)));
 
-            body.add(AlloyEqual(this.dsl.nextTransTaken(i), this.dsl.noneArrow(i)));
+            if (this.dm.hasTransAti(i))
+                body.add(AlloyEqual(this.dsl.nextTransTaken(i), this.dsl.noneArrow(i)));
 
             if (this.dm.hasEvents() && this.dm.hasIntEventsAti(i))
                 // internal events go away

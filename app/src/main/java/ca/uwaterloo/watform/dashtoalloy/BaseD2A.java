@@ -59,6 +59,14 @@ public class BaseD2A {
         return new ExprTranslatorVis(dm, isElectrum).translateExpr(expr);
     }
 
+    protected AlloyExpr translateExprAsNext(AlloyExpr expr) {
+        return new ExprTranslatorVis(dm, isElectrum).translateExprAsNext(expr);
+    }
+
+    protected AlloyExpr translateExprOnlyGetName(AlloyExpr expr) {
+        return new ExprTranslatorVis(dm, isElectrum).translateExprOnlyGetName(expr);
+    }
+
     protected AlloyExpr translateDashRefToArrowExpr(DashRef dashRef) {
         // p1 -> p2 -> fqn
         // used for initialization and
@@ -71,10 +79,6 @@ public class BaseD2A {
         }
         ll.add(AlloyVar(DashFQN.translateFQN(dashRef.name)));
         return AlloyArrowExprList(ll);
-    }
-
-    protected AlloyExpr translateExprOnlyGetName(AlloyExpr expr) {
-        return new ExprTranslatorVis(dm, isElectrum).translateExpr(expr, true);
     }
 
     protected Set<DashRef> collectDashRefs(AlloyExpr expr) {

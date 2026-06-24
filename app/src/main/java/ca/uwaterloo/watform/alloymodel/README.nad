@@ -23,6 +23,7 @@ AMMacros
 AMFacts
 AMAsserts
 AMCmds
+AMScopeComputer
 AlloyModel
 
 All AMxxx(notTable) are initialized with an empty list so that a model can be created completely through the API.
