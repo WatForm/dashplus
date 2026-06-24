@@ -117,6 +117,14 @@ public class TransDM extends InitsInvsDM {
         return depthsInUse;
     }
 
+    public boolean hasTransAti(int i) {
+        // any states with i parameters
+        for (String s : allTransNames()) {
+            if (this.transParams(s).size() == i) return true;
+        }
+        return false;
+    }
+
     public List<String> intEventsGenerated() {
         return mapBy(
                 filterBy(allTransNames(), i -> this.tt.get(i).sendR != null),

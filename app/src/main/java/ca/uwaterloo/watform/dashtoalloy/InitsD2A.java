@@ -108,15 +108,17 @@ public class InitsD2A extends SnapshotSigD2A {
                 // so this should be impossible
                 shouldNotReach();
             for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-                // Java required local var used in lambda to be final
-                final int numParams = i;
-                // entered comes back in terms of DashRefs and DashParams
-                List<AlloyExpr> ent =
-                        mapBy(
-                                filterBy(entered, x -> x.hasNumParams(numParams)),
-                                y -> this.translateDashRefToArrowExpr(y));
-                if (!ent.isEmpty()) body.add(AlloyEqual(this.dsl.curConf(i), AlloyUnion(ent)));
-                else body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.noneArrow(i)));
+                // Java requires local var used in lambda to be final
+                if (this.dm.hasStatesAti(i)) {
+                    final int numParams = i;
+                    // entered comes back in terms of DashRefs and DashParams
+                    List<AlloyExpr> ent =
+                            mapBy(
+                                    filterBy(entered, x -> x.hasNumParams(numParams)),
+                                    y -> this.translateDashRefToArrowExpr(y));
+                    if (!ent.isEmpty()) body.add(AlloyEqual(this.dsl.curConf(i), AlloyUnion(ent)));
+                    else body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.noneArrow(i)));
+                }
             }
         }
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
@@ -125,7 +127,8 @@ public class InitsD2A extends SnapshotSigD2A {
             if (this.dm.hasConcurrency())
                 body.add(AlloyEqual(this.dsl.curScopesUsed(i), this.dsl.noneArrow(i)));
 
-            body.add(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.noneArrow(i)));
+            if (this.dm.hasTransAti(i))
+                body.add(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.noneArrow(i)));
 
             // no limits on initial set of events except that they must be environmental
             // s.events1 :> internalEvents = none -> none

@@ -51,7 +51,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                                         D2AStrings.scopeLabelName)));
             }
             // conf0, conf1, etc.
-            if (!dm.hasOnlyOneState()) {
+            if (!dm.hasOnlyOneState() && dm.hasStatesAti(i)) {
                 decls.add(
                         this.dsl.AlloyDeclArrowStringList(
                                 this.dsl.nameNum(D2AStrings.confName, i),
@@ -63,26 +63,31 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             // __taken0: one Transitions
             // __taken0: set PID set->one Transitions
             // __taken1: set PID set -> set PID set->one Transitions
-            if (i == 0) {
-                decls.add(
-                        new AlloyDecl(
-                                this.dsl.transTakenVar(0),
-                                AlloyQtEnum.LONE,
-                                this.dsl.transLabelNameVar()));
-            } else {
-                // PID set->one Transitions
-                arrow =
-                        new AlloyArrowExpr(
-                                AlloyVar(cop.get(0)),
-                                AlloyQtEnum.SET,
-                                AlloyQtEnum.LONE,
-                                this.dsl.transLabelNameVar());
-                for (int x = 1; x < i; x++)
-                    // PID set -> set arrow
+            if (this.dm.hasTransAti(i)) {
+                if (i == 0) {
+                    decls.add(
+                            new AlloyDecl(
+                                    this.dsl.transTakenVar(0),
+                                    AlloyQtEnum.LONE,
+                                    this.dsl.transLabelNameVar()));
+                } else {
+                    // PID set->one Transitions
                     arrow =
                             new AlloyArrowExpr(
-                                    AlloyVar(cop.get(x)), AlloyQtEnum.SET, AlloyQtEnum.SET, arrow);
-                decls.add(new AlloyDecl(this.dsl.transTakenVar(i), AlloyQtEnum.SET, arrow));
+                                    AlloyVar(cop.get(0)),
+                                    AlloyQtEnum.SET,
+                                    AlloyQtEnum.LONE,
+                                    this.dsl.transLabelNameVar());
+                    for (int x = 1; x < i; x++)
+                        // PID set -> set arrow
+                        arrow =
+                                new AlloyArrowExpr(
+                                        AlloyVar(cop.get(x)),
+                                        AlloyQtEnum.SET,
+                                        AlloyQtEnum.SET,
+                                        arrow);
+                    decls.add(new AlloyDecl(this.dsl.transTakenVar(i), AlloyQtEnum.SET, arrow));
+                }
             }
             // events0, event1, etc.
             if (dm.hasEvents() && dm.hasEventsAti(i))

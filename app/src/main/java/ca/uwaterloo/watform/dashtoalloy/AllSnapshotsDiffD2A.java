@@ -32,13 +32,14 @@ public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
         List<AlloyExpr> body = this.dsl.emptyExprList();
         AlloyExpr e;
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            if (!this.dm.hasOnlyOneState())
+            if (!this.dm.hasOnlyOneState() && this.dm.hasStatesAti(i))
                 // s.confi = sn.confi
                 body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.nextConf(i)));
             // s.scopesUsedi = sn.scopesUsedi
             if (this.dm.hasConcurrency())
                 body.add(AlloyEqual(this.dsl.curScopesUsed(i), this.dsl.nextScopesUsed(i)));
-            body.add(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.nextTransTaken(i)));
+            if (this.dm.hasTransAti(i))
+                body.add(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.nextTransTaken(i)));
             if (this.dm.hasIntEventsAti(i))
                 body.add(AlloyEqual(this.dsl.curEvents(i), this.dsl.nextEvents(i)));
         }
