@@ -1,0 +1,178 @@
+package ca.uwaterloo.watform.portus;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * Utilities for manipulating sets (and lists) in an immutable, functional manner. Each function
+ * returns a new set (or list) and does not modify its input.
+ */
+final class SetOps {
+
+    public static <T> Set<T> add(Set<T> set, T value) {
+        Set<T> result = new HashSet<>(set);
+        result.add(value);
+        return result;
+    }
+
+    public static <T> Set<T> union(Set<T> a, Set<T> b) {
+        Set<T> result = new HashSet<>(a);
+        result.addAll(b);
+        return result;
+    }
+
+    public static <T> Set<T> intersection(Set<T> a, Set<T> b) {
+        Set<T> result = new HashSet<>(a);
+        result.retainAll(b);
+        return result;
+    }
+
+    public static <T> Set<T> difference(Set<T> a, Set<T> b) {
+        Set<T> result = new HashSet<>(a);
+        result.removeAll(b);
+        return result;
+    }
+
+    public static <T> boolean subset(Set<T> a, Set<T> b) {
+        return b.containsAll(a);
+    }
+
+    public static <T> Set<List<T>> cartesianProduct(Set<List<T>> a, Set<List<T>> b) {
+        Set<List<T>> result = new HashSet<>();
+        for (List<T> aTuple : a) {
+            for (List<T> bTuple : b) {
+                result.add(concatenate(aTuple, bTuple));
+            }
+        }
+        return result;
+    }
+
+    // TODO: These assume there are no 0-tuples, is that true?
+
+    public static <T> Set<List<T>> join(Set<List<T>> a, Set<List<T>> b) {
+        // TODO: Can this be done more intelligently? Probably not, look at DB literature
+        Set<List<T>> result = new HashSet<>();
+        for (List<T> aTuple : a) {
+            for (List<T> bTuple : b) {
+                if (Objects.equals(aTuple.get(aTuple.size() - 1), bTuple.get(0))) {
+                    result.add(
+                            concatenate(
+                                    aTuple.subList(0, aTuple.size() - 1),
+                                    bTuple.subList(1, bTuple.size())));
+                }
+            }
+        }
+        return result;
+    }
+
+    public static <T> Set<List<T>> domainRestrict(Set<T> values, Set<List<T>> tuples) {
+        return tuples.stream()
+                .filter(tuple -> values.contains(tuple.get(0)))
+                .collect(Collectors.toSet());
+    }
+
+    public static <T> Set<List<T>> rangeRestrict(Set<T> values, Set<List<T>> tuples) {
+        return tuples.stream()
+                .filter(tuple -> values.contains(tuple.get(tuple.size() - 1)))
+                .collect(Collectors.toSet());
+    }
+
+    public static <T> Set<T> getUnaryValues(Set<List<T>> tuples) {
+        return tuples.stream()
+                .map(
+                        tuple -> {
+                            if (tuple.size() != 1) {
+                                throw new IllegalArgumentException(
+                                        "getUnaryValues requires all tuples to be unary");
+                            }
+                            return tuple.get(0);
+                        })
+                .collect(Collectors.toSet());
+    }
+
+    public static <T> Set<List<T>> override(Set<List<T>> a, Set<List<T>> b) {
+        Set<List<T>> result = new HashSet<>(b);
+
+        // Add all tuples from a to result who don't share first elements with a tuple in b
+        // Try to be a bit more intelligent about it - O(n) not O(n^2), assuming O(1) set lookup
+        Set<T> firstValues = b.stream().map(tuple -> tuple.get(0)).collect(Collectors.toSet());
+        for (List<T> aTuple : a) {
+            if (!firstValues.contains(aTuple.get(0))) {
+                result.add(aTuple);
+            }
+        }
+
+        return result;
+    }
+
+    // These assume all are 2-tuples
+
+    public static <T> Set<List<T>> transpose(Set<List<T>> relation) {
+        return relation.stream()
+                .map(
+                        pair -> {
+                            assert pair.size() == 2;
+                            return Arrays.asList(pair.get(1), pair.get(0));
+                        })
+                .collect(Collectors.toSet());
+    }
+
+    // Technically these are list operations and not set operations, but oh well
+
+    public static <T> List<T> concatenate(List<? extends T> a, List<? extends T> b) {
+        List<T> result = new ArrayList<>(a);
+        result.addAll(b);
+        return result;
+    }
+
+    public static <T> List<T> concatenate(T value, List<T> list) {
+        List<T> result = new ArrayList<>(list.size() + 1);
+        result.add(value);
+        result.addAll(list);
+        return result;
+    }
+
+    public static <T> List<T> concatenate(List<T> list, T value) {
+        List<T> result = new ArrayList<>(list);
+        result.add(value);
+        return result;
+    }
+
+    public static <T> List<T> reverse(List<T> list) {
+        List<T> reversed = new ArrayList<>(list.size());
+        for (int idx = list.size() - 1; idx >= 0; idx--) {
+            reversed.add(list.get(idx));
+        }
+        return reversed;
+    }
+
+    public static <T> List<List<T>> cartesianProduct(List<List<T>> lists) {
+        List<List<T>> current = Collections.singletonList(new ArrayList<>());
+        for (List<T> list : lists) {
+            List<List<T>> next = new ArrayList<>();
+            for (List<T> tuple : current) {
+                for (T element : list) {
+                    next.add(concatenate(tuple, element));
+                }
+            }
+            current = next;
+        }
+        return current;
+    }
+
+    public static <T> boolean startsWith(List<T> list, List<T> prefix) {
+        if (prefix.size() > list.size()) {
+            return false;
+        }
+        for (int idx = 0; idx < prefix.size(); idx++) {
+            if (!prefix.get(idx).equals(list.get(idx))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static <T> boolean endsWith(List<T> list, List<T> suffix) {
+        return startsWith(reverse(list), reverse(suffix));
+    }
+}

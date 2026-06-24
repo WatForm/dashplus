@@ -1,0 +1,466 @@
+package ca.uwaterloo.watform.portus;
+
+import edu.mit.csail.sdg.alloy4.A4Reporter;
+import edu.mit.csail.sdg.alloy4.Err;
+import edu.mit.csail.sdg.alloy4.ErrorFatal;
+import edu.mit.csail.sdg.alloy4.Pair;
+import edu.mit.csail.sdg.alloy4.Pos;
+import edu.mit.csail.sdg.alloy4.SafeList;
+import edu.mit.csail.sdg.alloy4.Util;
+import edu.mit.csail.sdg.ast.Expr;
+import edu.mit.csail.sdg.ast.ExprVar;
+import edu.mit.csail.sdg.ast.Func;
+import edu.mit.csail.sdg.ast.Sig;
+import edu.mit.csail.sdg.translator.A4SolutionWriter;
+import edu.mit.csail.sdg.translator.A4Tuple;
+import edu.mit.csail.sdg.translator.A4TupleSet;
+import edu.mit.csail.sdg.translator.AlloySolution;
+import fortress.interpretation.Interpretation;
+import fortress.msfol.*;
+import fortress.operations.InterpretationVerifier;
+import fortress.operations.PreimageFinding;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import kodkod.instance.Universe;
+
+// FIXME - Possible memory leak in the GUI! The solver process is only closed when close() is
+// called, but in the GUI,
+//   it probably won't be called, so the process will remain open indefinitely!
+public class FortressSolution implements AlloySolution, AutoCloseable {
+
+    /** The Fortress interpretation corresponding to this solution (null if unsat). */
+    private final Interpretation interpretation;
+
+    /**
+     * An evaluator which contains the state necessary to evaluate expressions in this
+     * interpretation.
+     */
+    private final Evaluator evaluator;
+
+    /** For decoding atoms to strings when outputting to XML. */
+    private final StringDecoder stringDecoder;
+
+    /** The context of the translation used to produce the interpretation. */
+    private final TranslationContext context;
+
+    /** The solution finder used to generate 'next interpretations' for incremental solving. */
+    private final SolutionFinder solutionFinder;
+
+    /** All reachable sigs in the model. */
+    private final SafeList<Sig> sigs;
+
+    private final String originalFilename;
+    private final String originalCommand;
+
+    /** Map atoms from Fortress to Alloy. */
+    private final Map<Value, ExprVar> fortressToAlloyAtoms = new HashMap<>();
+
+    /** Map sorts to the atoms that belong to them. */
+    private final Map<Sort, List<Value>> sortsToAtoms = new HashMap<>();
+
+    /** The single Kodkod universe of atoms - Alloy requires a consistent Universe object. */
+    private final Universe universe;
+
+    FortressSolution(
+            Interpretation interpretation,
+            Evaluator evaluator,
+            StringDecoder stringDecoder,
+            TranslationContext context,
+            Iterable<Sig> sigs,
+            String originalFilename,
+            String originalCommand,
+            SolutionFinder solutionFinder) {
+        this.interpretation = interpretation;
+        this.evaluator = evaluator;
+        this.stringDecoder = stringDecoder;
+        this.context = context;
+        this.solutionFinder = solutionFinder;
+        this.sigs = new SafeList<>(sigs);
+        this.originalFilename = originalFilename;
+        this.originalCommand = originalCommand;
+
+        if (interpretation != null) {
+            // Generate Alloy atoms (ExprVars) for each Fortress atom
+            Map<Sort, List<Value>> sortInterpretations =
+                    new HashMap<>(interpretation.sortInterpretationsJava());
+
+            List<Value> fortressAtoms = new ArrayList<>();
+            for (Sort sort : sortInterpretations.keySet()) {
+                // Booleans will cause an error if they're included in the universe, so manually
+                // exclude them if needed
+                if (Objects.equals(sort, Sort.Bool())) {
+                    continue;
+                }
+
+                List<Value> sortAtoms = sortInterpretations.get(sort);
+                fortressAtoms.addAll(sortAtoms);
+                sortsToAtoms.put(sort, sortAtoms);
+                for (Value atom : sortAtoms) {
+                    ExprVar alloyAtom = ExprVar.make(null, atom.toString());
+                    fortressToAlloyAtoms.put(atom, alloyAtom);
+                }
+            }
+            List<Object> sanitizedLiterals = sanitizeLiteralsForKodkod(fortressAtoms);
+
+            // Kodkod can't handle an empty universe, so A4Solution adds a "<empty>" literal: mimic
+            // this
+            if (sanitizedLiterals.isEmpty()) {
+                sanitizedLiterals.add("<empty>");
+            }
+
+            this.universe = new Universe(sanitizedLiterals);
+        } else {
+            this.universe = null;
+        }
+    }
+
+    List<Value> getSortAtoms(Sort sort) {
+        return sortsToAtoms.get(sort);
+    }
+
+    Universe getUniverse() {
+        return universe;
+    }
+
+    @Override
+    public int getBitwidth() {
+        return context.getBitwidth();
+    }
+
+    @Override
+    public int max() {
+        return Util.max(getBitwidth());
+    }
+
+    @Override
+    public int min() {
+        return Util.min(getBitwidth());
+    }
+
+    @Override
+    public int getMaxSeq() {
+        return context.scoper.getMaxSeq();
+    }
+
+    @Override
+    public int unrolls() {
+        // TODO - recursion
+        return 0;
+    }
+
+    @Override
+    public int getMaxTrace() {
+        // TODO - temporal support
+        return -1;
+    }
+
+    @Override
+    public int getMinTrace() {
+        // TODO - temporal support
+        return -1;
+    }
+
+    @Override
+    public int getLoopState() {
+        // TODO - temporal support
+        return 0;
+    }
+
+    @Override
+    public int getTraceLength() {
+        // TODO - temporal support
+        return 1;
+    }
+
+    @Override
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    @Override
+    public String getOriginalCommand() {
+        return originalCommand;
+    }
+
+    @Override
+    public boolean satisfiable() {
+        return interpretation != null;
+    }
+
+    @Override
+    public boolean hasConfigs() {
+        // TODO - what is this?
+        return false;
+    }
+
+    @Override
+    public Iterable<ExprVar> getAllSkolems() {
+        // TODO - skolemization
+        return new ArrayList<>();
+    }
+
+    @Override
+    public SafeList<Sig> getAllReachableSigs() {
+        return sigs.dup();
+    }
+
+    @Override
+    public Iterable<ExprVar> getAllAtoms() {
+        return fortressToAlloyAtoms.values();
+    }
+
+    @Override
+    public A4TupleSet eval(Sig sig) {
+        return (A4TupleSet) eval((Expr) sig);
+    }
+
+    @Override
+    public A4TupleSet eval(Sig sig, int state) {
+        // TODO - temporal support
+        return eval(sig);
+    }
+
+    @Override
+    public A4TupleSet eval(Sig.Field field) {
+        return (A4TupleSet) eval((Expr) field);
+    }
+
+    @Override
+    public A4TupleSet eval(Sig.Field field, int state) {
+        // TODO - temporal support
+        return eval(field);
+    }
+
+    @Override
+    public Object eval(Expr expr) throws Err {
+        ValueTupleSet tupleSet = evaluateExpr(expr);
+
+        // Pure booleans and ints are expected to be returned as Java booleans and ints.
+        if (tupleSet.isPureBoolean()) {
+            return tupleSet.getPureBoolean();
+        }
+        if (tupleSet.isPureInt()) {
+            return tupleSet.getPureInt();
+        }
+
+        return tupleSet.toAlloy(this);
+    }
+
+    @Override
+    public Object eval(Expr expr, int state) throws Err {
+        // TODO - temporal support
+        return eval(expr);
+    }
+
+    public ValueTupleSet evaluateExpr(Expr expr) {
+        return evaluator.evaluate(expr, this, context);
+    }
+
+    /**
+     * Is this given Fortress formula true in this theory's interpretation? It must be a boolean
+     * formula.
+     */
+    boolean evaluateFormula(Term formula) {
+        // Check whether the interpretation satisfies a theory with the term as the only axiom.
+        Theory theory =
+                Theory.empty()
+                        .withSorts(interpretation.sortInterpretationsJava().keySet())
+                        .withFunctionDefinitions(interpretation.functionDefinitions().toIterable())
+                        .withConstantDeclarations(
+                                interpretation.constantInterpretationsJava().keySet())
+                        .withAxiom(formula);
+        InterpretationVerifier verifier = new InterpretationVerifier(theory);
+        return verifier.verifyInterpretation(interpretation);
+    }
+
+    /**
+     * Find the Value this term is interpreted as. Note: This does not support quantifiers. Use
+     * evaluateFormula for general formulas.
+     */
+    Value evaluateTerm(Term term) {
+        return interpretation.visitFunctionBody(
+                term, scala.collection.immutable.Map$.MODULE$.<Term, Value>empty());
+    }
+
+    /** Get the preimage of the output value in the function func. */
+    ValueTupleSet functionPreimage(FuncDecl func, Value output) {
+        FunctionDefinition definition =
+                interpretation
+                        .functionDefinitions()
+                        .find(
+                                def ->
+                                        def.name().equals(func.name())
+                                                && def.argSortedVar()
+                                                        .map(AnnotatedVar::sort)
+                                                        .equals(func.argSorts())
+                                                && def.resultSort().equals(func.resultSort()))
+                        .getOrElse(
+                                () -> {
+                                    throw new ErrorFatal(
+                                            "Function "
+                                                    + func
+                                                    + " does not exist in this solution!");
+                                });
+        int arity = definition.argSortedVar().size();
+        return ValueTupleSet.fromScala(
+                PreimageFinding.findPreimage(
+                        interpretation, definition.argSortedVar(), definition.body(), output),
+                arity);
+    }
+
+    // A4SolutionReader/Writer want the int literals to be actual Integer objects, so convert
+    // IntegerLiterals.
+    // TODO: duplicates ValueTupleSet
+    private List<Object> sanitizeLiteralsForKodkod(List<Value> values) {
+        return values.stream()
+                .map(
+                        value -> {
+                            if (value instanceof IntegerLiteral) {
+                                return ((IntegerLiteral) value).value();
+                            } else if (Term.mkTop().equals(value)
+                                    || Term.mkBottom().equals(value)) {
+                                throw new ErrorFatal("Booleans are invalid in Kodkod tuples!");
+                            } else {
+                                return value;
+                            }
+                        })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        // TODO - do we need to do this?
+        return satisfiable() ? "SAT" : "UNSAT";
+    }
+
+    @Override
+    public String toString(int state) {
+        // TODO - temporal support
+        return toString();
+    }
+
+    @Override
+    public FortressSolution next() throws Err {
+        if (solutionFinder == null) {
+            throw new ErrorFatal("This FortressSolution doesn't support incremental solving!");
+        }
+        // TODO - should be more careful with resource handles! Both of these objects will hold the
+        // process reference!
+        return solutionFinder.nextInterpretation();
+    }
+
+    @Override
+    public FortressSolution fork(int p) throws Err {
+        return next();
+    }
+
+    @Override
+    public boolean isIncremental() {
+        return solutionFinder != null;
+    }
+
+    @Override
+    public Set<Pos> lowLevelCore() {
+        // TODO - does Fortress support unsat cores?
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Pair<Set<Pos>, Set<Pos>> highLevelCore() {
+        // TODO - does Fortress support unsat cores?
+        return new Pair<>(Collections.emptySet(), Collections.emptySet());
+    }
+
+    @Override
+    public void writeXML(String filename) throws Err {
+        writeXML(A4Reporter.NOP, filename, Collections.emptyList(), Collections.emptyMap());
+    }
+
+    @Override
+    public void writeXML(
+            A4Reporter rep, String filename, Iterable<Func> macros, Map<String, String> sourceFiles)
+            throws Err {
+        try (PrintWriter out = new PrintWriter(filename, "UTF-8")) {
+            writeXML(rep, out, macros, sourceFiles);
+            if (out.checkError()) {
+                throw new ErrorFatal("Failed to write the Fortress solution XML file.");
+            }
+        } catch (IOException e) {
+            throw new ErrorFatal("Error writing the Fortress solution XML file.", e);
+        }
+    }
+
+    @Override
+    public void writeXML(PrintWriter writer, Iterable<Func> macros, Map<String, String> sourceFiles)
+            throws Err {
+        writeXML(A4Reporter.NOP, writer, macros, sourceFiles);
+    }
+
+    private void writeXML(
+            A4Reporter rep,
+            PrintWriter writer,
+            Iterable<Func> macros,
+            Map<String, String> sourceFiles)
+            throws Err {
+        // Use the general solution writer routine
+        A4SolutionWriter.writeInstance(rep, this, writer, macros, sourceFiles);
+    }
+
+    @Override
+    public String format() {
+        return interpretation.toString();
+    }
+
+    @Override
+    public String format(int state) {
+        // TODO - temporal support
+        return format();
+    }
+
+    @Override
+    public String atom2name(Object atom) {
+        // If this atom represents a string constant, use the actual string as the name.
+        // This is needed for printing to XML in the format read by A4SolutionReader.
+        if (atom instanceof DomainElement) {
+            String stringConst = stringDecoder.decode((DomainElement) atom);
+            if (stringConst != null) {
+                return stringConst;
+            }
+        }
+        if (atom instanceof IntegerLiteral) {
+            return String.valueOf(((IntegerLiteral) atom).value());
+        }
+        return atom.toString();
+    }
+
+    @Override
+    public Sig.PrimSig atom2sig(Object atom) {
+        // For now, brute force which sig it's in by manually loading each sig's atoms
+        // TODO: if this is hurting perf, cache the sigs' atoms
+        for (Sig sig : getAllReachableSigs()) {
+            if (sig instanceof Sig.PrimSig) {
+                A4TupleSet sigAtoms = eval(sig);
+                for (A4Tuple tuple : sigAtoms) {
+                    assert tuple.arity() == 1;
+                    if (tuple.atom(0).equals(atom.toString())) {
+                        return (Sig.PrimSig) sig;
+                    }
+                }
+            }
+        }
+        return Sig.UNIV; // didn't find it
+    }
+
+    @Override
+    public void close() {
+        solutionFinder.close();
+    }
+}

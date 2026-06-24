@@ -1,0 +1,383 @@
+package ca.uwaterloo.watform.portus;
+
+import edu.mit.csail.sdg.alloy4.ConstList;
+import edu.mit.csail.sdg.alloy4.ErrorFatal;
+import edu.mit.csail.sdg.alloy4.Pair;
+import edu.mit.csail.sdg.ast.Expr;
+import edu.mit.csail.sdg.ast.ExprBinary;
+import edu.mit.csail.sdg.ast.ExprUnary;
+import edu.mit.csail.sdg.ast.Sig;
+import fortress.data.NameGenerator;
+import fortress.msfol.FuncDecl;
+import fortress.msfol.Sort;
+import fortress.msfol.Term;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * A translator for the function optimization, based on KT 5.5. For now, we optimize only
+ * S1->S2->...->[l]one Sn (and they're partial functions).
+ */
+final class FunctionOptTranslator extends AbstractTranslator implements ScalarCaster, Evaluator {
+
+    // The list of arrow operators which define (partial) functions using "one".
+    private static final ConstList<ExprBinary.Op> FUNCTION_ONE_OPS =
+            ConstList.make(
+                    Arrays.asList(
+                            ExprBinary.Op.ANY_ARROW_ONE,
+                            ExprBinary.Op.SOME_ARROW_ONE,
+                            ExprBinary.Op.ONE_ARROW_ONE,
+                            ExprBinary.Op.LONE_ARROW_ONE));
+
+    // Same, but for "lone".
+    private static final ConstList<ExprBinary.Op> FUNCTION_LONE_OPS =
+            ConstList.make(
+                    Arrays.asList(
+                            ExprBinary.Op.ISSEQ_ARROW_LONE,
+                            ExprBinary.Op.ANY_ARROW_LONE,
+                            ExprBinary.Op.SOME_ARROW_LONE,
+                            ExprBinary.Op.ONE_ARROW_LONE,
+                            ExprBinary.Op.LONE_ARROW_LONE));
+
+    // A POJO collecting information about a field subject to this optimization.
+    private final class FieldFuncInfo {
+        // Invariant: argSorts.size() + 1 == arity == sum of boundExpr.type().arity() for each
+        // boundExpr in boundExprs
+        // Also, we must have at least one arg sort.
+        public final String funcName;
+        public final List<Sort> argSorts;
+        public final Sort resultSort;
+        public final List<Expr> boundExprs;
+
+        public final int arity;
+
+        // May be null if there's no domain predicate.
+        public final String domainPredName;
+
+        public FieldFuncInfo(
+                String funcName,
+                List<Sort> argSorts,
+                Sort resultSort,
+                List<Expr> boundExprs,
+                String domainPredName) {
+            this.funcName = funcName;
+            this.argSorts = argSorts;
+            this.resultSort = resultSort;
+            this.boundExprs = boundExprs;
+            this.domainPredName = domainPredName;
+
+            // enforce the invariant
+            this.arity = boundExprs.stream().mapToInt(expr -> expr.type().arity()).sum();
+            if (this.arity != argSorts.size() + 1) {
+                throw new ErrorFatal(
+                        "Internal Portus error: function optimization arities do not match!");
+            }
+            if (argSorts.isEmpty()) {
+                throw new ErrorFatal(
+                        "Internal Portus error: function optimization field with no arg sorts!");
+            }
+        }
+
+        public FuncDecl getDomainPredDecl() {
+            if (domainPredName == null) {
+                throw new ErrorFatal(
+                        "Cannot get domain predicate declaration: no domain predicate!");
+            }
+            return FuncDecl.mkFuncDecl(domainPredName, argSorts, Sort.Bool());
+        }
+
+        public Scalar toScalar(TranslationContext context) {
+            return new Scalar(
+                    argSorts,
+                    resultSort,
+                    (tuple, newContext) -> Term.mkApp(funcName, tuple.getTerms()),
+                    (tuple, newContext) -> makeDomainFormula(tuple, this, newContext),
+                    context);
+        }
+    }
+
+    // The base evaluator; use this instead of calling evaluate directly for generality.
+    private final Evaluator rootEvaluator;
+
+    private final SortPolicy sortPolicy;
+
+    private final SigAxioms sigAxioms;
+
+    private final NameGenerator nameGenerator;
+
+    // Should we optimize "A->lone B" as well as "A->one B"?
+    private final boolean optimizeLone;
+
+    private final Map<Sig.Field, FieldFuncInfo> optimizedFieldsInfo = new HashMap<>();
+
+    public FunctionOptTranslator(
+            Translator topLevel,
+            Evaluator rootEvaluator,
+            SortPolicy sortPolicy,
+            SigAxioms sigAxioms,
+            NameGenerator nameGenerator,
+            boolean optimizeLone) {
+        super(topLevel);
+        this.rootEvaluator = rootEvaluator;
+        this.sortPolicy = sortPolicy;
+        this.sigAxioms = sigAxioms;
+        this.nameGenerator = nameGenerator;
+        this.optimizeLone = optimizeLone;
+    }
+
+    @Override
+    public String name() {
+        return "Function Optimization";
+    }
+
+    /** Translate declarations of fields declared as partial functions. */
+    @Override
+    public Term translate(Sig.Field field, TranslationContext context) {
+        Expr bound = productWithRightMultiplicity(field.sig, field.decl().expr);
+        if (bound == null) {
+            // could occur if meta is used and EXACTLYOF is used on the right bound - don't bother
+            return null;
+        }
+
+        Pair<List<Expr>, ExprUnary.Op> funcTypeExprsAndMult = getFunctionTypeExprs(bound);
+        if (funcTypeExprsAndMult == null) return null; // not a function, not applicable
+        List<Expr> boundExprs = funcTypeExprsAndMult.a;
+
+        SortResolvant allSorts = sortPolicy.getMinimalExprSorts(field, context);
+        if (allSorts.isNone()) {
+            return null; // short-circuiting is handled elsewhere
+        }
+        if (!allSorts.isDefinite()) {
+            throw new ErrorNoPortusSupport("A field declaration must have definite Portus sorts!");
+        }
+
+        List<Sort> argSorts =
+                allSorts.getDefiniteSorts().subList(0, allSorts.getDefiniteSorts().size() - 1);
+        Sort resultSort = allSorts.getDefiniteSorts().get(allSorts.getDefiniteSorts().size() - 1);
+
+        String funcName = nameGenerator.freshName(field.label);
+        // The optimized type is S1 x ... x S{n-1} -> Sn, where n is the field arity
+        context.addFunctionDeclaration(FuncDecl.mkFuncDecl(funcName, argSorts, resultSort));
+
+        String domainPredName = null;
+        if (optimizeLone && funcTypeExprsAndMult.b == ExprUnary.Op.LONE) {
+            // Generate the inDomain predicate (will be constrained by the field bound constraint)
+            domainPredName = nameGenerator.freshName("inDomain");
+            context.addFunctionDeclaration(
+                    FuncDecl.mkFuncDecl(domainPredName, argSorts, Sort.Bool()));
+        }
+
+        FieldFuncInfo info =
+                new FieldFuncInfo(funcName, argSorts, resultSort, boundExprs, domainPredName);
+        optimizedFieldsInfo.put(field, info);
+
+        context.addAxiom(
+                sigAxioms.makeFieldBoundConstraint(field, allSorts.getDefiniteSorts(), context));
+
+        // The return value doesn't matter for field declarations, it just can't be null
+        return Term.mkTop();
+    }
+
+    /** Create the proper (right-) arrow. */
+    private Expr productWithRightMultiplicity(Expr left, Expr right) {
+        // unwrap right from its multiplicity and generate the appropriate arrow
+        right = right.deNOP();
+        ExprUnary.Op mult = right.mult();
+
+        if (right instanceof ExprUnary) {
+            ExprUnary wrappedRight = (ExprUnary) right;
+            if (wrappedRight.op == ExprUnary.Op.SETOF
+                    || wrappedRight.op == ExprUnary.Op.ONEOF
+                    || wrappedRight.op == ExprUnary.Op.LONEOF
+                    || wrappedRight.op == ExprUnary.Op.SOMEOF) {
+                right = wrappedRight.sub.deNOP();
+            }
+        }
+
+        switch (mult) {
+            case SETOF:
+                return left.product(right);
+            case ONEOF:
+                return left.any_arrow_one(right);
+            case LONEOF:
+                return left.any_arrow_lone(right);
+            case SOMEOF:
+                return left.any_arrow_some(right);
+            case EXACTLYOF:
+                // EXACTLYOF should only appear here if the meta feature is used
+                // Don't bother trying to optimize it, fall back to the default case
+                return null;
+            default:
+                // we don't support anything else
+                throw new ErrorFatal("Unsupported multiplicity: " + mult);
+        }
+    }
+
+    /**
+     * If expr is a function type e1->...->[l]one en, return ([e1,...,en], [l]one), else return
+     * null.
+     */
+    private Pair<List<Expr>, ExprUnary.Op> getFunctionTypeExprs(Expr expr) {
+        if (!(expr instanceof ExprBinary)) return null;
+        ExprBinary binExpr = (ExprBinary) expr.deNOP();
+        if (!binExpr.op.isArrow) return null;
+
+        Pair<List<Expr>, ExprUnary.Op> rightExprs = getFunctionTypeExprs(binExpr.right);
+        if (rightExprs != null) {
+            // there's a correct multiplicity on the rightmost arrow, so it's a function
+            List<Expr> exprs = new ArrayList<>();
+            exprs.add(binExpr.left);
+            exprs.addAll(rightExprs.a);
+            return new Pair<>(exprs, rightExprs.b);
+        } else if (binExpr.right.type().arity() == 1
+                && (FUNCTION_ONE_OPS.contains(binExpr.op)
+                        || (optimizeLone && FUNCTION_LONE_OPS.contains(binExpr.op)))) {
+            // this is the rightmost arrow and the last element in the arity has correct
+            // multiplicity: it's a function
+            ExprUnary.Op mult =
+                    FUNCTION_ONE_OPS.contains(binExpr.op) ? ExprUnary.Op.ONE : ExprUnary.Op.LONE;
+            return new Pair<>(Arrays.asList(binExpr.left, binExpr.right), mult);
+        } else {
+            return null; // not a function
+        }
+    }
+
+    /** Cast a field optimized here to a scalar function. */
+    @Override
+    public Scalar castToScalar(Expr expr, TranslationContext context) {
+        expr = PortusUtil.stripPortusNoops(expr);
+        if (!(expr instanceof Sig.Field)) {
+            return null;
+        }
+
+        // Ignore if it's not a field optimized here.
+        Sig.Field field = (Sig.Field) expr;
+        if (!optimizedFieldsInfo.containsKey(field)) {
+            return null;
+        }
+
+        return optimizedFieldsInfo.get(field).toScalar(context);
+    }
+
+    /** Evaluate fields we optimized here. */
+    @Override
+    public ValueTupleSet evaluate(
+            Expr expr, FortressSolution solution, TranslationContext context) {
+        if (!(expr instanceof Sig.Field)) return null;
+        Sig.Field field = (Sig.Field) expr;
+        if (!optimizedFieldsInfo.containsKey(field)) return null;
+
+        FieldFuncInfo info = optimizedFieldsInfo.get(field);
+
+        // Find the sets of n-1 atoms for which the domain predicate is true then map to get the
+        // final atoms
+        ValueTupleSet domain = getTuplesInDomain(info, solution, context);
+        return domain.stream()
+                .map(
+                        args ->
+                                SetOps.concatenate(
+                                        args,
+                                        solution.evaluateTerm(Term.mkApp(info.funcName, args))))
+                .collect(ValueTupleSet.collect(info.arity));
+    }
+
+    /**
+     * Given some variables x1,...,xn and the list of bounds of a field with this optimization (i.e.
+     * for sig S { f: e1->e2->one e3 }, the bound expressions are S,e1,e2,e3), return a term
+     * expressing "(x1,...,x{n-1}) is in the domain of the function representing the field".
+     */
+    private Term makeDomainFormula(TermTuple vars, FieldFuncInfo info, TranslationContext context) {
+        if (info.domainPredName != null) {
+            // use the domain predicate instead (supports lone)
+            return Term.mkApp(info.domainPredName, vars.getTerms());
+        }
+        return makeBoundExprDomainFormula(vars, info.boundExprs, context);
+    }
+
+    /**
+     * Implementation for the above. Actually create the expression without defaulting to the domain
+     * predicate.
+     */
+    private Term makeBoundExprDomainFormula(
+            TermTuple vars, List<Expr> boundExprs, TranslationContext context) {
+        // Map "this" to the first var in the tuple, because it's the one bounded by the enclosing
+        // signature.
+        context.addTermMapping("this", vars.getAnnotatedTerm(0));
+        try {
+            List<Term> conjuncts = new ArrayList<>();
+            int varIdx = 0;
+
+            // Ignore the last bound expr, it's for the result
+            for (Expr expr : boundExprs.subList(0, boundExprs.size() - 1)) {
+                int arity = expr.type().arity();
+                if (varIdx + arity > vars.size()) {
+                    // out of variables - arities are mismatched
+                    throw new ErrorFatal("Mismatched arities in optimized field expression!");
+                }
+
+                TermTuple subTuple = vars.slice(varIdx, varIdx + arity);
+                Term conjunct = recursivelyTranslate(ExprElementOf.make(subTuple, expr), context);
+                conjuncts.add(conjunct);
+
+                varIdx += arity;
+            }
+
+            return conjuncts.isEmpty() ? Term.mkTop() : Term.mkAnd(conjuncts);
+        } finally {
+            context.removeMapping("this");
+        }
+    }
+
+    private ValueTupleSet getTuplesInDomain(
+            FieldFuncInfo info, FortressSolution solution, TranslationContext context) {
+        if (info.domainPredName != null) {
+            // reverse the domain predicate if available
+            return solution.functionPreimage(info.getDomainPredDecl(), Term.mkTop());
+        }
+
+        // Evaluate the first bound expr, which can't contain "this"
+        ValueTupleSet first = rootEvaluator.evaluate(info.boundExprs.get(0), solution, context);
+        if (first.arity() != 1) {
+            // It should be the sig
+            throw new ErrorFatal("First bound expr should be a pure set!");
+        }
+        if (first.isEmpty()) {
+            // There are none: return an empty ValueTupleSet of the appropriate arity (to avoid
+            // returning null)
+            return ValueTupleSet.empty(info.boundExprs.size() - 1);
+        }
+
+        // For each value of the first bound expr, evaluate the rest of the bound exprs separately
+        // using the value of the first expr as "this". Then union all of them together.
+        // Use atomic because Java requires variables used in lambdas to be effectively final.
+        AtomicReference<ValueTupleSet> result = new AtomicReference<>(null);
+        Sort sigSort = info.argSorts.get(0);
+        first.singleValueStream()
+                .forEach(
+                        thisValue -> {
+                            context.addTermMapping("this", new AnnotatedTerm(thisValue, sigSort));
+                            try {
+                                ValueTupleSet thisResult = ValueTupleSet.singleton(thisValue);
+                                for (Expr boundExpr :
+                                        info.boundExprs.subList(1, info.boundExprs.size() - 1)) {
+                                    ValueTupleSet exprResult =
+                                            rootEvaluator.evaluate(boundExpr, solution, context);
+                                    thisResult = thisResult.cartesianProduct(exprResult);
+                                }
+                                if (result.get() == null) {
+                                    result.set(thisResult);
+                                } else {
+                                    result.set(result.get().union(thisResult));
+                                }
+                            } finally {
+                                context.removeMapping("this");
+                            }
+                        });
+
+        return result.get();
+    }
+}
