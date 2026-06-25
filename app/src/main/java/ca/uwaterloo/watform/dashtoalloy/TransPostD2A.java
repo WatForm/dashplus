@@ -151,14 +151,13 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // in trans could be primed or unprimed
         List<DashRef> dashRefsInTrans = emptyList();
         if (tfqnOpt.isPresent() && this.dm.doR(tfqnOpt.get()) != null) {
-            dashRefsInTrans = setToList(this.collectDashRefs(this.dm.doR(tfqnOpt.get())));
+            dashRefsInTrans = this.dm.varsChangedByTrans(tfqnOpt.get());
         } else {
             dashRefsInTrans = emptyList();
         }
 
         // invs cannot have primes in them
-        dashRefsInTrans.addAll(
-                flatten(mapBy(this.dm.invsR(), y -> setToList(this.collectDashRefs(y)))));
+        dashRefsInTrans.addAll(this.dm.varsChangedByInvs());
 
         Set<String> intVarsBuffersThatDoChange = listToSet(mapBy(dashRefsInTrans, y -> y.name));
 
