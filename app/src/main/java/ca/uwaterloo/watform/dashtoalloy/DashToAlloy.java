@@ -85,7 +85,7 @@ public class DashToAlloy extends StutterD2A {
         this.addCompleteBigSteps();
         this.addEnoughOps();
         // System.out.println(this.am);
-        // this.am.resolve();
+        this.am.resolve();
         return this.am;
     }
 

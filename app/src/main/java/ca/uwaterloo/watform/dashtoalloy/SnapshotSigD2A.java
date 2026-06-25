@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.expr.binary.AlloyArrowExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.dashast.DashFQN;
+import ca.uwaterloo.watform.dashast.dashref.EventDashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
     private void addSnapshotSigTracesTcmc() {
         // traces/tcmc use sig Snapshot {} with fields
 
+        List<AlloyExpr> eventLimitations = emptyList();
         List<AlloyDecl> decls = this.dsl.emptyDeclList();
 
         // scopesUsed0, scopesUsed1, etc, (need if have parameters)
@@ -89,12 +91,37 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
                     decls.add(new AlloyDecl(this.dsl.transTakenVar(i), AlloyQtEnum.SET, arrow));
                 }
             }
-            // events0, event1, etc.
-            if (dm.hasEvents() && dm.hasEventsAti(i))
+
+            if (this.dm.hasEvents() && this.dm.hasEventsAti(i)) {
+                // events0, event1, etc.
+                // eventsi: set __Ids set->set __States
                 decls.add(
                         this.dsl.AlloyDeclArrowStringList(
                                 this.dsl.nameNum(D2AStrings.eventsName, i),
                                 newListWithOneMore(cop, D2AStrings.allEventsName)));
+
+                // event limitations
+                // not every event can occur at every level
+                // these are facts for every snapshot
+                // this is valuable to stop first level events
+                // appearing in the second level event set
+                // where they are just useless
+                // violating these facts does not allow any different behaviour
+                // it just makes it easier to understand the model's execution
+                // without random env events showing up at levels in the event set
+                // where they can never trigger anything
+                List<EventDashRef> eventsAtThisLevel = this.dm.eventsAti(i);
+                AlloyExpr allPossibleEventsAti =
+                        AlloyUnion(
+                                mapBy(
+                                        eventsAtThisLevel,
+                                        ev -> this.translateDashRefToArrowExpr(ev)));
+                // fact: all s. s.eventsi in PID1 -> ev1 + PID2 -> ev2
+                eventLimitations.add(
+                        AlloyAllVars(
+                                this.dsl.curDecls(),
+                                AlloyIn(this.dsl.curEvents(i), allPossibleEventsAti)));
+            }
         }
 
         // stable: one boolean;
@@ -107,6 +134,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
 
         // add the snapshot signature
         this.am.addSigPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+        this.am.addFact(D2AStrings.eventLimitations, eventLimitations);
     }
 
     public void varsBuffersOnlySnapshotSig() {

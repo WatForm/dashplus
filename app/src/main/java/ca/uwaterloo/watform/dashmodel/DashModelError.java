@@ -128,4 +128,8 @@ public class DashModelError extends UserOrImplError {
         return new DashModelError(
                 expr.pos, " 'this' must refer to a parametrized state: " + expr.toString());
     }
+
+    public static DashModelError lookupOfNonExistentEvent(String ev) {
+        return new DashModelError("lookup of event that does not exist: " + ev);
+    }
 }
