@@ -1,7 +1,5 @@
 package ca.uwaterloo.watform.alloyevaluator;
 
-import static ca.uwaterloo.watform.utils.CommonStrings.*;
-
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -16,200 +14,183 @@ import java.util.Set;
 
 public class FormulaEvaluator implements AlloyExprVis<Boolean> {
     private final AlloyExprVis<Set<List<String>>> setEvaluator;
+    private final EvalLogger logger;
 
-    public FormulaEvaluator(Instance instance) {
-        setEvaluator = new SetEvaluator(instance);
+    public FormulaEvaluator(Instance instance, boolean debug) {
+        logger = EvalLoggerFactory.make("evaluation", debug);
+        setEvaluator = new SetEvaluator(instance, debug);
     }
 
+    // These visit cases are unimplemented; just note the type and let the error carry the detail
     public Boolean visit(DashRef dashRef) {
-        dashOutput("Visiting: " + dashRef.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("DashRef: " + dashRef);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "DashRef: " + dashRef + " " + dashRef.getClass().getName());
     }
 
     public Boolean visit(AlloyBinaryExpr binExpr) {
-        dashOutput("Visiting: " + binExpr.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("AlloyBinaryExpr: " + binExpr);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "AlloyBinaryExpr: " + binExpr + " " + binExpr.getClass().getName());
     }
 
     public Boolean visit(AlloyUnaryExpr unaryExpr) {
-        dashOutput("Visiting: " + unaryExpr.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("AlloyUnaryExpr: " + unaryExpr);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "AlloyUnaryExpr: " + unaryExpr + " " + unaryExpr.getClass().getName());
     }
 
     public Boolean visit(AlloyVarExpr varExpr) {
-        dashOutput("Visiting: " + varExpr.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("AlloyVarExpr: " + varExpr);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "AlloyVarExpr: " + varExpr + " " + varExpr.getClass().getName());
     }
 
     public Boolean visit(AlloyBracketExpr bracketExpr) {
-        dashOutput("Visiting: " + bracketExpr.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("AlloyBracketExpr: " + bracketExpr);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "AlloyBracketExpr: " + bracketExpr + " " + bracketExpr.getClass().getName());
     }
 
     public Boolean visit(AlloyCphExpr comprehensionExpr) {
-        dashOutput("Visiting: " + comprehensionExpr.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("AlloyCphExpr: " + comprehensionExpr);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "AlloyCphExpr: "
+                        + comprehensionExpr
+                        + " "
+                        + comprehensionExpr.getClass().getName());
     }
 
     public Boolean visit(AlloyIteExpr iteExpr) {
-        dashOutput("Visiting: " + iteExpr.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("AlloyIteExpr: " + iteExpr);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
     }
 
     public Boolean visit(AlloyLetExpr letExpr) {
-        dashOutput("Visiting: " + letExpr.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("AlloyLetExpr: " + letExpr);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "AlloyLetExpr: " + letExpr + " " + letExpr.getClass().getName());
     }
 
     public Boolean visit(AlloyQuantificationExpr quantificationExpr) {
-        dashOutput("Visiting: " + quantificationExpr.getClass().getName());
         throw AlloyEvaluatorImplError.missingVisitCase(
-                "AlloyQuantificationExpr: " + quantificationExpr);
+                "AlloyQuantificationExpr: "
+                        + quantificationExpr
+                        + " "
+                        + quantificationExpr.getClass().getName());
     }
 
     public Boolean visit(AlloyDecl decl) {
-        dashOutput("Visiting: " + decl.getClass().getName());
-        throw AlloyEvaluatorImplError.missingVisitCase("AlloyDecl: " + decl);
+        throw AlloyEvaluatorImplError.missingVisitCase(
+                "AlloyDecl: " + decl + " " + decl.getClass().getName());
     }
 
     public Boolean visit(AlloyBlock block) {
-        dashOutput("Evaluating block: " + block);
+        logger.enter("Block (" + block.exprs.size() + " exprs)");
         for (var expr : block.exprs) {
-            dashOutput("Evaluating expr: " + expr);
             if (!expr.accept(this)) {
-                dashOutput("The expression evaluated to false: " + expr);
+                logger.exit("Block = false, failed on: " + expr);
                 return false;
             }
         }
+        logger.exit("Block = true");
         return true;
     }
 
     public Boolean visit(AlloyQtExpr qtExpr) {
-        switch (qtExpr.qt) {
-            case AlloyQtEnum.NO -> {
-                dashOutput("Multiplicity No case: " + qtExpr.sub);
-                return qtExpr.sub.accept(setEvaluator).isEmpty();
-            }
-            case AlloyQtEnum.SOME -> {
-                dashOutput("Multiplicity Some case: " + qtExpr.sub);
-                return !qtExpr.sub.accept(setEvaluator).isEmpty();
-            }
-            case AlloyQtEnum.ONE -> {
-                dashOutput("Multiplicity One case: " + qtExpr.sub);
-                return qtExpr.sub.accept(setEvaluator).size() == 1;
-            }
-            case AlloyQtEnum.LONE -> {
-                dashOutput("Multiplicity Lone case: " + qtExpr.sub);
-                return qtExpr.sub.accept(setEvaluator).size() <= 1;
-            }
-            default ->
-                    throw AlloyEvaluatorImplError.missingVisitCase(
-                            "AlloyQtEnum multiplicity: " + qtExpr.qt);
-        }
+        logger.enter("Multiplicity " + qtExpr.qt + ": " + qtExpr.sub);
+        var set = qtExpr.sub.accept(setEvaluator);
+        boolean result =
+                switch (qtExpr.qt) {
+                    case AlloyQtEnum.NO -> set.isEmpty();
+                    case AlloyQtEnum.SOME -> !set.isEmpty();
+                    case AlloyQtEnum.ONE -> set.size() == 1;
+                    case AlloyQtEnum.LONE -> set.size() <= 1;
+                    default ->
+                            throw AlloyEvaluatorImplError.missingVisitCase(
+                                    "AlloyQtEnum multiplicity: " + qtExpr.qt);
+                };
+        logger.exit("Multiplicity " + qtExpr.qt + " = " + result);
+        return result;
     }
 
     public Boolean visit(AlloyEqualsExpr expr) {
-        dashOutput("Evaluating equals: " + expr);
-        var leftVal = expr.left.accept(setEvaluator);
-        var rightVal = expr.right.accept(setEvaluator);
-        var result = leftVal.equals(rightVal);
-        dashOutput("Evalutated to " + String.valueOf(result));
+        logger.enter("EQ: " + expr);
+        var result = expr.left.accept(setEvaluator).equals(expr.right.accept(setEvaluator));
+        logger.exit("EQ = " + result);
         return result;
     }
 
     public Boolean visit(AlloyNotEqualsExpr expr) {
-        dashOutput("Evaluating not equals: " + expr);
-        var leftVal = expr.left.accept(setEvaluator);
-        var rightVal = expr.right.accept(setEvaluator);
-        var result = !leftVal.equals(rightVal);
-        dashOutput("not equals Evalutated to " + String.valueOf(result));
+        logger.enter("NEQ: " + expr);
+        var result = !expr.left.accept(setEvaluator).equals(expr.right.accept(setEvaluator));
+        logger.exit("NEQ = " + result);
         return result;
     }
 
     public Boolean visit(AlloyAndExpr expr) {
-        dashOutput("Evaluating and: " + expr);
-        var leftVal = expr.left.accept(this);
-        if (!leftVal) {
-            dashOutput("Short circuit and Evalutated to false");
+        logger.enter("AND: " + expr);
+        if (!expr.left.accept(this)) {
+            logger.exit("AND = false (short-circuit)");
             return false;
         }
-        var rightVal = expr.right.accept(this);
-        var result = leftVal && rightVal;
-        dashOutput("and Evalutated to " + String.valueOf(result));
+        var result = expr.right.accept(this);
+        logger.exit("AND = " + result);
         return result;
     }
 
     public Boolean visit(AlloyOrExpr expr) {
-        dashOutput("Evaluating or: " + expr);
-        var leftVal = expr.left.accept(this);
-        if (leftVal) {
-            dashOutput("Short circuit or Evalutated to true");
+        logger.enter("OR: " + expr);
+        if (expr.left.accept(this)) {
+            logger.exit("OR = true (short-circuit)");
             return true;
         }
-        var rightVal = expr.right.accept(this);
-        var result = leftVal || rightVal;
-        dashOutput("or Evalutated to " + String.valueOf(result));
+        var result = expr.right.accept(this);
+        logger.exit("OR = " + result);
         return result;
     }
 
     public Boolean visit(AlloyImpliesExpr expr) {
-        dashOutput("Evaluating =>: " + expr);
-        var leftVal = expr.left.accept(this);
-        if (!leftVal) {
-            dashOutput("Short circuit => Evalutated to true");
+        logger.enter("=>: " + expr);
+        if (!expr.left.accept(this)) {
+            logger.exit("=> = true (left false, short-circuit)");
             return true;
         }
-        var rightVal = expr.right.accept(this);
-        var result = !leftVal || rightVal;
-        dashOutput("=> Evalutated to " + String.valueOf(result));
+        var result = expr.right.accept(this);
+        logger.exit("=> = " + result);
         return result;
     }
 
     public Boolean visit(AlloyIffExpr expr) {
-        dashOutput("Evaluating <=>: " + expr);
-        var leftVal = expr.left.accept(this);
-        var rightVal = expr.right.accept(this);
-        var result = leftVal == rightVal;
-        dashOutput("<=> Evalutated to " + String.valueOf(result));
+        logger.enter("<=>: " + expr);
+        var result = expr.left.accept(this) == expr.right.accept(this);
+        logger.exit("<=> = " + result);
         return result;
     }
 
     public Boolean visit(AlloyNegExpr expr) {
-        dashOutput("Evaluating neg: " + expr);
+        logger.enter("NOT: " + expr);
         var result = !expr.sub.accept(this);
-        dashOutput("not Evalutated to " + String.valueOf(result));
+        logger.exit("NOT = " + result);
         return result;
     }
 
     public Boolean visit(AlloyCmpExpr expr) {
-        dashOutput("Evaluating cmp expr: " + expr);
-        dashOutput("Evaluating cmp expr.neg: " + expr.neg);
-
-        if (expr.neg) {
-            throw new UnsupportedOperationException("Neg not implemented currently");
-        }
-
+        if (expr.neg) throw new UnsupportedOperationException("Neg not implemented currently");
+        logger.enter("CMP " + expr.comp + ": " + expr);
         var left = expr.left.accept(setEvaluator);
         var right = expr.right.accept(setEvaluator);
-
-        switch (expr.comp) {
-            case AlloyCmpExpr.Comp.IN -> {
-                var result = right.containsAll(left);
-                dashOutput("Comp Evaluated to: " + result);
-                return result;
-            }
-            case AlloyCmpExpr.Comp.LESS_THAN ->
-                    throw new UnsupportedOperationException("Comp.LT not implemented");
-            case AlloyCmpExpr.Comp.GREATER_THAN ->
-                    throw new UnsupportedOperationException("Comp.GT not implemented");
-            case AlloyCmpExpr.Comp.LESS_EQUAL ->
-                    throw new UnsupportedOperationException("Comp.LE not implemented");
-            case AlloyCmpExpr.Comp.EQUAL_LESS ->
-                    throw new UnsupportedOperationException("Comp.EL not implemented");
-            case AlloyCmpExpr.Comp.GREATER_EQUAL ->
-                    throw new UnsupportedOperationException("Comp.GE not implemented");
-            default ->
-                    throw AlloyEvaluatorImplError.missingVisitCase("AlloyCmp comp: " + expr.comp);
-        }
+        boolean result =
+                switch (expr.comp) {
+                    case AlloyCmpExpr.Comp.IN -> right.containsAll(left);
+                    case AlloyCmpExpr.Comp.LESS_THAN ->
+                            throw new UnsupportedOperationException("Comp.LT not implemented");
+                    case AlloyCmpExpr.Comp.GREATER_THAN ->
+                            throw new UnsupportedOperationException("Comp.GT not implemented");
+                    case AlloyCmpExpr.Comp.LESS_EQUAL ->
+                            throw new UnsupportedOperationException("Comp.LE not implemented");
+                    case AlloyCmpExpr.Comp.EQUAL_LESS ->
+                            throw new UnsupportedOperationException("Comp.EL not implemented");
+                    case AlloyCmpExpr.Comp.GREATER_EQUAL ->
+                            throw new UnsupportedOperationException("Comp.GE not implemented");
+                    default ->
+                            throw AlloyEvaluatorImplError.missingVisitCase(
+                                    "AlloyCmp comp: " + expr.comp);
+                };
+        logger.exit("CMP " + expr.comp + " = " + result);
+        return result;
     }
 }
