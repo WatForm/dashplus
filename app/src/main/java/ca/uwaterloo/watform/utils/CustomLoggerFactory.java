@@ -3,6 +3,8 @@ package ca.uwaterloo.watform.utils;
 import java.io.*;
 import java.util.HashMap;
 import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
@@ -38,31 +40,37 @@ public class CustomLoggerFactory {
 
     private static HashMap<String, FileHandler> handlerTable = new HashMap<>();
 
-    public static Logger make(String fileName, boolean debug) {
+    public static Logger make(String fileName, boolean debug, Level level, Formatter formatter) {
         Logger logger = Logger.getLogger("" + UID);
         UID += 1;
 
         fileName = fileName + ".log";
 
         logger.setUseParentHandlers(false); // remove ability to access console
+        logger.setLevel(level);
 
         if (!debug) return logger;
 
-        if (!handlerTable.containsKey(fileName)) makeNewFileAndHandler(fileName);
+        if (!handlerTable.containsKey(fileName)) makeNewFileAndHandler(fileName, level, formatter);
 
         logger.addHandler(handlerTable.get(fileName));
 
         return logger;
     }
 
-    private static void makeNewFileAndHandler(String fileName) {
+    public static Logger make(String fileName, boolean debug) {
+        return make(fileName, debug, Level.INFO, new SimpleFormatter());
+    }
+
+    private static void makeNewFileAndHandler(String fileName, Level level, Formatter formatter) {
         File file = new File(fileName);
         if (file.getParentFile() != null) {
             file.getParentFile().mkdirs();
         }
         try {
             FileHandler fh = new FileHandler(fileName);
-            fh.setFormatter(new SimpleFormatter());
+            fh.setFormatter(formatter);
+            fh.setLevel(level);
             handlerTable.put(fileName, fh);
         } catch (Exception e) {
             e.printStackTrace();

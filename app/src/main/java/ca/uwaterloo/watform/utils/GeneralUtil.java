@@ -110,6 +110,15 @@ public class GeneralUtil {
         return ll.get(ll.size() - 1);
     }
 
+    public static <T> T firstElement(List<T> ll) {
+        return ll.get(0);
+    }
+
+    public static <T> List<T> allButFirst(List<T> ll) {
+        if (ll.isEmpty()) return ll;
+        else return ll.subList(1, ll.size());
+    }
+
     public static <T> List<T> allButLast(List<T> ll) {
         if (ll.isEmpty()) return ll;
         else return ll.subList(0, ll.size() - 1);
@@ -169,6 +178,10 @@ public class GeneralUtil {
 
     public static <T> List<T> filterBy(List<T> items, Predicate<T> filterFn) {
         return items.stream().filter(filterFn).collect(Collectors.toList());
+    }
+
+    public static <T> Set<T> filterBy(Set<T> items, Predicate<T> filterFn) {
+        return items.stream().filter(filterFn).collect(Collectors.toSet());
     }
 
     public static <T> List<T> concat(List<T> list1, List<T> list2) {
