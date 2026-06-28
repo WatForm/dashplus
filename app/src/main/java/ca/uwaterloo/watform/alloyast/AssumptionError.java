@@ -20,4 +20,8 @@ public class AssumptionError extends UserOrImplError {
     public static AssumptionError cantHaveMultipleCmdDecls(Pos p, String s) {
         return new AssumptionError(p, "Can't have multiple cmds within cmd: " + s);
     }
+
+    public static AssumptionError cantHaveScopeRange(Pos p, String s) {
+        return new AssumptionError(p, "Can't have scope range in command: " + s);
+    }
 }

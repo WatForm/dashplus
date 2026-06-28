@@ -59,4 +59,8 @@ public final class AlloyModelImplError extends ImplementationError {
         return new AlloyModelImplError(
                 "Trying to access a pred/fun name that does not exist: " + s);
     }
+
+    public static AlloyModelImplError noScopeForNonSig(String s) {
+        return new AlloyModelImplError("Asking for scope of a non-sig: " + s);
+    }
 }

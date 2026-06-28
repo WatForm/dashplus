@@ -10,7 +10,7 @@ import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyParaParseVis;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdDeclParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashast.DashFile;
@@ -156,16 +156,16 @@ public class Parser {
         }
     }
 
-    public static AlloyCmdPara parseCmd(String s) {
+    public static AlloyCmdPara.CommandDecl parseCmdDecl(String s) {
         CharStream input = CharStreams.fromString(s);
         BailLexer lexer = new BailLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BailParser parser = new BailParser(tokens);
-        ParseTree antlrAST = parser.commandPara();
-        AlloyParaParseVis afpv = new AlloyParaParseVis();
-        AlloyCmdPara cmd = null;
+        ParseTree antlrAST = parser.commandDecl();
+        AlloyCmdDeclParseVis afpv = new AlloyCmdDeclParseVis();
+        AlloyCmdPara.CommandDecl cmd = null;
         try {
-            cmd = afpv.visitCommandPara((DashParser.CommandParaContext) antlrAST);
+            cmd = afpv.visitCommandDecl((DashParser.CommandDeclContext) antlrAST);
         } catch (AlloyCtorError alloyCtorError) {
             Reporter.INSTANCE.addError(alloyCtorError);
         }

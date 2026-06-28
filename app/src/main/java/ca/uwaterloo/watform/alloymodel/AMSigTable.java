@@ -17,7 +17,7 @@ import java.util.function.BiFunction;
 
 public class AMSigTable extends AMFieldTable {
 
-    private LinkedHashMap<String, SigData> sigTable = new LinkedHashMap<>();
+    public LinkedHashMap<String, SigData> sigTable = new LinkedHashMap<>();
 
     protected AMSigTable(AlloyFile alloyFile) {
         // no sigTables in an AlloyFile
@@ -36,6 +36,9 @@ public class AMSigTable extends AMFieldTable {
         super.resolve(fieldArityAndSetMul);
         // done after all sigs and enums are added
         DetectCycles.topoOrderCycleDetector(this.allSigs(), x -> this.allChildren(x));
+        // now that all sigs are in the sigTable
+        // get the child links set up
+        this.setChildren();
     }
 
     protected void addToSigTable(AlloySigPara multiSigPara) {
@@ -86,23 +89,18 @@ public class AMSigTable extends AMFieldTable {
         return returnList;
     }
 
-    private void setChildren(List<String> sigNames) {
+    private void setChildren() {
         // set child attributes for sigs in sigNames
         // when adding a few sigs, they might add children
         // to a previously existing sig or sigs in sigNames
         // but nothing in previously existing sigs can have
         // children in this list of sigNames
-        for (String sigName : sigNames) {
-            if (!this.containsSig(sigName))
-                throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
-            else {
-                for (String inParent : sigTable.get(sigName).inParents()) {
-                    sigTable.get(inParent).addInChild(sigName);
-                }
-                if (sigTable.get(sigName).extendsParent().isPresent()) {
-                    sigTable.get(sigTable.get(sigName).extendsParent().get())
-                            .addExtendsChild(sigName);
-                }
+        for (String sigName : this.allSigs()) {
+            for (String inParent : sigTable.get(sigName).inParents()) {
+                sigTable.get(inParent).addInChild(sigName);
+            }
+            if (sigTable.get(sigName).extendsParent().isPresent()) {
+                sigTable.get(sigTable.get(sigName).extendsParent().get()).addExtendsChild(sigName);
             }
         }
     }
@@ -135,10 +133,32 @@ public class AMSigTable extends AMFieldTable {
         else return this.sigTable.get(sigName).inChildren();
     }
 
+    public boolean isInChild(String sigName) {
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return !(this.sigTable.get(sigName).inParents().isEmpty());
+    }
+
+    public boolean isExtendsChild(String sigName) {
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).extendsParent().isPresent();
+    }
+
     public Optional<String> extendsParent(String sigName) {
         if (!this.containsSig(sigName))
             throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
         else return this.sigTable.get(sigName).extendsParent();
+    }
+
+    public String topLevelExtendsAncestor(String sigName) {
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else {
+            Optional<String> parent = this.sigTable.get(sigName).extendsParent();
+            if (parent.isPresent()) return topLevelExtendsAncestor(parent.get());
+            else return sigName;
+        }
     }
 
     public List<String> extendsChildren(String sigName) {
@@ -189,5 +209,21 @@ public class AMSigTable extends AMFieldTable {
         if (!this.containsSig(sigName))
             throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
         else return this.sigTable.get(sigName).isLoneSig;
+    }
+
+    @Override
+    public String toString() {
+        // written by ChatGPT
+        StringBuilder sb = new StringBuilder("sigTable:\n");
+
+        for (Map.Entry<String, SigData> entry : sigTable.entrySet()) {
+            sb.append("  ")
+                    .append(entry.getKey())
+                    .append(" -> ")
+                    .append(entry.getValue())
+                    .append('\n');
+        }
+
+        return sb.toString();
     }
 }

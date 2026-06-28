@@ -31,14 +31,18 @@ public class SigData {
     }
 
     public SigData(AlloySigPara p) {
-        // this is data for only one sig
+        // this is data for a single sigPara
         if (p.rel.isPresent()) {
             if (p.rel.get() instanceof AlloySigPara.Extends e) {
+                // this includes one sigs because they are extensions
                 this.extendsParent = Optional.of(e.sigRef.getName());
                 this.inParents = emptyList();
             } else if (p.rel.get() instanceof AlloySigPara.In e) {
                 this.extendsParent = Optional.empty();
                 this.inParents = mapBy(e.sigRefs, s -> s.getName());
+                if (p.quals.contains(AlloySigPara.Qual.ABSTRACT)) {
+                    throw AlloyModelError.subsetSigsCannotBeAbstrast(p.pos, p.toString());
+                }
             } else if (p.rel.get() instanceof AlloySigPara.Equal e) {
                 // sig A = C + C {}
                 // means
@@ -122,6 +126,7 @@ public class SigData {
                 + "\ninChildren: "
                 + inChildren.toString()
                 + "\nextendsChildren: "
+                + extendsChildren.toString()
                 + "\n";
     }
 }

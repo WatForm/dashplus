@@ -1,5 +1,6 @@
 
-
+These notes have been implemented in AMScopes.java
+We can remove this file at some point.
 
 ## Summary of scope resolution:
 

@@ -37,7 +37,7 @@ public class PredicateAbstraction {
     public DashModel concreteModel;
     public DashModel absModel;
     // public int cmdnum;
-    public AlloyCmdPara cmd;
+    public AlloyCmdPara.CommandDecl cmdDecl;
     protected AlloyCmdPara.CommandDecl.Scope scope;
     public String abvNamePre = "B";
     public String cafDepPredPre = "caf_dep_";
@@ -58,9 +58,9 @@ public class PredicateAbstraction {
         this.concreteModel = concreteModel;
         this.exprTranslator = new ExprTranslatorVis(concreteModel);
         this.dsl = new DSL(false);
-        String defaultcmd = "run {} for 4";
-        this.cmd = null;
-        this.scope = Parser.parseCmd(defaultcmd).cmdDecls.get(0).scope.orElse(null);
+        String defaultcmdDecl = "run {} for 4";
+        this.cmdDecl = null;
+        this.scope = Parser.parseCmdDecl(defaultcmdDecl).scope.orElse(null);
         if (this.scope == null)
             System.out.println("Null scope for default cmd in PredicateAbstraction().");
     }
@@ -70,8 +70,8 @@ public class PredicateAbstraction {
         this.exprTranslator = new ExprTranslatorVis(concreteModel);
         this.dsl = new DSL(false);
         // this.cmdnum = n;
-        this.cmd = concreteModel.getCmdNum(n).orElse(null);
-        this.scope = cmd.cmdDecls.get(0).scope.orElse(null);
+        this.cmdDecl = concreteModel.getCmdNum(n).orElse(null);
+        this.scope = this.cmdDecl.scope.orElse(null);
     }
 
     public void createABVmap() {
@@ -316,18 +316,17 @@ public class PredicateAbstraction {
     }
 
     private AlloyExpr getCmdBodyExpr() {
-        if (this.cmd == null) {
+        if (this.cmdDecl == null) {
             return null;
         } else {
             try {
-                AlloyCmdPara.CommandDecl cmdDecl = this.cmd.cmdDecls.get(0);
-                AlloyQnameExpr cmdBodyQname = cmdDecl.invoQname.orElse(null);
+                AlloyQnameExpr cmdBodyQname = this.cmdDecl.invoQname.orElse(null);
                 if (cmdBodyQname == null) {
                     System.out.println("Unable to get cmd body expr.");
                     return null;
                 }
                 String vname = cmdBodyQname.vars.get(0).label;
-                if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
+                if (this.cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) {
                     AlloyAssertPara p = this.concreteModel.getAssertPara(vname);
                     return p.block;
                 } else {
@@ -342,9 +341,8 @@ public class PredicateAbstraction {
     }
 
     private int addAbstractCmd() {
-        if (this.cmd != null) {
+        if (this.cmdDecl != null) {
             try {
-                AlloyCmdPara.CommandDecl cmdDecl = this.cmd.cmdDecls.get(0);
                 AlloyQnameExpr cmdBodyQname = cmdDecl.invoQname.orElse(null);
                 String vname = cmdBodyQname.vars.get(0).label;
 

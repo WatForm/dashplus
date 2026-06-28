@@ -129,4 +129,22 @@ public final class AlloyModelError extends UserOrImplError {
                         + " in a bounding expression outside of its signature: "
                         + sigParent);
     }
+
+    public static AlloyModelError nonOneScopeForOneSig(Pos pos, String cmd) {
+        return new AlloyModelError(pos, "Scopes for one sigs must be one: " + cmd);
+    }
+
+    public static AlloyModelError cantSetScopeOfInChild(Pos pos, String cmd) {
+        return new AlloyModelError(pos, "Can't set scope of 'in' child: " + cmd);
+    }
+
+    public static AlloyModelError scopeOfTopLevelSigMustBeGiven(Pos pos, String cmd) {
+        return new AlloyModelError(
+                pos,
+                "Can't set scope of 'extends' child when no scope for its top-level sig: " + cmd);
+    }
+
+    public static AlloyModelError subsetSigsCannotBeAbstrast(Pos pos, String sigPara) {
+        return new AlloyModelError(pos, "Subset sigs cannot be abstract: " + sigPara);
+    }
 }
