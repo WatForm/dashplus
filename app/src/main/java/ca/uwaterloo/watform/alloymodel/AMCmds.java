@@ -55,6 +55,10 @@ public class AMCmds extends AMScopes {
         this.cmds.add(cmdPara);
     }
 
+    public void addCmdPara(AlloyCmdPara.CommandDecl cmdDecl) {
+        this.cmds.add(new AlloyCmdPara(cmdDecl));
+    }
+
     public Integer getNumCmds() {
         return this.cmds.size();
     }

@@ -108,18 +108,16 @@ public class PredAbsUtil {
 
     public static int addRunCmd(String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
         am.addCmdPara(
-                new AlloyCmdPara(
-                        new AlloyCmdPara.CommandDecl(
-                                AlloyCmdPara.CommandDecl.CmdType.RUN, AlloyVar(pname), scope)));
+                new AlloyCmdPara.CommandDecl(
+                        AlloyCmdPara.CommandDecl.CmdType.RUN, AlloyVar(pname), scope));
         return am.getNumCmds() - 1;
     }
 
     public static int addCheckCmd(
             String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
         am.addCmdPara(
-                new AlloyCmdPara(
-                        new AlloyCmdPara.CommandDecl(
-                                AlloyCmdPara.CommandDecl.CmdType.CHECK, AlloyVar(pname), scope)));
+                new AlloyCmdPara.CommandDecl(
+                        AlloyCmdPara.CommandDecl.CmdType.CHECK, AlloyVar(pname), scope));
         return am.getNumCmds() - 1;
     }
 
