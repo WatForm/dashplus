@@ -280,7 +280,7 @@ public class Main implements Callable<Integer> {
                                 verbose,
                                 debug);
                     } else if (evalFacts) {
-                        runEvalFacts(am, cliConf.xmlFileName);
+                        runEvalFacts(am, cliConf.xmlFileName, debug);
                     } else if (xml) {
                         runCheckAlloyInstanceTla(am, cliConf.xmlFileName);
                     } else if (dumpInstance) {
@@ -414,7 +414,7 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    private static void runEvalFacts(AlloyModel am, String instanceFilename) {
+    private static void runEvalFacts(AlloyModel am, String instanceFilename, boolean debug) {
         dashOutput("Checking instance for " + instanceFilename);
 
         boolean satisfied = true;
@@ -427,9 +427,8 @@ public class Main implements Callable<Integer> {
             return;
         }
 
-        var evaluator = new FormulaEvaluator(instance);
+        var evaluator = new FormulaEvaluator(instance, debug);
         for (var para : am.allFactParas()) {
-            dashOutput("Checking para: " + para);
             if (!para.block.accept(evaluator)) {
                 satisfied = false;
                 break;
