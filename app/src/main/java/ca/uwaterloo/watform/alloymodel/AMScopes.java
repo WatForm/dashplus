@@ -271,6 +271,26 @@ public class AMScopes extends AMAsserts {
         public String toString() {
             return (isExact ? "exact " : "") + max;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            // written by ChatGPT
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof SigScope)) {
+                return false;
+            }
+
+            SigScope other = (SigScope) obj;
+            return isExact == other.isExact && Objects.equals(max, other.max);
+        }
+
+        @Override
+        public int hashCode() {
+            // written by ChatGPT
+            return Objects.hash(max, isExact);
+        }
     }
 
     public static SigScope ExactScope(int max) {
@@ -349,6 +369,27 @@ public class AMScopes extends AMAsserts {
             sb.append("}");
 
             return sb.toString();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            // written by ChatGPT
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof CmdScopeProfile)) {
+                return false;
+            }
+
+            CmdScopeProfile other = (CmdScopeProfile) obj;
+            return Objects.equals(topLevel, other.topLevel)
+                    && Objects.equals(explicitExtends, other.explicitExtends);
+        }
+
+        @Override
+        public int hashCode() {
+            // written by ChatGPT
+            return Objects.hash(topLevel, explicitExtends);
         }
     }
 }
