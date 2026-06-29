@@ -11,8 +11,10 @@ package ca.uwaterloo.watform.alloyinterface;
 import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.cli.Constants;
+import ca.uwaterloo.watform.parser.Parser;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.ast.Command;
@@ -21,6 +23,7 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
+import java.util.*;
 
 public class AlloyInterface {
 
@@ -67,6 +70,10 @@ public class AlloyInterface {
         if (cmdnum == Constants.noCmdValue) {
             return checkModelSatisfiability(am);
         } else {
+            // command must exist from above check
+            Optional<AlloyCmdPara.CommandDecl> cmdDecl = am.getCmdNum(cmdnum);
+            // System.out.println(cmdDecl);
+            System.out.println(am.getScopeLimits(cmdDecl.get()));
             return AlloyInterface.executeCommand(alloyCode, cmdnum);
         }
     }
@@ -76,6 +83,8 @@ public class AlloyInterface {
         // and ask it to execute cmd 0
         // in converting Alloy to Kodkod, it will add a run {}
         String alloyCode = am.toStringNoCmds();
+        AlloyCmdPara.CommandDecl cmdDecl = Parser.parseCmdDecl("run {}");
+        System.out.println(am.getScopeLimits(cmdDecl));
         return AlloyInterface.executeCommand(alloyCode, 0);
     }
 

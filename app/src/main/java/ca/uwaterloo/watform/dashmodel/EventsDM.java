@@ -10,6 +10,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashStrings.IntEnvKind;
+import ca.uwaterloo.watform.dashast.dashref.EventDashRef;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ public class EventsDM extends VarsBuffersDM {
     // individual event non-complex getters
 
     public boolean isEnvEvent(String efqn) {
+        // TODO: add errors if efqn not in table
         return (this.et.get(efqn).kind == IntEnvKind.ENV);
     }
 
@@ -96,6 +98,15 @@ public class EventsDM extends VarsBuffersDM {
             if (eventParams(e).size() == i) return true;
         }
         return false;
+    }
+
+    public List<EventDashRef> eventsAti(int i) {
+        // at level i
+        List<EventDashRef> eventsAti = emptyList();
+        for (String e : allEventNames()) {
+            if (eventParams(e).size() == i) eventsAti.add(this.eventAsDashRef(e));
+        }
+        return eventsAti;
     }
 
     public boolean hasIntEventsAti(int i) {
@@ -151,6 +162,16 @@ public class EventsDM extends VarsBuffersDM {
 
     public void addEvent(String efqn, IntEnvKind k, List<DashParam> prms) {
         addEvent(Pos.UNKNOWN, efqn, k, prms);
+    }
+
+    private EventDashRef eventAsDashRef(String ev) {
+        // returns a dash event as a DashRef FORALL parameter values
+        // PID1, PID2 , eventName
+        if (this.containsEvent(ev)) {
+            return new EventDashRef(ev, mapBy(this.eventParams(ev), x -> x.asWholeSet()));
+        } else {
+            throw DashModelError.lookupOfNonExistentEvent(ev);
+        }
     }
 
     private class EventEntry {

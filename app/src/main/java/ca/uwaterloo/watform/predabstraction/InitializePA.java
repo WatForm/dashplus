@@ -28,7 +28,7 @@ import java.util.*;
 public class InitializePA {
 
     public DashModel concreteModel;
-    public AlloyCmdPara cmd;
+    public AlloyCmdPara.CommandDecl cmdDecl;
     public String abvNamePre = "B";
     // public String cafDepPredPre = "caf_dep_";
     public String bPredPrefix = "CAF_";
@@ -54,9 +54,9 @@ public class InitializePA {
     public InitializePA(DashModel input) {
         this.concreteModel = input;
         this.exprTranslator = new ExprTranslatorVis(this.concreteModel);
-        String defaultcmd = "run {} for 4";
-        this.cmd = null;
-        this.scope = Parser.parseCmd(defaultcmd).cmdDecls.get(0).scope.orElse(null);
+        String defaultcmdDecl = "run {} for 4";
+        this.cmdDecl = null;
+        this.scope = Parser.parseCmdDecl(defaultcmdDecl).scope.orElse(null);
         if (this.scope == null) {
             System.out.println("Null scope for default cmd in InitializePA().");
         }
@@ -68,8 +68,8 @@ public class InitializePA {
     public InitializePA(DashModel input, int n) {
         this.concreteModel = input;
         this.exprTranslator = new ExprTranslatorVis(this.concreteModel);
-        this.cmd = concreteModel.getCmdNum(n).orElse(null);
-        this.scope = cmd.cmdDecls.get(0).scope.orElse(null);
+        this.cmdDecl = concreteModel.getCmdNum(n).orElse(null);
+        this.scope = this.cmdDecl.scope.orElse(null);
 
         DashToAlloy d2a = new DashToAlloy(concreteModel);
         this.queryModel = d2a.translateVarBufferSigsOnly();
@@ -179,19 +179,22 @@ public class InitializePA {
 
     // gets the body of the predicate/assert that is being run by a cmd
     private AlloyExpr getCmdBodyExpr() throws AlloyCtorError {
-        if (this.cmd == null) {
+        if (this.cmdDecl == null) {
             System.out.println("In getCmdBodyExpr(): Command does not exist.");
             return null;
         } else {
             try {
-                String pname = PredAbsUtil.getPredNameFromCmd(cmd);
+                String pname = PredAbsUtil.getPredNameFromCmd(this.cmdDecl);
                 if (pname == null) { // in case of commands like "check/run {expr} for..."
-                    AlloyBlock block = PredAbsUtil.getFormulaFromCmd(cmd);
+                    AlloyBlock block = PredAbsUtil.getFormulaFromCmd(this.cmdDecl);
                     if (block != null) {
                         return (AlloyExpr) block;
                     } else { // should not happen: command has neither a valid pred/assert nor exprs
                         throw AlloyCtorError.xorFields(
-                                cmd.pos, "invoQname", "constrBlock", "AlloyCmdPara.CommandDecl");
+                                this.cmdDecl.pos,
+                                "invoQname",
+                                "constrBlock",
+                                "AlloyCmdPara.CommandDecl");
                     }
                 } else { // when cmd is like "run/check pname for ..."
                     AlloyPredPara pred = concreteModel.getPredPara(pname);

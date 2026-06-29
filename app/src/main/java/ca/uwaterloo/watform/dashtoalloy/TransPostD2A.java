@@ -151,14 +151,13 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // in trans could be primed or unprimed
         List<DashRef> dashRefsInTrans = emptyList();
         if (tfqnOpt.isPresent() && this.dm.doR(tfqnOpt.get()) != null) {
-            dashRefsInTrans = setToList(this.collectDashRefs(this.dm.doR(tfqnOpt.get())));
+            dashRefsInTrans = this.dm.varsChangedByTrans(tfqnOpt.get());
         } else {
             dashRefsInTrans = emptyList();
         }
 
         // invs cannot have primes in them
-        dashRefsInTrans.addAll(
-                flatten(mapBy(this.dm.invsR(), y -> setToList(this.collectDashRefs(y)))));
+        dashRefsInTrans.addAll(this.dm.varsChangedByInvs());
 
         Set<String> intVarsBuffersThatDoChange = listToSet(mapBy(dashRefsInTrans, y -> y.name));
 
@@ -416,7 +415,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
             } else {
                 if (this.dm.hasEnvEventsAti(i)) case3.add(envEvExpr);
             }
-            if (this.dm.hasConcurrency()) {
+            if (this.dm.hasConcurrency() && this.dm.hasScopesAti(i)) {
                 // scopesUsedi' = scopesUsed
                 u =
                         mapBy(
@@ -466,7 +465,7 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                     // no events are generated so no change in events
                     case4.add(AlloyEqual(this.dsl.nextEvents(i), this.dsl.curEvents(i)));
             }
-            if (this.dm.hasConcurrency()) {
+            if (this.dm.hasConcurrency() && this.dm.hasScopesAti(i)) {
                 // scopesUsedi' = scopesUsedi + scopesUsed
                 u =
                         mapBy(
@@ -543,8 +542,9 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
                     List<AlloyExpr> scopesUsedEmpty = this.dsl.emptyExprList();
 
                     for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-                        scopesUsedEmpty.add(
-                                AlloyEqual(this.dsl.nextScopesUsed(i), this.dsl.noneArrow(i)));
+                        if (this.dm.hasScopesAti(i))
+                            scopesUsedEmpty.add(
+                                    AlloyEqual(this.dsl.nextScopesUsed(i), this.dsl.noneArrow(i)));
                     }
                     stableTrueAndScopesUsedEmpty =
                             AlloyAnd(this.dsl.nextStableTrue(), AlloyAndList(scopesUsedEmpty));

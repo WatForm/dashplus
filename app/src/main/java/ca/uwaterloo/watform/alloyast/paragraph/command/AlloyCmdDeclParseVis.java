@@ -11,6 +11,20 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyScopableExpr;
 import ca.uwaterloo.watform.utils.Pos;
 
+/*
+commandPara      : commandDecl (=> commandDecl)* ;
+we don't support multiple commandDecls in a commandPara
+
+commandDecl     : (CHECK | RUN) qname? ( qname | block ) scope? (EXPECT number)? ;
+scope           : FOR number ( BUT typescope ( COMMA typescope )* )*
+                | FOR typescope ( COMMA typescope )*
+                ;
+
+                number .. number as a scope is something we don't internally support
+
+typescope       : EXACTLY? number (DOT DOT (number (COLON number)?)?)?
+                    (qname | SIGINT | INT | SEQ | STRING | STEPS) ;
+*/
 public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.CommandDecl> {
     AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
     AlloyCmdDeclScopeParseVis typescopeParseVis = new AlloyCmdDeclScopeParseVis();
@@ -82,6 +96,10 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
                             AlloyCmdPara.CommandDecl.Scope.Typescope.class));
         }
 
+        /*
+        typescope       : EXACTLY? number (DOT DOT (number (COLON number)?)?)?
+                    (qname | SIGINT | INT | SEQ | STRING | STEPS) ;
+        */
         public static final class AlloyCmdDeclScopeTypescopeParseVis
                 extends DashBaseVisitor<AlloyCmdPara.CommandDecl.Scope.Typescope> {
             AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
@@ -104,6 +122,7 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
                 } else if (ctx.SIGINT() != null) {
                     scopableExpr = (AlloyScopableExpr) exprParseVis.visit(ctx.SIGINT());
                 } else if (ctx.INT() != null) {
+                    /* 2026-06-27 NAD: AA seems to accept this for Int */
                     scopableExpr = (AlloyScopableExpr) exprParseVis.visit(ctx.INT());
                 } else if (ctx.SEQ() != null) {
                     scopableExpr = (AlloyScopableExpr) exprParseVis.visit(ctx.SEQ());

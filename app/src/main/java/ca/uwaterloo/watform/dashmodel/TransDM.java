@@ -18,6 +18,7 @@ import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.exprvisitor.CollectDashRefVis;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -248,5 +249,9 @@ public class TransDM extends InitsInvsDM {
                         entry.gotoR,
                         entry.sendR,
                         exp));
+    }
+
+    public List<DashRef> varsChangedByTrans(String tfqn) {
+        return setToList(new CollectDashRefVis().collect(this.doR(tfqn)));
     }
 }

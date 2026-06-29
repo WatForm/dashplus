@@ -108,18 +108,16 @@ public class PredAbsUtil {
 
     public static int addRunCmd(String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
         am.addCmdPara(
-                new AlloyCmdPara(
-                        new AlloyCmdPara.CommandDecl(
-                                AlloyCmdPara.CommandDecl.CmdType.RUN, AlloyVar(pname), scope)));
+                new AlloyCmdPara.CommandDecl(
+                        AlloyCmdPara.CommandDecl.CmdType.RUN, AlloyVar(pname), scope));
         return am.getNumCmds() - 1;
     }
 
     public static int addCheckCmd(
             String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
         am.addCmdPara(
-                new AlloyCmdPara(
-                        new AlloyCmdPara.CommandDecl(
-                                AlloyCmdPara.CommandDecl.CmdType.CHECK, AlloyVar(pname), scope)));
+                new AlloyCmdPara.CommandDecl(
+                        AlloyCmdPara.CommandDecl.CmdType.CHECK, AlloyVar(pname), scope));
         return am.getNumCmds() - 1;
     }
 
@@ -127,9 +125,9 @@ public class PredAbsUtil {
         return getPredNameFromCmd(am.getCmdNum(cmdIdx).orElse(null));
     }
 
-    public static String getPredNameFromCmd(AlloyCmdPara cmd) {
-        if (cmd == null) return null;
-        AlloyQnameExpr predName = cmd.cmdDecls.get(0).invoQname.orElse(null);
+    public static String getPredNameFromCmd(AlloyCmdPara.CommandDecl cmdDecl) {
+        if (cmdDecl == null) return null;
+        AlloyQnameExpr predName = cmdDecl.invoQname.orElse(null);
         if (predName != null) {
             return predName.vars.get(0).label;
         } else {
@@ -142,8 +140,8 @@ public class PredAbsUtil {
         return getFormulaFromCmd(am.getCmdNum(cmdIdx).orElse(null));
     }
 
-    public static AlloyBlock getFormulaFromCmd(AlloyCmdPara cmd) {
-        if (cmd == null) return null;
-        return cmd.cmdDecls.get(0).constrBlock.orElse(null);
+    public static AlloyBlock getFormulaFromCmd(AlloyCmdPara.CommandDecl cmdDecl) {
+        if (cmdDecl == null) return null;
+        return cmdDecl.constrBlock.orElse(null);
     }
 }

@@ -33,9 +33,9 @@ public class StutterD2A extends SingleEventInputD2A {
         if (this.dm.hasConcurrency()) body.add(this.noChange(D2AStrings.stableName));
         for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
 
-            if (!this.dm.hasOnlyOneState() && dm.hasStatesAti(i))
+            if (!this.dm.hasOnlyOneState() && this.dm.hasStatesAti(i))
                 body.add(this.noChange(D2AStrings.confName + Integer.toString(i)));
-            if (this.dm.hasConcurrency())
+            if (this.dm.hasConcurrency() && this.dm.hasScopesAti(i))
                 body.add(noChange(D2AStrings.scopesUsedName + Integer.toString(i)));
 
             if (this.dm.hasTransAti(i))

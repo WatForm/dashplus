@@ -290,6 +290,12 @@ public final class AlloyCmdPara extends AlloyPara {
             return true;
         }
 
+        /*
+        scope   : FOR number ( BUT typescope ( COMMA typescope )* )*
+                | FOR typescope ( COMMA typescope )*
+                ;
+        */
+
         public static final class Scope extends ASTNode {
             public final Optional<AlloyNumExpr>
                     num; // this is filled only in the case of "for x but y sig" with x
@@ -376,6 +382,12 @@ public final class AlloyCmdPara extends AlloyPara {
                 return true;
             }
 
+            /*
+                typescope       : EXACTLY? start (DOT DOT (end (COLON increment)?)?)?
+                    (qname | SIGINT | INT | SEQ | STRING | STEPS) ;
+            */
+
+            // if "end" does not exist, "start" is the max value
             // The fields only reflect the syntax
             // In the constructor, do not try to infer the fields from the arguments given
             // For example, if start is equal to end, don't make isExactly true
@@ -421,6 +433,11 @@ public final class AlloyCmdPara extends AlloyPara {
                         throw AlloyCtorError.cmdNegScop(pos);
                     }
 
+                    if (this.end.isPresent())
+                        throw AssumptionError.cantHaveScopeRange(pos, this.toString());
+
+                    // this one does not really matter b/c of the previous check
+                    // but the previous check might be removed at some time
                     if (this.end.isPresent() && this.end.get().value < this.start.value) {
                         throw AlloyCtorError.cmdDecreasingScope(pos);
                     }

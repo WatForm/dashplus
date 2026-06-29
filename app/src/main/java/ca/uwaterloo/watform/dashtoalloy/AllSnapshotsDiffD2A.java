@@ -36,7 +36,7 @@ public class AllSnapshotsDiffD2A extends CompleteBigStepsD2A {
                 // s.confi = sn.confi
                 body.add(AlloyEqual(this.dsl.curConf(i), this.dsl.nextConf(i)));
             // s.scopesUsedi = sn.scopesUsedi
-            if (this.dm.hasConcurrency())
+            if (this.dm.hasConcurrency() && this.dm.hasScopesAti(i))
                 body.add(AlloyEqual(this.dsl.curScopesUsed(i), this.dsl.nextScopesUsed(i)));
             if (this.dm.hasTransAti(i))
                 body.add(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.nextTransTaken(i)));

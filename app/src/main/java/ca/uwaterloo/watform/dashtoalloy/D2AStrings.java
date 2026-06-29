@@ -34,6 +34,7 @@ public final class D2AStrings {
     public static final String initPredName = dsh_prefix + "initial";
     public static final String invFactName = dsh_prefix + "inv";
     public static final String initFactName = initPredName;
+    public static final String eventLimitations = dsh_prefix + "event_limitations";
     // predicate names
 
     public static final String smallStepName = dsh_prefix + "small_step";

@@ -12,7 +12,7 @@ import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import java.util.*;
 
-public class AMCmds extends AMAsserts {
+public class AMCmds extends AMScopes {
 
     // cmdParas never have names
     protected List<AlloyCmdPara> cmds = emptyList();
@@ -32,6 +32,9 @@ public class AMCmds extends AMAsserts {
         super.resolve();
         List<AlloyCmdPara> newCmds = emptyList();
         for (AlloyCmdPara cmdPara : this.cmds) {
+            // we can do this only after we know the sig hierarchy
+            // under our Assumptions, there is only one cmdDecl in a cmdPara
+            this.checkForErrorsInScopes(cmdPara.cmdDecls.get(0));
             AlloyCmdPara newCmdPara =
                     new AlloyCmdPara(
                             cmdPara.pos,
@@ -52,6 +55,10 @@ public class AMCmds extends AMAsserts {
         this.cmds.add(cmdPara);
     }
 
+    public void addCmdPara(AlloyCmdPara.CommandDecl cmdDecl) {
+        this.cmds.add(new AlloyCmdPara(cmdDecl));
+    }
+
     public Integer getNumCmds() {
         return this.cmds.size();
     }
@@ -62,9 +69,9 @@ public class AMCmds extends AMAsserts {
     }
 
     /** Retrieve the nth para in this table useful for cmds */
-    public Optional<AlloyCmdPara> getCmdNum(int n) {
+    public Optional<AlloyCmdPara.CommandDecl> getCmdNum(int n) {
         if (n < 0 || n >= this.cmds.size()) return Optional.empty();
-        else return Optional.of(this.cmds.get(n));
+        else return Optional.of(this.cmds.get(n).cmdDecls.get(0));
     }
 
     // accessors per CmdDecl
@@ -75,42 +82,6 @@ public class AMCmds extends AMAsserts {
 
     public Boolean isCheck(AlloyCmdPara.CommandDecl cmdDecl) {
         return cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK;
-    }
-
-    // usually sigName is a sigRef, but for generality we can
-    // leave it as a string
-    // what if sigName does not get a scope?
-    // do subsigs always get specific scopes?
-    // should return a pair that is exact flag and value?
-    public Integer getScope(AlloyCmdPara.CommandDecl cmdDecl, String sigName) {
-
-        // TODO: should this be hard-coded here?
-        int DEFAULT_SCOPE = 3;
-        int defaultScope =
-                cmdDecl.scope
-                        .map(s -> s.num.map(n -> n.value).orElse(DEFAULT_SCOPE))
-                        .orElse(DEFAULT_SCOPE);
-
-        // check it is a sig in sigTable
-        if (this.containsSig(sigName)) {
-            // look for name in cmdDecl.scope
-            // and return that value cmd.cmdScope.get(s).start.value
-            // cmd.cmdScope.get(s).isExactly()
-            // or if exists orElse default/non-exact
-
-            // check out Mathew's summary (scopeComputer.md)
-            // check out Elias' thesis
-            // IntScope
-
-            var typeScopes = cmdDecl.scope.map(s -> s.typescopes).orElse(new ArrayList<>());
-            for (var typeScope : typeScopes) {
-
-                String key = typeScope.scopableExpr.toString();
-                // scopes.put(key, typeScope.start.value);
-                // exact.put(key, typeScope.isExactly);
-            }
-        }
-        return 1;
     }
 
     // could add other functions here to create a cmdPara that is added above

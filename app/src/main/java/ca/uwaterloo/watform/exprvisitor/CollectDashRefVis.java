@@ -9,7 +9,7 @@
 
 */
 
-package ca.uwaterloo.watform.dashtoalloy;
+package ca.uwaterloo.watform.exprvisitor;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -20,7 +20,6 @@ import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashref.*;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import java.util.Set;
 
 // Void (rather than void) because Void is a class, but then all methods must return null

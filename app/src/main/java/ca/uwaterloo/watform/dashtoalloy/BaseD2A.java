@@ -17,6 +17,7 @@ import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashast.dashref.VarDashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
+import ca.uwaterloo.watform.exprvisitor.CollectDashRefVis;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.*;
 

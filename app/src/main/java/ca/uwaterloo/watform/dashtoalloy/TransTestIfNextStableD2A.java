@@ -85,11 +85,15 @@ public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
             body.add(AlloyNot(AlloyPredCall(D2AStrings.enabledAfterStepName(tout), args)));
         }
 
-        this.am.addPred(
-                D2AStrings.testIfNextStableName,
-                decls,
-                List.of(
-                        AlloyAllVars(
-                                this.dsl.paramDecls(this.dm.allParams()), new AlloyBlock(body))));
+        if (this.dm.allParams().isEmpty())
+            this.am.addPred(D2AStrings.testIfNextStableName, decls, body);
+        else
+            this.am.addPred(
+                    D2AStrings.testIfNextStableName,
+                    decls,
+                    List.of(
+                            AlloyAllVars(
+                                    this.dsl.paramDecls(this.dm.allParams()),
+                                    new AlloyBlock(body))));
     }
 }

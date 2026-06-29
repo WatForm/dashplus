@@ -172,9 +172,8 @@ public class AbstractBuildPA extends InitializePA {
 
     // abstracts the concrete cmd and returns the cmd index
     private int addAbstractCmd() {
-        if (this.cmd != null) {
+        if (this.cmdDecl != null) {
             try {
-                AlloyCmdPara.CommandDecl cmdDecl = this.cmd.cmdDecls.get(0);
                 AlloyQnameExpr cmdBodyQname = cmdDecl.invoQname.orElse(null);
                 String vname = cmdBodyQname.vars.get(0).label;
                 CAF2ABVReplacer replacer =

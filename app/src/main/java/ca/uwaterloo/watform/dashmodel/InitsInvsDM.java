@@ -4,6 +4,8 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.dashast.DashFile;
+import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.exprvisitor.CollectDashRefVis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,5 +96,9 @@ public class InitsInvsDM extends BaseDM {
         } else {
             return emptyList();
         }
+    }
+
+    public List<DashRef> varsChangedByInvs() {
+        return flatten(mapBy(this.invsR(), y -> setToList(new CollectDashRefVis().collect(y))));
     }
 }
