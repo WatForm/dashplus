@@ -20,6 +20,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 public class Parser {
+    // currently unused
     public static List<Path> recurGetFiles(Path dir, String filter) {
         List<Path> filePaths = new ArrayList<>();
         try (Stream<Path> stream = Files.walk(dir)) {
@@ -50,9 +52,9 @@ public class Parser {
      * @param filePath
      * @return
      */
-    public static AlloyFile parse(Path filePath) {
-        if (!filePath.getFileName().toString().endsWith(".als")
-                && !filePath.getFileName().toString().endsWith(".dsh")) {
+    public static AlloyFile parse(String fullFileName) {
+        Path filePath = Paths.get(fullFileName);
+        if (!fullFileName.endsWith(".als") && !fullFileName.endsWith(".dsh")) {
             throw new Reporter.ErrorUser("File extension must be .dsh or .als");
         }
         CharStream input = null;
@@ -61,8 +63,13 @@ public class Parser {
         } catch (IOException ioException) {
             throw new Reporter.ErrorUser("Input file cannot be found. ");
         }
+        return parseFromCharStream(input, fullFileName);
+    }
+
+    // this is used for importing util files
+    public static AlloyFile parseFromCharStream(CharStream input, String fullFileName) {
         BailLexer lexer = new BailLexer(input);
-        if (filePath.getFileName().toString().endsWith(".dsh")) {
+        if (fullFileName.endsWith(".dsh")) {
             lexer.dashMode = true;
         }
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -91,31 +98,32 @@ public class Parser {
                     }
                 });
 
-        if (filePath.getFileName().toString().endsWith(".als")) {
+        if (fullFileName.endsWith(".als")) {
             ParseTree antlrAST = parser.alloyFile();
             Reporter.INSTANCE.exitIfHasErrors();
-            AlloyFileParseVis afpv = new AlloyFileParseVis(filePath);
+            AlloyFileParseVis afpv = new AlloyFileParseVis(fullFileName);
             AlloyFile alloyFile = null;
             alloyFile = afpv.visit(antlrAST);
-            alloyFile.filename = filePath.toString();
+            alloyFile.filename = fullFileName;
             return alloyFile;
         } else {
             ParseTree antlrAST = parser.dashFile();
-            DashFileParseVis dfpv = new DashFileParseVis(filePath);
+            DashFileParseVis dfpv = new DashFileParseVis(fullFileName);
             DashFile dashFile = null;
             dashFile = dfpv.visit(antlrAST);
-            dashFile.filename = filePath.toString();
+            dashFile.filename = fullFileName;
             return dashFile;
         }
     }
 
     // Use this function for parsing both dash and alloy files
-    public static AlloyModel parseToModel(Path filePath) {
+    public static AlloyModel parseToModel(String fullFileName) {
+        // Path filePath = Paths.get(fullFileName);
         AlloyModel model = null;
         try {
             // this could be errors in the Reporter
             // but continues on after these errors
-            AlloyFile file = Parser.parse(filePath);
+            AlloyFile file = Parser.parse(fullFileName);
             if (null == file) {
                 // This happens when
                 // 1) Parser.parse found UserError

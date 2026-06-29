@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.parser.Parser.*;
 import ca.uwaterloo.watform.alloyinterface.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.utils.*;
-import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -26,7 +25,7 @@ import picocli.CommandLine.Parameters;
 public class Main implements Callable<Integer> {
     // Picocli automatically converts the input String to a Path object
     @Parameters(index = "0", description = "The file path to the Dash/Alloy model.")
-    private Path filePath;
+    private String fullFileName;
 
     @Parameters(
             index = "1",
@@ -46,7 +45,7 @@ public class Main implements Callable<Integer> {
         try {
             // Main logic
             Solution solution =
-                    AlloyInterface.executeCommand(parseToModel(filePath), this.commandIndex);
+                    AlloyInterface.executeCommand(parseToModel(fullFileName), this.commandIndex);
             System.out.println(solution.toString());
 
             AlloyModel alloyModel = new AlloyModel();

@@ -3,15 +3,14 @@ package ca.uwaterloo.watform.alloyast;
 import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
-    public final Path filePath;
+    public final String fullFileName;
 
-    public AlloyFileParseVis(Path filePath) {
-        this.filePath = filePath;
+    public AlloyFileParseVis(String fullFileName) {
+        this.fullFileName = fullFileName;
     }
 
     @Override

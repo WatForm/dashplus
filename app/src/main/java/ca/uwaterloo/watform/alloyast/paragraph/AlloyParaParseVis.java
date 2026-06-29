@@ -4,6 +4,7 @@ import static ca.uwaterloo.watform.parser.Parser.*;
 
 import antlr.generated.*;
 import antlr.generated.DashBaseVisitor;
+import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -16,8 +17,14 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigQualParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigRelParseVis;
 import ca.uwaterloo.watform.utils.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.*;
 import java.util.Collections;
 import java.util.List;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.tree.*;
 
 public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     protected final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
@@ -44,6 +51,27 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     // ====================================================================================
     @Override
     public AlloyImportPara visitImportPara(DashParser.ImportParaContext ctx) {
+        String fileName = exprParseVis.visit(ctx.qname(0)).toString() + ".als";
+        if (fileName.startsWith("util/")) {
+            // TODO: that string should not be hardcoded
+            InputStream in = getClass().getClassLoader().getResourceAsStream(fileName + ".als");
+            // otherwise the line below throws a null pointer exception
+            try {
+                CharStream input = CharStreams.fromStream(in);
+                AlloyFile alloyFile = parseFromCharStream(input, fileName);
+            } catch (IOException e) {
+                throw AlloyCtorError.utilFileNotFound(new Pos(ctx), fileName);
+                // can continue parsing although there will be errors
+            } catch (NullPointerException e) {
+                // if in is null
+                throw AlloyCtorError.utilFileNotFound(new Pos(ctx), fileName);
+            }
+        } else {
+            String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
+            AlloyFile alloyFile = parse(fullFileName);
+        }
+
+        // next we have to put this alloyFile into some part of the import
         return new AlloyImportPara(
                 new Pos(ctx),
                 null != ctx.PRIVATE(),

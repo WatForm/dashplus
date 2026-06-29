@@ -205,14 +205,18 @@ public class AMScopes extends AMAsserts {
         }
 
         SigScope givenScope;
+        Boolean overrideFlag = false;
         if (!this.givenScopes.keySet().contains(sigName) && isTopLevel) {
             // top-level so must be given a scope
             // chosen from exactBoundOpt and this.defaultScope
             givenScope = NonExactScope(this.default_scope);
         } else if (!this.givenScopes.keySet().contains(sigName) && this.isOneSig(sigName)) {
+            // it is an error earlier if 'one sig's are given a scope other than 1
             givenScope = ExactScope(1);
         } else {
             // given a scope; might or might not be top-level
+            // only time when override of scope in cmd could be true
+            overrideFlag = true;
             givenScope = this.givenScopes.get(sigName);
         }
         // System.out.println(givenScope);
@@ -230,6 +234,7 @@ public class AMScopes extends AMAsserts {
             if (exactBoundOpt.get() >= givenScope.max()) {
                 // does not matter if givenScope is exact or not
                 // sum of children  is higher and takes precedence
+                if (overrideFlag) System.out.println("Overriding cmd scope for " + sigName);
                 if (isTopLevel)
                     this.scopeProfile.addTopLevel(sigName, ExactScope(exactBoundOpt.get()));
                 else this.scopeProfile.addExplicitExtends(sigName, ExactScope(exactBoundOpt.get()));
