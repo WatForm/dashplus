@@ -173,10 +173,10 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
     public Set<List<String>> visit(AlloyBracketExpr bracketExpr) {
         logger.enter("BoxJoin: " + bracketExpr);
         List<Set<List<String>>> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
-        var left = bracketExpr.expr.accept(this);
-        var argsProduct = foldLeft(args.subList(1, args.size()), this::product, args.get(0));
-        logger.log("Box left = " + left + ", inner = " + argsProduct);
-        var result = join(argsProduct, left);
+        var result = bracketExpr.expr.accept(this);
+        for (var arg : args) {
+            result = join(arg, result);
+        }
         logger.exit("BoxJoin = " + result);
         return result;
     }
@@ -217,6 +217,46 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
             }
         }
         logger.exit("RangeRestrict = " + result);
+        return result;
+    }
+
+    public Set<List<String>> visit(AlloyRelOvrdExpr expr) {
+        logger.enter("RelOverride: " + expr);
+        var left = expr.left.accept(this);
+        var right = expr.right.accept(this);
+
+        var domRight = mapBy(right, e -> firstElement(e));
+        left.removeIf(val -> domRight.contains(firstElement(val)));
+
+        Set<List<String>> result = mergeSets(left, right);
+        logger.exit("RelOverride = " + result);
+        return result;
+    }
+
+    private Set<List<String>> evalTransClosure(Set<List<String>> base) {
+        var collect = base;
+        var current = join(base, base);
+
+        while (!current.isEmpty()) {
+            collect = mergeSets(collect, current);
+            current = join(current, base);
+        }
+
+        return collect;
+    }
+
+    public Set<List<String>> visit(AlloyTransClosExpr expr) {
+        logger.enter("TransClosure: " + expr);
+        Set<List<String>> result = evalTransClosure(expr.sub.accept(this));
+        logger.exit("TransClosure = " + result);
+        return result;
+    }
+
+    public Set<List<String>> visit(AlloyReflTransClosExpr expr) {
+        logger.enter("TransClosure: " + expr);
+        Set<List<String>> result = evalTransClosure(expr.sub.accept(this));
+        result = mergeSets(result, instance.getIden());
+        logger.exit("TransClosure = " + result);
         return result;
     }
 }

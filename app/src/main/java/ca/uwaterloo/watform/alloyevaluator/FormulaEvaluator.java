@@ -169,7 +169,6 @@ public class FormulaEvaluator implements AlloyExprVis<Boolean> {
     }
 
     public Boolean visit(AlloyCmpExpr expr) {
-        if (expr.neg) throw new UnsupportedOperationException("Neg not implemented currently");
         logger.enter("CMP " + expr.comp + ": " + expr);
         var left = expr.left.accept(setEvaluator);
         var right = expr.right.accept(setEvaluator);
@@ -190,6 +189,7 @@ public class FormulaEvaluator implements AlloyExprVis<Boolean> {
                             throw AlloyEvaluatorImplError.missingVisitCase(
                                     "AlloyCmp comp: " + expr.comp);
                 };
+        if (expr.neg) result = !result;
         logger.exit("CMP " + expr.comp + " = " + result);
         return result;
     }
