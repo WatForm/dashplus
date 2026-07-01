@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.utils;
 
-import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
