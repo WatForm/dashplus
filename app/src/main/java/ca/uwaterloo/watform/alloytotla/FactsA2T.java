@@ -11,7 +11,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FactsA2T extends BoilerplateA2T {
+public class FactsA2T extends CommandDefnA2T {
 
     public FactsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
         super(alloyModel, verbose, debug);

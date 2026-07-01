@@ -11,15 +11,34 @@ import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
-public class CommandDefnA2T extends NextDefnA2T {
+public class CommandDefnA2T extends BoilerplateA2T {
 
     public CommandDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
         super(alloyModel, verbose, debug);
     }
 
+    protected TlaExp cmdBody(AlloyCmdPara.CommandDecl cmdDecl) {
+        TlaExp core = cmdDecl.constrBlock.map(b -> translateSnippet(b)).orElse(TlaTrue());
+        if (cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK) core = TlaNot(core);
+        core = core.AND(augmentedTrue());
+        return core;
+    }
+
     private TlaExp augmentedTrue() {
+
+        /*
+        TRUE cannot be used in an invariant
+        thus V=V is used as a stand-in for True
+        */
+
         String dummy = alloyModel.allSigs().get(0);
         return TlaVar(dummy).EQUALS(TlaVar(dummy));
+    }
+
+    public void addCommandDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
+
+        tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));
+        tlaModel.addInvariant(TlaAppl(COMMAND));
     }
 
     public TlaDefn cmdConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
@@ -56,11 +75,5 @@ public class CommandDefnA2T extends NextDefnA2T {
         if (isRun) block = TlaNot(block);
 
         return TlaDefn(COMMAND, block);
-    }
-
-    public void addScopeConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
-
-        tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));
-        tlaModel.addInvariant(TlaAppl(COMMAND));
     }
 }

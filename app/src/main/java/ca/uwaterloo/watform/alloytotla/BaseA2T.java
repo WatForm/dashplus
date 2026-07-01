@@ -3,7 +3,17 @@ package ca.uwaterloo.watform.alloytotla;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
+import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
+import ca.uwaterloo.watform.tlaast.tlanaryops.TlaTuple;
 import ca.uwaterloo.watform.utils.CustomLoggerFactory;
+
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaSet;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaStringLiteral;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaTuple;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class BaseA2T {
@@ -26,6 +36,26 @@ public class BaseA2T {
         this.debug = debug;
         this.l = CustomLoggerFactory.make("AlloyToTla", debug);
         this.translator = new AlloyToTlaExprVis(alloyModel, l);
+    }
+
+    /*
+    commonly used functions:
+    */
+
+    protected TlaStringLiteral sigAtomString(String signame, int n) {
+        return TlaStringLiteral(signame + n);
+    }
+
+    protected TlaTuple sigAtom(String signame, int n) {
+        return TlaTuple(sigAtomString(signame, n));
+    }
+
+    protected TlaSet sigAtoms(String signame, int start, int end) {
+        List<TlaTuple> atoms = new ArrayList<>();
+        for (int i = start; i <= end; i++) {
+            atoms.add(sigAtom(signame, i));
+        }
+        return TlaSet(atoms);
     }
 
     /*

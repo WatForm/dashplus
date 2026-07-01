@@ -28,6 +28,10 @@ public class BoilerplateA2T extends BaseA2T {
         return TlaVar(SPECIAL + "y");
     }
 
+    public static final TlaVar Z() {
+        return TlaVar(SPECIAL + "z");
+    }
+
     public static final TlaVar R1() {
         return TlaVar(SPECIAL + "R1");
     }

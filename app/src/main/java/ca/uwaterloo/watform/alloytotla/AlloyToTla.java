@@ -10,7 +10,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlloyToTla extends StdLibsA2T {
+public class AlloyToTla extends StdLibsTlaA2T {
 
     public static TlaModel getBlankModel(String moduleName) {
         return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
@@ -45,15 +45,19 @@ public class AlloyToTla extends StdLibsA2T {
 
     public void translate(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
-        l.info(TlaAppl("test").toTLAPlusSnippetCore());
+        l.info("translating Alloy to TLA+");
+        l.info("chosen command: " + cmdDecl.toString());
 
-        addStdLibs(tlaModel);
+        
         addSigConsts(tlaModel);
         addSigVars(tlaModel);
         addFieldVars(tlaModel);
 
         tlaModel.addComment("translation macros", verbose);
         addBoilerplate(tlaModel);
+
+        tlaModel.addComment("macros for special alloy libraries", verbose);
+        addStdLibsAlloy(tlaModel);
 
         tlaModel.addComment("standard alloy modules", verbose);
         orderingModule(tlaModel);

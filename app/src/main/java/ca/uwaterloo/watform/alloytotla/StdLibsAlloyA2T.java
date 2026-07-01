@@ -13,7 +13,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaRecord;
-import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaDot;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
@@ -23,35 +22,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StdLibsA2T extends SigVarsA2T {
+public class StdLibsAlloyA2T extends SigVarsA2T {
 
-    public StdLibsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    public StdLibsAlloyA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
         super(alloyModel, verbose, debug);
     }
 
-    protected void addStdLibs(TlaModel tlaModel) {
-        tlaModel.addSTL(new TlaStdLibs(TlaStdLibs.LIBRARIES.STL_FiniteSets));
-        tlaModel.addSTL(new TlaStdLibs(TlaStdLibs.LIBRARIES.STL_Integers));
-        tlaModel.addSTL(new TlaStdLibs(TlaStdLibs.LIBRARIES.STL_Sequences));
+    public void addStdLibsAlloy(TlaModel tlamodel) {}
 
-        testOrdering(tlaModel);
-    }
-
-    protected TlaStringLiteral sigAtomString(String signame, int n) {
-        return TlaStringLiteral(signame + n);
-    }
-
-    protected TlaTuple sigAtom(String signame, int n) {
-        return TlaTuple(sigAtomString(signame, n));
-    }
-
-    protected TlaSet sigAtoms(String signame, int start, int end) {
-        List<TlaTuple> atoms = new ArrayList<>();
-        for (int i = start; i <= end; i++) {
-            atoms.add(sigAtom(signame, i));
-        }
-        return TlaSet(atoms);
-    }
+    
 
     protected int maxOrdering(String signame) {
         // TODO this needs to change
@@ -155,7 +134,7 @@ public class StdLibsA2T extends SigVarsA2T {
         orderingPredicates(tlaModel);
     }
 
-    protected void testOrdering(TlaModel tlaModel) {
+    protected void logImports(TlaModel tlaModel) {
         l.info("imports: " + alloyModel.allImportParas());
 
         for (var importPara : alloyModel.allImportParas()) {
