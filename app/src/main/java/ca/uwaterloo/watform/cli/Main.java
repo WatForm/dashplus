@@ -445,8 +445,9 @@ public class Main implements Callable<Integer> {
         String modelPath = dumpDirPath.resolve(fileNamePrefix + "-model.xml").toString();
         String instancePath = dumpDirPath.resolve(fileNamePrefix + "-instance.xml").toString();
 
-        dashOutput("Dumping the alloy model");
-        XmlDumper.dumpModel(am, modelPath);
+        // dashOutput("Dumping the alloy model"); Don't need for now, no significant information
+        // gained
+        // XmlDumper.dumpModel(am, modelPath);
 
         Solution soln = AlloyInterface.checkModelSatisfiability(am);
         dumpOrReport(soln, instancePath, "default scope (no commands in file)");
