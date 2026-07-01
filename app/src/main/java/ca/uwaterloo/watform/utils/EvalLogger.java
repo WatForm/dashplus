@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.utils;
 
-import java.io.*;
 import java.util.logging.Logger;
 
 public class EvalLogger {
