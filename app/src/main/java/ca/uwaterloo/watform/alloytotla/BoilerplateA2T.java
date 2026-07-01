@@ -219,8 +219,8 @@ public class BoilerplateA2T extends BaseA2T {
     }
 
     private static TlaDefn iden() {
-        // _iden = {<<x,x>> : x \in _univ}
-        return TlaDefn(IDEN, TlaSetMap(TlaQuantOpHead(X(), _UNIV()), TlaTuple(X(), X())));
+        // _iden = {x \o x : x \in _univ}
+        return TlaDefn(IDEN, TlaSetMap(TlaQuantOpHead(X(), _UNIV()), TlaConcatSeq(X(), X())));
     }
 
     private static TlaDefn univ(List<TlaVar> setVars) {

@@ -1,5 +1,9 @@
 package ca.uwaterloo.watform.alloytotla;
 
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaSet;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaStringLiteral;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaTuple;
+
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
@@ -7,11 +11,6 @@ import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaTuple;
 import ca.uwaterloo.watform.utils.CustomLoggerFactory;
-
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaSet;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaStringLiteral;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaTuple;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -43,7 +42,7 @@ public class BaseA2T {
     */
 
     protected TlaStringLiteral sigAtomString(String signame, int n) {
-        return TlaStringLiteral(signame + n);
+        return TlaStringLiteral(signame + AlloyToTlaStrings.DOLLAR + n);
     }
 
     protected TlaTuple sigAtom(String signame, int n) {

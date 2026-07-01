@@ -4,9 +4,6 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaAppl;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaDecl;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaDefn;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaIntLiteral;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaSet;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaStringLiteral;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaTuple;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaVar;
 import static ca.uwaterloo.watform.utils.GeneralUtil.filterBy;
 import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
@@ -14,9 +11,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaRecord;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaDot;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
-import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
-import ca.uwaterloo.watform.tlaast.tlanaryops.TlaTuple;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +23,6 @@ public class StdLibsAlloyA2T extends SigVarsA2T {
     }
 
     public void addStdLibsAlloy(TlaModel tlamodel) {}
-
-    
 
     protected int maxOrdering(String signame) {
         // TODO this needs to change

@@ -48,7 +48,6 @@ public class AlloyToTla extends StdLibsTlaA2T {
         l.info("translating Alloy to TLA+");
         l.info("chosen command: " + cmdDecl.toString());
 
-        
         addSigConsts(tlaModel);
         addSigVars(tlaModel);
         addFieldVars(tlaModel);

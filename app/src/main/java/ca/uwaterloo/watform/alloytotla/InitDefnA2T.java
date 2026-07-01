@@ -7,11 +7,9 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,14 +17,6 @@ public class InitDefnA2T extends FieldsA2T {
 
     public InitDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
         super(alloyModel, verbose, debug);
-    }
-
-    public TlaSet generateSet(String predicate, int n) {
-        List<TlaStringLiteral> elements = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            elements.add(TlaStringLiteral(predicate + i));
-        }
-        return TlaSet(mapBy(elements, e -> TlaTuple(Arrays.asList(e))));
     }
 
     protected List<TlaExp> membershipConstraintsTopLevelSigs(AlloyCmdPara.CommandDecl cmdDecl) {
@@ -57,10 +47,10 @@ public class InitDefnA2T extends FieldsA2T {
         for (var s : scopes.keySet()) {
             int n = scopes.get(s);
             boolean e = exact.get(s);
-            if (e) scopeConstraints.add(TlaVar(s).EQUALS(generateSet(s, n)));
+            if (e) scopeConstraints.add(TlaVar(s).EQUALS(sigAtoms(s, 0, n - 1)));
             else {
                 List<TlaSet> possibleSets = new ArrayList<>();
-                for (int i = 0; i <= n; i++) possibleSets.add(generateSet(s, i));
+                for (int i = 0; i <= n; i++) possibleSets.add(sigAtoms(s, 0, i - 1));
                 scopeConstraints.add(repeatedOr(mapBy(possibleSets, set -> TlaVar(s).EQUALS(set))));
             }
         }
