@@ -75,9 +75,9 @@ public class BoilerplateA2T extends BaseA2T {
         tlaModel.addDefn(transpose());
         tlaModel.addDefn(domain_restriction());
         tlaModel.addDefn(range_restriction());
-        tlaModel.addDefn(inner_product_map());
-        tlaModel.addDefn(inner_product_filter());
-        tlaModel.addDefn(inner_product());
+        tlaModel.addDefn(dot_map());
+        tlaModel.addDefn(dot_filter());
+        tlaModel.addDefn(dot());
         tlaModel.addDefn(relational_override());
         tlaModel.addDefn(cross());
     }
@@ -127,8 +127,8 @@ public class BoilerplateA2T extends BaseA2T {
         return TlaAppl(RELATIONAL_OVERRIDE, Arrays.asList(r1, r2));
     }
 
-    public static TlaAppl _INNER_PRODUCT(TlaExp r1, TlaExp r2) {
-        return TlaAppl(INNER_PRODUCT, Arrays.asList(r1, r2));
+    public static TlaAppl _DOT(TlaExp r1, TlaExp r2) {
+        return TlaAppl(DOT_MACRO, Arrays.asList(r1, r2));
     }
 
     public static TlaAppl _CROSS(TlaExp r1, TlaExp r2) {
@@ -159,28 +159,28 @@ public class BoilerplateA2T extends BaseA2T {
         return new TlaDefn(TlaDecl(DOMAIN_RESTRICTION, Arrays.asList(S(), R())), body);
     }
 
-    private static TlaDefn inner_product() {
+    private static TlaDefn dot() {
         TlaExp inner =
                 TlaSetFilter(
                         TlaQuantOpHeadTuple(Arrays.asList(F1(), F2()), TlaProductSet(R1(), R2())),
-                        TlaAppl(INNER_PRODUCT_FILTER, Arrays.asList(F1(), F2())));
+                        TlaAppl(DOT_FILTER, Arrays.asList(F1(), F2())));
         return new TlaDefn(
-                TlaDecl(INNER_PRODUCT, Arrays.asList(R1(), R2())),
+                TlaDecl(DOT_MACRO, Arrays.asList(R1(), R2())),
                 TlaSetMap(
                         TlaQuantOpHeadTuple(Arrays.asList(E1(), E2()), inner),
-                        TlaAppl(INNER_PRODUCT_MAP, Arrays.asList(E1(), E2()))));
+                        TlaAppl(DOT_MAP, Arrays.asList(E1(), E2()))));
     }
 
-    private static TlaDefn inner_product_filter() {
+    private static TlaDefn dot_filter() {
 
         // e1[Len(e1)] = e2[1]
 
         return new TlaDefn(
-                TlaDecl(INNER_PRODUCT_FILTER, Arrays.asList(E1(), E2())),
+                TlaDecl(DOT_FILTER, Arrays.asList(E1(), E2())),
                 E1().INDEX(TlaStdLibs.Len(E1())).EQUALS(E2().INDEX(TlaIntLiteral(1))));
     }
 
-    private static TlaDefn inner_product_map() {
+    private static TlaDefn dot_map() {
 
         // SubSeq(e1,1,Len(e1)-1) \o SubSeq(e2,2,Len(e2))
         TlaExp left =
@@ -189,8 +189,7 @@ public class BoilerplateA2T extends BaseA2T {
                         TlaIntLiteral(1),
                         TlaSubtract(TlaStdLibs.Len(E1()), TlaIntLiteral(1)));
         TlaExp right = TlaStdLibs.SubSeq(E2(), TlaIntLiteral(2), TlaStdLibs.Len(E2()));
-        return new TlaDefn(
-                TlaDecl(INNER_PRODUCT_MAP, Arrays.asList(E1(), E2())), TlaConcatSeq(left, right));
+        return new TlaDefn(TlaDecl(DOT_MAP, Arrays.asList(E1(), E2())), TlaConcatSeq(left, right));
     }
 
     private static TlaDefn relational_override() {

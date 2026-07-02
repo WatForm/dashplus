@@ -58,7 +58,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         switch (rightResult) {
             case TlaExpResult tlaExpResultRight:
                 {
-                    var answer = _INNER_PRODUCT(left, extract(tlaExpResultRight));
+                    var answer = _DOT(left, extract(tlaExpResultRight));
                     return new TlaExpResult(answer);
                 }
             case MacroResult macroResultRight:
@@ -100,7 +100,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
                             };
                     case AlloyDiffExpr _ -> TlaDiffSet(el, er);
                     case AlloyDomRestrExpr _ -> _DOMAIN_RESTRICTION(el, er);
-                    case AlloyDotExpr _ -> _INNER_PRODUCT(el, er);
+                    case AlloyDotExpr _ -> _DOT(el, er);
                     case AlloyEqualsExpr _ -> TlaEquals(el, er);
                     case AlloyIffExpr _ -> TlaEquivalence(el, er);
                     case AlloyImpliesExpr _ -> TlaImplies(el, er);
@@ -206,7 +206,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
                         throw new ImplementationError(
                                 "malformed bracket expression: " + bracketExpr);
                     var right = bracketExpr.exprs.get(0);
-                    var answer = _INNER_PRODUCT(extract(visit(right)), leftTlaExpResult.exp);
+                    var answer = _DOT(extract(visit(right)), leftTlaExpResult.exp);
                     return new TlaExpResult(answer);
                 }
             case MacroResult leftMacroResult:

@@ -69,24 +69,22 @@ public class StdLibsAlloyA2T extends SigVarsA2T {
         tlaModel.addDefn(
                 TlaDefn(
                         TlaDecl(prefix + "lt", Arrays.asList(E1(), E2())),
-                        E1().IN(_INNER_PRODUCT(E2(), TlaAppl(prefix + "prevs")))));
+                        E1().IN(_DOT(E2(), TlaAppl(prefix + "prevs")))));
 
         tlaModel.addDefn(
                 TlaDefn(
                         TlaDecl(prefix + "gt", Arrays.asList(E1(), E2())),
-                        E1().IN(_INNER_PRODUCT(E2(), TlaAppl(prefix + "nexts")))));
+                        E1().IN(_DOT(E2(), TlaAppl(prefix + "nexts")))));
 
         tlaModel.addDefn(
                 TlaDefn(
                         TlaDecl(prefix + "lte", Arrays.asList(E1(), E2())),
-                        (E1().EQUALS(E2()))
-                                .OR(E1().IN(_INNER_PRODUCT(E2(), TlaAppl(prefix + "prevs"))))));
+                        (E1().EQUALS(E2())).OR(E1().IN(_DOT(E2(), TlaAppl(prefix + "prevs"))))));
 
         tlaModel.addDefn(
                 TlaDefn(
                         TlaDecl(prefix + "gte", Arrays.asList(E1(), E2())),
-                        (E1().EQUALS(E2()))
-                                .OR(E1().IN(_INNER_PRODUCT(E2(), TlaAppl(prefix + "nexts"))))));
+                        (E1().EQUALS(E2())).OR(E1().IN(_DOT(E2(), TlaAppl(prefix + "nexts"))))));
         tlaModel.addDefn(
                 TlaDefn(
                         TlaDecl(prefix + "smaller", Arrays.asList(E1(), E2())),
