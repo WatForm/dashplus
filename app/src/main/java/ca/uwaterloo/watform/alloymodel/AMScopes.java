@@ -322,12 +322,20 @@ public class AMScopes extends AMAsserts {
         // so until we have a use case for handling one sigs separately
         // here, leave it as is
 
-        HashMap<String, SigScope> topLevel;
-        HashMap<String, SigScope> explicitExtends;
+        private final HashMap<String, SigScope> topLevel;
+        private final HashMap<String, SigScope> explicitExtends;
 
         public CmdScopeProfile() {
             this.topLevel = new HashMap<>();
             this.explicitExtends = new HashMap<>();
+        }
+
+        public Optional<SigScope> getTopLevelScope(String sigName) {
+            return Optional.ofNullable(this.topLevel.get(sigName));
+        }
+
+        public Optional<SigScope> getExplicitExtendsScope(String sigName) {
+            return Optional.ofNullable(this.explicitExtends.get(sigName));
         }
 
         public void addTopLevel(String sigName, SigScope ss) {

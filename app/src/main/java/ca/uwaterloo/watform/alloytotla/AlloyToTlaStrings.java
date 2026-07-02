@@ -32,19 +32,19 @@ public class AlloyToTlaStrings {
     public static final String RANGE_RESTRICTION = SPECIAL + "range" + SPECIAL + "restriction";
     public static final String DOMAIN_RESTRICTION = SPECIAL + "domain" + SPECIAL + "restriction";
     public static final String RELATIONAL_OVERRIDE = SPECIAL + "relational" + SPECIAL + "override";
-    public static final String INNER_PRODUCT = SPECIAL + "inner" + SPECIAL + "product";
-    public static final String INNER_PRODUCT_MAP =
-            SPECIAL + "inner" + SPECIAL + "product" + SPECIAL + "map";
-    public static final String INNER_PRODUCT_FILTER =
-            SPECIAL + "inner" + SPECIAL + "product" + SPECIAL + "filter";
+    public static final String DOT_MACRO = SPECIAL + "dot";
+    public static final String DOT_MAP = SPECIAL + "dot" + SPECIAL + "map";
+    public static final String DOT_FILTER = SPECIAL + "dot" + SPECIAL + "filter";
     public static final String TRANSPOSE = SPECIAL + "transpose";
     public static final String CROSS = SPECIAL + "cross";
 
     public static final String DOLLAR = "$";
 
     //
-    public static final String SIG_SET_SUFFIX = SPECIAL + "set";
     public static final String SIG_CONSTRAINT_SUFFIX = SPECIAL + "sig" + SPECIAL + "constraints";
     public static final String UNNAMED_FACT_PREFIX = SPECIAL + "fact" + SPECIAL;
     public static final String COMMAND = SPECIAL + "command";
+    public static final String SCOPE = SPECIAL + "scope";
+
+    public static final String ORDERING_MODULE_ALLOY = "util/ordering";
 }

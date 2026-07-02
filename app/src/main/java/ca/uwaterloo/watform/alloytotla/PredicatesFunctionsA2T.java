@@ -1,7 +1,5 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -18,16 +16,26 @@ class PredicatesFunctionsA2T extends NextDefnA2T {
 
     protected void addPredicatesFunctions(TlaModel tlaModel) {
 
+        tlaModel.addComment("Predicates and functions", verbose);
+
         for (var p : alloyModel.allPredParas()) {
             TlaExp body = translateSnippet(p.block);
             List<TlaVar> args = mapBy(p.arguments, decl -> TlaVar(decl.getName()));
-            tlaModel.addDefn(new TlaDefn(new TlaDecl(p.getName(), args), body));
+            TlaDefn defn = new TlaDefn(new TlaDecl(p.getName(), args), body);
+            tlaModel.addDefn(defn);
+            log("predicate detected: " + p.getName());
+            log(p.toString() + "\n↓\n" + defn.toTLAPlusSnippetCore());
         }
 
         for (var p : alloyModel.allFunParas()) {
             TlaExp body = translateSnippet(p.block);
             List<TlaVar> args = mapBy(p.arguments, decl -> TlaVar(decl.getName()));
-            tlaModel.addDefn(new TlaDefn(new TlaDecl(p.qname.getName(), args), body));
+            TlaDefn defn = new TlaDefn(new TlaDecl(p.getName(), args), body);
+            tlaModel.addDefn(defn);
+            log("function detected: " + p.getName());
+            log(p.toString() + "\n↓\n" + defn.toTLAPlusSnippetCore());
         }
+
+        l.info(dump());
     }
 }

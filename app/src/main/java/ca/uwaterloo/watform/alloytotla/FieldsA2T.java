@@ -5,10 +5,7 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaTypes;
-import ca.uwaterloo.watform.tlaast.TlaVar;
+import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.List;
 
@@ -25,6 +22,9 @@ public class FieldsA2T extends FactsA2T {
     }
 
     protected void addFieldTypes(TlaModel tlaModel) {
+
+        tlaModel.addComment("field types", verbose);
+
         List<TlaExp> fieldTypes = mapBy(alloyModel.allFields(), f -> fieldType(f));
         var defn = TlaDefn(FIELD_TYPES, repeatedAnd(fieldTypes));
         tlaModel.addDefn(defn);
@@ -34,6 +34,7 @@ public class FieldsA2T extends FactsA2T {
 
         for (String field : alloyModel.allFields()) {
             tlaModel.addVar(TlaVar(field), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
+            l.info("translated field " + field + " into a VARIABLE");
         }
     }
 

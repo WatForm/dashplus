@@ -11,7 +11,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FactsA2T extends BoilerplateA2T {
+public class FactsA2T extends CommandA2T {
 
     public FactsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
         super(alloyModel, verbose, debug);
@@ -25,6 +25,9 @@ public class FactsA2T extends BoilerplateA2T {
     }
 
     protected void addFacts(TlaModel tlaModel) {
+
+        tlaModel.addComment("facts", verbose);
+
         List<String> factNames = new ArrayList<>();
         List<String> comments = new ArrayList<>();
         List<AlloyFactPara> factParas = alloyModel.allFactParas();
