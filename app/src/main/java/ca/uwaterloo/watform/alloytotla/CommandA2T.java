@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,19 @@ public class CommandA2T extends BoilerplateA2T {
                 clauses.add(repeatedOr(subClauses));
             }
         }
+
+        for(var s : alloyModel.allSigs())
+        {
+            scopeLimits.getexplicitExtendsScope(s).ifPresent(sc -> {
+                int n = sc.max();
+                TlaExp cardinality = TlaStdLibs.Cardinality(TlaVar(s));
+                if(sc.isExact())
+                    clauses.add(cardinality.EQUALS(TlaIntLiteral(n)));
+                else
+                    clauses.add(TlaLesserEq(cardinality, TlaIntLiteral(n)));
+            });
+        }
+
         return TlaDefn(SCOPE, repeatedAnd(clauses));
     }
 
