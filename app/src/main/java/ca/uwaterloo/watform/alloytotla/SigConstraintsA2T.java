@@ -66,7 +66,7 @@ public class SigConstraintsA2T extends PredicatesFunctionsA2T {
                             + extendsChildNames
                             + (n > 1
                                     ? ", translated to pairwise disjointedness constraints"
-                                    : "no added constraints because only one child sig"));
+                                    : ", no added constraints because only one child sig"));
         }
 
         // pairwise disjoint sets for sigs that extend the same sig

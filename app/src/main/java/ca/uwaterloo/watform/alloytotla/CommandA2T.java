@@ -39,7 +39,7 @@ public class CommandA2T extends BoilerplateA2T {
 
     public void addCommand(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
-        tlaModel.addComment("command", verbose);
+        tlaModel.addComment("command: " + cmdDecl.toString(), verbose);
         tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));
         tlaModel.addDefn(scopeConstraints(tlaModel, cmdDecl));
         tlaModel.addInvariant(TlaAppl(COMMAND));
@@ -47,15 +47,27 @@ public class CommandA2T extends BoilerplateA2T {
 
     public TlaDefn scopeConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
         List<TlaExp> clauses = new ArrayList<>();
+        var scopeLimits = alloyModel.getScopeLimits(cmdDecl);
+
+        l.info("computed scopes:" + alloyModel.getScopeLimits(cmdDecl).toString());
+
         for (var s : alloyModel.topLevelSigs()) {
-            clauses.add(TlaVar(s).EQUALS(sigAtoms(s, 0, 2)));
+
+            var scope = scopeLimits.getTopLevelScope(s);
+            int n = scope.map(sc -> sc.max()).orElse(DEFAULT_SCOPE);
+            boolean exact = scope.map(sc -> sc.isExact()).orElse(false);
+
+            if (exact) clauses.add(TlaVar(s).EQUALS(sigAtoms(s, 0, n - 1)));
+            else {
+                List<TlaExp> subClauses = new ArrayList<>();
+                for (int i = 0; i < n; i++) subClauses.add(TlaVar(s).EQUALS(sigAtoms(s, 0, i)));
+                clauses.add(repeatedOr(subClauses));
+            }
         }
         return TlaDefn(SCOPE, repeatedAnd(clauses));
     }
 
     public TlaDefn cmdConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
-
-        tlaModel.addComment(cmdDecl.toString(), verbose);
 
         /*
         [run/check] {block} for [num but] ([exactly] num sig)* [expect 1/0]

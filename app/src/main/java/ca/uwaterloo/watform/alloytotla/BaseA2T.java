@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class BaseA2T {
+
+    public static final int DEFAULT_SCOPE = 3;
+
     public final AlloyModel alloyModel;
     public final boolean verbose;
     public final boolean debug;
