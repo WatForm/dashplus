@@ -147,4 +147,8 @@ public final class AlloyModelError extends UserOrImplError {
     public static AlloyModelError subsetSigsCannotBeAbstrast(Pos pos, String sigPara) {
         return new AlloyModelError(pos, "Subset sigs cannot be abstract: " + sigPara);
     }
+
+    public static AlloyModelError cantExtendSubsetSig(Pos pos, String sigName) {
+        return new AlloyModelError(pos, "Subset sigs cannot be extended: " + sigName);
+    }
 }

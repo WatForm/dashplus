@@ -34,11 +34,24 @@ public class AMSigTable extends AMFieldTable {
             BiFunction<AlloyExpr, Optional<String>, CalcAritySetMulDefaultsExprVis.Result>
                     fieldArityAndSetMul) {
         super.resolve(fieldArityAndSetMul);
-        // done after all sigs and enums are added
-        DetectCycles.topoOrderCycleDetector(this.allSigs(), x -> this.allChildren(x));
         // now that all sigs are in the sigTable
         // get the child links set up
         this.setChildren();
+        // done after all sigs and enums are added
+        DetectCycles.topoOrderCycleDetector(this.allSigs(), x -> this.allChildren(x));
+        // error detection
+        for (String sigName : this.allSigs()) {
+
+            // if parent is an "in" child can't be an extends
+            if (!this.inParents(sigName).isEmpty()) {
+                // it is an in child
+                if (!this.extendsChildren(sigName).isEmpty()) {
+                    // one of the children (could be multiple)
+                    String childName = this.extendsChildren(sigName).get(0);
+                    throw AlloyModelError.cantExtendSubsetSig(this.pos(childName), childName);
+                }
+            }
+        }
     }
 
     protected void addToSigTable(AlloySigPara multiSigPara) {
@@ -120,6 +133,12 @@ public class AMSigTable extends AMFieldTable {
     }
 
     // individual getters
+
+    public Pos pos(String sigName) {
+        if (!this.containsSig(sigName))
+            throw AlloyModelImplError.tryingToAccessNonExistentSig(sigName);
+        else return this.sigTable.get(sigName).pos();
+    }
 
     public List<String> inParents(String sigName) {
         if (!this.containsSig(sigName))

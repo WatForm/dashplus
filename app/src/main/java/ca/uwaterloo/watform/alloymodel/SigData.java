@@ -13,6 +13,7 @@ public class SigData {
     public Boolean isOneSig = false;
     public Boolean isSomeSig = false;
     public Boolean isLoneSig = false;
+    public Pos pos = Pos.UNKNOWN;
 
     // created on initialization and never modified
     // but can't make final w/o rearranging code in constructor
@@ -32,6 +33,7 @@ public class SigData {
 
     public SigData(AlloySigPara p) {
         // this is data for a single sigPara
+        this.pos = p.pos;
         if (p.rel.isPresent()) {
             if (p.rel.get() instanceof AlloySigPara.Extends e) {
                 // this includes one sigs because they are extensions
@@ -81,6 +83,10 @@ public class SigData {
     }
 
     // getters
+
+    public Pos pos() {
+        return this.pos;
+    }
 
     public List<String> inParents() {
         return this.inParents;
