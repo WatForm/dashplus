@@ -329,7 +329,7 @@ public class AMScopes extends AMAsserts {
             return Optional.ofNullable(this.topLevel.get(sigName));
         }
 
-        public Optional<SigScope> getexplicitExtendsScope(String sigName) {
+        public Optional<SigScope> getExplicitExtendsScope(String sigName) {
             return Optional.ofNullable(this.explicitExtends.get(sigName));
         }
 

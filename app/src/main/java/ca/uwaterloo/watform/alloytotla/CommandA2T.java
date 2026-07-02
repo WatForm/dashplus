@@ -66,16 +66,16 @@ public class CommandA2T extends BoilerplateA2T {
             }
         }
 
-        for(var s : alloyModel.allSigs())
-        {
-            scopeLimits.getexplicitExtendsScope(s).ifPresent(sc -> {
-                int n = sc.max();
-                TlaExp cardinality = TlaStdLibs.Cardinality(TlaVar(s));
-                if(sc.isExact())
-                    clauses.add(cardinality.EQUALS(TlaIntLiteral(n)));
-                else
-                    clauses.add(TlaLesserEq(cardinality, TlaIntLiteral(n)));
-            });
+        for (var s : alloyModel.allSigs()) {
+            scopeLimits
+                    .getExplicitExtendsScope(s)
+                    .ifPresent(
+                            sc -> {
+                                int n = sc.max();
+                                TlaExp cardinality = TlaStdLibs.Cardinality(TlaVar(s));
+                                if (sc.isExact()) clauses.add(cardinality.EQUALS(TlaIntLiteral(n)));
+                                else clauses.add(TlaLesserEq(cardinality, TlaIntLiteral(n)));
+                            });
         }
 
         return TlaDefn(SCOPE, repeatedAnd(clauses));
