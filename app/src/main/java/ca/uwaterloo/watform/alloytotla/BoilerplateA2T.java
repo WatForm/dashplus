@@ -16,7 +16,7 @@ public class BoilerplateA2T extends BaseA2T {
         super(alloyModel, verbose, debug);
     }
 
-    private static final TlaVar S() {
+    public static final TlaVar S() {
         return TlaVar(SPECIAL + "S");
     }
 
