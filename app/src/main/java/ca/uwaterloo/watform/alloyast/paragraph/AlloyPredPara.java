@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -141,6 +142,11 @@ public final class AlloyPredPara extends AlloyPara {
             if (other.block != null) return false;
         } else if (!block.equals(other.block)) return false;
         return true;
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 
     public AlloyPredPara rebuild(List<AlloyDecl> arguments, AlloyBlock block) {

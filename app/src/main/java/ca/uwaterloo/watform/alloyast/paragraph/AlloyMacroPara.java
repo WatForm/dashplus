@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
@@ -157,6 +158,11 @@ public final class AlloyMacroPara extends AlloyPara {
             if (other.sub != null) return false;
         } else if (!sub.equals(other.sub)) return false;
         return true;
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 
     public AlloyMacroPara rebuild(AlloyBlock block, AlloyExpr sub) {

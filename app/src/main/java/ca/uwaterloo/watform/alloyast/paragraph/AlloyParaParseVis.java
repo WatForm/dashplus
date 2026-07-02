@@ -54,11 +54,14 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
         String fileName = exprParseVis.visit(ctx.qname(0)).toString() + ".als";
         if (fileName.startsWith("util/")) {
             // TODO: that string should not be hardcoded
-            InputStream in = getClass().getClassLoader().getResourceAsStream(fileName + ".als");
+            fileName = "models/" + fileName;
+            // System.out.println(fileName);
+            InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
             // otherwise the line below throws a null pointer exception
             try {
                 CharStream input = CharStreams.fromStream(in);
                 AlloyFile alloyFile = parseFromCharStream(input, fileName);
+                System.out.println(alloyFile);
             } catch (IOException e) {
                 throw AlloyCtorError.utilFileNotFound(new Pos(ctx), fileName);
                 // can continue parsing although there will be errors

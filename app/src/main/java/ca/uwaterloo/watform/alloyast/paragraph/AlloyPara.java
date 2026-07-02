@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import ca.uwaterloo.watform.alloyast.AlloyASTNode;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,8 @@ public abstract class AlloyPara extends AlloyASTNode {
     }
 
     public abstract AlloyId getId();
+
+    public abstract <T> T accept(AlloyParaVis<T> visitor);
 
     public static final class AlloyId {
         public final String name;

@@ -6,6 +6,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.dashast.dashNamedExpr.*;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
@@ -151,5 +152,10 @@ public class DashState extends DashPara implements DashStateItem {
     @Override
     public AlloyId getId() {
         return new AlloyId(name);
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

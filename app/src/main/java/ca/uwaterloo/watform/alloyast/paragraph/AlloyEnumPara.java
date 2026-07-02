@@ -6,6 +6,7 @@ import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.ASTNode;
 import ca.uwaterloo.watform.utils.Pos;
 import ca.uwaterloo.watform.utils.PrintContext;
@@ -63,6 +64,11 @@ public final class AlloyEnumPara extends AlloyPara {
     @Override
     public AlloyId getId() {
         return new AlloyId(qname.toString());
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 
     public List<AlloyId> getAllIds() {

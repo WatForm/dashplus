@@ -9,6 +9,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -82,6 +83,11 @@ public final class AlloyCmdPara extends AlloyPara {
             if (other.cmdDecls != null) return false;
         } else if (!cmdDecls.equals(other.cmdDecls)) return false;
         return true;
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 
     public static final class CommandDecl extends ASTNode {

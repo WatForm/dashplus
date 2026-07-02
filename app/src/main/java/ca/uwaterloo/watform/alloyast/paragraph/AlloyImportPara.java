@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -116,5 +117,10 @@ public final class AlloyImportPara extends AlloyPara {
             if (other.asQname != null) return false;
         } else if (!asQname.equals(other.asQname)) return false;
         return true;
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 }
