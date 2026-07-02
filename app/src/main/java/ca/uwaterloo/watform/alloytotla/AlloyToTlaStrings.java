@@ -47,4 +47,5 @@ public class AlloyToTlaStrings {
     public static final String SIG_CONSTRAINT_SUFFIX = SPECIAL + "sig" + SPECIAL + "constraints";
     public static final String UNNAMED_FACT_PREFIX = SPECIAL + "fact" + SPECIAL;
     public static final String COMMAND = SPECIAL + "command";
+    public static final String SCOPE = SPECIAL + "scope";
 }

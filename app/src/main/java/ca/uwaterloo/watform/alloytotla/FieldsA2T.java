@@ -22,6 +22,9 @@ public class FieldsA2T extends FactsA2T {
     }
 
     protected void addFieldTypes(TlaModel tlaModel) {
+
+        tlaModel.addComment("field types", verbose);
+
         List<TlaExp> fieldTypes = mapBy(alloyModel.allFields(), f -> fieldType(f));
         var defn = TlaDefn(FIELD_TYPES, repeatedAnd(fieldTypes));
         tlaModel.addDefn(defn);
@@ -31,6 +34,7 @@ public class FieldsA2T extends FactsA2T {
 
         for (String field : alloyModel.allFields()) {
             tlaModel.addVar(TlaVar(field), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
+            l.info("translated field " + field + " into a VARIABLE");
         }
     }
 

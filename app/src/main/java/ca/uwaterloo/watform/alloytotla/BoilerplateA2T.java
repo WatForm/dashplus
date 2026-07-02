@@ -62,6 +62,8 @@ public class BoilerplateA2T extends BaseA2T {
 
     public void addBoilerplate(TlaModel tlaModel) {
 
+        tlaModel.addComment("translation macros", verbose);
+
         List<TlaVar> setVars = mapBy(alloyModel.topLevelSigs(), s -> TlaVar(s));
 
         tlaModel.addDefn(univ(setVars));

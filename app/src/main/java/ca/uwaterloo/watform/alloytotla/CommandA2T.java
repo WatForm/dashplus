@@ -10,10 +10,12 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CommandDefnA2T extends BoilerplateA2T {
+public class CommandA2T extends BoilerplateA2T {
 
-    public CommandDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    public CommandA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
         super(alloyModel, verbose, debug);
     }
 
@@ -35,10 +37,20 @@ public class CommandDefnA2T extends BoilerplateA2T {
         return TlaVar(dummy).EQUALS(TlaVar(dummy));
     }
 
-    public void addCommandDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
+    public void addCommand(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
+        tlaModel.addComment("command", verbose);
         tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));
+        tlaModel.addDefn(scopeConstraints(tlaModel, cmdDecl));
         tlaModel.addInvariant(TlaAppl(COMMAND));
+    }
+
+    public TlaDefn scopeConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
+        List<TlaExp> clauses = new ArrayList<>();
+        for (var s : alloyModel.topLevelSigs()) {
+            clauses.add(TlaVar(s).EQUALS(sigAtoms(s, 0, 2)));
+        }
+        return TlaDefn(SCOPE, repeatedAnd(clauses));
     }
 
     public TlaDefn cmdConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {

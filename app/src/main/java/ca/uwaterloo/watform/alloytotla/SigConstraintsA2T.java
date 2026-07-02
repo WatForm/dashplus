@@ -20,42 +20,57 @@ public class SigConstraintsA2T extends PredicatesFunctionsA2T {
     }
 
     protected void addSigConstraints(TlaModel tlaModel) {
+
+        tlaModel.addComment("signature constraints", verbose);
+
         List<TlaAppl> explicitConstraints = new ArrayList<>();
 
-        alloyModel
-                .allSigs()
-                .forEach(
-                        sig -> {
-                            List<TlaExp> constraints = constraints(sig, alloyModel);
-                            if (constraints.size() != 0) {
-                                tlaModel.addDefn(
-                                        TlaDefn(sigConstraint(sig), repeatedAnd(constraints)));
-                                explicitConstraints.add(TlaAppl(sigConstraint(sig)));
-                            }
-                        });
+        for (var sig : alloyModel.allSigs()) {
+            List<TlaExp> constraints = constraints(sig, alloyModel);
+            if (constraints.size() != 0) {
+                tlaModel.addDefn(TlaDefn(sigConstraint(sig), repeatedAnd(constraints)));
+                explicitConstraints.add(TlaAppl(sigConstraint(sig)));
+            }
+        }
 
         tlaModel.addDefn(TlaDefn(ALL_SIG_CONSTRAINTS, repeatedAnd(explicitConstraints)));
+
+        l.info(dump());
     }
 
     private List<TlaExp> constraints(String sig, AlloyModel alloyModel) {
+
         List<TlaExp> constraints = new ArrayList<>();
 
-        // alloyModel
-        //         .block(sig)
-        //         .ifPresent(
-        //                 b -> {
-        //                     // universal quantification for facts
-        //                     constraints.add(new AlloyToTlaExprVis().visit(b));
-        //                 });
-
-        if (alloyModel.isOneSig(sig)) constraints.add(_ONE(TlaVar(sig)));
-        if (alloyModel.isLoneSig(sig)) constraints.add(_LONE(TlaVar(sig)));
-        if (alloyModel.isSomeSig(sig)) constraints.add(_SOME(TlaVar(sig)));
+        if (alloyModel.isOneSig(sig)) {
+            log("sig " + sig + " is a one sig");
+            constraints.add(_ONE(TlaVar(sig)));
+        }
+        if (alloyModel.isLoneSig(sig)) {
+            log("sig " + sig + " is a lone sig");
+            constraints.add(_LONE(TlaVar(sig)));
+        }
+        if (alloyModel.isSomeSig(sig)) {
+            log("sig " + sig + " is a some sig");
+            constraints.add(_SOME(TlaVar(sig)));
+        }
 
         List<String> extendsChildNames = alloyModel.extendsChildren(sig);
+        int n = extendsChildNames.size();
+
+        if (n != 0) {
+            log(
+                    "sig "
+                            + sig
+                            + " has extends children "
+                            + extendsChildNames
+                            + (n > 1
+                                    ? ", translated to pairwise disjointedness constraints"
+                                    : "no added constraints because only one child sig"));
+        }
 
         // pairwise disjoint sets for sigs that extend the same sig
-        int n = extendsChildNames.size();
+
         for (int i = 0; i < n; i++)
             for (int j = i + 1; j < n; j++) {
                 TlaVar si = TlaVar(extendsChildNames.get(i));
@@ -65,10 +80,16 @@ public class SigConstraintsA2T extends PredicatesFunctionsA2T {
             }
 
         // abstract sigs
-        if (alloyModel.isAbstractSig(sig))
+        if (alloyModel.isAbstractSig(sig)) {
+            log(
+                    "sig "
+                            + sig
+                            + " is an abstract sig, and is made up of only its extends children "
+                            + extendsChildNames);
             constraints.add(
                     TlaVar(sig)
                             .EQUALS(repeatedUnion(mapBy(extendsChildNames, ecn -> TlaVar(ecn)))));
+        }
 
         return constraints;
     }

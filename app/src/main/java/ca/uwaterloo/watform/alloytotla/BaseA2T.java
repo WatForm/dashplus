@@ -22,11 +22,20 @@ public class BaseA2T {
     public final Logger l;
     public final AlloyToTlaExprVis translator;
 
+    public final StringBuilder transcript;
+
     public TlaExp translateSnippet(AlloyExpr e) {
-
-        l.info("translating core:" + e.toString());
-
         return translator.extract(translator.visit(e));
+    }
+
+    public String dump() {
+        String answer = transcript.toString();
+        transcript.setLength(0);
+        return answer;
+    }
+
+    public void log(String s) {
+        transcript.append("\n" + s);
     }
 
     public BaseA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
@@ -35,6 +44,7 @@ public class BaseA2T {
         this.debug = debug;
         this.l = CustomLoggerFactory.make("AlloyToTla", debug);
         this.translator = new AlloyToTlaExprVis(alloyModel, l);
+        this.transcript = new StringBuilder("");
     }
 
     /*

@@ -45,41 +45,19 @@ public class AlloyToTla extends StdLibsTlaA2T {
 
     public void translate(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
-        l.info("translating Alloy to TLA+");
         l.info("chosen command: " + cmdDecl.toString());
 
-        addSigConsts(tlaModel);
+        addStdLibsTla(tlaModel);
         addSigVars(tlaModel);
         addFieldVars(tlaModel);
-
-        tlaModel.addComment("translation macros", verbose);
         addBoilerplate(tlaModel);
-
-        tlaModel.addComment("macros for special alloy libraries", verbose);
         addStdLibsAlloy(tlaModel);
-
-        tlaModel.addComment("standard alloy modules", verbose);
-        orderingModule(tlaModel);
-
-        tlaModel.addComment("Predicates and functions", verbose);
         addPredicatesFunctions(tlaModel);
-
-        tlaModel.addComment("signature hierarchy", verbose);
         addSigHierarchy(tlaModel);
-
-        tlaModel.addComment("field types", verbose);
         addFieldTypes(tlaModel);
-
-        tlaModel.addComment("signature constraints", verbose);
         addSigConstraints(tlaModel);
-
-        // tlaModel.addComment("scope constraints", verbose);
-        // addScopeConstraints(tlaModel, cmdDecl);
-
-        tlaModel.addComment("facts", verbose);
         addFacts(tlaModel);
-
-        tlaModel.addComment("Init and Next", verbose);
+        addCommand(tlaModel, cmdDecl);
         addInitDefn(tlaModel, cmdDecl);
         addNextDefn(tlaModel);
     }

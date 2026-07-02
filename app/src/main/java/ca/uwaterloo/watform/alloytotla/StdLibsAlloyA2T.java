@@ -22,7 +22,12 @@ public class StdLibsAlloyA2T extends SigVarsA2T {
         super(alloyModel, verbose, debug);
     }
 
-    public void addStdLibsAlloy(TlaModel tlamodel) {}
+    public void addStdLibsAlloy(TlaModel tlaModel) {
+
+        tlaModel.addComment("macros for special alloy libraries", verbose);
+
+        // orderingModule(tlaModel);
+    }
 
     protected int maxOrdering(String signame) {
         // TODO this needs to change
