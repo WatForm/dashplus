@@ -32,6 +32,15 @@ public class AMImports extends AMModules {
 
     protected void resolve() {
         super.resolve();
+        // there's actually nothing to do here
+        // but we'll call the visitor for consistency
+        // with the other paras
+        List<AlloyImportPara> newImports = emptyList();
+        for (AlloyImportPara importPara : this.imports) {
+            AlloyImportPara newImportPara = (AlloyImportPara) this.setMul(importPara);
+            newImports.add(newImportPara);
+        }
+        this.imports = newImports;
     }
 
     public void addImportPara(AlloyImportPara importPara) {

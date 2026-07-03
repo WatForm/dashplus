@@ -6,6 +6,8 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara;
+import ca.uwaterloo.watform.paravisitor.TestAndReplaceExprParaVis;
 import java.util.*;
 
 public class AMArity extends AMPredFunTable {
@@ -95,6 +97,33 @@ public class AMArity extends AMPredFunTable {
         return arityAndMulCalcVis.setMul(e).exp;
     }
 
+    AlloyPara setMul(AlloyPara p) {
+        return new TestAndReplaceExprParaVis(e -> true, e -> this.setMul(e)).visit(p);
+    }
+
+    AlloyPara setMul(List<AlloyDecl> decls, AlloyPara p) {
+        CalcAritySetMulDefaultsExprVis vis =
+                new CalcAritySetMulDefaultsExprVis(
+                        this::sigFieldArity, this::predFunReturnArity, this::predFunArgsArities);
+        List<AlloyDecl> expandedDecls = emptyList();
+        for (AlloyDecl d : decls) {
+            expandedDecls.addAll(d.expand());
+        }
+        vis.localEnvPush(expandedDecls);
+        AlloyPara newPara =
+                new TestAndReplaceExprParaVis(e -> true, e -> vis.visit(e).exp).visit(p);
+        // vis is local so no need to pop
+        /*
+        List<AlloyDecl> expandedDecls = emptyList();
+        for (AlloyDecl d : decls) {
+            expandedDecls.addAll(d.expand());
+        }
+        vis.localEnvPop(expandedDecls);
+        */
+        return newPara;
+    }
+
+    /*
     public void localEnvPush(List<AlloyDecl> decls) {
         List<AlloyDecl> expandedDecls = emptyList();
         for (AlloyDecl d : decls) {
@@ -110,4 +139,5 @@ public class AMArity extends AMPredFunTable {
         }
         arityAndMulCalcVis.localEnvPop(expandedDecls);
     }
+    */
 }

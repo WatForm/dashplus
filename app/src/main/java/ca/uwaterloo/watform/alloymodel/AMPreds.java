@@ -37,7 +37,8 @@ public class AMPreds extends AMSigs {
         super.resolve();
         // now update the para for mul and add to predPara list
         List<AlloyPredPara> newPreds = emptyList();
-        for (AlloyPredPara p : this.preds) {
+        for (AlloyPredPara predPara : this.preds) {
+            /*
             this.localEnvPush(p.arguments);
             // System.out.println("Rebuilding: ");
             // System.out.println(p);
@@ -46,7 +47,9 @@ public class AMPreds extends AMSigs {
                             mapBy(p.arguments, a -> ((AlloyDecl) this.setMul(a))),
                             ((AlloyBlock) this.setMul(p.block)));
             this.localEnvPop(p.arguments);
-            newPreds.add(newP);
+            */
+            AlloyPredPara newPredPara = (AlloyPredPara) this.setMul(predPara);
+            newPreds.add(newPredPara);
         }
         this.preds = new ArrayList<AlloyPredPara>(newPreds);
     }

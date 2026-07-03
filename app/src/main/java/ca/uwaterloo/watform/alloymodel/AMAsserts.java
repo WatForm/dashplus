@@ -8,7 +8,6 @@ import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyAssertPara;
 import java.util.*;
 
@@ -34,8 +33,9 @@ public class AMAsserts extends AMFacts {
         super.resolve();
         List<AlloyAssertPara> newAsserts = emptyList();
         for (AlloyAssertPara assertPara : this.asserts) {
-            AlloyAssertPara newAssertPara =
-                    assertPara.rebuild(((AlloyBlock) this.setMul(assertPara.block)));
+            AlloyAssertPara newAssertPara = (AlloyAssertPara) this.setMul(assertPara);
+            // AlloyAssertPara newAssertPara =
+            //        assertPara.rebuild(((AlloyBlock) this.setMul(assertPara.block)));
             newAsserts.add(newAssertPara);
         }
         this.asserts = newAsserts;

@@ -8,7 +8,6 @@ import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyMacroPara;
 import java.util.*;
 
@@ -36,10 +35,13 @@ public class AMMacros extends AMImports {
         super.resolve();
         List<AlloyMacroPara> newMacros = emptyList();
         for (AlloyMacroPara macroPara : this.macros) {
+            /*
             AlloyMacroPara newMacroPara =
                     macroPara.rebuild(
                             ((AlloyBlock) (macroPara.block.map(b -> this.setMul(b)).orElse(null))),
                             (macroPara.sub.map(b -> this.setMul(b)).orElse(null)));
+            */
+            AlloyMacroPara newMacroPara = (AlloyMacroPara) this.setMul(macroPara);
             newMacros.add(newMacroPara);
         }
         this.macros = newMacros;

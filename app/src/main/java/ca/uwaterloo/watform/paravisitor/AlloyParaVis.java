@@ -1,3 +1,8 @@
+/*
+    This centralizes knowledge about walking over paragraphs
+    for different purposes
+*/
+
 package ca.uwaterloo.watform.paravisitor;
 
 import ca.uwaterloo.watform.alloyast.paragraph.*;
