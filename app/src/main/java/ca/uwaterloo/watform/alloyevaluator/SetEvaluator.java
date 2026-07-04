@@ -13,7 +13,7 @@ import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.Set;
 
-public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
+public class SetEvaluator implements AlloyExprVis<Set<List<Atom>>> {
     private final Instance instance;
     private final EvalLogger logger;
 
@@ -23,32 +23,32 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
     }
 
     // Unimplemented — error message carries all needed detail
-    public Set<List<String>> visit(DashRef dashRef) {
+    public Set<List<Atom>> visit(DashRef dashRef) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "DashRef: " + dashRef + " " + dashRef.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyBinaryExpr binExpr) {
+    public Set<List<Atom>> visit(AlloyBinaryExpr binExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyBinaryExpr: " + binExpr + " " + binExpr.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyUnaryExpr unaryExpr) {
+    public Set<List<Atom>> visit(AlloyUnaryExpr unaryExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyUnaryExpr: " + unaryExpr + " " + unaryExpr.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyVarExpr varExpr) {
+    public Set<List<Atom>> visit(AlloyVarExpr varExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyVarExpr: " + varExpr + " " + varExpr.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyBlock block) {
+    public Set<List<Atom>> visit(AlloyBlock block) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyBlock: " + block + " " + block.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyCphExpr comprehensionExpr) {
+    public Set<List<Atom>> visit(AlloyCphExpr comprehensionExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyCphExpr: "
                         + comprehensionExpr
@@ -56,17 +56,17 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
                         + comprehensionExpr.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyIteExpr iteExpr) {
+    public Set<List<Atom>> visit(AlloyIteExpr iteExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyLetExpr letExpr) {
+    public Set<List<Atom>> visit(AlloyLetExpr letExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyLetExpr: " + letExpr + " " + letExpr.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyQuantificationExpr quantificationExpr) {
+    public Set<List<Atom>> visit(AlloyQuantificationExpr quantificationExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyQuantificationExpr: "
                         + quantificationExpr
@@ -74,12 +74,12 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
                         + quantificationExpr.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyDecl decl) {
+    public Set<List<Atom>> visit(AlloyDecl decl) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyDecl: " + decl + " " + decl.getClass().getName());
     }
 
-    public Set<List<String>> visit(AlloyQnameExpr qName) {
+    public Set<List<Atom>> visit(AlloyQnameExpr qName) {
         logger.enter("QName: " + qName);
         if (qName.vars.isEmpty())
             throw AlloyEvaluatorImplError.notSupported("A variable must exist to evaluate it");
@@ -90,49 +90,49 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return result.get();
     }
 
-    public Set<List<String>> visit(AlloyNoneExpr expr) {
+    public Set<List<Atom>> visit(AlloyNoneExpr expr) {
         logger.enter("None");
         logger.exit("None = {}");
         return emptySet();
     }
 
-    public Set<List<String>> visit(AlloyIdenExpr expr) {
+    public Set<List<Atom>> visit(AlloyIdenExpr expr) {
         logger.enter("Iden");
         var result = instance.getIden();
         logger.exit("Iden = " + result);
         return result;
     }
 
-    public Set<List<String>> visit(AlloyUnivExpr expr) {
+    public Set<List<Atom>> visit(AlloyUnivExpr expr) {
         logger.enter("Univ");
         var result = instance.getUniv();
         logger.exit("Univ = " + result);
         return result;
     }
 
-    public Set<List<String>> visit(AlloyUnionExpr expr) {
+    public Set<List<Atom>> visit(AlloyUnionExpr expr) {
         logger.enter("Union: " + expr);
         var result = mergeSets(expr.left.accept(this), expr.right.accept(this));
         logger.exit("Union = " + result);
         return result;
     }
 
-    public Set<List<String>> visit(AlloyIntersExpr expr) {
+    public Set<List<Atom>> visit(AlloyIntersExpr expr) {
         logger.enter("Intersect: " + expr);
         var result = intersectSets(expr.left.accept(this), expr.right.accept(this));
         logger.exit("Intersect = " + result);
         return result;
     }
 
-    public Set<List<String>> visit(AlloyDiffExpr expr) {
+    public Set<List<Atom>> visit(AlloyDiffExpr expr) {
         logger.enter("Diff: " + expr);
         var result = diffSets(expr.left.accept(this), expr.right.accept(this));
         logger.exit("Diff = " + result);
         return result;
     }
 
-    private Set<List<String>> product(Set<List<String>> left, Set<List<String>> right) {
-        Set<List<String>> result = emptySet();
+    private Set<List<Atom>> product(Set<List<Atom>> left, Set<List<Atom>> right) {
+        Set<List<Atom>> result = emptySet();
         for (var l : left) {
             for (var r : right) {
                 result.add(concat(l, r));
@@ -141,8 +141,9 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return result;
     }
 
-    private Set<List<String>> join(Set<List<String>> left, Set<List<String>> right) {
-        Set<List<String>> result = emptySet();
+    // TODO: potentially fix this one with updated semantics
+    private Set<List<Atom>> join(Set<List<Atom>> left, Set<List<Atom>> right) {
+        Set<List<Atom>> result = emptySet();
         for (var l : left) {
             for (var r : right) {
                 if (lastElement(l).equals(firstElement(r))) {
@@ -153,14 +154,14 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return result;
     }
 
-    public Set<List<String>> visit(AlloyArrowExpr expr) {
+    public Set<List<Atom>> visit(AlloyArrowExpr expr) {
         logger.enter("ArrowProduct: " + expr);
         var result = product(expr.left.accept(this), expr.right.accept(this));
         logger.exit("ArrowProduct = " + result);
         return result;
     }
 
-    public Set<List<String>> visit(AlloyDotExpr expr) {
+    public Set<List<Atom>> visit(AlloyDotExpr expr) {
         logger.enter("Dot: " + expr);
         var left = expr.left.accept(this);
         var right = expr.right.accept(this);
@@ -170,9 +171,9 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return result;
     }
 
-    public Set<List<String>> visit(AlloyBracketExpr bracketExpr) {
+    public Set<List<Atom>> visit(AlloyBracketExpr bracketExpr) {
         logger.enter("BoxJoin: " + bracketExpr);
-        List<Set<List<String>>> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
+        List<Set<List<Atom>>> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
         var result = bracketExpr.expr.accept(this);
         for (var arg : args) {
             result = join(arg, result);
@@ -181,10 +182,10 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return result;
     }
 
-    public Set<List<String>> visit(AlloyTransExpr expr) {
+    public Set<List<Atom>> visit(AlloyTransExpr expr) {
         logger.enter("Transpose: " + expr);
         var inner = expr.sub.accept(this);
-        Set<List<String>> result = emptySet();
+        Set<List<Atom>> result = emptySet();
         for (var tuple : inner) {
             result.add(reverse(tuple));
         }
@@ -192,11 +193,11 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return result;
     }
 
-    public Set<List<String>> visit(AlloyDomRestrExpr expr) {
+    public Set<List<Atom>> visit(AlloyDomRestrExpr expr) {
         logger.enter("DomainRestrict: " + expr);
         var domain = expr.left.accept(this);
         var relation = expr.right.accept(this);
-        Set<List<String>> result = emptySet();
+        Set<List<Atom>> result = emptySet();
         for (var tuple : relation) {
             if (domain.contains(List.of(firstElement(tuple)))) {
                 result.add(tuple);
@@ -206,11 +207,11 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return result;
     }
 
-    public Set<List<String>> visit(AlloyRngRestrExpr expr) {
+    public Set<List<Atom>> visit(AlloyRngRestrExpr expr) {
         logger.enter("RangeRestrict: " + expr);
         var relation = expr.left.accept(this);
         var range = expr.right.accept(this);
-        Set<List<String>> result = emptySet();
+        Set<List<Atom>> result = emptySet();
         for (var tuple : relation) {
             if (range.contains(List.of(lastElement(tuple)))) {
                 result.add(tuple);
@@ -220,7 +221,7 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return result;
     }
 
-    public Set<List<String>> visit(AlloyRelOvrdExpr expr) {
+    public Set<List<Atom>> visit(AlloyRelOvrdExpr expr) {
         logger.enter("RelOverride: " + expr);
         var left = expr.left.accept(this);
         var right = expr.right.accept(this);
@@ -228,12 +229,12 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         var domRight = mapBy(right, e -> firstElement(e));
         left.removeIf(val -> domRight.contains(firstElement(val)));
 
-        Set<List<String>> result = mergeSets(left, right);
+        Set<List<Atom>> result = mergeSets(left, right);
         logger.exit("RelOverride = " + result);
         return result;
     }
 
-    private Set<List<String>> evalTransClosure(Set<List<String>> base) {
+    private Set<List<Atom>> evalTransClosure(Set<List<Atom>> base) {
         var collect = base;
         var current = join(base, base);
 
@@ -245,18 +246,41 @@ public class SetEvaluator implements AlloyExprVis<Set<List<String>>> {
         return collect;
     }
 
-    public Set<List<String>> visit(AlloyTransClosExpr expr) {
+    public Set<List<Atom>> visit(AlloyTransClosExpr expr) {
         logger.enter("TransClosure: " + expr);
-        Set<List<String>> result = evalTransClosure(expr.sub.accept(this));
+        Set<List<Atom>> result = evalTransClosure(expr.sub.accept(this));
         logger.exit("TransClosure = " + result);
         return result;
     }
 
-    public Set<List<String>> visit(AlloyReflTransClosExpr expr) {
+    public Set<List<Atom>> visit(AlloyReflTransClosExpr expr) {
         logger.enter("TransClosure: " + expr);
-        Set<List<String>> result = evalTransClosure(expr.sub.accept(this));
+        Set<List<Atom>> result = evalTransClosure(expr.sub.accept(this));
         result = mergeSets(result, instance.getIden());
         logger.exit("TransClosure = " + result);
+        return result;
+    }
+
+    public Set<List<Atom>> visit(AlloyNumExpr expr) {
+        logger.enter("NumExpr: " + expr);
+        Set<List<Atom>> result = Set.of(List.of(Instance.convertToAtom(expr.value)));
+        logger.exit("NumExpr = " + result);
+        return result;
+    } // TODO: this possibly has to change
+
+    public Set<List<Atom>> visit(AlloyCardExpr expr) {
+        logger.enter("Cardinality: " + expr);
+        Set<List<Atom>> result =
+                Set.of(List.of(Instance.convertToAtom(expr.sub.accept(this).size())));
+        logger.exit("Cardinality = " + result);
+        return result;
+    }
+
+    // TODO: this most definitely has to be cleaned up
+    public Set<List<Atom>> visit(AlloySigIntExpr expr) {
+        logger.enter("Int set: " + expr);
+        Set<List<Atom>> result = instance.get("this/Int").get();
+        logger.exit("Int set = " + result);
         return result;
     }
 }
