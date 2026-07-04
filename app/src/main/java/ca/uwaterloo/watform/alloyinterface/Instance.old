@@ -1,75 +1,134 @@
+package ca.uwaterloo.watform.alloyinterface;
+
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyevaluator.AtomFactory;
+import ca.uwaterloo.watform.alloyevaluator.AtomTuple;
+import ca.uwaterloo.watform.alloyevaluator.OverflowAtom.OverflowDirection;
+import ca.uwaterloo.watform.alloyevaluator.TupleSet;
+import ca.uwaterloo.watform.utils.Pos;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Stack;
 
 /** Domain wrapper around the relation-to-tuples data that represents an Alloy instance. */
 public final class Instance {
-    private final Map<String, Set<List<String>>> relations;
+    private final Stack<Map<String, TupleSet>> relations;
     private static final String PREFIX = AlloyStrings.THIS + AlloyStrings.SLASH;
-    private final Set<List<String>> univ;
-    private final Set<List<String>> iden;
+    private final TupleSet univ;
+    private final TupleSet iden;
+    private final TupleSet intSet;
+    private final AtomFactory factory;
 
     public Instance(Map<String, Set<List<String>>> relations) {
-        this.relations = new HashMap<>();
-        this.univ = new HashSet<>();
-        this.iden = new HashSet<>();
+        this.relations = new Stack<>();
+        addStackFrame();
+
+        int min, max;
+        try {
+            min = Integer.parseInt(setToList(relations.get("Int/min")).get(0).get(0));
+            max = Integer.parseInt(setToList(relations.get("Int/max")).get(0).get(0));
+        } catch (Exception e) {
+            throw AlloyInterfaceImplError.failedCast("Failed to extract int min and max");
+        }
+        factory = new AtomFactory(min, max);
+
+        List<AtomTuple> univList = new ArrayList<>();
+        List<AtomTuple> intList =
+                mapBy(
+                        range(min, max + 1),
+                        i -> new AtomTuple(List.of(factory.createAtom(i.intValue()))));
+        univList.addAll(intList);
+        intSet = new TupleSet(intList);
 
         for (var entry : relations.entrySet()) {
             var newKey = removeParentSigInfo(entry.getKey());
-            this.relations.put(newKey, entry.getValue());
-
-            if (entry.getKey().startsWith(PREFIX) && newKey.equals(entry.getKey())) {
-                // top-level sig: no dot was found, key was unchanged
-                for (var atom : entry.getValue()) {
-                    univ.add(atom); // e.g. [A$1]
-                    iden.add(List.of(atom.get(0), atom.get(0))); // e.g. [A$1, A$1]
-                }
+            addRelation(
+                    newKey,
+                    new TupleSet(
+                            mapBy(
+                                    setToList(entry.getValue()),
+                                    t -> new AtomTuple(mapBy(t, a -> factory.createAtom(a))))));
+            var it = entry.getValue().iterator();
+            if (it.hasNext() && it.next().size() == 1) {
+                univList.addAll(
+                        mapBy(
+                                setToList(entry.getValue()),
+                                t -> new AtomTuple(mapBy(t, a -> factory.createAtom(a)))));
             }
         }
+
+        univ = new TupleSet(univList);
+        iden = new TupleSet(mapBy(univList, t -> AtomTuple.concat(t, t)));
     }
 
     private static String removeParentSigInfo(String key) {
         if (!key.startsWith(PREFIX)) return key;
         String body = key.substring(PREFIX.length());
         int lastDot = body.lastIndexOf('.');
-        if (lastDot == -1) return key;
-        return PREFIX + body.substring(lastDot + 1);
+        if (lastDot == -1) return body;
+        return body.substring(lastDot + 1);
     }
 
-    public boolean contains(String relationName) {
-        return relations.containsKey(normalize(relationName))
-                || relations.containsKey(relationName);
+    public Optional<TupleSet> get(String key) {
+        for (int i = relations.size() - 1; i >= 0; i--) {
+            if (relations.get(i).containsKey(key)) {
+                return Optional.ofNullable(relations.get(i).get(key));
+            }
+        }
+        return null;
     }
 
-    public Optional<Set<List<String>>> getRelation(String relationName) {
-        return Optional.ofNullable(relations.get(normalize(relationName)));
-    }
-
-    public Optional<Set<List<String>>> get(String key) {
-        return Optional.ofNullable(relations.get(key));
-    }
-
-    public Set<String> getRelationMapKeys() {
-        Set<String> keys = new HashSet<>(relations.keySet());
-        return keys;
-    }
-
-    public Set<List<String>> getUniv() {
+    public TupleSet getUniv() {
         return univ;
     }
 
-    public Set<List<String>> getIden() {
+    public TupleSet getIden() {
         return iden;
     }
 
-    // will have to be edited, does not support imports
-    private static String normalize(String relationName) {
-        if (relationName.startsWith(PREFIX)) {
-            return relationName;
+    public TupleSet getIntSet() {
+        return intSet;
+    }
+
+    public TupleSet getIntScalar(int val, Pos pos) {
+        return new TupleSet(List.of(new AtomTuple(List.of(factory.createAtom(val, pos)))));
+    }
+
+    public TupleSet getOverflowScalar(OverflowDirection direction, Pos pos) {
+        return new TupleSet(List.of(new AtomTuple(List.of(factory.createAtom(direction, pos)))));
+    }
+
+    public TupleSet getCardinality(TupleSet set, Pos pos) {
+        if (set.containsOverflow()) {
+            return getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
+        } else {
+            return getIntScalar(set.size(), pos);
         }
-        return PREFIX + relationName;
+    }
+
+    public int minInt() {
+        return factory.minInt();
+    }
+
+    public void addStackFrame() {
+        relations.push(new HashMap<>());
+    }
+
+    public void popStackFrame() {
+        relations.pop();
+    }
+
+    public void addRelation(String key, TupleSet set) {
+        relations.peek().put(key, set);
+    }
+
+    public void removeRelation(String key) {
+        relations.peek().remove(key);
     }
 }

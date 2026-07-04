@@ -26,4 +26,19 @@ public class AlloyEvaluatorImplError extends ImplementationError {
         return new AlloyEvaluatorImplError(
                 "Relation not found in XML instance (model/instance mismatch): " + relationName);
     }
+
+    public static AlloyEvaluatorImplError cardinalityError(String description) {
+        return new AlloyEvaluatorImplError(
+                "The cardinality of the set evaluated is inconsistent: " + description);
+    }
+
+    public static AlloyEvaluatorImplError arityError(String description) {
+        return new AlloyEvaluatorImplError(
+                "The arity of the set evaluated is inconsistent: " + description);
+    }
+
+    public static AlloyEvaluatorImplError typeError(String description) {
+        return new AlloyEvaluatorImplError(
+                "The type of the set evaluated is inconsistent: " + description);
+    }
 }
