@@ -1,5 +1,9 @@
 package ca.uwaterloo.watform.alloyevaluator;
 
+import static ca.uwaterloo.watform.alloyevaluator.ThreeVal.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.firstElement;
+import static ca.uwaterloo.watform.utils.GeneralUtil.setToList;
+
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -11,9 +15,10 @@ import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiPredicate;
 
-public class FormulaEvaluator implements AlloyExprVis<Boolean> {
-    private final AlloyExprVis<Set<List<String>>> setEvaluator;
+public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
+    private final AlloyExprVis<Set<List<Atom>>> setEvaluator;
     private final EvalLogger logger;
 
     public FormulaEvaluator(Instance instance, boolean debug) {
@@ -22,32 +27,32 @@ public class FormulaEvaluator implements AlloyExprVis<Boolean> {
     }
 
     // These visit cases are unimplemented; just note the type and let the error carry the detail
-    public Boolean visit(DashRef dashRef) {
+    public ThreeVal visit(DashRef dashRef) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "DashRef: " + dashRef + " " + dashRef.getClass().getName());
     }
 
-    public Boolean visit(AlloyBinaryExpr binExpr) {
+    public ThreeVal visit(AlloyBinaryExpr binExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyBinaryExpr: " + binExpr + " " + binExpr.getClass().getName());
     }
 
-    public Boolean visit(AlloyUnaryExpr unaryExpr) {
+    public ThreeVal visit(AlloyUnaryExpr unaryExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyUnaryExpr: " + unaryExpr + " " + unaryExpr.getClass().getName());
     }
 
-    public Boolean visit(AlloyVarExpr varExpr) {
+    public ThreeVal visit(AlloyVarExpr varExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyVarExpr: " + varExpr + " " + varExpr.getClass().getName());
     }
 
-    public Boolean visit(AlloyBracketExpr bracketExpr) {
+    public ThreeVal visit(AlloyBracketExpr bracketExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyBracketExpr: " + bracketExpr + " " + bracketExpr.getClass().getName());
     }
 
-    public Boolean visit(AlloyCphExpr comprehensionExpr) {
+    public ThreeVal visit(AlloyCphExpr comprehensionExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyCphExpr: "
                         + comprehensionExpr
@@ -55,17 +60,17 @@ public class FormulaEvaluator implements AlloyExprVis<Boolean> {
                         + comprehensionExpr.getClass().getName());
     }
 
-    public Boolean visit(AlloyIteExpr iteExpr) {
+    public ThreeVal visit(AlloyIteExpr iteExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
     }
 
-    public Boolean visit(AlloyLetExpr letExpr) {
+    public ThreeVal visit(AlloyLetExpr letExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyLetExpr: " + letExpr + " " + letExpr.getClass().getName());
     }
 
-    public Boolean visit(AlloyQuantificationExpr quantificationExpr) {
+    public ThreeVal visit(AlloyQuantificationExpr quantificationExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyQuantificationExpr: "
                         + quantificationExpr
@@ -73,124 +78,169 @@ public class FormulaEvaluator implements AlloyExprVis<Boolean> {
                         + quantificationExpr.getClass().getName());
     }
 
-    public Boolean visit(AlloyDecl decl) {
+    public ThreeVal visit(AlloyDecl decl) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyDecl: " + decl + " " + decl.getClass().getName());
     }
 
-    public Boolean visit(AlloyBlock block) {
+    public ThreeVal visit(AlloyBlock block) {
         logger.enter("Block (" + block.exprs.size() + " exprs)");
         for (var expr : block.exprs) {
-            if (!expr.accept(this)) {
-                logger.exit("Block = false, failed on: " + expr);
-                return false;
+            var result = expr.accept(this);
+            if (result != TRUE) {
+                logger.exit("Expr evaluated to: " + result);
+                return result;
             }
         }
-        logger.exit("Block = true");
-        return true;
+        logger.exit("Block = " + TRUE);
+        return TRUE;
     }
 
-    public Boolean visit(AlloyQtExpr qtExpr) {
+    // TODO: subset/set semantics for three values maybe (this one is probably fine)
+    public ThreeVal visit(AlloyQtExpr qtExpr) {
         logger.enter("Multiplicity " + qtExpr.qt + ": " + qtExpr.sub);
         var set = qtExpr.sub.accept(setEvaluator);
-        boolean result =
-                switch (qtExpr.qt) {
-                    case AlloyQtEnum.NO -> set.isEmpty();
-                    case AlloyQtEnum.SOME -> !set.isEmpty();
-                    case AlloyQtEnum.ONE -> set.size() == 1;
-                    case AlloyQtEnum.LONE -> set.size() <= 1;
-                    default ->
-                            throw AlloyEvaluatorImplError.missingVisitCase(
-                                    "AlloyQtEnum multiplicity: " + qtExpr.qt);
-                };
+        var result =
+                convertThree(
+                        switch (qtExpr.qt) {
+                            case AlloyQtEnum.NO -> set.isEmpty();
+                            case AlloyQtEnum.SOME -> !set.isEmpty();
+                            case AlloyQtEnum.ONE -> set.size() == 1;
+                            case AlloyQtEnum.LONE -> set.size() <= 1;
+                            default ->
+                                    throw AlloyEvaluatorImplError.missingVisitCase(
+                                            "AlloyQtEnum multiplicity: " + qtExpr.qt);
+                        });
         logger.exit("Multiplicity " + qtExpr.qt + " = " + result);
         return result;
     }
 
-    public Boolean visit(AlloyEqualsExpr expr) {
+    // TODO: subset/set semantics for three values logic
+    public ThreeVal visit(AlloyEqualsExpr expr) {
         logger.enter("EQ: " + expr);
-        var result = expr.left.accept(setEvaluator).equals(expr.right.accept(setEvaluator));
+        var result =
+                convertThree(
+                        expr.left.accept(setEvaluator).equals(expr.right.accept(setEvaluator)));
         logger.exit("EQ = " + result);
         return result;
     }
 
-    public Boolean visit(AlloyNotEqualsExpr expr) {
+    // TODO: subset/set semantics for three values logic
+    public ThreeVal visit(AlloyNotEqualsExpr expr) {
         logger.enter("NEQ: " + expr);
-        var result = !expr.left.accept(setEvaluator).equals(expr.right.accept(setEvaluator));
+        var result =
+                convertThree(
+                        !expr.left.accept(setEvaluator).equals(expr.right.accept(setEvaluator)));
         logger.exit("NEQ = " + result);
         return result;
     }
 
-    public Boolean visit(AlloyAndExpr expr) {
+    public ThreeVal visit(AlloyAndExpr expr) {
         logger.enter("AND: " + expr);
-        if (!expr.left.accept(this)) {
-            logger.exit("AND = false (short-circuit)");
-            return false;
+        var leftRes = expr.left.accept(this);
+        if (leftRes.shortCircuitsAnd()) {
+            logger.exit("AND = " + shortCircuitAndResult() + " (short-circuit)");
+            return shortCircuitAndResult();
         }
-        var result = expr.right.accept(this);
+        var result = leftRes.and(expr.right.accept(this));
         logger.exit("AND = " + result);
         return result;
     }
 
-    public Boolean visit(AlloyOrExpr expr) {
+    public ThreeVal visit(AlloyOrExpr expr) {
         logger.enter("OR: " + expr);
-        if (expr.left.accept(this)) {
-            logger.exit("OR = true (short-circuit)");
-            return true;
+        var leftRes = expr.left.accept(this);
+        if (leftRes.shortCircuitsOr()) {
+            logger.exit("OR = " + shortCircuitOrResult() + " (short-circuit)");
+            return shortCircuitOrResult();
         }
-        var result = expr.right.accept(this);
+        var result = leftRes.or(expr.right.accept(this));
         logger.exit("OR = " + result);
         return result;
     }
 
-    public Boolean visit(AlloyImpliesExpr expr) {
-        logger.enter("=>: " + expr);
-        if (!expr.left.accept(this)) {
-            logger.exit("=> = true (left false, short-circuit)");
-            return true;
+    public ThreeVal visit(AlloyImpliesExpr expr) {
+        logger.enter("IMPL: " + expr);
+        var leftRes = expr.left.accept(this);
+        if (leftRes.shortCircuitImpl()) {
+            logger.exit("IMPL = " + shortCircuitImplResult() + " (short-circuit)");
+            return shortCircuitImplResult();
         }
-        var result = expr.right.accept(this);
-        logger.exit("=> = " + result);
+        var result = leftRes.impl(expr.right.accept(this));
+        logger.exit("IMPL = " + result);
         return result;
     }
 
-    public Boolean visit(AlloyIffExpr expr) {
-        logger.enter("<=>: " + expr);
-        var result = expr.left.accept(this) == expr.right.accept(this);
-        logger.exit("<=> = " + result);
+    public ThreeVal visit(AlloyIffExpr expr) {
+        logger.enter("IFF: " + expr);
+        var result = expr.left.accept(this).iff(expr.right.accept(this));
+        logger.exit("IFF = " + result);
         return result;
     }
 
-    public Boolean visit(AlloyNegExpr expr) {
+    public ThreeVal visit(AlloyNegExpr expr) {
         logger.enter("NOT: " + expr);
-        var result = !expr.sub.accept(this);
+        var result = expr.sub.accept(this).not();
         logger.exit("NOT = " + result);
         return result;
     }
 
-    public Boolean visit(AlloyCmpExpr expr) {
+    public ThreeVal visit(AlloyCmpExpr expr) {
         logger.enter("CMP " + expr.comp + ": " + expr);
         var left = expr.left.accept(setEvaluator);
         var right = expr.right.accept(setEvaluator);
-        boolean result =
-                switch (expr.comp) {
-                    case AlloyCmpExpr.Comp.IN -> right.containsAll(left);
-                    case AlloyCmpExpr.Comp.LESS_THAN ->
-                            throw new UnsupportedOperationException("Comp.LT not implemented");
+        ThreeVal result = switch (expr.comp) { // TODO: subset/set semantics for three values logic
+                    case AlloyCmpExpr.Comp.IN -> convertThree(right.containsAll(left));
+                    case AlloyCmpExpr.Comp.LESS_THAN -> compareInts(left, right, (l, r) -> l < r);
                     case AlloyCmpExpr.Comp.GREATER_THAN ->
-                            throw new UnsupportedOperationException("Comp.GT not implemented");
-                    case AlloyCmpExpr.Comp.LESS_EQUAL ->
-                            throw new UnsupportedOperationException("Comp.LE not implemented");
-                    case AlloyCmpExpr.Comp.EQUAL_LESS ->
-                            throw new UnsupportedOperationException("Comp.EL not implemented");
+                            compareInts(left, right, (l, r) -> l > r);
+                    case AlloyCmpExpr.Comp.LESS_EQUAL -> compareInts(left, right, (l, r) -> l <= r);
+                    case AlloyCmpExpr.Comp.EQUAL_LESS -> compareInts(left, right, (l, r) -> l <= r);
                     case AlloyCmpExpr.Comp.GREATER_EQUAL ->
-                            throw new UnsupportedOperationException("Comp.GE not implemented");
+                            compareInts(left, right, (l, r) -> l >= r);
                     default ->
                             throw AlloyEvaluatorImplError.missingVisitCase(
                                     "AlloyCmp comp: " + expr.comp);
                 };
-        if (expr.neg) result = !result;
+        if (expr.neg) result = result.not();
         logger.exit("CMP " + expr.comp + " = " + result);
         return result;
     }
+
+    private ThreeVal compareInts(
+            Set<List<Atom>> scalar1, Set<List<Atom>> scalar2, BiPredicate<Integer, Integer> cmp) {
+        var left = getIntScalar(scalar1);
+        var right = getIntScalar(scalar2);
+
+        if (left.isOverflowing() || right.isOverflowing()) return UNKNOWN;
+        return convertThree(cmp.test(left.getValue(), right.getValue()));
+    }
+
+    private Atom getIntScalar(Set<List<Atom>> val) {
+        var list = setToList(val);
+        if (list.size() != 1) {
+            throw AlloyEvaluatorImplError.cardinalityError("The cardinality of a scalar must be 1");
+        } else if (firstElement(list).size() != 1) {
+            throw AlloyEvaluatorImplError.arityError("The arity of a scalar must be 1");
+        }
+        var result = firstElement(firstElement(list));
+        if (!result.isInteger()) {
+            throw AlloyEvaluatorImplError.arityError("Scale comparison must be done on an integer");
+        }
+        return result;
+    }
+
+    /* TODO: subset/set semantics for three values logic
+    private ThreeVal subsThreeVal(Set<List<Atom>> left, Set<List<Atom>> right) {
+        if (left.size() > right.size()) return FALSE;
+
+        return TRUE;
+    }
+
+    private boolean containsOverflow(Set<List<Atom>> val) {
+        for (var tuple : val) {
+            if (tuple.)
+        }
+    }
+            */
 }
