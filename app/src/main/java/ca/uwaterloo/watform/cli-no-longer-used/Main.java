@@ -6,6 +6,7 @@ import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyevaluator.FormulaEvaluator;
+import ca.uwaterloo.watform.alloyevaluator.ThreeVal;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Instance;
 import ca.uwaterloo.watform.alloyinterface.Solution;
