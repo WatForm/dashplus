@@ -39,7 +39,10 @@ public final class Solution {
         this.a4Solution = a4Solution;
         this.map = new HashMap<>();
         this.alloyModule = alloyModule;
-        if (this.a4Solution.satisfiable()) populateMap();
+        if (this.a4Solution.satisfiable()) {
+            populateMap();
+            fixOneSigIssue();
+        }
     }
 
     public boolean isSat() {
@@ -206,6 +209,25 @@ public final class Solution {
             }
         }
         return Optional.empty();
+    }
+
+    private void fixOneSigIssue() {
+        var sigs = alloyModule.getAllSigs();
+        for (var sig : sigs) {
+            if (sig.isOne == null) {
+                continue;
+            }
+
+            var sigTuple = map.get(sig.label).iterator().next();
+            for (var key : map.keySet()) {
+                if (!key.startsWith(sig.label + ".")) {
+                    continue;
+                }
+
+                Set<List<String>> newValue = mapBy(map.get(key), t -> concat(sigTuple, t));
+                map.replace(key, newValue);
+            }
+        }
     }
 
     public record EvalRes(Integer intVal, Boolean boolVal, Set<List<String>> setVal) {
