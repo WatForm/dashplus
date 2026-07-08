@@ -17,7 +17,7 @@ import ca.uwaterloo.watform.dashast.DashFile;
 import ca.uwaterloo.watform.dashast.DashFileParseVis;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import ca.uwaterloo.watform.utils.*;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,9 +61,37 @@ public class Parser {
         try {
             input = CharStreams.fromPath(filePath);
         } catch (IOException ioException) {
-            throw new Reporter.ErrorUser("Input file cannot be found. ");
+            throw new Reporter.ErrorUser("Input file cannotF be found. ");
         }
         return parseFromCharStream(input, fullFileName);
+    }
+
+    public static AlloyFile parseUtilFile(Pos pos, String utilFileName) {
+        if (!utilFileName.startsWith("util/")) {
+            throw ParserError.notUtilFile(pos, utilFileName);
+        } else {
+            // TODO: that string should not be hardcoded
+            // this is where the util files are store in the jar
+            String fileName = "models/" + utilFileName;
+            // System.out.println(fileName);
+            InputStream in = Parser.class.getClassLoader().getResourceAsStream(fileName);
+            // InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
+            // otherwise the lines below throws a null pointer exception
+            try {
+                CharStream input = CharStreams.fromStream(in);
+                // creation of an AlloyFile checks that there is only one modulePara
+                // in the AlloyFile
+                AlloyFile importedAlloyFile = parseFromCharStream(input, fileName);
+                System.out.println(importedAlloyFile);
+                return importedAlloyFile;
+            } catch (IOException e) {
+                throw ParserError.utilFileNotFound(pos, fileName);
+                // can continue parsing although there will be errors
+            } catch (NullPointerException e) {
+                // if in is null
+                throw ParserError.utilFileNotFound(pos, fileName);
+            }
+        }
     }
 
     // this is used for importing util files
@@ -114,6 +142,17 @@ public class Parser {
             dashFile.filename = fullFileName;
             return dashFile;
         }
+    }
+
+    public static AlloyFile parseImport(Pos pos, String fileName) {
+        AlloyFile importedAlloyFile;
+        if (fileName.startsWith("util/")) {
+            importedAlloyFile = parseUtilFile(pos, fileName);
+        } else {
+            String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
+            importedAlloyFile = parse(fullFileName);
+        }
+        return importedAlloyFile;
     }
 
     // Use this function for parsing both dash and alloy files

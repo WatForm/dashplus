@@ -31,10 +31,6 @@ public class AlloyCtorError extends UserOrImplError {
         super(pos, msg);
     }
 
-    public static AlloyCtorError utilFileNotFound(Pos pos, String msg) {
-        return new AlloyCtorError(pos, "Util file not found in jar: " + msg);
-    }
-
     // ====================================================================================
     // Sig
     // ====================================================================================

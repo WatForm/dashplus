@@ -19,10 +19,16 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import java.util.*;
 
-public class AMScopes extends AMAsserts {
+public class AMScopes extends AMFuns {
 
     int DEFAULT_SCOPE = 3;
     int INT_DEFAULT_SCOPE = 4;
+
+    // imports can force a scope to be exact
+    public List<String> nonOrderedSigsWithExactsScope = emptyList();
+    // because of symmetry breaking, these are special
+
+    public List<String> orderedSigsWithExactScope = emptyList();
 
     // to avoid passing it to all arguments
     private HashMap<String, SigScope> givenScopes;
@@ -40,6 +46,18 @@ public class AMScopes extends AMAsserts {
 
     protected void resolve() {
         super.resolve();
+    }
+
+    private List<String> sigsWithExactScope() {
+        return concat(this.nonOrderedSigsWithExactsScope, this.orderedSigsWithExactScope);
+    }
+
+    public void addOrderedSigWithExactScope(String sigName) {
+        this.orderedSigsWithExactScope.add(sigName);
+    }
+
+    public void addNonOrderedSigWithExactScope(String sigName) {
+        this.nonOrderedSigsWithExactsScope.add(sigName);
     }
 
     protected void checkForErrorsInScopes(AlloyCmdPara.CommandDecl cmdDecl) {
@@ -119,6 +137,7 @@ public class AMScopes extends AMAsserts {
         - scope of parents (even if prescribed in the cmd) are overridden to accommodate exact scopes for children
         - default scope for top-level sigs not forced to have explicit scopes is 3
         - default scope for Int is always 4 even if a different scope is chosen as a default for everything else
+        - a sig may have been set to an exact scope from an import paragraph
 
        Notes (constraints not enforced by sigs)
        - sig A in B means A subseteq B
@@ -129,6 +148,13 @@ public class AMScopes extends AMAsserts {
     */
 
     public CmdScopeProfile getScopeLimits(AlloyCmdPara.CommandDecl cmdDecl) {
+
+        // general error
+        for (String s : this.orderedSigsWithExactScope) {
+            if (!this.topLevelSigs().contains(s)) {
+                throw AlloyModelError.orderedOnlyOnTopLevelSigs(s);
+            }
+        }
 
         this.default_scope =
                 cmdDecl.scope
@@ -143,13 +169,19 @@ public class AMScopes extends AMAsserts {
             String sigName = typeScope.scopableExpr.toString();
             /* AA accepts "int" as sig name for scopes */
             if (sigName.equals(AlloyStrings.INT)) sigName = AlloyStrings.SIGINT;
-            givenScopes.put(
-                    sigName,
-                    typeScope.isExactly
-                            ? ExactScope(typeScope.start.value)
-                            : NonExactScope(typeScope.start.value));
+            if (this.sigsWithExactScope().contains(sigName)) {
+                // overrides command
+                givenScopes.put(sigName, ExactScope(typeScope.start.value));
+            } else {
+                givenScopes.put(
+                        sigName,
+                        typeScope.isExactly
+                                ? ExactScope(typeScope.start.value)
+                                : NonExactScope(typeScope.start.value));
+            }
         }
         this.scopeProfile = new CmdScopeProfile();
+
         // modifies the scopeProfile
         // Int might or might not be in the topLevelSigs
         for (String s : this.topLevelSigs()) {
@@ -200,16 +232,24 @@ public class AMScopes extends AMAsserts {
                 && !isTopLevel
                 && !this.isOneSig(sigName)) {
             // no prescribed scope and not one sig and not top level
-            // so just pass the bound up
+            // so just pass the exact bound up
+            // but if an import forced it to be exact add that
+            if (this.sigsWithExactScope().contains(sigName)) {
+                this.scopeProfile.addTopLevel(sigName, ExactScope(exactBoundOpt.get()));
+            }
             return exactBoundOpt; // might be empty or might be exact scope
         }
 
         SigScope givenScope;
         Boolean overrideFlag = false;
-        if (!this.givenScopes.keySet().contains(sigName) && isTopLevel) {
+        if (!this.givenScopes.keySet().contains(sigName) && isTopLevel && !this.isOneSig(sigName)) {
             // top-level so must be given a scope
             // chosen from exactBoundOpt and this.defaultScope
-            givenScope = NonExactScope(this.default_scope);
+            if (this.sigsWithExactScope().contains(sigName)) {
+                givenScope = ExactScope(this.default_scope);
+            } else {
+                givenScope = NonExactScope(this.default_scope);
+            }
         } else if (!this.givenScopes.keySet().contains(sigName) && this.isOneSig(sigName)) {
             // it is an error earlier if 'one sig's are given a scope other than 1
             givenScope = ExactScope(1);
@@ -217,6 +257,7 @@ public class AMScopes extends AMAsserts {
             // given a scope; might or might not be top-level
             // only time when override of scope in cmd could be true
             overrideFlag = true;
+            // already been set to exact from an import above
             givenScope = this.givenScopes.get(sigName);
         }
         // System.out.println(givenScope);

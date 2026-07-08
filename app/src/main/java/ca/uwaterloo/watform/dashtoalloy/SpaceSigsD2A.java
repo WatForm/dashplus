@@ -4,9 +4,6 @@ import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyNameExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyImportPara;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.List;
@@ -191,6 +188,14 @@ public class SpaceSigsD2A extends BaseD2A {
                     this.am.addSig(this.dsl.bufferIndexSig(this.dm.bufferIndex(bfqn)));
 
                 // import util/buffer[BufIdx, elem]
+                this.am.addImport(
+                        // util/buffer
+                        List.of(D2AStrings.utilName, D2AStrings.utilBufferName),
+                        // [BufIdx, elem]
+                        List.of(
+                                this.dsl.bufferIndexVar(this.dm.bufferIndex(bfqn)),
+                                AlloyVar(this.dm.bufferElement(bfqn))));
+                /*
                 this.am.addImportPara(
                         new AlloyImportPara(
                                 false,
@@ -204,6 +209,7 @@ public class SpaceSigsD2A extends BaseD2A {
                                         AlloyVar(this.dm.bufferElement(bfqn))), // [BufIdx, elem]
                                 null // no "as"
                                 ));
+                */
             }
         }
     }

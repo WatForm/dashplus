@@ -17,14 +17,13 @@ AMEnums - adds to SigTable
 AMSigs - adds to SigTable, FieldTable
 AMPreds - add to PredFunTable
 AMFuns - add to PredFunTable
-AMModules
-AMImports
+AMScopes - contains a little state for exactly scopes loaded by imports; only local state
+AMImports - adds to SigTable, FieldTable, PredFunTable
 AMMacros
 AMFacts
 AMAsserts
-AMScopes - contains no state for AlloyModel; only local state
 AMCmds
-AMScopeComputer
+AMModules
 AlloyModel
 
 All AMxxx(notTable) are initialized with an empty list so that a model can be created completely through the API.
@@ -33,6 +32,10 @@ All AMxxx(notTable) are initialized with an empty list so that a model can be cr
 
 When creating via an AlloyFile, copy of another AlloyModel, or through the API, all tables, and lists are initialized, but default muls and arities are not calculated.  
 
+Imported are included in the above.  
+
+Any exact scopes set via imports are recorded in AMScopes.
+
 ### Resolving
 
 In the use of an Alloy Model, it must be resolved before it is final.
@@ -40,6 +43,8 @@ In the use of an Alloy Model, it must be resolved before it is final.
 - Done in Dash2Alloy at very end.
 - Should be done in predAbs or DashToTla?
 
+The purpose of resolving is to:
+-
 ### Creating an AlloyModel through API calls
 
 Any API additions of paragraphs are NOT checked for arity and default multiplicities.  The "resolve" phase of an AlloyModel is a separate check that the user can call.  This is because declarations are not required before use in Alloy.

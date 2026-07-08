@@ -204,6 +204,11 @@ public class GeneralUtil {
         return items.stream().filter(c::isInstance).map(c::cast).collect(Collectors.toList());
     }
 
+    // this does not change the input list
+    public static <S> List<S> extractItemsNotOfClass(List<S> items, Class<?> c) {
+        return items.stream().filter(item -> !c.isInstance(item)).toList();
+    }
+
     // like python range; inclusive at start and exclusive on stop
     public static List<Integer> range(int start, int stop) {
         return IntStream.range(start, stop)

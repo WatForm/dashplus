@@ -11,7 +11,7 @@ import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import java.util.*;
 
-public class AMCmds extends AMScopes {
+public class AMCmds extends AMAsserts {
 
     // cmdParas never have names
     protected List<AlloyCmdPara> cmds = emptyList();

@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import static ca.uwaterloo.watform.parser.Parser.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import antlr.generated.*;
 import antlr.generated.DashBaseVisitor;
@@ -17,13 +18,9 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigQualParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigRelParseVis;
 import ca.uwaterloo.watform.utils.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.*;
 import java.util.Collections;
 import java.util.List;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.tree.*;
 
 public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
@@ -52,26 +49,12 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     @Override
     public AlloyImportPara visitImportPara(DashParser.ImportParaContext ctx) {
         String fileName = exprParseVis.visit(ctx.qname(0)).toString() + ".als";
+        AlloyFile importedAlloyFile;
         if (fileName.startsWith("util/")) {
-            // TODO: that string should not be hardcoded
-            fileName = "models/" + fileName;
-            // System.out.println(fileName);
-            InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
-            // otherwise the line below throws a null pointer exception
-            try {
-                CharStream input = CharStreams.fromStream(in);
-                AlloyFile alloyFile = parseFromCharStream(input, fileName);
-                System.out.println(alloyFile);
-            } catch (IOException e) {
-                throw AlloyCtorError.utilFileNotFound(new Pos(ctx), fileName);
-                // can continue parsing although there will be errors
-            } catch (NullPointerException e) {
-                // if in is null
-                throw AlloyCtorError.utilFileNotFound(new Pos(ctx), fileName);
-            }
+            importedAlloyFile = parseUtilFile(new Pos(ctx), fileName);
         } else {
             String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
-            AlloyFile alloyFile = parse(fullFileName);
+            importedAlloyFile = parse(fullFileName);
         }
 
         // next we have to put this alloyFile into some part of the import
@@ -82,9 +65,8 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
                 ((null != ctx.sigRefs())
                         ? this.sigRefsParseVis.visit(ctx.sigRefs())
                         : Collections.emptyList()),
-                ((null != ctx.qname(1))
-                        ? (AlloyQnameExpr) exprParseVis.visit(ctx.qname(1))
-                        : null));
+                ((null != ctx.qname(1)) ? (AlloyQnameExpr) exprParseVis.visit(ctx.qname(1)) : null),
+                importedAlloyFile);
     }
 
     // ====================================================================================
