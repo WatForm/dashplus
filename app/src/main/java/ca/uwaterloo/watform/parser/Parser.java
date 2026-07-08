@@ -10,6 +10,8 @@ import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyParaParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdDeclParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -203,11 +205,16 @@ public class Parser {
         }
     }
 
-    public static AlloyCmdPara.CommandDecl parseCmdDecl(String s) {
+    private static BailParser stringParser(String s) {
         CharStream input = CharStreams.fromString(s);
         BailLexer lexer = new BailLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BailParser parser = new BailParser(tokens);
+        return parser;
+    }
+
+    public static AlloyCmdPara.CommandDecl parseCmdDecl(String s) {
+        BailParser parser = stringParser(s);
         ParseTree antlrAST = parser.commandDecl();
         AlloyCmdDeclParseVis afpv = new AlloyCmdDeclParseVis();
         AlloyCmdPara.CommandDecl cmd = null;
@@ -221,10 +228,7 @@ public class Parser {
     }
 
     public static AlloyExpr parseExpr(String s) {
-        CharStream input = CharStreams.fromString(s);
-        BailLexer lexer = new BailLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        BailParser parser = new BailParser(tokens);
+        BailParser parser = stringParser(s);
         ParseTree antlrAST = parser.expr1();
         AlloyExprParseVis afpv = new AlloyExprParseVis();
         AlloyExpr expr = null;
@@ -238,10 +242,7 @@ public class Parser {
     }
 
     public static AlloyDecl parseDecl(String s) {
-        CharStream input = CharStreams.fromString(s);
-        BailLexer lexer = new BailLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        BailParser parser = new BailParser(tokens);
+        BailParser parser = stringParser(s);
         ParseTree antlrAST = parser.decl();
         AlloyExprParseVis afpv = new AlloyExprParseVis();
         AlloyDecl decl = null;
@@ -252,5 +253,19 @@ public class Parser {
         }
         Reporter.INSTANCE.exitIfHasErrors();
         return decl;
+    }
+
+    public static AlloyPara parsePara(String s) {
+        BailParser parser = stringParser(s);
+        ParseTree antlrAST = parser.paragraph();
+        AlloyParaParseVis afpv = new AlloyParaParseVis();
+        AlloyPara para = null;
+        try {
+            para = afpv.visitParagraph((DashParser.ParagraphContext) antlrAST);
+        } catch (AlloyCtorError alloyCtorError) {
+            Reporter.INSTANCE.addError(alloyCtorError);
+        }
+        Reporter.INSTANCE.exitIfHasErrors();
+        return para;
     }
 }
