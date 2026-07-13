@@ -8,6 +8,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyStrLiteralExpr;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Objects;
 import java.util.Optional;
@@ -108,6 +109,11 @@ public final class AlloyAssertPara extends AlloyPara {
             if (other.strLit != null) return false;
         } else if (!strLit.equals(other.strLit)) return false;
         return true;
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 
     public AlloyAssertPara rebuild(AlloyBlock block) {

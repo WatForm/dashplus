@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaHelpers.*;
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
@@ -17,10 +16,13 @@ public class NextDefnA2T extends InitDefnA2T {
     }
 
     protected void addNextDefn(TlaModel tlaModel) {
+
+        tlaModel.addComment("Next", verbose);
+
         List<TlaVar> unchanged = new ArrayList<>();
 
-        alloyModel.allSigs().forEach(sigName -> unchanged.add(TlaVar(sigName)));
-        alloyModel.allFields().forEach(field -> unchanged.add(TlaVar(field)));
+        for (var s : alloyModel.allSigs()) unchanged.add(TlaVar(s));
+        for (var f : alloyModel.allFields()) unchanged.add(TlaVar(f));
 
         tlaModel.addDefn(TlaDefn(NEXT, TlaUnchanged(unchanged)));
     }

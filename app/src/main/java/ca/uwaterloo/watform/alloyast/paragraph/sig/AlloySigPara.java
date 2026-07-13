@@ -8,6 +8,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -209,6 +210,11 @@ public final class AlloySigPara extends AlloyPara {
         if (this.block.isPresent()) {
             this.block.get().pp(pCtx);
         }
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 
     /*

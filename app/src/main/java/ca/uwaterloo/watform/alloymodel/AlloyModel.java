@@ -27,7 +27,7 @@ import ca.uwaterloo.watform.utils.PrintContext;
 import java.io.StringWriter;
 import java.util.*;
 
-public class AlloyModel extends AMCmds {
+public class AlloyModel extends AMModules {
 
     public AlloyModel() {
         this(new AlloyFile(Collections.emptyList()));

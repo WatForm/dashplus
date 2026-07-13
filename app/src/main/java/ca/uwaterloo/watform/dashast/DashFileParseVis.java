@@ -4,16 +4,15 @@ import antlr.generated.*;
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
-    public final Path filePath;
+    public final String fullFileName;
 
-    public DashFileParseVis(Path filePath) {
+    public DashFileParseVis(String fullFileName) {
         super();
-        this.filePath = filePath;
+        this.fullFileName = fullFileName;
     }
 
     @Override

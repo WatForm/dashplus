@@ -8,11 +8,10 @@ import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import java.util.*;
 
-public class AMCmds extends AMScopes {
+public class AMCmds extends AMAsserts {
 
     // cmdParas never have names
     protected List<AlloyCmdPara> cmds = emptyList();
@@ -35,6 +34,8 @@ public class AMCmds extends AMScopes {
             // we can do this only after we know the sig hierarchy
             // under our Assumptions, there is only one cmdDecl in a cmdPara
             this.checkForErrorsInScopes(cmdPara.cmdDecls.get(0));
+            AlloyCmdPara newCmdPara = (AlloyCmdPara) this.setMul(cmdPara);
+            /*
             AlloyCmdPara newCmdPara =
                     new AlloyCmdPara(
                             cmdPara.pos,
@@ -46,6 +47,7 @@ public class AMCmds extends AMScopes {
                                                             d.constrBlock
                                                                     .map(x -> this.setMul(x))
                                                                     .orElse(null))))));
+            */
             newCmds.add(newCmdPara);
         }
         this.cmds = newCmds;

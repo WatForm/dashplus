@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
+import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +19,7 @@ public final class AlloyImportPara extends AlloyPara {
     public final AlloyQnameExpr qname;
     public final List<AlloySigRefExpr> sigRefs;
     public final Optional<AlloyQnameExpr> asQname;
+    public final AlloyFile importedFile;
 
     // import qname [sigName1, sigName2] as asQname {}
     public AlloyImportPara(
@@ -25,12 +27,14 @@ public final class AlloyImportPara extends AlloyPara {
             boolean isPrivate,
             AlloyQnameExpr qname,
             List<AlloySigRefExpr> sigRefs,
-            AlloyQnameExpr asQname) {
+            AlloyQnameExpr asQname,
+            AlloyFile importedFile) {
         super(pos);
         this.isPrivate = isPrivate;
         this.qname = qname;
         this.sigRefs = Collections.unmodifiableList(sigRefs);
         this.asQname = Optional.ofNullable(asQname);
+        this.importedFile = importedFile;
         reqNonNull(nullField(pos, this), this.qname, this.sigRefs, this.asQname);
     }
 
@@ -39,8 +43,9 @@ public final class AlloyImportPara extends AlloyPara {
             boolean isPrivate,
             AlloyQnameExpr qname,
             List<AlloySigRefExpr> sigRefs,
-            AlloyQnameExpr asQname) {
-        this(Pos.UNKNOWN, isPrivate, qname, sigRefs, asQname);
+            AlloyQnameExpr asQname,
+            AlloyFile importedFile) {
+        this(Pos.UNKNOWN, isPrivate, qname, sigRefs, asQname, importedFile);
     }
 
     /*
@@ -116,5 +121,10 @@ public final class AlloyImportPara extends AlloyPara {
             if (other.asQname != null) return false;
         } else if (!asQname.equals(other.asQname)) return false;
         return true;
+    }
+
+    @Override
+    public <T> T accept(AlloyParaVis<T> visitor) {
+        return visitor.visit(this);
     }
 }

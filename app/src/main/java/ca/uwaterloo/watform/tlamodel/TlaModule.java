@@ -55,9 +55,12 @@ public class TlaModule {
 
     private static String variableString(List<TlaVarDecl> varDecls) {
         StringBuilder sb = new StringBuilder(TlaStrings.VARIABLES + TlaStrings.NEWLINE);
-        for (var v : varDecls) {
+        for (int i = 0; i < varDecls.size(); i++) {
+            var v = varDecls.get(i);
             sb.append(v.type.annotation() + TlaStrings.NEWLINE);
-            sb.append(v.var.toTLAPlusSnippetCore() + TlaStrings.NEWLINE);
+            sb.append(v.var.toTLAPlusSnippetCore());
+            if (i != varDecls.size() - 1) sb.append(",");
+            sb.append(TlaStrings.NEWLINE);
         }
         return sb.toString();
     }

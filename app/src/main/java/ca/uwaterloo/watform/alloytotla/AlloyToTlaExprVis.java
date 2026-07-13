@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -46,10 +45,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         this.am = am;
     }
 
-    public void info(AlloyExpr e) {
-        l.info("translating: " + e.toString() + " of type:" + e.getClass());
-    }
-
     @Override
     public Result visit(DashRef dashRef) {
 
@@ -63,7 +58,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
         switch (rightResult) {
             case TlaExpResult tlaExpResultRight:
                 {
-                    var answer = _INNER_PRODUCT(left, extract(tlaExpResultRight));
+                    var answer = _DOT(left, extract(tlaExpResultRight));
                     return new TlaExpResult(answer);
                 }
             case MacroResult macroResultRight:
@@ -85,8 +80,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     @Override
     public Result visit(AlloyBinaryExpr binExpr) {
 
-        info(binExpr);
-
         if (binExpr.getClass() == AlloyDotExpr.class) return translateDot((AlloyDotExpr) binExpr);
 
         TlaExp el = extract(this.visit(binExpr.left));
@@ -107,7 +100,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
                             };
                     case AlloyDiffExpr _ -> TlaDiffSet(el, er);
                     case AlloyDomRestrExpr _ -> _DOMAIN_RESTRICTION(el, er);
-                    case AlloyDotExpr _ -> _INNER_PRODUCT(el, er);
+                    case AlloyDotExpr _ -> _DOT(el, er);
                     case AlloyEqualsExpr _ -> TlaEquals(el, er);
                     case AlloyIffExpr _ -> TlaEquivalence(el, er);
                     case AlloyImpliesExpr _ -> TlaImplies(el, er);
@@ -128,8 +121,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
     @Override
     public Result visit(AlloyUnaryExpr unaryExpr) {
-
-        info(unaryExpr);
 
         TlaExp e = extract(visit(unaryExpr.sub));
 
@@ -172,8 +163,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     @Override
     public Result visit(AlloyVarExpr varExpr) {
 
-        info(varExpr);
-
         TlaExp answer =
                 switch (varExpr) {
                     case AlloyUnivExpr _ -> _UNIV();
@@ -194,16 +183,12 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     @Override
     public Result visit(AlloyBlock block) {
 
-        info(block);
-
         var answer = CreateHelper.repeatedAnd(mapBy(block.exprs, e -> extract(visit(e))));
         return new TlaExpResult(answer);
     }
 
     @Override
     public Result visit(AlloyBracketExpr bracketExpr) {
-
-        info(bracketExpr);
 
         /*
         a[b] = b.a
@@ -221,7 +206,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
                         throw new ImplementationError(
                                 "malformed bracket expression: " + bracketExpr);
                     var right = bracketExpr.exprs.get(0);
-                    var answer = _INNER_PRODUCT(extract(visit(right)), leftTlaExpResult.exp);
+                    var answer = _DOT(extract(visit(right)), leftTlaExpResult.exp);
                     return new TlaExpResult(answer);
                 }
             case MacroResult leftMacroResult:
@@ -241,8 +226,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
     @Override
     public Result visit(AlloyCphExpr comprehensionExpr) {
-
-        info(comprehensionExpr);
 
         /*
         alloy:
@@ -278,8 +261,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     @Override
     public Result visit(AlloyIteExpr iteExpr) {
 
-        info(iteExpr);
-
         var condition = extract(this.visit(iteExpr.cond));
         var conseq = extract(this.visit(iteExpr.conseq));
         var alt = extract(this.visit(iteExpr.alt));
@@ -292,7 +273,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     @Override
     public Result visit(AlloyLetExpr letExpr) {
 
-        info(letExpr);
         /*
         note that let expressions in TLA+ can have params, but cannot in ALloy
         let expressions are translated directly, since TLA+ has a more expressive system for let expressions
@@ -311,7 +291,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
     @Override
     public Result visit(AlloyQuantificationExpr quantificationExpr) {
-        info(quantificationExpr);
 
         l.info("quant: " + quantificationExpr.quant);
         l.info("body:" + quantificationExpr.body);
@@ -385,8 +364,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
     @Override
     public Result visit(AlloyDecl decl) {
-
-        info(decl);
 
         l.info("expr " + decl.expr);
         l.info("isDisj2 " + decl.isDisj1);

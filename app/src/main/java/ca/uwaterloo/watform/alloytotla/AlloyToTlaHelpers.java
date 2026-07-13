@@ -7,10 +7,6 @@ import ca.uwaterloo.watform.tlaast.TlaAppl;
 
 public class AlloyToTlaHelpers {
 
-    public static String sigSet(String sigName) {
-        return sigName + SIG_SET_SUFFIX;
-    }
-
     public static String sigConstraint(String sigName) {
         return sigName + SIG_CONSTRAINT_SUFFIX;
     }

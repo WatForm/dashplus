@@ -1,9 +1,11 @@
 package ca.uwaterloo.watform.alloyast.paragraph;
 
 import static ca.uwaterloo.watform.parser.Parser.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import antlr.generated.*;
 import antlr.generated.DashBaseVisitor;
+import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -16,8 +18,10 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigQualParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigRelParseVis;
 import ca.uwaterloo.watform.utils.*;
+import java.nio.file.*;
 import java.util.Collections;
 import java.util.List;
+import org.antlr.v4.runtime.tree.*;
 
 public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     protected final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
@@ -44,6 +48,16 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     // ====================================================================================
     @Override
     public AlloyImportPara visitImportPara(DashParser.ImportParaContext ctx) {
+        String fileName = exprParseVis.visit(ctx.qname(0)).toString() + ".als";
+        AlloyFile importedAlloyFile;
+        if (fileName.startsWith("util/")) {
+            importedAlloyFile = parseUtilFile(new Pos(ctx), fileName);
+        } else {
+            String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
+            importedAlloyFile = parse(fullFileName);
+        }
+
+        // next we have to put this alloyFile into some part of the import
         return new AlloyImportPara(
                 new Pos(ctx),
                 null != ctx.PRIVATE(),
@@ -51,9 +65,8 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
                 ((null != ctx.sigRefs())
                         ? this.sigRefsParseVis.visit(ctx.sigRefs())
                         : Collections.emptyList()),
-                ((null != ctx.qname(1))
-                        ? (AlloyQnameExpr) exprParseVis.visit(ctx.qname(1))
-                        : null));
+                ((null != ctx.qname(1)) ? (AlloyQnameExpr) exprParseVis.visit(ctx.qname(1)) : null),
+                importedAlloyFile);
     }
 
     // ====================================================================================

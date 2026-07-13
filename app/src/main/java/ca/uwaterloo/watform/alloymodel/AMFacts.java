@@ -34,8 +34,11 @@ public class AMFacts extends AMMacros {
         super.resolve();
         List<AlloyFactPara> newFacts = emptyList();
         for (AlloyFactPara factPara : this.facts) {
-            AlloyFactPara newFactPara =
+            AlloyFactPara newFactPara = (AlloyFactPara) this.setMul(factPara);
+            /*
+            AlloyFactPara factPara =
                     factPara.rebuild(((AlloyBlock) this.setMul(factPara.block)));
+            */
             newFacts.add(factPara);
         }
         this.facts = newFacts;

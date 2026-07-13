@@ -12,7 +12,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
 import java.util.*;
 
-public class AMModules extends AMFuns {
+public class AMModules extends AMCmds {
 
     private List<AlloyModulePara> modules = emptyList();
 
@@ -30,6 +30,15 @@ public class AMModules extends AMFuns {
 
     protected void resolve() {
         super.resolve();
+        // there's actually nothing to do here
+        // but we'll call the visitor for consistency
+        // with the other paras
+        List<AlloyModulePara> newModules = emptyList();
+        for (AlloyModulePara modulePara : this.modules) {
+            AlloyModulePara newModulePara = (AlloyModulePara) this.setMul(modulePara);
+            newModules.add(newModulePara);
+        }
+        this.modules = newModules;
     }
 
     private void addModulePara(AlloyModulePara modulePara) {

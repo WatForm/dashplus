@@ -4,7 +4,7 @@
 
 * An AlloyCtorError is a subclass of DashPlusException that could be caused either:
     - During parsing, these should be caught and collected as user feedback by adding them into the Reporter.
-    - During creation of AST elements by Dash To Alloy translation or other internal functions, which is an implementation erro and should be allowed to propagate to the main as an exception.
+    - During creation of AST elements by Dash To Alloy translation or other internal functions, which is an implementation error and should be allowed to propagate to the main as an exception.
 
 
 - This is an example of a DashPlusException that is treated as UserError (if generated during parsing) or as ImplementationError (if generated during translation)

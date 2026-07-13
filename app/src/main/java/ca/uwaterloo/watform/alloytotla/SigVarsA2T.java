@@ -13,8 +13,12 @@ public class SigVarsA2T extends SigHierarchyA2T {
     }
 
     protected void addSigVars(TlaModel tlaModel) {
+
         for (var sigName : alloyModel.allSigs()) {
             tlaModel.addVar(TlaVar(sigName), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
+            log("translated sig " + sigName + " into a VARIABLE");
         }
+
+        l.info(dump());
     }
 }

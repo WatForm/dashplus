@@ -147,4 +147,18 @@ public final class AlloyModelError extends UserOrImplError {
     public static AlloyModelError subsetSigsCannotBeAbstrast(Pos pos, String sigPara) {
         return new AlloyModelError(pos, "Subset sigs cannot be abstract: " + sigPara);
     }
+
+    public static AlloyModelError cantExtendSubsetSig(Pos pos, String sigName) {
+        return new AlloyModelError(pos, "Subset sigs cannot be extended: " + sigName);
+    }
+
+    public static AlloyModelError importArgsNumDoesntMatch(Pos pos, String importPara) {
+        return new AlloyModelError(
+                pos, "Number of args to 'open' module does not match: " + importPara);
+    }
+
+    public static AlloyModelError orderedOnlyOnTopLevelSigs(String sigName) {
+        return new AlloyModelError(
+                "Ording module can only be applied to top-level sigs: " + sigName);
+    }
 }

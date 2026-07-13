@@ -6,10 +6,8 @@
 
 package ca.uwaterloo.watform.dashtoalloy;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.List;
 
 public class DashToAlloy extends StutterD2A {
 
@@ -29,7 +27,7 @@ public class DashToAlloy extends StutterD2A {
 
         if (this.dm.hasConcurrency())
             // open util/boolean
-            this.am.addImport(List.of(AlloyStrings.utilName, AlloyStrings.booleanName));
+            this.am.addUtilBooleanImport();
 
         // state, transition, parameter, buffer spaces
         this.addSpaceSigs();

@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaAppl;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -10,7 +9,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlloyToTla extends StdLibsA2T {
+public class AlloyToTla extends StdLibsTlaA2T {
 
     public static TlaModel getBlankModel(String moduleName) {
         return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
@@ -45,38 +44,19 @@ public class AlloyToTla extends StdLibsA2T {
 
     public void translate(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
-        l.info(TlaAppl("test").toTLAPlusSnippetCore());
+        l.info("chosen command: " + cmdDecl.toString());
 
-        addStdLibs(tlaModel);
-        addSigConsts(tlaModel);
+        addStdLibsTla(tlaModel);
         addSigVars(tlaModel);
         addFieldVars(tlaModel);
-
-        tlaModel.addComment("translation macros", verbose);
         addBoilerplate(tlaModel);
-
-        tlaModel.addComment("standard alloy modules", verbose);
-        orderingModule(tlaModel);
-
-        tlaModel.addComment("Predicates and functions", verbose);
+        addStdLibsAlloy(tlaModel, cmdDecl);
         addPredicatesFunctions(tlaModel);
-
-        tlaModel.addComment("signature hierarchy", verbose);
         addSigHierarchy(tlaModel);
-
-        tlaModel.addComment("field types", verbose);
         addFieldTypes(tlaModel);
-
-        tlaModel.addComment("signature constraints", verbose);
         addSigConstraints(tlaModel);
-
-        // tlaModel.addComment("scope constraints", verbose);
-        // addScopeConstraints(tlaModel, cmdDecl);
-
-        tlaModel.addComment("facts", verbose);
         addFacts(tlaModel);
-
-        tlaModel.addComment("Init and Next", verbose);
+        addCommand(tlaModel, cmdDecl);
         addInitDefn(tlaModel, cmdDecl);
         addNextDefn(tlaModel);
     }

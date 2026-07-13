@@ -216,7 +216,7 @@ public class Main implements Callable<Integer> {
 
                 if (fullFileName.endsWith(".als")) {
                     dashOutput("Input: " + fullFileName);
-                    AlloyModel am = parseToModel(absolutePath);
+                    AlloyModel am = parseToModel(fullFileName);
                     // alloy model is complete
                     try {
                         am.resolve();
@@ -242,7 +242,7 @@ public class Main implements Callable<Integer> {
                 } else {
                     // this is a dash file
                     dashOutput("Input: " + fullFileName);
-                    DashModel dm = (DashModel) parseToModel(absolutePath);
+                    DashModel dm = (DashModel) parseToModel(fullFileName);
                     // dm.resolve();
 
                     if (vis) {

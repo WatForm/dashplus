@@ -19,8 +19,6 @@ package ca.uwaterloo.watform.alloymodel;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyFile;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
@@ -52,11 +50,14 @@ public class AMSigs extends AMEnums {
         // adds to this.sigs
         List<AlloySigPara> newSigs = emptyList();
         // won't be any multi-sigs in this.sigs
-        for (AlloySigPara sig : this.sigs) {
+        for (AlloySigPara sigPara : this.sigs) {
+            /*
             AlloySigPara newSigPara =
                     sig.rebuild(
                             mapBy(sig.fields, f -> ((AlloyDecl) this.setMul(f))),
                             ((AlloyBlock) sig.block.map(b -> this.setMul(b)).orElse(null)));
+            */
+            AlloySigPara newSigPara = (AlloySigPara) this.setMul(sigPara);
             // adds them one by one after setting defaults
             newSigs.add(newSigPara);
         }
