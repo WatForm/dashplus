@@ -28,17 +28,27 @@ public class AlloyEvaluatorImplError extends ImplementationError {
     }
 
     public static AlloyEvaluatorImplError cardinalityError(String description) {
-        return new AlloyEvaluatorImplError(
-                "The cardinality of the set evaluated is inconsistent: " + description);
+        return new AlloyEvaluatorImplError("Cardinality error: " + description);
     }
 
     public static AlloyEvaluatorImplError arityError(String description) {
-        return new AlloyEvaluatorImplError(
-                "The arity of the set evaluated is inconsistent: " + description);
+        return new AlloyEvaluatorImplError("Arity error: " + description);
     }
 
     public static AlloyEvaluatorImplError typeError(String description) {
         return new AlloyEvaluatorImplError(
                 "The type of the set evaluated is inconsistent: " + description);
+    }
+
+    public static AlloyEvaluatorImplError atomConstructionError(String description) {
+        return new AlloyEvaluatorImplError("The atom was incorrectly constructed: " + description);
+    }
+
+    public static AlloyEvaluatorImplError comparisonError(String description) {
+        return new AlloyEvaluatorImplError("Atom comparison error: " + description);
+    }
+
+    public static AlloyEvaluatorImplError setError(String description) {
+        return new AlloyEvaluatorImplError("Set error: " + description);
     }
 }
