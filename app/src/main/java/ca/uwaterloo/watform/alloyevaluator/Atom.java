@@ -1,67 +1,89 @@
 package ca.uwaterloo.watform.alloyevaluator;
 
-import java.util.Objects;
+import static ca.uwaterloo.watform.alloyevaluator.ThreeVal.*;
 
-public class Atom {
-    private final boolean integer;
-    private final String label;
-    private final int value;
-    private final boolean overflowing;
+import ca.uwaterloo.watform.alloyevaluator.OverflowAtom.OverflowDirection;
 
-    public Atom() {
-        overflowing = true;
-        value = 0;
-        label = "";
-        integer = true;
+public sealed interface Atom permits LabelAtom, IntegerAtom, OverflowAtom {
+
+    // Use this method to check if values are equal. Standard equals does not handle overflows
+    // correctly
+    public static ThreeVal threeEqual(Atom a, Atom b) {
+        if (a instanceof LabelAtom la) {
+            if (b instanceof LabelAtom lb) {
+                return convertThree(la.label().equals(lb.label()));
+            }
+            return FALSE;
+        } else if (b instanceof LabelAtom) {
+            return FALSE;
+        }
+
+        if (a instanceof IntegerAtom ia && b instanceof IntegerAtom ib) {
+            return convertThree(ia.value() == ib.value());
+        }
+
+        // at least one overflows
+        OverflowDirection da = directionOf(a);
+        OverflowDirection db = directionOf(b);
+
+        if (da == OverflowDirection.OVERFLOW_UNKNOWN || db == OverflowDirection.OVERFLOW_UNKNOWN) {
+            return UNKNOWN;
+        }
+        // both known directions, or one known-overflow vs. a plain int (null direction)
+        return (da == db) ? UNKNOWN : FALSE;
     }
 
-    public Atom(int value) {
-        this.integer = true;
-        this.value = value;
-        label = "";
-        overflowing = false;
+    // Use this method to compare atoms
+    public static ThreeVal threeLessThan(Atom a, Atom b) {
+        if (a instanceof LabelAtom || b instanceof LabelAtom) {
+            throw AlloyEvaluatorImplError.comparisonError("Range-based comparison on a label");
+        }
+
+        if (a instanceof IntegerAtom ai) {
+            if (b instanceof IntegerAtom bi) {
+                return convertThree(ai.value() < bi.value());
+            }
+            // b must be OverflowAtom here, so directionOf(b) is never null
+            OverflowDirection db = directionOf(b);
+            return switch (db) {
+                case OVERFLOW_DOWN -> FALSE;
+                case OVERFLOW_UP -> TRUE;
+                case OVERFLOW_UNKNOWN -> UNKNOWN;
+                default ->
+                        throw AlloyEvaluatorImplError.comparisonError("Unexpected atom b overflow");
+            };
+        } else if (a instanceof OverflowAtom ao) {
+            OverflowDirection da = ao.direction();
+            OverflowDirection db = directionOf(b); // null if b is a plain IntegerAtom
+
+            if (da == OverflowDirection.OVERFLOW_UNKNOWN
+                    || db == OverflowDirection.OVERFLOW_UNKNOWN) {
+                return UNKNOWN;
+            }
+            if (da == db) {
+                return UNKNOWN;
+            }
+            return convertThree(da == OverflowDirection.OVERFLOW_DOWN);
+        } else {
+            throw AlloyEvaluatorImplError.comparisonError(
+                    "Unreachable: unexpected Atom a subtype " + a.getClass());
+        }
     }
 
-    public Atom(String label) {
-        this.integer = false;
-        this.label = Objects.requireNonNull(label);
-        value = 0;
-        overflowing = false;
+    public static ThreeVal threeGreaterEqual(Atom a, Atom b) {
+        return threeLessThan(a, b).not();
     }
 
-    public boolean isInteger() {
-        return integer;
+    public static ThreeVal threeLessEqual(Atom a, Atom b) {
+        return threeLessThan(a, b).or(threeEqual(a, b));
     }
 
-    public String getLabel() {
-        return label;
+    public static ThreeVal threeGreater(Atom a, Atom b) {
+        return threeLessThan(a, b).not().and(threeEqual(a, b).not());
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public boolean isOverflowing() {
-        return overflowing;
-    }
-
-    @Override
-    public String toString() {
-        return integer ? String.valueOf(value) : label;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Atom other)) return false;
-
-        if (this.overflowing || other.overflowing) return false;
-        if (integer != other.integer) return false;
-
-        return integer ? value == other.value : label.equals(other.label);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(integer, label, value, overflowing);
+    // returns the overflow direction, or null if a is a plain (non-overflowing) IntegerAtom
+    private static OverflowDirection directionOf(Atom a) {
+        return (a instanceof OverflowAtom oa) ? oa.direction() : null;
     }
 }

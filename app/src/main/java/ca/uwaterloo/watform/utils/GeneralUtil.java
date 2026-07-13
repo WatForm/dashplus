@@ -114,11 +114,6 @@ public class GeneralUtil {
         return ll.get(0);
     }
 
-    public static <T> List<T> allButFirst(List<T> ll) {
-        if (ll.isEmpty()) return ll;
-        else return ll.subList(1, ll.size());
-    }
-
     public static <T> List<T> allButLast(List<T> ll) {
         if (ll.isEmpty()) return ll;
         else return ll.subList(0, ll.size() - 1);
