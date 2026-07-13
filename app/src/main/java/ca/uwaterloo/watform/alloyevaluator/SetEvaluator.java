@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.alloyevaluator;
 
+import static ca.uwaterloo.watform.alloyevaluator.ThreeVal.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -11,9 +12,8 @@ import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
-import java.util.Set;
 
-public class SetEvaluator implements AlloyExprVis<Set<List<Atom>>> {
+public class SetEvaluator implements AlloyExprVis<TupleSet> {
     private final Instance instance;
     private final EvalLogger logger;
 
@@ -23,32 +23,32 @@ public class SetEvaluator implements AlloyExprVis<Set<List<Atom>>> {
     }
 
     // Unimplemented — error message carries all needed detail
-    public Set<List<Atom>> visit(DashRef dashRef) {
+    public TupleSet visit(DashRef dashRef) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "DashRef: " + dashRef + " " + dashRef.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyBinaryExpr binExpr) {
+    public TupleSet visit(AlloyBinaryExpr binExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyBinaryExpr: " + binExpr + " " + binExpr.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyUnaryExpr unaryExpr) {
+    public TupleSet visit(AlloyUnaryExpr unaryExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyUnaryExpr: " + unaryExpr + " " + unaryExpr.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyVarExpr varExpr) {
+    public TupleSet visit(AlloyVarExpr varExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyVarExpr: " + varExpr + " " + varExpr.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyBlock block) {
+    public TupleSet visit(AlloyBlock block) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyBlock: " + block + " " + block.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyCphExpr comprehensionExpr) {
+    public TupleSet visit(AlloyCphExpr comprehensionExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyCphExpr: "
                         + comprehensionExpr
@@ -56,17 +56,17 @@ public class SetEvaluator implements AlloyExprVis<Set<List<Atom>>> {
                         + comprehensionExpr.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyIteExpr iteExpr) {
+    public TupleSet visit(AlloyIteExpr iteExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyLetExpr letExpr) {
+    public TupleSet visit(AlloyLetExpr letExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyLetExpr: " + letExpr + " " + letExpr.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyQuantificationExpr quantificationExpr) {
+    public TupleSet visit(AlloyQuantificationExpr quantificationExpr) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyQuantificationExpr: "
                         + quantificationExpr
@@ -74,12 +74,12 @@ public class SetEvaluator implements AlloyExprVis<Set<List<Atom>>> {
                         + quantificationExpr.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyDecl decl) {
+    public TupleSet visit(AlloyDecl decl) {
         throw AlloyEvaluatorImplError.missingVisitCase(
                 "AlloyDecl: " + decl + " " + decl.getClass().getName());
     }
 
-    public Set<List<Atom>> visit(AlloyQnameExpr qName) {
+    public TupleSet visit(AlloyQnameExpr qName) {
         logger.enter("QName: " + qName);
         if (qName.vars.isEmpty())
             throw AlloyEvaluatorImplError.notSupported("A variable must exist to evaluate it");
@@ -90,196 +90,160 @@ public class SetEvaluator implements AlloyExprVis<Set<List<Atom>>> {
         return result.get();
     }
 
-    public Set<List<Atom>> visit(AlloyNoneExpr expr) {
+    public TupleSet visit(AlloyNoneExpr expr) {
         logger.enter("None");
         logger.exit("None = {}");
-        return emptySet();
+        return TupleSet.emptySet();
     }
 
-    public Set<List<Atom>> visit(AlloyIdenExpr expr) {
+    public TupleSet visit(AlloyIdenExpr expr) {
         logger.enter("Iden");
         var result = instance.getIden();
         logger.exit("Iden = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyUnivExpr expr) {
+    public TupleSet visit(AlloyUnivExpr expr) {
         logger.enter("Univ");
         var result = instance.getUniv();
         logger.exit("Univ = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyUnionExpr expr) {
+    public TupleSet visit(AlloyUnionExpr expr) {
         logger.enter("Union: " + expr);
-        var result = mergeSets(expr.left.accept(this), expr.right.accept(this));
+        var result = TupleSet.union(expr.left.accept(this), expr.right.accept(this));
         logger.exit("Union = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyIntersExpr expr) {
+    public TupleSet visit(AlloyIntersExpr expr) {
         logger.enter("Intersect: " + expr);
-        var result = intersectSets(expr.left.accept(this), expr.right.accept(this));
+        var result = TupleSet.intersect(expr.left.accept(this), expr.right.accept(this));
         logger.exit("Intersect = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyDiffExpr expr) {
+    public TupleSet visit(AlloyDiffExpr expr) {
         logger.enter("Diff: " + expr);
-        var result = diffSets(expr.left.accept(this), expr.right.accept(this));
+        var result = TupleSet.diff(expr.left.accept(this), expr.right.accept(this));
         logger.exit("Diff = " + result);
         return result;
     }
 
-    private Set<List<Atom>> product(Set<List<Atom>> left, Set<List<Atom>> right) {
-        Set<List<Atom>> result = emptySet();
-        for (var l : left) {
-            for (var r : right) {
-                result.add(concat(l, r));
-            }
-        }
-        return result;
-    }
-
-    // TODO: potentially fix this one with updated semantics
-    private Set<List<Atom>> join(Set<List<Atom>> left, Set<List<Atom>> right) {
-        Set<List<Atom>> result = emptySet();
-        for (var l : left) {
-            for (var r : right) {
-                if (lastElement(l).equals(firstElement(r))) {
-                    result.add(concat(allButLast(l), allButFirst(r)));
-                }
-            }
-        }
-        return result;
-    }
-
-    public Set<List<Atom>> visit(AlloyArrowExpr expr) {
+    public TupleSet visit(AlloyArrowExpr expr) {
         logger.enter("ArrowProduct: " + expr);
-        var result = product(expr.left.accept(this), expr.right.accept(this));
+        var result = TupleSet.crossProduct(expr.left.accept(this), expr.right.accept(this));
         logger.exit("ArrowProduct = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyDotExpr expr) {
+    public TupleSet visit(AlloyDotExpr expr) {
         logger.enter("Dot: " + expr);
-        var left = expr.left.accept(this);
-        var right = expr.right.accept(this);
-        logger.log("Dot left = " + left + ", right = " + right);
-        var result = join(left, right);
+        var result = TupleSet.join(expr.left.accept(this), expr.right.accept(this));
         logger.exit("Dot = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyBracketExpr bracketExpr) {
+    public TupleSet visit(AlloyBracketExpr bracketExpr) {
         logger.enter("BoxJoin: " + bracketExpr);
-        List<Set<List<Atom>>> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
+        List<TupleSet> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
         var result = bracketExpr.expr.accept(this);
         for (var arg : args) {
-            result = join(arg, result);
+            result = TupleSet.join(arg, result);
         }
         logger.exit("BoxJoin = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyTransExpr expr) {
+    public TupleSet visit(AlloyTransExpr expr) {
         logger.enter("Transpose: " + expr);
-        var inner = expr.sub.accept(this);
-        Set<List<Atom>> result = emptySet();
-        for (var tuple : inner) {
-            result.add(reverse(tuple));
-        }
+        var result = TupleSet.mapBy(expr.sub.accept(this), t -> AtomTuple.transpose(t));
         logger.exit("Transpose = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyDomRestrExpr expr) {
+    public TupleSet visit(AlloyDomRestrExpr expr) {
         logger.enter("DomainRestrict: " + expr);
         var domain = expr.left.accept(this);
         var relation = expr.right.accept(this);
-        Set<List<Atom>> result = emptySet();
-        for (var tuple : relation) {
-            if (domain.contains(List.of(firstElement(tuple)))) {
-                result.add(tuple);
-            }
-        }
+        TupleSet result =
+                TupleSet.filterBy(
+                        relation, t -> domain.contains(AtomTuple.tupleOfFirst(t)) == TRUE);
         logger.exit("DomainRestrict = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyRngRestrExpr expr) {
+    public TupleSet visit(AlloyRngRestrExpr expr) {
         logger.enter("RangeRestrict: " + expr);
         var relation = expr.left.accept(this);
         var range = expr.right.accept(this);
-        Set<List<Atom>> result = emptySet();
-        for (var tuple : relation) {
-            if (range.contains(List.of(lastElement(tuple)))) {
-                result.add(tuple);
-            }
-        }
+        TupleSet result =
+                TupleSet.filterBy(relation, t -> range.contains(AtomTuple.tupleOfLast(t)) == TRUE);
         logger.exit("RangeRestrict = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyRelOvrdExpr expr) {
+    public TupleSet visit(AlloyRelOvrdExpr expr) {
         logger.enter("RelOverride: " + expr);
         var left = expr.left.accept(this);
         var right = expr.right.accept(this);
 
-        var domRight = mapBy(right, e -> firstElement(e));
-        left.removeIf(val -> domRight.contains(firstElement(val)));
-
-        Set<List<Atom>> result = mergeSets(left, right);
+        var domRight = TupleSet.mapBy(right, e -> AtomTuple.tupleOfFirst(e));
+        TupleSet result =
+                TupleSet.union(
+                        TupleSet.filterBy(
+                                left, t -> domRight.contains(AtomTuple.tupleOfFirst(t)) == FALSE),
+                        right);
         logger.exit("RelOverride = " + result);
         return result;
     }
 
-    private Set<List<Atom>> evalTransClosure(Set<List<Atom>> base) {
+    private TupleSet evalTransClosure(TupleSet base) {
         var collect = base;
-        var current = join(base, base);
+        var current = TupleSet.join(base, base);
 
         while (!current.isEmpty()) {
-            collect = mergeSets(collect, current);
-            current = join(current, base);
+            collect = TupleSet.union(collect, current);
+            current = TupleSet.join(current, base);
         }
 
         return collect;
     }
 
-    public Set<List<Atom>> visit(AlloyTransClosExpr expr) {
+    public TupleSet visit(AlloyTransClosExpr expr) {
         logger.enter("TransClosure: " + expr);
-        Set<List<Atom>> result = evalTransClosure(expr.sub.accept(this));
+        TupleSet result = evalTransClosure(expr.sub.accept(this));
         logger.exit("TransClosure = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyReflTransClosExpr expr) {
+    public TupleSet visit(AlloyReflTransClosExpr expr) {
         logger.enter("TransClosure: " + expr);
-        Set<List<Atom>> result = evalTransClosure(expr.sub.accept(this));
-        result = mergeSets(result, instance.getIden());
+        TupleSet result = evalTransClosure(expr.sub.accept(this));
+        result = TupleSet.union(result, instance.getIden());
         logger.exit("TransClosure = " + result);
         return result;
     }
 
-    public Set<List<Atom>> visit(AlloyNumExpr expr) {
+    // TODO: Need to check for overflow in future
+    public TupleSet visit(AlloyNumExpr expr) {
         logger.enter("NumExpr: " + expr);
-        Set<List<Atom>> result = Set.of(List.of(Instance.convertToAtom(expr.value)));
+        TupleSet result = instance.getIntScalar(expr.value);
         logger.exit("NumExpr = " + result);
         return result;
-    } // TODO: this possibly has to change
+    }
 
-    public Set<List<Atom>> visit(AlloyCardExpr expr) {
+    public TupleSet visit(AlloyCardExpr expr) {
         logger.enter("Cardinality: " + expr);
-        Set<List<Atom>> result =
-                Set.of(List.of(Instance.convertToAtom(expr.sub.accept(this).size())));
+        TupleSet result = instance.getCardinality(expr.sub.accept(this));
         logger.exit("Cardinality = " + result);
         return result;
     }
 
-    // TODO: this most definitely has to be cleaned up
-    public Set<List<Atom>> visit(AlloySigIntExpr expr) {
+    public TupleSet visit(AlloySigIntExpr expr) {
         logger.enter("Int set: " + expr);
-        Set<List<Atom>> result = instance.get("this/Int").get();
+        var result = instance.getIntSet();
         logger.exit("Int set = " + result);
         return result;
     }
