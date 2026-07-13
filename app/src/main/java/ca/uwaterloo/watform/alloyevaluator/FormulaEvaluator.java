@@ -1,8 +1,6 @@
 package ca.uwaterloo.watform.alloyevaluator;
 
 import static ca.uwaterloo.watform.alloyevaluator.ThreeVal.*;
-import static ca.uwaterloo.watform.utils.GeneralUtil.firstElement;
-import static ca.uwaterloo.watform.utils.GeneralUtil.setToList;
 
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
@@ -13,12 +11,9 @@ import ca.uwaterloo.watform.alloyinterface.Instance;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiPredicate;
 
 public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
-    private final AlloyExprVis<Set<List<Atom>>> setEvaluator;
+    private final AlloyExprVis<TupleSet> setEvaluator;
     private final EvalLogger logger;
 
     public FormulaEvaluator(Instance instance, boolean debug) {
@@ -85,52 +80,55 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
 
     public ThreeVal visit(AlloyBlock block) {
         logger.enter("Block (" + block.exprs.size() + " exprs)");
+        var returnVal = TRUE;
         for (var expr : block.exprs) {
-            var result = expr.accept(this);
-            if (result != TRUE) {
-                logger.exit("Expr evaluated to: " + result);
-                return result;
+            returnVal = returnVal.and(expr.accept(this));
+            if (returnVal.shortCircuitsAnd()) {
+                logger.exit("Expr evaluated to: " + returnVal);
+                return returnVal;
             }
         }
-        logger.exit("Block = " + TRUE);
-        return TRUE;
+        logger.exit("Block = " + returnVal);
+        return returnVal;
     }
 
-    // TODO: subset/set semantics for three values maybe (this one is probably fine)
+    private ThreeVal isOne(TupleSet set) {
+        if (set.size() != 1) return FALSE;
+        return set.containsOverflow() ? UNKNOWN : TRUE;
+    }
+
     public ThreeVal visit(AlloyQtExpr qtExpr) {
         logger.enter("Multiplicity " + qtExpr.qt + ": " + qtExpr.sub);
         var set = qtExpr.sub.accept(setEvaluator);
         var result =
-                convertThree(
-                        switch (qtExpr.qt) {
-                            case AlloyQtEnum.NO -> set.isEmpty();
-                            case AlloyQtEnum.SOME -> !set.isEmpty();
-                            case AlloyQtEnum.ONE -> set.size() == 1;
-                            case AlloyQtEnum.LONE -> set.size() <= 1;
-                            default ->
-                                    throw AlloyEvaluatorImplError.missingVisitCase(
-                                            "AlloyQtEnum multiplicity: " + qtExpr.qt);
-                        });
+                switch (qtExpr.qt) {
+                    case AlloyQtEnum.NO -> convertThree(set.isEmpty());
+                    case AlloyQtEnum.SOME -> convertThree(!set.isEmpty());
+                    case AlloyQtEnum.ONE -> isOne(set);
+                    case AlloyQtEnum.LONE -> convertThree(set.isEmpty()).or(isOne(set));
+                    default ->
+                            throw AlloyEvaluatorImplError.missingVisitCase(
+                                    "AlloyQtEnum multiplicity: " + qtExpr.qt);
+                };
         logger.exit("Multiplicity " + qtExpr.qt + " = " + result);
         return result;
     }
 
-    // TODO: subset/set semantics for three values logic
     public ThreeVal visit(AlloyEqualsExpr expr) {
         logger.enter("EQ: " + expr);
         var result =
-                convertThree(
-                        expr.left.accept(setEvaluator).equals(expr.right.accept(setEvaluator)));
+                TupleSet.threeEquals(
+                        expr.left.accept(setEvaluator), (expr.right.accept(setEvaluator)));
         logger.exit("EQ = " + result);
         return result;
     }
 
-    // TODO: subset/set semantics for three values logic
     public ThreeVal visit(AlloyNotEqualsExpr expr) {
         logger.enter("NEQ: " + expr);
         var result =
-                convertThree(
-                        !expr.left.accept(setEvaluator).equals(expr.right.accept(setEvaluator)));
+                TupleSet.threeEquals(
+                                expr.left.accept(setEvaluator), (expr.right.accept(setEvaluator)))
+                        .not();
         logger.exit("NEQ = " + result);
         return result;
     }
@@ -189,15 +187,19 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
         logger.enter("CMP " + expr.comp + ": " + expr);
         var left = expr.left.accept(setEvaluator);
         var right = expr.right.accept(setEvaluator);
-        ThreeVal result = switch (expr.comp) { // TODO: subset/set semantics for three values logic
-                    case AlloyCmpExpr.Comp.IN -> convertThree(right.containsAll(left));
-                    case AlloyCmpExpr.Comp.LESS_THAN -> compareInts(left, right, (l, r) -> l < r);
+        var result =
+                switch (expr.comp) {
+                    case AlloyCmpExpr.Comp.IN -> TupleSet.threeSubset(left, right);
+                    case AlloyCmpExpr.Comp.LESS_THAN ->
+                            Atom.threeLessThan(left.getScalar(), right.getScalar());
                     case AlloyCmpExpr.Comp.GREATER_THAN ->
-                            compareInts(left, right, (l, r) -> l > r);
-                    case AlloyCmpExpr.Comp.LESS_EQUAL -> compareInts(left, right, (l, r) -> l <= r);
-                    case AlloyCmpExpr.Comp.EQUAL_LESS -> compareInts(left, right, (l, r) -> l <= r);
+                            Atom.threeGreater(left.getScalar(), right.getScalar());
+                    case AlloyCmpExpr.Comp.LESS_EQUAL ->
+                            Atom.threeLessEqual(left.getScalar(), right.getScalar());
+                    case AlloyCmpExpr.Comp.EQUAL_LESS ->
+                            Atom.threeLessEqual(left.getScalar(), right.getScalar());
                     case AlloyCmpExpr.Comp.GREATER_EQUAL ->
-                            compareInts(left, right, (l, r) -> l >= r);
+                            Atom.threeGreaterEqual(left.getScalar(), right.getScalar());
                     default ->
                             throw AlloyEvaluatorImplError.missingVisitCase(
                                     "AlloyCmp comp: " + expr.comp);
@@ -206,41 +208,4 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
         logger.exit("CMP " + expr.comp + " = " + result);
         return result;
     }
-
-    private ThreeVal compareInts(
-            Set<List<Atom>> scalar1, Set<List<Atom>> scalar2, BiPredicate<Integer, Integer> cmp) {
-        var left = getIntScalar(scalar1);
-        var right = getIntScalar(scalar2);
-
-        if (left.isOverflowing() || right.isOverflowing()) return UNKNOWN;
-        return convertThree(cmp.test(left.getValue(), right.getValue()));
-    }
-
-    private Atom getIntScalar(Set<List<Atom>> val) {
-        var list = setToList(val);
-        if (list.size() != 1) {
-            throw AlloyEvaluatorImplError.cardinalityError("The cardinality of a scalar must be 1");
-        } else if (firstElement(list).size() != 1) {
-            throw AlloyEvaluatorImplError.arityError("The arity of a scalar must be 1");
-        }
-        var result = firstElement(firstElement(list));
-        if (!result.isInteger()) {
-            throw AlloyEvaluatorImplError.arityError("Scale comparison must be done on an integer");
-        }
-        return result;
-    }
-
-    /* TODO: subset/set semantics for three values logic
-    private ThreeVal subsThreeVal(Set<List<Atom>> left, Set<List<Atom>> right) {
-        if (left.size() > right.size()) return FALSE;
-
-        return TRUE;
-    }
-
-    private boolean containsOverflow(Set<List<Atom>> val) {
-        for (var tuple : val) {
-            if (tuple.)
-        }
-    }
-            */
 }
