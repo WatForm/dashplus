@@ -3,7 +3,11 @@ package ca.uwaterloo.watform.alloyinterface;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
-import ca.uwaterloo.watform.alloyevaluator.Atom;
+import ca.uwaterloo.watform.alloyevaluator.AtomFactory;
+import ca.uwaterloo.watform.alloyevaluator.AtomTuple;
+import ca.uwaterloo.watform.alloyevaluator.OverflowAtom.OverflowDirection;
+import ca.uwaterloo.watform.alloyevaluator.TupleSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,47 +17,51 @@ import java.util.Set;
 
 /** Domain wrapper around the relation-to-tuples data that represents an Alloy instance. */
 public final class Instance {
-    private final Map<String, Set<List<Atom>>> relations;
+    private final Map<String, TupleSet> relations;
     private static final String PREFIX = AlloyStrings.THIS + AlloyStrings.SLASH;
-    private final Set<List<Atom>> univ;
-    private final Set<List<Atom>> iden;
+    private final TupleSet univ;
+    private final TupleSet iden;
+    private final TupleSet intSet;
+    private final AtomFactory factory;
 
     public Instance(Map<String, Set<List<String>>> relations) {
         this.relations = new HashMap<>();
-        this.univ = new HashSet<>();
-        this.iden = new HashSet<>();
-
         int min, max;
         try {
             min = Integer.parseInt(setToList(relations.get("Int/min")).get(0).get(0));
             max = Integer.parseInt(setToList(relations.get("Int/max")).get(0).get(0));
         } catch (Exception e) {
-            throw AlloyInterfaceImplError.failedCast("Cant eval to int or sumn");
+            throw AlloyInterfaceImplError.failedCast("Failed to extract int min and max");
         }
+        factory = new AtomFactory(min, max);
 
-        Set<List<Atom>> ints = new HashSet<>();
-        for (int i = min; i <= max; i++) {
-            ints.add(List.of(new Atom(i)));
-        }
-        this.relations.put(
-                "this/Int", ints); // TODO: full revamp, this is not a proper way to do it
+        List<AtomTuple> univList = new ArrayList<>();
+        List<AtomTuple> intList =
+                mapBy(
+                        range(min, max + 1),
+                        i -> new AtomTuple(List.of(factory.createAtom(i.intValue()))));
+        univList.addAll(intList);
+        intSet = new TupleSet(intList);
 
         for (var entry : relations.entrySet()) {
             var newKey = removeParentSigInfo(entry.getKey());
-            this.relations.put(newKey, convertToAtoms(entry.getValue()));
-
-            if (entry.getKey().startsWith(PREFIX) && newKey.equals(entry.getKey())) {
-                // top-level sig: no dot was found, key was unchanged
-                for (var tuple : entry.getValue()) {
-                    univ.add(convertTupleToAtoms(tuple)); // e.g. [A$1]
-
-                    iden.add(
-                            List.of(
-                                    convertToAtom(tuple.get(0)),
-                                    convertToAtom(tuple.get(0)))); // e.g. [A$1, A$1]
-                }
+            this.relations.put(
+                    newKey,
+                    new TupleSet(
+                            mapBy(
+                                    setToList(entry.getValue()),
+                                    t -> new AtomTuple(mapBy(t, a -> factory.createAtom(a))))));
+            var it = entry.getValue().iterator();
+            if (it.hasNext() && it.next().size() == 1) {
+                univList.addAll(
+                        mapBy(
+                                setToList(entry.getValue()),
+                                t -> new AtomTuple(mapBy(t, a -> factory.createAtom(a)))));
             }
         }
+
+        univ = new TupleSet(univList);
+        iden = new TupleSet(mapBy(univList, t -> AtomTuple.concat(t, t)));
     }
 
     private static String removeParentSigInfo(String key) {
@@ -69,11 +77,11 @@ public final class Instance {
                 || relations.containsKey(relationName);
     }
 
-    public Optional<Set<List<Atom>>> getRelation(String relationName) {
+    public Optional<TupleSet> getRelation(String relationName) {
         return Optional.ofNullable(relations.get(normalize(relationName)));
     }
 
-    public Optional<Set<List<Atom>>> get(String key) {
+    public Optional<TupleSet> get(String key) {
         return Optional.ofNullable(relations.get(key));
     }
 
@@ -82,12 +90,16 @@ public final class Instance {
         return keys;
     }
 
-    public Set<List<Atom>> getUniv() {
+    public TupleSet getUniv() {
         return univ;
     }
 
-    public Set<List<Atom>> getIden() {
+    public TupleSet getIden() {
         return iden;
+    }
+
+    public TupleSet getIntSet() {
+        return intSet;
     }
 
     // will have to be edited, does not support imports
@@ -98,24 +110,19 @@ public final class Instance {
         return PREFIX + relationName;
     }
 
-    public static Atom convertToAtom(String value) {
-        try {
-            int intVal = Integer.parseInt(value);
-            return new Atom(intVal);
-        } catch (NumberFormatException e) {
-            return new Atom(value);
+    public TupleSet getIntScalar(int val) {
+        return new TupleSet(List.of(new AtomTuple(List.of(factory.createAtom(val)))));
+    }
+
+    private TupleSet getOverflowScalar(OverflowDirection direction) {
+        return new TupleSet(List.of(new AtomTuple(List.of(factory.createAtom(direction)))));
+    }
+
+    public TupleSet getCardinality(TupleSet set) {
+        if (set.containsOverflow()) {
+            return getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN);
+        } else {
+            return getIntScalar(set.size());
         }
-    }
-
-    public static Atom convertToAtom(int value) {
-        return new Atom(value);
-    }
-
-    private static List<Atom> convertTupleToAtoms(List<String> values) {
-        return mapBy(values, Instance::convertToAtom);
-    }
-
-    private static Set<List<Atom>> convertToAtoms(Set<List<String>> values) {
-        return mapBy(values, Instance::convertTupleToAtoms);
     }
 }
