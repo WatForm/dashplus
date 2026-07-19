@@ -7,6 +7,7 @@ import ca.uwaterloo.watform.alloyevaluator.AtomFactory;
 import ca.uwaterloo.watform.alloyevaluator.AtomTuple;
 import ca.uwaterloo.watform.alloyevaluator.OverflowAtom.OverflowDirection;
 import ca.uwaterloo.watform.alloyevaluator.TupleSet;
+import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,19 +111,23 @@ public final class Instance {
         return PREFIX + relationName;
     }
 
-    public TupleSet getIntScalar(int val) {
-        return new TupleSet(List.of(new AtomTuple(List.of(factory.createAtom(val)))));
+    public TupleSet getIntScalar(int val, Pos pos) {
+        return new TupleSet(List.of(new AtomTuple(List.of(factory.createAtom(val, pos)))));
     }
 
-    private TupleSet getOverflowScalar(OverflowDirection direction) {
-        return new TupleSet(List.of(new AtomTuple(List.of(factory.createAtom(direction)))));
+    public TupleSet getOverflowScalar(OverflowDirection direction, Pos pos) {
+        return new TupleSet(List.of(new AtomTuple(List.of(factory.createAtom(direction, pos)))));
     }
 
-    public TupleSet getCardinality(TupleSet set) {
+    public TupleSet getCardinality(TupleSet set, Pos pos) {
         if (set.containsOverflow()) {
-            return getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN);
+            return getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
         } else {
-            return getIntScalar(set.size());
+            return getIntScalar(set.size(), pos);
         }
+    }
+
+    public int minInt() {
+        return factory.minInt();
     }
 }
