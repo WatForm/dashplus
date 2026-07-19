@@ -70,6 +70,20 @@ public sealed interface Atom permits LabelAtom, IntegerAtom, OverflowAtom {
         }
     }
 
+    // This method checks that the atoms have the same structure. It does not mean they are
+    // semantically equal
+    public static boolean structurallyIdentical(Atom a, Atom b) {
+        if (a instanceof LabelAtom la && b instanceof LabelAtom lb) {
+            return la.label().equals(lb.label());
+        } else if (a instanceof IntegerAtom ia && b instanceof IntegerAtom ib) {
+            return ia.value() == ib.value();
+        } else if (a instanceof OverflowAtom oa && b instanceof OverflowAtom ob) {
+            return oa.direction() == ob.direction();
+        } else {
+            return false;
+        }
+    }
+
     public static ThreeVal threeGreaterEqual(Atom a, Atom b) {
         return threeLessThan(a, b).not();
     }
@@ -82,8 +96,8 @@ public sealed interface Atom permits LabelAtom, IntegerAtom, OverflowAtom {
         return threeLessThan(a, b).not().and(threeEqual(a, b).not());
     }
 
-    // returns the overflow direction, or null if a is a plain (non-overflowing) IntegerAtom
-    private static OverflowDirection directionOf(Atom a) {
+    // returns the overflow direction, or null if a is a non-overflowing atom
+    public static OverflowDirection directionOf(Atom a) {
         return (a instanceof OverflowAtom oa) ? oa.direction() : null;
     }
 }
