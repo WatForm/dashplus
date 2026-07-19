@@ -12,8 +12,6 @@ public class AtomTuple {
 
     public AtomTuple(List<Atom> atoms) {
         Objects.requireNonNull(atoms);
-        if (atoms.size() == 0)
-            throw AlloyEvaluatorImplError.arityError("Tuple with arity 0 is constructed");
         this.atoms = new ArrayList<>(atoms);
         this.overflows = containsMatch(this.atoms, a -> a instanceof OverflowAtom);
     }
@@ -24,14 +22,26 @@ public class AtomTuple {
     }
 
     public static ThreeVal threeEqual(AtomTuple a, AtomTuple b) {
-        if (a.atoms.size() != b.atoms.size()) return FALSE;
+        if (a.arity() != b.arity()) return FALSE;
 
         ThreeVal returnVal = TRUE;
-        for (int i = 0; i < a.atoms.size(); i++) {
+        for (int i = 0; i < a.arity(); i++) {
             returnVal = returnVal.and(Atom.threeEqual(a.atoms.get(i), b.atoms.get(i)));
             if (returnVal.shortCircuitsAnd()) return returnVal;
         }
         return returnVal;
+    }
+
+    // This method checks that the tuples have the same structure (will behave identically in every
+    // evaluation scenario).
+    // Does not necessarily mean they are semantically equal
+    public static boolean structurallyIdentical(AtomTuple a, AtomTuple b) {
+        if (a.arity() != b.arity()) return false;
+
+        for (int i = 0; i < a.arity(); i++) {
+            if (!Atom.structurallyIdentical(a.get(i), b.get(i))) return false;
+        }
+        return true;
     }
 
     public Atom first() {
@@ -40,6 +50,13 @@ public class AtomTuple {
 
     public Atom last() {
         return lastElement(atoms);
+    }
+
+    public Atom get(int idx) {
+        if (idx < 0 || idx >= arity())
+            throw AlloyEvaluatorImplError.arityError(
+                    "Accessing non-existing atom at index: " + idx);
+        return atoms.get(idx);
     }
 
     public boolean containsOverflow() {
@@ -72,5 +89,13 @@ public class AtomTuple {
 
     public static AtomTuple tupleOfLast(AtomTuple a) {
         return new AtomTuple(a.atoms.subList(a.arity() - 1, a.arity()));
+    }
+
+    public static AtomTuple join(AtomTuple a, AtomTuple b) {
+        if (Atom.threeEqual(a.last(), b.first()) != TRUE)
+            throw AlloyEvaluatorImplError.comparisonError("Join occurs on invalid tuples");
+        List<Atom> left = GeneralUtil.allButLast(a.atoms);
+        List<Atom> right = GeneralUtil.tail(b.atoms);
+        return new AtomTuple(GeneralUtil.concat(left, right));
     }
 }
