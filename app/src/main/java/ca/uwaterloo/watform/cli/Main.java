@@ -408,7 +408,6 @@ public class Main implements Callable<Integer> {
     private static void runEvalFacts(AlloyModel am, String instanceFilename, boolean debug) {
         dashOutput("Checking instance for " + instanceFilename);
 
-        boolean satisfied = true;
         Instance instance;
         try {
             instance = XmlReader.readInstance(instanceFilename);
@@ -419,18 +418,13 @@ public class Main implements Callable<Integer> {
         }
 
         var evaluator = new FormulaEvaluator(instance, debug);
+        var result = ThreeVal.TRUE;
         for (var para : am.allFactParas()) {
-            if (para.block.accept(evaluator) != ThreeVal.TRUE) {
-                satisfied = false;
-                break;
-            }
+            result = result.and(para.block.accept(evaluator));
+            if (result.shortCircuitsAnd()) break;
         }
 
-        if (satisfied) {
-            dashOutput("The facts are satisfied");
-        } else {
-            dashOutput("The facts are not satisfied");
-        }
+        dashOutput("Satisfied: " + result);
     }
 
     // Dumps the alloy model and a satisfiable instance for every satisfiable command to
