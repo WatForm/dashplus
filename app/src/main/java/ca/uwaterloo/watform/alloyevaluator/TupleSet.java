@@ -24,14 +24,14 @@ public class TupleSet {
         for (int i = 0; i < tuples.size(); i++) {
             AtomTuple ti = tuples.get(i);
             for (int j = tuples.size() - 1; j > i; j--) {
-                if (AtomTuple.threeEqual(ti, tuples.get(j)) == TRUE) {
+                if (AtomTuple.structurallyIdentical(ti, tuples.get(j))) {
                     tuples.remove(j);
                 }
             }
         }
     }
 
-    // Note: can give false positives if overflows are present
+    // Note: can be incaccurate if overflows are present
     private boolean isScalar() {
         return tuples.size() == 1 && firstElement(tuples).arity() == 1;
     }
@@ -110,7 +110,7 @@ public class TupleSet {
         for (var at : a.tuples) {
             for (var bt : b.tuples) {
                 if (Atom.threeEqual(at.last(), bt.first()) == TRUE) {
-                    tuples.add(AtomTuple.concat(AtomTuple.allButLast(at), AtomTuple.tail(bt)));
+                    tuples.add(AtomTuple.join(at, bt));
                 }
             }
         }
