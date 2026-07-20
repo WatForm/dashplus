@@ -883,3 +883,16 @@ for every sig s in S:
 
 further experimentation required
 
+
+## Integers
+
+
+- chosen scheme: 2's complement
+- range: -2^(n-1) to 2^(n-1)-1
+- overflow(t) == t < -2^(n-1) or t > 2^(n-1)-1
+- int(t) == Int$0 -> -2^(n-1), Int$1 -> -2^(n-1) - 1, Int$2 -> -2^(n-1) -2...
+- intAtom(t) == inverse of int(t)
+- normalize(t) == (t + 2^(n-1)) % 2^n - 2^(n-1)
+- add(a,b) == intAtom(normalize(int(a)+int(b)))
+
+

@@ -14,8 +14,8 @@ import java.util.List;
 
 public class CommandA2T extends BoilerplateA2T {
 
-    public CommandA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-        super(alloyModel, verbose, debug);
+    public CommandA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+        super(alloyModel, verbose, debug, optimization);
     }
 
     protected TlaExp cmdBody(AlloyCmdPara.CommandDecl cmdDecl) {

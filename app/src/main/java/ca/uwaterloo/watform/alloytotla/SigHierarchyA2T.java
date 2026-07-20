@@ -20,8 +20,8 @@ public class SigHierarchyA2T extends SigConstraintsA2T {
     to do this, the set of all sigs needs to be topologically sorted
     */
 
-    public SigHierarchyA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-        super(alloyModel, verbose, debug);
+    public SigHierarchyA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+        super(alloyModel, verbose, debug, optimization);
     }
 
     protected void addSigHierarchy(TlaModel tlaModel) {

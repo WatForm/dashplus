@@ -13,8 +13,8 @@ import java.util.List;
 
 public class FactsA2T extends CommandA2T {
 
-    public FactsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-        super(alloyModel, verbose, debug);
+    public FactsA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+        super(alloyModel, verbose, debug, optimization);
     }
 
     private int count = 0; // used to number un-named facts

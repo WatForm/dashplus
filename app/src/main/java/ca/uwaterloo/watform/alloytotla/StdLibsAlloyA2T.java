@@ -14,8 +14,8 @@ import java.util.List;
 
 public class StdLibsAlloyA2T extends SigVarsA2T {
 
-    public StdLibsAlloyA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-        super(alloyModel, verbose, debug);
+    public StdLibsAlloyA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+        super(alloyModel, verbose, debug, optimization);
     }
 
     public void addStdLibsAlloy(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
@@ -27,6 +27,16 @@ public class StdLibsAlloyA2T extends SigVarsA2T {
         log("completed all special alloy library translations");
 
         l.info(dump());
+    }
+
+    protected void integerModule(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
+        var scopeLimits = alloyModel.getScopeLimits(cmdDecl);
+        int n = 4;
+
+        var _intDefn = TlaDefn(TlaDecl("_int", Arrays.asList(X())), _int(n));
+        tlaModel.addDefn(_intDefn);
+        var _intAtomDefn = TlaDefn(TlaDecl("_int", Arrays.asList(X())), _int(n));
+        tlaModel.addDefn(_intAtomDefn);
     }
 
     protected void orderingModule(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
@@ -154,4 +164,84 @@ public class StdLibsAlloyA2T extends SigVarsA2T {
                 elements.add(TlaTuple(Arrays.asList(sigAtomString(sig, i), sigAtomString(sig, j))));
         return TlaSet(elements);
     }
+
+    private TlaExp _int(int n)
+    {
+        // n is the bitwidth
+        int low = -Math.powExact(2, n-1);
+        int high = -low - 1;
+        TlaExp answer = TlaIntLiteral(high+1);
+        for(int i = low, p=0; i<=high;i++,p++)
+        {
+                var el = TlaSet(Arrays.asList(TlaTuple(Arrays.asList(TlaStringLiteral("Int$"+p)))));
+                answer = TlaIfThenElse(X().EQUALS(el), TlaIntLiteral(i), answer);
+        }
+        return answer;      
+    }
+
+    private TlaExp _intAtom(int n)
+    {
+        // n is the bitwidth
+        int low = -Math.powExact(2, n-1);
+        int high = -low - 1;
+        TlaExp answer =  TlaSet(Arrays.asList(TlaTuple(Arrays.asList(TlaStringLiteral("Int$Overflow")))));
+        for(int i = low, p=0; i<= high; i++,p++)
+        {
+                var el = TlaSet(Arrays.asList(TlaTuple(Arrays.asList(TlaStringLiteral("Int$"+p)))));
+                answer = TlaIfThenElse(X().EQUALS(TlaIntLiteral(i)), el, answer);
+        }
+        return answer;
+    }
+
+    /*
+    \* macros for integers : n=3
+_int(x) == 
+    IF x = {<<"Int$0">>} THEN -4 ELSE
+    IF x = {<<"Int$1">>} THEN -3 ELSE
+    IF x = {<<"Int$2">>} THEN -2 ELSE
+    IF x = {<<"Int$3">>} THEN -1 ELSE
+    IF x = {<<"Int$4">>} THEN 0 ELSE
+    IF x = {<<"Int$5">>} THEN 1 ELSE
+    IF x = {<<"Int$6">>} THEN 2 ELSE
+    IF x = {<<"Int$7">>} THEN 3 ELSE 4
+
+_intAtom(x) == 
+    IF x = -4 THEN {<<"Int$0">>}  ELSE
+    IF x = -3 THEN {<<"Int$1">>}  ELSE
+    IF x = -2 THEN {<<"Int$2">>}  ELSE
+    IF x = -1 THEN {<<"Int$3">>}  ELSE
+    IF x = 0 THEN {<<"Int$4">>}  ELSE
+    IF x = 1 THEN {<<"Int$5">>}  ELSE
+    IF x = 2 THEN {<<"Int$6">>}  ELSE
+    IF x = 3 THEN {<<"Int$7">>}  ELSE  {<<"Int$Overflow">>}
+
+_INT_MAX == 3
+_INT_MIN == -4
+_overflow(x) == x < _INT_MIN || x > _INT_MAX
+
+_normalize(x) == (x + 4) % 8 - 4
+
+_plus(a,b) == _intAtom(_normalize(_int(a)+_int(b)))
+_add(a,b) == _plus(a,b)
+_minus(a,b) == _intAtom(_normalize(_int(a)-_int(b)))
+_sub(a,b) == _minus(a,b)
+_mul(a,b) == _intAtom(_normalize(_int(a) * _int(b)))
+_div(a,b) == _intAtom(_normalize(_int(a) \div _int(b)))
+_rem(a,b) == _intAtom(_normalize(_int(a) % _int(b)))
+
+Int_min(_S) == {_x \in _Int : \A _y \in _S : x <= y}
+Int_max(_S) == {_x \in _Int : \A _y \in _S : x >= y}
+Int_next(x) == IF _int(x) != _INT_MAX THEN _intAtom(_int(x)+1) ELSE {}
+Int_prev(x) == IF _int(x) != _INT_MIN THEN _intAtom(_int(x)-1) ELSE {}
+
+\* what if equal?
+Int_larger(a,b) == IF _int(a) > _int(b) THEN a ELSE b
+Int_smaller(a,b) == IF _int(a) > _int(b) THEN b ELSE a
+
+
+int2elem(s,next,i): {}
+elem2int(s,next,e): 
+    */
+
+
 }

@@ -25,6 +25,10 @@ public class BaseA2T {
     public final Logger l;
     public final AlloyToTlaExprVis translator;
 
+    public record Optimization(boolean exactScope, boolean customOrdering, boolean oneField, boolean oneSig) {};
+
+    public final Optimization optimization;
+
     public final StringBuilder transcript;
 
     public TlaExp translateSnippet(AlloyExpr e) {
@@ -41,13 +45,14 @@ public class BaseA2T {
         transcript.append("\n" + s);
     }
 
-    public BaseA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    public BaseA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         this.alloyModel = alloyModel;
         this.verbose = verbose;
         this.debug = debug;
         this.l = CustomLoggerFactory.make("AlloyToTla", debug);
         this.translator = new AlloyToTlaExprVis(alloyModel, l);
         this.transcript = new StringBuilder("");
+        this.optimization = optimization;
     }
 
     /*
