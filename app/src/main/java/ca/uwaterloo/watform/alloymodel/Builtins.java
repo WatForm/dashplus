@@ -11,6 +11,14 @@ public class Builtins {
     // private static final Optional<Integer> BOOLEAN_ARITY = Optional.of(1);
     protected static final Optional<Integer> ONE_ARITY = Optional.of(1);
     protected static final Optional<Integer> TWO_ARITY = Optional.of(2);
+    public static final String BOOLEAN_TYPE_STR = "[Bool]";
+    public static final String NONE_TYPE_STR = "[None]";
+    public static final String INTEGER_TYPE_STR = "[String]";
+    public static final String UNIVERSE_TYPE_STR = "[Univ]";
+    public static final AlloyUnionType BOOLEAN_TYPE = new AlloyUnionType(BOOLEAN_TYPE_STR);
+    public static final AlloyUnionType NONE_TYPE = new AlloyUnionType(NONE_TYPE_STR);
+    public static final AlloyUnionType INTEGER_TYPE = new AlloyUnionType(INTEGER_TYPE_STR);
+    public static final AlloyUnionType UNIVERSE_TYPE = new AlloyUnionType(UNIVERSE_TYPE_STR);
 
     private static final Map<String, Integer> builtinsArity =
             Map.ofEntries(
