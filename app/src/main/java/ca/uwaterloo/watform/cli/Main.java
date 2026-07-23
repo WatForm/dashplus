@@ -8,12 +8,11 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloytotla.AlloyToTla;
+// MKJ RE-ADD import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
-import ca.uwaterloo.watform.dashtotla.*;
-import ca.uwaterloo.watform.predabstraction.PAMain;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
+// NAD RE-ADD import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
+// NAD RE-ADD import ca.uwaterloo.watform.dashtotla.*;
+// ASN RE-ADD import ca.uwaterloo.watform.predabstraction.PAMain;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.visualization.ControlStateHierarchyVisualizer;
 import edu.mit.csail.sdg.alloy4.Err;
@@ -141,10 +140,12 @@ public class Main implements Callable<Integer> {
                 !(tla || xml || predAbs || vis || alsInputFile); // might also have a -alloy=
 
         // set the default options to be traces for anything that translates to alloy
+        /* NAD RE-ADD
         DashToAlloy.Options d2aOptions =
                 (translateToAlloy && !alloyPresent)
                         ? DashToAlloy.Options.traces
                         : cliConf.d2aOptions;
+        */
 
         // set a default value for cmd in case this arg is not given
         // cmdIdx = Constants.noCmdValue means no cmd value given so run all commands
@@ -219,7 +220,13 @@ public class Main implements Callable<Integer> {
                     AlloyModel am = parseToModel(fullFileName);
                     // alloy model is complete
                     try {
+                        System.out.println("---");
+                        System.out.println("Before resolve");
+                        am.debug();
                         am.resolve();
+                        System.out.println("---");
+                        System.out.println("After resolve");
+                        am.debug();
                     } catch (UserOrImplError err) {
                         Reporter.INSTANCE.addError(err);
                         Reporter.INSTANCE.exitIfHasErrors();
@@ -268,8 +275,9 @@ public class Main implements Callable<Integer> {
                         } else if (predAbs) {
                             runPredAbs(fullFileName, dm, cmdIdx, write);
                         } else {
-
+                            /* NAD RE-ADD
                             runDashToAlloy(dm, d2aOptions, outputFileNamePrefix, write, cmdIdx);
+                            */
                         }
                     }
                 }
@@ -327,6 +335,7 @@ public class Main implements Callable<Integer> {
         // TODO MKJ - this should take the cmd
         // Is this necessary?
 
+        /* MKJ
         AlloyToTla alloyTranslator = new AlloyToTla(alloyModel, verbose, debug);
         List<TlaModel> tlaModels = alloyTranslator.translate(moduleName);
         for (var tlaModel : tlaModels) {
@@ -337,6 +346,7 @@ public class Main implements Callable<Integer> {
             Files.writeString(cfgPath, tlaModel.configCode());
             dashOutput("Output:\n" + tlaPath.toString() + "\n" + cfgPath.toString());
         }
+        */
     }
 
     private static void runCheckAlloyInstanceTla(AlloyModel am, String xmlFileName) {
@@ -393,6 +403,7 @@ public class Main implements Callable<Integer> {
 
         // outputFileNamePrefix is the module name
         // TODO MKJ add cmd as argument here
+        /* MKJ
         TlaModel tlaModel = DashToTla.translate(dm, moduleName, true, verbose, debug);
         String tlaFileName = outputFileNamePrefix + ".tla";
         String cfgFileName = outputFileNamePrefix + ".cfg";
@@ -400,10 +411,12 @@ public class Main implements Callable<Integer> {
         Files.writeString(fileFromString(cfgFileName), tlaModel.configCode());
 
         dashOutput("Output:\n" + tlaFileName + "\n" + cfgFileName);
+        */
     }
 
     private static void runPredAbs(String fullFileName, DashModel dm, Integer cmdIdx, Boolean write)
             throws IOException {
+        /* ASN
         PAMain pa;
         if (cmdIdx == Constants.noCmdValue) {
             pa = new PAMain(dm);
@@ -415,17 +428,19 @@ public class Main implements Callable<Integer> {
         if (write) {
             pa.writeAllModels(fullFileName);
         }
+        */
     }
 
     private static void runDashToAlloy(
             DashModel dm,
-            DashToAlloy.Options opt,
+            // NAD DashToAlloy.Options opt,
             String outputFileNamePrefix,
             Boolean writeOnly,
             Integer cmdIdx)
             throws IOException {
 
         AlloyModel am;
+        /* NAD RE-ADD
         try {
 
             am = new DashToAlloy(dm, opt).translate();
@@ -446,6 +461,7 @@ public class Main implements Callable<Integer> {
             // we don't need to write the file
             runAlloy(am, cmdIdx);
         }
+        */
     }
 
     private static Path fileFromString(String fname) {

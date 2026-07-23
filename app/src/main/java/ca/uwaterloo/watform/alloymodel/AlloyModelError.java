@@ -39,7 +39,7 @@ public final class AlloyModelError extends UserOrImplError {
         return new AlloyModelError(pos1, "Duplicate name: " + name);
     }
 
-    public static AlloyModelError duplicateFieldName(Pos pos1, String name) {
+    public static AlloyModelError duplicateFieldNameInSig(Pos pos1, String name) {
         return new AlloyModelError(pos1, "Duplicate field name: " + name);
     }
 
@@ -53,6 +53,17 @@ public final class AlloyModelError extends UserOrImplError {
 
     public static AlloyModelError sigNameIsFieldName(Pos pos1, String name) {
         return new AlloyModelError(pos1, "Field name the same as sig name: " + name);
+    }
+
+    public static AlloyModelError fieldBoundingExprCanContainOnlySigsAndCurrentFieldNames(
+            Pos pos, String expr) {
+        return new AlloyModelError(
+                pos,
+                "Field bounding expression can contain only sigs and fields of this sig: " + expr);
+    }
+
+    public static AlloyModelError recursiveBoundingExpr(Pos pos, String expr) {
+        return new AlloyModelError(pos, "Recursive bounding expr: " + expr);
     }
 
     public static AlloyModelError paraDNE(String name) {
@@ -81,6 +92,17 @@ public final class AlloyModelError extends UserOrImplError {
                         + expr
                         + " (has arity: "
                         + Integer.toString(arity)
+                        + ")");
+    }
+
+    public static AlloyModelError arityMismatchReturnType(
+            Pos pos, Integer returnTypeArity, Integer bodyArity) {
+        return new AlloyModelError(
+                pos,
+                "Arity of return type ("
+                        + Integer.toString(returnTypeArity)
+                        + ") does not match arity of body ("
+                        + Integer.toString(bodyArity)
                         + ")");
     }
 
@@ -159,6 +181,58 @@ public final class AlloyModelError extends UserOrImplError {
 
     public static AlloyModelError orderedOnlyOnTopLevelSigs(String sigName) {
         return new AlloyModelError(
-                "Ording module can only be applied to top-level sigs: " + sigName);
+                "Ordering module can only be applied to top-level sigs: " + sigName);
+    }
+
+    public static AlloyModelError cantAtNonFieldOfThisSig(String fieldName) {
+        return new AlloyModelError("Can't @ non-field of this sig: " + fieldName);
+    }
+
+    public static AlloyModelError assertNameMustBeUnique(Pos pos, String name) {
+        return new AlloyModelError(pos, "Assert name must be unique in namespace: " + name);
+    }
+
+    public static AlloyModelError expectValueZeroOrOne(Pos pos) {
+        return new AlloyModelError(pos, "Command expect value must be 0 or 1");
+    }
+
+    public static AlloyModelError argToImportMustBeSigs(Pos pos, String s) {
+        return new AlloyModelError(pos, "arg to open must be a sig: " + s);
+    }
+
+    public static AlloyModelError argToImportMustBeUnique(Pos pos, String s) {
+        return new AlloyModelError(pos, "arg to open must be a unique sig: " + s);
+    }
+
+    public static AlloyModelError multipleScopeValuesForSameSig(Pos pos, String s) {
+        return new AlloyModelError(pos, "duplicated sig in command: " + s);
+    }
+
+    public static AlloyModelError nameCouldBeMultipleSigs(Pos pos, String s) {
+        return new AlloyModelError(pos, "name could be muliple sigs: " + s);
+    }
+
+    public static AlloyModelError unknownName(Pos pos, String s) {
+        return new AlloyModelError(pos, "unknown name: " + s);
+    }
+
+    public static AlloyModelError cannotResolveAssertName(Pos pos, String s) {
+        return new AlloyModelError(pos, "cannot resolve assert name: " + s);
+    }
+
+    public static AlloyModelError cannotResolvePredFunName(Pos pos, String s) {
+        return new AlloyModelError(pos, "cannot resolve pred/fun name: " + s);
+    }
+
+    public static AlloyModelError assertCanOnlyBeUsedWithCheck(Pos pos) {
+        return new AlloyModelError(pos, "assert can only be used with check command");
+    }
+
+    public static AlloyModelError overloadingPredFunNotSupported(Pos pos) {
+        return new AlloyModelError(pos, "overloaded pred/fun name in same namespace");
+    }
+
+    public static AlloyModelError recursivePredFunDependency(String name) {
+        return new AlloyModelError("recursive pred/fun defn: " + name);
     }
 }

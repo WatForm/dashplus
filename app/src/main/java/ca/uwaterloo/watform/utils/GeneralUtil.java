@@ -241,6 +241,13 @@ public class GeneralUtil {
         return result;
     }
 
+    public static <T> Set<T> mergeSets(Set<T> a, Set<T> b, Set<T> c) {
+        Set<T> result = new HashSet<>(a);
+        result.addAll(b);
+        result.addAll(c);
+        return result;
+    }
+
     public static <T> Set<T> diffSets(Set<T> set1, Set<T> set2) {
         return set1.stream().filter(element -> !set2.contains(element)).collect(Collectors.toSet());
     }

@@ -1,3 +1,7 @@
+/*
+    All places where we don't support something that might be supported in AA
+*/
+
 package ca.uwaterloo.watform.alloyast;
 
 import ca.uwaterloo.watform.utils.*;
@@ -23,5 +27,25 @@ public class AssumptionError extends UserOrImplError {
 
     public static AssumptionError cantHaveScopeRange(Pos p, String s) {
         return new AssumptionError(p, "Can't have scope range in command: " + s);
+    }
+
+    public static AssumptionError macrosNotSupported(Pos p) {
+        return new AssumptionError(p, "Macros are not supported");
+    }
+
+    public static AssumptionError missingAssertName(Pos p) {
+        return new AssumptionError(p, "Assertion names must be unqualified strings");
+    }
+
+    public static AssumptionError atNotAllowed(Pos p, String s) {
+        return new AssumptionError(p, "@ not allowed here: " + s);
+    }
+
+    public static AssumptionError thisNotAllowed(Pos p, String s) {
+        return new AssumptionError(p, "'this' not allowed here: " + s);
+    }
+
+    public static AssumptionError cmdNameMustBeUnique(Pos p, String s) {
+        return new AssumptionError(p, "command name must be unique: " + s);
     }
 }

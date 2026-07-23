@@ -6,6 +6,7 @@ import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.AssumptionError;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -41,6 +42,7 @@ public final class AlloyMacroPara extends AlloyPara {
             throw AlloyCtorError.xorFields(pos, "block", "sub", "AlloyMacroPara");
         }
         reqNonNull(nullField(pos, this), this.qname, this.qnames, this.block, this.sub);
+        throw AssumptionError.macrosNotSupported(pos);
     }
 
     public AlloyMacroPara(

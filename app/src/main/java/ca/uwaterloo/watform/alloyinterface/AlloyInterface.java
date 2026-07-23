@@ -52,6 +52,7 @@ public class AlloyInterface {
         // this will put in a cmd 0: run {} if there are no other cmds
         CompModule alloy = parse(alloyCode);
         A4Reporter rep = new A4Reporter();
+        // TODO: no cmd at that position
         Command cmd = alloy.getAllCommands().get(cmdnum);
         dashOutput("Executing cmd " + String.valueOf(cmdnum) + ": " + cmd.toString());
         // turn off kodkod stuff going to screen
@@ -71,9 +72,11 @@ public class AlloyInterface {
             return checkModelSatisfiability(am);
         } else {
             // command must exist from above check
+            /* NAD RE-ADD
             Optional<AlloyCmdPara.CommandDecl> cmdDecl = am.getCmdNum(cmdnum);
             // System.out.println(cmdDecl);
             System.out.println(am.getScopeLimits(cmdDecl.get()));
+            */
             return AlloyInterface.executeCommand(alloyCode, cmdnum);
         }
     }
@@ -84,7 +87,7 @@ public class AlloyInterface {
         // in converting Alloy to Kodkod, it will add a run {}
         String alloyCode = am.toStringNoCmds();
         AlloyCmdPara.CommandDecl cmdDecl = Parser.parseCmdDecl("run {}");
-        System.out.println(am.getScopeLimits(cmdDecl));
+        // NAD RE-ADD System.out.println(am.getScopeLimits(cmdDecl));
         return AlloyInterface.executeCommand(alloyCode, 0);
     }
 

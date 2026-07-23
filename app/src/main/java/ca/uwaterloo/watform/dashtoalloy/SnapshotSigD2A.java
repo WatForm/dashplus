@@ -133,7 +133,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
         decls.addAll(this.bufferFieldsTraces());
 
         // add the snapshot signature
-        this.am.addSigPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+        this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
         this.am.addFact(D2AStrings.eventLimitations, eventLimitations);
     }
 
@@ -143,7 +143,7 @@ public class SnapshotSigD2A extends SpaceSigsD2A {
             decls.addAll(varFieldsTraces());
             decls.addAll(bufferFieldsTraces());
             // add the snapshot signature
-            this.am.addSigPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
+            this.am.addPara(new AlloySigPara(AlloyVar(D2AStrings.snapshotName), decls));
         }
         // TODO add case for Electrum
     }

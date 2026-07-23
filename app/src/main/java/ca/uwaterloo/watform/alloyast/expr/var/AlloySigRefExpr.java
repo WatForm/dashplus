@@ -1,5 +1,7 @@
 package ca.uwaterloo.watform.alloyast.expr.var;
 
+import ca.uwaterloo.watform.utils.Pos;
+
 public sealed interface AlloySigRefExpr
         permits AlloyQnameExpr,
                 AlloyUnivExpr,
@@ -10,4 +12,6 @@ public sealed interface AlloySigRefExpr
                 AlloyNoneExpr {
 
     String getName();
+
+    Pos getPos();
 }

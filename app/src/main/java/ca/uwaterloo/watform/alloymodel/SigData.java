@@ -2,81 +2,46 @@ package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
 public class SigData {
 
-    public Boolean isTopLevelSig = false;
-    public Boolean isAbstractSig = false;
-    public Boolean isOneSig = false;
-    public Boolean isSomeSig = false;
-    public Boolean isLoneSig = false;
-    public Pos pos = Pos.UNKNOWN;
+    protected Boolean isTopLevelSig = false;
+    protected Boolean isAbstractSig = false;
+    protected Boolean isOneSig = false;
+    protected Boolean isSomeSig = false;
+    protected Boolean isLoneSig = false;
+    protected Pos pos = Pos.UNKNOWN;
 
     // created on initialization and never modified
     // but can't make final w/o rearranging code in constructor
-    public List<String> inParents = emptyList();
-    public Optional<String> extendsParent = Optional.empty();
+    protected List<Qname> inParents = emptyList();
+    protected Optional<Qname> extendsParent = Optional.empty();
 
     // this is not used so let's leave it out for now
     // private List<String> fields;
 
     // populated after multiple sigs loaded
-    private List<String> inChildren = emptyList();
-    private List<String> extendsChildren = emptyList();
+    protected List<Qname> inChildren = emptyList();
+    protected List<Qname> extendsChildren = emptyList();
 
-    public SigData() {
+    protected SigData() {
         // returns a SigData with all the default values
     }
 
-    public SigData(AlloySigPara p) {
-        // this is data for a single sigPara
-        this.pos = p.pos;
-        if (p.rel.isPresent()) {
-            if (p.rel.get() instanceof AlloySigPara.Extends e) {
-                // this includes one sigs because they are extensions
-                this.extendsParent = Optional.of(e.sigRef.getName());
-                this.inParents = emptyList();
-            } else if (p.rel.get() instanceof AlloySigPara.In e) {
-                this.extendsParent = Optional.empty();
-                this.inParents = mapBy(e.sigRefs, s -> s.getName());
-                if (p.quals.contains(AlloySigPara.Qual.ABSTRACT)) {
-                    throw AlloyModelError.subsetSigsCannotBeAbstrast(p.pos, p.toString());
-                }
-            } else if (p.rel.get() instanceof AlloySigPara.Equal e) {
-                // sig A = C + C {}
-                // means
-                // sig A in B + C {}
-                // fact { A = B + C }
-                // it is not extends
-                this.extendsParent = Optional.empty();
-                this.inParents = mapBy(e.sigRefs, s -> s.getName());
-            } else {
-                this.isTopLevelSig = true;
-            }
-        } else {
-            this.extendsParent = Optional.empty();
-            this.inParents = emptyList();
-            this.isTopLevelSig = true;
-        }
-        if (p.quals.contains(AlloySigPara.Qual.ABSTRACT)) this.isAbstractSig = true;
-        if (p.quals.contains(AlloySigPara.Qual.ONE)) this.isOneSig = true;
-        if (p.quals.contains(AlloySigPara.Qual.SOME)) this.isSomeSig = true;
-        if (p.quals.contains(AlloySigPara.Qual.LONE)) this.isLoneSig = true;
-    }
-
     // this is used when adding parts of an AlloyEnumPara
-    public static SigData abstractSigData() {
+    protected static SigData abstractSigData(Pos pos) {
         SigData sd = new SigData();
+        sd.pos = pos;
         sd.isAbstractSig = true;
         sd.isTopLevelSig = true;
         return sd;
     }
 
-    public static SigData oneSigData(String parent) {
+    protected static SigData oneSigData(Pos pos, Qname parent) {
         SigData sd = new SigData();
+        sd.pos = pos;
         sd.isOneSig = true;
         sd.extendsParent = Optional.of(parent);
         return sd;
@@ -84,55 +49,68 @@ public class SigData {
 
     // getters
 
-    public Pos pos() {
+    /*
+    protected Pos pos() {
         return this.pos;
     }
 
-    public List<String> inParents() {
+    public List<Qname> inParents() {
         return this.inParents;
     }
 
-    public Optional<String> extendsParent() {
+    public Optional<Qname> extendsParent() {
         return this.extendsParent;
     }
 
-    public List<String> allParents() {
+    public List<Qname> allParents() {
         return concat(
                 this.inParents(), this.extendsParent().map(p -> List.of(p)).orElse(emptyList()));
     }
 
-    public List<String> inChildren() {
+    public List<Qname> inChildren() {
         return this.inChildren;
     }
 
-    public List<String> extendsChildren() {
+    public List<Qname> extendsChildren() {
         return this.extendsChildren;
     }
 
     public List<String> allChildren() {
         return concat(this.inChildren(), this.extendsChildren());
     }
-
+    */
     // setters; note there is no ability to add a parent!
 
-    public void addInChild(String sigName) {
-        this.inChildren.add(sigName);
+    /*
+    public void addInChild(Qname qname) {
+        this.inChildren.add(qname);
     }
 
-    public void addExtendsChild(String sigName) {
-        this.extendsChildren.add(sigName);
+    public void addExtendsChild(Qname qame) {
+        this.extendsChildren.add(qname);
     }
+    */
 
     @Override
     public String toString() {
-        return "\ninParents: "
-                + inParents.toString()
-                + "\nextendsParent: "
-                + extendsParent.toString()
-                + "\ninChildren: "
-                + inChildren.toString()
-                + "\nextendsChildren: "
-                + extendsChildren.toString()
-                + "\n";
+        StringBuilder sb = new StringBuilder();
+
+        if (isTopLevelSig) sb.append("topLevel=true, ");
+        if (isAbstractSig) sb.append("abstract=true, ");
+        if (isOneSig) sb.append("one=true, ");
+        if (isSomeSig) sb.append("some=true, ");
+        if (isLoneSig) sb.append("lone=true, ");
+        // if (!Pos.UNKNOWN.equals(pos)) sb.append("pos=").append(pos).append(", ");
+        if (!inParents.isEmpty()) sb.append("inParents=").append(inParents).append(", ");
+        if (extendsParent.isPresent())
+            sb.append("extendsParent=").append(extendsParent).append(", ");
+        if (!inChildren.isEmpty()) sb.append("inChildren=").append(inChildren).append(", ");
+        if (!extendsChildren.isEmpty())
+            sb.append("extendsChildren=").append(extendsChildren).append(", ");
+
+        if (sb.length() > "SigData{".length())
+            sb.setLength(sb.length() - 2); // remove trailing ", "
+
+        return sb.toString();
     }
 }

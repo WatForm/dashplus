@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.AssumptionError;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyStrLiteralExpr;
@@ -23,6 +24,7 @@ public final class AlloyAssertPara extends AlloyPara {
             Pos pos, AlloyQnameExpr qname, AlloyStrLiteralExpr strLit, AlloyBlock block) {
         super(pos);
         this.qname = Optional.ofNullable(qname);
+        if (this.qname.isEmpty()) throw AssumptionError.missingAssertName(pos);
         this.strLit = Optional.ofNullable(strLit);
         this.block = block;
         reqNonNull(nullField(pos, this), this.block, this.qname, this.strLit);

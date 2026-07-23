@@ -1,4 +1,9 @@
 
+
+* a givenScope always results in the sig being set to some scope
+* a modelScope always results in the sig being set to some scope
+
+
 These notes have been implemented in AMScopes.java
 We can remove this file at some point.
 
