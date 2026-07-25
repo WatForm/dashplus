@@ -47,6 +47,7 @@ public class SMResolve extends SMCmds {
     public void debug() {
         System.out.println(this.toString());
         debugSMSigs();
+        debugSMImports();
         debugSMFields();
         debugSMPredFuns();
         debugSMConstraints();
@@ -58,6 +59,8 @@ public class SMResolve extends SMCmds {
     public void resolve() {
         // order here matters
         this.resolveSMSigs(); // includes resolving sigs passed to imports
+        this.resolveSMImports(); // check sig names substituted for parameters
+        // will be used in expressions
         this.resolveSMFields(this::resolve1);
         this.resolveSMPredFuns(this::resolve1, this::resolve2);
         this.resolveSMConstraints(this::resolve2);

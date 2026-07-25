@@ -35,13 +35,6 @@ public class AMThisImportParas extends AMThisCmdParas {
         this.imports = new ArrayList<AlloyImportPara>(other.imports);
     }
 
-    /*
-    protected void addPara(AlloyImportPara importPara, String nameSpace) {
-        this.addSMPara(importPara, nameSpace);
-        this.imports.add(importPara);
-    }
-    */
-
     public void addPara(AlloyImportPara importPara) {
         this.addSMPara(importPara, THIS_NAMESPACE);
         this.imports.add(importPara);
@@ -61,7 +54,6 @@ public class AMThisImportParas extends AMThisCmdParas {
         // fully qualified or they belong to this namespace
         List<AlloySigRefExpr> valsToSubstitute = importPara.sigRefs;
         // to check in resolve that these are all resolved sigs
-        this.createValsSubstitutedFromImport(valsToSubstitute);
 
         // will be only one modPara in the importedFile
         AlloyModulePara modPara =
@@ -110,9 +102,15 @@ public class AMThisImportParas extends AMThisCmdParas {
         }
 
         String importNameSpace = THIS_NAMESPACE;
+
         // add all the paragraphs in the namespace
         // open name[A, B] as X -> X
         if (importPara.asQname.isPresent()) importNameSpace = importPara.asQname.get().getName();
+        this.createImport(
+                importPara.pos,
+                importNameSpace,
+                importPara.qname.getName(),
+                mapBy(valsToSubstitute, n -> thisQname(n.getName())));
 
         for (AlloyPara alloyPara : newParas) {
             // only added to SM (not AMThis)

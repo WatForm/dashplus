@@ -18,8 +18,7 @@ import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloySigRefExpr;
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
@@ -27,8 +26,6 @@ public class SMSigs {
 
     // Qname is unique for sigs
     public HashMap<Qname, SigData> sigTable = new HashMap<>();
-    // this is here just for error checking
-    public List<AlloySigRefExpr> valsSubstitutedFromImports = emptyList();
 
     // init --------------
 
@@ -36,6 +33,13 @@ public class SMSigs {
 
     protected SMSigs(SMSigs other) {
         this.sigTable = new HashMap<>(other.sigTable);
+        // two builtins
+        // KENG: I'm not sure how these work for
+        // the parent-child sig relationships
+        // we might have to change some functions
+        // about top-level sigs
+        this.sigTable.put(thisQname(AlloyStrings.UNIV), new SigData());
+        this.sigTable.put(thisQname(AlloyStrings.NONE), new SigData());
     }
 
     // no other function should do a 'put' into the sigTable
@@ -48,25 +52,9 @@ public class SMSigs {
         else throw AlloyModelError.duplicateSigName(p, qname.fullName());
     }
 
-    protected void createValsSubstitutedFromImport(List<AlloySigRefExpr> ll) {
-        valsSubstitutedFromImports.addAll(ll);
-    }
-
     // resolve
 
     protected void resolveSMSigs() {
-
-        // check values substituted on imports are okay
-        // because o/w error will show up a weird place
-        for (AlloySigRefExpr sigRefExpr : valsSubstitutedFromImports) {
-            if (!(sigRefExpr instanceof AlloyQnameExpr)) {
-                throw AlloyModelError.argToImportMustBeSigs(
-                        sigRefExpr.getPos(), sigRefExpr.toString());
-            } else if (!this.isSig(thisQname(sigRefExpr.getName()))) {
-                throw AlloyModelError.argToImportMustBeUnique(
-                        sigRefExpr.getPos(), sigRefExpr.toString());
-            }
-        }
 
         // now that all sigs are in the sigTable
         // get the child links set up
@@ -269,8 +257,5 @@ public class SMSigs {
                     .append(entry.getValue())
                     .append('\n');
         }
-
-        sb.append("valsSubstitutedFromImports=").append(valsSubstitutedFromImports);
-        System.out.println(sb.toString() + "\n");
     }
 }

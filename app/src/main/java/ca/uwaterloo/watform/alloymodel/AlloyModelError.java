@@ -235,4 +235,8 @@ public final class AlloyModelError extends UserOrImplError {
     public static AlloyModelError recursivePredFunDependency(String name) {
         return new AlloyModelError("recursive pred/fun defn: " + name);
     }
+
+    public static AlloyModelError ambiguousSigRef(Pos p, String name) {
+        return new AlloyModelError(p, "ambiguous sig arg to import" + name);
+    }
 }

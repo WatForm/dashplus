@@ -15,7 +15,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
-public class SMFields extends SMSigs {
+public class SMFields extends SMImports {
 
     // Qname is unique for fields
     // Linked is important here so we can get them out in the order

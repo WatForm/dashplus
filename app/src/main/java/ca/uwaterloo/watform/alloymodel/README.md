@@ -41,6 +41,10 @@
     - (*createSig(name, namespaces, parent)*) 
     - (*resolve*) sets children, look for circularity of parent/child (does not need resolve1 and resolve2)
     - (*lookup*) may return multiple namespace+name
+
+* SMImports
+    * contains namespace mapped to import name plus parameters of import
+    * necessary if custom translations of imports
     
 * DONE SMFields 
     - fields are loaded into the sig table in their namespace (including the sig name) so there cannot be multiple entries for the same spot in the hashtable.
