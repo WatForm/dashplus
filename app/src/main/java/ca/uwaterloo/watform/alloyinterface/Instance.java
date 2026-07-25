@@ -10,15 +10,15 @@ import ca.uwaterloo.watform.alloyevaluator.TupleSet;
 import ca.uwaterloo.watform.utils.Pos;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Stack;
 
 /** Domain wrapper around the relation-to-tuples data that represents an Alloy instance. */
 public final class Instance {
-    private final Map<String, TupleSet> relations;
+    private final Stack<Map<String, TupleSet>> relations;
     private static final String PREFIX = AlloyStrings.THIS + AlloyStrings.SLASH;
     private final TupleSet univ;
     private final TupleSet iden;
@@ -26,7 +26,9 @@ public final class Instance {
     private final AtomFactory factory;
 
     public Instance(Map<String, Set<List<String>>> relations) {
-        this.relations = new HashMap<>();
+        this.relations = new Stack<>();
+        addStackFrame();
+
         int min, max;
         try {
             min = Integer.parseInt(setToList(relations.get("Int/min")).get(0).get(0));
@@ -46,7 +48,7 @@ public final class Instance {
 
         for (var entry : relations.entrySet()) {
             var newKey = removeParentSigInfo(entry.getKey());
-            this.relations.put(
+            addRelation(
                     newKey,
                     new TupleSet(
                             mapBy(
@@ -69,26 +71,17 @@ public final class Instance {
         if (!key.startsWith(PREFIX)) return key;
         String body = key.substring(PREFIX.length());
         int lastDot = body.lastIndexOf('.');
-        if (lastDot == -1) return key;
-        return PREFIX + body.substring(lastDot + 1);
-    }
-
-    public boolean contains(String relationName) {
-        return relations.containsKey(normalize(relationName))
-                || relations.containsKey(relationName);
-    }
-
-    public Optional<TupleSet> getRelation(String relationName) {
-        return Optional.ofNullable(relations.get(normalize(relationName)));
+        if (lastDot == -1) return body;
+        return body.substring(lastDot + 1);
     }
 
     public Optional<TupleSet> get(String key) {
-        return Optional.ofNullable(relations.get(key));
-    }
-
-    public Set<String> getRelationMapKeys() {
-        Set<String> keys = new HashSet<>(relations.keySet());
-        return keys;
+        for (int i = relations.size() - 1; i >= 0; i--) {
+            if (relations.get(i).containsKey(key)) {
+                return Optional.ofNullable(relations.get(i).get(key));
+            }
+        }
+        return null;
     }
 
     public TupleSet getUniv() {
@@ -101,14 +94,6 @@ public final class Instance {
 
     public TupleSet getIntSet() {
         return intSet;
-    }
-
-    // will have to be edited, does not support imports
-    private static String normalize(String relationName) {
-        if (relationName.startsWith(PREFIX)) {
-            return relationName;
-        }
-        return PREFIX + relationName;
     }
 
     public TupleSet getIntScalar(int val, Pos pos) {
@@ -129,5 +114,21 @@ public final class Instance {
 
     public int minInt() {
         return factory.minInt();
+    }
+
+    public void addStackFrame() {
+        relations.push(new HashMap<>());
+    }
+
+    public void popStackFrame() {
+        relations.pop();
+    }
+
+    public void addRelation(String key, TupleSet set) {
+        relations.peek().put(key, set);
+    }
+
+    public void removeRelation(String key) {
+        relations.peek().remove(key);
     }
 }

@@ -427,7 +427,7 @@ public class Main implements Callable<Integer> {
             return;
         }
 
-        var evaluator = new FormulaEvaluator(instance, debug);
+        var evaluator = new FormulaEvaluator(instance, debug, am.allFunParas());
         var result = ThreeVal.TRUE;
         for (var para : am.allFactParas()) {
             result = result.and(para.block.accept(evaluator));

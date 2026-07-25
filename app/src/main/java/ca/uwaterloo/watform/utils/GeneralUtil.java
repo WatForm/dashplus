@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.BiFunction;
@@ -169,6 +170,10 @@ public class GeneralUtil {
         T top = f.apply(defaultVal, items.get(0));
         for (int i = 1; i < n; i++) top = f.apply(top, items.get(i));
         return top;
+    }
+
+    public static <T> Optional<T> findFirst(List<T> items, Predicate<T> filterFn) {
+        return items.stream().filter(filterFn).findFirst();
     }
 
     public static <T> List<T> filterBy(List<T> items, Predicate<T> filterFn) {
