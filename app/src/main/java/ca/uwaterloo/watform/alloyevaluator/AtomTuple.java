@@ -71,6 +71,10 @@ public class AtomTuple {
         return new AtomTuple(GeneralUtil.concat(a.atoms, b.atoms));
     }
 
+    public static AtomTuple concat(List<AtomTuple> tuples) {
+        return new AtomTuple(flatten(mapBy(tuples, t -> t.atoms)));
+    }
+
     public static AtomTuple tail(AtomTuple a) {
         return new AtomTuple(GeneralUtil.tail(a.atoms));
     }
