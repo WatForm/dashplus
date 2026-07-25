@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class TupleSet {
+public class TupleSet implements Iterable<AtomTuple> {
     private final List<AtomTuple> tuples;
     private final boolean overflows;
 
@@ -132,5 +132,10 @@ public class TupleSet {
 
     public static TupleSet createScalar(Atom a) {
         return new TupleSet(List.of(new AtomTuple(List.of(a))));
+    }
+
+    @Override
+    public Iterator<AtomTuple> iterator() {
+        return tuples.iterator();
     }
 }
