@@ -1,24 +1,30 @@
 package ca.uwaterloo.watform.alloyevaluator;
 
 import static ca.uwaterloo.watform.alloyevaluator.ThreeVal.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyQuantificationExpr.Quant;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyFunPara;
 import ca.uwaterloo.watform.alloyinterface.Instance;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
+import java.util.List;
 
 public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
+    private final Instance instance;
     private final AlloyExprVis<TupleSet> setEvaluator;
     private final EvalLogger logger;
 
-    public FormulaEvaluator(Instance instance, boolean debug) {
+    public FormulaEvaluator(Instance instance, boolean debug, List<AlloyFunPara> funs) {
         logger = EvalLoggerFactory.make("evaluation", debug);
-        setEvaluator = new SetEvaluator(instance, debug);
+        setEvaluator = new SetEvaluator(instance, debug, this, funs);
+        this.instance = instance;
     }
 
     // These visit cases are unimplemented; just note the type and let the error carry the detail
@@ -60,17 +66,89 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
                 "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
     }
 
+    // TODO: potentially review, may need changing
     public ThreeVal visit(AlloyLetExpr letExpr) {
-        throw AlloyEvaluatorImplError.missingVisitCase(
-                "AlloyLetExpr: " + letExpr + " " + letExpr.getClass().getName());
+        logger.enter("LetExpr " + letExpr);
+        instance.addStackFrame();
+        for (var asn : letExpr.asns) {
+            instance.addRelation(asn.qname.label, asn.expr.accept(setEvaluator));
+        }
+        var result = letExpr.body.accept(this);
+        instance.popStackFrame();
+        logger.exit("LetExpr " + result);
+        return result;
     }
 
+    // TODO: cleanup, potentially add var handling or other edge cases
     public ThreeVal visit(AlloyQuantificationExpr quantificationExpr) {
-        throw AlloyEvaluatorImplError.missingVisitCase(
-                "AlloyQuantificationExpr: "
-                        + quantificationExpr
-                        + " "
-                        + quantificationExpr.getClass().getName());
+        logger.enter("QuantificationExpr " + quantificationExpr);
+        var valList = mapBy(quantificationExpr.decls, d -> d.expr.accept(setEvaluator));
+        var resCount = countQuant(quantificationExpr, valList, 0, 0);
+        var result =
+                switch (quantificationExpr.quant) {
+                    case Quant.ALL ->
+                            resCount.falseCnt > 0 ? FALSE : (resCount.unkCnt > 0 ? UNKNOWN : TRUE);
+                    case Quant.NO ->
+                            resCount.trueCnt > 0 ? FALSE : (resCount.unkCnt > 0 ? UNKNOWN : TRUE);
+                    case Quant.LONE ->
+                            resCount.trueCnt > 1 ? FALSE : (resCount.unkCnt > 0 ? UNKNOWN : TRUE);
+                    case Quant.ONE ->
+                            resCount.trueCnt > 1
+                                    ? FALSE
+                                    : (resCount.unkCnt > 0
+                                            ? UNKNOWN
+                                            : convertThree(resCount.trueCnt == 1));
+                    case Quant.SOME ->
+                            resCount.trueCnt > 0 ? TRUE : (resCount.unkCnt > 0 ? UNKNOWN : FALSE);
+                    default -> throw AlloyEvaluatorImplError.typeError("Sum In Boolean Context");
+                };
+        logger.exit("QuantificationExpr " + result);
+        return result;
+    }
+
+    private static record ResCount(int trueCnt, int falseCnt, int unkCnt) {}
+
+    // TODO: review
+    private ResCount countQuant(
+            AlloyQuantificationExpr expr, List<TupleSet> sets, int idx1, int idx2) {
+        if (idx1 == expr.decls.size() - 1 && idx2 == expr.decls.get(idx1).qnames.size() - 1) {
+            int cntTrue = 0, cntFalse = 0, cntUnk = 0;
+            for (var tuple : sets.get(idx1)) {
+                instance.addRelation(
+                        expr.decls.get(idx1).qnames.get(idx2).label, new TupleSet(List.of(tuple)));
+                var res = expr.body.accept(this);
+                instance.removeRelation(expr.decls.get(idx1).qnames.get(idx2).label);
+                switch (res) {
+                    case TRUE:
+                        cntTrue++;
+                        break;
+                    case FALSE:
+                        cntFalse++;
+                        break;
+                    default:
+                        cntUnk++;
+                        break;
+                }
+            }
+            return new ResCount(cntTrue, cntFalse, cntUnk);
+        } else {
+            int cntTrue = 0, cntFalse = 0, cntUnk = 0;
+            for (var tuple : sets.get(idx1)) {
+                instance.addRelation(
+                        expr.decls.get(idx1).qnames.get(idx2).label, new TupleSet(List.of(tuple)));
+                var res =
+                        countQuant(
+                                expr,
+                                sets,
+                                idx1 + ((idx2 + 1) / expr.decls.get(idx1).qnames.size()),
+                                (idx2 + 1) % expr.decls.get(idx1).qnames.size());
+                instance.removeRelation(expr.decls.get(idx1).qnames.get(idx2).label);
+                cntTrue += res.trueCnt;
+                cntFalse += res.falseCnt;
+                cntUnk += res.unkCnt;
+            }
+            return new ResCount(cntTrue, cntFalse, cntUnk);
+        }
     }
 
     public ThreeVal visit(AlloyDecl decl) {
