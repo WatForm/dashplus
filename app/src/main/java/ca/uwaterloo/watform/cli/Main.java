@@ -10,8 +10,8 @@ import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 // MKJ RE-ADD import ca.uwaterloo.watform.alloytotla.AlloyToTla;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-// NAD RE-ADD import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
-// NAD RE-ADD import ca.uwaterloo.watform.dashtotla.*;
+import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
+// MKJ RE-ADD import ca.uwaterloo.watform.dashtotla.*;
 // ASN RE-ADD import ca.uwaterloo.watform.predabstraction.PAMain;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.visualization.ControlStateHierarchyVisualizer;
@@ -140,12 +140,11 @@ public class Main implements Callable<Integer> {
                 !(tla || xml || predAbs || vis || alsInputFile); // might also have a -alloy=
 
         // set the default options to be traces for anything that translates to alloy
-        /* NAD RE-ADD
+
         DashToAlloy.Options d2aOptions =
                 (translateToAlloy && !alloyPresent)
                         ? DashToAlloy.Options.traces
                         : cliConf.d2aOptions;
-        */
 
         // set a default value for cmd in case this arg is not given
         // cmdIdx = Constants.noCmdValue means no cmd value given so run all commands
@@ -275,9 +274,7 @@ public class Main implements Callable<Integer> {
                         } else if (predAbs) {
                             runPredAbs(fullFileName, dm, cmdIdx, write);
                         } else {
-                            /* NAD RE-ADD
                             runDashToAlloy(dm, d2aOptions, outputFileNamePrefix, write, cmdIdx);
-                            */
                         }
                     }
                 }
@@ -433,14 +430,13 @@ public class Main implements Callable<Integer> {
 
     private static void runDashToAlloy(
             DashModel dm,
-            // NAD DashToAlloy.Options opt,
+            DashToAlloy.Options opt,
             String outputFileNamePrefix,
             Boolean writeOnly,
             Integer cmdIdx)
             throws IOException {
 
         AlloyModel am;
-        /* NAD RE-ADD
         try {
 
             am = new DashToAlloy(dm, opt).translate();
@@ -461,7 +457,6 @@ public class Main implements Callable<Integer> {
             // we don't need to write the file
             runAlloy(am, cmdIdx);
         }
-        */
     }
 
     private static Path fileFromString(String fname) {
