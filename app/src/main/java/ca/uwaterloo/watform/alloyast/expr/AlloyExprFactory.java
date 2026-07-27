@@ -4,6 +4,7 @@
 
 package ca.uwaterloo.watform.alloyast.expr;
 
+import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
@@ -182,6 +183,11 @@ public class AlloyExprFactory {
         return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ALL, decls, sub);
     }
 
+    // all decls sub
+    public static AlloyExpr AlloyAllVars(AlloyDecl decl, AlloyExpr sub) {
+        return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.ALL, List.of(decl), sub);
+    }
+
     // some decls sub
     public static AlloyExpr AlloySomeVars(List<AlloyDecl> decls, AlloyExpr sub) {
         return new AlloyQuantificationExpr(AlloyQuantificationExpr.Quant.SOME, decls, sub);
@@ -216,6 +222,10 @@ public class AlloyExprFactory {
 
     public static AlloyQnameExpr AlloyVar(String s) {
         return new AlloyQnameExpr(s);
+    }
+
+    public static AlloyQnameExpr AlloyVar(List<String> names) {
+        return new AlloyQnameExpr(mapBy(names, v -> new AlloyQnameExpr(v)));
     }
 
     // none

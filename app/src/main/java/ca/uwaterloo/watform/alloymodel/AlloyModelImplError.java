@@ -17,9 +17,9 @@ public final class AlloyModelImplError extends ImplementationError {
                 "Trying to look up the arity of a symbol that is not builtin: " + s);
     }
 
-    public static AlloyModelImplError predNotFound(String s) {
+    public static AlloyModelImplError predFunNotFound(String s) {
         return new AlloyModelImplError(
-                "Trying to look up the arity of a symbol that is not a pred: " + s);
+                "Trying to look up the arity of a symbol that is not a pred/fun: " + s);
     }
 
     public static AlloyModelImplError fcnNotFound(String s) {
@@ -62,5 +62,13 @@ public final class AlloyModelImplError extends ImplementationError {
 
     public static AlloyModelImplError noScopeForNonSig(String s) {
         return new AlloyModelImplError("Asking for scope of a non-sig: " + s);
+    }
+
+    public static AlloyModelImplError blankStringNotAllowed() {
+        return new AlloyModelImplError("Blank string not allowed");
+    }
+
+    public static AlloyModelImplError qnameNameCannotHaveSlash(String s) {
+        return new AlloyModelImplError("Qname name " + s + " cannot have slash in it");
     }
 }

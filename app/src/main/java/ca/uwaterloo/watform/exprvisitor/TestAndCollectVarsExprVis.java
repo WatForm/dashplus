@@ -24,6 +24,12 @@ public class TestAndCollectVarsExprVis implements AlloyExprVis<Set<String>> {
         this.test = test;
     }
 
+    // common instance: get all Qnames in an expression
+    public static Set<String> getAlloyQnameExprNames(AlloyExpr expr) {
+        TestAndCollectVarsExprVis vis = new TestAndCollectVarsExprVis(e -> true);
+        return vis.visit(expr);
+    }
+
     public Set<String> visit(DashRef dashRef) {
         // System.out.println(this.toString());
         return flatten(mapBy(listToSet(dashRef.paramValues), p -> this.visit(p)));

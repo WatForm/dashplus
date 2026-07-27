@@ -128,8 +128,6 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
         // vars not mentioned in action do not change
         // actions are handled separately
 
-        // System.out.println("HERERERERER: " + tfqn);
-
         // TODO: includes entered/exited
 
         // start with all vars and buffers

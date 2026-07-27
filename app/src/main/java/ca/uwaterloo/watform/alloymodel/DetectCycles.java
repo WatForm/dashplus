@@ -9,32 +9,32 @@ public class DetectCycles {
     // o/w returns list in order of parent to child
 
     // largely written by ChatGPT
-    public static List<String> topoOrderCycleDetector(
-            List<String> startingSet, Function<String, List<String>> getChildren) {
+    public static List<Qname> topoOrderCycleDetector(
+            List<Qname> startingSet, Function<Qname, List<Qname>> getChildren) {
 
-        Set<String> visited = new HashSet<>();
-        Set<String> inStack = new HashSet<>();
-        List<String> result = new ArrayList<>();
+        Set<Qname> visited = new HashSet<>();
+        Set<Qname> inStack = new HashSet<>();
+        List<Qname> result = new ArrayList<>();
 
-        for (String node : startingSet) {
+        for (Qname node : startingSet) {
             if (visited.contains(node)) continue;
 
-            Deque<String> stack = new ArrayDeque<>();
-            Map<String, Iterator<String>> iters = new HashMap<>();
+            Deque<Qname> stack = new ArrayDeque<>();
+            Map<Qname, Iterator<Qname>> iters = new HashMap<>();
 
             stack.push(node);
             inStack.add(node);
             iters.put(node, getChildren.apply(node).iterator());
 
             while (!stack.isEmpty()) {
-                String curr = stack.peek();
-                Iterator<String> it = iters.get(curr);
+                Qname curr = stack.peek();
+                Iterator<Qname> it = iters.get(curr);
 
                 if (it.hasNext()) {
-                    String child = it.next();
+                    Qname child = it.next();
 
                     if (inStack.contains(child)) {
-                        throw AlloyModelError.sigsInCycle(child.toString());
+                        throw AlloyModelError.sigsInCycle(child.fullName());
                     }
 
                     if (!visited.contains(child)) {

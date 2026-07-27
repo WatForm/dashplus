@@ -95,13 +95,17 @@ public final class AlloyCmdPara extends AlloyPara {
         /*
         consider the following command:
 
-        run {p} for 3 A, exactly 5 B expect 1
+        1) run {p} for 3 A, exactly 5 B expect 1
 
         "run" refers to the cmdType, which is an enum with two possible values for run and check
         {p} is an example of constrBlock, which is an AlloyBlock
         "for 3 A, exactly 5 B" lives in the scope
         "expect 1" -> this is captured in expect.value (which is an int)
 
+        2) check p with no braces after it
+        means p is an assertion name -- only works for 'check'
+
+        3) check p {} means p is the unused name of the command
         */
 
         public final CmdType cmdType; // this

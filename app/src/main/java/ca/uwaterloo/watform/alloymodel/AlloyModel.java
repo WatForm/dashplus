@@ -1,19 +1,6 @@
-/*
-    AlloyModel has paragraphs from an AlloyFile
-    and "additional paragraphs"
-
-    Printing is done by printing the original AlloyFile
-    and then adding the additional paragraphs to a
-    new AlloyFile and printing it.
-
-    TODO: we probably need to make AlloyModel just print
-    its own paragraphs directly with no difference between
-    original and additional ones.
-
-*/
-
 package ca.uwaterloo.watform.alloymodel;
 
+import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
@@ -21,16 +8,36 @@ import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.*;
+import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.utils.*;
 import ca.uwaterloo.watform.utils.PrintContext;
 import java.io.StringWriter;
 import java.util.*;
 
-public class AlloyModel extends AMModules {
+public class AlloyModel extends AMThisModuleParas {
 
-    public AlloyModel() {
-        this(new AlloyFile(Collections.emptyList()));
+    public AlloyModel(AlloyFile alloyFile) {
+        for (AlloyPara alloyPara : alloyFile.paras) {
+            // all are in THIS_NAMESPACE
+            if (alloyPara instanceof AlloyEnumPara p) addPara(p);
+            else if (alloyPara instanceof AlloySigPara p) addPara(p);
+            else if (alloyPara instanceof AlloyPredPara p) addPara(p);
+            else if (alloyPara instanceof AlloyFunPara p) addPara(p);
+            else if (alloyPara instanceof AlloyFactPara p) addPara(p);
+            else if (alloyPara instanceof AlloyAssertPara p) addPara(p);
+            else if (alloyPara instanceof AlloyCmdPara p) addPara(p);
+            else if (alloyPara instanceof AlloyImportPara p) addPara(p);
+            else if (alloyPara instanceof AlloyModulePara p) addPara(p);
+            else throw new AssertionError("Unknown AlloyPara subtype: " + alloyPara.getClass());
+        }
+    }
+
+    public AlloyModel() {}
+
+    public AlloyModel(AlloyModel other) {
+        super(other);
     }
 
     public AlloyModel copy() {
@@ -46,19 +53,6 @@ public class AlloyModel extends AMModules {
         return new AlloyModel(af);
     }
 
-    // we need copies of these two constructors in every parent class
-    public AlloyModel(AlloyFile alloyFile) {
-        super(alloyFile);
-    }
-
-    public AlloyModel(AlloyModel other) {
-        super(other);
-    }
-
-    public void resolve() {
-        super.resolve();
-    }
-
     public List<AlloyPara> getAllParas(boolean withCmds) {
         List<AlloyPara> allParas = new ArrayList<AlloyPara>();
 
@@ -68,7 +62,7 @@ public class AlloyModel extends AMModules {
 
         allParas.addAll(this.allEnumParas());
         allParas.addAll(this.allSigParas());
-        allParas.addAll(this.allMacroParas());
+        // allParas.addAll(this.allMacroParas());
         allParas.addAll(this.allFunParas());
         allParas.addAll(this.allPredParas());
         allParas.addAll(this.allFactParas());

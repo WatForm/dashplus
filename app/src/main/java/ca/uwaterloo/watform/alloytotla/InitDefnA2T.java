@@ -12,8 +12,8 @@ import java.util.List;
 
 public class InitDefnA2T extends FieldsA2T {
 
-    public InitDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-        super(alloyModel, verbose, debug);
+    public InitDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+        super(alloyModel, verbose, debug, optimization);
     }
 
     protected void addInitDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {

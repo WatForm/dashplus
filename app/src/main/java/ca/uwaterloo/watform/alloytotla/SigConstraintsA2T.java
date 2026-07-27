@@ -15,8 +15,8 @@ import java.util.List;
 
 public class SigConstraintsA2T extends PredicatesFunctionsA2T {
 
-    public SigConstraintsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-        super(alloyModel, verbose, debug);
+    public SigConstraintsA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+        super(alloyModel, verbose, debug, optimization);
     }
 
     protected void addSigConstraints(TlaModel tlaModel) {

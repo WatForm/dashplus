@@ -82,11 +82,15 @@ task releaseJar(type: Jar) {
     zip64 = true
 }
 
+
 // for jdtls, gradle doesn't need this to compile
 sourceSets {
     main {
         java {
             srcDirs += "$buildDir/generated-src/antlr/main"
+            exclude 'ca/uwaterloo/watform/predabstraction/**'
+            exclude 'ca/uwaterloo/watform/dashtotla/**'
+            exclude 'ca/uwaterloo/watform/alloytotla/**'
         }
     }
 }

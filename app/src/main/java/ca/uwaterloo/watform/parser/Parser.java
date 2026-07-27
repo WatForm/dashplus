@@ -84,7 +84,7 @@ public class Parser {
                 // creation of an AlloyFile checks that there is only one modulePara
                 // in the AlloyFile
                 AlloyFile importedAlloyFile = parseFromCharStream(input, fileName);
-                System.out.println(importedAlloyFile);
+                // System.out.println(importedAlloyFile);
                 return importedAlloyFile;
             } catch (IOException e) {
                 throw ParserError.utilFileNotFound(pos, fileName);

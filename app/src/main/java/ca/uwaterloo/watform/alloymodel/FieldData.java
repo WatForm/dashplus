@@ -1,51 +1,55 @@
 package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import static ca.uwaterloo.watform.alloymodel.ResolveInfo.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.var.AlloyThisExpr;
-import ca.uwaterloo.watform.exprvisitor.ReplaceExprVis;
 import java.util.*;
 
 public class FieldData {
 
-    // probably we don't need these two because fieldName is the key to the table
-    // and the parent of a field is not used anywhere currently
-    // MKJ: We do need sigParent
-    public final String fieldName;
-    public final String sigParent;
-
     // since these are changed after initialization
     // they have getters and setters
-    protected AlloyExpr fieldExpr;
-    protected Optional<Integer> fieldArity;
+    protected AlloyExpr expr;
+    // everything will get a fieldArity after resolve
+    protected Optional<Integer> arity = UNKNOWN_ARITY;
+    protected List<Qname> product = emptyList();
 
     // eventually we could add something about its basic type
 
-    FieldData(String fieldName, AlloyExpr fieldExpr, String sigParent) {
-        this.fieldName = fieldName;
-        // replace any occurrences of "this" with AlloyQnameVar(sigParent)
-        this.fieldExpr =
-                new ReplaceExprVis(e -> e instanceof AlloyThisExpr, e -> AlloyVar(sigParent))
-                        .visit(fieldExpr);
-        this.sigParent = sigParent;
-        // everything will get a fieldArity eventually
-        this.fieldArity = Optional.empty();
+    protected FieldData(AlloyExpr fieldExpr) {
+        this.expr = fieldExpr;
+    }
+
+    @Override
+    public String toString() {
+        return expr
+                + ","
+                + "arity="
+                + (arity.isPresent() ? Integer.toString(arity.get()) : "?")
+                + ", "
+                + product
+                + '}';
     }
 
     // setters
 
+    /*
     public void setFieldArity(Optional<Integer> a) {
-        this.fieldArity = a;
+        this.arity = a;
     }
 
     public void setFieldExpr(AlloyExpr exp) {
-        this.fieldExpr = exp;
+        this.expr = exp;
     }
 
-    // getters
+    public void setIsResolved() {
+        this.isResolved = true;
+    }
+    */
 
+    /*
     public AlloyExpr fieldExpr() {
         return this.fieldExpr;
     }
@@ -54,7 +58,15 @@ public class FieldData {
         return this.fieldArity;
     }
 
-    public String fieldParent() {
-        return this.sigParent;
+    public List<Qname> fieldProductExpr() {
+        // TODO: walk over arrows and o/w throw errors
+        assert (this.isResolved);
+        return this.productExpr;
     }
+
+    public Boolean isResolved() {
+        return this.isResolved;
+    }
+    */
+
 }

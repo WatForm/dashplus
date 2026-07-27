@@ -11,8 +11,8 @@ import java.util.*;
 
 public class BoilerplateA2T extends BaseA2T {
 
-    public BoilerplateA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-        super(alloyModel, verbose, debug);
+    public BoilerplateA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+        super(alloyModel, verbose, debug, optimization);
     }
 
     public static final TlaVar S() {

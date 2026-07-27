@@ -140,4 +140,11 @@ public final class AlloyStrings extends CommonStrings {
     // util/sequniv.als
     // https://github.com/AlloyTools/org.alloytools.alloy/blob/master/org.alloytools.alloy.core/src/main/resources/models/util/sequniv.als
     public static final String shortSeqUnivDelete = "delete";
+
+    public enum Kind {
+        UNKNOWN_KIND,
+        SIG,
+        FIELD,
+        PREDFUN
+    }
 }

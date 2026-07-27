@@ -5,47 +5,55 @@
 package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
+import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.parser.Parser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.AlloyFile;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
+import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
+import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.paravisitor.TestAndReplaceExprParaVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
-public class AMImports extends AMScopes {
+// must come after everything else b/c it uses cmd, fact, etc add methods
+public class AMThisImportParas extends AMThisCmdParas {
 
     // importParas never have names
     protected List<AlloyImportPara> imports = emptyList();
 
-    public AMImports(AlloyFile alloyFile) {
-        super(alloyFile);
-        this.imports = emptyList();
-        extractItemsOfClass(alloyFile.paras, AlloyImportPara.class)
-                .forEach(p -> this.addImportPara(p));
-    }
+    public AMThisImportParas() {}
 
-    protected AMImports(AMImports other) {
+    protected AMThisImportParas(AMThisImportParas other) {
         super(other);
+        // does not recursively load
         this.imports = new ArrayList<AlloyImportPara>(other.imports);
     }
 
-    private void loadImport(AlloyImportPara importPara) {
+    public void addPara(AlloyImportPara importPara) {
+        this.addSMPara(importPara, THIS_NAMESPACE);
+        this.imports.add(importPara);
+    }
+
+    private void addSMPara(AlloyImportPara importPara, String nameSpace) {
         /*
             1) add in exactly ordered or non-ordered
             2) substitute arguments for parameters
-            3) rename per aliases
-            4) initialize paragraphs into sigTable, etc
+            3) put in common model within this namespace
+            Note: we do not put paras imported into the classes that store 'this's paras (which are used to create a string of the top-level file)
+            This will recursively load any imported files from this importPara (these will have a nested namespace)
         */
 
-        // open name[A, B] as X -> [A,B]
+        // from `open name[A, B] as X` get [A,B]
+        // We will check in resolve that these are either already
+        // fully qualified or they belong to this namespace
         List<AlloySigRefExpr> valsToSubstitute = importPara.sigRefs;
+        // to check in resolve that these are all resolved sigs
 
         // will be only one modPara in the importedFile
         AlloyModulePara modPara =
@@ -56,16 +64,13 @@ public class AMImports extends AMScopes {
             throw AlloyModelError.importArgsNumDoesntMatch(importPara.pos, importPara.toString());
         }
 
-        // paras in importedFile to walk over
-
-        // no need for module name para
-        List<AlloyPara> paras =
-                extractItemsNotOfClass(importPara.importedFile.paras, AlloyModulePara.class);
-        // no need for cmds or asserts
-        paras = extractItemsNotOfClass(paras, AlloyCmdPara.class);
-        paras = extractItemsNotOfClass(paras, AlloyAssertPara.class);
+        Map<AlloyQnameExpr, AlloySigRefExpr> substMap = new HashMap<>();
+        for (int i = 0; i < modArgs.size(); i++) {
+            substMap.put(modArgs.get(i).qname, valsToSubstitute.get(i));
+        }
 
         // 1)
+        // set what is "isExactly"
         for (int i = 0; i < modArgs.size(); i++) {
             if (modArgs.get(i).isExactly) {
                 if (importPara.qname.equals("util/ordering")) {
@@ -74,54 +79,57 @@ public class AMImports extends AMScopes {
                     // in AMScopes about applying only
                     // to top-level sigs
                     // Assumption: ordering module has only one param
-                    this.addOrderedSigWithExactScope(valsToSubstitute.get(i).getName());
+                    this.createOrderedSigWithExactScope(
+                            unknownQname(valsToSubstitute.get(i).getName()));
                 } else {
-                    this.addNonOrderedSigWithExactScope(valsToSubstitute.get(i).getName());
+                    this.createNonOrderedSigWithExactScope(
+                            unknownQname(valsToSubstitute.get(i).getName()));
                 }
             }
         }
 
         // 2)
-        Map<AlloyQnameExpr, AlloySigRefExpr> substMap = new HashMap<>();
-        for (int i = 0; i < modArgs.size(); i++) {
-            substMap.put(modArgs.get(i).qname, valsToSubstitute.get(i));
-        }
-        // System.out.println(substMap);
-
-        // replace modArg name with value to substitute
-
+        // replace modArg name with value to substitute in all paragraphs
         TestAndReplaceExprParaVis vis =
                 new TestAndReplaceExprParaVis(
                         e -> substMap.keySet().contains(e), e -> ((AlloyExpr) substMap.get(e)));
-
+        List<AlloyPara> importParas =
+                extractItemsNotOfClass(importPara.importedFile.paras, AlloyCmdPara.class);
+        importParas = extractItemsNotOfClass(importParas, AlloyModulePara.class);
         List<AlloyPara> newParas = emptyList();
-        for (AlloyPara para : paras) {
+        for (AlloyPara para : importParas) {
             newParas.add(vis.visit(para));
         }
-        System.out.println(new AlloyFile(newParas));
-        // 3)
 
-        // 4)
-        // what do we do with these paras now???
-        // add to sigTable, fieldTable, preds/funs table
-        // TODO: I think we need a fact table also
-        // or do we want to just add them to our sigParas, factParas, etc.????
+        String importNameSpace = THIS_NAMESPACE;
 
-    }
+        // add all the paragraphs in the namespace
+        // open name[A, B] as X -> X
+        if (importPara.asQname.isPresent()) importNameSpace = importPara.asQname.get().getName();
+        this.createImport(
+                importPara.pos,
+                importNameSpace,
+                importPara.qname.getName(),
+                mapBy(valsToSubstitute, n -> thisQname(n.getName())));
 
-    protected void resolve() {
-        super.resolve();
-        List<AlloyImportPara> newImports = emptyList();
-        for (AlloyImportPara importPara : this.imports) {
-            AlloyImportPara newImportPara = (AlloyImportPara) this.setMul(importPara);
-            newImports.add(newImportPara);
+        for (AlloyPara alloyPara : newParas) {
+            // only added to SM (not AMThis)
+            if (alloyPara instanceof AlloyEnumPara p) addSMPara(p, importNameSpace);
+            else if (alloyPara instanceof AlloySigPara p) addSMPara(p, importNameSpace);
+            else if (alloyPara instanceof AlloyPredPara p) addSMPara(p, importNameSpace);
+            else if (alloyPara instanceof AlloyFunPara p) addSMPara(p, importNameSpace);
+            else if (alloyPara instanceof AlloyFactPara p) addSMPara(p, importNameSpace);
+            else if (alloyPara instanceof AlloyAssertPara p) addSMPara(p, importNameSpace);
+            // else if (alloyPara instanceof AlloyCmdPara p) addSMPara(p, importNameSpace);
+            else if (alloyPara instanceof AlloyImportPara p)
+                // this will cause a recursive call if nested imports
+                addSMPara(p, importNameSpace);
+            // else if (alloyPara instanceof AlloyModulePara p) addSMPara(p, importNameSpace);
+            else {
+                System.out.println(alloyPara);
+                throw ImplementationError.shouldNotReach();
+            }
         }
-        this.imports = newImports;
-    }
-
-    public void addImportPara(AlloyImportPara importPara) {
-        this.imports.add(importPara);
-        loadImport(importPara);
     }
 
     public List<AlloyImportPara> allImportParas() {
@@ -136,7 +144,7 @@ public class AMImports extends AMScopes {
     // import name1/name2[sigName] as asName
     public void addImport(List<String> names, String sigName, String asName) {
         String fileName = String.join("/", names);
-        this.addImportPara(
+        this.addPara(
                 new AlloyImportPara(
                         false,
                         new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
@@ -148,7 +156,7 @@ public class AMImports extends AMScopes {
     // import name1/name2[sigName]
     public void addImport(List<String> names, String sigName) {
         String fileName = String.join("/", names);
-        this.addImportPara(
+        this.addPara(
                 new AlloyImportPara(
                         false,
                         new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
@@ -160,7 +168,7 @@ public class AMImports extends AMScopes {
     // import name1/name2[sigName1, sigName2]
     public void addImport(List<String> names, List<AlloySigRefExpr> sigNames) {
         String fileName = String.join("/", names);
-        this.addImportPara(
+        this.addPara(
                 new AlloyImportPara(
                         false,
                         new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
@@ -172,7 +180,7 @@ public class AMImports extends AMScopes {
     // import name1/name2
     public void addImport(List<String> names) {
         String fileName = String.join("/", names);
-        this.addImportPara(
+        this.addPara(
                 new AlloyImportPara(
                         false,
                         new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
