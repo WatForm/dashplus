@@ -179,12 +179,14 @@ public class SMResolve extends SMCmds {
 
         // --------------
 
+        /*
         // helper functions for conditions that should throw errors in arity checking
         private void notUnknown(ResolveInfo r) {
             if (r.arity.equals(UNKNOWN_ARITY)) {
                 throw AlloyModelError.unknownArity(r.exp.pos, r.exp.toString());
             }
         }
+        */
 
         private void noArgArities(ResolveInfo leftResult, ResolveInfo rightResult) {
             if (!leftResult.argArities.isEmpty() || (!rightResult.argArities.isEmpty()))
@@ -198,9 +200,9 @@ public class SMResolve extends SMCmds {
         }
 
         private void equalArities(ResolveInfo leftResult, ResolveInfo rightResult) {
-            if (!leftResult.arity.equals(rightResult.arity)
-                    && !leftResult.arity.equals(UNKNOWN_ARITY)
-                    && !rightResult.arity.equals(UNKNOWN_ARITY)) {
+            if (!leftResult.arity.equals(rightResult.arity)) {
+                // && !leftResult.arity.equals(UNKNOWN_ARITY)
+                // && !rightResult.arity.equals(UNKNOWN_ARITY)) {
                 // arity mismatch error
                 throw AlloyModelError.arityMismatch(
                         leftResult.exp.pos,
@@ -239,10 +241,11 @@ public class SMResolve extends SMCmds {
             // throws an error
             noArgArities(leftResult, rightResult);
             // must have Boolean arity args
-            if (!leftResult.arity.equals(ONE_ARITY) && !leftResult.arity.equals(UNKNOWN_ARITY)) {
+            if (!leftResult.arity.equals(
+                    ONE_ARITY)) { // && !leftResult.arity.equals(UNKNOWN_ARITY)) {
                 throw AlloyModelError.mustBeFormula(binExpr.left.pos, binExpr.left.toString());
-            } else if (!rightResult.arity.equals(ONE_ARITY)
-                    && !rightResult.arity.equals(UNKNOWN_ARITY)) {
+            } else if (!rightResult.arity.equals(ONE_ARITY)) {
+                // && !rightResult.arity.equals(UNKNOWN_ARITY)) {
                 throw AlloyModelError.mustBeFormula(binExpr.right.pos, binExpr.right.toString());
             }
 
@@ -323,14 +326,16 @@ public class SMResolve extends SMCmds {
                             mul2.orElse(null),
                             rightResult.exp);
 
+            /*
             if (leftResult.arity.equals(UNKNOWN_ARITY)) {
                 return new ResolveInfo(resultExp);
             } else if (rightResult.arity.equals(UNKNOWN_ARITY)) {
                 return new ResolveInfo(resultExp);
             } else {
-                return new ResolveInfo(
-                        Optional.of(leftResult.arity.get() + rightResult.arity.get()), resultExp);
-            }
+            */
+            return new ResolveInfo(
+                    Optional.of(leftResult.arity.get() + rightResult.arity.get()), resultExp);
+            // }
         }
 
         @Override
@@ -390,8 +395,8 @@ public class SMResolve extends SMCmds {
             // it is a pred/fun call
             if (rightResult.argArities.isEmpty()) {
                 // b is not a pred/fun call
-                notUnknown(leftResult);
-                notUnknown(rightResult);
+                // notUnknown(leftResult);
+                // notUnknown(rightResult);
                 Optional<Integer> returnArity =
                         Optional.of(leftResult.arity.get() + rightResult.arity.get() - 2);
                 return new ResolveInfo(returnArity, resultExpr);
@@ -549,7 +554,8 @@ public class SMResolve extends SMCmds {
             // throws an error
             noArgArities(subResult);
             // must have Boolean arity args
-            if (!subResult.arity.equals(ONE_ARITY) && !subResult.arity.equals(UNKNOWN_ARITY)) {
+            if (!subResult.arity.equals(
+                    ONE_ARITY)) { // } && !subResult.arity.equals(UNKNOWN_ARITY)) {
                 throw AlloyModelError.mustBeFormula(unaryExpr.sub.pos, unaryExpr.sub.toString());
             }
             return new ResolveInfo(ONE_ARITY, unaryExpr.rebuild(subResult.exp));
@@ -656,7 +662,7 @@ public class SMResolve extends SMCmds {
             noArgArities(subResult);
             // seq is weird
             if (isSeq(unaryExpr)) {
-                notUnknown(subResult);
+                // notUnknown(subResult);
                 return new ResolveInfo(
                         Optional.of(subResult.arity.get() + 1), unaryExpr.rebuild(subResult.exp));
             }
@@ -695,8 +701,8 @@ public class SMResolve extends SMCmds {
                 for (AlloyExpr e : block.exprs) {
                     ResolveInfo r = this.visit(e);
                     noArgArities(r);
-                    // let it pass if it is UNKNOWN_ARITY
-                    if (!r.arity.equals(UNKNOWN_ARITY) && !r.arity.equals(ONE_ARITY)) {
+
+                    if (!r.arity.equals(ONE_ARITY)) { // !r.arity.equals(UNKNOWN_ARITY) && !) {
                         throw AlloyModelError.mustBeFormula(e.pos, e.toString());
                     }
                     newExprs.add(r.exp);
@@ -714,21 +720,21 @@ public class SMResolve extends SMCmds {
                     new AlloyBracketExpr(
                             bracketExpr.pos, exprResult.exp, mapBy(exprsResult, r -> r.exp));
 
-            notUnknown(exprResult);
+            // notUnknown(exprResult);
             if (exprResult.argArities.isEmpty()) {
                 // exprResult is not a pred/fun call that needs args so
                 // this is just a regular join
                 // interpreted as c.(b.(a.p))
                 Optional<Integer> rightArity = exprResult.arity;
                 for (ResolveInfo argR : exprsResult) {
-                    notUnknown(argR);
+                    // notUnknown(argR);
                     noArgArities(argR);
                     Optional<Integer> leftArity = argR.arity;
-                    if (leftArity.equals(UNKNOWN_ARITY)) {
-                        throw AlloyModelError.unknownArity(argR.exp.pos, argR.exp.toString());
-                    } else {
-                        rightArity = Optional.of(leftArity.get() + rightArity.get() - 2);
-                    }
+                    // if (leftArity.equals(UNKNOWN_ARITY)) {
+                    //    throw AlloyModelError.unknownArity(argR.exp.pos, argR.exp.toString());
+                    // } else {
+                    rightArity = Optional.of(leftArity.get() + rightArity.get() - 2);
+                    // }
                 }
                 return new ResolveInfo(rightArity, resultExpr);
             } else if (exprsResult.size() > exprResult.argArities.size()) {
@@ -745,7 +751,7 @@ public class SMResolve extends SMCmds {
                 Integer i = 0;
                 for (Optional<Integer> argArity : exprResult.argArities) {
                     noArgArities(exprsResult.get(i));
-                    notUnknown(exprsResult.get(i));
+                    // notUnknown(exprsResult.get(i));
                     // not possible for argArity to be UNKNOWN
                     if (argArity.equals(exprsResult.get(i).arity)) {
                         i++;
@@ -802,8 +808,9 @@ public class SMResolve extends SMCmds {
 
                 ResolveInfo bodyResult = this.visit(comprehensionExpr.body.get());
                 bodyExpr = bodyResult.exp;
-                if (!bodyResult.arity.equals(UNKNOWN_ARITY) && !bodyResult.arity.equals(ONE_ARITY))
-                    throw AlloyModelError.mustBeFormula(
+                if (!bodyResult.arity.equals(
+                        ONE_ARITY)) // !bodyResult.arity.equals(UNKNOWN_ARITY) && )
+                throw AlloyModelError.mustBeFormula(
                             comprehensionExpr.pos,
                             comprehensionExpr.body.toString()
                                     + " of arity "
@@ -828,7 +835,7 @@ public class SMResolve extends SMCmds {
             Optional<Integer> typeArity = typeResult.arity;
             AlloyExpr newExpr = typeResult.exp;
             AlloyDecl newDecl = null;
-            notUnknown(typeResult);
+            // notUnknown(typeResult);
             // x: <emptymul> "seq A" is allowed
             if (declExpr.mul.isEmpty() && !isSeq(newExpr)) {
                 // setting default
@@ -866,20 +873,22 @@ public class SMResolve extends SMCmds {
             ResolveInfo condResult = this.visit(iteExpr.cond);
             ResolveInfo conseqResult = this.visit(iteExpr.conseq);
             ResolveInfo altResult = this.visit(iteExpr.alt);
-            if (!condResult.arity.equals(UNKNOWN_ARITY) && !condResult.arity.equals(ONE_ARITY)) {
+            if (!condResult.arity.equals(
+                    ONE_ARITY)) { // !condResult.arity.equals(UNKNOWN_ARITY) && ) {
                 throw AlloyModelError.mustBeFormula(iteExpr.pos, condResult.exp.toString());
             }
-            if (!conseqResult.arity.equals(UNKNOWN_ARITY)
-                    && !altResult.arity.equals(UNKNOWN_ARITY)
-                    && !conseqResult.arity.equals(altResult.arity)) {
+            if (!conseqResult.arity.equals(
+                    altResult.arity)) { // !conseqResult.arity.equals(UNKNOWN_ARITY)
+                // && !altResult.arity.equals(UNKNOWN_ARITY)
+                // &&
                 throw AlloyModelError.arityMismatch(
                         iteExpr.pos, conseqResult.exp.toString(), altResult.exp.toString());
             }
             Optional<Integer> returnArity;
-            if (!conseqResult.arity.equals(UNKNOWN_ARITY)) returnArity = conseqResult.arity;
-            else
-                // could be UNKNOWN_ARITY
-                returnArity = conseqResult.arity;
+            // if (!conseqResult.arity.equals(UNKNOWN_ARITY)) returnArity = conseqResult.arity;
+            // else
+            // could be UNKNOWN_ARITY
+            returnArity = conseqResult.arity;
             return new ResolveInfo(
                     returnArity, iteExpr.rebuild(condResult.exp, conseqResult.exp, altResult.exp));
         }
@@ -909,7 +918,8 @@ public class SMResolve extends SMCmds {
             for (AlloyDecl ds : quantificationExpr.decls) {
                 for (AlloyDecl d : ds.expand()) {
                     ResolveInfo dResult = this.visit(d.expr);
-                    if (!(dResult.arity.equals(UNKNOWN_ARITY) || dResult.arity.equals(ONE_ARITY))) {
+                    if (!dResult.arity.equals(
+                            ONE_ARITY)) { // !(dResult.arity.equals(UNKNOWN_ARITY) || )) {
                         // higher order warning
                         Reporter.INSTANCE.addWarning(
                                 new WarningUser(
@@ -926,8 +936,8 @@ public class SMResolve extends SMCmds {
             }
 
             ResolveInfo bodyResult = this.visit(quantificationExpr.body);
-            if (!bodyResult.arity.equals(UNKNOWN_ARITY) && !bodyResult.arity.equals(ONE_ARITY))
-                throw AlloyModelError.mustBeFormula(
+            if (!bodyResult.arity.equals(ONE_ARITY)) // !bodyResult.arity.equals(UNKNOWN_ARITY) && )
+            throw AlloyModelError.mustBeFormula(
                         quantificationExpr.pos, quantificationExpr.body.toString());
 
             // take them off the stack

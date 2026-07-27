@@ -20,11 +20,13 @@ class ResolveInfo {
         this.argArities = emptyList();
     }
 
+    /*
     ResolveInfo(AlloyExpr exp) {
         this.arity = UNKNOWN_ARITY;
         this.exp = exp;
         this.argArities = emptyList();
     }
+    */
 
     ResolveInfo(List<Optional<Integer>> argArities, Optional<Integer> arity, AlloyExpr exp) {
         this.argArities = argArities;
