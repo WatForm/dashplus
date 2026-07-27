@@ -110,6 +110,7 @@ sourceSets {
             exclude 'ca/uwaterloo/watform/predabstraction/**'
             exclude 'ca/uwaterloo/watform/dashtotla/**'
             exclude 'ca/uwaterloo/watform/alloytotla/**'
+            exclude 'ca/uwaterloo/watform/bar/**'
         }
     }
 }
