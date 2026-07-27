@@ -11,7 +11,8 @@ import java.util.List;
 
 public class NextDefnA2T extends InitDefnA2T {
 
-    public NextDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+    public NextDefnA2T(
+            AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
     }
 

@@ -17,7 +17,8 @@ public class FieldsA2T extends FactsA2T {
 
     */
 
-    public FieldsA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+    public FieldsA2T(
+            AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
     }
 

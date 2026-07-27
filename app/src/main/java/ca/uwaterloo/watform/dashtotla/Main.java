@@ -17,9 +17,7 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 // NAD RE-ADD import ca.uwaterloo.watform.dashtotla.*;
 // ASN RE-ADD import ca.uwaterloo.watform.predabstraction.PAMain;
 import ca.uwaterloo.watform.utils.*;
-import ca.uwaterloo.watform.visualization.ControlStateHierarchyVisualizer;
 import edu.mit.csail.sdg.alloy4.Err;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,7 +57,7 @@ import picocli.CommandLine.Mixin;
             "",
             "@|bold,underline USAGE MODES|@",
             "",
-            
+
             // Dash -> TLA
             "  @|bold 2) dashplus f.dsh/f.als -tla < -cmd | -cmd =n > < -v > < -d > |@",
             "     (translate dash or alloy to tla)",
@@ -105,8 +103,7 @@ public class Main implements Callable<Integer> {
                 someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")));
 
         // alloy is the default command
-        Boolean translateToAlloy =
-                !(tla || alsInputFile); // might also have a -alloy=
+        Boolean translateToAlloy = !(tla || alsInputFile); // might also have a -alloy=
 
         // set the default options to be traces for anything that translates to alloy
         /* NAD RE-ADD
@@ -146,7 +143,7 @@ public class Main implements Callable<Integer> {
             Reporter.INSTANCE.addError(
                     CliError.invalidParams(
                             "only -alloy can be written and input file must be .dsh"));
-        } 
+        }
         // stop if any errors from above check on combinations
         // Reporter.INSTANCE.exitIfHasErrors();
         if (Reporter.INSTANCE.hasErrors()) {
@@ -268,8 +265,10 @@ public class Main implements Callable<Integer> {
     }
 
     public static void main(String[] args) throws IOException {
+        System.out.println("started custom main");
         int exitCode = new CommandLine(new Main()).execute(args);
         System.exit(exitCode);
+        System.out.println("ended custom main");
     }
 
     private static void runAlloyToTla(
@@ -297,7 +296,6 @@ public class Main implements Callable<Integer> {
         */
     }
 
-
     private static void runAlloy(AlloyModel am, Integer cmdIdx) {
         int num_cmds_in_file = am.getNumCmds();
         if (cmdIdx < num_cmds_in_file) {
@@ -313,8 +311,6 @@ public class Main implements Callable<Integer> {
             }
         }
     }
-
-    
 
     private static void runDashToTla(
             DashModel dm,

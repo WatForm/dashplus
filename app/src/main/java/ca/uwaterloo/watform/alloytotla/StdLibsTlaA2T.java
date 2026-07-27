@@ -6,7 +6,8 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class StdLibsTlaA2T extends StdLibsAlloyA2T {
 
-    public StdLibsTlaA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+    public StdLibsTlaA2T(
+            AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
     }
 

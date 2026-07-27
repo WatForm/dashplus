@@ -13,7 +13,8 @@ import java.util.List;
 
 public class FactsA2T extends CommandA2T {
 
-    public FactsA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+    public FactsA2T(
+            AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
     }
 

@@ -7,7 +7,7 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.parser.Parser;
-import ca.uwaterloo.watform.test.*;
+import ca.uwaterloo.watform.testmodule.*;
 import ca.uwaterloo.watform.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;

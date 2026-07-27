@@ -25,7 +25,9 @@ public class BaseA2T {
     public final Logger l;
     public final AlloyToTlaExprVis translator;
 
-    public record Optimization(boolean exactScope, boolean customOrdering, boolean oneField, boolean oneSig) {};
+    public record Optimization(
+            boolean exactScope, boolean customOrdering, boolean oneField, boolean oneSig) {}
+    ;
 
     public final Optimization optimization;
 
@@ -45,7 +47,8 @@ public class BaseA2T {
         transcript.append("\n" + s);
     }
 
-    public BaseA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+    public BaseA2T(
+            AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         this.alloyModel = alloyModel;
         this.verbose = verbose;
         this.debug = debug;
