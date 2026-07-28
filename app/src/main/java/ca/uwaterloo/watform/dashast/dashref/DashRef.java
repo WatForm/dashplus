@@ -26,14 +26,14 @@
 package ca.uwaterloo.watform.dashast.dashref;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
-import static ca.uwaterloo.watform.parser.Parser.*;
+import static ca.uwaterloo.watform.parser.AlloyParser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashStrings;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,98 +42,98 @@ import java.util.stream.Collectors;
 
 public abstract class DashRef extends AlloyExpr {
 
-    public final String name;
-    public final List<AlloyExpr> paramValues;
+  public final String name;
+  public final List<AlloyExpr> paramValues;
 
-    protected DashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
-        super(p); // for pos
-        this.name = n;
-        this.paramValues = Collections.unmodifiableList(prmValues);
+  protected DashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
+    super(p); // for pos
+    this.name = n;
+    this.paramValues = Collections.unmodifiableList(prmValues);
+  }
+
+  protected DashRef(String n, List<? extends AlloyExpr> prmValues) {
+    this(Pos.UNKNOWN, n, prmValues);
+  }
+
+  protected DashRef(Pos p, List<AlloyNameExpr> names, List<? extends AlloyExpr> prmValues) {
+
+    String n =
+        names.stream()
+            .map(AlloyNameExpr::toString)
+            .collect(Collectors.joining(DashStrings.internalQualChar));
+    this(p, n, prmValues);
+  }
+
+  public static List<AlloyExpr> emptyParamValuesList() {
+    return new ArrayList<AlloyExpr>();
+  }
+
+  /*
+  public AlloyExpr asAlloyArrow() {
+      // p1 -> p2 -> fqn
+      // used for initialization and
+      // checking elements in conf/events
+      assert (!(this instanceof VarDashRef) || !((VarDashRef) this).isNext);
+      // TODO: paramValues need to be converted to AlloyVars
+      System.out.println("PARAM VALUES: " + this.paramValues);
+      List<AlloyExpr> ll = reverse(this.paramValues);
+      ll.add(AlloyVar(DashFQN.translateFQN(this.name)));
+      return AlloyArrowExprList(ll);
+  }
+  */
+
+  @Override
+  public void pp(PrintContext pCtx) {
+    // pp within Dash state (not in AlloyModel, where it should not exist)
+    // STATE: Root/A/B[a1,b1]
+    // other: Root/A/B[a1,b1]/var1
+    String s = "";
+    if (!this.paramValues.isEmpty()) {
+      // then it has to be at least partially resolved already
+      if (this instanceof StateDashRef) {
+        s += this.name;
+      } else {
+        s += DashFQN.chopPrefixFromFQN(this.name);
+      }
+      s += "[";
+      s += GeneralUtil.strCommaList(this.paramValues);
+      s += "]";
+      if (!(this instanceof StateDashRef)) {
+        s += "/";
+        s += DashFQN.chopNameFromFQN(this.name);
+      }
+    } else {
+      s += this.name;
     }
-
-    protected DashRef(String n, List<? extends AlloyExpr> prmValues) {
-        this(Pos.UNKNOWN, n, prmValues);
-    }
-
-    protected DashRef(Pos p, List<AlloyNameExpr> names, List<? extends AlloyExpr> prmValues) {
-
-        String n =
-                names.stream()
-                        .map(AlloyNameExpr::toString)
-                        .collect(Collectors.joining(DashStrings.internalQualChar));
-        this(p, n, prmValues);
-    }
-
-    public static List<AlloyExpr> emptyParamValuesList() {
-        return new ArrayList<AlloyExpr>();
-    }
-
+    pCtx.append(s);
     /*
-    public AlloyExpr asAlloyArrow() {
-        // p1 -> p2 -> fqn
-        // used for initialization and
-        // checking elements in conf/events
-        assert (!(this instanceof VarDashRef) || !((VarDashRef) this).isNext);
-        // TODO: paramValues need to be converted to AlloyVars
-        System.out.println("PARAM VALUES: " + this.paramValues);
-        List<AlloyExpr> ll = reverse(this.paramValues);
-        ll.add(AlloyVar(DashFQN.translateFQN(this.name)));
-        return AlloyArrowExprList(ll);
+    if (s.equals(
+            "System/Elevator/MovingUp[PID, System/Elevator/MovingUp[PID]/MovingUp]/MovingUp")) {
+        System.out.println(this.name);
+        System.out.println(this.paramValues);
+        printStackTrace();
+        System.exit(1);
     }
     */
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        // pp within Dash state (not in AlloyModel, where it should not exist)
-        // STATE: Root/A/B[a1,b1]
-        // other: Root/A/B[a1,b1]/var1
-        String s = "";
-        if (!this.paramValues.isEmpty()) {
-            // then it has to be at least partially resolved already
-            if (this instanceof StateDashRef) {
-                s += this.name;
-            } else {
-                s += DashFQN.chopPrefixFromFQN(this.name);
-            }
-            s += "[";
-            s += GeneralUtil.strCommaList(this.paramValues);
-            s += "]";
-            if (!(this instanceof StateDashRef)) {
-                s += "/";
-                s += DashFQN.chopNameFromFQN(this.name);
-            }
-        } else {
-            s += this.name;
-        }
-        pCtx.append(s);
-        /*
-        if (s.equals(
-                "System/Elevator/MovingUp[PID, System/Elevator/MovingUp[PID]/MovingUp]/MovingUp")) {
-            System.out.println(this.name);
-            System.out.println(this.paramValues);
-            printStackTrace();
-            System.exit(1);
-        }
-        */
-    }
+  public boolean hasNumParams(int i) {
+    return this.paramValues.size() == i;
+  }
 
-    public boolean hasNumParams(int i) {
-        return this.paramValues.size() == i;
-    }
+  @Override
+  public <T> T accept(AlloyExprVis<T> visitor) {
+    return visitor.visit(this);
+  }
 
-    @Override
-    public <T> T accept(AlloyExprVis<T> visitor) {
-        return visitor.visit(this);
-    }
+  public abstract DashStrings.DashRefKind kind();
 
-    public abstract DashStrings.DashRefKind kind();
+  public boolean isNext() {
+    return (this instanceof VarDashRef && ((VarDashRef) this).isNext);
+  }
 
-    public boolean isNext() {
-        return (this instanceof VarDashRef && ((VarDashRef) this).isNext);
-    }
-
-    @Override
-    public int getPrec() {
-        return AlloyExpr.NO_PAREN;
-    }
+  @Override
+  public int getPrec() {
+    return AlloyExpr.NO_PAREN;
+  }
 }

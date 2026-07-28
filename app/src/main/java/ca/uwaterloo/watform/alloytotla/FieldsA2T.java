@@ -11,45 +11,50 @@ import java.util.List;
 
 public class FieldsA2T extends FactsA2T {
 
-    /*
-    each field f gets a VARIABLE added
-    VARIABLES f1, f2...
+  /*
+  each field f gets a VARIABLE added
+  VARIABLES f1, f2...
 
-    */
+  */
 
+<<<<<<< HEAD
     public FieldsA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
+=======
+  public FieldsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    super(alloyModel, verbose, debug);
+  }
+
+  protected void addFieldTypes(TlaModel tlaModel) {
+
+    tlaModel.addComment("field types", verbose);
+
+    List<TlaExp> fieldTypes = mapBy(alloyModel.allFields(), f -> fieldType(f));
+    var defn = TlaDefn(FIELD_TYPES, repeatedAnd(fieldTypes));
+    tlaModel.addDefn(defn);
+  }
+
+  protected void addFieldVars(TlaModel tlaModel) {
+
+    for (String field : alloyModel.allFields()) {
+      tlaModel.addVar(TlaVar(field), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
+      l.info("translated field " + field + " into a VARIABLE");
+>>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
     }
+  }
 
-    protected void addFieldTypes(TlaModel tlaModel) {
+  protected TlaExp fieldType(String field) {
 
-        tlaModel.addComment("field types", verbose);
+    return TlaNullSet();
+    // TlaVar parentSig = TlaVar(alloyModel.sigOfField(field));
+    // TlaExp expr = new AlloyToTlaExprVis().visit(alloyModel.declOfField(field).expr);
+    // return TlaVar(field).IN(TlaSubsetUnary(_CROSS(parentSig, expr)));
+  }
 
-        List<TlaExp> fieldTypes = mapBy(alloyModel.allFields(), f -> fieldType(f));
-        var defn = TlaDefn(FIELD_TYPES, repeatedAnd(fieldTypes));
-        tlaModel.addDefn(defn);
-    }
+  protected void fieldFacts(String field) {
 
-    protected void addFieldVars(TlaModel tlaModel) {
-
-        for (String field : alloyModel.allFields()) {
-            tlaModel.addVar(TlaVar(field), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
-            l.info("translated field " + field + " into a VARIABLE");
-        }
-    }
-
-    protected TlaExp fieldType(String field) {
-
-        return TlaNullSet();
-        // TlaVar parentSig = TlaVar(alloyModel.sigOfField(field));
-        // TlaExp expr = new AlloyToTlaExprVis().visit(alloyModel.declOfField(field).expr);
-        // return TlaVar(field).IN(TlaSubsetUnary(_CROSS(parentSig, expr)));
-    }
-
-    protected void fieldFacts(String field) {
-
-        return;
-        // var expr = alloyModel.declOfField(field).expr;
-        // var mul = alloyModel.declOfField(field).mul;
-    }
+    return;
+    // var expr = alloyModel.declOfField(field).expr;
+    // var mul = alloyModel.declOfField(field).mul;
+  }
 }

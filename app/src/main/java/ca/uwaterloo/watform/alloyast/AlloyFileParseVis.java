@@ -7,29 +7,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
-    public final String fullFileName;
+  public final String fullFileName;
 
-    public AlloyFileParseVis(String fullFileName) {
-        this.fullFileName = fullFileName;
-    }
+  public AlloyFileParseVis(String fullFileName) {
+    this.fullFileName = fullFileName;
+  }
 
-    @Override
-    public AlloyFile visitAlloyFile(DashParser.AlloyFileContext ctx) {
-        AlloyParaParseVis ppv = new AlloyParaParseVis();
-        List<AlloyPara> paragraphs = new ArrayList<>();
-        for (DashParser.AlloyParagraphContext parCtx : ctx.alloyParagraph()) {
-            try {
-                paragraphs.add(ppv.visit(parCtx));
-            } catch (AlloyCtorError alloyCtorError) {
-                // caught here, because we will let it
-                // continue on other paragraphs
-                Reporter.INSTANCE.addError(alloyCtorError);
-            }
-        }
-        if (paragraphs.isEmpty()) {
-            return new AlloyFile(paragraphs);
-        } else {
-            return new AlloyFile(new Pos(ctx), paragraphs);
-        }
+  @Override
+  public AlloyFile visitAlloyFile(DashParser.AlloyFileContext ctx) {
+    AlloyParaParseVis ppv = new AlloyParaParseVis();
+    List<AlloyPara> paragraphs = new ArrayList<>();
+    for (DashParser.AlloyParagraphContext parCtx : ctx.alloyParagraph()) {
+      try {
+        paragraphs.add(ppv.visit(parCtx));
+      } catch (AlloyCtorError alloyCtorError) {
+        // caught here, because we will let it
+        // continue on other paragraphs
+        Reporter.INSTANCE.addError(alloyCtorError);
+      }
     }
+    if (paragraphs.isEmpty()) {
+      return new AlloyFile(paragraphs);
+    } else {
+      return new AlloyFile(new Pos(ctx), paragraphs);
+    }
+  }
 }

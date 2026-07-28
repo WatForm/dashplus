@@ -11,53 +11,58 @@ import java.util.List;
 
 public class AlloyToTla extends StdLibsTlaA2T {
 
-    public static TlaModel getBlankModel(String moduleName) {
-        return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
+  public static TlaModel getBlankModel(String moduleName) {
+    return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
+  }
+
+  public AlloyToTla(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    super(alloyModel, verbose, debug);
+  }
+
+  public List<TlaModel> translate(String baseName) {
+
+    List<AlloyCmdPara> paras = alloyModel.allCmdParas();
+
+    List<AlloyCmdPara.CommandDecl> cmdDecls = new ArrayList<>();
+    for (var p : paras) {
+      cmdDecls.addAll(p.cmdDecls);
     }
 
+<<<<<<< HEAD
     public AlloyToTla(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
+=======
+    List<TlaModel> tlaModels = new ArrayList<>();
+
+    int ct = 0;
+    for (var cmdDecl : cmdDecls) {
+      String name = ct == 0 ? baseName : baseName + ct;
+      TlaModel tlaModel = getBlankModel(name);
+      translate(tlaModel, cmdDecl);
+      tlaModels.add(tlaModel);
+      ct += 1;
+>>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
     }
 
-    public List<TlaModel> translate(String baseName) {
+    return tlaModels;
+  }
 
-        List<AlloyCmdPara> paras = alloyModel.allCmdParas();
+  public void translate(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
-        List<AlloyCmdPara.CommandDecl> cmdDecls = new ArrayList<>();
-        for (var p : paras) {
-            cmdDecls.addAll(p.cmdDecls);
-        }
+    l.info("chosen command: " + cmdDecl.toString());
 
-        List<TlaModel> tlaModels = new ArrayList<>();
-
-        int ct = 0;
-        for (var cmdDecl : cmdDecls) {
-            String name = ct == 0 ? baseName : baseName + ct;
-            TlaModel tlaModel = getBlankModel(name);
-            translate(tlaModel, cmdDecl);
-            tlaModels.add(tlaModel);
-            ct += 1;
-        }
-
-        return tlaModels;
-    }
-
-    public void translate(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
-
-        l.info("chosen command: " + cmdDecl.toString());
-
-        addStdLibsTla(tlaModel);
-        addSigVars(tlaModel);
-        addFieldVars(tlaModel);
-        addBoilerplate(tlaModel);
-        addStdLibsAlloy(tlaModel, cmdDecl);
-        addPredicatesFunctions(tlaModel);
-        addSigHierarchy(tlaModel);
-        addFieldTypes(tlaModel);
-        addSigConstraints(tlaModel);
-        addFacts(tlaModel);
-        addCommand(tlaModel, cmdDecl);
-        addInitDefn(tlaModel, cmdDecl);
-        addNextDefn(tlaModel);
-    }
+    addStdLibsTla(tlaModel);
+    addSigVars(tlaModel);
+    addFieldVars(tlaModel);
+    addBoilerplate(tlaModel);
+    addStdLibsAlloy(tlaModel, cmdDecl);
+    addPredicatesFunctions(tlaModel);
+    addSigHierarchy(tlaModel);
+    addFieldTypes(tlaModel);
+    addSigConstraints(tlaModel);
+    addFacts(tlaModel);
+    addCommand(tlaModel, cmdDecl);
+    addInitDefn(tlaModel, cmdDecl);
+    addNextDefn(tlaModel);
+  }
 }

@@ -5,14 +5,14 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 
 public class TlaStringSet extends TlaSimpleExp {
 
-    /*
+  /*
 
-    STRING
+  STRING
 
-    this is a TLA+ constant that refers to the set of all strings
-    */
+  this is a TLA+ constant that refers to the set of all strings
+  */
 
-    public TlaStringSet() {
-        super(TlaStrings.STRING_SET);
-    }
+  public TlaStringSet() {
+    super(TlaStrings.STRING_SET);
+  }
 }

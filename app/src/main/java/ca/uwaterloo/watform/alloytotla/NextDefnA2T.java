@@ -11,19 +11,25 @@ import java.util.List;
 
 public class NextDefnA2T extends InitDefnA2T {
 
+<<<<<<< HEAD
     public NextDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
     }
+=======
+  public NextDefnA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    super(alloyModel, verbose, debug);
+  }
+>>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
 
-    protected void addNextDefn(TlaModel tlaModel) {
+  protected void addNextDefn(TlaModel tlaModel) {
 
-        tlaModel.addComment("Next", verbose);
+    tlaModel.addComment("Next", verbose);
 
-        List<TlaVar> unchanged = new ArrayList<>();
+    List<TlaVar> unchanged = new ArrayList<>();
 
-        for (var s : alloyModel.allSigs()) unchanged.add(TlaVar(s));
-        for (var f : alloyModel.allFields()) unchanged.add(TlaVar(f));
+    for (var s : alloyModel.allSigs()) unchanged.add(TlaVar(s));
+    for (var f : alloyModel.allFields()) unchanged.add(TlaVar(f));
 
-        tlaModel.addDefn(TlaDefn(NEXT, TlaUnchanged(unchanged)));
-    }
+    tlaModel.addDefn(TlaDefn(NEXT, TlaUnchanged(unchanged)));
+  }
 }

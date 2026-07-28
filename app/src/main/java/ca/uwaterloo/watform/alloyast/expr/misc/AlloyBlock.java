@@ -5,103 +5,103 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public final class AlloyBlock extends AlloyExpr {
-    public final List<AlloyExpr> exprs;
+  public final List<AlloyExpr> exprs;
 
-    public AlloyBlock(Pos pos, List<AlloyExpr> exprs) {
-        super(pos);
-        this.exprs = Collections.unmodifiableList(exprs);
-        reqNonNull(nullField(pos, this), this.exprs);
+  public AlloyBlock(Pos pos, List<AlloyExpr> exprs) {
+    super(pos);
+    this.exprs = Collections.unmodifiableList(exprs);
+    reqNonNull(nullField(pos, this), this.exprs);
+  }
+
+  public AlloyBlock(List<AlloyExpr> exprs) {
+    this(Pos.UNKNOWN, exprs);
+  }
+
+  public AlloyBlock(Pos pos, AlloyExpr expr) {
+    this(pos, Collections.singletonList(expr));
+  }
+
+  public AlloyBlock(AlloyExpr expr) {
+    this(Pos.UNKNOWN, Collections.singletonList(expr));
+  }
+
+  public AlloyBlock() {
+    this(Pos.UNKNOWN, Collections.emptyList());
+  }
+
+  @Override
+  public void toString(StringBuilder sb, int indent) {
+    String tabs = TAB.repeat(indent);
+
+    sb.append(LBRACE);
+
+    for (AlloyExpr expr : this.exprs) {
+      sb.append(NEWLINE + tabs + TAB);
+      expr.toString(sb, indent + 1);
     }
+    sb.append(NEWLINE);
 
-    public AlloyBlock(List<AlloyExpr> exprs) {
-        this(Pos.UNKNOWN, exprs);
-    }
+    sb.append(tabs);
+    sb.append(RBRACE);
+  }
 
-    public AlloyBlock(Pos pos, AlloyExpr expr) {
-        this(pos, Collections.singletonList(expr));
-    }
+  @Override
+  public <T> T accept(AlloyExprVis<T> visitor) {
+    return visitor.visit(this);
+  }
 
-    public AlloyBlock(AlloyExpr expr) {
-        this(Pos.UNKNOWN, Collections.singletonList(expr));
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.exprs);
+  }
 
-    public AlloyBlock() {
-        this(Pos.UNKNOWN, Collections.emptyList());
-    }
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    AlloyBlock other = (AlloyBlock) obj;
+    if (exprs == null) {
+      if (other.exprs != null) return false;
+    } else if (!exprs.equals(other.exprs)) return false;
+    return true;
+  }
 
-    @Override
-    public void toString(StringBuilder sb, int indent) {
-        String tabs = TAB.repeat(indent);
-
-        sb.append(LBRACE);
-
-        for (AlloyExpr expr : this.exprs) {
-            sb.append(NEWLINE + tabs + TAB);
-            expr.toString(sb, indent + 1);
+  @Override
+  public void pp(PrintContext pCtx) {
+    pCtx.append(LBRACE);
+    if (!this.exprs.isEmpty()) {
+      pCtx.brkNoSpace();
+      if (1 == exprs.size()) {
+        exprs.getFirst().ppNewBlock(pCtx);
+        pCtx.brkNoSpaceNoIndent();
+      } else {
+        for (AlloyExpr alloyExpr : this.exprs) {
+          alloyExpr.ppNewBlock(pCtx);
+          if (alloyExpr != this.exprs.getLast()) {
+            pCtx.nl();
+            pCtx.nl();
+          }
         }
-        sb.append(NEWLINE);
-
-        sb.append(tabs);
-        sb.append(RBRACE);
+        pCtx.nlNoIndent();
+      }
     }
+    pCtx.append(RBRACE);
+  }
 
-    @Override
-    public <T> T accept(AlloyExprVis<T> visitor) {
-        return visitor.visit(this);
-    }
+  @Override
+  public int getPrec() {
+    return AlloyExpr.NO_PAREN;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.exprs);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        AlloyBlock other = (AlloyBlock) obj;
-        if (exprs == null) {
-            if (other.exprs != null) return false;
-        } else if (!exprs.equals(other.exprs)) return false;
-        return true;
-    }
-
-    @Override
-    public void pp(PrintContext pCtx) {
-        pCtx.append(LBRACE);
-        if (!this.exprs.isEmpty()) {
-            pCtx.brkNoSpace();
-            if (1 == exprs.size()) {
-                exprs.getFirst().ppNewBlock(pCtx);
-                pCtx.brkNoSpaceNoIndent();
-            } else {
-                for (AlloyExpr alloyExpr : this.exprs) {
-                    alloyExpr.ppNewBlock(pCtx);
-                    if (alloyExpr != this.exprs.getLast()) {
-                        pCtx.nl();
-                        pCtx.nl();
-                    }
-                }
-                pCtx.nlNoIndent();
-            }
-        }
-        pCtx.append(RBRACE);
-    }
-
-    @Override
-    public int getPrec() {
-        return AlloyExpr.NO_PAREN;
-    }
-
-    public AlloyBlock rebuild(List<AlloyExpr> exprs) {
-        return new AlloyBlock(this.pos, exprs);
-    }
+  public AlloyBlock rebuild(List<AlloyExpr> exprs) {
+    return new AlloyBlock(this.pos, exprs);
+  }
 }

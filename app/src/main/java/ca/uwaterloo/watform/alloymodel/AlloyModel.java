@@ -18,85 +18,85 @@ import java.util.*;
 
 public class AlloyModel extends AMThisModuleParas {
 
-    public AlloyModel(AlloyFile alloyFile) {
-        for (AlloyPara alloyPara : alloyFile.paras) {
-            // all are in THIS_NAMESPACE
-            if (alloyPara instanceof AlloyEnumPara p) addPara(p);
-            else if (alloyPara instanceof AlloySigPara p) addPara(p);
-            else if (alloyPara instanceof AlloyPredPara p) addPara(p);
-            else if (alloyPara instanceof AlloyFunPara p) addPara(p);
-            else if (alloyPara instanceof AlloyFactPara p) addPara(p);
-            else if (alloyPara instanceof AlloyAssertPara p) addPara(p);
-            else if (alloyPara instanceof AlloyCmdPara p) addPara(p);
-            else if (alloyPara instanceof AlloyImportPara p) addPara(p);
-            else if (alloyPara instanceof AlloyModulePara p) addPara(p);
-            else throw new AssertionError("Unknown AlloyPara subtype: " + alloyPara.getClass());
-        }
+  public AlloyModel(AlloyFile alloyFile) {
+    for (AlloyPara alloyPara : alloyFile.paras) {
+      // all are in THIS_NAMESPACE
+      if (alloyPara instanceof AlloyEnumPara p) addPara(p);
+      else if (alloyPara instanceof AlloySigPara p) addPara(p);
+      else if (alloyPara instanceof AlloyPredPara p) addPara(p);
+      else if (alloyPara instanceof AlloyFunPara p) addPara(p);
+      else if (alloyPara instanceof AlloyFactPara p) addPara(p);
+      else if (alloyPara instanceof AlloyAssertPara p) addPara(p);
+      else if (alloyPara instanceof AlloyCmdPara p) addPara(p);
+      else if (alloyPara instanceof AlloyImportPara p) addPara(p);
+      else if (alloyPara instanceof AlloyModulePara p) addPara(p);
+      else throw new AssertionError("Unknown AlloyPara subtype: " + alloyPara.getClass());
     }
+  }
 
-    public AlloyModel() {}
+  public AlloyModel() {}
 
-    public AlloyModel(AlloyModel other) {
-        super(other);
-    }
+  public AlloyModel(AlloyModel other) {
+    super(other);
+  }
 
-    public AlloyModel copy() {
-        return new AlloyModel(this);
-    }
+  public AlloyModel copy() {
+    return new AlloyModel(this);
+  }
 
-    public AlloyModel copyImportsAndSigs() {
-        List<AlloyPara> paras = new ArrayList<AlloyPara>();
-        paras.addAll(this.allModuleParas());
-        paras.addAll(this.allImportParas());
-        paras.addAll(this.allSigParas());
-        AlloyFile af = new AlloyFile(paras);
-        return new AlloyModel(af);
-    }
+  public AlloyModel copyImportsAndSigs() {
+    List<AlloyPara> paras = new ArrayList<AlloyPara>();
+    paras.addAll(this.allModuleParas());
+    paras.addAll(this.allImportParas());
+    paras.addAll(this.allSigParas());
+    AlloyFile af = new AlloyFile(paras);
+    return new AlloyModel(af);
+  }
 
-    public List<AlloyPara> getAllParas(boolean withCmds) {
-        List<AlloyPara> allParas = new ArrayList<AlloyPara>();
+  public List<AlloyPara> getAllParas(boolean withCmds) {
+    List<AlloyPara> allParas = new ArrayList<AlloyPara>();
 
-        // first two must come before the rest
-        allParas.addAll(this.allModuleParas());
-        allParas.addAll(this.allImportParas());
+    // first two must come before the rest
+    allParas.addAll(this.allModuleParas());
+    allParas.addAll(this.allImportParas());
 
-        allParas.addAll(this.allEnumParas());
-        allParas.addAll(this.allSigParas());
-        // allParas.addAll(this.allMacroParas());
-        allParas.addAll(this.allFunParas());
-        allParas.addAll(this.allPredParas());
-        allParas.addAll(this.allFactParas());
-        allParas.addAll(this.allAssertParas());
-        if (withCmds) allParas.addAll(this.allCmdParas());
-        return allParas;
-    }
+    allParas.addAll(this.allEnumParas());
+    allParas.addAll(this.allSigParas());
+    // allParas.addAll(this.allMacroParas());
+    allParas.addAll(this.allFunParas());
+    allParas.addAll(this.allPredParas());
+    allParas.addAll(this.allFactParas());
+    allParas.addAll(this.allAssertParas());
+    if (withCmds) allParas.addAll(this.allCmdParas());
+    return allParas;
+  }
 
-    private AlloyFile toAlloyFile(boolean withCmds) {
-        return new AlloyFile(this.getAllParas(withCmds));
-    }
+  private AlloyFile toAlloyFile(boolean withCmds) {
+    return new AlloyFile(this.getAllParas(withCmds));
+  }
 
-    public AlloyFile toAlloyFile() {
-        return new AlloyFile(this.getAllParas(true));
-    }
+  public AlloyFile toAlloyFile() {
+    return new AlloyFile(this.getAllParas(true));
+  }
 
-    public AlloyFile toAlloyFileNoCmds() {
-        return new AlloyFile(this.getAllParas(false));
-    }
+  public AlloyFile toAlloyFileNoCmds() {
+    return new AlloyFile(this.getAllParas(false));
+  }
 
-    private String toString(boolean withCmds) {
-        StringWriter sw = new StringWriter();
-        PrintContext pCtx = new PrintContext(sw);
+  private String toString(boolean withCmds) {
+    StringWriter sw = new StringWriter();
+    PrintContext pCtx = new PrintContext(sw);
 
-        AlloyFile newAlloyFile = this.toAlloyFile(withCmds);
-        newAlloyFile.ppNewBlock(pCtx);
-        return sw.toString();
-    }
+    AlloyFile newAlloyFile = this.toAlloyFile(withCmds);
+    newAlloyFile.ppNewBlock(pCtx);
+    return sw.toString();
+  }
 
-    public String toString() {
-        return this.toString(true);
-    }
+  public String toString() {
+    return this.toString(true);
+  }
 
-    public String toStringNoCmds() {
-        return this.toString(false);
-    }
+  public String toStringNoCmds() {
+    return this.toString(false);
+  }
 }

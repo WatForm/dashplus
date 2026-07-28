@@ -10,80 +10,80 @@ import java.util.logging.Logger;
 
 public class DashToTla {
 
-    public static void translate(
-            DashModel dashModel,
-            TlaModel tlaModel,
-            boolean verbose,
-            boolean debug,
-            boolean singleEnvInput) {
+  public static void translate(
+      DashModel dashModel,
+      TlaModel tlaModel,
+      boolean verbose,
+      boolean debug,
+      boolean singleEnvInput) {
 
-        // AlloyToTla alloyTranslator = new AlloyToTla(dashModel, tlaModel, verbose, debug);
-        // alloyTranslator.translate();
+    // AlloyToTla alloyTranslator = new AlloyToTla(dashModel, tlaModel, verbose, debug);
+    // alloyTranslator.translate();
 
-        // StdLibDefns.translate(dashModel, tlaModel);
-        // if (debug) System.out.println("translated libraries");
+    // StdLibDefns.translate(dashModel, tlaModel);
+    // if (debug) System.out.println("translated libraries");
 
-        // StandardVars.translate(dashModel, tlaModel);
-        // if (debug) System.out.println("translated variables");
+    // StandardVars.translate(dashModel, tlaModel);
+    // if (debug) System.out.println("translated variables");
 
-        // tlaModel.addComment(
-        //         "State literals, represented as sets of strings. Leaf-states become strings and
-        // non-leaf states are composed of their descendants",
-        //         verbose);
-        // StateDefns.translate(dashModel, tlaModel);
-        // if (debug) System.out.println("translated states");
+    // tlaModel.addComment(
+    //         "State literals, represented as sets of strings. Leaf-states become strings and
+    // non-leaf states are composed of their descendants",
+    //         verbose);
+    // StateDefns.translate(dashModel, tlaModel);
+    // if (debug) System.out.println("translated states");
 
-        // tlaModel.addComment(
-        //         "string literal representations of transitions taken, which are the values taken
-        // by the "
-        //                 + EVENTS
-        //                 + " variable",
-        //         verbose);
-        // EventDefns.translate(dashModel, tlaModel);
-        // if (debug) System.out.println("translated events");
+    // tlaModel.addComment(
+    //         "string literal representations of transitions taken, which are the values taken
+    // by the "
+    //                 + EVENTS
+    //                 + " variable",
+    //         verbose);
+    // EventDefns.translate(dashModel, tlaModel);
+    // if (debug) System.out.println("translated events");
 
-        // tlaModel.addComment(
-        //         "string literal representations of transitions taken, which are the values taken
-        // by the "
-        //                 + TRANS_TAKEN
-        //                 + " variable",
-        //         verbose);
-        // TransDefns.translate(dashModel, tlaModel, verbose, debug);
-        // if (debug) System.out.println("translated transitions");
+    // tlaModel.addComment(
+    //         "string literal representations of transitions taken, which are the values taken
+    // by the "
+    //                 + TRANS_TAKEN
+    //                 + " variable",
+    //         verbose);
+    // TransDefns.translate(dashModel, tlaModel, verbose, debug);
+    // if (debug) System.out.println("translated transitions");
 
-        // tlaModel.addComment("Small step definition", verbose);
-        // SmallStepDefn.translate(dashModel, tlaModel);
+    // tlaModel.addComment("Small step definition", verbose);
+    // SmallStepDefn.translate(dashModel, tlaModel);
 
-        // tlaModel.addComment("type restrictions on variables", verbose);
-        // ValidDefns.translate(dashModel, tlaModel);
+    // tlaModel.addComment("type restrictions on variables", verbose);
+    // ValidDefns.translate(dashModel, tlaModel);
 
-        // tlaModel.addComment(
-        //         "Single environmental event constraint, vacuously true if there are no events",
-        //         verbose && singleEnvInput);
-        // SingleEnvEvent.translate(dashModel, tlaModel, singleEnvInput);
+    // tlaModel.addComment(
+    //         "Single environmental event constraint, vacuously true if there are no events",
+    //         verbose && singleEnvInput);
+    // SingleEnvEvent.translate(dashModel, tlaModel, singleEnvInput);
 
-        // tlaModel.addComment("initial values for variables", verbose);
-        // InitDefn.translate(dashModel, tlaModel, singleEnvInput);
+    // tlaModel.addComment("initial values for variables", verbose);
+    // InitDefn.translate(dashModel, tlaModel, singleEnvInput);
 
-        // tlaModel.addComment("Next relation", verbose);
-        // NextDefn.translate(dashModel, tlaModel, singleEnvInput);
-    }
+    // tlaModel.addComment("Next relation", verbose);
+    // NextDefn.translate(dashModel, tlaModel, singleEnvInput);
+  }
 
-    public static TlaModel translate(
-            DashModel dashModel,
-            String moduleName,
-            boolean singleEnvInput,
-            boolean verbose,
-            boolean debug) {
+  public static TlaModel translate(
+      DashModel dashModel,
+      String moduleName,
+      boolean singleEnvInput,
+      boolean verbose,
+      boolean debug) {
 
-        Logger l = CustomLoggerFactory.make("AlloyToTla", debug);
+    Logger l = CustomLoggerFactory.make("AlloyToTla", debug);
 
-        l.info("making TLA model with name: " + moduleName);
+    l.info("making TLA model with name: " + moduleName);
 
-        TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
+    TlaModel tlaModel = new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
 
-        translate(dashModel, tlaModel, singleEnvInput, verbose, debug);
+    translate(dashModel, tlaModel, singleEnvInput, verbose, debug);
 
-        return tlaModel;
-    }
+    return tlaModel;
+  }
 }

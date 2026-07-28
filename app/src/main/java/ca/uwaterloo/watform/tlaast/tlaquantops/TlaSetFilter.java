@@ -10,36 +10,36 @@ import java.util.List;
 
 public class TlaSetFilter extends TlaQuantOp {
 
-    /*
+  /*
 
-    {v \in S : exp}
+  {v \in S : exp}
 
-    variable: v
-    set: S  (can be an expression that evaluates to a set)
-    expression: exp (boolean expression)
+  variable: v
+  set: S  (can be an expression that evaluates to a set)
+  expression: exp (boolean expression)
 
-    used to construct a set by applying a filter to another set
+  used to construct a set by applying a filter to another set
 
-    for more complex constructions:
+  for more complex constructions:
 
-    {<quantophead> : exp}
+  {<quantophead> : exp}
 
-    where quantophead can be constructed from the QuantOP class
+  where quantophead can be constructed from the QuantOP class
 
-    */
+  */
 
-    public TlaSetFilter(List<TlaQuantOpHead> heads, TlaExp expression) {
-        super(heads, expression, TlaOperator.PrecedenceGroup.SAFE);
-    }
+  public TlaSetFilter(List<TlaQuantOpHead> heads, TlaExp expression) {
+    super(heads, expression, TlaOperator.PrecedenceGroup.SAFE);
+  }
 
-    @Override
-    public String toTLAPlusSnippetCore() {
-        return TlaStrings.SET_START
-                + strCommaList(mapBy(this.heads, h -> h.toTLAPlusSnippetCore(this)))
-                + TlaStrings.SPACE
-                + TlaStrings.COLON
-                + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.expression)
-                + TlaStrings.SET_END;
-    }
+  @Override
+  public String toTLAPlusSnippetCore() {
+    return TlaStrings.SET_START
+        + strCommaList(mapBy(this.heads, h -> h.toTLAPlusSnippetCore(this)))
+        + TlaStrings.SPACE
+        + TlaStrings.COLON
+        + TlaStrings.SPACE
+        + this.getTLASnippetOfChild(this.expression)
+        + TlaStrings.SET_END;
+  }
 }

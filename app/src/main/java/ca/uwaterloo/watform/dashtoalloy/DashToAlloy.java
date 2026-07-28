@@ -11,112 +11,112 @@ import ca.uwaterloo.watform.dashmodel.DashModel;
 
 public class DashToAlloy extends StutterD2A {
 
-    public DashToAlloy(DashModel dm, Options opt) {
-        super(dm, opt);
+  public DashToAlloy(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
+
+  public DashToAlloy(DashModel dm) {
+    super(dm, Options.traces);
+  }
+
+  public AlloyModel translate() {
+
+    // copy all Alloy stuff from dm into am
+    this.am = dm.copy();
+    // System.out.println(this.am);
+
+    if (this.dm.hasConcurrency())
+      // open util/boolean
+      this.am.addUtilBooleanImport();
+
+    // state, transition, parameter, buffer spaces
+    this.addSpaceSigs();
+
+    this.addSnapshotSig();
+
+    this.addInit();
+    this.addInvs();
+
+    for (String tfqn : this.dm.allTransNames()) {
+      this.addTransPre(tfqn);
+      if (this.dm.hasConcurrency()) {
+        this.addTransIsEnabledAfterStep(tfqn);
+      }
+      this.addTransPost(tfqn);
+      this.addTrans(tfqn);
     }
 
-    public DashToAlloy(DashModel dm) {
-        super(dm, Options.traces);
+    // one of these for the whole model
+    if (this.dm.hasConcurrency()) this.addTestIfNextStable();
+
+    this.addTransEnabled();
+    this.addSmallStep();
+
+    if (this.isTcmc) {
+      // next two are required
+      this.addStutter();
+      this.addTcmcFact();
+      this.addAllSnapshotsDiffFact();
+
+      // next ones can be used along with property checking
+      this.addStrongNoStutter();
+      // only useful for Tcmc and is a fact
+      this.addReachability();
+
+    } else if (this.isTraces) {
+      // next two are required
+      this.addStutter();
+      this.addTracesFact();
+      this.addAllSnapshotsDiffFact();
+      // everything in traces is reachable b/c it
+      // starts from initial state and only takes steps
+      // it can reach
+
+    } else if (this.isElectrum) {
+      // this one is required
+      // all snapshots are automatically different in electrum
+      this.addElectrumFact();
     }
 
-    public AlloyModel translate() {
+    // these predicates may be useful in any of the above
+    this.addSingleEventInput();
+    this.addCompleteBigSteps();
+    this.addEnoughOps();
+    // System.out.println(this.am);
+    this.am.resolve();
+    return this.am;
+  }
 
-        // copy all Alloy stuff from dm into am
-        this.am = dm.copy();
-        // System.out.println(this.am);
+  public AlloyModel translateVarBufferSigsOnly() {
+    this.am = dm.copyImportsAndSigs();
+    this.addParamSpaceSigs();
+    this.varsBuffersOnlySnapshotSig();
+    return this.am;
+  }
 
-        if (this.dm.hasConcurrency())
-            // open util/boolean
-            this.am.addUtilBooleanImport();
+  public AlloyModel translateVarSlice() {
+    this.am = dm.copyImportsAndSigs();
 
-        // state, transition, parameter, buffer spaces
-        this.addSpaceSigs();
+    this.addParamSpaceSigs();
+    this.varsBuffersOnlySnapshotSig();
 
-        this.addSnapshotSig();
+    // this.addSpaceSigs();
 
-        this.addInit();
-        this.addInvs();
+    // this.addSnapshotSig();
 
-        for (String tfqn : this.dm.allTransNames()) {
-            this.addTransPre(tfqn);
-            if (this.dm.hasConcurrency()) {
-                this.addTransIsEnabledAfterStep(tfqn);
-            }
-            this.addTransPost(tfqn);
-            this.addTrans(tfqn);
-        }
+    this.addInitVarsOnly();
+    this.addInvs();
 
-        // one of these for the whole model
-        if (this.dm.hasConcurrency()) this.addTestIfNextStable();
-
-        this.addTransEnabled();
-        this.addSmallStep();
-
-        if (this.isTcmc) {
-            // next two are required
-            this.addStutter();
-            this.addTcmcFact();
-            this.addAllSnapshotsDiffFact();
-
-            // next ones can be used along with property checking
-            this.addStrongNoStutter();
-            // only useful for Tcmc and is a fact
-            this.addReachability();
-
-        } else if (this.isTraces) {
-            // next two are required
-            this.addStutter();
-            this.addTracesFact();
-            this.addAllSnapshotsDiffFact();
-            // everything in traces is reachable b/c it
-            // starts from initial state and only takes steps
-            // it can reach
-
-        } else if (this.isElectrum) {
-            // this one is required
-            // all snapshots are automatically different in electrum
-            this.addElectrumFact();
-        }
-
-        // these predicates may be useful in any of the above
-        this.addSingleEventInput();
-        this.addCompleteBigSteps();
-        this.addEnoughOps();
-        // System.out.println(this.am);
-        this.am.resolve();
-        return this.am;
+    for (String tfqn : this.dm.allTransNames()) {
+      this.addTransPreVarsOnly(tfqn);
+      this.addTransPostVarsOnly(tfqn);
     }
 
-    public AlloyModel translateVarBufferSigsOnly() {
-        this.am = dm.copyImportsAndSigs();
-        this.addParamSpaceSigs();
-        this.varsBuffersOnlySnapshotSig();
-        return this.am;
-    }
+    this.addTransPostNoTrans();
 
-    public AlloyModel translateVarSlice() {
-        this.am = dm.copyImportsAndSigs();
-
-        this.addParamSpaceSigs();
-        this.varsBuffersOnlySnapshotSig();
-
-        // this.addSpaceSigs();
-
-        // this.addSnapshotSig();
-
-        this.addInitVarsOnly();
-        this.addInvs();
-
-        for (String tfqn : this.dm.allTransNames()) {
-            this.addTransPreVarsOnly(tfqn);
-            this.addTransPostVarsOnly(tfqn);
-        }
-
-        this.addTransPostNoTrans();
-
-        // these predicates may be useful in any of the above
-        // System.out.println(this.am);
-        this.am.resolve();
-        return this.am;
-    }
+    // these predicates may be useful in any of the above
+    // System.out.println(this.am);
+    this.am.resolve();
+    return this.am;
+  }
 }

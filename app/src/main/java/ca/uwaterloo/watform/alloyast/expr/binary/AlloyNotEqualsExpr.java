@@ -2,31 +2,31 @@ package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 // Part of the comparison grammar rule in .g4, but made a distinct class b/c it's used frequently
 public final class AlloyNotEqualsExpr extends AlloyBinaryExpr {
-    public AlloyNotEqualsExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
-        super(pos, left, right, AlloyStrings.NOT_EXCL + AlloyStrings.EQUAL);
-    }
+  public AlloyNotEqualsExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
+    super(pos, left, right, AlloyStrings.NOT_EXCL + AlloyStrings.EQUAL);
+  }
 
-    public AlloyNotEqualsExpr(AlloyExpr left, AlloyExpr right) {
-        super(left, right, AlloyStrings.NOT_EXCL + AlloyStrings.EQUAL);
-    }
+  public AlloyNotEqualsExpr(AlloyExpr left, AlloyExpr right) {
+    super(left, right, AlloyStrings.NOT_EXCL + AlloyStrings.EQUAL);
+  }
 
-    @Override
-    public <T> T accept(AlloyExprVis<T> visitor) {
-        return visitor.visit(this);
-    }
+  @Override
+  public <T> T accept(AlloyExprVis<T> visitor) {
+    return visitor.visit(this);
+  }
 
-    @Override
-    public AlloyNotEqualsExpr rebuild(AlloyExpr left, AlloyExpr right) {
-        return new AlloyNotEqualsExpr(this.pos, left, right);
-    }
+  @Override
+  public AlloyNotEqualsExpr rebuild(AlloyExpr left, AlloyExpr right) {
+    return new AlloyNotEqualsExpr(this.pos, left, right);
+  }
 
-    @Override
-    public int getPrec() {
-        return AlloyExpr.COMP_PREC;
-    }
+  @Override
+  public int getPrec() {
+    return AlloyExpr.COMP_PREC;
+  }
 }

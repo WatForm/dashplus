@@ -14,184 +14,184 @@ import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import java.util.List;
 
 public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
-    private boolean onlyGetName = false;
-    private boolean isElectrum;
-    private DashModel dm;
-    protected DSL dsl;
-    private boolean mkNext = false;
+  private boolean onlyGetName = false;
+  private boolean isElectrum;
+  private DashModel dm;
+  protected DSL dsl;
+  private boolean mkNext = false;
 
-    public ExprTranslatorVis(DashModel dm, boolean isElectrum) {
-        this.dm = dm;
-        this.isElectrum = isElectrum;
-        this.dsl = new DSL(isElectrum);
+  public ExprTranslatorVis(DashModel dm, boolean isElectrum) {
+    this.dm = dm;
+    this.isElectrum = isElectrum;
+    this.dsl = new DSL(isElectrum);
+  }
+
+  public ExprTranslatorVis(DashModel dm) {
+    this.dm = dm;
+    this.isElectrum = false;
+    this.dsl = new DSL(this.isElectrum);
+  }
+
+  public AlloyExpr translateExprOnlyGetName(AlloyExpr e) {
+    this.onlyGetName = true;
+    this.mkNext = false;
+    return visit(e);
+  }
+
+  public AlloyExpr translateExpr(AlloyExpr e) {
+    this.onlyGetName = false;
+    this.mkNext = false;
+    return visit(e);
+  }
+
+  public AlloyExpr translateExprAsNext(AlloyExpr e) {
+    this.onlyGetName = false;
+    this.mkNext = true;
+    return visit(e);
+  }
+
+  // visitor
+
+  // no need to override
+  public AlloyExpr visit(DashRef dashRef) {
+
+    // DashRef var has an attribute that means isCur or isNext
+
+    // onlyGetName = true is ONLY used for the case when
+    // translating type expressions of snapshot signatures
+    // there we only require the full name with underscores (not the parameters)
+
+    if (this.onlyGetName) {
+      String vfqn = dashRef.name;
+      return AlloyVar(DashFQN.translateFQN(vfqn));
     }
 
-    public ExprTranslatorVis(DashModel dm) {
-        this.dm = dm;
-        this.isElectrum = false;
-        this.dsl = new DSL(this.isElectrum);
-    }
+    // translate paramvalues
+    // may be empty
+    List<AlloyExpr> join_list = mapBy(dashRef.paramValues, i -> visit(i));
 
-    public AlloyExpr translateExprOnlyGetName(AlloyExpr e) {
-        this.onlyGetName = true;
-        this.mkNext = false;
-        return visit(e);
-    }
+    String vfqn = dashRef.name;
+    AlloyExpr v_expr = AlloyVar(DashFQN.translateFQN(vfqn));
 
-    public AlloyExpr translateExpr(AlloyExpr e) {
-        this.onlyGetName = false;
-        this.mkNext = false;
-        return visit(e);
-    }
-
-    public AlloyExpr translateExprAsNext(AlloyExpr e) {
-        this.onlyGetName = false;
-        this.mkNext = true;
-        return visit(e);
-    }
-
-    // visitor
-
-    @Override
-    public AlloyExpr visit(DashRef dashRef) {
-
-        // DashRef var has an attribute that means isCur or isNext
-
-        // onlyGetName = true is ONLY used for the case when
-        // translating type expressions of snapshot signatures
-        // there we only require the full name with underscores (not the parameters)
-
-        if (this.onlyGetName) {
-            String vfqn = dashRef.name;
-            return AlloyVar(DashFQN.translateFQN(vfqn));
-        }
-
-        // translate paramvalues
-        // may be empty
-        List<AlloyExpr> join_list = mapBy(dashRef.paramValues, i -> visit(i));
-
-        String vfqn = dashRef.name;
-        AlloyExpr v_expr = AlloyVar(DashFQN.translateFQN(vfqn));
-
-        if (!this.isElectrum) {
-            // tcmc, traces
-            if (dashRef.isNext())
-                // p1.p2.(sn.v)
-                join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
-            else {
-                if (!this.mkNext) {
-                    // p1.p2.(s.v)
-                    join_list.add(this.dsl.curJoinExpr((AlloyQnameExpr) v_expr));
-                } else {
-                    // p1.p2.(sn.v)
-                    join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
-                }
-            }
-            return AlloyJoinList(join_list);
+    if (!this.isElectrum) {
+      // tcmc, traces
+      if (dashRef.isNext())
+        // p1.p2.(sn.v)
+        join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
+      else {
+        if (!this.mkNext) {
+          // p1.p2.(s.v)
+          join_list.add(this.dsl.curJoinExpr((AlloyQnameExpr) v_expr));
         } else {
-            // Electrum
-            if (dashRef.isNext())
-                // have to put the prime in the var name
-                v_expr = new AlloyPrimeExpr(v_expr);
-            if (this.dm.containsVar(vfqn)
-                    && dm.varParams(vfqn).size() == 0
-                    && !((this.dm.varTyp(vfqn)) instanceof AlloyVarExpr)) {
-                // in Electrum - if we have a dynamic var (not buffer) with
-                // no parameters, and
-                // is a non-var, non-one var, non-lone var, non-set var, non-parametrized
-                // type (i.e., an arrow type), we have to handle it specially
-                // Variables.v or Variables.v'
-                return AlloyJoin(AlloyVar(D2AStrings.variablesName), v_expr);
-            } else {
-                // p2.p1.v or p2.p1.v'
-                join_list.add(v_expr);
-                return AlloyJoinList(join_list);
-            }
-            // TODO Buffers!!!
+          // p1.p2.(sn.v)
+          join_list.add(this.dsl.nextJoinExpr((AlloyQnameExpr) v_expr));
         }
+      }
+      return AlloyJoinList(join_list);
+    } else {
+      // Electrum
+      if (dashRef.isNext())
+        // have to put the prime in the var name
+        v_expr = new AlloyPrimeExpr(v_expr);
+      if (this.dm.containsVar(vfqn)
+          && dm.varParams(vfqn).size() == 0
+          && !((this.dm.varTyp(vfqn)) instanceof AlloyVarExpr)) {
+        // in Electrum - if we have a dynamic var (not buffer) with
+        // no parameters, and
+        // is a non-var, non-one var, non-lone var, non-set var, non-parametrized
+        // type (i.e., an arrow type), we have to handle it specially
+        // Variables.v or Variables.v'
+        return AlloyJoin(AlloyVar(D2AStrings.variablesName), v_expr);
+      } else {
+        // p2.p1.v or p2.p1.v'
+        join_list.add(v_expr);
+        return AlloyJoinList(join_list);
+      }
+      // TODO Buffers!!!
     }
+  }
 
-    // ones from Dash
+  // ones from Dash
 
-    /*
-    @Override
-    public AlloyExpr visit(DashParam dashParam) {
-        return dashParam.asAlloyVar();
-    }
-    */
+  /*
+  @Override
+  public AlloyExpr visit(DashParam dashParam) {
+      return dashParam.asAlloyVar();
+  }
+  */
 
-    @Override
-    public AlloyExpr visit(AlloyVarExpr varExpr) {
-        return varExpr;
-    }
+  @Override
+  public AlloyExpr visit(AlloyVarExpr varExpr) {
+    return varExpr;
+  }
 
-    // below this line are recursive ones
+  // below this line are recursive ones
 
-    @Override
-    public AlloyExpr visit(AlloyBinaryExpr binExpr) {
-        return binExpr.rebuild(this.visit(binExpr.left), this.visit(binExpr.right));
-    }
+  @Override
+  public AlloyExpr visit(AlloyBinaryExpr binExpr) {
+    return binExpr.rebuild(this.visit(binExpr.left), this.visit(binExpr.right));
+  }
 
-    @Override
-    public AlloyExpr visit(AlloyUnaryExpr unaryExpr) {
-        // there should be no expressions that are primed with Dash
-        assert (!(unaryExpr instanceof AlloyPrimeExpr));
-        return unaryExpr.rebuild(this.visit(unaryExpr.sub));
-    }
+  @Override
+  public AlloyExpr visit(AlloyUnaryExpr unaryExpr) {
+    // there should be no expressions that are primed with Dash
+    assert (!(unaryExpr instanceof AlloyPrimeExpr));
+    return unaryExpr.rebuild(this.visit(unaryExpr.sub));
+  }
 
-    // misc exprs
+  // misc exprs
 
-    @Override
-    public AlloyExpr visit(AlloyBlock block) {
-        return new AlloyBlock(mapBy(block.exprs, e -> this.visit(e)));
-    }
+  @Override
+  public AlloyExpr visit(AlloyBlock block) {
+    return new AlloyBlock(mapBy(block.exprs, e -> this.visit(e)));
+  }
 
-    @Override
-    public AlloyExpr visit(AlloyBracketExpr bracketExpr) {
-        return new AlloyBracketExpr(
-                this.visit(bracketExpr.expr), mapBy(bracketExpr.exprs, e -> this.visit(e)));
-    }
+  @Override
+  public AlloyExpr visit(AlloyBracketExpr bracketExpr) {
+    return new AlloyBracketExpr(
+        this.visit(bracketExpr.expr), mapBy(bracketExpr.exprs, e -> this.visit(e)));
+  }
 
-    @Override
-    public AlloyExpr visit(AlloyCphExpr comprehensionExpr) {
+  @Override
+  public AlloyExpr visit(AlloyCphExpr comprehensionExpr) {
 
-        return new AlloyCphExpr(
-                mapBy(comprehensionExpr.decls, i -> ((AlloyDecl) this.visit(i))),
-                comprehensionExpr.body.map(b -> this.visit(b)).orElse(null));
-    }
+    return new AlloyCphExpr(
+        mapBy(comprehensionExpr.decls, i -> ((AlloyDecl) this.visit(i))),
+        comprehensionExpr.body.map(b -> this.visit(b)).orElse(null));
+  }
 
-    @Override
-    public AlloyExpr visit(AlloyDecl decl) {
-        return decl.rebuild(this.visit(decl.expr));
-    }
+  @Override
+  public AlloyExpr visit(AlloyDecl decl) {
+    return decl.rebuild(this.visit(decl.expr));
+  }
 
-    @Override
-    public AlloyExpr visit(AlloyIteExpr iteExpr) {
-        return new AlloyIteExpr(
-                this.visit(iteExpr.cond), this.visit(iteExpr.conseq), this.visit(iteExpr.alt));
-    }
+  @Override
+  public AlloyExpr visit(AlloyIteExpr iteExpr) {
+    return new AlloyIteExpr(
+        this.visit(iteExpr.cond), this.visit(iteExpr.conseq), this.visit(iteExpr.alt));
+  }
 
-    @Override
-    public AlloyExpr visit(AlloyLetExpr letExpr) {
-        return letExpr.rebuild(this.visit(letExpr.body));
-    }
+  @Override
+  public AlloyExpr visit(AlloyLetExpr letExpr) {
+    return letExpr.rebuild(this.visit(letExpr.body));
+  }
 
-    @Override
-    public AlloyExpr visit(AlloyParenExpr parenExpr) {
-        return new AlloyParenExpr(this.visit(parenExpr.sub));
-    }
+  @Override
+  public AlloyExpr visit(AlloyParenExpr parenExpr) {
+    return new AlloyParenExpr(this.visit(parenExpr.sub));
+  }
 
-    @Override
-    public AlloyExpr visit(AlloyQuantificationExpr quantificationExpr) {
-        List<AlloyDecl> decls = mapBy(quantificationExpr.decls, i -> ((AlloyDecl) this.visit(i)));
-        return quantificationExpr.rebuild(decls, this.visit(quantificationExpr.body));
-    }
+  @Override
+  public AlloyExpr visit(AlloyQuantificationExpr quantificationExpr) {
+    List<AlloyDecl> decls = mapBy(quantificationExpr.decls, i -> ((AlloyDecl) this.visit(i)));
+    return quantificationExpr.rebuild(decls, this.visit(quantificationExpr.body));
+  }
 }

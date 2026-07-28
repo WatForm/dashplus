@@ -8,19 +8,19 @@ import java.util.List;
 
 public class EventDashRef extends DashRef {
 
-    public EventDashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
-        super(p, n, prmValues);
-    }
+  public EventDashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
+    super(p, n, prmValues);
+  }
 
-    public EventDashRef(String n, List<? extends AlloyExpr> prmValues) {
-        super(n, prmValues);
-    }
+  public EventDashRef(String n, List<? extends AlloyExpr> prmValues) {
+    super(n, prmValues);
+  }
 
-    public EventDashRef(Pos p, List<AlloyNameExpr> names, List<? extends AlloyExpr> prmValues) {
-        super(p, names, prmValues);
-    }
+  public EventDashRef(Pos p, List<AlloyNameExpr> names, List<? extends AlloyExpr> prmValues) {
+    super(p, names, prmValues);
+  }
 
-    public DashStrings.DashRefKind kind() {
-        return DashStrings.DashRefKind.EVENT;
-    }
+  public DashStrings.DashRefKind kind() {
+    return DashStrings.DashRefKind.EVENT;
+  }
 }

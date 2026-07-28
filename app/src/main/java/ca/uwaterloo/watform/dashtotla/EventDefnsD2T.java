@@ -12,26 +12,26 @@ import java.util.List;
 
 public class EventDefnsD2T extends BaseD2T {
 
-    public EventDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(dashModel, tlaModel, verbose, debug);
-    }
+  public EventDefnsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+    super(dashModel, tlaModel, verbose, debug);
+  }
 
-    protected void translateEventDefns() {
-        if (!dashModel.hasEvents()) return;
+  protected void translateEventDefns() {
+    if (!dashModel.hasEvents()) return;
 
-        List<String> eventFQNs = dashModel.allEventNames();
+    List<String> eventFQNs = dashModel.allEventNames();
 
-        // _<event-name> == "<event-name>"
-        eventFQNs.forEach(eFQN -> tlaModel.addDefn(TlaDefn(tlaFQN(eFQN), TlaStringLiteral(eFQN))));
+    // _<event-name> == "<event-name>"
+    eventFQNs.forEach(eFQN -> tlaModel.addDefn(TlaDefn(tlaFQN(eFQN), TlaStringLiteral(eFQN))));
 
-        List<TlaAppl> envEvents = mapBy(dashModel.allEnvEvents(), eFQN -> TlaAppl(tlaFQN(eFQN)));
+    List<TlaAppl> envEvents = mapBy(dashModel.allEnvEvents(), eFQN -> TlaAppl(tlaFQN(eFQN)));
 
-        // _environmental_events == {_<env-event-name-i>...}
-        tlaModel.addDefn(TlaDefn(ENVIRONMENTAL_EVENTS, TlaSet(envEvents)));
+    // _environmental_events == {_<env-event-name-i>...}
+    tlaModel.addDefn(TlaDefn(ENVIRONMENTAL_EVENTS, TlaSet(envEvents)));
 
-        List<TlaAppl> intEvents = mapBy(dashModel.allIntEvents(), eFQN -> TlaAppl(tlaFQN(eFQN)));
+    List<TlaAppl> intEvents = mapBy(dashModel.allIntEvents(), eFQN -> TlaAppl(tlaFQN(eFQN)));
 
-        // _internal_events == {_<int-event-name-i>...}
-        tlaModel.addDefn(TlaDefn(INTERNAL_EVENTS, TlaSet(intEvents)));
-    }
+    // _internal_events == {_<int-event-name-i>...}
+    tlaModel.addDefn(TlaDefn(INTERNAL_EVENTS, TlaSet(intEvents)));
+  }
 }

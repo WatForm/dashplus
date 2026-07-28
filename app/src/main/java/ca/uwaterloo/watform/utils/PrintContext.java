@@ -13,213 +13,211 @@ import java.io.Writer;
 import java.util.List;
 
 public final class PrintContext {
-    private final Layouter<IOException> layouter;
-    public static final int lineWidth = 80;
-    // this is used to guarantee a size that cannot fit within a line
-    public static final int largeSize = lineWidth * 2;
-    public static final int indentSize = 4;
+  private final Layouter<IOException> layouter;
+  public static final int lineWidth = 80;
+  // this is used to guarantee a size that cannot fit within a line
+  public static final int largeSize = lineWidth * 2;
+  public static final int indentSize = 4;
 
-    public PrintContext(Writer w, int lineWidth, int indentSize) {
-        this.layouter = new Layouter<>(new WriterBackend(w, lineWidth), indentSize);
+  public PrintContext(Writer w, int lineWidth, int indentSize) {
+    this.layouter = new Layouter<>(new WriterBackend(w, lineWidth), indentSize);
+  }
+
+  public PrintContext(Writer w) {
+    this(w, lineWidth, indentSize);
+  }
+
+  public void append(String s) {
+    try {
+      layouter.print(s);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  /**
+   * @param indent Begins a CONSISTENT block: if a brk is taken in a block, then all the other brks
+   *     are taken too. If that's not what's needed, try to use multiple blocks. The INCONSISTENT
+   *     interface is not made visible here, because it's unlikely that we want it.
+   */
+  public void begin(int indent) {
+    layouter.begin(Layouter.BreakConsistency.CONSISTENT, Layouter.IndentationBase.FROM_POS, indent);
+  }
+
+  public void begin() {
+    this.begin(indentSize);
+  }
+
+  public void align() {
+    this.begin(0);
+  }
+
+  public void end() {
+    try {
+      layouter.end();
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  /**
+   * @param width space to insert if not broken
+   * @param offset offset relative to current indentation level
+   */
+  public void brk(int width, int offset) {
+    try {
+      layouter.brk(width, offset);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  public void brk() {
+    this.brk(1, 0);
+  }
+
+  public void brkNoSpace() {
+    this.brk(0, 0);
+  }
+
+  public void brkNoIndent() {
+    this.brk(1, -indentSize);
+  }
+
+  public void brkNoSpaceNoIndent() {
+    this.brk(0, -indentSize);
+  }
+
+  public void nl() {
+    try {
+      layouter.nl();
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  public void nlNoIndent() {
+    this.brk(largeSize, -indentSize);
+  }
+
+  // public void blankLine() {
+  // this.nl();
+  // this.brkNoIndent();
+  // }
+
+  public void flush() {
+    try {
+      layouter.flush();
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  /**
+   * Indent relative to the indentation level if surrounding block is broken. If the surrounding
+   * block fits on one line, insert <code>width</code> spaces. Otherwise, indent to the current
+   * indentation level, plus <code>offset</code>, unless that position has already been exceeded on
+   * the current line. If that is the case, nothing is printed. No line break is possible at this
+   * point.
+   *
+   * @param width space to insert if not broken
+   * @param offset offset relative to current indentation level
+   */
+  public void indent(int width, int offset) {
+    try {
+      layouter.ind(width, offset);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  public void indent() {
+    try {
+      layouter.ind(indentSize, 0);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  /**
+   * put break after li's elements; The last break will not be indented put seprator in between li's
+   * elements
+   *
+   * @param li
+   * @param separator
+   */
+  public <T> void appendList(List<T> li, String separator) {
+    if (li == null || li.isEmpty()) {
+      return;
+    }
+    this.align();
+    for (T element : li) {
+      if (element instanceof ASTNode) {
+        ASTNode astNode = (ASTNode) element;
+        astNode.ppNewBlock(this);
+      } else if (element instanceof String) {
+        append((String) element);
+      } else {
+        throw ImplementationError.failedCast(
+            "Cannot cast to ASTNode in PrintContext.appendList \n" + element.toString());
+      }
+      if (!(element == li.getLast())) {
+        this.append(separator);
+        this.brk();
+      }
+    }
+    this.end();
+  }
+
+  public void appendChild(AlloyExpr parent, AlloyExpr child, boolean useNewBlock) {
+    int parentPrec = parent.getPrec();
+    int childPrec = child.getPrec();
+    boolean needsParens = false;
+
+    if (childPrec == AlloyExpr.NO_PAREN) {
+      if (useNewBlock) {
+        child.ppNewBlock(this);
+      } else {
+        child.pp(this);
+      }
+      return;
     }
 
-    public PrintContext(Writer w) {
-        this(w, lineWidth, indentSize);
+    // Vertical Precedence
+    // If child is weaker (lower prec) than parent, it needs protection
+    if (childPrec < parentPrec) {
+      needsParens = true;
+    }
+    // Horizontal Associativity (only for BinOp)
+    // If prec is equal, we check assoc
+    else if (parent instanceof AlloyBinaryExpr && childPrec == parentPrec) {
+      AlloyBinaryExpr binParent = (AlloyBinaryExpr) parent;
+      boolean isRightChild = (binParent.right == child);
+      if (binParent.isLeftAssoc()) {
+        // ex: Dot(A, Dot(B.C))
+        // If is printing right child, need brackets
+        // Otherwise grouped like (A.B).C which is wrong
+        if (isRightChild) needsParens = true;
+      } else {
+        // ex: Arrow(Arrow(A, B), C)
+        // If is printing left child, need brackets
+        // Otherwise grouped like A->(B->), which is wrong
+        if (!isRightChild) needsParens = true;
+      }
     }
 
-    public void append(String s) {
-        try {
-            layouter.print(s);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    if (needsParens) this.append(LPAREN);
+
+    if (useNewBlock) {
+      child.ppNewBlock(this);
+    } else {
+      child.pp(this);
     }
 
-    /**
-     * @param indent Begins a CONSISTENT block: if a brk is taken in a block, then all the other
-     *     brks are taken too. If that's not what's needed, try to use multiple blocks. The
-     *     INCONSISTENT interface is not made visible here, because it's unlikely that we want it.
-     */
-    public void begin(int indent) {
-        layouter.begin(
-                Layouter.BreakConsistency.CONSISTENT, Layouter.IndentationBase.FROM_POS, indent);
-    }
+    if (needsParens) this.append(RPAREN);
+  }
 
-    public void begin() {
-        this.begin(indentSize);
-    }
-
-    public void align() {
-        this.begin(0);
-    }
-
-    public void end() {
-        try {
-            layouter.end();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    /**
-     * @param width space to insert if not broken
-     * @param offset offset relative to current indentation level
-     */
-    public void brk(int width, int offset) {
-        try {
-            layouter.brk(width, offset);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public void brk() {
-        this.brk(1, 0);
-    }
-
-    public void brkNoSpace() {
-        this.brk(0, 0);
-    }
-
-    public void brkNoIndent() {
-        this.brk(1, -indentSize);
-    }
-
-    public void brkNoSpaceNoIndent() {
-        this.brk(0, -indentSize);
-    }
-
-    public void nl() {
-        try {
-            layouter.nl();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public void nlNoIndent() {
-        this.brk(largeSize, -indentSize);
-    }
-
-    // public void blankLine() {
-    // this.nl();
-    // this.brkNoIndent();
-    // }
-
-    public void flush() {
-        try {
-            layouter.flush();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    /**
-     * Indent relative to the indentation level if surrounding block is broken. If the surrounding
-     * block fits on one line, insert <code>width</code> spaces. Otherwise, indent to the current
-     * indentation level, plus <code>offset</code>, unless that position has already been exceeded
-     * on the current line. If that is the case, nothing is printed. No line break is possible at
-     * this point.
-     *
-     * @param width space to insert if not broken
-     * @param offset offset relative to current indentation level
-     */
-    public void indent(int width, int offset) {
-        try {
-            layouter.ind(width, offset);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public void indent() {
-        try {
-            layouter.ind(indentSize, 0);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    /**
-     * put break after li's elements; The last break will not be indented put seprator in between
-     * li's elements
-     *
-     * @param li
-     * @param separator
-     */
-    public <T> void appendList(List<T> li, String separator) {
-        if (li == null || li.isEmpty()) {
-            return;
-        }
-        this.align();
-        for (T element : li) {
-            if (element instanceof ASTNode) {
-                ASTNode astNode = (ASTNode) element;
-                astNode.ppNewBlock(this);
-            } else if (element instanceof String) {
-                append((String) element);
-            } else {
-                throw ImplementationError.failedCast(
-                        "Cannot cast to ASTNode in PrintContext.appendList \n"
-                                + element.toString());
-            }
-            if (!(element == li.getLast())) {
-                this.append(separator);
-                this.brk();
-            }
-        }
-        this.end();
-    }
-
-    public void appendChild(AlloyExpr parent, AlloyExpr child, boolean useNewBlock) {
-        int parentPrec = parent.getPrec();
-        int childPrec = child.getPrec();
-        boolean needsParens = false;
-
-        if (childPrec == AlloyExpr.NO_PAREN) {
-            if (useNewBlock) {
-                child.ppNewBlock(this);
-            } else {
-                child.pp(this);
-            }
-            return;
-        }
-
-        // Vertical Precedence
-        // If child is weaker (lower prec) than parent, it needs protection
-        if (childPrec < parentPrec) {
-            needsParens = true;
-        }
-        // Horizontal Associativity (only for BinOp)
-        // If prec is equal, we check assoc
-        else if (parent instanceof AlloyBinaryExpr && childPrec == parentPrec) {
-            AlloyBinaryExpr binParent = (AlloyBinaryExpr) parent;
-            boolean isRightChild = (binParent.right == child);
-            if (binParent.isLeftAssoc()) {
-                // ex: Dot(A, Dot(B.C))
-                // If is printing right child, need brackets
-                // Otherwise grouped like (A.B).C which is wrong
-                if (isRightChild) needsParens = true;
-            } else {
-                // ex: Arrow(Arrow(A, B), C)
-                // If is printing left child, need brackets
-                // Otherwise grouped like A->(B->), which is wrong
-                if (!isRightChild) needsParens = true;
-            }
-        }
-
-        if (needsParens) this.append(LPAREN);
-
-        if (useNewBlock) {
-            child.ppNewBlock(this);
-        } else {
-            child.pp(this);
-        }
-
-        if (needsParens) this.append(RPAREN);
-    }
-
-    public void appendChild(AlloyExpr parent, AlloyExpr child) {
-        this.appendChild(parent, child, false);
-    }
+  public void appendChild(AlloyExpr parent, AlloyExpr child) {
+    this.appendChild(parent, child, false);
+  }
 }

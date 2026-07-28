@@ -17,17 +17,17 @@ import java.util.List;
 
 public class ElectrumFactD2A extends TcmcFactD2A {
 
-    protected ElectrumFactD2A(DashModel dm, Options opt) {
-        super(dm, opt);
-    }
+  protected ElectrumFactD2A(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
 
-    public void addElectrumFact() {
+  public void addElectrumFact() {
 
-        assert (this.isElectrum);
-        List<AlloyExpr> body = this.dsl.emptyExprList();
+    assert (this.isElectrum);
+    List<AlloyExpr> body = this.dsl.emptyExprList();
 
-        body.add(AlloyVar(D2AStrings.initFactName));
-        body.add(new AlloyAlwaysExpr(AlloyVar(D2AStrings.smallStepName)));
-        this.am.addFact(D2AStrings.initFactName, body);
-    }
+    body.add(AlloyVar(D2AStrings.initFactName));
+    body.add(new AlloyAlwaysExpr(AlloyVar(D2AStrings.smallStepName)));
+    this.am.addFact(D2AStrings.initFactName, body);
+  }
 }

@@ -7,9 +7,9 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
 	// eclipse is used for nvim's jdtls to find the classpath
 	id 'java'
-    id 'application'
+    // id 'application'
 	id 'antlr'
-    id 'com.diffplug.spotless' version '8.0.0'
+    //id 'com.diffplug.spotless' version '8.0.0'
 }
 
 repositories {
@@ -18,6 +18,10 @@ repositories {
 	flatDir {
 		dirs 'libs'
 	}
+}
+
+configurations {
+    googleJavaFormat
 }
 
 dependencies {
@@ -40,6 +44,8 @@ dependencies {
 
 	// jpplib (oppen style pretty printing)
 	implementation 'com.io7m.jpplib:com.io7m.jpplib.core:1.0.0'
+
+    googleJavaFormat "com.google.googlejavaformat:google-java-format:1.30.0"
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -49,58 +55,106 @@ java {
     }
 }
 
-application {
-    mainClass = 'ca.uwaterloo.watform.cli.Main'
-	applicationName = 'parser'
-}
-
-jar {
-	zip64 = true
-    manifest {
-        attributes(
-                'Main-Class': application.mainClass
-        )
-    }
-}
 
 
-task releaseJar(type: Jar) {
-	dependsOn 'spotlessApply' 
-    archiveBaseName.set('watform-dashplus') // Name of the output file
-    
-    manifest {
-        attributes 'Main-Class': application.mainClass
-    }
+def tools = [
+    dpalloy: [
+        mainClass: "ca.uwaterloo.watform.dpalloycli.DpAlloyCli",
+        excludes: [
+            'ca/uwaterloo/watform/alloytotla/**',
+            'ca/uwaterloo/watform/cli/**',
+            'ca/uwaterloo/watform/dashast/**',
+            'ca/uwaterloo/watform/dashmodel/**',
+            'ca/uwaterloo/watform/dashexprvisitor/**',
+            'ca/uwaterloo/watform/dashtoalloy/**',
+            'ca/uwaterloo/watform/dashtotla/**',
+            'ca/uwaterloo/watform/predabstraction/**',
+            'ca/uwaterloo/watform/tlaast/**',
+            'ca/uwaterloo/watform/tlamodel/**'
+        ]
+    ],
+    dashtoalloy: [
+       mainClass: "ca.uwaterloo.watform.dashtoalloy.DashToAlloyCli",
+       excludes: [
+            'ca/uwaterloo/watform/alloytotla/**',
+            'ca/uwaterloo/watform/cli/**',
+            'ca/uwaterloo/watform/dashtotla/**',
+            'ca/uwaterloo/watform/dpalloy/**',
+            'ca/uwaterloo/watform/predabstraction/**',
+            'ca/uwaterloo/watform/tlaast/**',
+            'ca/uwaterloo/watform/tlamodel/**'
+        ]
+    ],
+    releaseJar: [
+       mainClass: "ca.uwaterloo.watform.cli.Main",
+       excludes: []
+    ]
+]
 
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    
-    with jar 
 
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    zip64 = true
-}
-
-// for jdtls, gradle doesn't need this to compile
 sourceSets {
-    main {
-        java {
-            srcDirs += "$buildDir/generated-src/antlr/main"
-            exclude 'ca/uwaterloo/watform/predabstraction/**'
-            exclude 'ca/uwaterloo/watform/dashtotla/**'
-            exclude 'ca/uwaterloo/watform/alloytotla/**'
+    tools.each { name, tool ->
+        "$name" {
+            java {
+                srcDirs = [
+                    "src/main/java",
+                    "$buildDir/generated-src/antlr/main"
+                ]
+                exclude tool.excludes
+            }
         }
     }
 }
 
-spotless {
-	java {
-		googleJavaFormat('1.30.0').aosp()
-        targetExclude("build/generated-src/**/*.java")
-	}
+tools.each { name, tool ->
+    configurations["${name}Implementation"].extendsFrom(configurations.implementation)
 }
 
+// different tools to build
+tools.each { name, tool ->
+
+    def toolSources = sourceSets[name].java.files*.absolutePath
+
+    // replaces spotlessApply and is always done just before build
+    def formatTask = tasks.register("format${name.capitalize()}", JavaExec) {
+        dependsOn tasks.named("generateGrammarSource")
+        classpath = configurations.googleJavaFormat
+        mainClass = "com.google.googlejavaformat.java.Main"
+        jvmArgs(
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"
+        )
+
+        args = ["--replace"] + toolSources
+    }
+
+    tasks.register(name, Jar) {
+
+        dependsOn(formatTask)
+        dependsOn("compile${name.capitalize()}Java")
+
+        archiveBaseName = name
+
+        manifest {
+            attributes(
+                "Main-Class": tool.mainClass
+            )
+        }
+
+        from(sourceSets[name].output)
+
+        from {
+            configurations["${name}RuntimeClasspath"]
+                .collect { zipTree(it) }
+        }
+
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        zip64 = true
+    }
+}
 
 
 tasks.named('generateGrammarSource') {
@@ -108,10 +162,11 @@ tasks.named('generateGrammarSource') {
     arguments += ["-visitor", "-no-listener"]
 }
 
-tasks.named('compileJava') {
+tasks.withType(JavaCompile).configureEach {
     dependsOn tasks.named('generateGrammarSource')
-	dependsOn tasks.named('spotlessApply')
 }
+
+
 
 tasks.named("processTestResources") {
     dependsOn tasks.named('generateGrammarSource')

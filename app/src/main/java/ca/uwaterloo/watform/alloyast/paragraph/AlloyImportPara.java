@@ -15,116 +15,116 @@ import java.util.Objects;
 import java.util.Optional;
 
 public final class AlloyImportPara extends AlloyPara {
-    public final boolean isPrivate;
-    public final AlloyQnameExpr qname;
-    public final List<AlloySigRefExpr> sigRefs;
-    public final Optional<AlloyQnameExpr> asQname;
-    public final AlloyFile importedFile;
+  public final boolean isPrivate;
+  public final AlloyQnameExpr qname;
+  public final List<AlloySigRefExpr> sigRefs;
+  public final Optional<AlloyQnameExpr> asQname;
+  public final AlloyFile importedFile;
 
-    // import qname [sigName1, sigName2] as asQname {}
-    public AlloyImportPara(
-            Pos pos,
-            boolean isPrivate,
-            AlloyQnameExpr qname,
-            List<AlloySigRefExpr> sigRefs,
-            AlloyQnameExpr asQname,
-            AlloyFile importedFile) {
-        super(pos);
-        this.isPrivate = isPrivate;
-        this.qname = qname;
-        this.sigRefs = Collections.unmodifiableList(sigRefs);
-        this.asQname = Optional.ofNullable(asQname);
-        this.importedFile = importedFile;
-        reqNonNull(nullField(pos, this), this.qname, this.sigRefs, this.asQname);
-    }
+  // import qname [sigName1, sigName2] as asQname {}
+  public AlloyImportPara(
+      Pos pos,
+      boolean isPrivate,
+      AlloyQnameExpr qname,
+      List<AlloySigRefExpr> sigRefs,
+      AlloyQnameExpr asQname,
+      AlloyFile importedFile) {
+    super(pos);
+    this.isPrivate = isPrivate;
+    this.qname = qname;
+    this.sigRefs = Collections.unmodifiableList(sigRefs);
+    this.asQname = Optional.ofNullable(asQname);
+    this.importedFile = importedFile;
+    reqNonNull(nullField(pos, this), this.qname, this.sigRefs, this.asQname);
+  }
 
-    // import qname [sigName1, sigName2] as asQname {}
-    public AlloyImportPara(
-            boolean isPrivate,
-            AlloyQnameExpr qname,
-            List<AlloySigRefExpr> sigRefs,
-            AlloyQnameExpr asQname,
-            AlloyFile importedFile) {
-        this(Pos.UNKNOWN, isPrivate, qname, sigRefs, asQname, importedFile);
-    }
+  // import qname [sigName1, sigName2] as asQname {}
+  public AlloyImportPara(
+      boolean isPrivate,
+      AlloyQnameExpr qname,
+      List<AlloySigRefExpr> sigRefs,
+      AlloyQnameExpr asQname,
+      AlloyFile importedFile) {
+    this(Pos.UNKNOWN, isPrivate, qname, sigRefs, asQname, importedFile);
+  }
 
-    /*
-     * If no sigRefs, then don't print []
-     */
-    @Override
-    public void toString(StringBuilder sb, int indent) {
-        if (isPrivate) {
-            sb.append(AlloyStrings.PRIVATE);
-            sb.append(AlloyStrings.SPACE);
-        }
-        sb.append(AlloyStrings.OPEN);
-        sb.append(AlloyStrings.SPACE);
-        this.qname.toString(sb, indent);
-        if (!sigRefs.isEmpty()) {
-            sb.append(AlloyStrings.LBRACK);
-            ASTNode.join(sb, indent, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);
-            sb.append(AlloyStrings.RBRACK);
-        }
-        if (!this.asQname.isEmpty()) {
-            sb.append(AlloyStrings.SPACE);
-            sb.append(AlloyStrings.AS);
-            sb.append(AlloyStrings.SPACE);
-            this.asQname.get().toString(sb, indent);
-        }
+  /*
+   * If no sigRefs, then don't print []
+   */
+  @Override
+  public void toString(StringBuilder sb, int indent) {
+    if (isPrivate) {
+      sb.append(AlloyStrings.PRIVATE);
+      sb.append(AlloyStrings.SPACE);
     }
+    sb.append(AlloyStrings.OPEN);
+    sb.append(AlloyStrings.SPACE);
+    this.qname.toString(sb, indent);
+    if (!sigRefs.isEmpty()) {
+      sb.append(AlloyStrings.LBRACK);
+      ASTNode.join(sb, indent, this.sigRefs, AlloyStrings.COMMA + AlloyStrings.SPACE);
+      sb.append(AlloyStrings.RBRACK);
+    }
+    if (!this.asQname.isEmpty()) {
+      sb.append(AlloyStrings.SPACE);
+      sb.append(AlloyStrings.AS);
+      sb.append(AlloyStrings.SPACE);
+      this.asQname.get().toString(sb, indent);
+    }
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        if (isPrivate) {
-            pCtx.append(PRIVATE + SPACE);
-        }
-        pCtx.append(OPEN + SPACE);
-        qname.pp(pCtx);
-        pCtx.append(SPACE);
-        if (!sigRefs.isEmpty()) {
-            pCtx.append(LBRACK);
-            pCtx.brkNoSpace();
-            pCtx.appendList(sigRefs, COMMA);
-            pCtx.brkNoSpaceNoIndent();
-            pCtx.append(RBRACK + SPACE);
-        }
-        if (this.asQname.isPresent()) {
-            pCtx.append(AS + SPACE);
-            this.asQname.get().pp(pCtx);
-        }
+  @Override
+  public void pp(PrintContext pCtx) {
+    if (isPrivate) {
+      pCtx.append(PRIVATE + SPACE);
     }
+    pCtx.append(OPEN + SPACE);
+    qname.pp(pCtx);
+    pCtx.append(SPACE);
+    if (!sigRefs.isEmpty()) {
+      pCtx.append(LBRACK);
+      pCtx.brkNoSpace();
+      pCtx.appendList(sigRefs, COMMA);
+      pCtx.brkNoSpaceNoIndent();
+      pCtx.append(RBRACK + SPACE);
+    }
+    if (this.asQname.isPresent()) {
+      pCtx.append(AS + SPACE);
+      this.asQname.get().pp(pCtx);
+    }
+  }
 
-    @Override
-    public AlloyId getId() {
-        return new AlloyId(asQname.isPresent() ? asQname.toString() : "");
-    }
+  @Override
+  public AlloyId getId() {
+    return new AlloyId(asQname.isPresent() ? asQname.toString() : "");
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.isPrivate, this.qname, this.sigRefs, this.asQname);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.isPrivate, this.qname, this.sigRefs, this.asQname);
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        AlloyImportPara other = (AlloyImportPara) obj;
-        if (isPrivate != other.isPrivate) return false;
-        if (qname == null) {
-            if (other.qname != null) return false;
-        } else if (!qname.equals(other.qname)) return false;
-        if (sigRefs == null) {
-            if (other.sigRefs != null) return false;
-        } else if (!sigRefs.equals(other.sigRefs)) return false;
-        if (asQname == null) {
-            if (other.asQname != null) return false;
-        } else if (!asQname.equals(other.asQname)) return false;
-        return true;
-    }
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    AlloyImportPara other = (AlloyImportPara) obj;
+    if (isPrivate != other.isPrivate) return false;
+    if (qname == null) {
+      if (other.qname != null) return false;
+    } else if (!qname.equals(other.qname)) return false;
+    if (sigRefs == null) {
+      if (other.sigRefs != null) return false;
+    } else if (!sigRefs.equals(other.sigRefs)) return false;
+    if (asQname == null) {
+      if (other.asQname != null) return false;
+    } else if (!asQname.equals(other.asQname)) return false;
+    return true;
+  }
 
-    @Override
-    public <T> T accept(AlloyParaVis<T> visitor) {
-        return visitor.visit(this);
-    }
+  @Override
+  public <T> T accept(AlloyParaVis<T> visitor) {
+    return visitor.visit(this);
+  }
 }

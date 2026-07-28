@@ -34,38 +34,38 @@ Having multiple fileHandlers share the same file results in strange behavior, si
 
 public class CustomLoggerFactory {
 
-    private static int UID = 0;
+  private static int UID = 0;
 
-    private static HashMap<String, FileHandler> handlerTable = new HashMap<>();
+  private static HashMap<String, FileHandler> handlerTable = new HashMap<>();
 
-    public static Logger make(String fileName, boolean debug) {
-        Logger logger = Logger.getLogger("" + UID);
-        UID += 1;
+  public static Logger make(String fileName, boolean debug) {
+    Logger logger = Logger.getLogger("" + UID);
+    UID += 1;
 
-        fileName = fileName + ".log";
+    fileName = fileName + ".log";
 
-        logger.setUseParentHandlers(false); // remove ability to access console
+    logger.setUseParentHandlers(false); // remove ability to access console
 
-        if (!debug) return logger;
+    if (!debug) return logger;
 
-        if (!handlerTable.containsKey(fileName)) makeNewFileAndHandler(fileName);
+    if (!handlerTable.containsKey(fileName)) makeNewFileAndHandler(fileName);
 
-        logger.addHandler(handlerTable.get(fileName));
+    logger.addHandler(handlerTable.get(fileName));
 
-        return logger;
+    return logger;
+  }
+
+  private static void makeNewFileAndHandler(String fileName) {
+    File file = new File(fileName);
+    if (file.getParentFile() != null) {
+      file.getParentFile().mkdirs();
     }
-
-    private static void makeNewFileAndHandler(String fileName) {
-        File file = new File(fileName);
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
-        }
-        try {
-            FileHandler fh = new FileHandler(fileName);
-            fh.setFormatter(new SimpleFormatter());
-            handlerTable.put(fileName, fh);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    try {
+      FileHandler fh = new FileHandler(fileName);
+      fh.setFormatter(new SimpleFormatter());
+      handlerTable.put(fileName, fh);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 }

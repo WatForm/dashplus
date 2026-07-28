@@ -1,27 +1,28 @@
 package ca.uwaterloo.watform.dashast;
 
-import static ca.uwaterloo.watform.parser.Parser.*;
+import static ca.uwaterloo.watform.parser.AlloyParser.*;
 
 import antlr.generated.*;
+import antlr.generated.DashParser;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class DashParaParseVis extends AlloyParaParseVis {
-    @Override
-    public DashState visitDashParagraph(DashParser.DashParagraphContext ctx) {
-        return (DashState) this.visit(ctx.stateRoot());
-    }
+  @Override
+  public DashState visitDashParagraph(DashParser.DashParagraphContext ctx) {
+    return (DashState) this.visit(ctx.stateRoot());
+  }
 
-    @Override
-    public DashState visitStateRoot(DashParser.StateRootContext ctx) {
-        return new DashState(
-                new Pos(ctx),
-                this.exprParseVis.visit(ctx.name()).toString(),
-                DashState.noParam(),
-                DashStrings.StateKind.OR,
-                DashStrings.DefKind
-                        .DEFAULT, // root state is a default state whether it is labelled as such or
-                // not
-                visitAll(ctx.stateItem(), new DashStateItemParseVis(), Object.class));
-    }
+  @Override
+  public DashState visitStateRoot(DashParser.StateRootContext ctx) {
+    return new DashState(
+        new Pos(ctx),
+        this.exprParseVis.visit(ctx.name()).toString(),
+        DashState.noParam(),
+        DashStrings.StateKind.OR,
+        DashStrings.DefKind
+            .DEFAULT, // root state is a default state whether it is labelled as such or
+        // not
+        visitAll(ctx.stateItem(), new DashStateItemParseVis(), Object.class));
+  }
 }

@@ -4,43 +4,43 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyAfterExpr extends AlloyUnaryExpr {
-    public AlloyAfterExpr(Pos pos, AlloyExpr sub) {
-        super(pos, sub, AlloyStrings.AFTER);
-    }
+  public AlloyAfterExpr(Pos pos, AlloyExpr sub) {
+    super(pos, sub, AlloyStrings.AFTER);
+  }
 
-    public AlloyAfterExpr(AlloyExpr sub) {
-        super(sub, AlloyStrings.AFTER);
-    }
+  public AlloyAfterExpr(AlloyExpr sub) {
+    super(sub, AlloyStrings.AFTER);
+  }
 
-    @Override
-    public void toString(StringBuilder sb, int indent) {
-        sb.append(op);
-        sb.append(AlloyStrings.SPACE);
-        this.sub.toString(sb, indent);
-    }
+  @Override
+  public void toString(StringBuilder sb, int indent) {
+    sb.append(op);
+    sb.append(AlloyStrings.SPACE);
+    this.sub.toString(sb, indent);
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        pCtx.append(op + SPACE);
-        this.sub.pp(pCtx);
-    }
+  @Override
+  public void pp(PrintContext pCtx) {
+    pCtx.append(op + SPACE);
+    this.sub.pp(pCtx);
+  }
 
-    @Override
-    public <T> T accept(AlloyExprVis<T> visitor) {
-        return visitor.visit(this);
-    }
+  @Override
+  public <T> T accept(AlloyExprVis<T> visitor) {
+    return visitor.visit(this);
+  }
 
-    @Override
-    public AlloyAfterExpr rebuild(AlloyExpr sub) {
-        return new AlloyAfterExpr(this.pos, sub);
-    }
+  @Override
+  public AlloyAfterExpr rebuild(AlloyExpr sub) {
+    return new AlloyAfterExpr(this.pos, sub);
+  }
 
-    @Override
-    public int getPrec() {
-        return AlloyExpr.UNI_TEMP_PREC;
-    }
+  @Override
+  public int getPrec() {
+    return AlloyExpr.UNI_TEMP_PREC;
+  }
 }

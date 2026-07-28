@@ -11,20 +11,19 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class SingleEnvEventD2T extends NextDefnD2T {
 
-    public SingleEnvEventD2T(
-            DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(dashModel, tlaModel, verbose, debug);
-    }
+  public SingleEnvEventD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+    super(dashModel, tlaModel, verbose, debug);
+  }
 
-    protected void translateSingleEnvEvent() {
-        // add a formula:
-        // _single_environmental_event == \A x \in S : \A y \in S : x = y
-        // where S = _events \intersect _environmental_events
-        // this formula is added only if relevant
+  protected void translateSingleEnvEvent() {
+    // add a formula:
+    // _single_environmental_event == \A x \in S : \A y \in S : x = y
+    // where S = _events \intersect _environmental_events
+    // this formula is added only if relevant
 
-        TlaExp body = TlaTrue();
-        if (dashModel.hasEvents()) body = _ONE(EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS()));
+    TlaExp body = TlaTrue();
+    if (dashModel.hasEvents()) body = _ONE(EVENTS().INTERSECTION(ENVIRONMENTAL_EVENTS()));
 
-        tlaModel.addDefn(TlaDefn(SINGLE_ENV_INPUT, body));
-    }
+    tlaModel.addDefn(TlaDefn(SINGLE_ENV_INPUT, body));
+  }
 }

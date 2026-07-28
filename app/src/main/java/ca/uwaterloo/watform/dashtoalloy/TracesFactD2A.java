@@ -41,81 +41,75 @@ import java.util.List;
 
 public class TracesFactD2A extends SmallStepD2A {
 
-    protected TracesFactD2A(DashModel dm, Options opt) {
-        super(dm, opt);
+  protected TracesFactD2A(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
+
+  public void addTracesFact() {
+    assert (this.isTraces);
+
+    // open util/traces[Snapshot] as Snapshot
+    this.am.addImport(
+        List.of(AlloyStrings.utilName, D2AStrings.tracesName),
+        D2AStrings.snapshotName,
+        D2AStrings.snapshotName);
+
+    List<AlloyExpr> body = this.dsl.emptyExprList();
+
+    AlloyExpr snapShotFirst = AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesFirstName);
+    AlloyExpr snapShotLast = AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesLastName);
+    AlloyExpr snapShotNext = AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesNextName);
+    AlloyExpr snapshotBack = AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesBackName);
+
+    List<AlloyExpr> args = this.dsl.emptyExprList();
+    args.add(snapShotFirst);
+    // __initial[__Snapshot/first]
+    body.add(AlloyPredCall(D2AStrings.initFactName, args));
+
+    args = this.dsl.emptyExprList();
+    args.add(this.dsl.curVar());
+    args.add(this.dsl.curJoinExpr(snapShotNext));
+
+    List<AlloyDecl> decls1 = this.dsl.emptyDeclList();
+    decls1.add(this.dsl.curDecl());
+
+    List<AlloyDecl> decls2 = this.dsl.emptyDeclList();
+    decls2.add(
+        AlloyQuantVar(
+            D2AStrings.curName, AlloyDiff(AlloyVar(D2AStrings.snapshotName), snapShotLast)));
+
+    body.add(
+        AlloyIte(
+            // some __Snapshot/back
+            AlloySome(snapshotBack),
+            // all s : __Snapshot | __small_step[s, s.__Snapshot/next]
+            AlloyAllVars(decls1, AlloyPredCall(D2AStrings.smallStepName, args)),
+            // all s : __Snapshot - __Snapshot/last | __small_step[s, s.__Snapshot/next]
+            AlloyAllVars(decls2, AlloyPredCall(D2AStrings.smallStepName, args))));
+
+    this.am.addFact(D2AStrings.tracesFactName, body);
+  }
+
+  public void addStrongNoStutterPred() {
+
+    assert (this.isTraces);
+    AlloyExpr snapShotFirst = AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesFirstName);
+    List<AlloyExpr> body = this.dsl.emptyExprList();
+    List<AlloyDecl> decls = this.dsl.emptyDeclList();
+
+    List<AlloyExpr> bigOr = this.dsl.emptyExprList();
+    for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+      // don't need to make this stronger than an Or
+      // b/c other parts of semantics will make sure only
+      // one transTaken is true
+      bigOr.add(AlloyNot(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.noneArrow(i))));
     }
+    AlloyExpr ex = AlloyOr(AlloyEqual(this.dsl.curVar(), snapShotFirst), AlloyOrList(bigOr));
 
-    public void addTracesFact() {
-        assert (this.isTraces);
+    decls.add(AlloyQuantVar(D2AStrings.curName, AlloyVar(D2AStrings.snapshotName)));
+    body.add(AlloyAllVars(decls, ex));
 
-        // open util/traces[Snapshot] as Snapshot
-        this.am.addImport(
-                List.of(AlloyStrings.utilName, D2AStrings.tracesName),
-                D2AStrings.snapshotName,
-                D2AStrings.snapshotName);
-
-        List<AlloyExpr> body = this.dsl.emptyExprList();
-
-        AlloyExpr snapShotFirst =
-                AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesFirstName);
-        AlloyExpr snapShotLast =
-                AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesLastName);
-        AlloyExpr snapShotNext =
-                AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesNextName);
-        AlloyExpr snapshotBack =
-                AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesBackName);
-
-        List<AlloyExpr> args = this.dsl.emptyExprList();
-        args.add(snapShotFirst);
-        // __initial[__Snapshot/first]
-        body.add(AlloyPredCall(D2AStrings.initFactName, args));
-
-        args = this.dsl.emptyExprList();
-        args.add(this.dsl.curVar());
-        args.add(this.dsl.curJoinExpr(snapShotNext));
-
-        List<AlloyDecl> decls1 = this.dsl.emptyDeclList();
-        decls1.add(this.dsl.curDecl());
-
-        List<AlloyDecl> decls2 = this.dsl.emptyDeclList();
-        decls2.add(
-                AlloyQuantVar(
-                        D2AStrings.curName,
-                        AlloyDiff(AlloyVar(D2AStrings.snapshotName), snapShotLast)));
-
-        body.add(
-                AlloyIte(
-                        // some __Snapshot/back
-                        AlloySome(snapshotBack),
-                        // all s : __Snapshot | __small_step[s, s.__Snapshot/next]
-                        AlloyAllVars(decls1, AlloyPredCall(D2AStrings.smallStepName, args)),
-                        // all s : __Snapshot - __Snapshot/last | __small_step[s, s.__Snapshot/next]
-                        AlloyAllVars(decls2, AlloyPredCall(D2AStrings.smallStepName, args))));
-
-        this.am.addFact(D2AStrings.tracesFactName, body);
-    }
-
-    public void addStrongNoStutterPred() {
-
-        assert (this.isTraces);
-        AlloyExpr snapShotFirst =
-                AlloyVar(D2AStrings.snapshotName + "/" + D2AStrings.tracesFirstName);
-        List<AlloyExpr> body = this.dsl.emptyExprList();
-        List<AlloyDecl> decls = this.dsl.emptyDeclList();
-
-        List<AlloyExpr> bigOr = this.dsl.emptyExprList();
-        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            // don't need to make this stronger than an Or
-            // b/c other parts of semantics will make sure only
-            // one transTaken is true
-            bigOr.add(AlloyNot(AlloyEqual(this.dsl.curTransTaken(i), this.dsl.noneArrow(i))));
-        }
-        AlloyExpr ex = AlloyOr(AlloyEqual(this.dsl.curVar(), snapShotFirst), AlloyOrList(bigOr));
-
-        decls.add(AlloyQuantVar(D2AStrings.curName, AlloyVar(D2AStrings.snapshotName)));
-        body.add(AlloyAllVars(decls, ex));
-
-        List<AlloyDecl> emptyDeclList = this.dsl.emptyDeclList();
-        this.am.addPred(D2AStrings.strongNoStutterName, emptyDeclList, body);
-    }
+    List<AlloyDecl> emptyDeclList = this.dsl.emptyDeclList();
+    this.am.addPred(D2AStrings.strongNoStutterName, emptyDeclList, body);
+  }
 }

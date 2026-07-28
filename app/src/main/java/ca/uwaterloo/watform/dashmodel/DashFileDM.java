@@ -35,125 +35,118 @@ import java.util.List;
 
 public class DashFileDM extends ResolveDM {
 
-    protected DashFileDM() {
-        super();
+  protected DashFileDM() {
+    super();
+  }
+
+  protected DashFileDM(DashFile d) {
+    super(d);
+  }
+
+  public DashFile toDashFile() {
+    List<AlloyPara> ap = this.getAllParas(true);
+    DashState ds = stateRecurse(this.rootName);
+    ap.add(ds);
+    return new DashFile(ap);
+  }
+
+  private DashState stateRecurse(String sfqn) {
+
+    List<Object> itemList = new ArrayList<Object>();
+    if (!this.isLeaf(sfqn)) {
+      for (String childFQN : this.immChildren(sfqn)) {
+        itemList.add(stateRecurse(childFQN));
+      }
+    } else {
+      itemList = DashState.noSubstates();
     }
 
-    protected DashFileDM(DashFile d) {
-        super(d);
+    // add var decls
+    // just one at a time (in original might have been multiple vars
+    // declared with same type)
+    // parameters in declarations
+    // parameters are determined by position in state hierarchy
+    for (String vfqn : this.varsOfState(sfqn)) {
+      itemList.add(
+          new DashVarDecls(
+              Pos.UNKNOWN,
+              // list of size 1
+              new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(vfqn))),
+              this.mul(vfqn),
+              this.varTyp(vfqn),
+              this.varKind(vfqn)));
     }
 
-    public DashFile toDashFile() {
-        List<AlloyPara> ap = this.getAllParas(true);
-        DashState ds = stateRecurse(this.rootName);
-        ap.add(ds);
-        return new DashFile(ap);
+    // add buffer decls
+    // just one at a time (in original might have been multiple vars
+    // declared with same type)
+    // no parameters in declarations
+    // parameters are determined by position in state hierarchy
+    for (String bfqn : this.buffersOfState(sfqn)) {
+      itemList.add(
+          new DashBufferDecls(
+              Pos.UNKNOWN,
+              // list of size 1
+              new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(bfqn))),
+              this.bufferElement(bfqn),
+              this.bufferKind(bfqn)));
     }
 
-    private DashState stateRecurse(String sfqn) {
-
-        List<Object> itemList = new ArrayList<Object>();
-        if (!this.isLeaf(sfqn)) {
-            for (String childFQN : this.immChildren(sfqn)) {
-                itemList.add(stateRecurse(childFQN));
-            }
-        } else {
-            itemList = DashState.noSubstates();
-        }
-
-        // add var decls
-        // just one at a time (in original might have been multiple vars
-        // declared with same type)
-        // parameters in declarations
-        // parameters are determined by position in state hierarchy
-        for (String vfqn : this.varsOfState(sfqn)) {
-            itemList.add(
-                    new DashVarDecls(
-                            Pos.UNKNOWN,
-                            // list of size 1
-                            new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(vfqn))),
-                            this.mul(vfqn),
-                            this.varTyp(vfqn),
-                            this.varKind(vfqn)));
-        }
-
-        // add buffer decls
-        // just one at a time (in original might have been multiple vars
-        // declared with same type)
-        // no parameters in declarations
-        // parameters are determined by position in state hierarchy
-        for (String bfqn : this.buffersOfState(sfqn)) {
-            itemList.add(
-                    new DashBufferDecls(
-                            Pos.UNKNOWN,
-                            // list of size 1
-                            new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(bfqn))),
-                            this.bufferElement(bfqn),
-                            this.bufferKind(bfqn)));
-        }
-
-        // add event decls
-        // just one at a time
-        // no parameters in declarations
-        // parameters are determined by position in state hierarchy
-        for (String efqn : this.eventsOfState(sfqn)) {
-            itemList.add(
-                    new DashEventDecls(
-                            Pos.UNKNOWN,
-                            // list of size 1
-                            new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(efqn))),
-                            this.eventKind(efqn)));
-        }
-
-        // collect trans
-        // fqn name of trans tells us where it was declared
-        // no parameters in declarations
-        // parameters are determined by position in state hierarchy
-        for (String tfqn : this.transOfState(sfqn)) {
-
-            // these will be the resolved ones
-            // getSrc returns a DashRef
-            // DashFrom needs an expression,
-            // but a DashRef is a form of expression
-
-            // src -- cannot be null when in TransTable
-            DashFrom fromR = new DashFrom(Pos.UNKNOWN, this.fromR(tfqn));
-
-            DashWhen whenR =
-                    (this.whenR(tfqn) != null) ? new DashWhen(Pos.UNKNOWN, this.whenR(tfqn)) : null;
-
-            DashOn onR = (this.onR(tfqn) != null) ? new DashOn(Pos.UNKNOWN, this.onR(tfqn)) : null;
-
-            DashDo doR = (this.doR(tfqn) != null) ? new DashDo(Pos.UNKNOWN, this.doR(tfqn)) : null;
-            DashSend sendR =
-                    (this.sendR(tfqn) != null) ? new DashSend(Pos.UNKNOWN, this.sendR(tfqn)) : null;
-
-            // dest -- cannot be null when in TransTable
-            DashGoto gotoR = new DashGoto(Pos.UNKNOWN, this.gotoR(tfqn));
-
-            itemList.add(
-                    new DashTrans(
-                            Pos.UNKNOWN,
-                            DashFQN.chopNameFromFQN(tfqn),
-                            fromR,
-                            gotoR,
-                            onR,
-                            sendR,
-                            whenR,
-                            doR));
-        }
-
-        // an init/inv is not always an AlloyBlock; it could be a single expression
-        // but then it creates multiple init/inv
-        itemList.addAll(mapBy(this.initsOfState(sfqn), x -> new DashInit(Pos.UNKNOWN, x)));
-        itemList.addAll(mapBy(this.invsOfState(sfqn), x -> new DashInv(Pos.UNKNOWN, x)));
-
-        return new DashState(
-                Pos.UNKNOWN,
-                DashFQN.chopNameFromFQN(sfqn),
-                this.stateParam(sfqn) != null ? this.stateParam(sfqn).paramSig : null,
-                this.stateKind(sfqn),
-                this.def(sfqn),
-                itemList);
+    // add event decls
+    // just one at a time
+    // no parameters in declarations
+    // parameters are determined by position in state hierarchy
+    for (String efqn : this.eventsOfState(sfqn)) {
+      itemList.add(
+          new DashEventDecls(
+              Pos.UNKNOWN,
+              // list of size 1
+              new ArrayList<String>(Arrays.asList(DashFQN.chopNameFromFQN(efqn))),
+              this.eventKind(efqn)));
     }
+
+    // collect trans
+    // fqn name of trans tells us where it was declared
+    // no parameters in declarations
+    // parameters are determined by position in state hierarchy
+    for (String tfqn : this.transOfState(sfqn)) {
+
+      // these will be the resolved ones
+      // getSrc returns a DashRef
+      // DashFrom needs an expression,
+      // but a DashRef is a form of expression
+
+      // src -- cannot be null when in TransTable
+      DashFrom fromR = new DashFrom(Pos.UNKNOWN, this.fromR(tfqn));
+
+      DashWhen whenR =
+          (this.whenR(tfqn) != null) ? new DashWhen(Pos.UNKNOWN, this.whenR(tfqn)) : null;
+
+      DashOn onR = (this.onR(tfqn) != null) ? new DashOn(Pos.UNKNOWN, this.onR(tfqn)) : null;
+
+      DashDo doR = (this.doR(tfqn) != null) ? new DashDo(Pos.UNKNOWN, this.doR(tfqn)) : null;
+      DashSend sendR =
+          (this.sendR(tfqn) != null) ? new DashSend(Pos.UNKNOWN, this.sendR(tfqn)) : null;
+
+      // dest -- cannot be null when in TransTable
+      DashGoto gotoR = new DashGoto(Pos.UNKNOWN, this.gotoR(tfqn));
+
+      itemList.add(
+          new DashTrans(
+              Pos.UNKNOWN, DashFQN.chopNameFromFQN(tfqn), fromR, gotoR, onR, sendR, whenR, doR));
+    }
+
+    // an init/inv is not always an AlloyBlock; it could be a single expression
+    // but then it creates multiple init/inv
+    itemList.addAll(mapBy(this.initsOfState(sfqn), x -> new DashInit(Pos.UNKNOWN, x)));
+    itemList.addAll(mapBy(this.invsOfState(sfqn), x -> new DashInv(Pos.UNKNOWN, x)));
+
+    return new DashState(
+        Pos.UNKNOWN,
+        DashFQN.chopNameFromFQN(sfqn),
+        this.stateParam(sfqn) != null ? this.stateParam(sfqn).paramSig : null,
+        this.stateKind(sfqn),
+        this.def(sfqn),
+        itemList);
+  }
 }

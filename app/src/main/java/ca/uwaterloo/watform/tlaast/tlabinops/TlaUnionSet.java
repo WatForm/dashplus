@@ -4,18 +4,18 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaUnionSet extends TlaInfixBinOp {
 
-    /*
-    S1 \\union S2
+  /*
+  S1 \\union S2
 
-    set union
-    */
+  set union
+  */
 
-    public TlaUnionSet(TlaExp operandOne, TlaExp operandTwo) {
-        super(
-                TlaStrings.SET_UNION,
-                operandOne,
-                operandTwo,
-                TlaOperator.Associativity.IRRELEVANT,
-                PrecedenceGroup.SET_OPERATORS);
-    }
+  public TlaUnionSet(TlaExp operandOne, TlaExp operandTwo) {
+    super(
+        TlaStrings.SET_UNION,
+        operandOne,
+        operandTwo,
+        TlaOperator.Associativity.IRRELEVANT,
+        PrecedenceGroup.SET_OPERATORS);
+  }
 }

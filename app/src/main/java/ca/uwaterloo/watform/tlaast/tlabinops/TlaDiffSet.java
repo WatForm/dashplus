@@ -4,18 +4,18 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaDiffSet extends TlaInfixBinOp {
 
-    /*
-    S1 \X S2
+  /*
+  S1 \X S2
 
-    set difference
-    */
+  set difference
+  */
 
-    public TlaDiffSet(TlaExp operandOne, TlaExp operandTwo) {
-        super(
-                TlaStrings.SET_DIFFERENCE,
-                operandOne,
-                operandTwo,
-                TlaOperator.Associativity.LEFT,
-                TlaOperator.PrecedenceGroup.SET_OPERATORS);
-    }
+  public TlaDiffSet(TlaExp operandOne, TlaExp operandTwo) {
+    super(
+        TlaStrings.SET_DIFFERENCE,
+        operandOne,
+        operandTwo,
+        TlaOperator.Associativity.LEFT,
+        TlaOperator.PrecedenceGroup.SET_OPERATORS);
+  }
 }

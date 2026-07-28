@@ -5,88 +5,88 @@ import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara;
-import ca.uwaterloo.watform.dashast.DashPara;
+// import ca.uwaterloo.watform.dashast.DashPara;
 import ca.uwaterloo.watform.utils.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class AlloyFile extends AlloyASTNode {
-    public String filename = "";
-    public final List<AlloyPara> paras;
+  public String filename = "";
+  public final List<AlloyPara> paras;
 
-    public AlloyFile(Pos pos, List<AlloyPara> paragraphs) {
-        super(pos);
-        this.paras = Collections.unmodifiableList(paragraphs);
+  public AlloyFile(Pos pos, List<AlloyPara> paragraphs) {
+    super(pos);
+    this.paras = Collections.unmodifiableList(paragraphs);
 
-        List<AlloyModulePara> modules = extractItemsOfClass(paragraphs, AlloyModulePara.class);
+    List<AlloyModulePara> modules = extractItemsOfClass(paragraphs, AlloyModulePara.class);
 
-        if (modules.size() > 1) {
-            throw AlloyCtorError.moduleIsUnique(modules.get(0).pos, modules.get(1).pos);
-        }
-
-        boolean noMoreModule = false;
-        for (AlloyPara alloyPara : this.paras) {
-            if (noMoreModule && alloyPara instanceof AlloyModulePara) {
-                throw AlloyCtorError.moduleIsAtTop(alloyPara.pos);
-            }
-            if (!(alloyPara instanceof AlloyImportPara)
-                    && !(alloyPara instanceof AlloyModulePara)) {
-                noMoreModule = true;
-            }
-        }
-
-        List<DashPara> dashParas = extractItemsOfClass(this.paras, DashPara.class);
-        if (!dashParas.isEmpty()) {
-            throw AlloyASTImplError.dashParaInAlloyFile(dashParas.get(0).pos);
-        }
-
-        reqNonNull(nullField(pos, this), this.paras);
+    if (modules.size() > 1) {
+      throw AlloyCtorError.moduleIsUnique(modules.get(0).pos, modules.get(1).pos);
     }
 
-    public AlloyFile(List<AlloyPara> paragraphs) {
-        this(Pos.UNKNOWN, paragraphs);
+    boolean noMoreModule = false;
+    for (AlloyPara alloyPara : this.paras) {
+      if (noMoreModule && alloyPara instanceof AlloyModulePara) {
+        throw AlloyCtorError.moduleIsAtTop(alloyPara.pos);
+      }
+      if (!(alloyPara instanceof AlloyImportPara) && !(alloyPara instanceof AlloyModulePara)) {
+        noMoreModule = true;
+      }
     }
 
-    public AlloyFile(AlloyPara paragraph) {
-        this(Pos.UNKNOWN, Collections.singletonList(paragraph));
+    /*
+    List<DashPara> dashParas = extractItemsOfClass(this.paras, DashPara.class);
+    if (!dashParas.isEmpty()) {
+        throw AlloyASTImplError.dashParaInAlloyFile(dashParas.get(0).pos);
     }
+    */
+    reqNonNull(nullField(pos, this), this.paras);
+  }
 
-    @Override
-    public void toString(StringBuilder sb, int indent) {
-        for (AlloyPara p : this.paras) {
-            sb.append(AlloyStrings.TAB.repeat(indent));
-            p.toString(sb, indent);
-            sb.append(AlloyStrings.NEWLINE + AlloyStrings.NEWLINE);
-        }
-    }
+  public AlloyFile(List<AlloyPara> paragraphs) {
+    this(Pos.UNKNOWN, paragraphs);
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        for (AlloyPara p : this.paras) {
-            p.ppNewBlock(pCtx);
-            pCtx.nl();
-            pCtx.nlNoIndent();
-        }
-    }
+  public AlloyFile(AlloyPara paragraph) {
+    this(Pos.UNKNOWN, Collections.singletonList(paragraph));
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.filename, this.paras);
+  @Override
+  public void toString(StringBuilder sb, int indent) {
+    for (AlloyPara p : this.paras) {
+      sb.append(AlloyStrings.TAB.repeat(indent));
+      p.toString(sb, indent);
+      sb.append(AlloyStrings.NEWLINE + AlloyStrings.NEWLINE);
     }
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        AlloyFile other = (AlloyFile) obj;
-        if (filename == null) {
-            if (other.filename != null) return false;
-        } else if (!filename.equals(other.filename)) return false;
-        if (paras == null) {
-            if (other.paras != null) return false;
-        } else if (!paras.equals(other.paras)) return false;
-        return true;
+  @Override
+  public void pp(PrintContext pCtx) {
+    for (AlloyPara p : this.paras) {
+      p.ppNewBlock(pCtx);
+      pCtx.nl();
+      pCtx.nlNoIndent();
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.filename, this.paras);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    AlloyFile other = (AlloyFile) obj;
+    if (filename == null) {
+      if (other.filename != null) return false;
+    } else if (!filename.equals(other.filename)) return false;
+    if (paras == null) {
+      if (other.paras != null) return false;
+    } else if (!paras.equals(other.paras)) return false;
+    return true;
+  }
 }

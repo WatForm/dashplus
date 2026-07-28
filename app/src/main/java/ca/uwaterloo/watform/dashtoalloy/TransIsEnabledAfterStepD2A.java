@@ -45,130 +45,122 @@ import java.util.List;
 
 public class TransIsEnabledAfterStepD2A extends TransPreD2A {
 
-    protected TransIsEnabledAfterStepD2A(DashModel dm, Options opt) {
-        super(dm, opt);
+  protected TransIsEnabledAfterStepD2A(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
+
+  public void addTransIsEnabledAfterStep(String tfqn) {
+
+    String tout = DashFQN.translateFQN(tfqn);
+    List<DashParam> prs = this.dm.transParams(tfqn);
+    List<AlloyDecl> decls = this.dsl.emptyDeclList();
+    List<AlloyExpr> body = this.dsl.emptyExprList();
+
+    if (this.isElectrum) {
+      decls.addAll(this.dsl.paramDecls(prs));
+    } else {
+      decls.addAll(this.dsl.curNextParamsDecls(prs));
+    }
+    for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+      decls.add(this.dsl.scopeDecl(i));
+      if (this.dm.hasEventsAti(i)) {
+        decls.add(this.dsl.genEventDecl(i));
+      }
     }
 
-    public void addTransIsEnabledAfterStep(String tfqn) {
+    if (!this.dm.hasOnlyOneState())
+      // some (p3 -> p2 -> p1 -> src & s'.confi)
+      // src does not have to be a basic state
+      body.add(
+          AlloySome(
+              AlloyInter(
+                  this.translateDashRefToArrowExpr(this.dm.fromR(tfqn)),
+                  this.dsl.nextConf(prs.size()))));
 
-        String tout = DashFQN.translateFQN(tfqn);
-        List<DashParam> prs = this.dm.transParams(tfqn);
-        List<AlloyDecl> decls = this.dsl.emptyDeclList();
-        List<AlloyExpr> body = this.dsl.emptyExprList();
+    // primed guard condition is true
+    if (this.dm.whenR(tfqn) != null) body.add(this.translateExprAsNext(this.dm.whenR(tfqn)));
 
-        if (this.isElectrum) {
-            decls.addAll(this.dsl.paramDecls(prs));
-        } else {
-            decls.addAll(this.dsl.curNextParamsDecls(prs));
-        }
-        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            decls.add(this.dsl.scopeDecl(i));
-            if (this.dm.hasEventsAti(i)) {
-                decls.add(this.dsl.genEventDecl(i));
-            }
-        }
+    // orthogonality  ------------------
 
-        if (!this.dm.hasOnlyOneState())
-            // some (p3 -> p2 -> p1 -> src & s'.confi)
-            // src does not have to be a basic state
-            body.add(
-                    AlloySome(
-                            AlloyInter(
-                                    this.translateDashRefToArrowExpr(this.dm.fromR(tfqn)),
-                                    this.dsl.nextConf(prs.size()))));
+    // if first step of the big step
+    // tfqn's non-orthogonal scope are not in any scopes used in the parameters
+    List<AlloyExpr> orth1 = this.dsl.emptyExprList();
+    List<DashRef> nonO = this.dm.nonOrthogonalScopesOf(tfqn);
 
-        // primed guard condition is true
-        if (this.dm.whenR(tfqn) != null) body.add(this.translateExprAsNext(this.dm.whenR(tfqn)));
-
-        // orthogonality  ------------------
-
-        // if first step of the big step
-        // tfqn's non-orthogonal scope are not in any scopes used in the parameters
-        List<AlloyExpr> orth1 = this.dsl.emptyExprList();
-        List<DashRef> nonO = this.dm.nonOrthogonalScopesOf(tfqn);
-
-        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            if (this.dm.hasTransAti(i)) {
-                final int j = i;
-                List<AlloyExpr> u =
-                        mapBy(
-                                filterBy(nonO, x -> x.hasNumParams(j)),
-                                y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
-                // o1: forall i. not(t1_nonOrthScopei in scopesi)
-                for (AlloyExpr x : u) orth1.add(AlloyNot(AlloyIn(x, this.dsl.scopeVar(i))));
-            }
-        }
-        AlloyExpr o1 = AlloyAndList(orth1);
-
-        // if not the first of the big step
-        // tfqn's non-orthogonal scope are not in any scopes used in the parameters + the cur scopes
-        // used
-        List<AlloyExpr> orth2 = this.dsl.emptyExprList();
-        for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
-            // if there are no trans with scope at i, we don't need
-            // to rule out that higher level scope of this trans
-            if (this.dm.hasTransAti(i)) {
-                final int j = i;
-                List<AlloyExpr> u =
-                        mapBy(
-                                filterBy(nonO, x -> x.hasNumParams(j)),
-                                y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
-                // o2: forall i. not(t1_nonOrthScopei in scopesi + s'.scopesUsedi)
-                for (AlloyExpr x : u)
-                    orth2.add(
-                            AlloyNot(
-                                    AlloyIn(
-                                            x,
-                                            AlloyUnion(
-                                                    this.dsl.curScopesUsed(i),
-                                                    this.dsl.scopeVar(i)))));
-            }
-        }
-        AlloyExpr o2 = AlloyAndList(orth2);
-
-        // events ----------------------------
-
-        DashRef ev = this.dm.onR(tfqn);
-        AlloyExpr ev1, ev2;
-        if (ev != null) {
-            Integer level = ev.paramValues.size();
-            if (this.dm.hasEnvEvents()) {
-                // ev1: t1_on  in (s.events0 inter EnvEvents) + genEvents0
-                // or
-                // ev1: t1_on  in (s.eventsi :> EnvEvents) + genEventsi
-                ev1 =
-                        AlloyIn(
-                                this.translateDashRefToArrowExpr(ev),
-                                AlloyUnion(
-                                        this.dsl.RangeResLevel(
-                                                this.dsl.curEvents(level),
-                                                this.dsl.allEnvEventsVar(),
-                                                level),
-                                        this.dsl.genEventVar(level)));
-            } else {
-                // no env events so just
-                // ev1: t1_on  in genEventsi
-                ev1 =
-                        AlloyIn(
-                                this.translateDashRefToArrowExpr(ev),
-                                this.dsl.genEventVar(ev.paramValues.size()));
-            }
-            // ev2: t1_on  in s.eventsi  + genEventsi
-            ev2 =
-                    AlloyIn(
-                            this.translateDashRefToArrowExpr(ev),
-                            AlloyUnion(
-                                    this.dsl.curEvents(ev.paramValues.size()),
-                                    this.dsl.genEventVar(ev.paramValues.size())));
-        } else {
-            ev1 = AlloyTrueCond();
-            ev2 = AlloyTrueCond();
-        }
-
-        if (this.dm.hasConcurrency())
-            body.add(AlloyIte(this.dsl.curStableTrue(), AlloyAnd(o1, ev1), AlloyAnd(o2, ev2)));
-        else body.add(AlloyAnd(o1, ev1));
-
-        this.am.addPred(D2AStrings.enabledAfterStepName(tout), decls, body);
+    for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+      if (this.dm.hasTransAti(i)) {
+        final int j = i;
+        List<AlloyExpr> u =
+            mapBy(
+                filterBy(nonO, x -> x.hasNumParams(j)),
+                y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
+        // o1: forall i. not(t1_nonOrthScopei in scopesi)
+        for (AlloyExpr x : u) orth1.add(AlloyNot(AlloyIn(x, this.dsl.scopeVar(i))));
+      }
     }
+    AlloyExpr o1 = AlloyAndList(orth1);
+
+    // if not the first of the big step
+    // tfqn's non-orthogonal scope are not in any scopes used in the parameters + the cur scopes
+    // used
+    List<AlloyExpr> orth2 = this.dsl.emptyExprList();
+    for (int i = 0; i <= this.dm.maxDepthParams(); i++) {
+      // if there are no trans with scope at i, we don't need
+      // to rule out that higher level scope of this trans
+      if (this.dm.hasTransAti(i)) {
+        final int j = i;
+        List<AlloyExpr> u =
+            mapBy(
+                filterBy(nonO, x -> x.hasNumParams(j)),
+                y -> this.translateDashRefToArrowExpr(this.dsl.asScope(y)));
+        // o2: forall i. not(t1_nonOrthScopei in scopesi + s'.scopesUsedi)
+        for (AlloyExpr x : u)
+          orth2.add(
+              AlloyNot(AlloyIn(x, AlloyUnion(this.dsl.curScopesUsed(i), this.dsl.scopeVar(i)))));
+      }
+    }
+    AlloyExpr o2 = AlloyAndList(orth2);
+
+    // events ----------------------------
+
+    DashRef ev = this.dm.onR(tfqn);
+    AlloyExpr ev1, ev2;
+    if (ev != null) {
+      Integer level = ev.paramValues.size();
+      if (this.dm.hasEnvEvents()) {
+        // ev1: t1_on  in (s.events0 inter EnvEvents) + genEvents0
+        // or
+        // ev1: t1_on  in (s.eventsi :> EnvEvents) + genEventsi
+        ev1 =
+            AlloyIn(
+                this.translateDashRefToArrowExpr(ev),
+                AlloyUnion(
+                    this.dsl.RangeResLevel(
+                        this.dsl.curEvents(level), this.dsl.allEnvEventsVar(), level),
+                    this.dsl.genEventVar(level)));
+      } else {
+        // no env events so just
+        // ev1: t1_on  in genEventsi
+        ev1 =
+            AlloyIn(
+                this.translateDashRefToArrowExpr(ev), this.dsl.genEventVar(ev.paramValues.size()));
+      }
+      // ev2: t1_on  in s.eventsi  + genEventsi
+      ev2 =
+          AlloyIn(
+              this.translateDashRefToArrowExpr(ev),
+              AlloyUnion(
+                  this.dsl.curEvents(ev.paramValues.size()),
+                  this.dsl.genEventVar(ev.paramValues.size())));
+    } else {
+      ev1 = AlloyTrueCond();
+      ev2 = AlloyTrueCond();
+    }
+
+    if (this.dm.hasConcurrency())
+      body.add(AlloyIte(this.dsl.curStableTrue(), AlloyAnd(o1, ev1), AlloyAnd(o2, ev2)));
+    else body.add(AlloyAnd(o1, ev1));
+
+    this.am.addPred(D2AStrings.enabledAfterStepName(tout), decls, body);
+  }
 }

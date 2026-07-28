@@ -13,8 +13,8 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.cli.Constants;
-import ca.uwaterloo.watform.parser.Parser;
+import ca.uwaterloo.watform.parser.AlloyParser;
+import ca.uwaterloo.watform.utils.CliUtils;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.ast.Command;
@@ -27,81 +27,81 @@ import java.util.*;
 
 public class AlloyInterface {
 
-    public static CompModule parse(String alloyCode) throws Err {
-        return CompUtil.parseEverything_fromString(new A4Reporter(), alloyCode);
-    }
+  public static CompModule parse(String alloyCode) throws Err {
+    return CompUtil.parseEverything_fromString(new A4Reporter(), alloyCode);
+  }
 
-    private static CompModule toAlloy(AlloyModel am) throws Err {
-        return parse(am.toString());
-    }
+  private static CompModule toAlloy(AlloyModel am) throws Err {
+    return parse(am.toString());
+  }
 
-    // testing function
-    public static Boolean canParse(String alloyCode) {
-        try {
-            parse(alloyCode);
-            return true;
-        } catch (Err e) {
-            return false;
-        }
+  // testing function
+  public static Boolean canParse(String alloyCode) {
+    try {
+      parse(alloyCode);
+      return true;
+    } catch (Err e) {
+      return false;
     }
+  }
 
-    // keep these private; dashplus should be working from AlloyModel
-    // and DashModel
-    // assumption: cmdnum exists
-    private static Solution executeCommand(String alloyCode, int cmdnum) {
-        // this will put in a cmd 0: run {} if there are no other cmds
-        CompModule alloy = parse(alloyCode);
-        A4Reporter rep = new A4Reporter();
-        // TODO: no cmd at that position
-        Command cmd = alloy.getAllCommands().get(cmdnum);
-        dashOutput("Executing cmd " + String.valueOf(cmdnum) + ": " + cmd.toString());
-        // turn off kodkod stuff going to screen
-        System.setProperty("org.slf4j.simpleLogger.log.kodkod.engine.config", "warn");
-        A4Solution ans =
-                TranslateAlloyToKodkod.execute_command(
-                        rep, alloy.getAllReachableSigs(), cmd, new A4Options());
+  // keep these private; dashplus should be working from AlloyModel
+  // and DashModel
+  // assumption: cmdnum exists
+  private static Solution executeCommand(String alloyCode, int cmdnum) {
+    // this will put in a cmd 0: run {} if there are no other cmds
+    CompModule alloy = parse(alloyCode);
+    A4Reporter rep = new A4Reporter();
+    // TODO: no cmd at that position
+    Command cmd = alloy.getAllCommands().get(cmdnum);
+    dpOutput("Executing cmd " + String.valueOf(cmdnum) + ": " + cmd.toString());
+    // turn off kodkod stuff going to screen
+    System.setProperty("org.slf4j.simpleLogger.log.kodkod.engine.config", "warn");
+    A4Solution ans =
+        TranslateAlloyToKodkod.execute_command(
+            rep, alloy.getAllReachableSigs(), cmd, new A4Options());
 
-        dashOutput("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
-        return new Solution(ans, alloy);
+    dpOutput("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
+    return new Solution(ans, alloy);
+  }
+
+  public static Solution executeCommand(AlloyModel am, int cmdnum) {
+    // assumes this is a valid cmd or NOCMD
+    String alloyCode = am.toString();
+    if (cmdnum == CliUtils.noCmdValue) {
+      return checkModelSatisfiability(am);
+    } else {
+      // command must exist from above check
+      /* NAD RE-ADD
+      Optional<AlloyCmdPara.CommandDecl> cmdDecl = am.getCmdNum(cmdnum);
+      // System.out.println(cmdDecl);
+      System.out.println(am.getScopeLimits(cmdDecl.get()));
+      */
+      return AlloyInterface.executeCommand(alloyCode, cmdnum);
     }
+  }
 
-    public static Solution executeCommand(AlloyModel am, int cmdnum) {
-        // assumes this is a valid cmd or NOCMD
-        String alloyCode = am.toString();
-        if (cmdnum == Constants.noCmdValue) {
-            return checkModelSatisfiability(am);
-        } else {
-            // command must exist from above check
-            /* NAD RE-ADD
-            Optional<AlloyCmdPara.CommandDecl> cmdDecl = am.getCmdNum(cmdnum);
-            // System.out.println(cmdDecl);
-            System.out.println(am.getScopeLimits(cmdDecl.get()));
-            */
-            return AlloyInterface.executeCommand(alloyCode, cmdnum);
-        }
-    }
+  public static Solution checkModelSatisfiability(AlloyModel am) {
+    // translate to Alloy without any commands ("false" arg to toString below)
+    // and ask it to execute cmd 0
+    // in converting Alloy to Kodkod, it will add a run {}
+    String alloyCode = am.toStringNoCmds();
+    AlloyCmdPara.CommandDecl cmdDecl = AlloyParser.parseCmdDecl("run {}");
+    // NAD RE-ADD System.out.println(am.getScopeLimits(cmdDecl));
+    return AlloyInterface.executeCommand(alloyCode, 0);
+  }
 
-    public static Solution checkModelSatisfiability(AlloyModel am) {
-        // translate to Alloy without any commands ("false" arg to toString below)
-        // and ask it to execute cmd 0
-        // in converting Alloy to Kodkod, it will add a run {}
-        String alloyCode = am.toStringNoCmds();
-        AlloyCmdPara.CommandDecl cmdDecl = Parser.parseCmdDecl("run {}");
-        // NAD RE-ADD System.out.println(am.getScopeLimits(cmdDecl));
-        return AlloyInterface.executeCommand(alloyCode, 0);
-    }
-
-    /*
-    // returns a String
-    public static String executeCommandToString(AlloyModel am, int cmdnum) {
-        Solution soln = executeCommand(am, cmdnum);
-        // print cmd; must exist or would have thrown error in line above
-        Optional<AlloyCmdPara> cmd = am.getCmdNum(cmdnum);
-        String result = cmd.map(Object::toString).orElse("");
-        // print solution: might be unsat
-        if (soln.isSat()) return result + "\nSATISFIABLE\n" + soln.toString();
-        else return result + "\nUNSATISFIABLE\n";
-    }
-    */
+  /*
+  // returns a String
+  public static String executeCommandToString(AlloyModel am, int cmdnum) {
+      Solution soln = executeCommand(am, cmdnum);
+      // print cmd; must exist or would have thrown error in line above
+      Optional<AlloyCmdPara> cmd = am.getCmdNum(cmdnum);
+      String result = cmd.map(Object::toString).orElse("");
+      // print solution: might be unsat
+      if (soln.isSat()) return result + "\nSATISFIABLE\n" + soln.toString();
+      else return result + "\nUNSATISFIABLE\n";
+  }
+  */
 
 }

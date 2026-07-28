@@ -7,15 +7,15 @@ import java.util.List;
 
 public class TransDashRef extends DashRef {
 
-    public TransDashRef(Pos p, String n, List<AlloyExpr> prmValues) {
-        super(p, n, prmValues);
-    }
+  public TransDashRef(Pos p, String n, List<AlloyExpr> prmValues) {
+    super(p, n, prmValues);
+  }
 
-    public TransDashRef(String n, List<AlloyExpr> prmValues) {
-        super(n, prmValues);
-    }
+  public TransDashRef(String n, List<AlloyExpr> prmValues) {
+    super(n, prmValues);
+  }
 
-    public DashStrings.DashRefKind kind() {
-        return DashStrings.DashRefKind.TRANS;
-    }
+  public DashStrings.DashRefKind kind() {
+    return DashStrings.DashRefKind.TRANS;
+  }
 }

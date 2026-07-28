@@ -8,19 +8,19 @@ import java.util.List;
 
 public class StateDashRef extends DashRef {
 
-    public StateDashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
-        super(p, n, prmValues);
-    }
+  public StateDashRef(Pos p, String n, List<? extends AlloyExpr> prmValues) {
+    super(p, n, prmValues);
+  }
 
-    public StateDashRef(String n, List<? extends AlloyExpr> prmValues) {
-        super(n, prmValues);
-    }
+  public StateDashRef(String n, List<? extends AlloyExpr> prmValues) {
+    super(n, prmValues);
+  }
 
-    public StateDashRef(Pos p, List<AlloyNameExpr> names, List<? extends AlloyExpr> prmValues) {
-        super(p, names, prmValues);
-    }
+  public StateDashRef(Pos p, List<AlloyNameExpr> names, List<? extends AlloyExpr> prmValues) {
+    super(p, names, prmValues);
+  }
 
-    public DashStrings.DashRefKind kind() {
-        return DashStrings.DashRefKind.STATE;
-    }
+  public DashStrings.DashRefKind kind() {
+    return DashStrings.DashRefKind.STATE;
+  }
 }

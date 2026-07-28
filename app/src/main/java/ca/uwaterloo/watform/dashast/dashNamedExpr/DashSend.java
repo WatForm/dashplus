@@ -12,12 +12,12 @@ import ca.uwaterloo.watform.utils.*;
 
 public class DashSend extends DashNamedExpr implements DashTransItem {
 
-    public DashSend(Pos pos, AlloyExpr e) {
-        super(pos, e);
-    }
+  public DashSend(Pos pos, AlloyExpr e) {
+    super(pos, e);
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        super.pp(pCtx, sendName);
-    }
+  @Override
+  public void pp(PrintContext pCtx) {
+    super.pp(pCtx, sendName);
+  }
 }

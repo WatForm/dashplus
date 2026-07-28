@@ -9,28 +9,27 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class StandardVarsD2T extends SmallStepDefnD2T {
 
-    public StandardVarsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
-        super(dashModel, tlaModel, verbose, debug);
+  public StandardVarsD2T(DashModel dashModel, TlaModel tlaModel, boolean verbose, boolean debug) {
+    super(dashModel, tlaModel, verbose, debug);
+  }
+
+  protected void translateStandardVars() {
+    // this is subject to optimizations, and should remain its own function
+
+    // _conf - stores the leaf states of the snapshot
+    // _trans_taken - does not affect model execution, stored the transition taken to get to the
+    // current snapshot, used for easy interpretation of TLC traces
+    // _scopes_used - stores scopes (currently the same as leaf states), used to implement
+    // big-step semantics
+    // _stable - boolean variable, true if the current snapshot is stable
+
+    tlaModel.addVar(TlaVar(TRANS_TAKEN), TlaTypes.Str());
+    if (!dashModel.hasOnlyOneState()) tlaModel.addVar(TlaVar(CONF), TlaTypes.Set(TlaTypes.Str()));
+
+    if (dashModel.hasConcurrency()) {
+      tlaModel.addVar(TlaVar(SCOPES_USED), TlaTypes.Set(TlaTypes.Str()));
+      tlaModel.addVar(TlaVar(STABLE), TlaTypes.Bool());
     }
-
-    protected void translateStandardVars() {
-        // this is subject to optimizations, and should remain its own function
-
-        // _conf - stores the leaf states of the snapshot
-        // _trans_taken - does not affect model execution, stored the transition taken to get to the
-        // current snapshot, used for easy interpretation of TLC traces
-        // _scopes_used - stores scopes (currently the same as leaf states), used to implement
-        // big-step semantics
-        // _stable - boolean variable, true if the current snapshot is stable
-
-        tlaModel.addVar(TlaVar(TRANS_TAKEN), TlaTypes.Str());
-        if (!dashModel.hasOnlyOneState())
-            tlaModel.addVar(TlaVar(CONF), TlaTypes.Set(TlaTypes.Str()));
-
-        if (dashModel.hasConcurrency()) {
-            tlaModel.addVar(TlaVar(SCOPES_USED), TlaTypes.Set(TlaTypes.Str()));
-            tlaModel.addVar(TlaVar(STABLE), TlaTypes.Bool());
-        }
-        if (dashModel.hasEvents()) tlaModel.addVar(TlaVar(EVENTS), TlaTypes.Set(TlaTypes.Str()));
-    }
+    if (dashModel.hasEvents()) tlaModel.addVar(TlaVar(EVENTS), TlaTypes.Set(TlaTypes.Str()));
+  }
 }

@@ -11,49 +11,53 @@ import java.util.List;
 
 public class SigHierarchyA2T extends SigConstraintsA2T {
 
-    /*
-    let S be a non-top-level sig
-    if S has parents P1 P2 ...
-    we get
-    S \in SUBSET (P1 \\union P2 ...)
-    these clauses are all joined
-    to do this, the set of all sigs needs to be topologically sorted
-    */
+  /*
+  let S be a non-top-level sig
+  if S has parents P1 P2 ...
+  we get
+  S \in SUBSET (P1 \\union P2 ...)
+  these clauses are all joined
+  to do this, the set of all sigs needs to be topologically sorted
+  */
 
+<<<<<<< HEAD
     public SigHierarchyA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
+=======
+  public SigHierarchyA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    super(alloyModel, verbose, debug);
+  }
+
+  protected void addSigHierarchy(TlaModel tlaModel) {
+
+    tlaModel.addComment("signature hierarchy", verbose);
+
+    List<String> sortedSigs = alloyModel.topoSortedSigs();
+    List<String> sortedNonTopLevelSigs = filterBy(sortedSigs, s -> !alloyModel.isTopLevelSig(s));
+
+    log("toposorted non-top-level sigs: " + sortedNonTopLevelSigs);
+    for (var s : sortedNonTopLevelSigs) {
+      log("sig " + s + " has parents: " + alloyModel.allParents(s));
+>>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
     }
 
-    protected void addSigHierarchy(TlaModel tlaModel) {
+    var sigSetClausesUnprimed =
+        repeatedAnd(mapBy(sortedNonTopLevelSigs, sn -> sigSetClauseNonTopLevel(sn, false)));
+    var sigSetClausesPrimed =
+        repeatedAnd(mapBy(sortedNonTopLevelSigs, sn -> sigSetClauseNonTopLevel(sn, true)));
 
-        tlaModel.addComment("signature hierarchy", verbose);
+    tlaModel.addDefn(TlaDefn(SIG_SETS_UNPRIMED, sigSetClausesUnprimed));
 
-        List<String> sortedSigs = alloyModel.topoSortedSigs();
-        List<String> sortedNonTopLevelSigs =
-                filterBy(sortedSigs, s -> !alloyModel.isTopLevelSig(s));
+    tlaModel.addDefn(TlaDefn(SIG_SETS_PRIMED, sigSetClausesPrimed));
 
-        log("toposorted non-top-level sigs: " + sortedNonTopLevelSigs);
-        for (var s : sortedNonTopLevelSigs) {
-            log("sig " + s + " has parents: " + alloyModel.allParents(s));
-        }
+    l.info(dump());
+  }
 
-        var sigSetClausesUnprimed =
-                repeatedAnd(mapBy(sortedNonTopLevelSigs, sn -> sigSetClauseNonTopLevel(sn, false)));
-        var sigSetClausesPrimed =
-                repeatedAnd(mapBy(sortedNonTopLevelSigs, sn -> sigSetClauseNonTopLevel(sn, true)));
+  private TlaExp sigSetClauseNonTopLevel(String signame, boolean primed) {
 
-        tlaModel.addDefn(TlaDefn(SIG_SETS_UNPRIMED, sigSetClausesUnprimed));
-
-        tlaModel.addDefn(TlaDefn(SIG_SETS_PRIMED, sigSetClausesPrimed));
-
-        l.info(dump());
-    }
-
-    private TlaExp sigSetClauseNonTopLevel(String signame, boolean primed) {
-
-        TlaExp v = primed ? TlaVar(signame).PRIME() : TlaVar(signame);
-        List<TlaExp> parents =
-                mapBy(alloyModel.allParents(signame), p -> primed ? TlaVar(p).PRIME() : TlaVar(p));
-        return v.IN(TlaSubsetUnary(repeatedUnion(parents)));
-    }
+    TlaExp v = primed ? TlaVar(signame).PRIME() : TlaVar(signame);
+    List<TlaExp> parents =
+        mapBy(alloyModel.allParents(signame), p -> primed ? TlaVar(p).PRIME() : TlaVar(p));
+    return v.IN(TlaSubsetUnary(repeatedUnion(parents)));
+  }
 }

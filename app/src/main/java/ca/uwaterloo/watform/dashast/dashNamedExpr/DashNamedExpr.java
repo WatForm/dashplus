@@ -15,22 +15,22 @@ import ca.uwaterloo.watform.utils.*;
 
 public abstract class DashNamedExpr extends ASTNode {
 
-    public final AlloyExpr exp;
+  public final AlloyExpr exp;
 
-    public DashNamedExpr(Pos pos, AlloyExpr exp) {
-        super(pos);
-        this.exp = exp;
-        reqNonNull(nullField(pos, this), this.exp);
-    }
+  public DashNamedExpr(Pos pos, AlloyExpr exp) {
+    super(pos);
+    this.exp = exp;
+    reqNonNull(nullField(pos, this), this.exp);
+  }
 
-    public DashNamedExpr() {
-        super();
-        this.exp = null;
-    }
+  public DashNamedExpr() {
+    super();
+    this.exp = null;
+  }
 
-    public final void pp(PrintContext pCtx, String name) {
-        pCtx.append(name);
-        pCtx.append(SPACE);
-        this.exp.ppNewBlock(pCtx);
-    }
+  public final void pp(PrintContext pCtx, String name) {
+    pCtx.append(name);
+    pCtx.append(SPACE);
+    this.exp.ppNewBlock(pCtx);
+  }
 }

@@ -7,19 +7,19 @@ import ca.uwaterloo.watform.tlaast.TlaAppl;
 
 public class AlloyToTlaHelpers {
 
-    public static String sigConstraint(String sigName) {
-        return sigName + SIG_CONSTRAINT_SUFFIX;
-    }
+  public static String sigConstraint(String sigName) {
+    return sigName + SIG_CONSTRAINT_SUFFIX;
+  }
 
-    public static String unnamedFact(int n) {
-        return UNNAMED_FACT_PREFIX + n;
-    }
+  public static String unnamedFact(int n) {
+    return UNNAMED_FACT_PREFIX + n;
+  }
 
-    public static TlaAppl SIG_SETS_PRIMED() {
-        return TlaAppl(SIG_SETS_PRIMED);
-    }
+  public static TlaAppl SIG_SETS_PRIMED() {
+    return TlaAppl(SIG_SETS_PRIMED);
+  }
 
-    public static TlaAppl SIG_SETS_UNPRIMED() {
-        return TlaAppl(SIG_SETS_UNPRIMED);
-    }
+  public static TlaAppl SIG_SETS_UNPRIMED() {
+    return TlaAppl(SIG_SETS_UNPRIMED);
+  }
 }

@@ -5,19 +5,19 @@ import java.util.List;
 
 public abstract class TlaSimpleExp extends TlaExp {
 
-    public final String core;
+  public final String core;
 
-    public TlaSimpleExp(String core) {
-        this.core = core;
-    }
+  public TlaSimpleExp(String core) {
+    this.core = core;
+  }
 
-    @Override
-    public List<TlaExp> getChildren() {
-        return new ArrayList<>();
-    }
+  @Override
+  public List<TlaExp> getChildren() {
+    return new ArrayList<>();
+  }
 
-    @Override
-    public String toTLAPlusSnippetCore() {
-        return core;
-    }
+  @Override
+  public String toTLAPlusSnippetCore() {
+    return core;
+  }
 }

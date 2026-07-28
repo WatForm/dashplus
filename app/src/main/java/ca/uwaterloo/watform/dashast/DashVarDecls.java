@@ -14,70 +14,70 @@ import java.util.List;
 
 public final class DashVarDecls extends ASTNode implements DashStateItem {
 
-    public final List<String> names;
-    public final AlloyQtEnum mul;
-    public final AlloyExpr typ;
-    public final DashStrings.IntEnvKind kind;
+  public final List<String> names;
+  public final AlloyQtEnum mul;
+  public final AlloyExpr typ;
+  public final DashStrings.IntEnvKind kind;
 
-    private static AlloyQtEnum defaultMul(Pos pos, AlloyExpr expr) {
-        if (expr instanceof AlloyVarExpr) return AlloyQtEnum.ONE;
-        // this will change
-        else return AlloyQtEnum.SET;
-    }
+  private static AlloyQtEnum defaultMul(Pos pos, AlloyExpr expr) {
+    if (expr instanceof AlloyVarExpr) return AlloyQtEnum.ONE;
+    // this will change
+    else return AlloyQtEnum.SET;
+  }
 
-    public DashVarDecls(
-            Pos pos, List<String> n, AlloyQtEnum mul, AlloyExpr e, DashStrings.IntEnvKind k) {
-        super(pos);
-        assert (n != null && e != null);
-        this.names = Collections.unmodifiableList(n);
-        this.mul = mul;
-        this.typ = e;
-        this.kind = k;
-        // no limits on the classes of varType
-        // translator does not care what they are
-        if (!AlloyQtEnum.MUL.contains(this.mul)) {
-            throw DashASTError.invalidAlloyQtEnum(
-                    pos, this.getClass().getSimpleName() + ".mul must be LONE, ONE, SOME or SET. ");
-        }
-        reqNonNull(nullField(pos, this), this.names, this.typ, this.mul, this.kind);
+  public DashVarDecls(
+      Pos pos, List<String> n, AlloyQtEnum mul, AlloyExpr e, DashStrings.IntEnvKind k) {
+    super(pos);
+    assert (n != null && e != null);
+    this.names = Collections.unmodifiableList(n);
+    this.mul = mul;
+    this.typ = e;
+    this.kind = k;
+    // no limits on the classes of varType
+    // translator does not care what they are
+    if (!AlloyQtEnum.MUL.contains(this.mul)) {
+      throw DashASTError.invalidAlloyQtEnum(
+          pos, this.getClass().getSimpleName() + ".mul must be LONE, ONE, SOME or SET. ");
     }
+    reqNonNull(nullField(pos, this), this.names, this.typ, this.mul, this.kind);
+  }
 
-    public DashVarDecls(Pos pos, List<String> n, AlloyExpr e, DashStrings.IntEnvKind k) {
-        super(pos);
-        assert (n != null && e != null);
-        this.names = Collections.unmodifiableList(n);
-        this.mul = defaultMul(pos, e);
-        this.typ = e;
-        this.kind = k;
-        // no limits on the classes of varType
-        // translator does not care what they are
-        if (!AlloyQtEnum.MUL.contains(this.mul)) {
-            throw DashASTError.invalidAlloyQtEnum(pos, this.getClass().getSimpleName());
-        }
-        reqNonNull(nullField(pos, this), this.names, this.typ, this.mul, this.kind);
+  public DashVarDecls(Pos pos, List<String> n, AlloyExpr e, DashStrings.IntEnvKind k) {
+    super(pos);
+    assert (n != null && e != null);
+    this.names = Collections.unmodifiableList(n);
+    this.mul = defaultMul(pos, e);
+    this.typ = e;
+    this.kind = k;
+    // no limits on the classes of varType
+    // translator does not care what they are
+    if (!AlloyQtEnum.MUL.contains(this.mul)) {
+      throw DashASTError.invalidAlloyQtEnum(pos, this.getClass().getSimpleName());
     }
+    reqNonNull(nullField(pos, this), this.names, this.typ, this.mul, this.kind);
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        if (kind == IntEnvKind.ENV) {
-            pCtx.append(envName + SPACE);
-        }
-        pCtx.appendList(names, COMMA);
-        pCtx.append(SPACE + COLON);
-        pCtx.append(SPACE + mul);
-        pCtx.brk();
-        typ.ppNewBlock(pCtx);
+  @Override
+  public void pp(PrintContext pCtx) {
+    if (kind == IntEnvKind.ENV) {
+      pCtx.append(envName + SPACE);
     }
+    pCtx.appendList(names, COMMA);
+    pCtx.append(SPACE + COLON);
+    pCtx.append(SPACE + mul);
+    pCtx.brk();
+    typ.ppNewBlock(pCtx);
+  }
 
-    public List<String> getNames() {
-        return names;
-    }
+  public List<String> getNames() {
+    return names;
+  }
 
-    public AlloyExpr getTyp() {
-        return typ;
-    }
+  public AlloyExpr getTyp() {
+    return typ;
+  }
 
-    public DashStrings.IntEnvKind getKind() {
-        return kind;
-    }
+  public DashStrings.IntEnvKind getKind() {
+    return kind;
+  }
 }

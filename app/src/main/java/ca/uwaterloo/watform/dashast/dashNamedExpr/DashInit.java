@@ -8,12 +8,12 @@ import ca.uwaterloo.watform.utils.*;
 
 public final class DashInit extends DashNamedExpr implements DashStateItem {
 
-    public DashInit(Pos p, AlloyExpr e) {
-        super(p, e);
-    }
+  public DashInit(Pos p, AlloyExpr e) {
+    super(p, e);
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        super.pp(pCtx, initName);
-    }
+  @Override
+  public void pp(PrintContext pCtx) {
+    super.pp(pCtx, initName);
+  }
 }

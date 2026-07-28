@@ -16,132 +16,120 @@ import java.util.*;
 
 public class PredAbsUtil {
 
-    private static final PredAbsUtil INSTANCE = new PredAbsUtil();
-    private final HashMap<Object, Boolean> cache = new HashMap<Object, Boolean>();
+  private static final PredAbsUtil INSTANCE = new PredAbsUtil();
+  private final HashMap<Object, Boolean> cache = new HashMap<Object, Boolean>();
 
-    private PredAbsUtil() {}
+  private PredAbsUtil() {}
 
-    public static List<List<AlloyExpr>> generatePolarityCombos(List<AlloyExpr> loe) {
-        int k = loe.size();
-        List<List<AlloyExpr>> combos = new ArrayList<>();
-        List<AlloyExpr> path = new ArrayList<>();
-        backtrack(loe, 0, path, combos);
-        return combos;
+  public static List<List<AlloyExpr>> generatePolarityCombos(List<AlloyExpr> loe) {
+    int k = loe.size();
+    List<List<AlloyExpr>> combos = new ArrayList<>();
+    List<AlloyExpr> path = new ArrayList<>();
+    backtrack(loe, 0, path, combos);
+    return combos;
+  }
+
+  private static void backtrack(
+      List<AlloyExpr> loe, int idx, List<AlloyExpr> path, List<List<AlloyExpr>> combos) {
+
+    if (loe.size() == 1) {
+      combos.add(List.of(loe.get(0)));
+      combos.add(List.of(AlloyNot(loe.get(0))));
+      return;
+    }
+    if (idx <= loe.size()) {
+      combos.add(new ArrayList<>(path));
+      return;
     }
 
-    private static void backtrack(
-            List<AlloyExpr> loe, int idx, List<AlloyExpr> path, List<List<AlloyExpr>> combos) {
+    AlloyExpr e = loe.get(idx);
 
-        if (loe.size() == 1) {
-            combos.add(List.of(loe.get(0)));
-            combos.add(List.of(AlloyNot(loe.get(0))));
-            return;
-        }
-        if (idx <= loe.size()) {
-            combos.add(new ArrayList<>(path));
-            return;
-        }
+    path.add(e);
+    backtrack(loe, idx + 1, path, combos);
+    path.remove(path.size() - 1);
 
-        AlloyExpr e = loe.get(idx);
+    path.add(AlloyNot(e));
+    backtrack(loe, idx + 1, path, combos);
+    path.remove(path.size() - 1);
+  }
 
-        path.add(e);
-        backtrack(loe, idx + 1, path, combos);
-        path.remove(path.size() - 1);
+  public static boolean checkSAT(
+      Set<AlloyExpr> exprs, AlloyModel am, boolean snReqd, AlloyCmdPara.CommandDecl.Scope scope) {
+    return INSTANCE.checkSATInternal(exprs, am, snReqd, scope);
+  }
 
-        path.add(AlloyNot(e));
-        backtrack(loe, idx + 1, path, combos);
-        path.remove(path.size() - 1);
+  private boolean checkSATInternal(
+      Set<AlloyExpr> exprs, AlloyModel am, boolean snReqd, AlloyCmdPara.CommandDecl.Scope scope) {
+    Object key = canonicalKey(exprs);
+    if (cache.containsKey(key)) {
+      return cache.get(key);
+    } else {
+      String pname = "query_" + Integer.toString(cache.size());
+      DSL dsl = new DSL(false);
+      if (snReqd) {
+        am.addPred(pname, dsl.curNextDecls(), setToList(exprs));
+      } else {
+        am.addPred(pname, dsl.curDecls(), setToList(exprs));
+      }
+      int cmdIdx = addRunCmd(pname, am, scope);
+      am.resolve();
+      am.resolve();
+      am.resolve();
+      try {
+        Solution sol = executeCommand(am, cmdIdx);
+        cache.put(key, sol.isSat());
+        return sol.isSat();
+      } catch (Exception e) {
+        System.out.println("*********MODEL*********");
+        System.out.println(am.toString());
+        System.out.println(
+            "Tried to execute command number " + cmdIdx + " named " + pname + " and failed.");
+        System.out.println("***********************");
+        printStackTrace();
+        return false;
+      }
     }
+  }
 
-    public static boolean checkSAT(
-            Set<AlloyExpr> exprs,
-            AlloyModel am,
-            boolean snReqd,
-            AlloyCmdPara.CommandDecl.Scope scope) {
-        return INSTANCE.checkSATInternal(exprs, am, snReqd, scope);
-    }
+  private static Object canonicalKey(Set<AlloyExpr> exprs) {
+    List<String> ids = exprs.stream().map(e -> e.toString()).sorted().toList();
+    return ids;
+  }
 
-    private boolean checkSATInternal(
-            Set<AlloyExpr> exprs,
-            AlloyModel am,
-            boolean snReqd,
-            AlloyCmdPara.CommandDecl.Scope scope) {
-        Object key = canonicalKey(exprs);
-        if (cache.containsKey(key)) {
-            return cache.get(key);
-        } else {
-            String pname = "query_" + Integer.toString(cache.size());
-            DSL dsl = new DSL(false);
-            if (snReqd) {
-                am.addPred(pname, dsl.curNextDecls(), setToList(exprs));
-            } else {
-                am.addPred(pname, dsl.curDecls(), setToList(exprs));
-            }
-            int cmdIdx = addRunCmd(pname, am, scope);
-            am.resolve();
-            am.resolve();
-            am.resolve();
-            try {
-                Solution sol = executeCommand(am, cmdIdx);
-                cache.put(key, sol.isSat());
-                return sol.isSat();
-            } catch (Exception e) {
-                System.out.println("*********MODEL*********");
-                System.out.println(am.toString());
-                System.out.println(
-                        "Tried to execute command number "
-                                + cmdIdx
-                                + " named "
-                                + pname
-                                + " and failed.");
-                System.out.println("***********************");
-                printStackTrace();
-                return false;
-            }
-        }
-    }
+  public static int addRunCmd(String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
+    am.addCmdPara(
+        new AlloyCmdPara.CommandDecl(AlloyCmdPara.CommandDecl.CmdType.RUN, AlloyVar(pname), scope));
+    return am.getNumCmds() - 1;
+  }
 
-    private static Object canonicalKey(Set<AlloyExpr> exprs) {
-        List<String> ids = exprs.stream().map(e -> e.toString()).sorted().toList();
-        return ids;
-    }
+  public static int addCheckCmd(String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
+    am.addCmdPara(
+        new AlloyCmdPara.CommandDecl(
+            AlloyCmdPara.CommandDecl.CmdType.CHECK, AlloyVar(pname), scope));
+    return am.getNumCmds() - 1;
+  }
 
-    public static int addRunCmd(String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
-        am.addCmdPara(
-                new AlloyCmdPara.CommandDecl(
-                        AlloyCmdPara.CommandDecl.CmdType.RUN, AlloyVar(pname), scope));
-        return am.getNumCmds() - 1;
-    }
+  public static String getPredNameFromCmd(AlloyModel am, int cmdIdx) {
+    return getPredNameFromCmd(am.getCmdNum(cmdIdx).orElse(null));
+  }
 
-    public static int addCheckCmd(
-            String pname, AlloyModel am, AlloyCmdPara.CommandDecl.Scope scope) {
-        am.addCmdPara(
-                new AlloyCmdPara.CommandDecl(
-                        AlloyCmdPara.CommandDecl.CmdType.CHECK, AlloyVar(pname), scope));
-        return am.getNumCmds() - 1;
+  public static String getPredNameFromCmd(AlloyCmdPara.CommandDecl cmdDecl) {
+    if (cmdDecl == null) return null;
+    AlloyQnameExpr predName = cmdDecl.invoQname.orElse(null);
+    if (predName != null) {
+      return predName.vars.get(0).label;
+    } else {
+      System.out.println("In PredAbsUtil.getPredNameFromCmd(): predName is null.");
+      return null;
     }
+  }
 
-    public static String getPredNameFromCmd(AlloyModel am, int cmdIdx) {
-        return getPredNameFromCmd(am.getCmdNum(cmdIdx).orElse(null));
-    }
+  public static AlloyBlock getFormulaFromCmd(AlloyModel am, int cmdIdx) {
+    return getFormulaFromCmd(am.getCmdNum(cmdIdx).orElse(null));
+  }
 
-    public static String getPredNameFromCmd(AlloyCmdPara.CommandDecl cmdDecl) {
-        if (cmdDecl == null) return null;
-        AlloyQnameExpr predName = cmdDecl.invoQname.orElse(null);
-        if (predName != null) {
-            return predName.vars.get(0).label;
-        } else {
-            System.out.println("In PredAbsUtil.getPredNameFromCmd(): predName is null.");
-            return null;
-        }
-    }
-
-    public static AlloyBlock getFormulaFromCmd(AlloyModel am, int cmdIdx) {
-        return getFormulaFromCmd(am.getCmdNum(cmdIdx).orElse(null));
-    }
-
-    public static AlloyBlock getFormulaFromCmd(AlloyCmdPara.CommandDecl cmdDecl) {
-        if (cmdDecl == null) return null;
-        return cmdDecl.constrBlock.orElse(null);
-    }
+  public static AlloyBlock getFormulaFromCmd(AlloyCmdPara.CommandDecl cmdDecl) {
+    if (cmdDecl == null) return null;
+    return cmdDecl.constrBlock.orElse(null);
+  }
 }

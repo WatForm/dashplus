@@ -26,44 +26,40 @@ import java.util.List;
 
 public class SmallStepD2A extends TransEnabledD2A {
 
-    protected SmallStepD2A(DashModel dm, Options opt) {
-        super(dm, opt);
+  protected SmallStepD2A(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
+
+  public void addSmallStep() {
+
+    List<AlloyExpr> e = this.dsl.emptyExprList();
+    List<DashParam> prs = this.dm.allParams();
+
+    // trans is taken
+    for (String tfqn : this.dm.allTransNames()) {
+      String tout = DashFQN.translateFQN(tfqn);
+      // p3.p2.p1.t for parameters of this transition
+      if (this.isElectrum)
+        e.add(
+            AlloyPredCall(
+                D2AStrings.transName(tout), this.dsl.paramVars(this.dm.transParams(tfqn))));
+      // p3.p2.p1.s'.s.t for parameters of this transition
+      else
+        e.add(
+            AlloyPredCall(
+                D2AStrings.transName(tout), this.dsl.curNextParamVars(this.dm.transParams(tfqn))));
     }
+    AlloyExpr transIsTaken;
+    if (this.dm.allParams().isEmpty()) transIsTaken = AlloyOrList(e);
+    else transIsTaken = AlloySomeVars(this.dsl.paramDecls(prs), AlloyOrList(e));
 
-    public void addSmallStep() {
+    AlloyExpr transIsNotEnabled =
+        AlloyAnd(
+            AlloyNot(AlloyPredCall(D2AStrings.transEnabledName, List.of(this.dsl.curVar()))),
+            AlloyPredCall(D2AStrings.stutterName, this.dsl.curNextVars()));
 
-        List<AlloyExpr> e = this.dsl.emptyExprList();
-        List<DashParam> prs = this.dm.allParams();
-
-        // trans is taken
-        for (String tfqn : this.dm.allTransNames()) {
-            String tout = DashFQN.translateFQN(tfqn);
-            // p3.p2.p1.t for parameters of this transition
-            if (this.isElectrum)
-                e.add(
-                        AlloyPredCall(
-                                D2AStrings.transName(tout),
-                                this.dsl.paramVars(this.dm.transParams(tfqn))));
-            // p3.p2.p1.s'.s.t for parameters of this transition
-            else
-                e.add(
-                        AlloyPredCall(
-                                D2AStrings.transName(tout),
-                                this.dsl.curNextParamVars(this.dm.transParams(tfqn))));
-        }
-        AlloyExpr transIsTaken;
-        if (this.dm.allParams().isEmpty()) transIsTaken = AlloyOrList(e);
-        else transIsTaken = AlloySomeVars(this.dsl.paramDecls(prs), AlloyOrList(e));
-
-        AlloyExpr transIsNotEnabled =
-                AlloyAnd(
-                        AlloyNot(
-                                AlloyPredCall(
-                                        D2AStrings.transEnabledName, List.of(this.dsl.curVar()))),
-                        AlloyPredCall(D2AStrings.stutterName, this.dsl.curNextVars()));
-
-        e = this.dsl.emptyExprList();
-        e.add(AlloyOr(transIsTaken, transIsNotEnabled));
-        this.am.addPred(D2AStrings.smallStepName, this.dsl.curNextDecls(), e);
-    }
+    e = this.dsl.emptyExprList();
+    e.add(AlloyOr(transIsTaken, transIsNotEnabled));
+    this.am.addPred(D2AStrings.smallStepName, this.dsl.curNextDecls(), e);
+  }
 }

@@ -13,36 +13,41 @@ import java.util.List;
 
 public class FactsA2T extends CommandA2T {
 
+<<<<<<< HEAD
     public FactsA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
+=======
+  public FactsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    super(alloyModel, verbose, debug);
+  }
+
+  private int count = 0; // used to number un-named facts
+
+  public String generateFactName() {
+    count += 1;
+    return unnamedFact(count);
+  }
+
+  protected void addFacts(TlaModel tlaModel) {
+
+    tlaModel.addComment("facts", verbose);
+
+    List<String> factNames = new ArrayList<>();
+    List<String> comments = new ArrayList<>();
+    List<AlloyFactPara> factParas = alloyModel.allFactParas();
+
+    for (var fp : factParas) {
+      String factName = generateFactName();
+      factNames.add(factName);
+      fp.qname.ifPresent(n -> comments.add(factName + " -> " + n));
+      fp.strLit.ifPresent(str -> comments.add(factName + " -> " + str));
+
+      tlaModel.addDefn(TlaDefn(factName, translateSnippet(fp.block)));
+>>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
     }
 
-    private int count = 0; // used to number un-named facts
+    tlaModel.addDefn(TlaDefn(ALL_FACTS, repeatedAnd(mapBy(factNames, fn -> TlaAppl(fn)))));
 
-    public String generateFactName() {
-        count += 1;
-        return unnamedFact(count);
-    }
-
-    protected void addFacts(TlaModel tlaModel) {
-
-        tlaModel.addComment("facts", verbose);
-
-        List<String> factNames = new ArrayList<>();
-        List<String> comments = new ArrayList<>();
-        List<AlloyFactPara> factParas = alloyModel.allFactParas();
-
-        for (var fp : factParas) {
-            String factName = generateFactName();
-            factNames.add(factName);
-            fp.qname.ifPresent(n -> comments.add(factName + " -> " + n));
-            fp.strLit.ifPresent(str -> comments.add(factName + " -> " + str));
-
-            tlaModel.addDefn(TlaDefn(factName, translateSnippet(fp.block)));
-        }
-
-        tlaModel.addDefn(TlaDefn(ALL_FACTS, repeatedAnd(mapBy(factNames, fn -> TlaAppl(fn)))));
-
-        comments.forEach(c -> tlaModel.addComment(c, verbose));
-    }
+    comments.forEach(c -> tlaModel.addComment(c, verbose));
+  }
 }

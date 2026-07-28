@@ -14,60 +14,60 @@ import java.util.List;
 
 public class VarsBuffersDM extends BuffersDM {
 
-    protected VarsBuffersDM() {
-        super();
-    }
+  protected VarsBuffersDM() {
+    super();
+  }
 
-    protected VarsBuffersDM(DashFile d) {
-        super(d);
-    }
+  protected VarsBuffersDM(DashFile d) {
+    super(d);
+  }
 
-    public List<String> namesOfState(String sfqn) {
-        List<String> x = varsOfState(sfqn);
-        x.addAll(buffersOfState(sfqn));
-        return x;
-    }
+  public List<String> namesOfState(String sfqn) {
+    List<String> x = varsOfState(sfqn);
+    x.addAll(buffersOfState(sfqn));
+    return x;
+  }
 
-    public List<String> varAndBufferNames() {
-        // vars plus buffers
-        List<String> x = allVarNames();
-        x.addAll(allBufferNames());
-        return x;
-    }
+  public List<String> varAndBufferNames() {
+    // vars plus buffers
+    List<String> x = allVarNames();
+    x.addAll(allBufferNames());
+    return x;
+  }
 
-    public boolean isInt(String fqn) {
-        if (this.containsVar(fqn)) {
-            return this.isIntVar(fqn);
-        } else {
-            assert (this.containsBuffer(fqn));
-            return this.isIntBuffer(fqn);
-        }
+  public boolean isInt(String fqn) {
+    if (this.containsVar(fqn)) {
+      return this.isIntVar(fqn);
+    } else {
+      assert (this.containsBuffer(fqn));
+      return this.isIntBuffer(fqn);
     }
+  }
 
-    public boolean isEnv(String fqn) {
-        if (this.containsVar(fqn)) {
-            return this.isEnvVar(fqn);
-        } else {
-            assert (this.containsBuffer(fqn));
-            return this.isEnvBuffer(fqn);
-        }
+  public boolean isEnv(String fqn) {
+    if (this.containsVar(fqn)) {
+      return this.isEnvVar(fqn);
+    } else {
+      assert (this.containsBuffer(fqn));
+      return this.isEnvBuffer(fqn);
     }
+  }
 
-    public IntEnvKind kind(String fqn) {
-        if (this.containsVar(fqn)) {
-            return this.varKind(fqn);
-        } else {
-            assert (this.containsBuffer(fqn));
-            return this.bufferKind(fqn);
-        }
+  public IntEnvKind kind(String fqn) {
+    if (this.containsVar(fqn)) {
+      return this.varKind(fqn);
+    } else {
+      assert (this.containsBuffer(fqn));
+      return this.bufferKind(fqn);
     }
+  }
 
-    public List<DashParam> params(String fqn) {
-        if (this.containsVar(fqn)) {
-            return this.varParams(fqn);
-        } else {
-            assert (this.containsBuffer(fqn));
-            return this.bufferParams(fqn);
-        }
+  public List<DashParam> params(String fqn) {
+    if (this.containsVar(fqn)) {
+      return this.varParams(fqn);
+    } else {
+      assert (this.containsBuffer(fqn));
+      return this.bufferParams(fqn);
     }
+  }
 }

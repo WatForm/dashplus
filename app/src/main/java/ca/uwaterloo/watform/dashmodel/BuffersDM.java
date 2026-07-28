@@ -17,151 +17,151 @@ import java.util.stream.Collectors;
 
 public class BuffersDM extends VarsDM {
 
-    // stores Buffer Decls in a HashMap based on the FQN
-    private HashMap<String, BufferEntry> bt = new HashMap<String, BufferEntry>();
-    private Integer numBuffers = 0;
+  // stores Buffer Decls in a HashMap based on the FQN
+  private HashMap<String, BufferEntry> bt = new HashMap<String, BufferEntry>();
+  private Integer numBuffers = 0;
 
-    public BuffersDM() {
-        super();
+  public BuffersDM() {
+    super();
+  }
+
+  public BuffersDM(DashFile d) {
+    super(d);
+  }
+
+  /*
+  protected boolean equal(BuffersDM other) {
+      return
+          boolean check =
+              equals(this.super(), other.super()) &&
+              this.numBuffers == other.numBuffers &&
+              this.bt.keySet() == other.bt.keySet();
+          if (!check) return false;
+          for (String bfqn: this.bt.keySet()) {
+              if (!equal(this.bt.get(bfqn), other.bt.get(bfqn)))
+                  return false;
+          }
+          return true;
+  }
+  */
+  // individual buffer non-complex getters/testers
+
+  public Pos bufferPos(String bfqn) {
+    return this.bt.get(bfqn).pos;
+  }
+
+  public boolean isIntBuffer(String bfqn) {
+    return this.bt.get(bfqn).kind == IntEnvKind.INT;
+  }
+
+  public boolean isEnvBuffer(String bfqn) {
+    return this.bt.get(bfqn).kind == IntEnvKind.ENV;
+  }
+
+  public IntEnvKind bufferKind(String bfqn) {
+    return this.bt.get(bfqn).kind;
+  }
+
+  public List<DashParam> bufferParams(String bfqn) {
+    return this.bt.get(bfqn).params;
+  }
+
+  public String bufferElement(String bfqn) {
+    return this.bt.get(bfqn).element;
+  }
+
+  public Integer bufferIndex(String bfqn) {
+    return this.bt.get(bfqn).index;
+  }
+
+  // group getters
+
+  public List<String> allBufferNames() {
+    return new ArrayList<String>(this.bt.keySet());
+  }
+
+  public List<String> intBufferNames() {
+    return allBufferNames().stream().filter(i -> isIntBuffer(i)).collect(Collectors.toList());
+  }
+
+  public boolean hasBuffers() {
+    return (!this.bt.isEmpty());
+  }
+
+  public boolean containsBuffer(String bfqn) {
+    return (this.bt.containsKey(bfqn));
+  }
+
+  public List<Integer> bufferIndices() {
+    // 0 .. numBuffers-1
+    return range(0, this.bt.keySet().size() - 1);
+  }
+
+  public List<String> buffersOfState(String sfqn) {
+    // return all buffers declared in this state
+    // will have the sfqn as a prefix
+    return this.bt.keySet().stream()
+        // prefix of vfqn are state names
+        .filter(i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn))
+        .collect(Collectors.toList());
+  }
+
+  public void addBuffer(Pos pos, String bfqn, IntEnvKind k, List<DashParam> prms, String el) {
+    assert (prms != null);
+    if (bt.containsKey(bfqn)) throw DashModelError.duplicateName(pos, "buffer", bfqn);
+    else if (hasPrime(bfqn)) {
+      throw DashModelError.nameShouldNotBePrimed(pos, bfqn);
+    } else {
+      this.bt.put(bfqn, new BufferEntry(pos, k, prms, el));
+    }
+  }
+
+  public void addBuffer(String bfqn, IntEnvKind k, List<DashParam> prms, String el) {
+    addBuffer(Pos.UNKNOWN, bfqn, k, prms, el);
+  }
+
+  public String btToString() {
+    String s = new String("BUFFER TABLE\n");
+    for (String k : this.bt.keySet()) {
+      s += " ----- \n";
+      s += k + "\n";
+      s += this.bt.get(k).toString();
+    }
+    return s;
+  }
+
+  private class BufferEntry {
+    public final Pos pos;
+    public final IntEnvKind kind;
+    public final List<DashParam> params;
+    public final String element; // should be a sig
+    public final Integer index; // a number b/c each buffer has to have a different index
+
+    public BufferEntry(Pos p, IntEnvKind k, List<DashParam> prms, String e) {
+      assert (prms != null);
+      this.pos = p;
+      this.kind = k;
+      this.params = prms;
+      this.element = e;
+      this.index = numBuffers;
+      numBuffers++;
     }
 
-    public BuffersDM(DashFile d) {
-        super(d);
+    public String toString() {
+      String s = new String();
+      s += "kind: " + kind + "\n";
+      s += "params: " + NoneStringIfNeeded(params) + "\n";
+      s += "element: " + element.toString() + "\n";
+      s += "index:" + index;
+      return s;
     }
 
-    /*
-    protected boolean equal(BuffersDM other) {
-        return
-            boolean check =
-                equals(this.super(), other.super()) &&
-                this.numBuffers == other.numBuffers &&
-                this.bt.keySet() == other.bt.keySet();
-            if (!check) return false;
-            for (String bfqn: this.bt.keySet()) {
-                if (!equal(this.bt.get(bfqn), other.bt.get(bfqn)))
-                    return false;
-            }
-            return true;
+    public boolean equal(BufferEntry other) {
+      return this.kind == other.kind
+          && this.params == other.params
+          && this.element == other.element
+          && this.index == other.index;
+      // this might not be the same if read in a diff order?
     }
-    */
-    // individual buffer non-complex getters/testers
-
-    public Pos bufferPos(String bfqn) {
-        return this.bt.get(bfqn).pos;
-    }
-
-    public boolean isIntBuffer(String bfqn) {
-        return this.bt.get(bfqn).kind == IntEnvKind.INT;
-    }
-
-    public boolean isEnvBuffer(String bfqn) {
-        return this.bt.get(bfqn).kind == IntEnvKind.ENV;
-    }
-
-    public IntEnvKind bufferKind(String bfqn) {
-        return this.bt.get(bfqn).kind;
-    }
-
-    public List<DashParam> bufferParams(String bfqn) {
-        return this.bt.get(bfqn).params;
-    }
-
-    public String bufferElement(String bfqn) {
-        return this.bt.get(bfqn).element;
-    }
-
-    public Integer bufferIndex(String bfqn) {
-        return this.bt.get(bfqn).index;
-    }
-
-    // group getters
-
-    public List<String> allBufferNames() {
-        return new ArrayList<String>(this.bt.keySet());
-    }
-
-    public List<String> intBufferNames() {
-        return allBufferNames().stream().filter(i -> isIntBuffer(i)).collect(Collectors.toList());
-    }
-
-    public boolean hasBuffers() {
-        return (!this.bt.isEmpty());
-    }
-
-    public boolean containsBuffer(String bfqn) {
-        return (this.bt.containsKey(bfqn));
-    }
-
-    public List<Integer> bufferIndices() {
-        // 0 .. numBuffers-1
-        return range(0, this.bt.keySet().size() - 1);
-    }
-
-    public List<String> buffersOfState(String sfqn) {
-        // return all buffers declared in this state
-        // will have the sfqn as a prefix
-        return this.bt.keySet().stream()
-                // prefix of vfqn are state names
-                .filter(i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn))
-                .collect(Collectors.toList());
-    }
-
-    public void addBuffer(Pos pos, String bfqn, IntEnvKind k, List<DashParam> prms, String el) {
-        assert (prms != null);
-        if (bt.containsKey(bfqn)) throw DashModelError.duplicateName(pos, "buffer", bfqn);
-        else if (hasPrime(bfqn)) {
-            throw DashModelError.nameShouldNotBePrimed(pos, bfqn);
-        } else {
-            this.bt.put(bfqn, new BufferEntry(pos, k, prms, el));
-        }
-    }
-
-    public void addBuffer(String bfqn, IntEnvKind k, List<DashParam> prms, String el) {
-        addBuffer(Pos.UNKNOWN, bfqn, k, prms, el);
-    }
-
-    public String btToString() {
-        String s = new String("BUFFER TABLE\n");
-        for (String k : this.bt.keySet()) {
-            s += " ----- \n";
-            s += k + "\n";
-            s += this.bt.get(k).toString();
-        }
-        return s;
-    }
-
-    private class BufferEntry {
-        public final Pos pos;
-        public final IntEnvKind kind;
-        public final List<DashParam> params;
-        public final String element; // should be a sig
-        public final Integer index; // a number b/c each buffer has to have a different index
-
-        public BufferEntry(Pos p, IntEnvKind k, List<DashParam> prms, String e) {
-            assert (prms != null);
-            this.pos = p;
-            this.kind = k;
-            this.params = prms;
-            this.element = e;
-            this.index = numBuffers;
-            numBuffers++;
-        }
-
-        public String toString() {
-            String s = new String();
-            s += "kind: " + kind + "\n";
-            s += "params: " + NoneStringIfNeeded(params) + "\n";
-            s += "element: " + element.toString() + "\n";
-            s += "index:" + index;
-            return s;
-        }
-
-        public boolean equal(BufferEntry other) {
-            return this.kind == other.kind
-                    && this.params == other.params
-                    && this.element == other.element
-                    && this.index == other.index;
-            // this might not be the same if read in a diff order?
-        }
-    }
+  }
 }

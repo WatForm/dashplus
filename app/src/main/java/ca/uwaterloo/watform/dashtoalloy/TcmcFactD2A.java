@@ -25,43 +25,40 @@ import java.util.List;
 
 public class TcmcFactD2A extends TracesFactD2A {
 
-    protected TcmcFactD2A(DashModel dm, Options opt) {
-        super(dm, opt);
-    }
+  protected TcmcFactD2A(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
 
-    public void addTcmcFact() {
+  public void addTcmcFact() {
 
-        assert (this.isTcmc);
+    assert (this.isTcmc);
 
-        // open util/tcmc[Snapshot] as snapshot
-        this.am.addImport(
-                List.of(AlloyStrings.utilName, D2AStrings.tcmcName), D2AStrings.snapshotName);
+    // open util/tcmc[Snapshot] as snapshot
+    this.am.addImport(List.of(AlloyStrings.utilName, D2AStrings.tcmcName), D2AStrings.snapshotName);
 
-        List<AlloyExpr> body = this.dsl.emptyExprList();
+    List<AlloyExpr> body = this.dsl.emptyExprList();
 
-        List<AlloyDecl> decls = this.dsl.emptyDeclList();
-        decls.add(this.dsl.curDecl());
+    List<AlloyDecl> decls = this.dsl.emptyDeclList();
+    decls.add(this.dsl.curDecl());
 
-        List<AlloyExpr> args = this.dsl.emptyExprList();
-        args.add(this.dsl.curVar());
-        body.add(
-                AlloyAllVars(
-                        decls,
-                        AlloyIff(
-                                AlloyIn(
-                                        this.dsl.curVar(),
-                                        AlloyVar(D2AStrings.tcmcInitialStateName)),
-                                AlloyPredCall(D2AStrings.initFactName, args))));
+    List<AlloyExpr> args = this.dsl.emptyExprList();
+    args.add(this.dsl.curVar());
+    body.add(
+        AlloyAllVars(
+            decls,
+            AlloyIff(
+                AlloyIn(this.dsl.curVar(), AlloyVar(D2AStrings.tcmcInitialStateName)),
+                AlloyPredCall(D2AStrings.initFactName, args))));
 
-        body.add(
-                AlloyAllVars(
-                        this.dsl.curNextDecls(),
-                        AlloyIff(
-                                AlloyIn(
-                                        AlloyArrow(this.dsl.curVar(), this.dsl.nextVar()),
-                                        AlloyVar(D2AStrings.tcmcSigmaName)),
-                                AlloyPredCall(D2AStrings.smallStepName, this.dsl.curNextVars()))));
+    body.add(
+        AlloyAllVars(
+            this.dsl.curNextDecls(),
+            AlloyIff(
+                AlloyIn(
+                    AlloyArrow(this.dsl.curVar(), this.dsl.nextVar()),
+                    AlloyVar(D2AStrings.tcmcSigmaName)),
+                AlloyPredCall(D2AStrings.smallStepName, this.dsl.curNextVars()))));
 
-        this.am.addFact(D2AStrings.tcmcFactName, body);
-    }
+    this.am.addFact(D2AStrings.tcmcFactName, body);
+  }
 }
