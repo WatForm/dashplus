@@ -83,12 +83,12 @@ task releaseJar(type: Jar) {
     zip64 = true
 }
 
-task fooJar(type: Jar) {
+task testJar(type: Jar) {
 	dependsOn 'spotlessApply' 
-    archiveBaseName.set('watform-foo') // Name of the output file
+    archiveBaseName.set('watform-testmodule') // Name of the output file
     
     manifest {
-        attributes 'Main-Class': 'ca.uwaterloo.watform.foo.Main'
+        attributes 'Main-Class': 'ca.uwaterloo.watform.testmodule.Main'
     }
 
     from {

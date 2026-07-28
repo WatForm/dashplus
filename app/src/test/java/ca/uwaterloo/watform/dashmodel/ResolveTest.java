@@ -4,7 +4,7 @@ import static ca.uwaterloo.watform.parser.Parser.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.foo.*;
+import ca.uwaterloo.watform.testmodule.*;
 import ca.uwaterloo.watform.utils.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
