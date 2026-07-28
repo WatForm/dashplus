@@ -10,8 +10,7 @@ import java.util.List;
 
 class PredicatesFunctionsA2T extends NextDefnA2T {
 
-    public PredicatesFunctionsA2T(
-            AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+    public PredicatesFunctionsA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
     }
 

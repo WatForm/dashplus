@@ -15,8 +15,7 @@ public class AlloyToTla extends StdLibsTlaA2T {
         return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
     }
 
-    public AlloyToTla(
-            AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+    public AlloyToTla(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
     }
 

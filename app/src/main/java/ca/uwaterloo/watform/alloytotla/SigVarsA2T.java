@@ -8,8 +8,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class SigVarsA2T extends SigHierarchyA2T {
 
-    public SigVarsA2T(
-            AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+    public SigVarsA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
         super(alloyModel, verbose, debug, optimization);
     }
 
