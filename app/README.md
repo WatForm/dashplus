@@ -39,3 +39,5 @@ def tools = [
        excludes: []
     ]
 ]
+
+3. Run tool using something like: `java -ea -jar /Users/nday/UW/github/dashplus/dashplus/app/build/libs/dpalloy.jar`
