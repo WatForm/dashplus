@@ -40,4 +40,6 @@ def tools = [
     ]
 ]
 
-3. Run tool using something like: `java -ea -jar /Users/nday/UW/github/dashplus/dashplus/app/build/libs/dpalloy.jar`
+3. Build your tool using something like: './gradlew dpalloy'
+
+4. Run tool using something like: `java -ea -jar /Users/nday/UW/github/dashplus/dashplus/app/build/libs/dpalloy.jar`

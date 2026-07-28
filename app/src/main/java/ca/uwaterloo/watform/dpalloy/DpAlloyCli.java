@@ -22,9 +22,9 @@ import picocli.CommandLine.Mixin;
 
 @Command(
     usageHelpWidth = 120,
-    name = "java -cp dp-alloy.jar",
+    name = "java -jar dpalloy.jar",
     mixinStandardHelpOptions = true,
-    version = "dp-alloy 1.0",
+    version = "dpalloy 1.0",
     header = {
       "@|cyan     ____            __    ____  __               |@",
       "@|cyan    / __ \\____ _____/ /_  / __ \\/ /_  __  _______ |@",

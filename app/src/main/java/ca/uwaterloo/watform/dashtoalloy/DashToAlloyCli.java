@@ -23,7 +23,7 @@ import picocli.CommandLine.Mixin;
 
 @Command(
     usageHelpWidth = 120,
-    name = "java -cp dashtoalloy.jar",
+    name = "java -jar dashtoalloy.jar",
     mixinStandardHelpOptions = true,
     version = "dashtoalloy 1.0",
     header = {
