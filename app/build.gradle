@@ -82,7 +82,6 @@ task releaseJar(type: Jar) {
     zip64 = true
 }
 
-
 // for jdtls, gradle doesn't need this to compile
 sourceSets {
     main {
