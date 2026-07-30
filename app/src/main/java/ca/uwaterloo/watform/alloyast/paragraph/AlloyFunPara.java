@@ -78,6 +78,7 @@ public final class AlloyFunPara extends AlloyPara {
   /*
    * always print square brackets around args
    */
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(this.isPrivate ? AlloyStrings.PRIVATE + AlloyStrings.SPACE : "");
@@ -100,6 +101,7 @@ public final class AlloyFunPara extends AlloyPara {
     sb.append(AlloyStrings.SPACE);
     this.block.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

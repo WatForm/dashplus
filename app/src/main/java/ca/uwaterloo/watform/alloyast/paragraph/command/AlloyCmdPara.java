@@ -44,6 +44,7 @@ public final class AlloyCmdPara extends AlloyPara {
     this(Pos.UNKNOWN, Collections.singletonList(cmdDecl));
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     ASTNode.join(
@@ -52,6 +53,7 @@ public final class AlloyCmdPara extends AlloyPara {
         this.cmdDecls,
         AlloyStrings.SPACE + AlloyStrings.RFATARROW + AlloyStrings.SPACE);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {
@@ -192,6 +194,7 @@ public final class AlloyCmdPara extends AlloyPara {
       this(Pos.UNKNOWN, cmdType, null, null, constrBlock, scope, null);
     }
 
+    /*
     @Override
     public void toString(StringBuilder sb, int indent) {
       sb.append(this.cmdType.toString());
@@ -214,6 +217,7 @@ public final class AlloyCmdPara extends AlloyPara {
         this.expect.get().toString(sb, indent);
       }
     }
+    */
 
     @Override
     public void pp(PrintContext pCtx) {
@@ -325,6 +329,7 @@ public final class AlloyCmdPara extends AlloyPara {
         this(Pos.UNKNOWN, null, Collections.singletonList(typescope));
       }
 
+      /*
       @Override
       public void toString(StringBuilder sb, int indent) {
         sb.append(AlloyStrings.FOR + AlloyStrings.SPACE);
@@ -341,7 +346,7 @@ public final class AlloyCmdPara extends AlloyPara {
               pos, "num", "typescopes", "AlloyCmdPara.CommandDecl.Scope");
         }
       }
-
+      */
       public void pp(PrintContext pCtx) {
         pCtx.append(FOR + SPACE);
         if (!this.num.isEmpty()) {

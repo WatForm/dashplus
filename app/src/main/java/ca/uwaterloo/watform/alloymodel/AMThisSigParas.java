@@ -156,7 +156,7 @@ public class AMThisSigParas extends AMThisEnumParas {
       AlloyExpr e, Qname sigParent, List<String> allFieldNames, String nameSpace) {
     if (e instanceof AlloyThisExpr) {
       // TODO: perhaps not a great choice?
-      return THIS_REPLACEMENT(e.pos);
+      return AlloyVar(THIS_VAR);
     } else if (e instanceof AlloyAtNameExpr) {
       String atName = ((AlloyAtNameExpr) e).getName();
       // @f becomes resolvedSigParent <: f
@@ -164,12 +164,12 @@ public class AMThisSigParas extends AMThisEnumParas {
       return fieldQname(sigParent.nameSpace, sigParent.name, atName).toAlloyExpr(e.pos, Kind.FIELD);
     } else if (e instanceof AlloyQnameExpr) {
       // we know it is a field from this sig b/c of test
-      // replace any field (that is not with @ on the outside) with this.((resolvedSigParent)
+      // replace any field (that is not with @ on the outside) with this_var.((resolvedSigParent)
       // <: f)
       Qname fieldQname = fieldQname(nameSpace, sigParent.name, ((AlloyQnameExpr) e).getName());
-      AlloyExpr sig = sigParent.toAlloyExpr(e.pos, Kind.SIG);
+      // AlloyExpr sig = sigParent.toAlloyExpr(e.pos, Kind.SIG);
       AlloyExpr field = fieldQname.toAlloyExpr(e.pos, Kind.FIELD);
-      return AlloyJoin(sig, field);
+      return AlloyJoin(AlloyVar(THIS_VAR), field);
     } else {
       throw ImplementationError.shouldNotReach();
     }
@@ -184,8 +184,12 @@ public class AMThisSigParas extends AMThisEnumParas {
                 e -> desugarReplace(e, sigParent, allFieldNames, nameSpace))
             .visit(expr);
     // put "all AlloyThisExpr:A |"" on outside
-    return AlloyAllVars(
-        AlloyDecl(THIS_VAR, AlloyQtEnum.ONE, sigParent.toAlloyExpr(expr.pos, Kind.SIG)), newExpr);
+    AlloyExpr e =
+        AlloyAllVars(
+            AlloyDecl(THIS_VAR, AlloyQtEnum.ONE, sigParent.toAlloyExpr(expr.pos, Kind.SIG)),
+            newExpr);
+    System.out.println(e);
+    return e;
   }
 
   // API ---------------------

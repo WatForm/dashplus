@@ -16,12 +16,14 @@ public final class AlloyNumSumExpr extends AlloyUnaryExpr {
     super(sub, AlloyStrings.SUM);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(op);
     sb.append(AlloyStrings.SPACE);
     this.sub.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

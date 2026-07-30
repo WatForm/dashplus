@@ -29,6 +29,7 @@ public final class AlloyBracketExpr extends AlloyExpr {
     this(Pos.UNKNOWN, expr, exprs);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     this.expr.toString(sb, indent);
@@ -36,7 +37,7 @@ public final class AlloyBracketExpr extends AlloyExpr {
     ASTNode.join(sb, indent, exprs, AlloyStrings.COMMA + AlloyStrings.SPACE);
     sb.append(AlloyStrings.RBRACK);
   }
-
+  */
   @Override
   public void pp(PrintContext pCtx) {
     pCtx.appendChild(this, this.expr);

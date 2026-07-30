@@ -146,6 +146,29 @@ public final class AlloyDecl extends AlloyExpr {
     return expandedLi;
   }
 
+  /*
+  @Override
+  public void toString(StringBuilder sb, int indent) {
+    sb.append(this.isVar ? VAR + SPACE : "");
+    sb.append(this.isPrivate ? PRIVATE + SPACE : "");
+    sb.append((this.isDisj1 ? DISJ + SPACE : ""));
+    sb.appendList(this.qnames, COMMA);
+    sb.append(SPACE);
+    if (this.mul.orElse(null) == AlloyQtEnum.EXACTLY) {
+      sb.append(EQUAL);
+      sb.brk();
+    } else {
+      sb.append(COLON);
+      sb.brk();
+      if (this.isDisj2) {
+        sb.append(DISJ + SPACE);
+      }
+      this.mul.ifPresent(v -> sb.append(v.toString() + SPACE));
+    }
+    this.expr.toString(sb, indent);
+  }
+  */
+
   @Override
   public void pp(PrintContext pCtx) {
     pCtx.append(this.isVar ? VAR + SPACE : "");

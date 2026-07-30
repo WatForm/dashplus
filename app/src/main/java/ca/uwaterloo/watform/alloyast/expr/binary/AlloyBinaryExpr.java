@@ -27,6 +27,7 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
     this(Pos.UNKNOWN, left, right, op);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     this.left.toString(sb, indent);
@@ -35,6 +36,7 @@ public abstract class AlloyBinaryExpr extends AlloyExpr {
     sb.append(AlloyStrings.SPACE);
     this.right.toString(sb, indent);
   }
+  */
 
   @Override
   public <T> T accept(AlloyExprVis<T> visitor) {

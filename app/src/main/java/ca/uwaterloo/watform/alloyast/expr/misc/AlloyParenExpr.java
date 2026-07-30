@@ -4,7 +4,6 @@ import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
@@ -27,12 +26,14 @@ public final class AlloyParenExpr extends AlloyExpr {
     return sub;
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(AlloyStrings.LPAREN);
     this.sub.toString(sb, indent);
     sb.append(AlloyStrings.RPAREN);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

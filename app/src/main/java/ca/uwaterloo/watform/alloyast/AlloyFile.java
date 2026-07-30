@@ -52,6 +52,7 @@ public class AlloyFile extends AlloyASTNode {
     this(Pos.UNKNOWN, Collections.singletonList(paragraph));
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     for (AlloyPara p : this.paras) {
@@ -60,6 +61,7 @@ public class AlloyFile extends AlloyASTNode {
       sb.append(AlloyStrings.NEWLINE + AlloyStrings.NEWLINE);
     }
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

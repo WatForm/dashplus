@@ -4,10 +4,8 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
-import ca.uwaterloo.watform.utils.ASTNode;
 import ca.uwaterloo.watform.utils.Pos;
 import ca.uwaterloo.watform.utils.PrintContext;
 import java.util.ArrayList;
@@ -37,6 +35,7 @@ public final class AlloyEnumPara extends AlloyPara {
     this(Pos.UNKNOWN, false, qname, qnames);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(isPrivate ? AlloyStrings.PRIVATE + AlloyStrings.SPACE : "");
@@ -46,6 +45,7 @@ public final class AlloyEnumPara extends AlloyPara {
     ASTNode.join(sb, indent, this.qnames, AlloyStrings.COMMA + AlloyStrings.SPACE);
     sb.append(AlloyStrings.RBRACE);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

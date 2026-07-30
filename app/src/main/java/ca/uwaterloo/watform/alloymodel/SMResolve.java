@@ -929,8 +929,29 @@ public class SMResolve extends SMCmds {
     public ResolveInfo visit(AlloyVarExpr varExpr) {
       if (varExpr instanceof AlloyQnameExpr) {
         Qname chosen;
+        // to avoid casting everywhere
+        AlloyQnameExpr qnameExpr = (AlloyQnameExpr) varExpr;
         // KENG: revisions here
         // System.out.println("looking up1: " + varExpr.toString());
+
+        // might already be resolved
+        if (qnameExpr.kind == Kind.SIG) {
+          return new ResolveInfo(Optional.of(1), qnameExpr);
+        } else if (qnameExpr.kind == Kind.FIELD) {
+          return new ResolveInfo(
+              SMResolve.this.fieldArity(alloyQnameExprToQname(qnameExpr)), qnameExpr);
+        } else if (qnameExpr.kind == Kind.PREDFUN) {
+          chosen = SMResolve.this.predFunQnameMatches(alloyQnameExprToQname(qnameExpr)).get(0);
+          Optional<Integer> returnArity = SMResolve.this.predFunReturnArity(chosen);
+          if (returnArity.isPresent()) {
+            List<Optional<Integer>> argsArities = SMResolve.this.predFunArgArities(chosen);
+            return new ResolveInfo(
+                argsArities, returnArity, chosen.toAlloyExpr(qnameExpr.pos, Kind.PREDFUN));
+          } else {
+            throw AlloyModelError.unknownName(qnameExpr.pos, qnameExpr.toString());
+          }
+        }
+        // it is not already resolved
         Optional<Integer> x = localLookup(thisQname(varExpr.getName()));
         if (x.isPresent()) return new ResolveInfo(x, varExpr);
         // this qname may have UNKNOWN_NAMESPACE in it and should only be used for lookups

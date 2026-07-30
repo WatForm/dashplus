@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.AlloyCtorError;
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.AssumptionError;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -76,6 +75,7 @@ public final class AlloyMacroPara extends AlloyPara {
   /*
    * Always use square brackets around arguments
    */
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(this.isPrivate ? AlloyStrings.PRIVATE + AlloyStrings.SPACE : "");
@@ -100,6 +100,7 @@ public final class AlloyMacroPara extends AlloyPara {
       throw AlloyCtorError.xorFields(pos, "block", "sub", "AlloyMacroPara");
     }
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

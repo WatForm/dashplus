@@ -54,6 +54,7 @@ public final class AlloyAssertPara extends AlloyPara {
     this(Pos.UNKNOWN, null, null, block);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     String assertionName = "";
@@ -65,6 +66,7 @@ public final class AlloyAssertPara extends AlloyPara {
     sb.append(AlloyStrings.ASSERT + AlloyStrings.SPACE + assertionName);
     this.block.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

@@ -225,7 +225,15 @@ public class AlloyExprFactory {
   }
 
   public static AlloyQnameExpr AlloyVar(List<String> names) {
-    return new AlloyQnameExpr(mapBy(names, v -> new AlloyQnameExpr(v)));
+    return new AlloyQnameExpr(mapBy(names, v -> new AlloyNameExpr(v)));
+  }
+
+  public static AlloyQnameExpr AlloyVar(List<String> names, Kind k) {
+    return new AlloyQnameExpr(mapBy(names, v -> new AlloyNameExpr(v)), k);
+  }
+
+  public static AlloyQnameExpr AlloyVar(Pos pos, List<String> names, Kind k) {
+    return new AlloyQnameExpr(pos, mapBy(names, v -> new AlloyNameExpr(v)), k);
   }
 
   // none

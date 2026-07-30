@@ -61,12 +61,14 @@ public final class AlloyDotExpr extends AlloyBinaryExpr {
     return new AlloyDotExpr(this.pos, left, right);
   }
 
-  @Override
-  public void toString(StringBuilder sb, int indent) {
-    this.left.toString(sb, indent);
-    sb.append(op);
-    this.right.toString(sb, indent);
-  }
+  /*
+   @Override
+   public void toString(StringBuilder sb, int indent) {
+     this.left.toString(sb, indent);
+     sb.append(op);
+     this.right.toString(sb, indent);
+   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

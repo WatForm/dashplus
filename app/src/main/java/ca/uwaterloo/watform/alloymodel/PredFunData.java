@@ -24,7 +24,6 @@ public class PredFunData {
       this.arity = arity;
     }
 
-    @Override
     public String toString() {
       return "{" + decl + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
     }
@@ -41,7 +40,9 @@ public class PredFunData {
 
     @Override
     public String toString() {
-      return "{" + expr + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
+      StringBuilder sb = new StringBuilder("{");
+      expr.toString(sb, 0);
+      return "{" + sb.toString() + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
     }
   }
 
@@ -77,7 +78,11 @@ public class PredFunData {
 
   @Override
   public String toString() {
-    return argInfoList + ", " + resultInfo + ", " + body + " (resolved=" + isResolved + ")";
+    String s = argInfoList + ", " + resultInfo + ", ";
+    StringBuilder sb = new StringBuilder("");
+    body.toString(sb, 0);
+    s += body.toString() + " (resolved=" + isResolved + ")";
+    return s;
   }
 
   /*

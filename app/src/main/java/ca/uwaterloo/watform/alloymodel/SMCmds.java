@@ -252,6 +252,7 @@ public class SMCmds extends SMConstraints {
   // recursively calculated
   private CmdScopeProfile scopeProfile;
   private Integer default_scope;
+  private CmdData cd;
 
   /*
       Here we assume no errors in the scopes given in the cmd
@@ -275,120 +276,119 @@ public class SMCmds extends SMConstraints {
   /*
   public CmdScopeProfile getCmdScopeLimits(Integer cmdNum) {
 
-      this.checkForErrorsInScopes(cmdNum);
-      // general error
-      for (Qname s : this.orderedSigs) {
-          if (!this.topLevelSigs().contains(s)) {
-              throw AlloyModelError.orderedOnlyOnTopLevelSigs(s.fullName());
-          }
+    // this.checkForErrorsInScopes(cmdNum);
+    // general error
+    for (Qname s : this.orderedSigs) {
+      if (!this.topLevelSigs().contains(s)) {
+        throw AlloyModelError.orderedOnlyOnTopLevelSigs(s.fullName());
       }
+    }
 
-      CmdData cd = getCmdNum(cmdNum);
-      this.default_scope = cd.defaultScope.map(n -> n).orElse(DEFAULT_SCOPE);
-      this.scopeProfile = new CmdScopeProfile();
+    this.cd = getCmdNum(cmdNum);
+    this.default_scope = cd.defaultScope.map(n -> n).orElse(DEFAULT_SCOPE);
+    this.scopeProfile = new CmdScopeProfile();
 
-      // modifies the scopeProfile
-      // Int might or might not be in the topLevelSigs
-      for (Qname s : this.topLevelSigs()) {
-          Optional<Integer> sigBound = recurseExtendsProfile(s, true);
-      }
-      // make sure Int has a value
-      if (cd.cmdScopes.keySet().contains(AlloyStrings.SIGINT))
-          // givenScopes might not say INT is exactly, but it is always exactly in Alloy
-          this.scopeProfile.addTopLevel(
-                  AlloyStrings.SIGINT, ExactScope(cd.cmdScopes.get(AlloyStrings.SIGINT).max()));
-      else this.scopeProfile.addTopLevel(AlloyStrings.SIGINT, ExactScope(this.INT_DEFAULT_SCOPE));
+    // modifies the scopeProfile
+    // Int might or might not be in the topLevelSigs
+    for (Qname s : this.topLevelSigs()) {
+      Integer sigBound = recurseExtendsProfile(s, true);
+    }
+    // make sure Int has a value
+    if (cd.cmdScopes.keySet().contains(AlloyStrings.SIGINT))
+      // givenScopes might not say INT is exactly, but it is always exactly in Alloy
+      this.scopeProfile.addTopLevel(
+          AlloyStrings.SIGINT, ExactScope(cd.cmdScopes.get(AlloyStrings.SIGINT).max()));
+    else this.scopeProfile.addTopLevel(AlloyStrings.SIGINT, ExactScope(this.INT_DEFAULT_SCOPE));
 
-      // Alloy instances also always have:
-      // seq/Int={0, 1, 2, 3}
-      // String={}
-      // none={}
-      // TODO: may be something to fix here
+    // Alloy instances also always have:
+    // seq/Int={0, 1, 2, 3}
+    // String={}
+    // none={}
+    // TODO: may be something to fix here
 
-      return this.scopeProfile;
+    return this.scopeProfile;
   }
 
   private Integer recurseExtendsProfile(Qname sigName, Boolean isTopLevel) {
 
-      // recurse from a top-level sig down to leaves and back up
+    // recurse from a top-level sig down to leaves and back up
 
-      // look at what scopes from children say
-      // sum their exact scopes (might be none)
-      Integer minFromChildren = 0;
-      for (String child : this.extendsChildren(sigName)) {
-          minFromChildren = minFromChildren + recurseExtendsProfile(child, false);
+    // look at what scopes from children say
+    // sum their exact scopes (might be none)
+    Integer minFromChildren = 0;
+    for (Qname child : this.extendsChildren(sigName)) {
+      minFromChildren = minFromChildren + recurseExtendsProfile(child, false);
+    }
+
+    // we SET a scope in the scope profile (rather than just returning a value) if
+    // 1) it is top-level
+    // or
+    // 2) it is in model scopes (exactly with or without value)
+    if (!cd.cmdScopes.keySet().contains(sigName)
+        && !this.modelScopes.keySet().contains(sigName)
+        && !isTopLevel) {
+      // no prescribed scope and not modelScope sig and not top level
+      // so just pass the exact bound up
+      // but if an import forced it to be exact add that
+      if (this.sigsWithExactScope().contains(sigName)) {
+        this.scopeProfile.addTopLevel(sigName, ExactScope(exactBoundOpt.get()));
       }
+      return exactBoundOpt; // might be empty or might be exact scope
+    }
 
-      // we SET a scope in the scope profile (rather than just returning a value) if
-      // 1) it is top-level
-      // or
-      // 2) it is in model scopes (exactly with or without value)
-      if (!cd.cmdScopes.keySet().contains(sigName)
-              && !this.modelScopes.keySet().contains(sigName)
-              && !isTopLevel) {
-          // no prescribed scope and not modelScope sig and not top level
-          // so just pass the exact bound up
-          // but if an import forced it to be exact add that
-          if (this.sigsWithExactScope().contains(sigName)) {
-              this.scopeProfile.addTopLevel(sigName, ExactScope(exactBoundOpt.get()));
-          }
-          return exactBoundOpt; // might be empty or might be exact scope
-      }
-
-      SigScope givenScope;
-      Boolean overrideFlag = false;
-      if (!cd.cmdScopes.keySet().contains(sigName) && isTopLevel && !this.isOneSig(sigName)) {
-          // top-level so must be given a scope
-          // chosen from exactBoundOpt and this.defaultScope
-          if (this.sigsWithExactScope().contains(sigName)) {
-              givenScope = ExactScope(this.default_scope);
-          } else {
-              givenScope = NonExactScope(this.default_scope);
-          }
-      } else if (!cd.cmdScopes.keySet().contains(sigName) && this.isOneSig(sigName)) {
-          // it is an error earlier if 'one sig's are given a scope other than 1
-          givenScope = ExactScope(1);
+    SigScope givenScope;
+    Boolean overrideFlag = false;
+    if (!cd.cmdScopes.keySet().contains(sigName) && isTopLevel && !this.isOneSig(sigName)) {
+      // top-level so must be given a scope
+      // chosen from exactBoundOpt and this.defaultScope
+      if (this.sigsWithExactScope().contains(sigName)) {
+        givenScope = ExactScope(this.default_scope);
       } else {
-          // given a scope; might or might not be top-level
-          // only time when override of scope in cmd could be true
-          overrideFlag = true;
-          // already been set to exact from an import above
-          givenScope = cd.cmdScopes.get(sigName);
+        givenScope = NonExactScope(this.default_scope);
       }
-      // System.out.println(givenScope);
-      if (!exactBoundOpt.isPresent()) {
-          // givenScope could be exact or not
-          if (isTopLevel) this.scopeProfile.addTopLevel(sigName, givenScope);
-          else this.scopeProfile.addExplicitExtends(sigName, givenScope);
-          if (givenScope.isExact()) {
-              return Optional.of(givenScope.max());
-          } else {
-              return Optional.empty();
-          }
+    } else if (!cd.cmdScopes.keySet().contains(sigName) && this.isOneSig(sigName)) {
+      // it is an error earlier if 'one sig's are given a scope other than 1
+      givenScope = ExactScope(1);
+    } else {
+      // given a scope; might or might not be top-level
+      // only time when override of scope in cmd could be true
+      overrideFlag = true;
+      // already been set to exact from an import above
+      givenScope = cd.cmdScopes.get(sigName);
+    }
+    // System.out.println(givenScope);
+    if (!exactBoundOpt.isPresent()) {
+      // givenScope could be exact or not
+      if (isTopLevel) this.scopeProfile.addTopLevel(sigName, givenScope);
+      else this.scopeProfile.addExplicitExtends(sigName, givenScope);
+      if (givenScope.isExact()) {
+        return Optional.of(givenScope.max());
       } else {
-          // we have both a givenScope and an exactScope from children
-          if (exactBoundOpt.get() >= givenScope.max()) {
-              // does not matter if givenScope is exact or not
-              // sum of children  is higher and takes precedence
-              if (overrideFlag) System.out.println("Overriding cmd scope for " + sigName);
-              if (isTopLevel)
-                  this.scopeProfile.addTopLevel(sigName, ExactScope(exactBoundOpt.get()));
-              else this.scopeProfile.addExplicitExtends(sigName, ExactScope(exactBoundOpt.get()));
-              return exactBoundOpt;
-          } else {
-              // we have an exact bound from children that
-              // is less than givenScope
-              // givenScope could be exact or not-exact
-              if (isTopLevel) this.scopeProfile.addTopLevel(sigName, givenScope);
-              else this.scopeProfile.addExplicitExtends(sigName, givenScope);
-              // lower bound is exact scope from either child or givenScope
-              if (givenScope.isExact()) {
-                  return Optional.of(givenScope.max());
-              } else {
-                  return Optional.of(exactBoundOpt.get());
-              }
-          }
+        return Optional.empty();
       }
+    } else {
+      // we have both a givenScope and an exactScope from children
+      if (exactBoundOpt.get() >= givenScope.max()) {
+        // does not matter if givenScope is exact or not
+        // sum of children  is higher and takes precedence
+        if (overrideFlag) System.out.println("Overriding cmd scope for " + sigName);
+        if (isTopLevel) this.scopeProfile.addTopLevel(sigName, ExactScope(exactBoundOpt.get()));
+        else this.scopeProfile.addExplicitExtends(sigName, ExactScope(exactBoundOpt.get()));
+        return exactBoundOpt;
+      } else {
+        // we have an exact bound from children that
+        // is less than givenScope
+        // givenScope could be exact or not-exact
+        if (isTopLevel) this.scopeProfile.addTopLevel(sigName, givenScope);
+        else this.scopeProfile.addExplicitExtends(sigName, givenScope);
+        // lower bound is exact scope from either child or givenScope
+        if (givenScope.isExact()) {
+          return Optional.of(givenScope.max());
+        } else {
+          return Optional.of(exactBoundOpt.get());
+        }
+      }
+    }
   }
   */
 

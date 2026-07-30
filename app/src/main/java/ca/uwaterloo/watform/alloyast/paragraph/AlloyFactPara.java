@@ -52,6 +52,7 @@ public final class AlloyFactPara extends AlloyPara {
     this(Pos.UNKNOWN, null, null, block);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     String factName = "";
@@ -63,6 +64,7 @@ public final class AlloyFactPara extends AlloyPara {
     sb.append(AlloyStrings.FACT + AlloyStrings.SPACE + factName);
     this.block.toString(sb, indent);
   }
+  */
 
   @Override
   public AlloyId getId() {

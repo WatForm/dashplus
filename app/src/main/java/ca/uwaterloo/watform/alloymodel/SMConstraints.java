@@ -63,7 +63,7 @@ public class SMConstraints extends SMPredFuns {
   public void debugSMConstraints() {
     StringBuilder sb = new StringBuilder("SMConstraints:\n");
 
-    constraints.forEach(c -> sb.append("    ").append(c).append('\n'));
+    constraints.forEach(c -> sb.append("    ").append(c.toString()).append('\n'));
 
     System.out.println(sb.toString() + "\n");
   }

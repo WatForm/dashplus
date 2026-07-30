@@ -63,16 +63,19 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
     }
   }
 
+  /*
   @Override
-  public void toString(StringBuilder sb, int indent) {
+  public void toString() {
     sb.append(this.quant.toString());
     sb.append(AlloyStrings.SPACE);
+
     ASTNode.join(sb, indent, this.decls, AlloyStrings.COMMA + AlloyStrings.SPACE);
     sb.append(AlloyStrings.SPACE);
     sb.append(AlloyStrings.BAR);
     sb.append(AlloyStrings.SPACE);
     this.body.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

@@ -31,11 +31,13 @@ public abstract class AlloyUnaryExpr extends AlloyExpr {
     return op;
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(op);
     this.sub.toString(sb, indent);
   }
+  */
 
   @Override
   public <T> T accept(AlloyExprVis<T> visitor) {

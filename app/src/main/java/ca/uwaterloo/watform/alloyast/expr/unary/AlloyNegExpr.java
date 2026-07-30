@@ -17,12 +17,14 @@ public final class AlloyNegExpr extends AlloyUnaryExpr {
     super(sub, AlloyStrings.NOT_EXCL);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(op);
     sb.append(AlloyStrings.SPACE);
     this.sub.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

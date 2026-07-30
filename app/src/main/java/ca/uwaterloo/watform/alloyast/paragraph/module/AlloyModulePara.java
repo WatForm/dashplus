@@ -34,6 +34,7 @@ public final class AlloyModulePara extends AlloyPara {
       this(Pos.UNKNOWN, isExactly, qname);
     }
 
+    /*
     @Override
     public void toString(StringBuilder sb, int indent) {
       if (isExactly) {
@@ -42,6 +43,7 @@ public final class AlloyModulePara extends AlloyPara {
       }
       this.qname.toString(sb, indent);
     }
+    */
 
     @Override
     public void pp(PrintContext pCtx) {
@@ -84,6 +86,7 @@ public final class AlloyModulePara extends AlloyPara {
     this(Pos.UNKNOWN, moduleName, moduleArgs);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(AlloyStrings.MODULE);
@@ -95,6 +98,7 @@ public final class AlloyModulePara extends AlloyPara {
       sb.append(AlloyStrings.RBRACK);
     }
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

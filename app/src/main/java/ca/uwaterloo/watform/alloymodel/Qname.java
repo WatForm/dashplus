@@ -133,14 +133,29 @@ public class Qname {
     assert (this.nameSpace != UNKNOWN_NAMESPACE);
     if (k == Kind.SIG) {
       assert (this.sigParent == null);
-      return SigVar(p, List.of(this.nameSpace, this.name));
+      return AlloyVar(p, List.of(this.nameSpace, this.name), Kind.SIG);
     } else if (k == Kind.FIELD) {
-      return AlloyDomainRes(
-          SigVar(p, List.of(this.nameSpace, this.sigParent)), FieldVar(p, List.of(this.name)));
+      return AlloyVar(p, List.of(this.nameSpace, this.sigParent, this.name), Kind.FIELD);
+
+      //  AlloyDomainRes(
+      //    SigVar(p, List.of(this.nameSpace, this.sigParent)), FieldVar(p, List.of(this.name)));
     } else if (k == Kind.PREDFUN) {
-      return PredFunVar(p, List.of(this.nameSpace, this.name));
+      return AlloyVar(p, List.of(this.nameSpace, this.name), Kind.PREDFUN);
     } else {
       // can't handle Kind.UNKNOWN
+      throw ImplementationError.shouldNotReach();
+    }
+  }
+
+  public static Qname alloyQnameExprToQname(AlloyQnameExpr qnameExpr) {
+    assert (qnameExpr.vars.size() == 2 || qnameExpr.vars.size() == 3);
+    List<AlloyVarExpr> vars = qnameExpr.vars;
+    if (qnameExpr.kind == Kind.SIG || qnameExpr.kind == Kind.PREDFUN) {
+      return nameSpaceQname(vars.get(0).label, vars.get(1).label);
+    } else if (qnameExpr.kind == Kind.FIELD) {
+      // has the sigParent in it also
+      return fieldQname(vars.get(0).label, vars.get(1).label, vars.get(2).label);
+    } else {
       throw ImplementationError.shouldNotReach();
     }
   }
@@ -149,6 +164,7 @@ public class Qname {
     return this.toAlloyExpr(Pos.UNKNOWN, k);
   }
 
+  /*
   public static AlloyQnameExpr SigVar(Pos p, List<String> names) {
     return new AlloyQnameExpr(p, mapBy(names, v -> new AlloyNameExpr(v)), Kind.SIG);
   }
@@ -160,6 +176,7 @@ public class Qname {
   public static AlloyQnameExpr PredFunVar(Pos p, List<String> names) {
     return new AlloyQnameExpr(p, mapBy(names, v -> new AlloyNameExpr(v)), Kind.PREDFUN);
   }
+  */
 
   @Override
   public String toString() {

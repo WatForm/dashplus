@@ -46,6 +46,7 @@ public abstract class ASTNode {
   // There's a similar method in GeneralUtil.java, but ASTNodes need to take
   // in an indent param
   public static <T> void join(StringBuilder sb, int indent, List<T> items, String separator) {
+    System.out.println(items);
     if (items == null || items.isEmpty()) {
       return;
     }
@@ -56,5 +57,6 @@ public abstract class ASTNode {
         sb.append(separator);
       }
     }
+    System.out.println(sb.toString());
   }
 }

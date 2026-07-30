@@ -51,6 +51,7 @@ public final class AlloyImportPara extends AlloyPara {
   /*
    * If no sigRefs, then don't print []
    */
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     if (isPrivate) {
@@ -72,6 +73,7 @@ public final class AlloyImportPara extends AlloyPara {
       this.asQname.get().toString(sb, indent);
     }
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

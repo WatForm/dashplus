@@ -36,6 +36,7 @@ public final class AlloyBlock extends AlloyExpr {
     this(Pos.UNKNOWN, Collections.emptyList());
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     String tabs = TAB.repeat(indent);
@@ -51,6 +52,7 @@ public final class AlloyBlock extends AlloyExpr {
     sb.append(tabs);
     sb.append(RBRACE);
   }
+  */
 
   @Override
   public <T> T accept(AlloyExprVis<T> visitor) {

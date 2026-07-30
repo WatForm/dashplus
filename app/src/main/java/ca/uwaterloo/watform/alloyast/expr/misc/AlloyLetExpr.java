@@ -36,6 +36,7 @@ public final class AlloyLetExpr extends AlloyExpr {
     this(Pos.UNKNOWN, Collections.singletonList(asn), body);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(AlloyStrings.LET);
@@ -46,6 +47,7 @@ public final class AlloyLetExpr extends AlloyExpr {
     sb.append(AlloyStrings.SPACE);
     this.body.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {
@@ -121,12 +123,14 @@ public final class AlloyLetExpr extends AlloyExpr {
       return new AlloyLetAsn(this.pos, this.qname, expr);
     }
 
+    /*
     @Override
     public void toString(StringBuilder sb, int indent) {
       sb.append(this.qname.toString());
       sb.append(AlloyStrings.EQUAL);
       expr.toString(sb, indent);
     }
+    */
 
     @Override
     public void pp(PrintContext pCtx) {

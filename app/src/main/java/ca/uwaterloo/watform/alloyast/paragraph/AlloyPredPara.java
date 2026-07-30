@@ -4,7 +4,6 @@ import static ca.uwaterloo.watform.alloyast.AlloyASTImplError.nullField;
 import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
@@ -70,6 +69,7 @@ public final class AlloyPredPara extends AlloyPara {
   /*
    * Always use square brackets around arguments
    */
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(this.isPrivate ? AlloyStrings.PRIVATE + AlloyStrings.SPACE : "");
@@ -87,6 +87,7 @@ public final class AlloyPredPara extends AlloyPara {
     sb.append(AlloyStrings.SPACE);
     this.block.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

@@ -33,6 +33,7 @@ public final class AlloyCphExpr extends AlloyExpr {
     this(Pos.UNKNOWN, decls, body);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(AlloyStrings.LBRACE);
@@ -45,6 +46,7 @@ public final class AlloyCphExpr extends AlloyExpr {
     }
     sb.append(AlloyStrings.RBRACE);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

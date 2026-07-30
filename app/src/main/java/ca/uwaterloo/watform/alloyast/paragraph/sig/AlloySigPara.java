@@ -149,6 +149,7 @@ public final class AlloySigPara extends AlloyPara {
         null);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     // cannot use ASTNode.join here b/c Qual is not ASTNode; will fail
@@ -181,6 +182,7 @@ public final class AlloySigPara extends AlloyPara {
       sb.append(AlloyStrings.SPACE);
     }
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {
@@ -355,11 +357,13 @@ public final class AlloySigPara extends AlloyPara {
       this(Pos.UNKNOWN, sigRef);
     }
 
+    /*
     @Override
     public void toString(StringBuilder sb, int indent) {
       sb.append(AlloyStrings.EXTENDS + AlloyStrings.SPACE);
       ((AlloyVarExpr) this.sigRef).toString(sb, indent);
     }
+    */
 
     @Override
     public void pp(PrintContext pCtx) {
@@ -403,12 +407,14 @@ public final class AlloySigPara extends AlloyPara {
       this(Pos.UNKNOWN, Collections.singletonList(sigRef));
     }
 
+    /*
     @Override
     public void toString(StringBuilder sb, int indent) {
       sb.append(AlloyStrings.IN + AlloyStrings.SPACE);
       ASTNode.join(
           sb, indent, this.sigRefs, AlloyStrings.SPACE + AlloyStrings.PLUS + AlloyStrings.SPACE);
     }
+    */
 
     @Override
     public void pp(PrintContext pCtx) {
@@ -452,12 +458,14 @@ public final class AlloySigPara extends AlloyPara {
       this(Pos.UNKNOWN, Collections.singletonList(sigRef));
     }
 
+    /*
     @Override
     public void toString(StringBuilder sb, int indent) {
       sb.append(AlloyStrings.EQUAL + AlloyStrings.SPACE);
       ASTNode.join(
           sb, indent, this.sigRefs, AlloyStrings.SPACE + AlloyStrings.PLUS + AlloyStrings.SPACE);
     }
+    */
 
     @Override
     public void pp(PrintContext pCtx) {

@@ -21,10 +21,12 @@ public abstract class AlloyVarExpr extends AlloyExpr {
     this(Pos.UNKNOWN, label);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     sb.append(label);
   }
+  */
 
   public String getName() {
     return this.label;

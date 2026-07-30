@@ -26,6 +26,7 @@ public final class AlloyIteExpr extends AlloyExpr {
     this(Pos.UNKNOWN, cond, conseq, alt);
   }
 
+  /*
   @Override
   public void toString(StringBuilder sb, int indent) {
     this.cond.toString(sb, indent);
@@ -38,6 +39,7 @@ public final class AlloyIteExpr extends AlloyExpr {
     sb.append(SPACE);
     this.alt.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {

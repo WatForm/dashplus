@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 
 import ca.uwaterloo.watform.alloyast.*;
-import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
@@ -27,12 +26,14 @@ public final class AlloyQtExpr extends AlloyUnaryExpr {
     this(Pos.UNKNOWN, qt, sub);
   }
 
+  /*
   @Override
   public final void toString(StringBuilder sb, int indent) {
     sb.append(this.qt);
     sb.append(AlloyStrings.SPACE);
     this.sub.toString(sb, indent);
   }
+  */
 
   @Override
   public void pp(PrintContext pCtx) {
