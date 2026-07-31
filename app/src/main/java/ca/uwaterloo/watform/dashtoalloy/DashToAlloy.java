@@ -68,7 +68,7 @@ public class DashToAlloy extends StutterD2A {
       // next two are required
       this.addStutter();
       this.addTracesFact();
-      this.addAllSnapshotsDiffFact();
+      this.addAllSnapshotsDiffPred();
       // everything in traces is reachable b/c it
       // starts from initial state and only takes steps
       // it can reach
@@ -84,13 +84,13 @@ public class DashToAlloy extends StutterD2A {
     this.addCompleteBigSteps();
     this.addEnoughOps();
     // System.out.println(this.am);
-    System.out.println("---");
-    System.out.println("Before resolve");
-    am.debug();
+    // System.out.println("---");
+    // System.out.println("Before resolve");
+    // am.debug();
     this.am.resolve();
-    System.out.println("---");
-    System.out.println("After resolve");
-    am.debug();
+    // System.out.println("---");
+    // System.out.println("After resolve");
+    // am.debug();
     return this.am;
   }
 

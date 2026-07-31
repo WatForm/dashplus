@@ -1041,9 +1041,11 @@ public class SMResolve extends SMCmds {
           case AlloyPredTotOrdExpr q ->
               new ResolveInfo(List.of(ONE_ARITY, ONE_ARITY, TWO_ARITY), ONE_ARITY, varExpr);
           case AlloyNumExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
+          case AlloyIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
+          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           // TODO: fix this! it does not cover enough cases
           default -> {
-            System.out.println(varExpr.toString());
+            System.out.println(varExpr.toString() + " of class " + varExpr.getClass().getName());
             throw AlloyModelImplError.shouldNotReach();
           }
         };

@@ -75,7 +75,7 @@ public class Qname {
 
   // only works for sigs/pred/funs -- not fields
   String fullName() {
-    assert (this.sigParent.isEmpty());
+    assert (this.sigParent == null);
     return this.nameSpace + "/" + this.name;
   }
 

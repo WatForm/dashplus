@@ -24,4 +24,22 @@ public class ImportData {
     sb.append(")");
     return sb.toString();
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof ImportData other)) {
+      return false;
+    }
+
+    return this.importedModule.equals(other.importedModule)
+        && this.sigParamValues.equals(other.sigParamValues);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(pos, importedModule, sigParamValues);
+  }
 }

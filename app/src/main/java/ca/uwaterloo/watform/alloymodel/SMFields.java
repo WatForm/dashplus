@@ -31,11 +31,14 @@ public class SMFields extends SMImports {
 
   protected void createField(
       Pos p, String nameSpace, String fieldName, String sigParent, AlloyExpr fieldExpr) {
-    reqNonNull(nullField(p, this), nameSpace, fieldName, sigParent, fieldExpr);
-    assert (nameSpace != UNKNOWN_NAMESPACE);
-    if (this.fieldTable.containsKey(fieldQname(nameSpace, sigParent, fieldName)))
-      throw AlloyModelError.duplicateFieldNameInSig(p, fieldName);
-    else this.fieldTable.put(fieldQname(nameSpace, sigParent, fieldName), new FieldData(fieldExpr));
+    if (this.createSM) {
+      reqNonNull(nullField(p, this), nameSpace, fieldName, sigParent, fieldExpr);
+      assert (nameSpace != UNKNOWN_NAMESPACE);
+      if (this.fieldTable.containsKey(fieldQname(nameSpace, sigParent, fieldName)))
+        throw AlloyModelError.duplicateFieldNameInSig(p, fieldName);
+      else
+        this.fieldTable.put(fieldQname(nameSpace, sigParent, fieldName), new FieldData(fieldExpr));
+    }
   }
 
   public List<Qname> allFieldQnames() {

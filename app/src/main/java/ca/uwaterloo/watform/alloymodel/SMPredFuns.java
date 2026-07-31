@@ -35,18 +35,22 @@ public class SMPredFuns extends SMFields {
   }
 
   public void createPred(Pos p, Qname predName, List<AlloyDecl> argDeclList, AlloyExpr body) {
-    reqNonNull(nullField(p, this), predName, argDeclList, body);
-    this.predFunTable
-        .computeIfAbsent(predName, k -> new ArrayList())
-        .add(PredData(p, argDeclList, body));
+    if (this.createSM) {
+      reqNonNull(nullField(p, this), predName, argDeclList, body);
+      this.predFunTable
+          .computeIfAbsent(predName, k -> new ArrayList())
+          .add(PredData(p, argDeclList, body));
+    }
   }
 
   public void createFun(
       Pos p, Qname funName, List<AlloyDecl> argDeclList, AlloyExpr resultExpr, AlloyExpr body) {
-    reqNonNull(nullField(p, this), funName, argDeclList, resultExpr, body);
-    this.predFunTable
-        .computeIfAbsent(funName, k -> new ArrayList())
-        .add(FunData(p, argDeclList, resultExpr, body));
+    if (this.createSM) {
+      reqNonNull(nullField(p, this), funName, argDeclList, resultExpr, body);
+      this.predFunTable
+          .computeIfAbsent(funName, k -> new ArrayList())
+          .add(FunData(p, argDeclList, resultExpr, body));
+    }
   }
 
   /*
@@ -120,7 +124,7 @@ public class SMPredFuns extends SMFields {
 
       if (this.predFunTable.get(qname).size() != 1) {
         PredFunData first = this.predFunTable.get(qname).get(0);
-        throw AlloyModelError.overloadingPredFunNotSupported(first.pos);
+        throw AlloyModelError.overloadingPredFunNotSupported(first.pos, qname.toString());
       }
     }
 
@@ -171,8 +175,8 @@ public class SMPredFuns extends SMFields {
     // 2) resolve the body of the pred/fun defn
     // args should have arity now
     // System.out.println(mapBy(predFunData.argInfoList, x -> x.decl));
-    System.out.println(qname);
-    System.out.println(predFunData.body);
+    // System.out.println(qname);
+    // System.out.println(predFunData.body);
     ResolveInfo bodyResolveInfo =
         resolve2.apply(
             predFunData.body,

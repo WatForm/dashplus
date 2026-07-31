@@ -65,6 +65,8 @@ public class AMThisImportParas extends AMThisCmdParas {
         This will recursively load any imported files from this importPara (these will have a nested namespace)
     */
 
+    System.out.println("importing: " + importPara.toString());
+
     // from `open name[A, B] as X` get [A,B]
     // We will check in resolve that these are either already
     // fully qualified or they belong to this namespace
@@ -131,30 +133,32 @@ public class AMThisImportParas extends AMThisCmdParas {
     }
     // System.out.println(newParas);
 
-    this.createImport(
+    // below this is actually adding stuff to the SM
+    if (this.createImport(
         importPara.pos,
-        importNameSpace,
+        this.importNameSpace,
         importPara.qname.getName(),
-        mapBy(valsToSubstitute, n -> thisQname(n.getName())));
+        mapBy(valsToSubstitute, n -> thisQname(n.getName())))) {
 
-    for (AlloyPara alloyPara : newParas) {
-      // only added to SM (not AMThis)
-      if (alloyPara instanceof AlloyEnumPara p) addSMPara(p, importNameSpace);
-      else if (alloyPara instanceof AlloySigPara p) {
-        // System.out.println(p);
-        addSMPara(p, importNameSpace);
-      } else if (alloyPara instanceof AlloyPredPara p) addSMPara(p, importNameSpace);
-      else if (alloyPara instanceof AlloyFunPara p) addSMPara(p, importNameSpace);
-      else if (alloyPara instanceof AlloyFactPara p) addSMPara(p, importNameSpace);
-      else if (alloyPara instanceof AlloyAssertPara p) addSMPara(p, importNameSpace);
-      // else if (alloyPara instanceof AlloyCmdPara p) addSMPara(p, importNameSpace);
-      else if (alloyPara instanceof AlloyImportPara p)
-        // this will cause a recursive call if nested imports
-        addSMPara(p, importNameSpace);
-      // else if (alloyPara instanceof AlloyModulePara p) addSMPara(p, importNameSpace);
-      else {
-        System.out.println(alloyPara);
-        throw ImplementationError.shouldNotReach();
+      for (AlloyPara alloyPara : newParas) {
+        // only added to SM (not AMThis)
+        if (alloyPara instanceof AlloyEnumPara p) addSMPara(p, importNameSpace);
+        else if (alloyPara instanceof AlloySigPara p) {
+          // System.out.println(p);
+          addSMPara(p, importNameSpace);
+        } else if (alloyPara instanceof AlloyPredPara p) addSMPara(p, importNameSpace);
+        else if (alloyPara instanceof AlloyFunPara p) addSMPara(p, importNameSpace);
+        else if (alloyPara instanceof AlloyFactPara p) addSMPara(p, importNameSpace);
+        else if (alloyPara instanceof AlloyAssertPara p) addSMPara(p, importNameSpace);
+        // else if (alloyPara instanceof AlloyCmdPara p) addSMPara(p, importNameSpace);
+        else if (alloyPara instanceof AlloyImportPara p)
+          // this will cause a recursive call if nested imports
+          addSMPara(p, importNameSpace);
+        // else if (alloyPara instanceof AlloyModulePara p) addSMPara(p, importNameSpace);
+        else {
+          System.out.println(alloyPara);
+          throw ImplementationError.shouldNotReach();
+        }
       }
     }
   }
@@ -195,6 +199,7 @@ public class AMThisImportParas extends AMThisCmdParas {
   // import name1/name2[sigName1, sigName2]
   public void addImport(List<String> names, List<AlloySigRefExpr> sigNames) {
     String fileName = String.join("/", names);
+
     this.addPara(
         new AlloyImportPara(
             false,

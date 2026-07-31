@@ -46,47 +46,57 @@ public class SMCmds extends SMConstraints {
   }
 
   protected void createAssert(Qname qname, AlloyExpr body) {
-    if (this.assertTable.keySet().contains(qname)) {
-      // this is not allowed in AA
-      throw AlloyModelError.assertNameMustBeUnique(body.pos, qname.toString());
-    } else {
-      this.assertTable.put(qname, body);
+    if (this.createSM) {
+      if (this.assertTable.keySet().contains(qname)) {
+        // this is not allowed in AA
+        throw AlloyModelError.assertNameMustBeUnique(body.pos, qname.toString());
+      } else {
+        this.assertTable.put(qname, body);
+      }
     }
   }
 
   protected Integer createCmd(Qname qname, CmdData cmdData) {
-    if (this.cmdTable.keySet().contains(qname)) {
-      // this is allowed in AA
-      throw AssumptionError.cmdNameMustBeUnique(cmdData.pos, qname.toString());
+    if (this.createSM) {
+      if (this.cmdTable.keySet().contains(qname)) {
+        // this is allowed in AA
+        throw AssumptionError.cmdNameMustBeUnique(cmdData.pos, qname.toString());
+      } else {
+        this.cmdTable.put(qname, cmdData);
+      }
+      // return the command number
+      return this.cmdTable.keySet().size();
     } else {
-      this.cmdTable.put(qname, cmdData);
+      return 0;
     }
-    // return the command number
-    return this.cmdTable.keySet().size();
   }
 
   // import [exactly A] in the ordering module
   public void createOrderedSigWithExactScope(Qname qname) {
-    // we don't know the value of the exact scope
-    this.modelScopes.put(qname, ExactNoValue());
-    this.orderedSigs.add(qname);
+    if (this.createSM) {
+      // we don't know the value of the exact scope
+      this.modelScopes.put(qname, ExactNoValue());
+      this.orderedSigs.add(qname);
+    }
   }
 
   // enum parent
   public void createOrderedSigWithExactScopeValue(Qname qname, Integer value) {
-    // we know the value of the exact scope (enum)
-    this.modelScopes.put(qname, ExactScope(value));
-    this.orderedSigs.add(qname);
+    if (this.createSM) {
+      // we know the value of the exact scope (enum)
+      this.modelScopes.put(qname, ExactScope(value));
+      this.orderedSigs.add(qname);
+    }
   }
 
   // import [exactly A] NOT in the ordering module
   public void createNonOrderedSigWithExactScope(Qname qname) {
-    this.modelScopes.put(qname, ExactNoValue());
+    if (this.createSM) this.modelScopes.put(qname, ExactNoValue());
   }
 
   // one sig
   public void createNonOrderedSigWithExactScopeValue(Qname qname, Integer value) {
-    this.modelScopes.put(qname, ExactScope(value));
+    if (this.createSM) this.modelScopes.put(qname, ExactScope(value));
   }
 
   // resolve ------------------------

@@ -53,7 +53,7 @@ public class SMConstraints extends SMPredFuns {
   }
 
   public void createConstraint(String nameSpace, AlloyExpr expr) {
-    this.constraints.add(new Constraint(nameSpace, expr, false));
+    if (this.createSM) this.constraints.add(new Constraint(nameSpace, expr, false));
   }
 
   public List<AlloyExpr> allConstraints() {

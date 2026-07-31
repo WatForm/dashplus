@@ -78,8 +78,9 @@ public class TestAndReplaceExprParaVis implements AlloyParaVis<AlloyPara> {
   }
 
   public AlloyPara visit(AlloyImportPara importPara) {
-    // contains no expressions
-    return importPara;
+    // have to potentially replace sigs used as args to imports
+    return importPara.rebuild(
+        mapBy(importPara.sigRefs, x -> ((AlloySigRefExpr) testAndReplaceExprVis.visit(x))));
   }
 
   public AlloyPara visit(AlloyMacroPara macroPara) {

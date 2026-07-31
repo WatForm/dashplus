@@ -79,7 +79,7 @@ public class GeneralUtil {
     return new ArrayList<T>(ll);
   }
 
-  public static void debugprint(String s) {
+  public static void debugPrint(Object s) {
     // debugging output
     // this won't work unless a string is passed to myprint
     // so myprint(2) won't work
@@ -117,7 +117,7 @@ public class GeneralUtil {
   }
 
   public static <T> List<T> tail(List<T> ll) {
-    assert (ll.size() > 1);
+    if (ll.isEmpty()) return ll;
     return ll.subList(1, ll.size());
   }
 

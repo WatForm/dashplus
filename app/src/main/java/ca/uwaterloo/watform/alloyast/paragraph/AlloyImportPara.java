@@ -129,4 +129,14 @@ public final class AlloyImportPara extends AlloyPara {
   public <T> T accept(AlloyParaVis<T> visitor) {
     return visitor.visit(this);
   }
+
+  public AlloyImportPara rebuild(List<AlloySigRefExpr> sigRefs) {
+    return new AlloyImportPara(
+        this.pos,
+        this.isPrivate,
+        this.qname,
+        sigRefs,
+        this.asQname.orElse(null),
+        this.importedFile);
+  }
 }

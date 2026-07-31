@@ -31,7 +31,7 @@ public class AMThisAssertParas extends AMThisFactParas {
     if (assertPara.strLit.isPresent()) {
       qname = nameSpaceQname(nameSpace, assertPara.strLit.get().label);
     } else {
-      qname = thisQname(assertPara.qname.get().getName());
+      qname = nameSpaceQname(nameSpace, assertPara.qname.get().getName());
     }
     this.createAssert(qname, assertPara.block);
   }

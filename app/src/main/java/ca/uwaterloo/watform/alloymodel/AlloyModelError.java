@@ -223,8 +223,8 @@ public final class AlloyModelError extends UserOrImplError {
     return new AlloyModelError(pos, "assert can only be used with check command");
   }
 
-  public static AlloyModelError overloadingPredFunNotSupported(Pos pos) {
-    return new AlloyModelError(pos, "overloaded pred/fun name in same namespace");
+  public static AlloyModelError overloadingPredFunNotSupported(Pos pos, String s) {
+    return new AlloyModelError(pos, "overloaded pred/fun name in same namespace: " + s);
   }
 
   public static AlloyModelError recursivePredFunDependency(String name) {

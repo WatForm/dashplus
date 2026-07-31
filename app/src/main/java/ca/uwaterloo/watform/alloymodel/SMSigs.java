@@ -22,7 +22,7 @@ import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
-public class SMSigs {
+public class SMSigs extends SMBase {
 
   // Qname is unique for sigs
   public HashMap<Qname, SigData> sigTable = new HashMap<>();
@@ -44,13 +44,15 @@ public class SMSigs {
 
   // no other function should do a 'put' into the sigTable
   protected void createSig(Pos p, Qname qname, SigData sd) {
-    // System.out.println("Adding sig: " + name);
-    reqNonNull(nullField(p, this), qname, sd);
-    assert (qname.nameSpace != UNKNOWN_NAMESPACE);
-    // nameSpace + sig is unique
-    if (!this.sigTable.containsKey(qname)) {
-      this.sigTable.put(qname, sd);
-    } else throw AlloyModelError.duplicateSigName(p, qname.fullName());
+    if (this.createSM) {
+      // System.out.println("Adding sig: " + name);
+      reqNonNull(nullField(p, this), qname, sd);
+      assert (qname.nameSpace != UNKNOWN_NAMESPACE);
+      // nameSpace + sig is unique
+      if (!this.sigTable.containsKey(qname)) {
+        this.sigTable.put(qname, sd);
+      } else throw AlloyModelError.duplicateSigName(p, qname.fullName());
+    }
   }
 
   // resolve

@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.Reporter.*;
 
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
@@ -16,11 +17,28 @@ public class SMImports extends SMSigs {
     this.importTable = new HashMap<>(other.importTable);
   }
 
-  protected void createImport(
+  // don't let it load the same import twice
+  // return false if it has already been loaded in this namespace
+  protected Boolean createImport(
       Pos pos, String nameSpace, String importedModule, List<Qname> sigParamValues) {
-    this.importTable
-        .computeIfAbsent(nameSpace, k -> new ArrayList())
-        .add(new ImportData(pos, importedModule, sigParamValues));
+    if (this.createSM) {
+      ImportData id = new ImportData(pos, importedModule, sigParamValues);
+      if (this.importTable.keySet().contains(nameSpace)
+          && this.importTable.get(nameSpace).stream().anyMatch(x -> x.equals(id))) {
+        Reporter.INSTANCE.addWarning(
+            new WarningUser(
+                pos,
+                importedModule
+                    + " attempted to be loaded multiple times in namespace "
+                    + nameSpace));
+        return false;
+      } else {
+        this.importTable.computeIfAbsent(nameSpace, k -> new ArrayList()).add(id);
+        return true;
+      }
+    } else {
+      return true;
+    }
   }
 
   protected void resolveSMImports() {
@@ -32,6 +50,7 @@ public class SMImports extends SMSigs {
         resolvedSigParamValues = emptyList();
         for (Qname sigName : id.sigParamValues) {
           List<Qname> possibleMatches = this.sigQnameMatches(sigName);
+          // System.out.println(possibleMatches);
           if (possibleMatches.size() != 1) {
             throw AlloyModelError.ambiguousSigRef(id.pos, sigName.toString());
           } else {
