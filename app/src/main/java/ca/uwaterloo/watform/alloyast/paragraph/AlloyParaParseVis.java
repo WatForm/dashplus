@@ -51,7 +51,7 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
     String fileName = exprParseVis.visit(ctx.qname(0)).toString();
     AlloyFile importedAlloyFile;
     if (fileName.startsWith("util/")) {
-      importedAlloyFile = parseUtilFile(new Pos(ctx), fileName);
+      importedAlloyFile = parseImport(new Pos(ctx), fileName);
     } else {
       String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
       importedAlloyFile = alloyParse(fullFileName);

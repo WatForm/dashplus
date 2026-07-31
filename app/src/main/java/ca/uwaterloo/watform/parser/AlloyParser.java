@@ -53,6 +53,7 @@ public class AlloyParser {
    * @return
    */
   public static AlloyFile alloyParse(String fullFileName) {
+    // expects .als extension is in fullFileName
     Path filePath = Paths.get(fullFileName);
     if (!fullFileName.endsWith(".als") && !fullFileName.endsWith(".dsh")) {
       throw new Reporter.ErrorUser("File extension must be .dsh or .als");
@@ -73,7 +74,7 @@ public class AlloyParser {
     } else {
       // TODO: that string should not be hardcoded
       // this is where the util files are store in the jar
-      String fileName = "models/" + utilFileName + ".als";
+      String fileName = "models/" + utilFileName;
       // System.out.println(fileName);
       InputStream in = Parser.class.getClassLoader().getResourceAsStream(fileName);
       // InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
