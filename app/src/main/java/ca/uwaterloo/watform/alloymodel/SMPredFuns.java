@@ -86,13 +86,15 @@ public class SMPredFuns extends SMFields {
   private Set<Qname> collectUsedPredFuns(AlloyExpr expr) {
     if (expr instanceof AlloyQnameExpr) {
       List<Qname> possibleMatches =
-          this.predFunQnameMatches(unknownQname(((AlloyQnameExpr) expr).getName()));
+          this.predFunQnameMatches(
+              unknownQname(((AlloyQnameExpr) expr).getName()), this.limitedNameSpace);
       return listToSet(possibleMatches);
     } else {
       return emptySet();
     }
   }
 
+  private String limitedNameSpace;
   private Set<Qname> resolved = new HashSet<>();
   private Set<Qname> visiting = new HashSet<>();
   private TriFunction<AlloyExpr, String, Optional<String>, ResolveInfo> resolve1;
@@ -137,8 +139,10 @@ public class SMPredFuns extends SMFields {
     visiting.add(qname);
 
     PredFunData predFunData = this.predFunTable.get(qname).get(0);
+    // filter by this nameSpace
+    this.limitedNameSpace = qname.nameSpace;
     for (Qname dep : getDepsVis.visit(predFunData.body)) {
-      // recursive call
+      // recursive call: depth first
       this.resolvePredFunData(dep);
     }
 
@@ -166,6 +170,9 @@ public class SMPredFuns extends SMFields {
 
     // 2) resolve the body of the pred/fun defn
     // args should have arity now
+    // System.out.println(mapBy(predFunData.argInfoList, x -> x.decl));
+    System.out.println(qname);
+    System.out.println(predFunData.body);
     ResolveInfo bodyResolveInfo =
         resolve2.apply(
             predFunData.body,
@@ -221,6 +228,18 @@ public class SMPredFuns extends SMFields {
                 q.name.equals(qname.name)
                     & (q.nameSpace.equals(qname.nameSpace)
                         || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
+        .toList();
+  }
+
+  // if unknown only consider matches within a certain nameSpace
+  public List<Qname> predFunQnameMatches(Qname qname, String limitedNameSpace) {
+    return this.predFunTable.keySet().stream()
+        .filter(
+            q ->
+                q.name.equals(qname.name)
+                    & (q.nameSpace.equals(qname.nameSpace)
+                        || (qname.nameSpace.equals(UNKNOWN_NAMESPACE)
+                            & q.nameSpace.equals(limitedNameSpace))))
         .toList();
   }
 

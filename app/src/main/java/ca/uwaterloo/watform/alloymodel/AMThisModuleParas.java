@@ -18,6 +18,7 @@ public class AMThisModuleParas extends AMThisImportParas {
   public AMThisModuleParas() {}
 
   protected AMThisModuleParas(AMThisModuleParas other) {
+    // System.out.println("here90");
     super(other);
     this.modules = new ArrayList<AlloyModulePara>(other.modules);
   }

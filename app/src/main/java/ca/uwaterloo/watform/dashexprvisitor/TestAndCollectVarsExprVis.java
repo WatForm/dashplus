@@ -3,7 +3,7 @@
 
 */
 
-package ca.uwaterloo.watform.exprvisitor;
+package ca.uwaterloo.watform.dashexprvisitor;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -12,12 +12,11 @@ import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import java.util.*;
 import java.util.function.Function;
 
-public class TestAndCollectVarsExprVis implements AlloyExprVis<Set<String>> {
+public class TestAndCollectVarsExprVis implements DashExprVis<Set<String>> {
 
   private Function<AlloyExpr, Boolean> test;
 

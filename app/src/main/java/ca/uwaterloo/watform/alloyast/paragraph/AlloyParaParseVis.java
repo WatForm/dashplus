@@ -48,7 +48,7 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   // ====================================================================================
   @Override
   public AlloyImportPara visitImportPara(DashParser.ImportParaContext ctx) {
-    String fileName = exprParseVis.visit(ctx.qname(0)).toString() + ".als";
+    String fileName = exprParseVis.visit(ctx.qname(0)).toString();
     AlloyFile importedAlloyFile;
     if (fileName.startsWith("util/")) {
       importedAlloyFile = parseUtilFile(new Pos(ctx), fileName);

@@ -109,11 +109,11 @@ public class AMThisSigParas extends AMThisEnumParas {
     if (p.rel.isPresent()) {
       if (p.rel.get() instanceof AlloySigPara.Extends e) {
         // this includes one sigs because they are extensions
-        sd.extendsParent = Optional.of(nameSpaceQname(nameSpace, e.sigRef.getName()));
+        sd.extendsParent = Optional.of(unknownQname(e.sigRef.getName()));
         sd.inParents = emptyList();
       } else if (p.rel.get() instanceof AlloySigPara.In e) {
         sd.extendsParent = Optional.empty();
-        sd.inParents = mapBy(e.sigRefs, s -> nameSpaceQname(nameSpace, s.getName()));
+        sd.inParents = mapBy(e.sigRefs, s -> unknownQname(s.getName()));
         if (p.quals.contains(AlloySigPara.Qual.ABSTRACT)) {
           throw AlloyModelError.subsetSigsCannotBeAbstrast(p.pos, p.toString());
         }
@@ -124,7 +124,7 @@ public class AMThisSigParas extends AMThisEnumParas {
         // fact { A = B + C }
         // it is not extends
         sd.extendsParent = Optional.empty();
-        sd.inParents = mapBy(e.sigRefs, s -> nameSpaceQname(nameSpace, s.getName()));
+        sd.inParents = mapBy(e.sigRefs, s -> unknownQname(s.getName()));
       } else {
         sd.isTopLevelSig = true;
       }
@@ -188,7 +188,7 @@ public class AMThisSigParas extends AMThisEnumParas {
         AlloyAllVars(
             AlloyDecl(THIS_VAR, AlloyQtEnum.ONE, sigParent.toAlloyExpr(expr.pos, Kind.SIG)),
             newExpr);
-    System.out.println(e);
+    // System.out.println(e);
     return e;
   }
 

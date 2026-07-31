@@ -12,7 +12,7 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.*;
 import ca.uwaterloo.watform.alloyexprvisitor.ReplaceExprVis;
-// import ca.uwaterloo.watform.dashast.DashState;
+import java.util.*;
 import java.util.function.Function;
 
 public class TestAndReplaceExprParaVis implements AlloyParaVis<AlloyPara> {
@@ -25,7 +25,29 @@ public class TestAndReplaceExprParaVis implements AlloyParaVis<AlloyPara> {
   }
 
   public AlloyPara visit(AlloySigPara sigPara) {
-    return sigPara.rebuild(
+    // X may need to be replaced in "extends X" or "in X"
+
+    AlloySigPara.Rel newRel = null;
+    if (sigPara.rel.isPresent()) {
+
+      if (sigPara.rel.get() instanceof AlloySigPara.Extends e) {
+        newRel =
+            new AlloySigPara.Extends(((AlloySigRefExpr) testAndReplaceExprVis.visit(e.sigRef)));
+      } else if (sigPara.rel.get() instanceof AlloySigPara.In e) {
+        newRel =
+            new AlloySigPara.In(
+                mapBy(e.sigRefs, x -> ((AlloySigRefExpr) testAndReplaceExprVis.visit(x))));
+      } else if (sigPara.rel.get() instanceof AlloySigPara.Equal e) {
+        newRel =
+            new AlloySigPara.Equal(
+                mapBy(e.sigRefs, x -> ((AlloySigRefExpr) testAndReplaceExprVis.visit(x))));
+      }
+    }
+    return new AlloySigPara(
+        sigPara.pos,
+        sigPara.quals,
+        sigPara.qnames,
+        newRel,
         mapBy(sigPara.fields, f -> ((AlloyDecl) testAndReplaceExprVis.visit(f))),
         ((AlloyBlock) sigPara.block.map(b -> testAndReplaceExprVis.visit(b)).orElse(null)));
   }

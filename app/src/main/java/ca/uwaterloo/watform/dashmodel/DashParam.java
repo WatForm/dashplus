@@ -28,12 +28,11 @@ import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
-import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.utils.*;
 
-public class DashParam extends AlloyExpr {
+public class DashParam {
 
   public final String stateName;
   public final String paramSig;
@@ -43,12 +42,12 @@ public class DashParam extends AlloyExpr {
     // NADTODO is DashParam only ever created and never parsed?
     // super();
     // does not have a pos of origin
-    super(Pos.UNKNOWN);
+    // super(Pos.UNKNOWN);
     this.stateName = stateName; // fqn
     this.paramSig = paramSig;
   }
 
-  @Override
+  // @Override
   public void pp(PrintContext pCtx) {
     // pCtx.append(stateName);
     pCtx.append(paramSig);
@@ -76,14 +75,16 @@ public class DashParam extends AlloyExpr {
         this.asIndexValue(), AlloyQtEnum.ONE, this.asWholeSet());
   }
 
+  /*
   @Override
   public <T> T accept(AlloyExprVis<T> visitor) {
     return visitor.visit(this);
     // throw ImplementationError.methodShouldNotBeCalled("DashParam/accept for AlloyExprVis
     // "+this.getClass());
   }
+  */
 
-  @Override
+  // @Override
   public int getPrec() {
     return AlloyExpr.NO_PAREN;
   }

@@ -18,14 +18,13 @@ import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.AlloyUnaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
-import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.dashref.*;
 import java.util.Set;
 
 // Void (rather than void) because Void is a class, but then all methods must return null
 
-public class CollectDashRefVis implements AlloyExprVis<Void> {
+public class CollectDashRefVis implements DashExprVis<Void> {
 
   Set<DashRef> x = emptySet();
 

@@ -4,6 +4,7 @@
 
 package ca.uwaterloo.watform.alloymodel;
 
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
 import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.parser.AlloyParser.*;
@@ -39,6 +40,21 @@ public class AMThisImportParas extends AMThisCmdParas {
     this.addSMPara(importPara, THIS_NAMESPACE);
     this.imports.add(importPara);
   }
+
+  private Boolean testForThis(AlloyExpr q) {
+    return (q instanceof AlloyQnameExpr
+        && ((AlloyQnameExpr) q).vars.size() == 2
+        && ((AlloyQnameExpr) q).vars.get(0) instanceof AlloyThisExpr);
+  }
+
+  private AlloyQnameExpr replaceThis(AlloyExpr q) {
+    return AlloyVar(
+        q.pos,
+        List.of(this.importNameSpace, ((AlloyQnameExpr) q).vars.get(1).getName()),
+        ((AlloyQnameExpr) q).kind);
+  }
+
+  private String importNameSpace;
 
   private void addSMPara(AlloyImportPara importPara, String nameSpace) {
     /*
@@ -86,24 +102,35 @@ public class AMThisImportParas extends AMThisCmdParas {
       }
     }
 
+    // add all the paragraphs in the namespace
+
+    if (importPara.asQname.isPresent())
+      // open name[A, B] as X -> X
+      this.importNameSpace = importPara.asQname.get().getName();
+    else {
+      // without and 'as X', the namespace is the string after then last "/"
+      // according to chatgpt
+      String fullName = importPara.qname.getName();
+      this.importNameSpace = fullName.substring(fullName.lastIndexOf("/") + 1);
+    }
+
     // 2)
     // replace modArg name with value to substitute in all paragraphs
-    TestAndReplaceExprParaVis vis =
+    TestAndReplaceExprParaVis vis1 =
         new TestAndReplaceExprParaVis(
             e -> substMap.keySet().contains(e), e -> ((AlloyExpr) substMap.get(e)));
+    TestAndReplaceExprParaVis vis2 =
+        new TestAndReplaceExprParaVis(x -> testForThis(x), x -> replaceThis(x));
     List<AlloyPara> importParas =
         extractItemsNotOfClass(importPara.importedFile.paras, AlloyCmdPara.class);
     importParas = extractItemsNotOfClass(importParas, AlloyModulePara.class);
     List<AlloyPara> newParas = emptyList();
+    // this.importnameSpace = importNameSpace;
     for (AlloyPara para : importParas) {
-      newParas.add(vis.visit(para));
+      newParas.add(vis2.visit(vis1.visit(para)));
     }
+    // System.out.println(newParas);
 
-    String importNameSpace = THIS_NAMESPACE;
-
-    // add all the paragraphs in the namespace
-    // open name[A, B] as X -> X
-    if (importPara.asQname.isPresent()) importNameSpace = importPara.asQname.get().getName();
     this.createImport(
         importPara.pos,
         importNameSpace,
@@ -113,8 +140,10 @@ public class AMThisImportParas extends AMThisCmdParas {
     for (AlloyPara alloyPara : newParas) {
       // only added to SM (not AMThis)
       if (alloyPara instanceof AlloyEnumPara p) addSMPara(p, importNameSpace);
-      else if (alloyPara instanceof AlloySigPara p) addSMPara(p, importNameSpace);
-      else if (alloyPara instanceof AlloyPredPara p) addSMPara(p, importNameSpace);
+      else if (alloyPara instanceof AlloySigPara p) {
+        // System.out.println(p);
+        addSMPara(p, importNameSpace);
+      } else if (alloyPara instanceof AlloyPredPara p) addSMPara(p, importNameSpace);
       else if (alloyPara instanceof AlloyFunPara p) addSMPara(p, importNameSpace);
       else if (alloyPara instanceof AlloyFactPara p) addSMPara(p, importNameSpace);
       else if (alloyPara instanceof AlloyAssertPara p) addSMPara(p, importNameSpace);

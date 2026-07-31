@@ -24,6 +24,7 @@ public class AMThisEnumParas extends SMResolve {
   protected AMThisEnumParas() {}
 
   protected AMThisEnumParas(AMThisEnumParas other) {
+    super(other);
     this.enums = new ArrayList<AlloyEnumPara>(other.enums);
   }
 

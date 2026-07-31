@@ -79,7 +79,7 @@ public class GeneralUtil {
     return new ArrayList<T>(ll);
   }
 
-  public static void myprint(String s) {
+  public static void debugprint(String s) {
     // debugging output
     // this won't work unless a string is passed to myprint
     // so myprint(2) won't work

@@ -48,16 +48,44 @@ public class SMSigs {
     reqNonNull(nullField(p, this), qname, sd);
     assert (qname.nameSpace != UNKNOWN_NAMESPACE);
     // nameSpace + sig is unique
-    if (!this.sigTable.containsKey(qname)) this.sigTable.put(qname, sd);
-    else throw AlloyModelError.duplicateSigName(p, qname.fullName());
+    if (!this.sigTable.containsKey(qname)) {
+      this.sigTable.put(qname, sd);
+    } else throw AlloyModelError.duplicateSigName(p, qname.fullName());
   }
 
   // resolve
 
   protected void resolveSMSigs() {
 
+    // have to resolve parent names for sigs
+    for (Qname sigQname : this.allSigQnames()) {
+      SigData sd = this.sigTable.get(sigQname);
+      List<Qname> resolvedInParents = emptyList();
+      for (Qname parentQname : sd.inParents) {
+        if (this.sigQnameMatches(parentQname).size() == 1) {
+          resolvedInParents.add(this.sigQnameMatches(parentQname).get(0));
+        } else if (this.sigQnameMatches(parentQname).size() == 0) {
+          throw AlloyModelError.unknownName(sd.pos, parentQname.toString());
+        } else {
+          throw AlloyModelError.nameCouldBeMultipleSigs(sd.pos, parentQname.toString());
+        }
+      }
+      sd.inParents = resolvedInParents;
+      if (sd.extendsParent.isPresent()) {
+        Qname parentQname = sd.extendsParent.get();
+        if (this.sigQnameMatches(parentQname).size() == 1) {
+          sd.extendsParent = Optional.of(this.sigQnameMatches(parentQname).get(0));
+        } else if (this.sigQnameMatches(parentQname).size() == 0) {
+          throw AlloyModelError.unknownName(sd.pos, parentQname.toString());
+        } else {
+          throw AlloyModelError.nameCouldBeMultipleSigs(sd.pos, parentQname.toString());
+        }
+      }
+    }
+
     // now that all sigs are in the sigTable
     // get the child links set up
+    // this will all be with already resolved names
     this.setChildren();
 
     // done after all sigs and enums are added
@@ -140,7 +168,7 @@ public class SMSigs {
   }
 
   // gives their full names
-  private List<Qname> allSigQnames() {
+  public List<Qname> allSigQnames() {
     return setToList(this.sigTable.keySet());
   }
 
@@ -249,5 +277,6 @@ public class SMSigs {
     for (Map.Entry<Qname, SigData> entry : sigTable.entrySet()) {
       sb.append("  ").append(entry.getKey()).append(" -> ").append(entry.getValue()).append('\n');
     }
+    System.out.println(sb.toString() + "\n");
   }
 }

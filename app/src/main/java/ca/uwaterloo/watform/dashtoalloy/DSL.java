@@ -23,8 +23,8 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.dashref.*;
+import ca.uwaterloo.watform.dashexprvisitor.TestAndCollectVarsExprVis;
 import ca.uwaterloo.watform.dashmodel.DashParam;
-import ca.uwaterloo.watform.exprvisitor.TestAndCollectVarsExprVis;
 import java.util.*;
 import java.util.function.Function;
 

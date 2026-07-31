@@ -39,7 +39,7 @@ public class ImplementationError extends DashPlusException {
   }
 
   public static ImplementationError shouldNotReach() throws ImplementationError {
-    return new ImplementationError("should not be called reach this point");
+    return new ImplementationError("should not reach this point");
   }
 
   public static ImplementationError notSupported() throws ImplementationError {

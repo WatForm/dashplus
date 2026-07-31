@@ -45,7 +45,7 @@ public class SMResolve extends SMCmds {
   }
 
   public void debug() {
-    System.out.println(this.toString());
+    // System.out.println(this.toString());
     debugSMSigs();
     debugSMImports();
     debugSMFields();
@@ -153,8 +153,11 @@ public class SMResolve extends SMCmds {
     }
 
     private Optional<Integer> localLookup(Qname qname) {
+      // System.out.println(localArities);
       for (Map.Entry<Qname, Optional<Integer>> entry : localArities) {
-        if (entry.getKey().equals(qname)) {
+        Qname q = entry.getKey();
+        if (q.name.equals(qname.name)
+            & (qname.nameSpace.equals(UNKNOWN_NAMESPACE) || q.nameSpace.equals(qname.nameSpace))) {
           return entry.getValue(); // first match = most recent
         }
       }
@@ -167,7 +170,7 @@ public class SMResolve extends SMCmds {
     public void localEnvPush(List<AlloyDecl> decls) {
       for (AlloyDecl d : decls) {
         ResolveInfo dResult = this.visit(d.expr);
-        localPush(nameSpaceQname(SMResolve.this.nameSpace, d.getName()), dResult.arity);
+        localPush(nameSpaceQname(LOCAL_NAMESPACE, d.getName()), dResult.arity);
       }
     }
 
@@ -952,7 +955,7 @@ public class SMResolve extends SMCmds {
           }
         }
         // it is not already resolved
-        Optional<Integer> x = localLookup(thisQname(varExpr.getName()));
+        Optional<Integer> x = localLookup(unknownQname(varExpr.getName()));
         if (x.isPresent()) return new ResolveInfo(x, varExpr);
         // this qname may have UNKNOWN_NAMESPACE in it and should only be used for lookups
         Qname qname = unknownQname(varExpr.getName());
@@ -1037,6 +1040,7 @@ public class SMResolve extends SMCmds {
               throw AssumptionError.thisNotAllowed(varExpr.pos, varExpr.toString());
           case AlloyPredTotOrdExpr q ->
               new ResolveInfo(List.of(ONE_ARITY, ONE_ARITY, TWO_ARITY), ONE_ARITY, varExpr);
+          case AlloyNumExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           // TODO: fix this! it does not cover enough cases
           default -> {
             System.out.println(varExpr.toString());

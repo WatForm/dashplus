@@ -23,6 +23,7 @@ public class DashToAlloy extends StutterD2A {
 
     // copy all Alloy stuff from dm into am
     this.am = dm.copy();
+
     // System.out.println(this.am);
 
     if (this.dm.hasConcurrency())
@@ -83,7 +84,13 @@ public class DashToAlloy extends StutterD2A {
     this.addCompleteBigSteps();
     this.addEnoughOps();
     // System.out.println(this.am);
+    System.out.println("---");
+    System.out.println("Before resolve");
+    am.debug();
     this.am.resolve();
+    System.out.println("---");
+    System.out.println("After resolve");
+    am.debug();
     return this.am;
   }
 

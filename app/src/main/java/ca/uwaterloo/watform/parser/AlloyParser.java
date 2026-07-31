@@ -61,18 +61,19 @@ public class AlloyParser {
     try {
       input = CharStreams.fromPath(filePath);
     } catch (IOException ioException) {
-      throw new Reporter.ErrorUser("Input file cannotF be found. ");
+      throw new Reporter.ErrorUser("Input file cannot be found. ");
     }
     return alloyParseFromCharStream(input, fullFileName);
   }
 
   public static AlloyFile parseUtilFile(Pos pos, String utilFileName) {
+    // System.out.println("Imported: " + utilFileName);
     if (!utilFileName.startsWith("util/")) {
       throw ParserError.notUtilFile(pos, utilFileName);
     } else {
       // TODO: that string should not be hardcoded
       // this is where the util files are store in the jar
-      String fileName = "models/" + utilFileName;
+      String fileName = "models/" + utilFileName + ".als";
       // System.out.println(fileName);
       InputStream in = Parser.class.getClassLoader().getResourceAsStream(fileName);
       // InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
@@ -82,6 +83,7 @@ public class AlloyParser {
         // creation of an AlloyFile checks that there is only one modulePara
         // in the AlloyFile
         AlloyFile importedAlloyFile = alloyParseFromCharStream(input, fileName);
+        // System.out.println("Imported: " + fileName);
         // System.out.println(importedAlloyFile);
         return importedAlloyFile;
       } catch (IOException e) {
@@ -149,10 +151,10 @@ public class AlloyParser {
   public static AlloyFile parseImport(Pos pos, String fileName) {
     AlloyFile importedAlloyFile;
     if (fileName.startsWith("util/")) {
-      importedAlloyFile = parseUtilFile(pos, fileName);
+      importedAlloyFile = parseUtilFile(pos, fileName + ".als");
     } else {
       String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
-      importedAlloyFile = alloyParse(fullFileName);
+      importedAlloyFile = alloyParse(fullFileName + ".als");
     }
     return importedAlloyFile;
   }

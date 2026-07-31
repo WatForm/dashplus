@@ -88,6 +88,7 @@ public class Qname {
 
   protected static String UNKNOWN_NAMESPACE = "?";
   public static String THIS_NAMESPACE = AlloyStrings.THIS;
+  public static String LOCAL_NAMESPACE = "local";
 
   protected static String[] splitAtLastSlash(String s) {
     int i = s.lastIndexOf('/');

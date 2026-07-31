@@ -33,6 +33,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
 
   protected AMThisCmdParas(AMThisCmdParas other) {
     super(other);
+
     this.cmds = new ArrayList<AlloyCmdPara>(other.cmds);
   }
 

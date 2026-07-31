@@ -1,6 +1,11 @@
 /*
-    Apply test to each expression. If test is true, return result of "replace" function.
-    Otherwise, spply visitors to subexpressions and return rebuild
+  Extends alloyexprvisitor/ReplaceExprVis with a method for DashRef
+
+  Has to include implements DashExprVis to get correct visit default
+  for accept.
+
+  Apply test to each expression. If test is true, return result of "replace" function.
+  Otherwise, apply visitors to subexpressions and return rebuild
 	expressions.
 
 	If nothing here is overwritten, it will return
@@ -21,7 +26,7 @@ import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import java.util.*;
 import java.util.function.Function;
 
-public class DashReplaceExprVis extends ReplaceExprVis {
+public class DashReplaceExprVis extends ReplaceExprVis implements DashExprVis<AlloyExpr> {
 
   public DashReplaceExprVis(
       Function<AlloyExpr, Boolean> test, Function<AlloyExpr, AlloyExpr> replace) {

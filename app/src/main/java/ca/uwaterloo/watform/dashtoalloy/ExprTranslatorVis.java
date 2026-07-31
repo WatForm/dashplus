@@ -14,13 +14,13 @@ import ca.uwaterloo.watform.alloyast.expr.binary.AlloyBinaryExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.dashref.DashRef;
+import ca.uwaterloo.watform.dashexprvisitor.DashExprVis;
 import ca.uwaterloo.watform.dashmodel.DashModel;
 import java.util.List;
 
-public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
+public class ExprTranslatorVis implements DashExprVis<AlloyExpr> {
 
   private boolean onlyGetName = false;
   private boolean isElectrum;
@@ -60,7 +60,7 @@ public class ExprTranslatorVis implements AlloyExprVis<AlloyExpr> {
 
   // visitor
 
-  // no need to override
+  @Override
   public AlloyExpr visit(DashRef dashRef) {
 
     // DashRef var has an attribute that means isCur or isNext

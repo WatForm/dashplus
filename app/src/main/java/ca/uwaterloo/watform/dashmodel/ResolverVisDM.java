@@ -39,11 +39,11 @@ import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyVarExpr;
-import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.*;
 import ca.uwaterloo.watform.dashast.DashStrings;
 import ca.uwaterloo.watform.dashast.DashStrings.DashRefKind;
 import ca.uwaterloo.watform.dashast.dashref.*;
+import ca.uwaterloo.watform.dashexprvisitor.DashExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExpr> {
+public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr> {
 
   // these bits of state are used throughout the
   // visit functions with the same values
@@ -504,12 +504,13 @@ public class ResolverVisDM extends InitializeDM implements AlloyExprVis<AlloyExp
     return decl.rebuild(this.visit(decl.expr));
   }
 
+  // @Override
   public AlloyExpr visit(AlloyParenExpr parenExpr) {
     return new AlloyParenExpr(parenExpr.pos, this.visit(parenExpr.sub));
   }
   ;
 
-  // does not override anything
+  // does not override anything in AlloyExprVis because DashRef is an extension
   public AlloyExpr visit(DashRef dashRef) {
     // can exist in parsing from x[a,b] or x[a,b]/v
     // name might not be fully resolved

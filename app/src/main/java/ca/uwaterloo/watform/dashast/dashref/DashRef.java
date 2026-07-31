@@ -34,7 +34,9 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.dashast.DashFQN;
 import ca.uwaterloo.watform.dashast.DashStrings;
+import ca.uwaterloo.watform.dashexprvisitor.DashExprVis;
 import ca.uwaterloo.watform.utils.*;
+import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -123,8 +125,19 @@ public abstract class DashRef extends AlloyExpr {
 
   @Override
   public <T> T accept(AlloyExprVis<T> visitor) {
+
+    if (visitor instanceof DashExprVis) return ((DashExprVis<T>) visitor).visit(this);
+    else
+      // we never want dashref considered for an AlloyExprVis
+      throw ImplementationError.shouldNotReach();
+  }
+
+  /*
+  // no override needed b/c this is for DashExprVis
+  public <T> T accept(DashExprVis<T> visitor) {
     return visitor.visit(this);
   }
+  */
 
   public abstract DashStrings.DashRefKind kind();
 
