@@ -170,11 +170,11 @@ public class TransPostD2A extends TransTestIfNextStableD2A {
       List<DashParam> params = this.dm.params(x);
       AlloyExpr left = this.dsl.curJoinVar(x);
       AlloyExpr right = this.dsl.nextJoinVar(x);
-      for (DashParam dp : params) {
-        left = AlloyJoin(dp.asWholeSet(), left);
-        right = AlloyJoin(dp.asWholeSet(), right);
-      }
-      // p3.p2.p1.s.x = p3.p2.p1.s'.x
+      //for (DashParam dp : params) {
+      //  left = AlloyJoin(dp.asWholeSet(), left);
+      //  right = AlloyJoin(dp.asWholeSet(), right);
+      //}
+      // s.x = s'.x
       body.add(AlloyEqual(left, right));
     }
 
