@@ -37,7 +37,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
     this.cmds = new ArrayList<AlloyCmdPara>(other.cmds);
   }
 
-  protected void addSMPara(AlloyCmdPara cmdPara, String nameSpace) {
+  protected Integer addSMPara(AlloyCmdPara cmdPara, String nameSpace) {
     AlloyCmdPara.CommandDecl cmdDecl = cmdPara.cmdDecls.get(0);
     Qname qname;
     if (cmdDecl.declQname.isPresent()) {
@@ -52,7 +52,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
                   : "run$" + Integer.toString(cmdNum));
     }
 
-    this.createCmd(qname, cmdDeclCmdData(cmdDecl));
+    return this.createCmd(qname, cmdDeclCmdData(cmdDecl));
   }
 
   /*
@@ -62,9 +62,9 @@ public class AMThisCmdParas extends AMThisAssertParas {
   }
   */
 
-  public void addPara(AlloyCmdPara cmdPara) {
-    addSMPara(cmdPara, THIS_NAMESPACE);
+  public Integer addPara(AlloyCmdPara cmdPara) {
     this.cmds.add(cmdPara);
+    return addSMPara(cmdPara, THIS_NAMESPACE);
   }
 
   public CmdData cmdDeclCmdData(CommandDecl cmdDecl) {
@@ -116,12 +116,12 @@ public class AMThisCmdParas extends AMThisAssertParas {
     return cd;
   }
 
-  public void addCmdDecl(AlloyCmdPara.CommandDecl cmdDecl) {
-    this.addPara(new AlloyCmdPara(List.of(cmdDecl)));
+  public Integer addCmdDecl(AlloyCmdPara.CommandDecl cmdDecl) {
+    return this.addPara(new AlloyCmdPara(List.of(cmdDecl)));
   }
 
   // TODO: return index of cmd added
-  public void addCmd(
+  public Integer addCmd(
       CmdType cmdType, AlloyExpr expr, Integer defaultScope, HashMap<Qname, SigScope> scopes) {
     // it seems a bit wrong to turn this into a cmd decl only
     // to turn the CommandDecl back to CmdData
@@ -141,7 +141,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
     Scope s = new Scope(new AlloyNumExpr(defaultScope), typeScopes);
     // no cmd name (null)
     // no invoQname (null)
-    this.addCmdDecl(new CommandDecl(cmdType, null, null, new AlloyBlock(expr), s));
+    return this.addCmdDecl(new CommandDecl(cmdType, null, null, new AlloyBlock(expr), s));
   }
 
   public List<AlloyCmdPara> allCmdParas() {

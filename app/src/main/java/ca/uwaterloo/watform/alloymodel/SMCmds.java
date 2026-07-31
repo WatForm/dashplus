@@ -54,13 +54,15 @@ public class SMCmds extends SMConstraints {
     }
   }
 
-  protected void createCmd(Qname qname, CmdData cmdData) {
+  protected Integer createCmd(Qname qname, CmdData cmdData) {
     if (this.cmdTable.keySet().contains(qname)) {
       // this is allowed in AA
       throw AssumptionError.cmdNameMustBeUnique(cmdData.pos, qname.toString());
     } else {
       this.cmdTable.put(qname, cmdData);
     }
+    // return the command number
+    return this.cmdTable.keySet().size();
   }
 
   // import [exactly A] in the ordering module
