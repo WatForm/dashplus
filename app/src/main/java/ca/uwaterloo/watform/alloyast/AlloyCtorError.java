@@ -89,6 +89,12 @@ public class AlloyCtorError extends UserOrImplError {
     throw new AlloyCtorError(pos, "Cannot specify a bitwidth greater than 30");
   }
 
+  // FunPara
+
+  public static AlloyCtorError funBlockMustHaveOneExpr(Pos pos) {
+    throw new AlloyCtorError(pos, "Function definition must have exactly one expression in it");
+  }
+
   // ====================================================================================
   // Decl
   // ====================================================================================

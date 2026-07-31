@@ -4,6 +4,7 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -49,6 +50,9 @@ public final class AlloyFunPara extends AlloyPara {
         this.mul,
         this.sub,
         this.block);
+    if (this.block.exprs.size() != 1) {
+      throw AlloyCtorError.funBlockMustHaveOneExpr(pos);
+    }
   }
 
   public AlloyFunPara(
