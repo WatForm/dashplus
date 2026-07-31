@@ -169,14 +169,16 @@ public class SMResolve extends SMCmds {
     // it has local decls
     public void localEnvPush(List<AlloyDecl> decls) {
       for (AlloyDecl d : decls) {
-        ResolveInfo dResult = this.visit(d.expr);
-        localPush(nameSpaceQname(LOCAL_NAMESPACE, d.getName()), dResult.arity);
+        for (AlloyDecl dd : d.expand()) {
+          ResolveInfo dResult = this.visit(dd.expr);
+          localPush(nameSpaceQname(LOCAL_NAMESPACE, dd.getName()), dResult.arity);
+        }
       }
     }
 
     public void localEnvPop(List<AlloyDecl> decls) {
       for (AlloyDecl d : decls) {
-        localPop();
+        for (AlloyDecl dd : d.expand()) localPop();
       }
     }
 
@@ -763,18 +765,20 @@ public class SMResolve extends SMCmds {
       List<AlloyDecl> newDecls = new ArrayList<AlloyDecl>();
       // these decls can never be an empty list
       for (AlloyDecl d : comprehensionExpr.decls) {
-        ResolveInfo dResult = this.visit(d.expr);
-        // System.out.println(d.expr.getClass().getName());
-        // System.out.println(dResult.exp.getClass().getName());
-        if (!dResult.arity.equals(ONE_ARITY)) {
-          throw AlloyModelError.mustBeUnary(d.pos, d.toString());
+        for (AlloyDecl dd : d.expand()) {
+          ResolveInfo dResult = this.visit(dd.expr);
+          // System.out.println(d.expr.getClass().getName());
+          // System.out.println(dResult.exp.getClass().getName());
+          if (!dResult.arity.equals(ONE_ARITY)) {
+            throw AlloyModelError.mustBeUnary(dd.pos, dd.toString());
+          }
+          if (dd.mul.isPresent() && !dd.mul.get().equals(AlloyQtEnum.ONE)) {
+            throw AlloyModelError.mulOfDeclMustBeOne(dd.pos, dd.toString());
+          }
+          declsArity += 1;
+          newDecls.add(dd.rebuild(AlloyQtEnum.ONE, dResult.exp));
+          localPush(nameSpaceQname(SMResolve.this.nameSpace, dd.getName()), dResult.arity);
         }
-        if (d.mul.isPresent() && !d.mul.get().equals(AlloyQtEnum.ONE)) {
-          throw AlloyModelError.mulOfDeclMustBeOne(d.pos, d.toString());
-        }
-        declsArity += 1;
-        newDecls.add(d.rebuild(AlloyQtEnum.ONE, dResult.exp));
-        localPush(nameSpaceQname(SMResolve.this.nameSpace, d.getName()), dResult.arity);
       }
 
       AlloyExpr bodyExpr;
@@ -793,7 +797,7 @@ public class SMResolve extends SMCmds {
 
       // take them off the stack
       for (AlloyDecl d : comprehensionExpr.decls) {
-        localPop();
+        for (AlloyDecl dd : d.expand()) localPop();
       }
       return new ResolveInfo(
           Optional.of(declsArity), new AlloyCphExpr(comprehensionExpr.pos, newDecls, bodyExpr));
