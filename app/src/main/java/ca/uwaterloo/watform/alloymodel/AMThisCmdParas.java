@@ -37,7 +37,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
     this.cmds = new ArrayList<AlloyCmdPara>(other.cmds);
   }
 
-  protected Integer addSMPara(AlloyCmdPara cmdPara, String nameSpace) {
+  private Integer addSMPara(AlloyCmdPara cmdPara, String nameSpace) {
     AlloyCmdPara.CommandDecl cmdDecl = cmdPara.cmdDecls.get(0);
     Qname qname;
     if (cmdDecl.declQname.isPresent()) {
@@ -64,7 +64,14 @@ public class AMThisCmdParas extends AMThisAssertParas {
 
   public Integer addPara(AlloyCmdPara cmdPara) {
     this.cmds.add(cmdPara);
-    return addSMPara(cmdPara, THIS_NAMESPACE);
+    Integer cmdNum = addSMPara(cmdPara, THIS_NAMESPACE);
+    // bit of a hack to handle cases where not creating SM for testing
+    // but saves us from modifying this later when createSM is turned on
+    if (this.createSM) {
+      return cmdNum;
+    } else {
+      return this.cmds.size();
+    }
   }
 
   public CmdData cmdDeclCmdData(CommandDecl cmdDecl) {

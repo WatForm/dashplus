@@ -1,5 +1,5 @@
 package ca.uwaterloo.watform.alloymodel;
 
 public class SMBase {
-  protected Boolean createSM = false;
+  protected Boolean createSM = true;
 }

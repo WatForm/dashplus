@@ -8,6 +8,8 @@
 
 package ca.uwaterloo.watform.alloyinterface;
 
+import static ca.uwaterloo.watform.alloyinterface.Instance.*;
+import static ca.uwaterloo.watform.alloyinterface.Solution.*;
 import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -62,15 +64,18 @@ public class AlloyInterface {
     A4Solution ans =
         TranslateAlloyToKodkod.execute_command(
             rep, alloy.getAllReachableSigs(), cmd, new A4Options());
-
-    StringWriter sw = new StringWriter();
-    PrintWriter pw = new PrintWriter(sw);
-    ans.writeXML(pw, alloy.getAllFunc(), Collections.emptyMap());
-    pw.flush();
-    String xml = sw.toString();
-
     dpOutput("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
-    return new Solution(ans, alloy);
+    if (ans.satisfiable()) {
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      ans.writeXML(pw, alloy.getAllFunc(), Collections.emptyMap());
+      pw.flush();
+      String xml = sw.toString();
+      System.out.println(xml);
+      return SatSolution(new Instance(xml));
+    } else {
+      return UnsatSolution();
+    }
   }
 
   public static Solution executeCommand(AlloyModel am, int cmdnum) {
