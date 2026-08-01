@@ -6,9 +6,11 @@
 package ca.uwaterloo.watform.alloyinterface;
 
 import static ca.uwaterloo.watform.alloymodel.Qname.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloymodel.Qname;
+import ca.uwaterloo.watform.utils.ImplementationError;
 import java.io.StringReader;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -41,6 +43,13 @@ public class Instance {
       atomSet.add(alloyName(atomLabel));
     }
     return atomSet;
+  }
+
+  private Qname getQnameOf(Integer id) {
+    for (Qname qname : this.sigs.keySet()) {
+      if (this.sigs.get(qname).id == id) return qname;
+    }
+    throw ImplementationError.shouldNotReach();
   }
 
   public Instance(String xml) {
@@ -83,6 +92,14 @@ public class Instance {
           this.sigs.put(qname, new SigValue(getAtoms(sig), id, parentId));
         }
       }
+      // set extendsChildren attribute
+      for (Qname q : this.sigs.keySet()) {
+        if (this.sigs.get(q).parentId != null) {
+          this.sigs.get(getQnameOf(this.sigs.get(q).parentId)).addExtendsChild(q);
+        }
+      }
+
+      // fields
       NodeList fields = doc.getElementsByTagName("field");
       for (int i = 0; i < fields.getLength(); i++) {
         Element field = (Element) fields.item(i);
@@ -151,8 +168,22 @@ public class Instance {
     this.minInt = minInt;
   }
 
-  protected void addSigValue(Qname qname, Set<String> values) {
-    assert (this.sigs.containsKey(qname));
+  public Set<List<String>> getAllValues(Qname qname) {
+    // qname could be a sig or a field
+    // if a sig, collect
+    if (qname.isFieldQname() && this.fields.keySet().contains(qname)) {
+      return this.fields.get(qname).values();
+    } else if (this.sigs.keySet().contains(qname)) {
+      Set<List<String>> ret = this.fields.get(qname).values();
+      // recursion ends when no children
+      for (Qname k : this.sigs.get(qname).extendsChildren()) {
+        ret.addAll(getAllValues(k));
+      }
+      return ret;
+    } else {
+      // can't just return emptySet() b/c a found qname could be empty
+      throw ImplementationError.shouldNotReach();
+    }
   }
 
   protected void instanceChecks() {
@@ -161,7 +192,15 @@ public class Instance {
     // minInt must be smaller than maxInt
   }
 
-  public record SigValue(Set<String> values, Integer id, Integer parentId) {
+  public record SigValue(
+      Set<String> values, Integer id, Integer parentId, List<Qname> extendsChildren) {
+    public SigValue(Set<String> values, Integer id, Integer parentId) {
+      this(values, id, parentId, emptyList());
+    }
+
+    public void addExtendsChild(Qname qname) {
+      this.extendsChildren.add(qname);
+    }
     // parentId might be null if subset sig
   }
 

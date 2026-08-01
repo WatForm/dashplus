@@ -108,24 +108,6 @@ public class Qname {
     return parts[1];
   }
 
-  /*
-  public static Qname thisQname(String s) {
-      return new Qname(THIS_NAMESPACE, s);
-  }
-
-
-  public static Qname Qname(String name) {
-      return new Qname(name);
-  }
-
-  public static Qname Qname(String nameSpace, String name) {
-      return new Qname(nameSpace, name);
-  }
-
-  public static Qname Qname(String nameSpace, String sigParent, String name) {
-      return new Qname(nameSpace, sigParent, name);
-  }
-  */
   public boolean isUnknownNameSpace() {
     return this.nameSpace.equals(UNKNOWN_NAMESPACE);
   }
@@ -161,23 +143,13 @@ public class Qname {
     }
   }
 
+  public Boolean isFieldQname() {
+    return this.sigParent != null;
+  }
+
   public AlloyExpr toAlloyExpr(Kind k) {
     return this.toAlloyExpr(Pos.UNKNOWN, k);
   }
-
-  /*
-  public static AlloyQnameExpr SigVar(Pos p, List<String> names) {
-    return new AlloyQnameExpr(p, mapBy(names, v -> new AlloyNameExpr(v)), Kind.SIG);
-  }
-
-  public static AlloyQnameExpr FieldVar(Pos p, List<String> names) {
-    return new AlloyQnameExpr(p, mapBy(names, v -> new AlloyNameExpr(v)), Kind.FIELD);
-  }
-
-  public static AlloyQnameExpr PredFunVar(Pos p, List<String> names) {
-    return new AlloyQnameExpr(p, mapBy(names, v -> new AlloyNameExpr(v)), Kind.PREDFUN);
-  }
-  */
 
   @Override
   public String toString() {
@@ -216,18 +188,4 @@ public class Qname {
                         || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
         .toList();
   }
-  /*
-  public static AlloyQnameExpr SigVar(Pos p, List<String> names) {
-      return new AlloyQnameExpr(p, mapBy(names, v -> new AlloyQnameExpr(v)), Kind.SIG);
-  }
-
-  public static AlloyQnameExpr FieldVar(Pos p, List<String> names) {
-      return new AlloyQnameExpr(p, mapBy(names, v -> new AlloyQnameExpr(v)), Kind.FIELD);
-  }
-
-  public static AlloyQnameExpr PredFunVar(Pos p, List<String> names) {
-      return new AlloyQnameExpr(p, mapBy(names, v -> new AlloyQnameExpr(v)), Kind.PREDFUN);
-  }
-  */
-
 }
