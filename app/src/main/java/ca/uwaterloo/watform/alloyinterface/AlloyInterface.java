@@ -23,6 +23,8 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 public class AlloyInterface {
@@ -60,6 +62,12 @@ public class AlloyInterface {
     A4Solution ans =
         TranslateAlloyToKodkod.execute_command(
             rep, alloy.getAllReachableSigs(), cmd, new A4Options());
+
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    ans.writeXML(pw, alloy.getAllFunc(), Collections.emptyMap());
+    pw.flush();
+    String xml = sw.toString();
 
     dpOutput("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
     return new Solution(ans, alloy);

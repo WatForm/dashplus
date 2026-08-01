@@ -57,14 +57,16 @@ public class SMResolve extends SMCmds {
   // 2) resolve -- this is top-level resolve in all classes
 
   public void resolve() {
-    // order here matters
-    this.resolveSMSigs(); // includes resolving sigs passed to imports
-    this.resolveSMImports(); // check sig names substituted for parameters
-    // will be used in expressions
-    this.resolveSMFields(this::resolve1);
-    this.resolveSMPredFuns(this::resolve1, this::resolve2);
-    this.resolveSMConstraints(this::resolve2);
-    this.resolveSMCmds(this::resolve2);
+    if (this.createSM) {
+      // order here matters
+      this.resolveSMSigs(); // includes resolving sigs passed to imports
+      this.resolveSMImports(); // check sig names substituted for parameters
+      // will be used in expressions
+      this.resolveSMFields(this::resolve1);
+      this.resolveSMPredFuns(this::resolve1, this::resolve2);
+      this.resolveSMConstraints(this::resolve2);
+      this.resolveSMCmds(this::resolve2);
+    }
   }
 
   // 3) definitions of resolve1 and resolve2 -----------------------------------
