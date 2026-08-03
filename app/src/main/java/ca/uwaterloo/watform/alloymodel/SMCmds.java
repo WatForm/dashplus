@@ -190,7 +190,7 @@ public class SMCmds extends SMConstraints {
   }
 
   // indexed from 0
-  private CmdData getCmdNum(int n) {
+  public CmdData getCmdNum(int n) {
     existsCmd(n);
     return new ArrayList<>(this.cmdTable.values()).get(n);
   }
