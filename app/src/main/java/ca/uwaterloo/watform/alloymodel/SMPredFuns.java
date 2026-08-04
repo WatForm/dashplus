@@ -362,11 +362,11 @@ public class SMPredFuns extends SMFields {
           throw AlloyModelImplError.tryingToAccessNonExistentPredFun(predFunName);
       }
   }
-
-  public Integer numArgs(Qname predFunName) {
-      existsPredFun(predFunName);
-      return this.predFunTable.get(predFunName).argInfoList.size();
-  }
   */
 
+  public Integer numArgs(Qname predFunName) {
+    exists(predFunName);
+    // KENG: this chooses the first one
+    return this.predFunTable.get(predFunName).get(0).argInfoList.size();
+  }
 }

@@ -4,12 +4,13 @@ import java.util.*;
 
 public class Solution {
   // public Optional<CmdDecl> cmd;
-  public Optional<Instance> instance;
-  public Boolean isSat;
+  public final Optional<Instance> instance;
+  public final Boolean isSat;
 
   private Solution(Instance instance, Boolean isSat) {
     assert ((instance == null && !isSat) || (instance != null && isSat));
     this.instance = (instance == null) ? Optional.empty() : Optional.of(instance);
+    this.isSat = isSat;
   }
 
   public static Solution UnsatSolution() {
