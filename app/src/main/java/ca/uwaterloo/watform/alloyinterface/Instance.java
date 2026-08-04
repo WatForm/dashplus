@@ -207,6 +207,14 @@ public class Instance {
   // we might add types later?
   public record FieldValue(Set<List<String>> values) {}
 
+  public Set<Qname> allSigNames() {
+    return this.sigs.keySet();
+  }
+
+  public Set<Qname> allFieldNames() {
+    return this.fields.keySet();
+  }
+
   public void debugInstance() {
     System.out.println("Instance:");
     System.out.println("Min int " + this.minInt);
