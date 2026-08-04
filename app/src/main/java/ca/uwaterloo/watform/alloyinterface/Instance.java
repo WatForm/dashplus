@@ -25,6 +25,7 @@ public class Instance {
   private Map<Qname, FieldValue> fields = new HashMap<>();
   private Integer maxInt;
   private Integer minInt;
+  private Integer seqInt;
 
   private static String alloyName(String name) {
     if (name.contains("$")) {
@@ -60,18 +61,24 @@ public class Instance {
 
       NodeList instance = doc.getElementsByTagName("instance");
       // expect only one instance
+
       Integer bitwidth = Integer.parseInt(((Element) instance.item(0)).getAttribute("bitwidth"));
       this.minInt = -(1 << (bitwidth - 1)); // 2^(bitWidth-1)
       this.maxInt = (1 << (bitwidth - 1)) - 1; // 2^(bitWidth-1) - 1
+
+      // a positive number (greater than 0?)
+      this.seqInt = Integer.parseInt(((Element) instance.item(0)).getAttribute("maxseq"));
+
       NodeList sigs = doc.getElementsByTagName("sig");
       Qname qname;
       for (int i = 0; i < sigs.getLength(); i++) {
         Element sig = (Element) sigs.item(i);
         String label = sig.getAttribute("label");
-        if (label.equals("Int") || (label.equals("univ"))) {
-          // TODO: not sure how to handle this
-          // possibly just ignore?  what about univ?
+        if (label.equals("Int") || label.equals("seq/Int")) {
+          // ignore
         } else {
+          // this handles univ/String also
+          // univ has no parentID
           Integer id = Integer.parseInt(sig.getAttribute("ID"));
           Integer parentId;
           if (sig.getAttribute("parentID") != "") {
@@ -223,10 +230,15 @@ public class Instance {
     return this.maxInt;
   }
 
+  public Integer seqInt() {
+    return this.seqInt;
+  }
+
   public void debugInstance() {
     System.out.println("Instance:");
-    System.out.println("Min int " + this.minInt);
-    System.out.println("Max int " + this.maxInt);
+    System.out.println("Min int: " + this.minInt);
+    System.out.println("Max int: " + this.maxInt);
+    System.out.println("Seq int: " + this.seqInt);
     System.out.println("Sigs");
     for (Qname qname : this.sigs.keySet()) {
       System.out.println(qname + " -> " + this.sigs.get(qname));
