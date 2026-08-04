@@ -1,7 +1,6 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
-import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
@@ -64,7 +63,7 @@ public class BoilerplateA2T extends BaseA2T {
 
     tlaModel.addComment("translation macros", verbose);
 
-    List<TlaVar> setVars = mapBy(alloyModel.topLevelSigs(), s -> TlaVar(tlaQnameSig(s)));
+    List<TlaVar> setVars = mapBy(alloyModel.topLevelSigs(), s -> TlaVar(s));
 
     tlaModel.addDefn(univ(setVars));
     tlaModel.addDefn(none());
