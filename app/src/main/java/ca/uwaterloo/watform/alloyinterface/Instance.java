@@ -175,18 +175,27 @@ public class Instance {
     this.minInt = minInt;
   }
 
-  public Set<List<String>> getAllValues(Qname qname) {
+  public Set<String> getAllSigValues(Qname qname) {
+
+    if (this.sigs.keySet().contains(qname)) {
+      Set<String> ret = this.sigs.get(qname).values();
+
+      // recursion ends when no children
+      for (Qname k : this.sigs.get(qname).extendsChildren()) {
+        ret.addAll(getAllSigValues(k));
+      }
+      return ret;
+    } else {
+      // can't just return emptySet() b/c a found qname could be empty
+      throw ImplementationError.shouldNotReach();
+    }
+  }
+
+  public Set<List<String>> getAllFieldValues(Qname qname) {
     // qname could be a sig or a field
     // if a sig, collect
     if (qname.isFieldQname() && this.fields.keySet().contains(qname)) {
       return this.fields.get(qname).values();
-    } else if (this.sigs.keySet().contains(qname)) {
-      Set<List<String>> ret = this.fields.get(qname).values();
-      // recursion ends when no children
-      for (Qname k : this.sigs.get(qname).extendsChildren()) {
-        ret.addAll(getAllValues(k));
-      }
-      return ret;
     } else {
       // can't just return emptySet() b/c a found qname could be empty
       throw ImplementationError.shouldNotReach();
@@ -239,13 +248,15 @@ public class Instance {
     System.out.println("Min int: " + this.minInt);
     System.out.println("Max int: " + this.maxInt);
     System.out.println("Seq int: " + this.seqInt);
-    System.out.println("Sigs");
+    System.out.println("Sigs:");
     for (Qname qname : this.sigs.keySet()) {
       System.out.println(qname + " -> " + this.sigs.get(qname));
     }
-    System.out.println("Fields");
+    System.out.println("Fields:");
     for (Qname qname : this.fields.keySet()) {
       System.out.println(qname + " -> " + this.fields.get(qname));
     }
+    System.out.println("All values:");
+    System.out.println(this.getAllSigValues(thisQname("univ")));
   }
 }

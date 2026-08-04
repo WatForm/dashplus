@@ -169,7 +169,7 @@ public class Qname {
       return false;
     }
     return Objects.equals(nameSpace, other.nameSpace)
-        && Objects.equals(sigParent, other.sigParent)
+        && Objects.equals(sigParent, other.sigParent) // could both be null
         && Objects.equals(name, other.name);
   }
 
