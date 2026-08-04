@@ -11,6 +11,7 @@ import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
@@ -41,6 +42,12 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
   public AlloyToTlaExprVis(AlloyModel am, Logger l) {
     this.l = l;
     this.am = am;
+  }
+
+  @Override
+  public Result visit(DashRef dashRef) {
+
+    throw ImplementationError.notSupported("dashref inside pure AlloyVis");
   }
 
   public Result translateDot(AlloyDotExpr e) {
@@ -139,8 +146,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
     if (!am.allPreds().contains(exp.label)) return new TlaExpResult(TlaAppl(exp.label));
 
-    // TODO FIX THIS
-    int numArgs = 4; // am.numArgs(exp.label);
+    int numArgs = am.numArgs(exp.label);
 
     l.info("translating macro " + exp.label + " with " + numArgs + " args ");
 

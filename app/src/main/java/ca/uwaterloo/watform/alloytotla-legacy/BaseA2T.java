@@ -1,8 +1,8 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
-import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaSet;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaStringLiteral;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.TlaTuple;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
@@ -25,7 +25,15 @@ public class BaseA2T {
   public final Logger l;
   public final AlloyToTlaExprVis translator;
 
+<<<<<<< HEAD
+    public record Optimization(boolean exactScope, boolean customOrdering, boolean oneField, boolean oneSig) {};
+
+    public final Optimization optimization;
+
+    public final StringBuilder transcript;
+=======
   public final StringBuilder transcript;
+>>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
 
   public TlaExp translateSnippet(AlloyExpr e) {
     return translator.extract(translator.visit(e));
@@ -55,7 +63,7 @@ public class BaseA2T {
   */
 
   protected TlaStringLiteral sigAtomString(String signame, int n) {
-    return TlaStringLiteral(signame + DOLLAR + n);
+    return TlaStringLiteral(signame + AlloyToTlaStrings.DOLLAR + n);
   }
 
   protected TlaTuple sigAtom(String signame, int n) {
@@ -85,6 +93,17 @@ public class BaseA2T {
 
   */
 
+<<<<<<< HEAD
+    public BaseA2T(AlloyModel alloyModel, boolean verbose, boolean debug, Optimization optimization) {
+        this.alloyModel = alloyModel;
+        this.verbose = verbose;
+        this.debug = debug;
+        this.l = CustomLoggerFactory.make("AlloyToTla", debug);
+        this.translator = new AlloyToTlaExprVis(alloyModel, l);
+        this.transcript = new StringBuilder("");
+        this.optimization = optimization;
+    }
+=======
   /*
   public (AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
   	super(alloyModel, moduleName, verbose, debug);
@@ -94,6 +113,7 @@ public class BaseA2T {
   	super(alloyModel,verbose, debug);
   	translate();
   }
+>>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
 
   public void translate()
   {
