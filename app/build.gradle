@@ -70,7 +70,8 @@ def tools = [
             'ca/uwaterloo/watform/dashtotla/**',
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/tlaast/**',
-            'ca/uwaterloo/watform/tlamodel/**'
+            'ca/uwaterloo/watform/tlamodel/**',
+            'ca/uwaterloo/watform/alloytotla-legacy/**'
         ]
     ],
     dashtoalloy: [
@@ -83,7 +84,8 @@ def tools = [
             'ca/uwaterloo/watform/dpalloy/**',
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/tlaast/**',
-            'ca/uwaterloo/watform/tlamodel/**'
+            'ca/uwaterloo/watform/tlamodel/**',
+            'ca/uwaterloo/watform/alloytotla-legacy/**'
         ]
     ],
     alloytotla: [
