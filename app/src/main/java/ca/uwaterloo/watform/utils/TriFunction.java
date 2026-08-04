@@ -2,5 +2,5 @@ package ca.uwaterloo.watform.utils;
 
 @FunctionalInterface
 public interface TriFunction<T, U, V, R> {
-    R apply(T t, U u, V v);
+  R apply(T t, U u, V v);
 }

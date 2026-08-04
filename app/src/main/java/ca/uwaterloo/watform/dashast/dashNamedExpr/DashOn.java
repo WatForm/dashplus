@@ -8,12 +8,12 @@ import ca.uwaterloo.watform.utils.*;
 
 public class DashOn extends DashNamedExpr implements DashTransItem {
 
-    public DashOn(Pos pos, AlloyExpr e) {
-        super(pos, e);
-    }
+  public DashOn(Pos pos, AlloyExpr e) {
+    super(pos, e);
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        super.pp(pCtx, onName);
-    }
+  @Override
+  public void pp(PrintContext pCtx) {
+    super.pp(pCtx, onName);
+  }
 }

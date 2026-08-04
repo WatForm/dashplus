@@ -4,18 +4,18 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaProductSet extends TlaInfixBinOp {
 
-    /*
-    S1 \X S2
+  /*
+  S1 \X S2
 
-    Cartesian product
-    */
+  Cartesian product
+  */
 
-    public TlaProductSet(TlaExp operandOne, TlaExp operandTwo) {
-        super(
-                TlaStrings.SET_PRODUCT,
-                operandOne,
-                operandTwo,
-                TlaOperator.Associativity.UNSAFE,
-                PrecedenceGroup.SET_OPERATORS);
-    }
+  public TlaProductSet(TlaExp operandOne, TlaExp operandTwo) {
+    super(
+        TlaStrings.SET_PRODUCT,
+        operandOne,
+        operandTwo,
+        TlaOperator.Associativity.UNSAFE,
+        PrecedenceGroup.SET_OPERATORS);
+  }
 }

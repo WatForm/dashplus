@@ -7,44 +7,44 @@ import java.util.List;
 
 public class TlaAppl extends TlaOperator {
 
-    /*
-    G(arg1,arg2...) == exp
-    F == G(exp1,exp2...)
+  /*
+  G(arg1,arg2...) == exp
+  F == G(exp1,exp2...)
 
-    Here, G(exp1,exp2...) is represented by this node
-    G is the name
-    (exp1,exp2...) is params
-    */
+  Here, G(exp1,exp2...) is represented by this node
+  G is the name
+  (exp1,exp2...) is params
+  */
 
-    public final String name;
-    public final List<? extends TlaExp> params;
+  public final String name;
+  public final List<? extends TlaExp> params;
 
-    public TlaAppl(String name, List<? extends TlaExp> params) {
-        super(TlaOperator.Associativity.IRRELEVANT, TlaOperator.PrecedenceGroup.SAFE);
-        this.name = name;
-        this.params = Collections.unmodifiableList(params);
+  public TlaAppl(String name, List<? extends TlaExp> params) {
+    super(TlaOperator.Associativity.IRRELEVANT, TlaOperator.PrecedenceGroup.SAFE);
+    this.name = name;
+    this.params = Collections.unmodifiableList(params);
+  }
+
+  public TlaAppl(String name) {
+    this(name, new ArrayList<>());
+  }
+
+  public List<TlaExp> getChildren() {
+    return GeneralUtil.mapBy(this.params, x -> x);
+  }
+
+  @Override
+  public String toTLAPlusSnippetCore() {
+    int n = this.params.size();
+    if (n == 0) return this.name;
+
+    StringBuilder sb = new StringBuilder();
+    sb.append(this.name + TlaStrings.BRACKET_OPEN);
+    for (int i = 0; i < n; i++) {
+      sb.append(this.getTLASnippetOfChild(this.params.get(i)));
+      if (i != n - 1) sb.append(TlaStrings.COMMA);
     }
-
-    public TlaAppl(String name) {
-        this(name, new ArrayList<>());
-    }
-
-    public List<TlaExp> getChildren() {
-        return GeneralUtil.mapBy(this.params, x -> x);
-    }
-
-    @Override
-    public String toTLAPlusSnippetCore() {
-        int n = this.params.size();
-        if (n == 0) return this.name;
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.name + TlaStrings.BRACKET_OPEN);
-        for (int i = 0; i < n; i++) {
-            sb.append(this.getTLASnippetOfChild(this.params.get(i)));
-            if (i != n - 1) sb.append(TlaStrings.COMMA);
-        }
-        sb.append(TlaStrings.BRACKET_CLOSE);
-        return sb.toString();
-    }
+    sb.append(TlaStrings.BRACKET_CLOSE);
+    return sb.toString();
+  }
 }

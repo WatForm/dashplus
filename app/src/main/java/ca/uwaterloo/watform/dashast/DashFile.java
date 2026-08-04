@@ -9,29 +9,29 @@ import ca.uwaterloo.watform.utils.PrintContext;
 import java.util.List;
 
 public final class DashFile extends AlloyFile {
-    public final DashState stateRoot;
+  public final DashState stateRoot;
 
-    public DashFile(Pos pos, List<AlloyPara> paragraphs) {
-        super(pos, filterBy(paragraphs, alloyPara -> !(alloyPara instanceof DashPara)));
-        List<DashPara> dashParas = extractItemsOfClass(paragraphs, DashPara.class);
-        if (1 != dashParas.size()) {
-            System.out.println(dashParas);
-            throw DashASTError.exactlyOneStateRoot();
-        }
-        this.stateRoot = (DashState) dashParas.get(0);
+  public DashFile(Pos pos, List<AlloyPara> paragraphs) {
+    super(pos, filterBy(paragraphs, alloyPara -> !(alloyPara instanceof DashPara)));
+    List<DashPara> dashParas = extractItemsOfClass(paragraphs, DashPara.class);
+    if (1 != dashParas.size()) {
+      System.out.println(dashParas);
+      throw DashASTError.exactlyOneStateRoot();
     }
+    this.stateRoot = (DashState) dashParas.get(0);
+  }
 
-    public DashFile(List<AlloyPara> paragraphs) {
-        this(Pos.UNKNOWN, paragraphs);
-    }
+  public DashFile(List<AlloyPara> paragraphs) {
+    this(Pos.UNKNOWN, paragraphs);
+  }
 
-    public List<AlloyPara> getAlloyParas() {
-        return super.paras;
-    }
+  public List<AlloyPara> getAlloyParas() {
+    return super.paras;
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        super.pp(pCtx);
-        stateRoot.pp(pCtx);
-    }
+  @Override
+  public void pp(PrintContext pCtx) {
+    super.pp(pCtx);
+    stateRoot.pp(pCtx);
+  }
 }

@@ -9,64 +9,64 @@ import java.util.*;
 
 public class FieldData {
 
-    // since these are changed after initialization
-    // they have getters and setters
-    protected AlloyExpr expr;
-    // everything will get a fieldArity after resolve
-    protected Optional<Integer> arity = UNKNOWN_ARITY;
-    protected List<Qname> product = emptyList();
+  // since these are changed after initialization
+  // they have getters and setters
+  protected AlloyExpr expr;
+  // everything will get a fieldArity after resolve
+  protected Optional<Integer> arity = UNKNOWN_ARITY;
+  protected List<Qname> product = emptyList();
 
-    // eventually we could add something about its basic type
+  // eventually we could add something about its basic type
 
-    protected FieldData(AlloyExpr fieldExpr) {
-        this.expr = fieldExpr;
-    }
+  protected FieldData(AlloyExpr fieldExpr) {
+    this.expr = fieldExpr;
+  }
 
-    @Override
-    public String toString() {
-        return expr
-                + ","
-                + "arity="
-                + (arity.isPresent() ? Integer.toString(arity.get()) : "?")
-                + ", "
-                + product
-                + '}';
-    }
+  @Override
+  public String toString() {
+    return expr
+        + ","
+        + "arity="
+        + (arity.isPresent() ? Integer.toString(arity.get()) : "?")
+        + ", "
+        + product
+        + '}';
+  }
 
-    // setters
+  // setters
 
-    /*
-    public void setFieldArity(Optional<Integer> a) {
-        this.arity = a;
-    }
+  /*
+  public void setFieldArity(Optional<Integer> a) {
+      this.arity = a;
+  }
 
-    public void setFieldExpr(AlloyExpr exp) {
-        this.expr = exp;
-    }
+  public void setFieldExpr(AlloyExpr exp) {
+      this.expr = exp;
+  }
 
-    public void setIsResolved() {
-        this.isResolved = true;
-    }
-    */
+  public void setIsResolved() {
+      this.isResolved = true;
+  }
+  */
 
-    /*
-    public AlloyExpr fieldExpr() {
-        return this.fieldExpr;
-    }
+  /*
+  public AlloyExpr fieldExpr() {
+      return this.fieldExpr;
+  }
 
-    public Optional<Integer> fieldArity() {
-        return this.fieldArity;
-    }
+  public Optional<Integer> fieldArity() {
+      return this.fieldArity;
+  }
 
-    public List<Qname> fieldProductExpr() {
-        // TODO: walk over arrows and o/w throw errors
-        assert (this.isResolved);
-        return this.productExpr;
-    }
+  public List<Qname> fieldProductExpr() {
+      // TODO: walk over arrows and o/w throw errors
+      assert (this.isResolved);
+      return this.productExpr;
+  }
 
-    public Boolean isResolved() {
-        return this.isResolved;
-    }
-    */
+  public Boolean isResolved() {
+      return this.isResolved;
+  }
+  */
 
 }

@@ -5,11 +5,11 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 
 public class TlaTrue extends TlaSimpleExp {
 
-    /*
-    TRUE
-    */
+  /*
+  TRUE
+  */
 
-    public TlaTrue() {
-        super(TlaStrings.TRUE);
-    }
+  public TlaTrue() {
+    super(TlaStrings.TRUE);
+  }
 }

@@ -11,23 +11,23 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.List;
 
 public class EventDefns {
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+  public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        if (!dashModel.hasEvents()) return;
+    if (!dashModel.hasEvents()) return;
 
-        List<String> eventFQNs = dashModel.allEventNames();
+    List<String> eventFQNs = dashModel.allEventNames();
 
-        // _<event-name> == "<event-name>"
-        eventFQNs.forEach(eFQN -> tlaModel.addDefn(TlaDefn(tlaFQN(eFQN), TlaStringLiteral(eFQN))));
+    // _<event-name> == "<event-name>"
+    eventFQNs.forEach(eFQN -> tlaModel.addDefn(TlaDefn(tlaFQN(eFQN), TlaStringLiteral(eFQN))));
 
-        List<TlaAppl> envEvents = mapBy(dashModel.allEnvEvents(), eFQN -> TlaAppl(tlaFQN(eFQN)));
+    List<TlaAppl> envEvents = mapBy(dashModel.allEnvEvents(), eFQN -> TlaAppl(tlaFQN(eFQN)));
 
-        // _environmental_events == {_<env-event-name-i>...}
-        tlaModel.addDefn(TlaDefn(ENVIRONMENTAL_EVENTS, TlaSet(envEvents)));
+    // _environmental_events == {_<env-event-name-i>...}
+    tlaModel.addDefn(TlaDefn(ENVIRONMENTAL_EVENTS, TlaSet(envEvents)));
 
-        List<TlaAppl> intEvents = mapBy(dashModel.allIntEvents(), eFQN -> TlaAppl(tlaFQN(eFQN)));
+    List<TlaAppl> intEvents = mapBy(dashModel.allIntEvents(), eFQN -> TlaAppl(tlaFQN(eFQN)));
 
-        // _internal_events == {_<int-event-name-i>...}
-        tlaModel.addDefn(TlaDefn(INTERNAL_EVENTS, TlaSet(intEvents)));
-    }
+    // _internal_events == {_<int-event-name-i>...}
+    tlaModel.addDefn(TlaDefn(INTERNAL_EVENTS, TlaSet(intEvents)));
+  }
 }

@@ -5,13 +5,13 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 
 public class TlaBoolean extends TlaSimpleExp {
 
-    /*
-    BOOLEAN
+  /*
+  BOOLEAN
 
-    (this is a constant that is equal to {TRUE,FALSE})
-    */
+  (this is a constant that is equal to {TRUE,FALSE})
+  */
 
-    public TlaBoolean() {
-        super(TlaStrings.BOOLEAN);
-    }
+  public TlaBoolean() {
+    super(TlaStrings.BOOLEAN);
+  }
 }

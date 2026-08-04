@@ -13,41 +13,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InitDefn {
-    public static void translate(DashModel dashModel, TlaModel tlaModel, boolean singleEnvInput) {
+  public static void translate(DashModel dashModel, TlaModel tlaModel, boolean singleEnvInput) {
 
-        List<TlaExp> exps = new ArrayList<>();
+    List<TlaExp> exps = new ArrayList<>();
 
-        exps.add(VALID_UNPRIMED());
+    exps.add(VALID_UNPRIMED());
 
-        exps.add(
-                // _trans_taken = _none_transition
-                TRANS_TAKEN().EQUALS(NONE_TRANSITION()));
+    exps.add(
+        // _trans_taken = _none_transition
+        TRANS_TAKEN().EQUALS(NONE_TRANSITION()));
 
-        if (!dashModel.hasOnlyOneState()) {
-            List<TlaAppl> initialStates =
-                    mapBy(dashModel.rootLeafStatesEntered(), ref -> TlaAppl(tlaFQN(ref.name)));
+    if (!dashModel.hasOnlyOneState()) {
+      List<TlaAppl> initialStates =
+          mapBy(dashModel.rootLeafStatesEntered(), ref -> TlaAppl(tlaFQN(ref.name)));
 
-            exps.add(
-                    // conf = union <initial states>...
-                    CONF().EQUALS(repeatedUnion(initialStates)));
-        }
-
-        if (dashModel.hasConcurrency()) {
-            exps.add(
-                    // stable = TRUE
-                    STABLE().EQUALS(TlaTrue()));
-            exps.add(
-                    // scopes_used = {}
-                    SCOPES_USED().EQUALS(TlaNullSet()));
-        }
-
-        if (dashModel.hasEvents()) {
-            exps.add(
-                    // _events \intersect _internal_events = {}
-                    EVENTS().INTERSECTION(INTERNAL_EVENTS()).EQUALS(TlaNullSet()));
-            if (singleEnvInput) exps.add(SINGLE_ENV_INPUT());
-        }
-
-        tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
+      exps.add(
+          // conf = union <initial states>...
+          CONF().EQUALS(repeatedUnion(initialStates)));
     }
+
+    if (dashModel.hasConcurrency()) {
+      exps.add(
+          // stable = TRUE
+          STABLE().EQUALS(TlaTrue()));
+      exps.add(
+          // scopes_used = {}
+          SCOPES_USED().EQUALS(TlaNullSet()));
+    }
+
+    if (dashModel.hasEvents()) {
+      exps.add(
+          // _events \intersect _internal_events = {}
+          EVENTS().INTERSECTION(INTERNAL_EVENTS()).EQUALS(TlaNullSet()));
+      if (singleEnvInput) exps.add(SINGLE_ENV_INPUT());
+    }
+
+    tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
+  }
 }

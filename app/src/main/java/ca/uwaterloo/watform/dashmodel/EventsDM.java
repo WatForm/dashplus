@@ -18,180 +18,180 @@ import java.util.List;
 
 public class EventsDM extends VarsBuffersDM {
 
-    protected HashMap<String, EventEntry> et = new HashMap<String, EventEntry>();
+  protected HashMap<String, EventEntry> et = new HashMap<String, EventEntry>();
 
-    protected EventsDM() {
-        super();
+  protected EventsDM() {
+    super();
+  }
+
+  protected EventsDM(DashFile d) {
+    super(d);
+  }
+
+  /*
+  protected boolean equal(BuffersDM other) {
+      return
+          boolean check =
+              equals(this.super(), other.super()) &&
+              this.bt.keySet() == other.bt.keySet();
+          if (!check) return false;
+          for (String efqn: this.et.keySet()) {
+              if (!equal(this.et.get(efqn), other.et.get(efqn)))
+                  return false;
+          }
+          return true;
+  }
+  */
+
+  // individual event non-complex getters
+
+  public boolean isEnvEvent(String efqn) {
+    // TODO: add errors if efqn not in table
+    return (this.et.get(efqn).kind == IntEnvKind.ENV);
+  }
+
+  public boolean isIntEvent(String efqn) {
+    return (this.et.get(efqn).kind == IntEnvKind.INT);
+  }
+
+  public IntEnvKind eventKind(String efqn) {
+    return this.et.get(efqn).kind;
+  }
+
+  public List<DashParam> eventParams(String efqn) {
+    return this.et.get(efqn).params;
+  }
+
+  // overall getters
+
+  public List<String> allEventNames() {
+    return new ArrayList<String>(this.et.keySet());
+  }
+
+  public boolean hasEvents() {
+    return (!allEventNames().isEmpty());
+  }
+
+  public List<String> allIntEvents() {
+    return filterBy(allEventNames(), i -> this.et.get(i).kind == IntEnvKind.INT);
+  }
+
+  public boolean hasIntEvents() {
+    return !allIntEvents().isEmpty();
+  }
+
+  public List<String> allEnvEvents() {
+    return filterBy(allEventNames(), i -> this.et.get(i).kind == IntEnvKind.ENV);
+  }
+
+  public boolean hasEnvEvents() {
+    return !allEnvEvents().isEmpty();
+  }
+
+  public boolean containsEvent(String efqn) {
+    return this.et.containsKey(efqn);
+  }
+
+  public boolean hasEventsAti(int i) {
+    // at level i
+    for (String e : allEventNames()) {
+      if (eventParams(e).size() == i) return true;
+    }
+    return false;
+  }
+
+  public List<EventDashRef> eventsAti(int i) {
+    // at level i
+    List<EventDashRef> eventsAti = emptyList();
+    for (String e : allEventNames()) {
+      if (eventParams(e).size() == i) eventsAti.add(this.eventAsDashRef(e));
+    }
+    return eventsAti;
+  }
+
+  public boolean hasIntEventsAti(int i) {
+    for (String e : allEventNames()) {
+      if (et.get(e).params.size() == i && isIntEvent(e)) return true;
+    }
+    return false;
+  }
+
+  public boolean hasEnvEventsAti(int i) {
+    for (String e : allEventNames()) {
+      if (eventParams(e).size() == i && isEnvEvent(e)) return true;
+    }
+    return false;
+  }
+
+  // complex getters
+
+  public List<String> eventsOfState(String sfqn) {
+    // return all events _declared_ at the level of this state
+    // will have the sfqn as a prefix
+    // purely based on names
+    return filterBy(allEventNames(), i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn));
+  }
+
+  public List<String> eventsWithinState(String sfqn) {
+    // return all events _declared_ somewhere within this state
+    // will have the sfqn as a prefix
+    // purely based on names
+    return filterBy(allEventNames(), i -> DashFQN.prefix(sfqn, i));
+  }
+
+  public String etToString() {
+    String s = new String("EVENT TABLE\n");
+    for (String k : et.keySet()) {
+      s += " ----- \n";
+      s += k + "\n";
+      s += et.get(k).toString();
+    }
+    return s;
+  }
+
+  public void addEvent(Pos pos, String efqn, IntEnvKind k, List<DashParam> prms) {
+    assert (prms != null);
+    if (et.containsKey(efqn)) {
+      throw DashModelError.duplicateName(pos, "event", efqn);
+    } else if (hasPrime(efqn)) {
+      throw DashModelError.nameShouldNotBePrimed(pos, efqn);
+    } else {
+      et.put(efqn, new EventEntry(pos, k, prms));
+    }
+  }
+
+  public void addEvent(String efqn, IntEnvKind k, List<DashParam> prms) {
+    addEvent(Pos.UNKNOWN, efqn, k, prms);
+  }
+
+  private EventDashRef eventAsDashRef(String ev) {
+    // returns a dash event as a DashRef FORALL parameter values
+    // PID1, PID2 , eventName
+    if (this.containsEvent(ev)) {
+      return new EventDashRef(ev, mapBy(this.eventParams(ev), x -> x.asWholeSet()));
+    } else {
+      throw DashModelError.lookupOfNonExistentEvent(ev);
+    }
+  }
+
+  private class EventEntry {
+    public final Pos pos;
+    public final IntEnvKind kind;
+    public final List<DashParam> params;
+
+    public EventEntry(Pos p, IntEnvKind k, List<DashParam> prms) {
+      assert (p != null);
+      assert (prms != null);
+      this.pos = p;
+      this.kind = k;
+      this.params = prms;
     }
 
-    protected EventsDM(DashFile d) {
-        super(d);
+    public String toString() {
+      String s = new String();
+      s += "kind: " + kind + "\n";
+      s += "params: " + NoneStringIfNeeded(params) + "\n";
+      return s;
     }
-
-    /*
-    protected boolean equal(BuffersDM other) {
-        return
-            boolean check =
-                equals(this.super(), other.super()) &&
-                this.bt.keySet() == other.bt.keySet();
-            if (!check) return false;
-            for (String efqn: this.et.keySet()) {
-                if (!equal(this.et.get(efqn), other.et.get(efqn)))
-                    return false;
-            }
-            return true;
-    }
-    */
-
-    // individual event non-complex getters
-
-    public boolean isEnvEvent(String efqn) {
-        // TODO: add errors if efqn not in table
-        return (this.et.get(efqn).kind == IntEnvKind.ENV);
-    }
-
-    public boolean isIntEvent(String efqn) {
-        return (this.et.get(efqn).kind == IntEnvKind.INT);
-    }
-
-    public IntEnvKind eventKind(String efqn) {
-        return this.et.get(efqn).kind;
-    }
-
-    public List<DashParam> eventParams(String efqn) {
-        return this.et.get(efqn).params;
-    }
-
-    // overall getters
-
-    public List<String> allEventNames() {
-        return new ArrayList<String>(this.et.keySet());
-    }
-
-    public boolean hasEvents() {
-        return (!allEventNames().isEmpty());
-    }
-
-    public List<String> allIntEvents() {
-        return filterBy(allEventNames(), i -> this.et.get(i).kind == IntEnvKind.INT);
-    }
-
-    public boolean hasIntEvents() {
-        return !allIntEvents().isEmpty();
-    }
-
-    public List<String> allEnvEvents() {
-        return filterBy(allEventNames(), i -> this.et.get(i).kind == IntEnvKind.ENV);
-    }
-
-    public boolean hasEnvEvents() {
-        return !allEnvEvents().isEmpty();
-    }
-
-    public boolean containsEvent(String efqn) {
-        return this.et.containsKey(efqn);
-    }
-
-    public boolean hasEventsAti(int i) {
-        // at level i
-        for (String e : allEventNames()) {
-            if (eventParams(e).size() == i) return true;
-        }
-        return false;
-    }
-
-    public List<EventDashRef> eventsAti(int i) {
-        // at level i
-        List<EventDashRef> eventsAti = emptyList();
-        for (String e : allEventNames()) {
-            if (eventParams(e).size() == i) eventsAti.add(this.eventAsDashRef(e));
-        }
-        return eventsAti;
-    }
-
-    public boolean hasIntEventsAti(int i) {
-        for (String e : allEventNames()) {
-            if (et.get(e).params.size() == i && isIntEvent(e)) return true;
-        }
-        return false;
-    }
-
-    public boolean hasEnvEventsAti(int i) {
-        for (String e : allEventNames()) {
-            if (eventParams(e).size() == i && isEnvEvent(e)) return true;
-        }
-        return false;
-    }
-
-    // complex getters
-
-    public List<String> eventsOfState(String sfqn) {
-        // return all events _declared_ at the level of this state
-        // will have the sfqn as a prefix
-        // purely based on names
-        return filterBy(allEventNames(), i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn));
-    }
-
-    public List<String> eventsWithinState(String sfqn) {
-        // return all events _declared_ somewhere within this state
-        // will have the sfqn as a prefix
-        // purely based on names
-        return filterBy(allEventNames(), i -> DashFQN.prefix(sfqn, i));
-    }
-
-    public String etToString() {
-        String s = new String("EVENT TABLE\n");
-        for (String k : et.keySet()) {
-            s += " ----- \n";
-            s += k + "\n";
-            s += et.get(k).toString();
-        }
-        return s;
-    }
-
-    public void addEvent(Pos pos, String efqn, IntEnvKind k, List<DashParam> prms) {
-        assert (prms != null);
-        if (et.containsKey(efqn)) {
-            throw DashModelError.duplicateName(pos, "event", efqn);
-        } else if (hasPrime(efqn)) {
-            throw DashModelError.nameShouldNotBePrimed(pos, efqn);
-        } else {
-            et.put(efqn, new EventEntry(pos, k, prms));
-        }
-    }
-
-    public void addEvent(String efqn, IntEnvKind k, List<DashParam> prms) {
-        addEvent(Pos.UNKNOWN, efqn, k, prms);
-    }
-
-    private EventDashRef eventAsDashRef(String ev) {
-        // returns a dash event as a DashRef FORALL parameter values
-        // PID1, PID2 , eventName
-        if (this.containsEvent(ev)) {
-            return new EventDashRef(ev, mapBy(this.eventParams(ev), x -> x.asWholeSet()));
-        } else {
-            throw DashModelError.lookupOfNonExistentEvent(ev);
-        }
-    }
-
-    private class EventEntry {
-        public final Pos pos;
-        public final IntEnvKind kind;
-        public final List<DashParam> params;
-
-        public EventEntry(Pos p, IntEnvKind k, List<DashParam> prms) {
-            assert (p != null);
-            assert (prms != null);
-            this.pos = p;
-            this.kind = k;
-            this.params = prms;
-        }
-
-        public String toString() {
-            String s = new String();
-            s += "kind: " + kind + "\n";
-            s += "params: " + NoneStringIfNeeded(params) + "\n";
-            return s;
-        }
-    }
+  }
 }

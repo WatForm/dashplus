@@ -18,145 +18,140 @@ import java.util.stream.Collectors;
 
 public class VarsDM extends StatesDM {
 
-    // stores Var, Buffer Decls in a HashMap based on the FQN
+  // stores Var, Buffer Decls in a HashMap based on the FQN
 
-    // LinkedHashMap so order of keySet is consistent
-    // Alloy requires declaration before use for variables
-    private LinkedHashMap<String, VarEntry> vt = new LinkedHashMap<String, VarEntry>();
+  // LinkedHashMap so order of keySet is consistent
+  // Alloy requires declaration before use for variables
+  private LinkedHashMap<String, VarEntry> vt = new LinkedHashMap<String, VarEntry>();
 
-    // private String tableName = "Var"; // TODO this is never used and is not visible anywhere else
+  // private String tableName = "Var"; // TODO this is never used and is not visible anywhere else
 
-    public VarsDM() {
-        super();
+  public VarsDM() {
+    super();
+  }
+
+  public VarsDM(DashFile d) {
+    super(d);
+  }
+
+  // individual var non-complex getters/testers
+
+  public boolean isIntVar(String vfqn) {
+    return (this.vt.get(vfqn).kind == IntEnvKind.INT);
+  }
+
+  public boolean isEnvVar(String vfqn) {
+    return (this.vt.get(vfqn).kind == IntEnvKind.ENV);
+  }
+
+  public IntEnvKind varKind(String vfqn) {
+    return this.vt.get(vfqn).kind;
+  }
+
+  public List<DashParam> varParams(String vfqn) {
+    return this.vt.get(vfqn).params;
+  }
+
+  public AlloyQtEnum mul(String vfqn) {
+    return this.vt.get(vfqn).mul;
+  }
+
+  public AlloyExpr varTyp(String vfqn) {
+    return this.vt.get(vfqn).typ;
+  }
+
+  public void setVarTyp(String vfqn, AlloyExpr t) {
+    this.vt.get(vfqn).typ = t;
+  }
+
+  // group getters/testers
+
+  public List<String> allVarNames() {
+    return new ArrayList<String>(this.vt.keySet());
+  }
+
+  public List<String> allIntVarNames() {
+    List<String> ret = new ArrayList<String>();
+    ret = filterBy(setToList(this.vt.keySet()), x -> this.isIntVar(x));
+    return ret;
+  }
+
+  public boolean hasVars() {
+    return this.vt.isEmpty();
+  }
+
+  public boolean containsVar(String vfqn) {
+    return (this.vt.containsKey(vfqn));
+  }
+
+  public List<String> varsOfState(String sfqn) {
+    // return all events declared in this state
+    // will have the sfqn as a prefix
+    return this.vt.keySet().stream()
+        // prefix of vfqn are state names
+        .filter(i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn))
+        .collect(Collectors.toList());
+  }
+
+  public void addVar(
+      Pos pos, String vfqn, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
+    assert (prms != null);
+    if (this.vt.containsKey(vfqn)) {
+      throw DashModelError.duplicateName(pos, "var", vfqn);
+    } else if (hasPrime(vfqn)) {
+      throw DashModelError.nameShouldNotBePrimed(pos, vfqn);
+    } else {
+      this.vt.put(vfqn, new VarEntry(pos, k, prms, mul, t));
+    }
+  }
+
+  public void addVar(
+      String vfqn, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
+    // System.out.println("added: " + vfqn);
+    addVar(Pos.UNKNOWN, vfqn, k, prms, mul, t);
+  }
+
+  public String vtToString() {
+    String s = new String("VAR TABLE\n");
+    for (String k : vt.keySet()) {
+      s += " ----- \n";
+      s += k + "\n";
+      s += this.vt.get(k).toString();
+    }
+    return s;
+  }
+
+  private class VarEntry {
+
+    public final Pos pos;
+    public final IntEnvKind kind;
+    public final List<DashParam> params;
+    // this is the multiplicity on the arrow from the Snapshot to the element
+    // sig Snapshot {
+    //     x: mul type
+    // }
+
+    public AlloyQtEnum mul;
+    // can't be final because it has to be resolved
+    // after all the vars are in the var table
+    public AlloyExpr typ;
+
+    public VarEntry(Pos p, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
+      assert (prms != null);
+      this.pos = p;
+      this.kind = k;
+      this.params = prms;
+      this.mul = mul;
+      this.typ = t;
     }
 
-    public VarsDM(DashFile d) {
-        super(d);
+    public String toString() {
+      String s = new String();
+      s += "kind: " + kind + "\n";
+      s += "params: " + NoneStringIfNeeded(params) + "\n";
+      s += "mul: " + mul.toString() + "\n";
+      s += "typ: " + typ.toString() + "\n";
+      return s;
     }
-
-    // individual var non-complex getters/testers
-
-    public boolean isIntVar(String vfqn) {
-        return (this.vt.get(vfqn).kind == IntEnvKind.INT);
-    }
-
-    public boolean isEnvVar(String vfqn) {
-        return (this.vt.get(vfqn).kind == IntEnvKind.ENV);
-    }
-
-    public IntEnvKind varKind(String vfqn) {
-        return this.vt.get(vfqn).kind;
-    }
-
-    public List<DashParam> varParams(String vfqn) {
-        return this.vt.get(vfqn).params;
-    }
-
-    public AlloyQtEnum mul(String vfqn) {
-        return this.vt.get(vfqn).mul;
-    }
-
-    public AlloyExpr varTyp(String vfqn) {
-        return this.vt.get(vfqn).typ;
-    }
-
-    public void setVarTyp(String vfqn, AlloyExpr t) {
-        this.vt.get(vfqn).typ = t;
-    }
-
-    // group getters/testers
-
-    public List<String> allVarNames() {
-        return new ArrayList<String>(this.vt.keySet());
-    }
-
-    public List<String> allIntVarNames() {
-        List<String> ret = new ArrayList<String>();
-        ret = filterBy(setToList(this.vt.keySet()), x -> this.isIntVar(x));
-        return ret;
-    }
-
-    public boolean hasVars() {
-        return this.vt.isEmpty();
-    }
-
-    public boolean containsVar(String vfqn) {
-        return (this.vt.containsKey(vfqn));
-    }
-
-    public List<String> varsOfState(String sfqn) {
-        // return all events declared in this state
-        // will have the sfqn as a prefix
-        return this.vt.keySet().stream()
-                // prefix of vfqn are state names
-                .filter(i -> DashFQN.chopPrefixFromFQN(i).equals(sfqn))
-                .collect(Collectors.toList());
-    }
-
-    public void addVar(
-            Pos pos,
-            String vfqn,
-            IntEnvKind k,
-            List<DashParam> prms,
-            AlloyQtEnum mul,
-            AlloyExpr t) {
-        assert (prms != null);
-        if (this.vt.containsKey(vfqn)) {
-            throw DashModelError.duplicateName(pos, "var", vfqn);
-        } else if (hasPrime(vfqn)) {
-            throw DashModelError.nameShouldNotBePrimed(pos, vfqn);
-        } else {
-            this.vt.put(vfqn, new VarEntry(pos, k, prms, mul, t));
-        }
-    }
-
-    public void addVar(
-            String vfqn, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
-        // System.out.println("added: " + vfqn);
-        addVar(Pos.UNKNOWN, vfqn, k, prms, mul, t);
-    }
-
-    public String vtToString() {
-        String s = new String("VAR TABLE\n");
-        for (String k : vt.keySet()) {
-            s += " ----- \n";
-            s += k + "\n";
-            s += this.vt.get(k).toString();
-        }
-        return s;
-    }
-
-    private class VarEntry {
-
-        public final Pos pos;
-        public final IntEnvKind kind;
-        public final List<DashParam> params;
-        // this is the multiplicity on the arrow from the Snapshot to the element
-        // sig Snapshot {
-        //     x: mul type
-        // }
-
-        public AlloyQtEnum mul;
-        // can't be final because it has to be resolved
-        // after all the vars are in the var table
-        public AlloyExpr typ;
-
-        public VarEntry(Pos p, IntEnvKind k, List<DashParam> prms, AlloyQtEnum mul, AlloyExpr t) {
-            assert (prms != null);
-            this.pos = p;
-            this.kind = k;
-            this.params = prms;
-            this.mul = mul;
-            this.typ = t;
-        }
-
-        public String toString() {
-            String s = new String();
-            s += "kind: " + kind + "\n";
-            s += "params: " + NoneStringIfNeeded(params) + "\n";
-            s += "mul: " + mul.toString() + "\n";
-            s += "typ: " + typ.toString() + "\n";
-            return s;
-        }
-    }
+  }
 }

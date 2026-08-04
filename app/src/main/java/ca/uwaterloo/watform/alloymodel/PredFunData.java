@@ -13,109 +13,111 @@ import java.util.*;
 
 public class PredFunData {
 
-    // arity is not initialized as UNKNOWN on creation
-    // b/c we may be creating these in resolve
-    public static class ArgInfo {
-        public AlloyDecl decl;
-        public Optional<Integer> arity;
+  // arity is not initialized as UNKNOWN on creation
+  // b/c we may be creating these in resolve
+  public static class ArgInfo {
+    public AlloyDecl decl;
+    public Optional<Integer> arity;
 
-        ArgInfo(AlloyDecl decl, Optional<Integer> arity) {
-            this.decl = decl;
-            this.arity = arity;
-        }
-
-        @Override
-        public String toString() {
-            return "{" + decl + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
-        }
+    ArgInfo(AlloyDecl decl, Optional<Integer> arity) {
+      this.decl = decl;
+      this.arity = arity;
     }
 
-    public static class ResultInfo {
-        public AlloyExpr expr;
-        public Optional<Integer> arity;
-
-        ResultInfo(AlloyExpr expr, Optional<Integer> arity) {
-            this.expr = expr;
-            this.arity = arity;
-        }
-
-        @Override
-        public String toString() {
-            return "{" + expr + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
-        }
+    public String toString() {
+      return "{" + decl + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
     }
+  }
 
-    protected Pos pos;
-    protected List<ArgInfo> argInfoList = emptyList();
-    protected Optional<ResultInfo> resultInfo;
-    public AlloyExpr body;
-    public Boolean isResolved = false;
+  public static class ResultInfo {
+    public AlloyExpr expr;
+    public Optional<Integer> arity;
 
-    private PredFunData(
-            Pos p,
-            List<AlloyDecl> argsDeclList,
-            Optional<AlloyExpr> optionalResultExpr,
-            AlloyExpr body) {
-
-        for (AlloyDecl decl : argsDeclList) {
-            this.argInfoList.add(new ArgInfo(decl, UNKNOWN_ARITY));
-        }
-        if (optionalResultExpr.isPresent())
-            this.resultInfo = Optional.of(new ResultInfo(optionalResultExpr.get(), UNKNOWN_ARITY));
-        else this.resultInfo = Optional.empty();
-        this.body = body;
-        this.pos = p;
-    }
-
-    public static PredFunData PredData(Pos p, List<AlloyDecl> argsDeclList, AlloyExpr body) {
-        // Boolean return value
-        return new PredFunData(p, argsDeclList, Optional.empty(), body);
-    }
-
-    public static PredFunData FunData(
-            Pos p, List<AlloyDecl> argsDeclList, AlloyExpr resultExpr, AlloyExpr body) {
-        reqNonNull(nullField(Pos.UNKNOWN, resultExpr), resultExpr);
-        return new PredFunData(p, argsDeclList, Optional.of(resultExpr), body);
+    ResultInfo(AlloyExpr expr, Optional<Integer> arity) {
+      this.expr = expr;
+      this.arity = arity;
     }
 
     @Override
     public String toString() {
-        return argInfoList + ", " + resultInfo + ", " + body + " (resolved=" + isResolved + ")";
+      StringBuilder sb = new StringBuilder("{");
+      expr.toString(sb, 0);
+      return "{" + sb.toString() + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
     }
+  }
 
-    /*
-    public Integer numArgs() {
-        return argInfoList.size();
-    }
+  protected Pos pos;
+  protected List<ArgInfo> argInfoList = emptyList();
+  protected Optional<ResultInfo> resultInfo;
+  public AlloyExpr body;
+  public Boolean isResolved = false;
 
-    public List<AlloyDecl> argDecls() {
-        return mapBy(this.argInfoList, a -> a.decl);
-    }
+  private PredFunData(
+      Pos p, List<AlloyDecl> argsDeclList, Optional<AlloyExpr> optionalResultExpr, AlloyExpr body) {
 
-    public Boolean isPred() {
-        return !this.resultInfo.isPresent();
+    for (AlloyDecl decl : argsDeclList) {
+      this.argInfoList.add(new ArgInfo(decl, UNKNOWN_ARITY));
     }
+    if (optionalResultExpr.isPresent())
+      this.resultInfo = Optional.of(new ResultInfo(optionalResultExpr.get(), UNKNOWN_ARITY));
+    else this.resultInfo = Optional.empty();
+    this.body = body;
+    this.pos = p;
+  }
 
-    public Boolean isFun() {
-        return this.resultInfo.isPresent();
-    }
+  public static PredFunData PredData(Pos p, List<AlloyDecl> argsDeclList, AlloyExpr body) {
+    // Boolean return value
+    return new PredFunData(p, argsDeclList, Optional.empty(), body);
+  }
 
-    public AlloyExpr resultExpr() {
-        if (!this.isFun()) throw AlloyModelImplError.fcnNotFound(this.name);
-        else return this.resultInfo.get().expr;
-    }
+  public static PredFunData FunData(
+      Pos p, List<AlloyDecl> argsDeclList, AlloyExpr resultExpr, AlloyExpr body) {
+    reqNonNull(nullField(Pos.UNKNOWN, resultExpr), resultExpr);
+    return new PredFunData(p, argsDeclList, Optional.of(resultExpr), body);
+  }
 
-    public AlloyExpr body() {
-        return this.body;
-    }
+  @Override
+  public String toString() {
+    String s = argInfoList + ", " + resultInfo + ", ";
+    StringBuilder sb = new StringBuilder("");
+    body.toString(sb, 0);
+    s += body.toString() + " (resolved=" + isResolved + ")";
+    return s;
+  }
 
-    /*
-    public void setArgArity(Integer index, Integer arity) {
-        this.args.get(index).arity = Optional.of(arity);
-    }
+  /*
+  public Integer numArgs() {
+      return argInfoList.size();
+  }
 
-    public void setResultArity(Integer arity) {
-        this.result.get().arity = Optional.of(arity);
-    }
-    */
+  public List<AlloyDecl> argDecls() {
+      return mapBy(this.argInfoList, a -> a.decl);
+  }
+
+  public Boolean isPred() {
+      return !this.resultInfo.isPresent();
+  }
+
+  public Boolean isFun() {
+      return this.resultInfo.isPresent();
+  }
+
+  public AlloyExpr resultExpr() {
+      if (!this.isFun()) throw AlloyModelImplError.fcnNotFound(this.name);
+      else return this.resultInfo.get().expr;
+  }
+
+  public AlloyExpr body() {
+      return this.body;
+  }
+
+  /*
+  public void setArgArity(Integer index, Integer arity) {
+      this.args.get(index).arity = Optional.of(arity);
+  }
+
+  public void setResultArity(Integer arity) {
+      this.result.get().arity = Optional.of(arity);
+  }
+  */
 }

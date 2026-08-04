@@ -6,21 +6,21 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 
 public class TlaFuncDomain extends TlaUnaryOp {
 
-    /*
-    DOMAIN f
+  /*
+  DOMAIN f
 
-    function domain: the set of keys of function f
-    */
+  function domain: the set of keys of function f
+  */
 
-    public TlaFuncDomain(TlaExp operand) {
-        super(operand, TlaOperator.PrecedenceGroup.UNSAFE);
-    }
+  public TlaFuncDomain(TlaExp operand) {
+    super(operand, TlaOperator.PrecedenceGroup.UNSAFE);
+  }
 
-    @Override
-    public String toTLAPlusSnippetCore() {
-        return TlaStrings.DOMAIN
-                + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.operand)
-                + TlaStrings.PRIME;
-    }
+  @Override
+  public String toTLAPlusSnippetCore() {
+    return TlaStrings.DOMAIN
+        + TlaStrings.SPACE
+        + this.getTLASnippetOfChild(this.operand)
+        + TlaStrings.PRIME;
+  }
 }

@@ -16,47 +16,47 @@ import java.util.*;
 
 public class AMThisFactParas extends AMThisFunParas {
 
-    protected List<AlloyFactPara> facts = emptyList();
+  protected List<AlloyFactPara> facts = emptyList();
 
-    // init -----------
+  // init -----------
 
-    protected AMThisFactParas() {}
+  protected AMThisFactParas() {}
 
-    protected AMThisFactParas(AMThisFactParas other) {
-        super(other);
-        this.facts = new ArrayList<AlloyFactPara>(other.facts);
+  protected AMThisFactParas(AMThisFactParas other) {
+    super(other);
+    this.facts = new ArrayList<AlloyFactPara>(other.facts);
+  }
+
+  protected void addSMPara(AlloyFactPara factPara, String nameSpace) {
+    for (AlloyExpr expr : factPara.block.exprs) {
+      this.createConstraint(nameSpace, expr);
     }
+  }
 
-    protected void addSMPara(AlloyFactPara factPara, String nameSpace) {
-        for (AlloyExpr expr : factPara.block.exprs) {
-            this.createConstraint(nameSpace, expr);
-        }
-    }
+  /*
+  protected void addPara(AlloyFactPara factPara, String nameSpace) {
+      addSMPara(factPara, nameSpace);
+      this.facts.add(factPara);
+  }
+  */
 
-    /*
-    protected void addPara(AlloyFactPara factPara, String nameSpace) {
-        addSMPara(factPara, nameSpace);
-        this.facts.add(factPara);
-    }
-    */
+  protected void addPara(AlloyFactPara factPara) {
+    addSMPara(factPara, THIS_NAMESPACE);
+    this.facts.add(factPara);
+  }
 
-    protected void addPara(AlloyFactPara factPara) {
-        addSMPara(factPara, THIS_NAMESPACE);
-        this.facts.add(factPara);
-    }
+  // API -------
 
-    // API -------
+  public void addFact(String name, List<AlloyExpr> eList) {
+    this.addPara(new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(eList)));
+  }
 
-    public void addFact(String name, List<AlloyExpr> eList) {
-        this.addPara(new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(eList)));
-    }
+  public void addFact(String name, AlloyExpr eList) {
+    this.addPara(new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(List.of(eList))));
+  }
 
-    public void addFact(String name, AlloyExpr eList) {
-        this.addPara(new AlloyFactPara(new AlloyQnameExpr(name), new AlloyBlock(List.of(eList))));
-    }
-
-    public List<AlloyFactPara> allFactParas() {
-        // just to be safe, make a copy
-        return new ArrayList<AlloyFactPara>(this.facts);
-    }
+  public List<AlloyFactPara> allFactParas() {
+    // just to be safe, make a copy
+    return new ArrayList<AlloyFactPara>(this.facts);
+  }
 }

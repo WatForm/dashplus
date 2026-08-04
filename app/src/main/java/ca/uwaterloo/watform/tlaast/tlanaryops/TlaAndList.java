@@ -7,21 +7,21 @@ import java.util.List;
 
 public class TlaAndList extends TlaNaryOp {
 
-    /*
-    exp1
-    /\ exp2
-    /\ exp3
-    ...
+  /*
+  exp1
+  /\ exp2
+  /\ exp3
+  ...
 
-    where children are exp1, exp2, exp3...
-    */
+  where children are exp1, exp2, exp3...
+  */
 
-    public TlaAndList(List<? extends TlaExp> children) {
-        super(
-                "\n",
-                "",
-                TlaStrings.SPACE + "\n" + TlaStrings.AND + TlaStrings.SPACE,
-                children,
-                TlaOperator.PrecedenceGroup.AND_OR_LIST);
-    }
+  public TlaAndList(List<? extends TlaExp> children) {
+    super(
+        "\n",
+        "",
+        TlaStrings.SPACE + "\n" + TlaStrings.AND + TlaStrings.SPACE,
+        children,
+        TlaOperator.PrecedenceGroup.AND_OR_LIST);
+  }
 }

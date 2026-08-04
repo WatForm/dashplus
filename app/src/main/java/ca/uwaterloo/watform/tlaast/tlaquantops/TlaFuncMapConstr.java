@@ -10,28 +10,28 @@ import java.util.List;
 
 public class TlaFuncMapConstr extends TlaQuantOp {
 
-    /*
-    [v \in S |-> exp]
+  /*
+  [v \in S |-> exp]
 
-    variable: v
-    set: S  (can be an expression that evaluates to a set)
-    expression: exp
+  variable: v
+  set: S  (can be an expression that evaluates to a set)
+  expression: exp
 
-    used to construct another function by applying a map to a function
-    */
+  used to construct another function by applying a map to a function
+  */
 
-    public TlaFuncMapConstr(List<TlaQuantOpHead> heads, TlaExp expression) {
-        super(heads, expression, TlaOperator.PrecedenceGroup.SAFE);
-    }
+  public TlaFuncMapConstr(List<TlaQuantOpHead> heads, TlaExp expression) {
+    super(heads, expression, TlaOperator.PrecedenceGroup.SAFE);
+  }
 
-    @Override
-    public String toTLAPlusSnippetCore() {
-        return TlaStrings.SQUARE_BRACKET_OPEN
-                + strCommaList(mapBy(this.heads, h -> h.toTLAPlusSnippetCore(this)))
-                + TlaStrings.SPACE
-                + TlaStrings.MAP
-                + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.expression)
-                + TlaStrings.SPACE;
-    }
+  @Override
+  public String toTLAPlusSnippetCore() {
+    return TlaStrings.SQUARE_BRACKET_OPEN
+        + strCommaList(mapBy(this.heads, h -> h.toTLAPlusSnippetCore(this)))
+        + TlaStrings.SPACE
+        + TlaStrings.MAP
+        + TlaStrings.SPACE
+        + this.getTLASnippetOfChild(this.expression)
+        + TlaStrings.SPACE;
+  }
 }

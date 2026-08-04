@@ -2,7 +2,7 @@ package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloyast.paragraph.AlloyPara.*;
 import static ca.uwaterloo.watform.alloymodel.Qname.*;
-import static ca.uwaterloo.watform.parser.Parser.*;
+// import static ca.uwaterloo.watform.parser.AlloyParser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
@@ -17,120 +17,114 @@ import java.util.*;
 
 public class SMFields extends SMImports {
 
-    // Qname is unique for fields
-    // Linked is important here so we can get them out in the order
-    // they were added
-    private HashMap<Qname, FieldData> fieldTable = new LinkedHashMap<>();
+  // Qname is unique for fields
+  // Linked is important here so we can get them out in the order
+  // they were added
+  private HashMap<Qname, FieldData> fieldTable = new LinkedHashMap<>();
 
-    protected SMFields() {}
+  protected SMFields() {}
 
-    protected SMFields(SMFields other) {
-        super(other);
-        this.fieldTable = new HashMap<>(other.fieldTable);
+  protected SMFields(SMFields other) {
+    super(other);
+    this.fieldTable = new HashMap<>(other.fieldTable);
+  }
+
+  protected void createField(
+      Pos p, String nameSpace, String fieldName, String sigParent, AlloyExpr fieldExpr) {
+    if (this.createSM) {
+      reqNonNull(nullField(p, this), nameSpace, fieldName, sigParent, fieldExpr);
+      assert (nameSpace != UNKNOWN_NAMESPACE);
+      if (this.fieldTable.containsKey(fieldQname(nameSpace, sigParent, fieldName)))
+        throw AlloyModelError.duplicateFieldNameInSig(p, fieldName);
+      else
+        this.fieldTable.put(fieldQname(nameSpace, sigParent, fieldName), new FieldData(fieldExpr));
     }
+  }
 
-    protected void createField(
-            Pos p, String nameSpace, String fieldName, String sigParent, AlloyExpr fieldExpr) {
-        reqNonNull(nullField(p, this), nameSpace, fieldName, sigParent, fieldExpr);
-        assert (nameSpace != UNKNOWN_NAMESPACE);
-        if (this.fieldTable.containsKey(fieldQname(nameSpace, sigParent, fieldName)))
-            throw AlloyModelError.duplicateFieldNameInSig(p, fieldName);
-        else
-            this.fieldTable.put(
-                    fieldQname(nameSpace, sigParent, fieldName), new FieldData(fieldExpr));
+  public List<Qname> allFieldQnames() {
+    return setToList(this.fieldTable.keySet());
+  }
+
+  public List<Qname> fieldQnameMatches(Qname qname) {
+    // either matches exactly (which would mean only one match)
+    // or could match on multiple of UNKNOWN_NAMESPACE
+    return fieldTable.keySet().stream()
+        .filter(
+            q ->
+                q.name.equals(qname.name)
+                    & (q.sigParent.equals(qname.sigParent) || qname.sigParent == null)
+                    & (q.nameSpace.equals(qname.nameSpace)
+                        || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
+        .toList();
+  }
+
+  public Boolean isField(Qname qname) {
+    return !fieldQnameMatches(qname).isEmpty();
+  }
+
+  // sets arities in fieldTable and default mul in field Types
+  protected void resolveSMFields(
+      TriFunction<AlloyExpr, String, Optional<String>, ResolveInfo> resolve1) {
+
+    for (Qname fieldQname : this.allFieldQnames()) {
+      AlloyExpr fieldExpr = this.fieldTable.get(fieldQname).expr;
+      // throws an error if it can't calculate it and set defaults
+      ResolveInfo resolveInfo =
+          resolve1.apply(
+              this.fieldExpr(fieldQname), fieldQname.nameSpace, Optional.of(fieldQname.sigParent));
+      if (!resolveInfo.arity.isPresent()) {
+        throw AlloyModelError.unknownArity(fieldExpr.pos, fieldExpr.toString());
+      } else {
+        // fields have +1 in arity than returned here b/c of sig
+        int fieldArity = resolveInfo.arity.get() + 1;
+        this.fieldTable.get(fieldQname).arity = Optional.of(fieldArity);
+        this.fieldTable.get(fieldQname).expr = resolveInfo.exp;
+        // KENG: also need to set this.fieldTable.get(fieldQname).product
+      }
     }
+  }
 
-    public List<Qname> allFieldQnames() {
-        return setToList(this.fieldTable.keySet());
-    }
+  // individual getters
 
-    public List<Qname> fieldQnameMatches(Qname qname) {
-        // either matches exactly (which would mean only one match)
-        // or could match on multiple of UNKNOWN_NAMESPACE
-        return fieldTable.keySet().stream()
-                .filter(
-                        q ->
-                                q.name.equals(qname.name)
-                                        & (q.sigParent.equals(qname.sigParent)
-                                                || qname.sigParent == null)
-                                        & (q.nameSpace.equals(qname.nameSpace)
-                                                || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
-                .toList();
-    }
+  private void existsField(Qname fieldQname) {
+    if (!this.isField(fieldQname))
+      throw AlloyModelImplError.tryingToAccessNonExistentField(fieldQname.toString());
+  }
 
-    public Boolean isField(Qname qname) {
-        return !fieldQnameMatches(qname).isEmpty();
-    }
+  public AlloyExpr fieldExpr(Qname fieldQname) {
+    existsField(fieldQname);
+    return this.fieldTable.get(fieldQname).expr;
+  }
 
-    // sets arities in fieldTable and default mul in field Types
-    protected void resolveSMFields(
-            TriFunction<AlloyExpr, String, Optional<String>, ResolveInfo> resolve1) {
+  protected Optional<Integer> fieldArity(Qname fieldQname) {
+    existsField(fieldQname);
+    return this.fieldTable.get(fieldQname).arity;
+  }
 
-        for (Qname fieldQname : this.allFieldQnames()) {
-            AlloyExpr fieldExpr = this.fieldTable.get(fieldQname).expr;
-            // throws an error if it can't calculate it and set defaults
-            ResolveInfo resolveInfo =
-                    resolve1.apply(
-                            this.fieldExpr(fieldQname),
-                            fieldQname.nameSpace,
-                            Optional.of(fieldQname.sigParent));
-            if (!resolveInfo.arity.isPresent()) {
-                throw AlloyModelError.unknownArity(fieldExpr.pos, fieldExpr.toString());
-            } else {
-                // fields have +1 in arity than returned here b/c of sig
-                int fieldArity = resolveInfo.arity.get() + 1;
-                this.fieldTable.get(fieldQname).arity = Optional.of(fieldArity);
-                this.fieldTable.get(fieldQname).expr = resolveInfo.exp;
-                // KENG: also need to set this.fieldTable.get(fieldQname).product
-            }
-        }
-    }
+  public List<Qname> fieldProduct(Qname fieldQname) {
+    existsField(fieldQname);
+    return this.fieldTable.get(fieldQname).product;
+  }
 
-    // individual getters
+  protected Boolean isFieldResolved(Qname fieldQname) {
+    existsField(fieldQname);
+    return this.fieldTable.get(fieldQname).arity.isPresent();
+  }
 
-    private void existsField(Qname fieldQname) {
-        if (!this.isField(fieldQname))
-            throw AlloyModelImplError.tryingToAccessNonExistentField(fieldQname.toString());
-    }
+  /*
+  public Boolean endsInOne() {
+      // assert (this.isResolved);
+      // TODO:
+  }
+  */
 
-    public AlloyExpr fieldExpr(Qname fieldQname) {
-        existsField(fieldQname);
-        return this.fieldTable.get(fieldQname).expr;
-    }
+  public void debugSMFields() {
+    StringBuilder sb = new StringBuilder("SMFields:\n");
 
-    protected Optional<Integer> fieldArity(Qname fieldQname) {
-        existsField(fieldQname);
-        return this.fieldTable.get(fieldQname).arity;
-    }
+    fieldTable.forEach(
+        (qname, fieldData) ->
+            sb.append("    ").append(qname).append(" -> ").append(fieldData).append('\n'));
 
-    public List<Qname> fieldProduct(Qname fieldQname) {
-        existsField(fieldQname);
-        return this.fieldTable.get(fieldQname).product;
-    }
-
-    protected Boolean isFieldResolved(Qname fieldQname) {
-        existsField(fieldQname);
-        return this.fieldTable.get(fieldQname).arity.isPresent();
-    }
-
-    /*
-    public Boolean endsInOne() {
-        // assert (this.isResolved);
-        // TODO:
-    }
-    */
-
-    public void debugSMFields() {
-        StringBuilder sb = new StringBuilder("SMFields:\n");
-
-        fieldTable.forEach(
-                (qname, fieldData) ->
-                        sb.append("    ")
-                                .append(qname)
-                                .append(" -> ")
-                                .append(fieldData)
-                                .append('\n'));
-
-        System.out.println(sb.toString() + "\n");
-    }
+    System.out.println(sb.toString() + "\n");
+  }
 }

@@ -4,23 +4,21 @@ import ca.uwaterloo.watform.tlaast.*;
 
 public class TlaSubsetUnary extends TlaUnaryOp {
 
-    /*
+  /*
 
-    SUBSET exp
+  SUBSET exp
 
 
-    this is a way to obtain the power set P(exp)
+  this is a way to obtain the power set P(exp)
 
-    */
+  */
 
-    public TlaSubsetUnary(TlaExp operand) {
-        super(operand, TlaOperator.PrecedenceGroup.SET_OPERATORS);
-    }
+  public TlaSubsetUnary(TlaExp operand) {
+    super(operand, TlaOperator.PrecedenceGroup.SET_OPERATORS);
+  }
 
-    @Override
-    public String toTLAPlusSnippetCore() {
-        return TlaStrings.SET_SUBSET_UNARY
-                + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.operand);
-    }
+  @Override
+  public String toTLAPlusSnippetCore() {
+    return TlaStrings.SET_SUBSET_UNARY + TlaStrings.SPACE + this.getTLASnippetOfChild(this.operand);
+  }
 }

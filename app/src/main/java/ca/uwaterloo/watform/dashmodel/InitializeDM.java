@@ -36,215 +36,209 @@ import java.util.List;
 
 public class InitializeDM extends PredsDM {
 
-    // we don't store the DashFile here
-    // because these tables might change
-    // and might get out of sync with the DashFile
+  // we don't store the DashFile here
+  // because these tables might change
+  // and might get out of sync with the DashFile
 
-    public InitializeDM() {
-        super();
+  public InitializeDM() {
+    super();
+  }
+
+  public InitializeDM(DashFile d) {
+    super(d);
+    // we have to go through the paragraphs in
+    // the entire model and do this for the one
+    // root state
+
+    DashState root = d.stateRoot;
+    this.rootName = root.name;
+    stateRecurseToInitializeStatesVarsEventsBuffers(root, null, emptyList(), DefKind.DEFAULT, 0);
+  }
+
+  /*
+  private void addToParamsList(DashParam p) {
+      allParams.add(p);
+  }
+  */
+
+  private void stateRecurseToInitializeStatesVarsEventsBuffers(
+      DashState s, String parentFQN, List<DashParam> parentParams, DefKind def, int depth) {
+
+    // this state is not yet in the st
+    // but its parent is in the st
+
+    // figure out its sfqn and its parent's fqn
+    if (DashFQN.isFQN(s.name)) throw DashModelError.nameCantBeFQN(s.pos, s.name);
+    String sfqn;
+    if (parentFQN != null) {
+      sfqn = DashFQN.fqn(parentFQN, s.name);
+    } else {
+      sfqn = s.name;
     }
 
-    public InitializeDM(DashFile d) {
-        super(d);
-        // we have to go through the paragraphs in
-        // the entire model and do this for the one
-        // root state
+    List<DashParam> newParams = new ArrayList<DashParam>(parentParams);
+    DashParam thisStateParam = null;
+    if (s.param != null) {
+      thisStateParam = new DashParam(sfqn, s.param);
+      newParams.add(thisStateParam);
+      // add to the overall param list for the DashModel
+      this.allParams.add(thisStateParam);
+      if (this.maxDepthParams <= depth) {
+        this.maxDepthParams = depth + 1;
+      }
+    }
 
-        DashState root = d.stateRoot;
-        this.rootName = root.name;
+    // stuff that is put in the table with this state
+    // and dealt with at the resolve phase
+    List<DashInv> invList = s.invs();
+    List<DashInit> initList = s.inits();
+
+    List<DashTrans> transList = s.trans();
+    for (DashTrans t : transList) {
+      if (DashFQN.isFQN(t.name)) throw DashModelError.nameCantBeFQN(t.pos, t.name);
+    }
+
+    // have to make a copy so that recursion does not just
+    // continue to add to list everywhere
+    List<DashState> substatesList = s.substates();
+
+    List<String> childFQNs = new ArrayList<String>();
+    for (DashState c : substatesList) childFQNs.add(DashFQN.fqn(sfqn, c.name));
+
+    // add this state to the table
+    // childFQNs can be empty
+    addState(s.pos, sfqn, s.kind, thisStateParam, newParams, def, parentFQN, childFQNs);
+
+    // process the children
+    if (!substatesList.isEmpty()) {
+
+      // check and set the default state(s)
+      // only looking at size of these sets
+      List<DashState> givenDefaultsList = filterBy(substatesList, i -> (i.def == DefKind.DEFAULT));
+
+      // invariant: andList.size() >= andListDefaults.size()
+      List<DashState> andList = filterBy(substatesList, i -> (i.kind == StateKind.AND));
+      List<DashState> andListDefaults =
+          filterBy(substatesList, i -> (i.kind == StateKind.AND && i.def == DefKind.DEFAULT));
+
+      // invariant: orList.size() >= orListDefaults.size()
+      List<DashState> orList = filterBy(substatesList, i -> (i.kind == StateKind.OR));
+      List<DashState> orListDefaults =
+          filterBy(substatesList, i -> (i.kind == StateKind.OR && i.def == DefKind.DEFAULT));
+
+      // see DefaultStates.md for docm on this logic
+
+      // first throw any errors
+      if (orListDefaults.size() > 1)
+        throw DashModelError.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
+      else if (orListDefaults.size() >= 1 && andListDefaults.size() > 0)
+        throw DashModelError.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
+      else if (andList.size() > 1
+          && andListDefaults.size() != 0
+          && andList.size() != andListDefaults.size())
+        throw DashModelError.allAndDefaults(andList.get(0).pos, sfqn);
+      else if (givenDefaultsList.size() == 0
+          && (orList.size() > 1 || (orList.size() == 1 && andList.size() >= 1)))
+        throw DashModelError.missingDefault(substatesList.get(0).pos, sfqn);
+
+      // defaults on the list are correct (but might be none)
+      List<String> defList = new ArrayList<String>();
+
+      if (givenDefaultsList.size() == 0) {
+        // no defaults were given so choose appropriate ones
+        if (orList.size() == 1) defList.add(DashFQN.fqn(sfqn, orList.get(0).name));
+        else {
+          assert (substatesList.size() == andList.size());
+          defList.addAll(childFQNs);
+        }
+      } else
+        // givenDefaultList is correct
+        defList = mapBy(givenDefaultsList, i -> DashFQN.fqn(sfqn, i.name));
+      assert (!defList.isEmpty());
+
+      // add all substates to the table
+      DefKind defk;
+      for (DashState sub : substatesList) {
+        // making sure all sibling states must
+        // have different names
+        // will be caught when children are
+        // added to the state table
+        defk = null;
+        if (defList.contains(DashFQN.fqn(sfqn, sub.name))) defk = DefKind.DEFAULT;
+        else defk = DefKind.NOTDEFAULT;
+
+        // want to keep only one place
+        // where we call stateRecurse
+        // to make sure all args are correct
         stateRecurseToInitializeStatesVarsEventsBuffers(
-                root, null, emptyList(), DefKind.DEFAULT, 0);
+            sub, sfqn, newParams, defk, s.param != null ? depth + 1 : depth);
+      }
     }
 
-    /*
-    private void addToParamsList(DashParam p) {
-        allParams.add(p);
-    }
-    */
+    // add declared events ---------------------
+    List<DashEventDecls> eventDeclsList = s.eventDecls();
 
-    private void stateRecurseToInitializeStatesVarsEventsBuffers(
-            DashState s, String parentFQN, List<DashParam> parentParams, DefKind def, int depth) {
-
-        // this state is not yet in the st
-        // but its parent is in the st
-
-        // figure out its sfqn and its parent's fqn
-        if (DashFQN.isFQN(s.name)) throw DashModelError.nameCantBeFQN(s.pos, s.name);
-        String sfqn;
-        if (parentFQN != null) {
-            sfqn = DashFQN.fqn(parentFQN, s.name);
+    // put in event table with FQN
+    for (DashEventDecls e : eventDeclsList) {
+      for (String x : e.getNames()) {
+        if (DashFQN.isFQN(x)) {
+          throw DashModelError.nameCantBeFQN(e.pos, x);
         } else {
-            sfqn = s.name;
+          String efqn = DashFQN.fqn(sfqn, x);
+          this.addEvent(e.pos, efqn, e.kind, newParams);
         }
-
-        List<DashParam> newParams = new ArrayList<DashParam>(parentParams);
-        DashParam thisStateParam = null;
-        if (s.param != null) {
-            thisStateParam = new DashParam(sfqn, s.param);
-            newParams.add(thisStateParam);
-            // add to the overall param list for the DashModel
-            this.allParams.add(thisStateParam);
-            if (this.maxDepthParams <= depth) {
-                this.maxDepthParams = depth + 1;
-            }
-        }
-
-        // stuff that is put in the table with this state
-        // and dealt with at the resolve phase
-        List<DashInv> invList = s.invs();
-        List<DashInit> initList = s.inits();
-
-        List<DashTrans> transList = s.trans();
-        for (DashTrans t : transList) {
-            if (DashFQN.isFQN(t.name)) throw DashModelError.nameCantBeFQN(t.pos, t.name);
-        }
-
-        // have to make a copy so that recursion does not just
-        // continue to add to list everywhere
-        List<DashState> substatesList = s.substates();
-
-        List<String> childFQNs = new ArrayList<String>();
-        for (DashState c : substatesList) childFQNs.add(DashFQN.fqn(sfqn, c.name));
-
-        // add this state to the table
-        // childFQNs can be empty
-        addState(s.pos, sfqn, s.kind, thisStateParam, newParams, def, parentFQN, childFQNs);
-
-        // process the children
-        if (!substatesList.isEmpty()) {
-
-            // check and set the default state(s)
-            // only looking at size of these sets
-            List<DashState> givenDefaultsList =
-                    filterBy(substatesList, i -> (i.def == DefKind.DEFAULT));
-
-            // invariant: andList.size() >= andListDefaults.size()
-            List<DashState> andList = filterBy(substatesList, i -> (i.kind == StateKind.AND));
-            List<DashState> andListDefaults =
-                    filterBy(
-                            substatesList,
-                            i -> (i.kind == StateKind.AND && i.def == DefKind.DEFAULT));
-
-            // invariant: orList.size() >= orListDefaults.size()
-            List<DashState> orList = filterBy(substatesList, i -> (i.kind == StateKind.OR));
-            List<DashState> orListDefaults =
-                    filterBy(
-                            substatesList,
-                            i -> (i.kind == StateKind.OR && i.def == DefKind.DEFAULT));
-
-            // see DefaultStates.md for docm on this logic
-
-            // first throw any errors
-            if (orListDefaults.size() > 1)
-                throw DashModelError.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
-            else if (orListDefaults.size() >= 1 && andListDefaults.size() > 0)
-                throw DashModelError.tooManyDefaults(givenDefaultsList.get(1).pos, sfqn);
-            else if (andList.size() > 1
-                    && andListDefaults.size() != 0
-                    && andList.size() != andListDefaults.size())
-                throw DashModelError.allAndDefaults(andList.get(0).pos, sfqn);
-            else if (givenDefaultsList.size() == 0
-                    && (orList.size() > 1 || (orList.size() == 1 && andList.size() >= 1)))
-                throw DashModelError.missingDefault(substatesList.get(0).pos, sfqn);
-
-            // defaults on the list are correct (but might be none)
-            List<String> defList = new ArrayList<String>();
-
-            if (givenDefaultsList.size() == 0) {
-                // no defaults were given so choose appropriate ones
-                if (orList.size() == 1) defList.add(DashFQN.fqn(sfqn, orList.get(0).name));
-                else {
-                    assert (substatesList.size() == andList.size());
-                    defList.addAll(childFQNs);
-                }
-            } else
-                // givenDefaultList is correct
-                defList = mapBy(givenDefaultsList, i -> DashFQN.fqn(sfqn, i.name));
-            assert (!defList.isEmpty());
-
-            // add all substates to the table
-            DefKind defk;
-            for (DashState sub : substatesList) {
-                // making sure all sibling states must
-                // have different names
-                // will be caught when children are
-                // added to the state table
-                defk = null;
-                if (defList.contains(DashFQN.fqn(sfqn, sub.name))) defk = DefKind.DEFAULT;
-                else defk = DefKind.NOTDEFAULT;
-
-                // want to keep only one place
-                // where we call stateRecurse
-                // to make sure all args are correct
-                stateRecurseToInitializeStatesVarsEventsBuffers(
-                        sub, sfqn, newParams, defk, s.param != null ? depth + 1 : depth);
-            }
-        }
-
-        // add declared events ---------------------
-        List<DashEventDecls> eventDeclsList = s.eventDecls();
-
-        // put in event table with FQN
-        for (DashEventDecls e : eventDeclsList) {
-            for (String x : e.getNames()) {
-                if (DashFQN.isFQN(x)) {
-                    throw DashModelError.nameCantBeFQN(e.pos, x);
-                } else {
-                    String efqn = DashFQN.fqn(sfqn, x);
-                    this.addEvent(e.pos, efqn, e.kind, newParams);
-                }
-            }
-        }
-
-        // add declared variables ------------------------
-        List<DashVarDecls> varDeclsList = s.varDecls();
-
-        // put in var table with FQN
-
-        for (DashVarDecls v : varDeclsList) {
-            for (String x : v.getNames()) {
-                if (DashFQN.isFQN(x)) {
-                    throw DashModelError.nameCantBeFQN(v.pos, x);
-                } else {
-                    // if already a sig in Alloy part of model
-                    // can't declare it again
-                    // TODO: add this back?????
-                    // if (this.containsId(x))
-                    // raises an exception
-                    // DashModelthrow DashModelError.duplicateName(v.pos, "var", x);
-                    String vfqn = DashFQN.fqn(sfqn, x);
-                    // v.typ will have to be resolved later
-                    this.addVar(v.pos, vfqn, v.kind, newParams, v.mul, v.typ);
-                }
-            }
-        }
-
-        // add declared buffers ---------------------------
-        List<DashBufferDecls> bufferDeclsList = s.bufferDecls();
-
-        // put in buffer table with FQN
-        for (DashBufferDecls b : bufferDeclsList) {
-            for (String x : b.getNames()) {
-                if (DashFQN.isFQN(x)) {
-                    throw DashModelError.nameCantBeFQN(b.pos, x);
-                } else {
-                    String bfqn = DashFQN.fqn(sfqn, x);
-                    this.addBuffer(b.pos, bfqn, b.kind, newParams, b.element);
-                }
-            }
-        }
-
-        // add preds ------------------------
-        List<DashPred> predsList = s.preds();
-
-        // put in var table with FQN
-        for (DashPred p : predsList) {
-            if (DashFQN.isFQN(p.name)) {
-                throw DashModelError.nameCantBeFQN(p.pos, p.name);
-            } else {
-                String nfqn = DashFQN.fqn(sfqn, p.name);
-                this.addPred(p.pos, nfqn, p.exp);
-            }
-        }
+      }
     }
+
+    // add declared variables ------------------------
+    List<DashVarDecls> varDeclsList = s.varDecls();
+
+    // put in var table with FQN
+
+    for (DashVarDecls v : varDeclsList) {
+      for (String x : v.getNames()) {
+        if (DashFQN.isFQN(x)) {
+          throw DashModelError.nameCantBeFQN(v.pos, x);
+        } else {
+          // if already a sig in Alloy part of model
+          // can't declare it again
+          // TODO: add this back?????
+          // if (this.containsId(x))
+          // raises an exception
+          // DashModelthrow DashModelError.duplicateName(v.pos, "var", x);
+          String vfqn = DashFQN.fqn(sfqn, x);
+          // v.typ will have to be resolved later
+          this.addVar(v.pos, vfqn, v.kind, newParams, v.mul, v.typ);
+        }
+      }
+    }
+
+    // add declared buffers ---------------------------
+    List<DashBufferDecls> bufferDeclsList = s.bufferDecls();
+
+    // put in buffer table with FQN
+    for (DashBufferDecls b : bufferDeclsList) {
+      for (String x : b.getNames()) {
+        if (DashFQN.isFQN(x)) {
+          throw DashModelError.nameCantBeFQN(b.pos, x);
+        } else {
+          String bfqn = DashFQN.fqn(sfqn, x);
+          this.addBuffer(b.pos, bfqn, b.kind, newParams, b.element);
+        }
+      }
+    }
+
+    // add preds ------------------------
+    List<DashPred> predsList = s.preds();
+
+    // put in var table with FQN
+    for (DashPred p : predsList) {
+      if (DashFQN.isFQN(p.name)) {
+        throw DashModelError.nameCantBeFQN(p.pos, p.name);
+      } else {
+        String nfqn = DashFQN.fqn(sfqn, p.name);
+        this.addPred(p.pos, nfqn, p.exp);
+      }
+    }
+  }
 }

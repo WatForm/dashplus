@@ -7,119 +7,119 @@ package ca.uwaterloo.watform.dashtoalloy;
 
 public final class D2AStrings {
 
-    // used for translation to Alloy
+  // used for translation to Alloy
 
-    // public static final String utilOrderingName = "util/ordering";
-    public static final String utilName = "util";
-    public static final String tracesName = "traces";
-    // public static final String booleanName = "traces";
-    // public static final String utilTracesName = "util/traces";
-    public static final String tracesFirstName = "first";
-    public static final String tracesNextName = "next";
-    public static final String tracesLastName = "last";
-    public static final String tracesBackName = "back";
+  // public static final String utilOrderingName = "util/ordering";
+  public static final String utilName = "util";
+  public static final String tracesName = "traces";
+  // public static final String booleanName = "traces";
+  // public static final String utilTracesName = "util/traces";
+  public static final String tracesFirstName = "first";
+  public static final String tracesNextName = "next";
+  public static final String tracesLastName = "last";
+  public static final String tracesBackName = "back";
 
-    public static final String utilBufferName = "buffer";
+  public static final String utilBufferName = "buffer";
 
-    public static final String tcmcName = "tcmc";
-    public static final String utilTcmcPathName = "util/tcmc";
-    public static final String tcmcInitialStateName = "tcmc/ks_s0";
-    public static final String tcmcSigmaName = "tcmc/ks_sigma";
+  public static final String tcmcName = "tcmc";
+  public static final String utilTcmcPathName = "util/tcmc";
+  public static final String tcmcInitialStateName = "tcmc/ks_s0";
+  public static final String tcmcSigmaName = "tcmc/ks_sigma";
 
-    // user must be aware of this name
-    public static final String bufferIndexName = "bufIdx";
+  // user must be aware of this name
+  public static final String bufferIndexName = "bufIdx";
 
-    public static final String dsh_prefix = "__";
-    // init is a reserved word in Dash and Alloy 6
-    public static final String initPredName = dsh_prefix + "initial";
-    public static final String invFactName = dsh_prefix + "inv";
-    public static final String initFactName = initPredName;
-    public static final String eventLimitations = dsh_prefix + "event_limitations";
-    // predicate names
+  public static final String dsh_prefix = "__";
+  // init is a reserved word in Dash and Alloy 6
+  public static final String initPredName = dsh_prefix + "initial";
+  public static final String invFactName = dsh_prefix + "inv";
+  public static final String initFactName = initPredName;
+  public static final String eventLimitations = dsh_prefix + "event_limitations";
+  // predicate names
 
-    public static final String smallStepName = dsh_prefix + "small_step";
-    public static final String transEnabledName = dsh_prefix + "trans_enabled";
-    public static final String stableName = dsh_prefix + "stable";
-    public static final String stutterName = dsh_prefix + "stutter";
-    public static final String noVarChange = dsh_prefix + "noVarChange_post";
-    public static final String strongNoStutterName = dsh_prefix + "strong_no_stutter";
-    // public static final String equalsName = "equals";
-    public static final String isEnabled = dsh_prefix + "isEnabled";
-    public static final String tracesFactName = dsh_prefix + "traces_fact";
-    public static final String electrumFactName = dsh_prefix + "electrum_fact";
-    public static final String tcmcFactName = dsh_prefix + "tcmc_fact";
-    public static final String singleEventName = dsh_prefix + "single_event";
-    public static final String reachabilityName = dsh_prefix + "reachability";
-    public static final String enoughOpsName = dsh_prefix + "enough_ops";
-    public static final String completeBigStepsName = dsh_prefix + "complete_big_steps";
-    /* names used in Dash translation */
-    // sig names
-    public static final String DshPrefix = dsh_prefix; // clean this up later
-    public static final String snapshotName = DshPrefix + "Snapshot";
-    public static final String allEventsName = DshPrefix + "Events";
-    public static final String allEnvEventsName = DshPrefix + "EnvEvents";
-    public static final String allIntEventsName = DshPrefix + "IntEvents";
-    public static final String variablesName = DshPrefix + "Vars";
-    public static final String stateLabelName = DshPrefix + "States";
-    public static final String scopeLabelName = DshPrefix + "Scopes";
-    // public static final String systemStateName = "SystemState";
-    public static final String transLabelName = DshPrefix + "Transitions";
-    // 2024-02-21 NAD we can just set the set of transitions to empty
-    // public static final String noTransName = "NO_TRANS";
-    public static final String identifierName = DshPrefix + "Ids";
-    public static final String bufferName = DshPrefix + "Buffer";
-    public static final String scopeSuffix = "_Scope";
+  public static final String smallStepName = dsh_prefix + "small_step";
+  public static final String transEnabledName = dsh_prefix + "trans_enabled";
+  public static final String stableName = dsh_prefix + "stable";
+  public static final String stutterName = dsh_prefix + "stutter";
+  public static final String noVarChange = dsh_prefix + "noVarChange_post";
+  public static final String strongNoStutterName = dsh_prefix + "strong_no_stutter";
+  // public static final String equalsName = "equals";
+  public static final String isEnabled = dsh_prefix + "isEnabled";
+  public static final String tracesFactName = dsh_prefix + "traces_fact";
+  public static final String electrumFactName = dsh_prefix + "electrum_fact";
+  public static final String tcmcFactName = dsh_prefix + "tcmc_fact";
+  public static final String singleEventName = dsh_prefix + "single_event";
+  public static final String reachabilityName = dsh_prefix + "reachability";
+  public static final String enoughOpsName = dsh_prefix + "enough_ops";
+  public static final String completeBigStepsName = dsh_prefix + "complete_big_steps";
+  /* names used in Dash translation */
+  // sig names
+  public static final String DshPrefix = dsh_prefix; // clean this up later
+  public static final String snapshotName = DshPrefix + "Snapshot";
+  public static final String allEventsName = DshPrefix + "Events";
+  public static final String allEnvEventsName = DshPrefix + "EnvEvents";
+  public static final String allIntEventsName = DshPrefix + "IntEvents";
+  public static final String variablesName = DshPrefix + "Vars";
+  public static final String stateLabelName = DshPrefix + "States";
+  public static final String scopeLabelName = DshPrefix + "Scopes";
+  // public static final String systemStateName = "SystemState";
+  public static final String transLabelName = DshPrefix + "Transitions";
+  // 2024-02-21 NAD we can just set the set of transitions to empty
+  // public static final String noTransName = "NO_TRANS";
+  public static final String identifierName = DshPrefix + "Ids";
+  public static final String bufferName = DshPrefix + "Buffer";
+  public static final String scopeSuffix = "_Scope";
 
-    // field names
-    public static final String confName = dsh_prefix + "conf";
-    public static final String scopesUsedName = dsh_prefix + "sc_used";
-    public static final String eventsName = dsh_prefix + "events";
-    public static final String transTakenName = dsh_prefix + "taken";
+  // field names
+  public static final String confName = dsh_prefix + "conf";
+  public static final String scopesUsedName = dsh_prefix + "sc_used";
+  public static final String eventsName = dsh_prefix + "events";
+  public static final String transTakenName = dsh_prefix + "taken";
 
-    // predicate names
-    // public static final String tName = "dsh_t";
-    public static String preName(String s) {
-        return dsh_prefix + s + "_pre";
-    }
+  // predicate names
+  // public static final String tName = "dsh_t";
+  public static String preName(String s) {
+    return dsh_prefix + s + "_pre";
+  }
 
-    public static String postName(String s) {
-        return dsh_prefix + s + "_post";
-    }
+  public static String postName(String s) {
+    return dsh_prefix + s + "_post";
+  }
 
-    public static String transName(String s) {
-        return dsh_prefix + s + "_trans";
-    }
+  public static String transName(String s) {
+    return dsh_prefix + s + "_trans";
+  }
 
-    // public static final String semanticsName = "_semantics";
-    public static final String testIfNextStableName = dsh_prefix + "nextIsStable";
+  // public static final String semanticsName = "_semantics";
+  public static final String testIfNextStableName = dsh_prefix + "nextIsStable";
 
-    public static String enabledAfterStepName(String s) {
-        return dsh_prefix + s + "_enabledAfterStep";
-    }
+  public static String enabledAfterStepName(String s) {
+    return dsh_prefix + s + "_enabledAfterStep";
+  }
 
-    public static final String allSnapshotsDiffName = dsh_prefix + "allSnapshotsDiff";
-    // variable/parameter names
-    // how to name parameter variables
-    public static final String curName = "s";
-    public static final String nextName = "sn";
+  public static final String allSnapshotsDiffName = dsh_prefix + "allSnapshotsDiff";
+  // variable/parameter names
+  // how to name parameter variables
+  public static final String curName = "s";
+  public static final String nextName = "sn";
 
-    public static final String genEventName = "genEvs";
-    public static final String scopeName = "sc";
-    public static final String randomParamExt = "_aa";
+  public static final String genEventName = "genEvs";
+  public static final String scopeName = "sc";
+  public static final String randomParamExt = "_aa";
 
-    // strings used internally
-    public static final String processRef = "$$PROCESSREF$$";
+  // strings used internally
+  public static final String processRef = "$$PROCESSREF$$";
 
-    public static final String paramsFact = dsh_prefix + "paramsFact";
+  public static final String paramsFact = dsh_prefix + "paramsFact";
 
-    public static final String prime(final String a) {
-        return a + "'";
-    }
-    ;
+  public static final String prime(final String a) {
+    return a + "'";
+  }
+  ;
 
-    // public static final String removePrime(final String s) {
-    //    if (hasPrime(s)) return s.substring(0, s.length() - 1);
-    //    else return s;
-    // }
+  // public static final String removePrime(final String s) {
+  //    if (hasPrime(s)) return s.substring(0, s.length() - 1);
+  //    else return s;
+  // }
 
 }

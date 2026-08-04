@@ -23,26 +23,24 @@ import java.util.List;
 
 public class CompleteBigStepsD2A extends ReachabilityD2A {
 
-    protected CompleteBigStepsD2A(DashModel dm, Options opt) {
-        super(dm, opt);
-    }
+  protected CompleteBigStepsD2A(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
 
-    public void addCompleteBigSteps() {
-        if (this.dm.hasConcurrency()) {
-            AlloyExpr b =
-                    AlloyAllVars(
-                            this.dsl.curDecls(),
-                            AlloyImplies(
-                                    this.dsl.curStableFalse(),
-                                    AlloySomeVars(
-                                            this.dsl.nextDecls(),
-                                            AlloyPredCall(
-                                                    D2AStrings.smallStepName,
-                                                    this.dsl.curNextVars()))));
+  public void addCompleteBigSteps() {
+    if (this.dm.hasConcurrency()) {
+      AlloyExpr b =
+          AlloyAllVars(
+              this.dsl.curDecls(),
+              AlloyImplies(
+                  this.dsl.curStableFalse(),
+                  AlloySomeVars(
+                      this.dsl.nextDecls(),
+                      AlloyPredCall(D2AStrings.smallStepName, this.dsl.curNextVars()))));
 
-            List<AlloyExpr> body = this.dsl.emptyExprList();
-            body.add(b);
-            this.am.addPred(D2AStrings.completeBigStepsName, this.dsl.emptyDeclList(), body);
-        }
+      List<AlloyExpr> body = this.dsl.emptyExprList();
+      body.add(b);
+      this.am.addPred(D2AStrings.completeBigStepsName, this.dsl.emptyDeclList(), body);
     }
+  }
 }
