@@ -215,6 +215,14 @@ public class Instance {
     return this.fields.keySet();
   }
 
+  public Integer minInt() {
+    return this.minInt;
+  }
+
+  public Integer maxInt() {
+    return this.maxInt;
+  }
+
   public void debugInstance() {
     System.out.println("Instance:");
     System.out.println("Min int " + this.minInt);
