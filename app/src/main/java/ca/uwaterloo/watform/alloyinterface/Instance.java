@@ -223,11 +223,11 @@ public class Instance {
   // we might add types later?
   public record FieldValue(Set<List<String>> values) {}
 
-  public Set<Qname> allSigNames() {
+  public Set<Qname> allSigQnames() {
     return this.sigs.keySet();
   }
 
-  public Set<Qname> allFieldNames() {
+  public Set<Qname> allFieldQnames() {
     return this.fields.keySet();
   }
 
