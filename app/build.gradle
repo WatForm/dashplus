@@ -99,6 +99,22 @@ def tools = [
             'ca/uwaterloo/watform/dashtoalloy/**',
         ]
     ],
+    evaluation: [
+       mainClass: "ca.uwaterloo.watform.evaluation.EvaluationCli",
+       excludes: [
+            'ca/uwaterloo/watform/alloytotla/**',
+            'ca/uwaterloo/watform/cli/**',
+            'ca/uwaterloo/watform/dashast/**',
+            'ca/uwaterloo/watform/dashmodel/**',
+            'ca/uwaterloo/watform/dashexprvisitor/**',
+            'ca/uwaterloo/watform/dashtoalloy/**',
+            'ca/uwaterloo/watform/dashtotla/**',
+            'ca/uwaterloo/watform/dpalloy/**',
+            'ca/uwaterloo/watform/predabstraction/**',
+            'ca/uwaterloo/watform/tlaast/**',
+            'ca/uwaterloo/watform/tlamodel/**'
+        ]
+    ],
     releaseJar: [
        mainClass: "ca.uwaterloo.watform.cli.Main",
        excludes: []
@@ -205,4 +221,3 @@ tasks.named('test') {
 tasks.named("check") {
     dependsOn.removeIf { it.name == "test" }
 }
-
