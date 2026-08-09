@@ -5,10 +5,7 @@ import static ca.uwaterloo.watform.parser.AlloyParser.*;
 import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyevaluator.FormulaEvaluator;
-import ca.uwaterloo.watform.alloyevaluator.ThreeVal;
 import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
-import ca.uwaterloo.watform.alloyinterface.Instance;
 import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 // MKJ RE-ADD import ca.uwaterloo.watform.alloytotla.AlloyToTla;
@@ -110,7 +107,7 @@ public class Main implements Callable<Integer> {
     -write              .dsh
     */
 
-        // flags to guide possible combinations
+    // flags to guide possible combinations
     Boolean alloyPresent = Constants.alloyPresent(cliConf.d2aOptions);
     Boolean tla = cliConf.tla;
     Boolean xml = Constants.xmlPresent(cliConf.xmlFileName);
@@ -119,8 +116,6 @@ public class Main implements Callable<Integer> {
     Boolean write = cliConf.write;
     Boolean verbose = cliConf.verbose;
     Boolean debug = cliConf.debug;
-    Boolean dumpInstance = cliConf.dumpInstance;
-    Boolean evalFacts = cliConf.evalFacts;
 
     Boolean alsInputFile = someTrue(mapBy(cliConf.fileNames, f -> ((String) f).contains(".als")));
 

@@ -50,6 +50,7 @@ public class Instance {
     for (Qname qname : this.sigs.keySet()) {
       if (this.sigs.get(qname).id == id) return qname;
     }
+    System.out.println(id);
     throw ImplementationError.shouldNotReach();
   }
 
