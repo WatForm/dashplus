@@ -35,52 +35,44 @@ Having multiple fileHandlers share the same file results in strange behavior, si
 */
 
 public class CustomLoggerFactory {
-
   private static int UID = 0;
 
   private static HashMap<String, FileHandler> handlerTable = new HashMap<>();
 
-    public static Logger make(String fileName, boolean debug, Level level, Formatter formatter) {
-        Logger logger = Logger.getLogger("" + UID);
-        UID += 1;
+  public static Logger make(String fileName, boolean debug, Level level, Formatter formatter) {
+    Logger logger = Logger.getLogger("" + UID);
+    UID += 1;
 
     fileName = fileName + ".log";
 
-        logger.setUseParentHandlers(false); // remove ability to access console
-        logger.setLevel(level);
+    logger.setUseParentHandlers(false); // remove ability to access console
+    logger.setLevel(level);
 
     if (!debug) return logger;
 
-        if (!handlerTable.containsKey(fileName)) makeNewFileAndHandler(fileName, level, formatter);
+    if (!handlerTable.containsKey(fileName)) makeNewFileAndHandler(fileName, level, formatter);
 
     logger.addHandler(handlerTable.get(fileName));
 
     return logger;
   }
 
-  private static void makeNewFileAndHandler(String fileName) {
+  public static Logger make(String fileName, boolean debug) {
+    return make(fileName, debug, Level.INFO, new SimpleFormatter());
+  }
+
+  private static void makeNewFileAndHandler(String fileName, Level level, Formatter formatter) {
     File file = new File(fileName);
     if (file.getParentFile() != null) {
       file.getParentFile().mkdirs();
     }
-
-    public static Logger make(String fileName, boolean debug) {
-        return make(fileName, debug, Level.INFO, new SimpleFormatter());
-    }
-
-    private static void makeNewFileAndHandler(String fileName, Level level, Formatter formatter) {
-        File file = new File(fileName);
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
-        }
-        try {
-            FileHandler fh = new FileHandler(fileName);
-            fh.setFormatter(formatter);
-            fh.setLevel(level);
-            handlerTable.put(fileName, fh);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    try {
+      FileHandler fh = new FileHandler(fileName);
+      fh.setFormatter(formatter);
+      fh.setLevel(level);
+      handlerTable.put(fileName, fh);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 }

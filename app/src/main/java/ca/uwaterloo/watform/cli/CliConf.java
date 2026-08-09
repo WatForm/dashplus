@@ -46,20 +46,10 @@ public class CliConf {
       description = "Index of the command to execute (Default: execute all).")
   public int cmdIdx;
 
-    // only meaningful with -dumpInstance; ignored otherwise
-    @Option(
-            names = {"-dumpDir"},
-            defaultValue = "out/", // Constants.DUMP_DIR
-            paramLabel = "<dir>",
-            description =
-                    "Directory to write -dumpInstance output to, created if it doesn't exist"
-                            + " (default: ${DEFAULT-VALUE}).")
-    public String dumpDir;
-
-    @Option(
-            names = {"-write"},
-            description = "Write translated Alloy into file")
-    public boolean write = false;
+  @Option(
+      names = {"-write"},
+      description = "Write translated Alloy into file")
+  public boolean write = false;
 
   @Option(
       names = {"-v", "--verbose"},
@@ -85,22 +75,4 @@ public class CliConf {
       names = {"-vis"},
       description = "create .dot file of Dash model")
   public boolean vis = false;
-
-    // .als input only, single file only (see Main: count/size checks)
-    // writes <dumpDir>/<inputFileBaseName>-model.xml and
-    //        <dumpDir>/<inputFileBaseName>-instance[-cmdN].xml
-    @Option(
-            names = {"-dumpInstance"},
-            description =
-                    "Dump the (.als) model and a satisfiable instance for every satisfiable"
-                            + " command to -dumpDir. Single .als input file only.")
-    public boolean dumpInstance = false;
-
-    // .als input only; requires -xml
-    @Option(
-            names = {"-evalFacts"},
-            description =
-                    "Evaluate the facts of the provided (.als) alloy file using the provided"
-                            + " -xml instance.")
-    public boolean evalFacts = false;
 }

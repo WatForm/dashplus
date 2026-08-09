@@ -1,91 +1,68 @@
 package ca.uwaterloo.watform.utils;
 
-import ca.uwaterloo.watform.alloyinterface.Solution;
+import static ca.uwaterloo.watform.utils.CommonStrings.dpOutput;
+
+import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import java.io.File;
-import java.util.List;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import edu.mit.csail.sdg.alloy4.A4Reporter;
+import edu.mit.csail.sdg.ast.Command;
+import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.translator.A4Options;
+import edu.mit.csail.sdg.translator.A4Solution;
+import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 
 public final class XmlDumper {
 
-    // Safe to reuse — stateless after creation, thread-safe
-    private static final DocumentBuilderFactory DOC_FACTORY = DocumentBuilderFactory.newInstance();
-    private static final TransformerFactory TF_FACTORY = TransformerFactory.newInstance();
+  private XmlDumper() {}
 
-    // Prevent instantiation
-    private XmlDumper() {}
-
-    public static void dumpInstance(Solution soln, String outputPath, String context) {
-        try {
-            dumpInstanceUnchecked(soln, outputPath);
-        } catch (ParserConfigurationException e) {
-            throw UtilsImplError.xmlConfigError("dumping " + context, e.getMessage());
-        } catch (TransformerException e) {
-            throw UtilsImplError.xmlWriteError(context, e.getMessage());
-        }
+  /**
+   * Dumps a native Alloy XML instance for the model's default scope and for every command.
+   * Unsatisfiable executions are reported but do not produce files.
+   */
+  public static void dumpInstances(AlloyModel alloyModel, String fileNamePrefix, Path dumpDir) {
+    try {
+      Files.createDirectories(dumpDir);
+    } catch (IOException error) {
+      throw UtilsUserError.outputDirectory(dumpDir.toString(), error.getMessage());
     }
 
-    public static void dumpModel(AlloyModel am, String outputPath) {
-        try {
-            dumpModelUnchecked(am, outputPath);
-        } catch (ParserConfigurationException e) {
-            throw UtilsImplError.xmlConfigError("dumping model", e.getMessage());
-        } catch (TransformerException e) {
-            throw UtilsImplError.xmlWriteError("model", e.getMessage());
-        }
+    CompModule defaultModule =
+        AlloyInterface.parse(alloyModel.toStringNoCmds() + System.lineSeparator() + "run {}");
+    executeAndDump(
+        defaultModule,
+        defaultModule.getAllCommands().getFirst(),
+        dumpDir.resolve(fileNamePrefix + "-instance.xml"),
+        "default scope (no commands in file)");
+
+    if (alloyModel.getNumCmds() == 0) return;
+
+    CompModule commandModule = AlloyInterface.parse(alloyModel.toString());
+    for (int commandIndex = 0; commandIndex < alloyModel.getNumCmds(); commandIndex++) {
+      executeAndDump(
+          commandModule,
+          commandModule.getAllCommands().get(commandIndex),
+          dumpDir.resolve(fileNamePrefix + "-instance-cmd" + commandIndex + ".xml"),
+          "command " + commandIndex);
+    }
+  }
+
+  private static void executeAndDump(
+      CompModule alloyModule, Command command, Path outputPath, String context) {
+    dpOutput("Executing " + context + ": " + command);
+    A4Solution solution =
+        TranslateAlloyToKodkod.execute_command(
+            new A4Reporter(), alloyModule.getAllReachableSigs(), command, new A4Options());
+
+    if (!solution.satisfiable()) {
+      dpOutput("UNSAT — no instance to dump for: " + context);
+      return;
     }
 
-    private static void dumpInstanceUnchecked(Solution soln, String outputPath)
-            throws ParserConfigurationException, TransformerException, ImplementationError {
-        if (!soln.isSat()) throw ImplementationError.shouldNotReach();
-        // Recreated per call — not thread-safe
-        Document doc = DOC_FACTORY.newDocumentBuilder().newDocument();
-        Transformer tf = TF_FACTORY.newTransformer();
-
-        Element root = doc.createElement(XmlConstants.INSTANCE_ROOT);
-        doc.appendChild(root);
-
-        for (String key : soln.getSolnMapKeys()) {
-            Element rel = doc.createElement(XmlConstants.RELATION);
-            rel.setAttribute(XmlConstants.RELATION_NAME_ATTR, key);
-            for (List<String> tuple : soln.get(key)) {
-                Element t = doc.createElement(XmlConstants.TUPLE);
-                t.setTextContent(String.join(XmlConstants.TUPLE_ATOM_SEPARATOR, tuple));
-                rel.appendChild(t);
-            }
-            root.appendChild(rel);
-        }
-
-        File outputFile = new File(outputPath);
-        outputFile.getParentFile().mkdirs(); // creates all missing parent dirs
-        tf.setOutputProperty(OutputKeys.INDENT, "yes");
-        tf.transform(new DOMSource(doc), new StreamResult(new File(outputPath)));
-    }
-
-    private static void dumpModelUnchecked(AlloyModel model, String outputPath)
-            throws ParserConfigurationException, TransformerException {
-        Document doc = DOC_FACTORY.newDocumentBuilder().newDocument();
-        Transformer tf = TF_FACTORY.newTransformer();
-
-        Element root = doc.createElement(XmlConstants.MODEL_ROOT);
-        doc.appendChild(root);
-
-        Element textNode = doc.createElement(XmlConstants.MODEL_TEXT_ATTR);
-        textNode.setTextContent(model.toString());
-        root.appendChild(textNode);
-
-        File outputFile = new File(outputPath);
-        outputFile.getParentFile().mkdirs(); // creates all missing parent dirs
-        tf.setOutputProperty(OutputKeys.INDENT, "yes");
-        tf.transform(new DOMSource(doc), new StreamResult(new File(outputPath)));
-    }
+    solution.writeXML(outputPath.toString(), alloyModule.getAllFunc(), Collections.emptyMap());
+    dpOutput("SAT — dumped instance to: " + outputPath);
+  }
 }
