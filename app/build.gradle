@@ -90,9 +90,9 @@ def tools = [
        excludes: [
             'ca/uwaterloo/watform/cli/**',
             'ca/uwaterloo/watform/dashtotla/**',
+            'ca/uwaterloo/watform/dashtoalloy/**',
             'ca/uwaterloo/watform/dpalloy/**',
             'ca/uwaterloo/watform/predabstraction/**',
-            'ca/uwaterloo/watform/dashtoalloy/**',
         ]
     ],
     releaseJar: [
