@@ -71,27 +71,23 @@ def tools = [
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/tlaast/**',
             'ca/uwaterloo/watform/tlamodel/**',
-            'ca/uwaterloo/watform/alloytotla-legacy/**'
         ]
     ],
     dashtoalloy: [
        mainClass: "ca.uwaterloo.watform.dashtoalloy.Main",
        excludes: [
             'ca/uwaterloo/watform/alloytotla/**',
-            'ca/uwaterloo/watform/alloytotla-legacy/**',
             'ca/uwaterloo/watform/cli/**',
             'ca/uwaterloo/watform/dashtotla/**',
             'ca/uwaterloo/watform/dpalloy/**',
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/tlaast/**',
             'ca/uwaterloo/watform/tlamodel/**',
-            'ca/uwaterloo/watform/alloytotla-legacy/**'
         ]
     ],
     alloytotla: [
        mainClass: "ca.uwaterloo.watform.alloytotla.DashToAlloyCli",
        excludes: [
-            'ca/uwaterloo/watform/alloytotla-legacy/**',
             'ca/uwaterloo/watform/cli/**',
             'ca/uwaterloo/watform/dashtotla/**',
             'ca/uwaterloo/watform/dpalloy/**',
