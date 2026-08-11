@@ -15,7 +15,7 @@ public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
 
   @Override
   public AlloyFile visitAlloyFile(DashParser.AlloyFileContext ctx) {
-    AlloyParaParseVis ppv = new AlloyParaParseVis();
+    AlloyParaParseVis ppv = new AlloyParaParseVis(this.fullFileName);
     List<AlloyPara> paragraphs = new ArrayList<>();
     for (DashParser.AlloyParagraphContext parCtx : ctx.alloyParagraph()) {
       try {

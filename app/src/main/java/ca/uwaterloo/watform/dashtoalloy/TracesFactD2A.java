@@ -49,7 +49,7 @@ public class TracesFactD2A extends SmallStepD2A {
     assert (this.isTraces);
 
     // open util/traces[Snapshot] as Snapshot
-    this.am.addImport(
+    this.am.addUtilImport(
         List.of(AlloyStrings.utilName, D2AStrings.tracesName),
         D2AStrings.snapshotName,
         D2AStrings.snapshotName);

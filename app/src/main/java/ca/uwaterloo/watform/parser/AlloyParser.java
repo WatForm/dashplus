@@ -1,3 +1,14 @@
+/*
+  CLI
+  - calls AlloyModel = alloyParseToModel(fullFileName)
+    - calls AlloyFile = alloyParse(fullFileName)
+      - AlloyParaParseVis on an import
+        - calls alloyParseUtilFile (no .als added)
+          - calls alloyParseFromCharStream(CharStream, FFN)
+        - calls alloyParse (.als and fullFileName determined from parent)
+      - calls alloyParseFromCharStream(CharStream, FFN)
+*/
+
 package ca.uwaterloo.watform.parser;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
@@ -17,19 +28,17 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.utils.*;
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 public class AlloyParser {
   // currently unused
+  /*
   public static List<Path> recurGetFiles(Path dir, String filter) {
     List<Path> filePaths = new ArrayList<>();
     try (Stream<Path> stream = Files.walk(dir)) {
@@ -45,7 +54,7 @@ public class AlloyParser {
     }
     return filePaths;
   }
-
+  */
   /**
    * This method will catch AlloyCtorError and store them in Reporter
    *
@@ -53,7 +62,8 @@ public class AlloyParser {
    * @return
    */
   public static AlloyFile alloyParse(String fullFileName) {
-    // expects .als extension is in fullFileName
+    // could be a top-level call or a call to parse a user-defined import
+    // expects .als extension is already in fullFileName
     Path filePath = Paths.get(fullFileName);
     if (!fullFileName.endsWith(".als")) {
       throw new Reporter.ErrorUser("File extension must be .als, given: " + fullFileName);
@@ -67,14 +77,15 @@ public class AlloyParser {
     return alloyParseFromCharStream(input, fullFileName);
   }
 
-  public static AlloyFile parseUtilFile(Pos pos, String utilFileName) {
-    // System.out.println("Imported: " + utilFileName);
+  public static AlloyFile alloyParseUtilFile(Pos pos, String utilFileName) {
+    System.out.println("Importing: " + utilFileName);
+    // util file will never import a user-defined file
     if (!utilFileName.startsWith("util/")) {
       throw ParserError.notUtilFile(pos, utilFileName);
     } else {
       // TODO: that string should not be hardcoded
       // this is where the util files are store in the jar
-      String fileName = "models/" + utilFileName;
+      String fileName = "models/" + utilFileName + ".als";
       // System.out.println(fileName);
       InputStream in = Parser.class.getClassLoader().getResourceAsStream(fileName);
       // InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
@@ -97,12 +108,13 @@ public class AlloyParser {
     }
   }
 
-  // this is used for importing util files
+  // this is used by alloyParse and alloyParseUtilFile
   public static AlloyFile alloyParseFromCharStream(CharStream input, String fullFileName) {
     BailLexer lexer = new BailLexer(input);
     if (fullFileName.endsWith(".dsh")) {
       lexer.dashMode = true;
     }
+    assert (fullFileName.endsWith(".dsh") || fullFileName.endsWith(".als"));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     BailParser parser = new BailParser(tokens);
     // Remove default console error listener
@@ -129,7 +141,6 @@ public class AlloyParser {
           }
         });
 
-    // if (fullFileName.endsWith(".als")) {
     ParseTree antlrAST = parser.alloyFile();
     Reporter.INSTANCE.exitIfHasErrors();
     AlloyFileParseVis afpv = new AlloyFileParseVis(fullFileName);
@@ -137,28 +148,20 @@ public class AlloyParser {
     alloyFile = afpv.visit(antlrAST);
     alloyFile.filename = fullFileName;
     return alloyFile;
-    // } else {
-    /*
-    ParseTree antlrAST = parser.dashFile();
-    DashFileParseVis dfpv = new DashFileParseVis(fullFileName);
-    DashFile dashFile = null;
-    dashFile = dfpv.visit(antlrAST);
-    dashFile.filename = fullFileName;
-    return dashFile;
-    */
-    // }
   }
 
-  public static AlloyFile parseImport(Pos pos, String fileName) {
+  /*
+  put into visitImportPara
+  public static AlloyFile alloyParseImport(Pos pos, String importFullFileName) {
     AlloyFile importedAlloyFile;
-    if (fileName.startsWith("util/")) {
-      importedAlloyFile = parseUtilFile(pos, fileName + ".als");
+    if (importName.startsWith("util/")) {
+      importedAlloyFile = alloyParseUtilFile(pos, importName);
     } else {
-      String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
-      importedAlloyFile = alloyParse(fullFileName + ".als");
+      importedAlloyFile = alloyParse(importFullFileName);
     }
     return importedAlloyFile;
   }
+  */
 
   // Use this function for parsing both dash and alloy files
   public static AlloyModel alloyParseToModel(String fullFileName) {
@@ -261,7 +264,9 @@ public class AlloyParser {
   public static AlloyPara parsePara(String s) {
     BailParser parser = stringParser(s);
     ParseTree antlrAST = parser.paragraph();
-    AlloyParaParseVis afpv = new AlloyParaParseVis();
+    // current directory is parent of an import
+    // unlikely to work well to create a user-defined import here
+    AlloyParaParseVis afpv = new AlloyParaParseVis(".");
     AlloyPara para = null;
     try {
       para = afpv.visitParagraph((DashParser.ParagraphContext) antlrAST);

@@ -86,13 +86,21 @@ public class SMResolve extends SMCmds {
   // returns both an expr and an arity
   // used for bounding expressions and args and return types
 
-  public ResolveInfo resolve1(AlloyExpr e, String nameSpace, Optional<String> sigParentOfField) {
+  public ResolveInfo resolve1(
+      AlloyExpr e, String nameSpace, Optional<String> sigParentOfField, List<AlloyDecl> args) {
     if (sigParentOfField.isPresent())
       this.sigParentOfField = Optional.of(nameSpaceQname(nameSpace, sigParentOfField.get()));
     else this.sigParentOfField = Optional.empty();
     this.nameSpace = nameSpace;
     this.usePredFun = false;
-    return new ResolveVis().visit(e);
+    ResolveVis resolveVis = new ResolveVis();
+    for (AlloyDecl arg : args) {
+      for (AlloyDecl d : arg.expand()) {
+        ResolveInfo dResult = resolveVis.visit(d.expr);
+        resolveVis.localPush(nameSpaceQname(nameSpace, d.getName()), dResult.arity);
+      }
+    }
+    return resolveVis.visit(e);
   }
 
   // depends on sigs/fields/pred/fun
@@ -148,6 +156,8 @@ public class SMResolve extends SMCmds {
     // namespace for these is THIS_NAMESPACE
     private void localPush(Qname qname, Optional<Integer> value) {
       localArities.push(new AbstractMap.SimpleEntry<>(qname, value));
+      System.out.println("local push of: " + qname.toString());
+      System.out.println(localArities);
     }
 
     private void localPop() {
@@ -155,7 +165,6 @@ public class SMResolve extends SMCmds {
     }
 
     private Optional<Integer> localLookup(Qname qname) {
-      // System.out.println(localArities);
       for (Map.Entry<Qname, Optional<Integer>> entry : localArities) {
         Qname q = entry.getKey();
         if (q.name.equals(qname.name)

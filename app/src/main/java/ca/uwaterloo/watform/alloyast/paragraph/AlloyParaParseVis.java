@@ -26,6 +26,11 @@ import org.antlr.v4.runtime.tree.*;
 public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   protected final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
   protected final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
+  public final String fullFileName;
+
+  public AlloyParaParseVis(String fullFileName) {
+    this.fullFileName = fullFileName;
+  }
 
   @Override
   public AlloyPara visitParagraph(DashParser.ParagraphContext ctx) {
@@ -48,13 +53,20 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   // ====================================================================================
   @Override
   public AlloyImportPara visitImportPara(DashParser.ImportParaContext ctx) {
-    String fileName = exprParseVis.visit(ctx.qname(0)).toString();
+    String importName = exprParseVis.visit(ctx.qname(0)).toString();
     AlloyFile importedAlloyFile;
-    if (fileName.startsWith("util/")) {
-      importedAlloyFile = parseImport(new Pos(ctx), fileName);
+    if (importName.startsWith("util/")) {
+      importedAlloyFile = alloyParseUtilFile(new Pos(ctx), importName);
     } else {
-      String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
-      importedAlloyFile = alloyParse(fullFileName);
+      // need to read this imported file relative to the current path
+      String importFullFileName =
+          Paths.get(this.fullFileName)
+              .getParent()
+              .resolve(importName + ".als")
+              .toAbsolutePath()
+              .normalize()
+              .toString();
+      importedAlloyFile = alloyParse(importFullFileName);
     }
 
     // next we have to put this alloyFile into some part of the import

@@ -8,6 +8,7 @@ import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.alloyast.paragraph.command.*;
 import ca.uwaterloo.watform.alloyast.paragraph.module.*;
@@ -64,14 +65,17 @@ public class SMFields extends SMImports {
 
   // sets arities in fieldTable and default mul in field Types
   protected void resolveSMFields(
-      TriFunction<AlloyExpr, String, Optional<String>, ResolveInfo> resolve1) {
+      QuadFunction<AlloyExpr, String, Optional<String>, List<AlloyDecl>, ResolveInfo> resolve1) {
 
     for (Qname fieldQname : this.allFieldQnames()) {
       AlloyExpr fieldExpr = this.fieldTable.get(fieldQname).expr;
       // throws an error if it can't calculate it and set defaults
       ResolveInfo resolveInfo =
           resolve1.apply(
-              this.fieldExpr(fieldQname), fieldQname.nameSpace, Optional.of(fieldQname.sigParent));
+              this.fieldExpr(fieldQname),
+              fieldQname.nameSpace,
+              Optional.of(fieldQname.sigParent),
+              emptyList());
       if (!resolveInfo.arity.isPresent()) {
         throw AlloyModelError.unknownArity(fieldExpr.pos, fieldExpr.toString());
       } else {

@@ -101,14 +101,14 @@ public class SMPredFuns extends SMFields {
   private String limitedNameSpace;
   private Set<Qname> resolved = new HashSet<>();
   private Set<Qname> visiting = new HashSet<>();
-  private TriFunction<AlloyExpr, String, Optional<String>, ResolveInfo> resolve1;
+  private QuadFunction<AlloyExpr, String, Optional<String>, List<AlloyDecl>, ResolveInfo> resolve1;
   private TriFunction<AlloyExpr, String, List<AlloyDecl>, ResolveInfo> resolve2;
 
   // have to put them in def-use order
   private CollectExprVis<Qname> getDepsVis = new CollectExprVis<>(this::collectUsedPredFuns);
 
   protected void resolveSMPredFuns(
-      TriFunction<AlloyExpr, String, Optional<String>, ResolveInfo> resolve1,
+      QuadFunction<AlloyExpr, String, Optional<String>, List<AlloyDecl>, ResolveInfo> resolve1,
       TriFunction<AlloyExpr, String, List<AlloyDecl>, ResolveInfo> resolve2) {
     this.resolved = new HashSet<>();
     this.visiting = new HashSet<>();
@@ -161,7 +161,8 @@ public class SMPredFuns extends SMFields {
       // because "a: seq X" is ("a", SEQ, "X")
       // i.e. the mul of "SEQ" is in the decl not the expr
       // of the decl
-      ResolveInfo argResolveInfo = resolve1.apply(argInfo.decl, qname.nameSpace, Optional.empty());
+      ResolveInfo argResolveInfo =
+          resolve1.apply(argInfo.decl, qname.nameSpace, Optional.empty(), emptyList());
       if (argResolveInfo.arity.isPresent()) {
         // put it back in the table
         argInfo.decl = (AlloyDecl) argResolveInfo.exp;
@@ -193,8 +194,14 @@ public class SMPredFuns extends SMFields {
     Optional<PredFunData.ResultInfo> resultInfo = predFunData.resultInfo;
 
     if (resultInfo.isPresent()) {
+      System.out.println(qname);
+      System.out.println(resultInfo.get().expr);
       ResolveInfo resultResolveInfo =
-          resolve1.apply(resultInfo.get().expr, qname.nameSpace, Optional.empty());
+          resolve1.apply(
+              resultInfo.get().expr,
+              qname.nameSpace,
+              Optional.empty(),
+              mapBy(predFunData.argInfoList, x -> x.decl));
       // put it back in the table
       if (resultResolveInfo.arity.isPresent()) {
         predFunData.resultInfo =

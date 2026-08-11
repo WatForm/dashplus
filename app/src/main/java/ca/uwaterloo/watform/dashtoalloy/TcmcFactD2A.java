@@ -34,7 +34,7 @@ public class TcmcFactD2A extends TracesFactD2A {
     assert (this.isTcmc);
 
     // open util/tcmc[Snapshot] as snapshot
-    this.am.addImport(List.of(AlloyStrings.utilName, D2AStrings.tcmcName), D2AStrings.snapshotName);
+    this.am.addUtilImport(List.of(AlloyStrings.utilName, D2AStrings.tcmcName), D2AStrings.snapshotName);
 
     List<AlloyExpr> body = this.dsl.emptyExprList();
 

@@ -169,55 +169,58 @@ public class AMThisImportParas extends AMThisCmdParas {
   }
 
   public void addUtilBooleanImport() {
-    this.addImport(List.of(AlloyStrings.utilName, AlloyStrings.booleanName));
+    this.addUtilImport(AlloyStrings.booleanName);
   }
 
-  // import name1/name2[sigName] as asName
-  public void addImport(List<String> names, String sigName, String asName) {
-    String fileName = String.join("/", names);
+  // import util/name
+  public void addUtilImport(String name) {
+    String fileName = AlloyStrings.utilName + "/" + name;
     this.addPara(
         new AlloyImportPara(
             false,
-            new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
-            List.of(new AlloyQnameExpr(sigName)),
-            new AlloyQnameExpr(asName),
-            parseImport(Pos.UNKNOWN, fileName)));
-  }
-
-  // import name1/name2[sigName]
-  public void addImport(List<String> names, String sigName) {
-    String fileName = String.join("/", names);
-    this.addPara(
-        new AlloyImportPara(
-            false,
-            new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
-            List.of(new AlloyQnameExpr(sigName)),
-            null,
-            parseImport(Pos.UNKNOWN, fileName)));
-  }
-
-  // import name1/name2[sigName1, sigName2]
-  public void addImport(List<String> names, List<AlloySigRefExpr> sigNames) {
-    String fileName = String.join("/", names);
-
-    this.addPara(
-        new AlloyImportPara(
-            false,
-            new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
-            sigNames,
-            null,
-            parseImport(Pos.UNKNOWN, fileName)));
-  }
-
-  // import name1/name2
-  public void addImport(List<String> names) {
-    String fileName = String.join("/", names);
-    this.addPara(
-        new AlloyImportPara(
-            false,
-            new AlloyQnameExpr(mapBy(names, x -> new AlloyNameExpr(x))),
+            new AlloyQnameExpr(
+                List.of(new AlloyNameExpr(AlloyStrings.utilName), new AlloyNameExpr(name))),
             emptyList(),
             null,
-            parseImport(Pos.UNKNOWN, fileName)));
+            alloyParseUtilFile(Pos.UNKNOWN, fileName)));
+  }
+
+  // import util/name[sigName] as asName
+  public void addUtilImport(String name, String sigName, String asName) {
+    String fileName = AlloyStrings.utilName + "/" + name;
+    this.addPara(
+        new AlloyImportPara(
+            false,
+            new AlloyQnameExpr(
+                List.of(new AlloyNameExpr(AlloyStrings.utilName), new AlloyNameExpr(name))),
+            List.of(new AlloyQnameExpr(sigName)),
+            new AlloyQnameExpr(asName),
+            alloyParseUtilFile(Pos.UNKNOWN, fileName)));
+  }
+
+  // import util/name[sigName]
+  public void addUtilImport(String name, String sigName) {
+    String fileName = AlloyStrings.utilName + "/" + name;
+    this.addPara(
+        new AlloyImportPara(
+            false,
+            new AlloyQnameExpr(
+                List.of(new AlloyNameExpr(AlloyStrings.utilName), new AlloyNameExpr(name))),
+            List.of(new AlloyQnameExpr(sigName)),
+            null,
+            alloyParseUtilFile(Pos.UNKNOWN, fileName)));
+  }
+
+  // import util/name[sigName1, sigName2]
+  public void addUtilImport(String name, List<AlloySigRefExpr> sigNames) {
+    String fileName = AlloyStrings.utilName + "/" + name;
+    this.addPara(
+        new AlloyImportPara(
+            false,
+            new AlloyQnameExpr(
+                List.of(new AlloyNameExpr(AlloyStrings.utilName), new AlloyNameExpr(name))),
+            sigNames,
+            null,
+            alloyParseUtilFile(Pos.UNKNOWN, fileName)));
   }
 }
