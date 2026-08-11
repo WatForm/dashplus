@@ -54,7 +54,6 @@ public class AlloyParser {
    */
   public static AlloyFile alloyParse(String fullFileName) {
     // expects .als extension is in fullFileName
-    System.out.println("in alloyParse: " + fullFileName);
     Path filePath = Paths.get(fullFileName);
     if (!fullFileName.endsWith(".als")) {
       throw new Reporter.ErrorUser("File extension must be .als, given: " + fullFileName);

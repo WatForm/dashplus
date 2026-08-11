@@ -71,7 +71,7 @@ public class AlloyInterface {
       ans.writeXML(pw, alloy.getAllFunc(), Collections.emptyMap());
       pw.flush();
       String xml = sw.toString();
-      System.out.println(xml);
+      // System.out.println(xml);
       return SatSolution(new Instance(xml));
     } else {
       return UnsatSolution();

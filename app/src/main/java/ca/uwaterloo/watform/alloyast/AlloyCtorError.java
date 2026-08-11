@@ -170,4 +170,8 @@ public class AlloyCtorError extends UserOrImplError {
             + className
             + ". It must contain exactly one of them.");
   }
+
+  public static AlloyCtorError enumOfSizeZero(Pos p, String name) {
+    return new AlloyCtorError(p, "enum of size 0: " + name);
+  }
 }

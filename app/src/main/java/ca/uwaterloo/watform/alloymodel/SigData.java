@@ -12,6 +12,7 @@ public class SigData {
   protected Boolean isOneSig = false;
   protected Boolean isSomeSig = false;
   protected Boolean isLoneSig = false;
+  protected Boolean isEnumSig = false;
   protected Pos pos = Pos.UNKNOWN;
 
   // created on initialization and never modified
@@ -31,11 +32,12 @@ public class SigData {
   }
 
   // this is used when adding parts of an AlloyEnumPara
-  protected static SigData abstractSigData(Pos pos) {
+  protected static SigData abstractEnumSigData(Pos pos) {
     SigData sd = new SigData();
     sd.pos = pos;
     sd.isAbstractSig = true;
     sd.isTopLevelSig = true;
+    sd.isEnumSig = true;
     return sd;
   }
 

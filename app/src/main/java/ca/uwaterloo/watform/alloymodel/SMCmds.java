@@ -6,7 +6,9 @@ import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
 import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.alloymodel.SigScope.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+import static ca.uwaterloo.watform.utils.Reporter.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.AssumptionError;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
@@ -18,18 +20,61 @@ import java.util.*;
 
 public class SMCmds extends SMConstraints {
 
-  // first two are added by paragraphs
+  // public API ------------------------
+
+  public Integer getNumCmds() {
+    return this.cmdTable.keySet().size();
+  }
+
+  // accessed by cmd number
+  public Boolean isRunCmd(int n) {
+    existsCmd(n);
+    return getCmdNum(n).cmdType == AlloyCmdPara.CommandDecl.CmdType.RUN;
+  }
+
+  public Boolean isCheckCmd(int n) {
+    existsCmd(n);
+    return getCmdNum(n).cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK;
+  }
+
+  public AlloyExpr getCmdFormula(int cmdNum) {
+    CmdData cd = getCmdNum(cmdNum);
+    return getCmdFormula(cd);
+  }
+
+  public HashMap<Qname, SigScope> getGivenScopes(Integer cmdNum) {
+    CmdData cmdData = getCmdNum(cmdNum);
+    return cmdData.cmdScopes;
+  }
+
+  public Optional<Integer> getDefaultScope(Integer cmdNum) {
+    CmdData cmdData = getCmdNum(cmdNum);
+    return cmdData.defaultScope;
+  }
+
+  public Optional<Integer> getExpect(Integer cmdNum) {
+    CmdData cmdData = getCmdNum(cmdNum);
+    return cmdData.expect;
+  }
+
+  public CmdScopeProfile getCmdScopeProfile(Integer cmdNum) {
+    CmdData cd = getCmdNum(cmdNum);
+    return this.getCmdScopeProfile(cd);
+  }
+
+  // internal data --------------------
+
   private HashMap<Qname, AlloyExpr> assertTable = new HashMap<>();
   // Linked so they are in order
   private HashMap<Qname, CmdData> cmdTable = new LinkedHashMap<>();
-
-  // rest of these elements are added by other paras
   // scopes that are definitely set by the model,
   // and can override a cmd scope
   // e.g., one sigs, enum values and enum parent sig
   // these are always exact scopes
   // imports can force something to be exact even if we don't know the value
+  // THESE ARE ALWAYS EXACT
   private HashMap<Qname, SigScope> modelScopes = new HashMap<>();
+
   // because of symmetry breaking, these are special to give errors
   private List<Qname> orderedSigs = emptyList();
 
@@ -72,7 +117,7 @@ public class SMCmds extends SMConstraints {
   }
 
   // import [exactly A] in the ordering module
-  public void createOrderedSigWithExactScope(Qname qname) {
+  protected void createOrderedSigWithExactScope(Qname qname) {
     if (this.createSM) {
       // we don't know the value of the exact scope
       this.modelScopes.put(qname, ExactNoValue());
@@ -81,7 +126,7 @@ public class SMCmds extends SMConstraints {
   }
 
   // enum parent
-  public void createOrderedSigWithExactScopeValue(Qname qname, Integer value) {
+  protected void createOrderedSigWithExactScopeValue(Qname qname, Integer value) {
     if (this.createSM) {
       // we know the value of the exact scope (enum)
       this.modelScopes.put(qname, ExactScope(value));
@@ -90,12 +135,12 @@ public class SMCmds extends SMConstraints {
   }
 
   // import [exactly A] NOT in the ordering module
-  public void createNonOrderedSigWithExactScope(Qname qname) {
+  protected void createNonOrderedSigWithExactScope(Qname qname) {
     if (this.createSM) this.modelScopes.put(qname, ExactNoValue());
   }
 
   // one sig
-  public void createNonOrderedSigWithExactScopeValue(Qname qname, Integer value) {
+  protected void createNonOrderedSigWithExactScopeValue(Qname qname, Integer value) {
     if (this.createSM) this.modelScopes.put(qname, ExactScope(value));
   }
 
@@ -123,12 +168,16 @@ public class SMCmds extends SMConstraints {
         // resolve sig names in scopes
         HashMap<Qname, SigScope> newCmdScopes = new HashMap();
         for (Qname sigQname : cmdData.cmdScopes.keySet()) {
-          List<Qname> matches = this.sigQnameMatches(sigQname);
-          if (matches.size() == 1) {
-            // rebuild the map with the resolved names
-            newCmdScopes.put(matches.get(0), cmdData.cmdScopes.get(sigQname));
+          if (sigQname.name.equals(AlloyStrings.SIGINT)) {
+            newCmdScopes.put(sigQname, cmdData.cmdScopes.get(sigQname));
           } else {
-            throw AlloyModelError.nameCouldBeMultipleSigs(cmdData.pos, sigQname.name);
+            List<Qname> matches = this.sigQnameMatches(sigQname);
+            if (matches.size() == 1) {
+              // rebuild the map with the resolved names
+              newCmdScopes.put(matches.get(0), cmdData.cmdScopes.get(sigQname));
+            } else {
+              throw AlloyModelError.nameCouldBeMultipleSigs(cmdData.pos, sigQname.name);
+            }
           }
         }
         cmdData.cmdScopes = newCmdScopes;
@@ -171,45 +220,10 @@ public class SMCmds extends SMConstraints {
     }
 
     // TODO need to resolve the names in orderedSigs, etc.
-    // Need to resolve scope names in commands (that will check that they all exist)
+
   }
 
-  // API ------------------------
-
-  public Integer getNumCmds() {
-    return this.cmdTable.keySet().size();
-  }
-
-  private void existsCmd(int n) {
-    // only used by impl
-    assert (n < 0 || n >= this.cmdTable.keySet().size());
-    /*
-    if (n < 0 || n >= this.cmdDataList.size())
-        throw AlloyModelImplError.noCmdAtThatPosition(Integer.toString(n));
-    */
-  }
-
-  // indexed from 0
-  public CmdData getCmdNum(int n) {
-    existsCmd(n);
-    return new ArrayList<>(this.cmdTable.values()).get(n);
-  }
-
-  // accessed by cmd number
-  public Boolean isRunCmd(int n) {
-    existsCmd(n);
-    return getCmdNum(n).cmdType == AlloyCmdPara.CommandDecl.CmdType.RUN;
-  }
-
-  public Boolean isCheckCmd(int n) {
-    existsCmd(n);
-    return getCmdNum(n).cmdType == AlloyCmdPara.CommandDecl.CmdType.CHECK;
-  }
-
-  public AlloyExpr getCmdFormula(int n) {
-    CmdData cmdData = getCmdNum(n);
-    return getCmdFormula(cmdData);
-  }
+  // calculate formula of command
 
   private AlloyExpr getCmdFormula(CmdData cmdData) {
 
@@ -244,18 +258,6 @@ public class SMCmds extends SMConstraints {
     }
   }
 
-  /*
-  public List<AlloyExpr> getCmdConstraints(int n) {
-      List<AlloyExpr> constraints = this.allConstraints();
-      if (this.isRunCmd(n)) {
-          constraints.add(this.cmdDataList.get(n).expr);
-      } else {
-          constraints.add(AlloyNot(this.cmdDataList.get(n).expr));
-      }
-      return constraints;
-  }
-  */
-
   // scope computations for a command -------------------
 
   private int DEFAULT_SCOPE = 3;
@@ -264,53 +266,71 @@ public class SMCmds extends SMConstraints {
   // recursively calculated
   private CmdScopeProfile scopeProfile;
   private Integer default_scope;
+  private HashMap<Qname, SigScope> givenScopes;
   private CmdData cd;
+  private Pos pos;
 
   /*
-      Here we assume no errors in the scopes given in the cmd
+
+      E = exact; NE = non-exact
+
+      Inputs:
+      - modelScopes (one sigs (E1), enums (Em), forced exactly (E?) from import
+      - givenScopes (Eg or NEG first check is for errors in these)
+      - recursive calculation from extends children of min scope (c)
+      - closest parent given scope (p) (which might be overridden), but givenScope of parent is used if child is forced to be something by E?)
 
       Rules about scopes
-      - every one sig has size 1 (info already in modelScopes)
-      - "extends" children (even abstract ones) can have an explicit scope
-      - scope of parents (even if prescribed in the cmd) are overridden to accommodate exact scopes for children
+      - default scope for Int is always E4 even if a different scope is chosen as a default for everything else
       - default scope for top-level sigs not forced to have explicit scopes is 3
-      - default scope for Int is always 4 even if a different scope is chosen as a default for everything else
-      - a sig may have been set to an exact scope from an import paragraph
+      - if child is E? and there is no given scope or calculated scope from children to limit it, it takes the closest ancestor's prescribed scope
+      - scope of parents (even if prescribed in the cmd) are overridden to accommodate exact scopes for children
 
-     Notes (constraints not enforced by sigs)
+      - some calculations in AA are ignored, e.g.,
+        - if A is abstract, unscoped and all children are scopes, A's scope is sum of children; for us this is only true if A is top-level; if A is not top-level, nothing about A is included in the CmdScopeProfile.
+        - if A is abstract, given a scope and all but one child is scopes then A's child scope is the difference - for us, we don't include A's child in the CmdScopeProfile
+
+     Notes (constraints assumed by CmdScopeProfile that are not given explicit scopes)
      - sig A in B means A subseteq B
      - sig A1, A2 extends B means A1 subseteq B, A2 subseteq B, A1 inter A2 = empty
      - abstract sig A means A = all its extends children
      - abstract can be used without any children
-     - every top-level sig must have a scope
+
   */
 
-  /*
-  public CmdScopeProfile getCmdScopeLimits(Integer cmdNum) {
+  private CmdScopeProfile getCmdScopeProfile(CmdData cd) {
 
-    // this.checkForErrorsInScopes(cmdNum);
-    // general error
-    for (Qname s : this.orderedSigs) {
-      if (!this.topLevelSigs().contains(s)) {
-        throw AlloyModelError.orderedOnlyOnTopLevelSigs(s.fullName());
-      }
-    }
+    // should we force orderSigs to be top-level??
+    // for (Qname s : this.orderedSigs) {
+    //  if (!this.topLevelSigs().contains(s)) {
+    //    throw AlloyModelError.orderedOnlyOnTopLevelSigs(s.fullName());
+    //  }
+    // }
 
-    this.cd = getCmdNum(cmdNum);
+    this.cd = cd;
     this.default_scope = cd.defaultScope.map(n -> n).orElse(DEFAULT_SCOPE);
-    this.scopeProfile = new CmdScopeProfile();
+    this.givenScopes = cd.cmdScopes;
 
+    this.scopeProfile = new CmdScopeProfile();
+    this.pos = this.cd.pos;
+
+    checkForErrorsInGivenScopes();
+
+    Integer parentSigScope;
     // modifies the scopeProfile
-    // Int might or might not be in the topLevelSigs
+    // Int should not be in top level sigs
     for (Qname s : this.topLevelSigs()) {
-      Integer sigBound = recurseExtendsProfile(s, true);
+      if (givenScope(s).equals(NoScope()))
+        // used for children of s
+        parentSigScope = recurseExtendsProfile(s, this.default_scope);
+      else parentSigScope = recurseExtendsProfile(s, this.default_scope);
     }
-    // make sure Int has a value
-    if (cd.cmdScopes.keySet().contains(AlloyStrings.SIGINT))
+
+    // set Int's scope
+    if (givenScopes.keySet().contains(unknownQname(AlloyStrings.SIGINT)))
       // givenScopes might not say INT is exactly, but it is always exactly in Alloy
-      this.scopeProfile.addTopLevel(
-          AlloyStrings.SIGINT, ExactScope(cd.cmdScopes.get(AlloyStrings.SIGINT).max()));
-    else this.scopeProfile.addTopLevel(AlloyStrings.SIGINT, ExactScope(this.INT_DEFAULT_SCOPE));
+      this.scopeProfile.setIntScope(givenScopes.get(unknownQname(AlloyStrings.SIGINT)).getValue());
+    else this.scopeProfile.setIntScope(this.INT_DEFAULT_SCOPE);
 
     // Alloy instances also always have:
     // seq/Int={0, 1, 2, 3}
@@ -318,161 +338,256 @@ public class SMCmds extends SMConstraints {
     // none={}
     // TODO: may be something to fix here
 
+    // check ordered sigs have scope greater than zero
+    for (Qname s : this.orderedSigs) {
+      if (this.scopeProfile.getValue(s) <= 0)
+        throw AlloyModelError.exactScopeForOrderedMustBeGreaterThanZero(s.fullName());
+    }
+
     return this.scopeProfile;
   }
 
-  private Integer recurseExtendsProfile(Qname sigName, Boolean isTopLevel) {
+  private Integer recurseExtendsProfile(Qname sigName, Integer closestParentScope) {
 
     // recurse from a top-level sig down to leaves and back up
 
     // look at what scopes from children say
     // sum their exact scopes (might be none)
-    Integer minFromChildren = 0;
+
+    // c = calculated scope
+    // 0 if no min limits
+    Integer c = 0;
+    Integer d;
     for (Qname child : this.extendsChildren(sigName)) {
-      minFromChildren = minFromChildren + recurseExtendsProfile(child, false);
+      if (!givenScope(sigName).equals(NoScope()))
+        d = recurseExtendsProfile(child, givenScope(sigName).getValue());
+      else d = recurseExtendsProfile(child, closestParentScope);
+      c = c + d;
     }
 
-    // we SET a scope in the scope profile (rather than just returning a value) if
-    // 1) it is top-level
-    // or
-    // 2) it is in model scopes (exactly with or without value)
-    if (!cd.cmdScopes.keySet().contains(sigName)
-        && !this.modelScopes.keySet().contains(sigName)
-        && !isTopLevel) {
-      // no prescribed scope and not modelScope sig and not top level
-      // so just pass the exact bound up
-      // but if an import forced it to be exact add that
-      if (this.sigsWithExactScope().contains(sigName)) {
-        this.scopeProfile.addTopLevel(sigName, ExactScope(exactBoundOpt.get()));
-      }
-      return exactBoundOpt; // might be empty or might be exact scope
+    SigScope g = givenScope(sigName);
+    SigScope m = modelScope(sigName);
+    // top level decision (g has Scope or Not, m has scope or Not)
+    if (g.equals(NoScope()) && m.equals(NoScope())) {
+      return this.NoGivenScopeNoModelScope(sigName, g, m, c, closestParentScope);
+    } else if (g.equals(NoScope()) && !m.equals(NoScope())) {
+      return this.NoGivenScopeModelScope(sigName, g, m, c, closestParentScope);
+    } else if (!g.equals(NoScope()) && m.equals(NoScope())) {
+      return this.GivenScopeNoModelScope(sigName, g, m, c, closestParentScope);
+    } else {
+      return this.GivenScopeModelScope(sigName, g, m, c, closestParentScope);
     }
+  }
 
-    SigScope givenScope;
-    Boolean overrideFlag = false;
-    if (!cd.cmdScopes.keySet().contains(sigName) && isTopLevel && !this.isOneSig(sigName)) {
-      // top-level so must be given a scope
-      // chosen from exactBoundOpt and this.defaultScope
-      if (this.sigsWithExactScope().contains(sigName)) {
-        givenScope = ExactScope(this.default_scope);
+  private SigScope modelScope(Qname sigName) {
+    if (this.modelScopes.keySet().contains(sigName)) {
+      return this.modelScopes.get(sigName);
+    } else return NoScope();
+  }
+
+  private SigScope givenScope(Qname sigName) {
+    if (this.givenScopes.keySet().contains(sigName)) {
+      return this.givenScopes.get(sigName);
+    } else return NoScope();
+  }
+
+  // separate into these four cases to make it easier to understand
+
+  private Integer NoGivenScopeNoModelScope(
+      Qname sigName, SigScope g, SigScope m, Integer c, Integer closestParentScope) {
+    if (this.isTopLevelSig(sigName)) {
+      if (this.isAbstractSig(sigName) && c != 0) {
+        // no g, no m, top-level, abstract, c != 0
+        addToCmdProfile(sigName, ExactScope(c));
+        return 0; // does not matter
       } else {
-        givenScope = NonExactScope(this.default_scope);
+        // no g, no m, top-level, c == 0 || !abstract
+        addToCmdProfile(sigName, NonExactScope(Math.max(c, this.default_scope)));
+        return 0; // does not matter
       }
-    } else if (!cd.cmdScopes.keySet().contains(sigName) && this.isOneSig(sigName)) {
-      // it is an error earlier if 'one sig's are given a scope other than 1
-      givenScope = ExactScope(1);
     } else {
-      // given a scope; might or might not be top-level
-      // only time when override of scope in cmd could be true
-      overrideFlag = true;
-      // already been set to exact from an import above
-      givenScope = cd.cmdScopes.get(sigName);
+      // no g, no m, !top-level, c=?, abstract?
+      return c; // abstract contraints take care of it
     }
-    // System.out.println(givenScope);
-    if (!exactBoundOpt.isPresent()) {
-      // givenScope could be exact or not
-      if (isTopLevel) this.scopeProfile.addTopLevel(sigName, givenScope);
-      else this.scopeProfile.addExplicitExtends(sigName, givenScope);
-      if (givenScope.isExact()) {
-        return Optional.of(givenScope.max());
+  }
+
+  private Integer GivenScopeNoModelScope(
+      Qname sigName, SigScope g, SigScope m, Integer c, Integer closestParentScope) {
+    // g is Ev or NEv, no m
+    if (g.getValue() < c) {
+      cmdScopeWarningExactFromBelowTakesPrecedence(this.pos, sigName, ExactScope(c), g.getValue());
+      if (isTopLevelSig(sigName)) {
+        // g is Ev or NEv, no m, v<c, top-level, abstract?
+        addToCmdProfile(sigName, ExactScope(c));
+        return c; // does not matter
       } else {
-        return Optional.empty();
+        // g is Ev or NEv, no m, v<c, !top-level, abstract?
+        return c;
       }
     } else {
-      // we have both a givenScope and an exactScope from children
-      if (exactBoundOpt.get() >= givenScope.max()) {
-        // does not matter if givenScope is exact or not
-        // sum of children  is higher and takes precedence
-        if (overrideFlag) System.out.println("Overriding cmd scope for " + sigName);
-        if (isTopLevel) this.scopeProfile.addTopLevel(sigName, ExactScope(exactBoundOpt.get()));
-        else this.scopeProfile.addExplicitExtends(sigName, ExactScope(exactBoundOpt.get()));
-        return exactBoundOpt;
-      } else {
-        // we have an exact bound from children that
-        // is less than givenScope
-        // givenScope could be exact or not-exact
-        if (isTopLevel) this.scopeProfile.addTopLevel(sigName, givenScope);
-        else this.scopeProfile.addExplicitExtends(sigName, givenScope);
-        // lower bound is exact scope from either child or givenScope
-        if (givenScope.isExact()) {
-          return Optional.of(givenScope.max());
-        } else {
-          return Optional.of(exactBoundOpt.get());
+      // g is Ev or NEv, no m, v>=c, top-level?, abstract?
+      if (this.isAbstractSig(sigName)) {
+        if (c != 0 && g.getValue() != c) {
+          cmdScopeWarningAbstractTakesPrecedence(this.pos, sigName, ExactScope(c), g.getValue());
         }
+        // g is Ev or NEv, no m, v>=c, top-level?, abstract
+        addToCmdProfile(sigName, ExactScope(c));
+        return c;
+      } else {
+        // g is Ev or NEv, no m, v>=c, top-level?
+        addToCmdProfile(sigName, g);
+        return g.isExact() ? g.getValue() : c;
       }
     }
   }
-  */
 
-  protected void checkForErrorsInScopes(Integer cmdNum) {
-    /* errors to check for
-    1) every sig given an explicit scope size is a sigName in the model
-    2) every one sig has size 1 (if one sig is given a default scope != 1, error; but it does not have to be an `exactly` 1)
-    3) "in" children can't have an explicit scope (error)
-    4) if an "extends" (including a one sig) child is given an explicit scope, its top-level sig must be given an explicit scope in the command (even if this is by designating a default scope for everything else) (otherwise error)
-        sig A {}
-        sig A1 extends A {}
+  private Integer NoGivenScopeModelScope(
+      Qname sigName, SigScope g, SigScope m, Integer c, Integer closestParentScope) {
+    if (m.hasValue()) {
+      if (c != 0 && c != m.getValue()) {
+        // no g, m is Evalue, c>m
+        throw ImplementationError.shouldNotReach();
+      } else {
+        // no g, m is Evalue, c=m, !abstract || !top-level
+        addToCmdProfile(sigName, ExactScope(m.getValue()));
+        return m.getValue();
+      }
+    } else {
+      // no g, m is E?, abstract?, top-level?
+      // only place p is used
+      addToCmdProfile(sigName, ExactScope(closestParentScope));
+      return closestParentScope;
+    }
+  }
 
-        run {} for 3 but exactly 2 A1
-      is okay, but
-        sig A {}
-        sig A1 extends A {}
+  private Integer GivenScopeModelScope(
+      Qname sigName, SigScope g, SigScope m, Integer c, Integer closestParentScope) {
+    // g is Eg or NEg, m is E? or Em, c>0 or c==0
+    if (m.hasValue() && c != 0 && c != m.getValue()) {
+      throw ImplementationError.shouldNotReach();
+    }
+    // g is Ev1 or NEv1, m is E? or Ec, c>0 or c==0
+    if (!m.hasValue()) {
+      if (g.isExact()) {
+        if (c > g.getValue()) {
+          // g is Eg, m is E? , c>g, toplevel?, abstract?
+          cmdScopeWarningExactFromBelowTakesPrecedence(this.pos, sigName, g, c);
+          addToCmdProfile(sigName, ExactScope(c));
+          return c;
+        } else {
+          // g is Eg, m is E? , c<=g, toplevel?, abstract?
+          addToCmdProfile(sigName, g);
+          return g.getValue();
+        }
+      } else {
+        // g is NEg, m is E?, toplevel?, abstract?
+        if (c != 0 && c != g.getValue() && this.isAbstractSig(sigName)) {
+          cmdScopeWarningExactFromBelowTakesPrecedence(this.pos, sigName, g, c);
+          addToCmdProfile(sigName, ExactScope(c));
+          return c;
+        } else {
+          cmdScopeWarningExactFromBelowTakesPrecedence(this.pos, sigName, g, c);
+          addToCmdProfile(sigName, ExactScope(g.getValue()));
+          return g.getValue();
+        }
+      }
+    } else {
+      // g is Eg or NEg, m is Ec, toplevel?, abstract?
+      if (g.getValue() != m.getValue()) {
+        // m.getValue() == c
+        cmdScopeWarningExactFromBelowTakesPrecedence(this.pos, sigName, g, m.getValue());
+      }
+      addToCmdProfile(sigName, m);
+      return m.getValue();
+    }
+  }
 
-        run {} for 2 A1
-      is not allowed
-    */
+  private void addToCmdProfile(Qname sigName, SigScope scope) {
+    // System.out.println(sigName + " assigned scope: " + scope.toString());
+    // assert (false);
+    if (isTopLevelSig(sigName)) {
+      this.scopeProfile.addTopLevel(sigName, scope);
+    } else {
+      this.scopeProfile.addExplicitExtends(sigName, scope);
+    }
+  }
+
+  private void checkForErrorsInGivenScopes() {
+
+    // trying to match what AA considers errors
+
+    for (Qname sigName : givenScopes.keySet()) {
+      SigScope scope = givenScopes.get(sigName);
+
+      // every sig given an explicit scope size is a sigName in the model
+
+      if (this.isSig(sigName)) {
+
+        if (!this.isExtendsChild(sigName) && !this.isTopLevelSig(sigName)) {
+          // "in" or "equals" sigs cannot be given scopes in the command
+          throw AlloyModelError.cantSetScopeOfInEqualsChild(this.pos, sigName.toString());
+
+        } else if (this.isEnumSig(sigName)) {
+          // no enum sig can have a givenScope
+          throw AlloyModelError.cantSetScopeOfEnum(this.pos, sigName.toString());
+
+        } else if (this.isLoneSig(sigName) && !scope.equals(NonExactScope(1))) {
+          // lone sig must be NE<=1
+          throw AlloyModelError.loneSigMustBeNonExactOne(this.pos, sigName.toString());
+
+        } else if (this.isSomeSig(sigName)) {
+          if (scope.getValue() <= 0) {
+            // every some sig has NE>=1
+            throw AlloyModelError.someSigMustBeOneAndUp(this.pos, sigName.toString());
+          }
+
+        } else if (this.isExtendsChild(sigName) && !cd.defaultScope.isPresent()) {
+          /*
+          if an "extends" (including a one sig) child is given an explicit scope, its top-level sig must be given an explicit scope in the command (even if this is by designating a default scope for everything else) (otherwise error)
+              sig A {}
+              sig A1 extends A {}
+
+              run {} for 3 but exactly 2 A1
+            is okay, but
+              sig A {}
+              sig A1 extends A {}
+
+              run {} for 2 A1
+            is not allowed
+          */
+          // we have to look in rest of givenScopes to see if top-level
+          // parent of sigName has an explicit scope given in the command
+          if (!givenScopes.keySet().contains(this.topLevelExtendsAncestor(sigName))) {
+            throw AlloyModelError.scopeOfTopLevelSigMustBeGiven(this.pos, sigName.toString());
+          }
+        }
+      } else if (sigName.name.equals(AlloyStrings.NONE)) {
+        throw AlloyModelError.noScopeForNone(this.pos);
+      } else if (!sigName.name.equals(AlloyStrings.SIGINT)) {
+        // TODO: other builtins to add here
+        throw AlloyModelError.noScopeForNonSig(sigName.toString());
+      }
+    }
+  }
+
+  // private  -------------------
+
+  private void existsCmd(int n) {
+    // only used by impl
+    assert (n < 0 || n >= this.cmdTable.keySet().size());
     /*
-    CmdData cd = getCmdNum(cmdNum);
-
-    // is there a default included explicitly in the cmd?
-    Optional<Integer> givenDefault;
-    if (cmdDecl.scope.isPresent() && cmdDecl.scope.get().num.isPresent())
-        givenDefault = Optional.of(cmdDecl.scope.get().num.get().value);
-    else givenDefault = Optional.empty();
-
-    // these are the sigs given explicit scopes in the cmd
-    List<AlloyCmdPara.CommandDecl.Scope.Typescope> typeScopes =
-            cmdDecl.scope.map(s -> s.typescopes).orElse(new ArrayList<>());
-    HashMap<String, SigScope> givenScopes = new HashMap<String, SigScope>();
-    // put the scopes given in the cmd into a HashMap
-    for (AlloyCmdPara.CommandDecl.Scope.Typescope typeScope : typeScopes) {
-        // Int will not be declared and in set of all sigs
-        String sigName = typeScope.scopableExpr.toString();
-        // AA accepts "int" as sig name for scopes *
-        if (sigName.equals(AlloyStrings.INT)) sigName = AlloyStrings.SIGINT;
-        if (!sigName.equals(AlloyStrings.SIGINT))
-            givenScopes.put(
-                    sigName,
-                    typeScope.isExactly
-                            ? ExactScope(typeScope.start.value)
-                            : NonExactScope(typeScope.start.value));
-    }
-    for (String sigName : givenScopes.keySet()) {
-        SigScope scope = givenScopes.get(sigName);
-        // 1)
-        if (this.containsSig(sigName)) {
-            // 2)
-            if (this.isOneSig(sigName) && (scope.max != 1)) {
-                throw AlloyModelError.nonOneScopeForOneSig(cmdDecl.pos, cmdDecl.toString());
-            }
-            // 3)
-            if (this.isInChild(sigName)) {
-                throw AlloyModelError.cantSetScopeOfInChild(cmdDecl.pos, cmdDecl.toString());
-            }
-            // 4)
-            if (this.isExtendsChild(sigName) && !givenDefault.isPresent()) {
-                // we have to look in rest of givenScopes to see if top-level
-                // parent of sigName has an explicit scope given in the command
-                if (!givenScopes.keySet().contains(this.topLevelExtendsAncestor(sigName))) {
-                    throw AlloyModelError.scopeOfTopLevelSigMustBeGiven(
-                            cmdDecl.pos, cmdDecl.toString());
-                }
-            }
-        } else {
-            throw AlloyModelImplError.noScopeForNonSig(sigName);
-        }
-        */
+    if (n < 0 || n >= this.cmdDataList.size())
+        throw AlloyModelImplError.noCmdAtThatPosition(Integer.toString(n));
+    */
   }
+
+  // indexed from 0
+  private CmdData getCmdNum(int n) {
+    existsCmd(n);
+    return new ArrayList<>(this.cmdTable.values()).get(n);
+  }
+
+  // debugging -----------------
 
   public void debugSMCmds() {
     StringBuilder sb = new StringBuilder("SMCmds:\n");
@@ -513,7 +628,7 @@ public class SMCmds extends SMConstraints {
         // or a block to begin with
         sb.append(
             String.format(
-                "%s\n %s \n   (scopes=%s%s, resolved=%s%s)",
+                "%s %s  (scopes=%s%s, resolved=%s%s)",
                 cd.cmdType,
                 "contents="
                     + (cd.block.isPresent()
@@ -524,6 +639,7 @@ public class SMCmds extends SMConstraints {
                 cd.isResolved,
                 cd.expect.map(e -> ", expect=" + e).orElse("")));
       }
+      sb.append("\n" + getCmdScopeProfile(cd));
       sb.append('\n');
     }
     sb.append("  modelScopes:\n");
@@ -536,95 +652,29 @@ public class SMCmds extends SMConstraints {
     System.out.println(sb.toString() + "\n");
   }
 
-  public static class CmdScopeProfile {
-    // this object contains everything a translator
-    // needs to know about limitations of scopes of a cmd
-    // the process above should result in a scope for every top Level Sig
-    // ending up in the ScopeProfile
-    // plus any required limitations on sigs lower in the sig hierarchy
+  private void cmdScopeWarningAbstractTakesPrecedence(
+      Pos pos, Qname sigName, SigScope scope, Integer v) {
+    Reporter.INSTANCE.addWarning(
+        new WarningUser(
+            pos,
+            "abstract takes precedence to make scope of "
+                + sigName.toString()
+                + " be "
+                + scope.toString()
+                + " rather than scope given in command of: "
+                + v.toString()));
+  }
 
-    // usually sigName is a sigRef, but for generality we can
-    // leave it as a string
-
-    // for now only separately topLevel ones from others
-    // one sigs could be a separate category, but they could be
-    // a topLevelSig or an explicitExtends
-    // so until we have a use case for handling one sigs separately
-    // here, leave it as is
-
-    private final HashMap<String, SigScope> topLevel;
-    private final HashMap<String, SigScope> explicitExtends;
-
-    public CmdScopeProfile() {
-      this.topLevel = new HashMap<>();
-      this.explicitExtends = new HashMap<>();
-    }
-
-    public Optional<SigScope> getTopLevelScope(String sigName) {
-      return Optional.ofNullable(this.topLevel.get(sigName));
-    }
-
-    public Optional<SigScope> getExplicitExtendsScope(String sigName) {
-      return Optional.ofNullable(this.explicitExtends.get(sigName));
-    }
-
-    public void addTopLevel(String sigName, SigScope ss) {
-      this.topLevel.put(sigName, ss);
-    }
-
-    public void addExplicitExtends(String sigName, SigScope ss) {
-      this.explicitExtends.put(sigName, ss);
-    }
-
-    // written by chatgpt
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      sb.append("CmdScopeProfile {\n");
-
-      sb.append("  topLevel:\n");
-      if (topLevel.isEmpty()) {
-        sb.append("    <none>\n");
-      } else {
-        for (Map.Entry<String, SigScope> e : topLevel.entrySet()) {
-          sb.append("    ").append(e.getKey()).append(" -> ").append(e.getValue()).append('\n');
-        }
-      }
-
-      sb.append("  explicitExtends:\n");
-      if (explicitExtends.isEmpty()) {
-        sb.append("    <none>\n");
-      } else {
-        for (Map.Entry<String, SigScope> e : explicitExtends.entrySet()) {
-          sb.append("    ").append(e.getKey()).append(" -> ").append(e.getValue()).append('\n');
-        }
-      }
-
-      sb.append("}");
-
-      return sb.toString();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      // written by ChatGPT
-      if (this == obj) {
-        return true;
-      }
-      if (!(obj instanceof CmdScopeProfile)) {
-        return false;
-      }
-
-      CmdScopeProfile other = (CmdScopeProfile) obj;
-      return Objects.equals(topLevel, other.topLevel)
-          && Objects.equals(explicitExtends, other.explicitExtends);
-    }
-
-    @Override
-    public int hashCode() {
-      // written by ChatGPT
-      return Objects.hash(topLevel, explicitExtends);
-    }
+  private void cmdScopeWarningExactFromBelowTakesPrecedence(
+      Pos pos, Qname sigName, SigScope scope, Integer v) {
+    Reporter.INSTANCE.addWarning(
+        new WarningUser(
+            pos,
+            "exact scope from children takes precedence to make scope of "
+                + sigName.toString()
+                + " be "
+                + scope.toString()
+                + " rather than scope given in command of: "
+                + v.toString()));
   }
 }

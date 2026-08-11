@@ -4,6 +4,7 @@ import static ca.uwaterloo.watform.alloyast.AlloyStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
 import ca.uwaterloo.watform.paravisitor.AlloyParaVis;
 import ca.uwaterloo.watform.utils.Pos;
@@ -29,6 +30,9 @@ public final class AlloyEnumPara extends AlloyPara {
 
   public AlloyEnumPara(boolean isPrivate, AlloyQnameExpr qname, List<AlloyQnameExpr> qnames) {
     this(Pos.UNKNOWN, isPrivate, qname, qnames);
+    if (qnames.size() == 0) {
+      throw AlloyCtorError.enumOfSizeZero(pos, qname.toString());
+    }
   }
 
   public AlloyEnumPara(AlloyQnameExpr qname, List<AlloyQnameExpr> qnames) {

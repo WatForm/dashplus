@@ -159,7 +159,7 @@ public class Instance {
         this.fields.put(qname, new FieldValue(tupleSet));
       }
 
-      this.debugInstance();
+      // this.debugInstance();
       instanceChecks();
     } catch (Exception e) {
       // sends it up to main
