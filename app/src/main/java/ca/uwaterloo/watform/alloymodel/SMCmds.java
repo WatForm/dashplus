@@ -503,7 +503,7 @@ public class SMCmds extends SMConstraints {
   }
 
   private void addToCmdProfile(Qname sigName, SigScope scope) {
-    // System.out.println(sigName + " assigned scope: " + scope.toString());
+    // q.println(sigName + " assigned scope: " + scope.toString());
     // assert (false);
     if (isTopLevelSig(sigName)) {
       this.scopeProfile.addTopLevel(sigName, scope);
