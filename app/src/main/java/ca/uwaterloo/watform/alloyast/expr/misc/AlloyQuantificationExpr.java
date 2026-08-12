@@ -21,7 +21,11 @@ public final class AlloyQuantificationExpr extends AlloyExpr {
       Pos pos, AlloyQuantificationExpr.Quant quant, List<AlloyDecl> decls, AlloyExpr body) {
     super(pos);
     this.quant = quant;
+    if (decls.isEmpty()) {
+      throw AlloyCtorError.declsEmptyForQuant(pos);
+    }
     this.decls = Collections.unmodifiableList(decls);
+
     this.body = body;
     reqNonNull(nullField(pos, this), this.quant, this.decls, this.body);
   }

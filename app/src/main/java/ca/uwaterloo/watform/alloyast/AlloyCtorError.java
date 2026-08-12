@@ -174,4 +174,8 @@ public class AlloyCtorError extends UserOrImplError {
   public static AlloyCtorError enumOfSizeZero(Pos p, String name) {
     return new AlloyCtorError(p, "enum of size 0: " + name);
   }
+
+  public static AlloyCtorError declsEmptyForQuant(Pos p) {
+    return new AlloyCtorError(p, "quantifier must have decls");
+  }
 }
