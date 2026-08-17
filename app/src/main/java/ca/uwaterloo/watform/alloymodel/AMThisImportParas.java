@@ -185,9 +185,9 @@ public class AMThisImportParas extends AMThisCmdParas {
         throw AlloyModelError.importArgsNumDoesntMatch(importPara.pos, importPara.toString());
       }
     }
-    System.out.println("parentNameSpace: " + parentNameSpace);
-    System.out.println("importPara: " + importPara.toString());
-    System.out.println("valsToSubstitute: " + valsToSubstitute.toString());
+    // System.out.println("parentNameSpace: " + parentNameSpace);
+    // System.out.println("importPara: " + importPara.toString());
+    // System.out.println("valsToSubstitute: " + valsToSubstitute.toString());
 
     // 2) determine nameSpace of import
     String importNameSpace =

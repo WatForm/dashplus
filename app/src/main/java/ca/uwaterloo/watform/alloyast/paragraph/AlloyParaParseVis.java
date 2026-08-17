@@ -54,110 +54,60 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   private String computeImportFileName(
       String parentModuleName, String parentFileName, String importName) {
 
+    // System.out.println("parentModuleName = " + parentModuleName);
+    // System.out.println("parentFileName   = " + parentFileName);
+    // System.out.println("importName       = " + importName);
+
     // for non-util files
     // determine imported file name relative to the current path and parentModuleName
-    // trying to match what AA does to create the file name that
 
-    // Start with the directory containing parentFileName
-    // strip off .als
-    String parentFileNameTmp = parentFileName.substring(0, parentFileName.lastIndexOf('.'));
+    // from ChatGPT's decomposition of AA's CompUtil and my debugging it!
 
-    if (parentFileNameTmp.endsWith(parentModuleName)) {
-      String[] parentFileNameParts = parentFileNameTmp.split("/");
-      String[] parentModuleParts = parentModuleName.split("/");
-      int m = parentModuleParts.length - 1;
-      int f = parentFileNameParts.length - 1;
+    // Start with the parent module name and the import name.
+    String remainingParentModuleName = parentModuleName;
+    String remainingImportName = importName;
 
-      // look for common parts with parentModuleName and parentFileName
-      while (m >= 0 && f >= 0 && parentModuleParts[m].equals(parentFileNameParts[f])) {
-        // not sure about partial matches here
-        m--;
-        f--;
-      }
-      // chop off the common parts from the parentDir
-      String parentDir;
-      if (f == parentFileNameParts.length - 1) {
-        parentDir = parentFileName.substring(0, parentFileName.lastIndexOf('/'));
-      } else {
-        parentDir = String.join("/", Arrays.copyOfRange(parentFileNameParts, 0, f + 1));
-      }
-      // add the importName
-      String fileName = parentDir + "/" + importName + ".als";
-      return fileName;
+    int parentSlash = remainingParentModuleName.indexOf('/');
+    int importSlash = remainingImportName.indexOf('/');
 
-    } else {
-      // parentModuleName does not end in XX/YY
-      // parentFileName does not end in XX/YY
+    // cut off parts at the end up to a slash that match
+    while (parentSlash >= 0
+        && importSlash >= 0
+        && remainingParentModuleName
+            .substring(0, parentSlash)
+            .equals(remainingImportName.substring(0, importSlash))) {
 
-      // AA looks for how much of parentModuleName is matched with
-      // importName and then creates file name from parentFileName
-      // plus remainder after match minus 1
-      // e.g.,
-      // module aa
-      // open aa/bb/cc  // looks for parentFileName/aa/bb/cc.als
-      //
-      // if there is no match, e.g.,
-      // module XX
-      // open aa/bb/cc // looks for parentFileName/aa/bb/cc.als
-      //
-      // another example:
-      // module aa/bb/cc
-      // open aa/bb/cc // looks for parentFilename/cc.als
-      //
-      // but the match between parentModuleName and importName
-      // does not have to be full, as in:
-      //
-      // module aa/b
-      // open aa/bb/cc/dd // looks for parentFileName/bb/cc/dd.als
-      // this example was probably a mistake in the AA code
-      // but we will live with it here to match AA behaviour
+      remainingParentModuleName = remainingParentModuleName.substring(parentSlash + 1);
 
-      String parentDir = parentFileName.substring(0, parentFileName.lastIndexOf('/'));
+      remainingImportName = remainingImportName.substring(importSlash + 1);
 
-      String[] parentParts = parentModuleName.split("/");
-      String[] importParts = importName.split("/");
+      parentSlash = remainingParentModuleName.indexOf('/');
+      importSlash = remainingImportName.indexOf('/');
+    }
 
-      // Find longest common prefix.
-      int common = 0;
-      while (common < parentParts.length && common < importParts.length) {
-        if (parentParts[common].equals(importParts[common])) {
-          common++;
-        } else if (importParts[common].startsWith(parentParts[common])) {
-          // partial match - count as a match but don't continue
-          // looking for matches
-          common++;
-          break;
-        } else {
-          // no match
-          break;
-        }
-      }
+    // System.out.println("remainingParentModuleName: " + remainingParentModuleName);
+    // System.out.println("remainingImportName: " + remainingImportName);
 
-      // Start with the directory containing parentFileName.
-      // String parentDir = parentFileName.substring(0, parentFileName.lastIndexOf('/'));
-      if (common == 1) {
-        // System.out.println("here29");
-        // System.out.println(parentDir + "/" + importName + ".als");
-        return parentDir + "/" + importName + ".als";
-      } else {
-
-        // System.out.println("here30");
-        // System.out.println(String.join("/", importParts));
-        // System.out.println(common);
-        // System.out.println(importParts.length);
-
-        // if there is a partial match
-        // go back by one match to get name
-        String fileName =
-            parentDir
-                + "/"
-                + String.join("/", Arrays.copyOfRange(importParts, common, importParts.length))
-                + ".als";
-        // System.out.println(fileName);
-
-        return fileName;
+    // Count the / characters in the original parentModuleName
+    int parentSlashCount = 0;
+    for (int i = 0; i < remainingParentModuleName.length(); i++) {
+      if (remainingParentModuleName.charAt(i) == '/') {
+        parentSlashCount++;
       }
     }
+
+    // Remove the filename, leaving the parent directory
+    String parentDirectory = parentFileName.substring(0, parentFileName.lastIndexOf('/'));
+
+    // Go upward from parentFileName by the number of slashes
+    for (int i = 0; i < parentSlashCount; i++) {
+      parentDirectory = parentDirectory.substring(0, parentDirectory.lastIndexOf('/'));
+    }
+
+    System.out.println("parentDirectory: " + parentDirectory);
+
+    // Append the complete importName plus .als.
+    return parentDirectory + "/" + remainingImportName + ".als";
   }
 
   // ====================================================================================
