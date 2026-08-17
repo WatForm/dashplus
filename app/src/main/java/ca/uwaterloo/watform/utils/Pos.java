@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 public final class Pos {
+  public final String fullFileName;
   public final int rowStart; // 1 indexed
   public final int colStart; // 0 indexed
   public final int rowEnd; // 1 indexed
@@ -11,6 +12,7 @@ public final class Pos {
   public static final Pos UNKNOWN = new Pos();
 
   private Pos() {
+    this.fullFileName = "unknown";
     this.rowStart = 1;
     this.colStart = 0;
     this.rowEnd = 1;
@@ -18,6 +20,7 @@ public final class Pos {
   }
 
   public Pos(ParserRuleContext ctx) {
+    this.fullFileName = ctx.getStart().getTokenSource().getInputStream().getSourceName();
     Token start = ctx.getStart();
     Token stop = ctx.getStop();
 
@@ -30,8 +33,9 @@ public final class Pos {
   }
 
   public Pos(TerminalNode tn) {
-    Token token = tn.getSymbol();
 
+    Token token = tn.getSymbol();
+    this.fullFileName = token.getTokenSource().getInputStream().getSourceName();
     this.rowStart = token.getLine();
     this.colStart = token.getCharPositionInLine();
 
@@ -40,22 +44,27 @@ public final class Pos {
   }
 
   public Pos(int rowStart, int colStart, int rowEnd, int colEnd) {
+    this.fullFileName = null;
     this.rowStart = rowStart;
     this.colStart = colStart;
     this.rowEnd = rowEnd;
     this.colEnd = colEnd;
   }
 
+  /*
   public Pos(edu.mit.csail.sdg.alloy4.Pos alloyJarPos) {
     this.rowStart = alloyJarPos.y;
     this.rowEnd = alloyJarPos.y2;
     this.colStart = alloyJarPos.x - 1; // change to 0 indexed
     this.colEnd = alloyJarPos.x2 - 1; // change to 0 indexed
   }
+  */
 
   @Override
   public String toString() {
-    return "Pos: \n  rowStart: "
+    return "Pos: \n  fileName: "
+        + (this.fullFileName == null ? "API" : this.fullFileName)
+        + "\n rowStart: "
         + this.rowStart
         + "\n  colStart: "
         + this.colStart
@@ -74,7 +83,8 @@ public final class Pos {
     if (!(other instanceof Pos otherPos)) {
       return false;
     }
-    return this.rowStart == otherPos.rowStart
+    return this.fullFileName.equals(otherPos.fullFileName)
+        && this.rowStart == otherPos.rowStart
         && this.colStart == otherPos.colStart
         && this.rowEnd == otherPos.rowEnd
         && this.colEnd == otherPos.colEnd;

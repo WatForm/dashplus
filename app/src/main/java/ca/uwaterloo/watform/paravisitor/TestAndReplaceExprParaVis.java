@@ -79,8 +79,12 @@ public class TestAndReplaceExprParaVis implements AlloyParaVis<AlloyPara> {
 
   public AlloyPara visit(AlloyImportPara importPara) {
     // have to potentially replace sigs used as args to imports
-    return importPara.rebuild(
-        mapBy(importPara.sigRefs, x -> ((AlloySigRefExpr) testAndReplaceExprVis.visit(x))));
+    System.out.println("importPara: " + importPara.toString());
+    AlloyImportPara ip =
+        importPara.rebuild(
+            mapBy(importPara.sigRefs, x -> ((AlloySigRefExpr) testAndReplaceExprVis.visit(x))));
+    System.out.println("replaced with: " + ip.toString());
+    return ip;
   }
 
   public AlloyPara visit(AlloyMacroPara macroPara) {

@@ -164,7 +164,6 @@ public class SMCmds extends SMConstraints {
       // changes info for each cmd
       CmdData cmdData = this.cmdTable.get(qname);
       if (!cmdData.isResolved) {
-
         // resolve sig names in scopes
         HashMap<Qname, SigScope> newCmdScopes = new HashMap();
         for (Qname sigQname : cmdData.cmdScopes.keySet()) {
@@ -172,7 +171,9 @@ public class SMCmds extends SMConstraints {
             newCmdScopes.put(sigQname, cmdData.cmdScopes.get(sigQname));
           } else {
             List<Qname> matches = this.sigQnameMatches(sigQname);
-            if (matches.size() == 1) {
+            if (matches.size() == 0) {
+              throw AlloyModelError.unknownName(cmdData.pos, sigQname.name);
+            } else if (matches.size() == 1) {
               // rebuild the map with the resolved names
               newCmdScopes.put(matches.get(0), cmdData.cmdScopes.get(sigQname));
             } else {
@@ -181,7 +182,6 @@ public class SMCmds extends SMConstraints {
           }
         }
         cmdData.cmdScopes = newCmdScopes;
-
         // resolve either 1) assert or pred name or 2) expression in block
         if (cmdData.assertOrPredFunQname.isPresent()) {
           if (cmdData.cmdType == AlloyCmdPara.CommandDecl.CmdType.RUN) {
@@ -639,7 +639,7 @@ public class SMCmds extends SMConstraints {
                 cd.isResolved,
                 cd.expect.map(e -> ", expect=" + e).orElse("")));
       }
-      sb.append("\n" + getCmdScopeProfile(cd));
+      // sb.append("\n" + getCmdScopeProfile(cd));
       sb.append('\n');
     }
     sb.append("  modelScopes:\n");

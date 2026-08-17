@@ -18,15 +18,16 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigQualParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigRelParseVis;
 import ca.uwaterloo.watform.utils.*;
+import java.io.*;
 import java.nio.file.*;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import org.antlr.v4.runtime.tree.*;
 
 public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   protected final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
   protected final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
   public final String fullFileName;
+  public String moduleName = ""; // gets set when parse a ModulePara
 
   public AlloyParaParseVis(String fullFileName) {
     this.fullFileName = fullFileName;
@@ -42,10 +43,121 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   // ====================================================================================
   @Override
   public AlloyModulePara visitModulePara(DashParser.ModuleParaContext ctx) {
+    AlloyQnameExpr moduleNameExpr = (AlloyQnameExpr) exprParseVis.visit(ctx.qname());
+    this.moduleName = moduleNameExpr.getName();
     return new AlloyModulePara(
         new Pos(ctx),
-        (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
+        moduleNameExpr,
         visitAll(ctx.moduleArg(), new AlloyModuleArgParseVis(), AlloyModuleArg.class));
+  }
+
+  private String computeImportFileName(
+      String parentModuleName, String parentFileName, String importName) {
+
+    // for non-util files
+    // determine imported file name relative to the current path and parentModuleName
+    // trying to match what AA does to create the file name that
+
+    // Start with the directory containing parentFileName
+    // strip off .als
+    String parentFileNameTmp = parentFileName.substring(0, parentFileName.lastIndexOf('.'));
+
+    if (parentFileNameTmp.endsWith(parentModuleName)) {
+      String[] parentFileNameParts = parentFileNameTmp.split("/");
+      String[] parentModuleParts = parentModuleName.split("/");
+      int m = parentModuleParts.length - 1;
+      int f = parentFileNameParts.length - 1;
+
+      // look for common parts with parentModuleName and parentFileName
+      while (m >= 0 && f >= 0 && parentModuleParts[m].equals(parentFileNameParts[f])) {
+        // not sure about partial matches here
+        m--;
+        f--;
+      }
+      // chop off the common parts from the parentDir
+      String parentDir;
+      if (f == parentFileNameParts.length - 1) {
+        parentDir = parentFileName.substring(0, parentFileName.lastIndexOf('/'));
+      } else {
+        parentDir = String.join("/", Arrays.copyOfRange(parentFileNameParts, 0, f + 1));
+      }
+      // add the importName
+      String fileName = parentDir + "/" + importName + ".als";
+      return fileName;
+
+    } else {
+      // parentModuleName does not end in XX/YY
+      // parentFileName does not end in XX/YY
+
+      // AA looks for how much of parentModuleName is matched with
+      // importName and then creates file name from parentFileName
+      // plus remainder after match minus 1
+      // e.g.,
+      // module aa
+      // open aa/bb/cc  // looks for parentFileName/aa/bb/cc.als
+      //
+      // if there is no match, e.g.,
+      // module XX
+      // open aa/bb/cc // looks for parentFileName/aa/bb/cc.als
+      //
+      // another example:
+      // module aa/bb/cc
+      // open aa/bb/cc // looks for parentFilename/cc.als
+      //
+      // but the match between parentModuleName and importName
+      // does not have to be full, as in:
+      //
+      // module aa/b
+      // open aa/bb/cc/dd // looks for parentFileName/bb/cc/dd.als
+      // this example was probably a mistake in the AA code
+      // but we will live with it here to match AA behaviour
+
+      String parentDir = parentFileName.substring(0, parentFileName.lastIndexOf('/'));
+
+      String[] parentParts = parentModuleName.split("/");
+      String[] importParts = importName.split("/");
+
+      // Find longest common prefix.
+      int common = 0;
+      while (common < parentParts.length && common < importParts.length) {
+        if (parentParts[common].equals(importParts[common])) {
+          common++;
+        } else if (importParts[common].startsWith(parentParts[common])) {
+          // partial match - count as a match but don't continue
+          // looking for matches
+          common++;
+          break;
+        } else {
+          // no match
+          break;
+        }
+      }
+
+      // Start with the directory containing parentFileName.
+      // String parentDir = parentFileName.substring(0, parentFileName.lastIndexOf('/'));
+      if (common == 1) {
+        // System.out.println("here29");
+        // System.out.println(parentDir + "/" + importName + ".als");
+        return parentDir + "/" + importName + ".als";
+      } else {
+
+        // System.out.println("here30");
+        // System.out.println(String.join("/", importParts));
+        // System.out.println(common);
+        // System.out.println(importParts.length);
+
+        // if there is a partial match
+        // go back by one match to get name
+        String fileName =
+            parentDir
+                + "/"
+                + String.join("/", Arrays.copyOfRange(importParts, common, importParts.length))
+                + ".als";
+        // System.out.println(fileName);
+
+        return fileName;
+      }
+    }
   }
 
   // ====================================================================================
@@ -55,20 +167,33 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   public AlloyImportPara visitImportPara(DashParser.ImportParaContext ctx) {
     String importName = exprParseVis.visit(ctx.qname(0)).toString();
     AlloyFile importedAlloyFile;
+    String parentModuleName = this.moduleName;
+    String parentFileName = this.fullFileName;
     if (importName.startsWith("util/")) {
+      // where the util files are stored in the jar
+      // if not found, error will be issued via alloyParseUtilFile
       importedAlloyFile = alloyParseUtilFile(new Pos(ctx), importName);
     } else {
-      // need to read this imported file relative to the current path
-      String importFullFileName =
-          Paths.get(this.fullFileName)
-              .getParent()
-              .resolve(importName + ".als")
-              .toAbsolutePath()
-              .normalize()
-              .toString();
-      importedAlloyFile = alloyParse(importFullFileName);
+      // have to check if it exists on disk before checking jar
+      String fullFileName = computeImportFileName(this.moduleName, this.fullFileName, importName);
+      if (Files.exists(Paths.get(fullFileName))) {
+        // file exists so parse the normal way
+        importedAlloyFile = alloyParse(fullFileName);
+      } else {
+        // see if it is in the Alloy jar
+        // System.out.println("import Name: " + importName);
+        InputStream in =
+            AlloyParaParseVis.class
+                .getClassLoader()
+                .getResourceAsStream("models/" + importName + ".als");
+        if (in != null) {
+          importedAlloyFile = alloyParseFromJar(new Pos(ctx), "models/" + importName + ".als");
+        } else {
+          // this will fail but will throw a standard error of file not found
+          importedAlloyFile = alloyParse(fullFileName);
+        }
+      }
     }
-
     // next we have to put this alloyFile into some part of the import
     return new AlloyImportPara(
         new Pos(ctx),

@@ -51,7 +51,7 @@ public class DashParser extends AlloyParser {
     try {
       input = CharStreams.fromPath(filePath);
     } catch (IOException ioException) {
-      throw new Reporter.ErrorUser("Input file cannot be found. ");
+      throw new Reporter.ErrorUser("Input file cannot be found: "+ fullFileName);
     }
     return dashParseFromCharStream(input, fullFileName);
   }

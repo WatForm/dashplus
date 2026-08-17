@@ -59,6 +59,7 @@ public class AMThisSigParas extends AMThisEnumParas {
     for (AlloySigPara sigPara : multiSigPara.expand()) {
       String sigName = sigPara.getName();
       Qname sigQname = nameSpaceQname(nameSpace, sigName);
+      // System.out.println("creating sig: " + sigQname.toString());
       this.createSig(sigPara.pos, sigQname, sigParaSigData(sigPara, nameSpace));
       if (sigPara.quals.contains(AlloySigPara.Qual.ONE))
         this.createNonOrderedSigWithExactScopeValue(sigQname, 1);

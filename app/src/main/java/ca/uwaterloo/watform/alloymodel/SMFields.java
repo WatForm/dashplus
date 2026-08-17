@@ -33,6 +33,8 @@ public class SMFields extends SMImports {
   protected void createField(
       Pos p, String nameSpace, String fieldName, String sigParent, AlloyExpr fieldExpr) {
     if (this.createSM) {
+      // System.out.println("adding field: " + fieldQname(nameSpace, sigParent,
+      // fieldName).toString());
       reqNonNull(nullField(p, this), nameSpace, fieldName, sigParent, fieldExpr);
       assert (nameSpace != UNKNOWN_NAMESPACE);
       if (this.fieldTable.containsKey(fieldQname(nameSpace, sigParent, fieldName)))

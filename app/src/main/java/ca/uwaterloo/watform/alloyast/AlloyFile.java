@@ -12,12 +12,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class AlloyFile extends AlloyASTNode {
-  public String filename = "";
+  public String fullFileName = ""; // set in AlloyParser.java
   public final List<AlloyPara> paras;
 
-  public AlloyFile(Pos pos, List<AlloyPara> paragraphs) {
+  public AlloyFile(Pos pos, List<AlloyPara> paragraphs, String fullFileName) {
     super(pos);
     this.paras = Collections.unmodifiableList(paragraphs);
+    this.fullFileName = fullFileName;
 
     List<AlloyModulePara> modules = extractItemsOfClass(paragraphs, AlloyModulePara.class);
 
@@ -41,15 +42,16 @@ public class AlloyFile extends AlloyASTNode {
         throw AlloyASTImplError.dashParaInAlloyFile(dashParas.get(0).pos);
     }
     */
-    reqNonNull(nullField(pos, this), this.paras);
+    reqNonNull(nullField(pos, this), this.paras, fullFileName);
+    assert (fullFileName != "");
   }
 
-  public AlloyFile(List<AlloyPara> paragraphs) {
-    this(Pos.UNKNOWN, paragraphs);
+  public AlloyFile(List<AlloyPara> paragraphs, String fullFileName) {
+    this(Pos.UNKNOWN, paragraphs, fullFileName);
   }
 
-  public AlloyFile(AlloyPara paragraph) {
-    this(Pos.UNKNOWN, Collections.singletonList(paragraph));
+  public AlloyFile(AlloyPara paragraph, String fullFileName) {
+    this(Pos.UNKNOWN, Collections.singletonList(paragraph), fullFileName);
   }
 
   /*
@@ -74,7 +76,7 @@ public class AlloyFile extends AlloyASTNode {
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.filename, this.paras);
+    return Objects.hash(this.fullFileName, this.paras);
   }
 
   @Override
@@ -83,9 +85,9 @@ public class AlloyFile extends AlloyASTNode {
     if (obj == null) return false;
     if (getClass() != obj.getClass()) return false;
     AlloyFile other = (AlloyFile) obj;
-    if (filename == null) {
-      if (other.filename != null) return false;
-    } else if (!filename.equals(other.filename)) return false;
+    if (this.fullFileName == null) {
+      if (other.fullFileName != null) return false;
+    } else if (!fullFileName.equals(other.fullFileName)) return false;
     if (paras == null) {
       if (other.paras != null) return false;
     } else if (!paras.equals(other.paras)) return false;
