@@ -160,9 +160,18 @@ public class AMThisSigParas extends AMThisEnumParas {
       return AlloyVar(THIS_VAR);
     } else if (e instanceof AlloyAtNameExpr) {
       String atName = ((AlloyAtNameExpr) e).getName();
-      // @f becomes resolvedSigParent <: f
-      if (!allFieldNames.contains(atName)) throw AlloyModelError.cantAtNonFieldOfThisSig(atName);
-      return fieldQname(sigParent.nameSpace, sigParent.name, atName).toAlloyExpr(e.pos, Kind.FIELD);
+      // @f becomes resolvedSigParent <: f if it is a field of this sig
+      if (!allFieldNames.contains(atName)) {
+        // this is tricky because @ is allowed on non-field of this sig names
+        // could be a field of some other sig or some parent sig
+        // lets try just removing the at since this formula
+        // will be put in a regular constraint not in a sig fact anymore
+        return ((AlloyAtNameExpr) e).name; // this is a AlloyQnameExpr
+        // throw AlloyModelError.cantAtNonFieldOfThisSig(e.pos, atName);
+      } else {
+        return fieldQname(sigParent.nameSpace, sigParent.name, atName)
+            .toAlloyExpr(e.pos, Kind.FIELD);
+      }
     } else if (e instanceof AlloyQnameExpr) {
       // we know it is a field from this sig b/c of test
       // replace any field (that is not with @ on the outside) with this_var.((resolvedSigParent)

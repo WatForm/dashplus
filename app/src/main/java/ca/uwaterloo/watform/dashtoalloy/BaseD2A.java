@@ -31,7 +31,7 @@ public class BaseD2A {
   }
 
   protected DashModel dm; // input
-  protected AlloyModel am = new AlloyModel(); // output
+  protected AlloyModel am; // output
   protected boolean isElectrum = false;
   protected boolean isTraces = false;
   protected boolean isTcmc = false;
@@ -39,7 +39,11 @@ public class BaseD2A {
 
   protected BaseD2A(DashModel dm, Options opt) {
     this.dm = dm;
-
+    // every AlloyModel has to have a file name
+    String outputFileNamePrefix =
+        dm.dashFullFileName.substring(0, dm.dashFullFileName.lastIndexOf("."));
+    String alloyFullFileName = outputFileNamePrefix + "-" + opt + ".als";
+    this.am = new AlloyModel(alloyFullFileName);
     switch (opt) {
       case Options.electrum:
         this.isElectrum = true;

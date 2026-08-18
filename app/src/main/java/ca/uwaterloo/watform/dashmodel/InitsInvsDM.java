@@ -18,8 +18,8 @@ public class InitsInvsDM extends BaseDM {
   protected LinkedHashMap<String, List<AlloyExpr>> initsR = new LinkedHashMap<>();
   protected LinkedHashMap<String, List<AlloyExpr>> invsR = new LinkedHashMap<>();
 
-  protected InitsInvsDM() {
-    super();
+  protected InitsInvsDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   protected InitsInvsDM(DashFile d) {

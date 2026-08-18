@@ -16,12 +16,16 @@ import ca.uwaterloo.watform.dashast.DashFile;
 
 public class BaseDM extends AlloyModel {
 
-  public BaseDM() {
-    super();
+  public String dashFullFileName;
+
+  public BaseDM(String dashFullFileName) {
+    super(dashFullFileName);
+    this.dashFullFileName = dashFullFileName;
   }
 
   public BaseDM(DashFile d) {
     super((AlloyFile) d);
+    this.dashFullFileName = d.fullFileName;
   }
 
   public static boolean supportedBuiltinVarExpr(AlloyVarExpr varExpr) {

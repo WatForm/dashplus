@@ -51,7 +51,7 @@ public class DashParser extends AlloyParser {
     try {
       input = CharStreams.fromPath(filePath);
     } catch (IOException ioException) {
-      throw new Reporter.ErrorUser("Input file cannot be found: "+ fullFileName);
+      throw new Reporter.ErrorUser("Input file cannot be found: " + fullFileName);
     }
     return dashParseFromCharStream(input, fullFileName);
   }
@@ -88,9 +88,7 @@ public class DashParser extends AlloyParser {
 
     ParseTree antlrAST = parser.dashFile();
     DashFileParseVis dfpv = new DashFileParseVis(fullFileName);
-    DashFile dashFile = null;
-    dashFile = dfpv.visit(antlrAST);
-    dashFile.filename = fullFileName;
+    DashFile dashFile = dfpv.visit(antlrAST);
     return dashFile;
   }
 }

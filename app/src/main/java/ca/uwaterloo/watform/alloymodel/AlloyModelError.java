@@ -197,8 +197,8 @@ public final class AlloyModelError extends UserOrImplError {
     return new AlloyModelError("Ordering module can only be applied to top-level sigs: " + sigName);
   }
 
-  public static AlloyModelError cantAtNonFieldOfThisSig(String fieldName) {
-    return new AlloyModelError("Can't @ non-field of this sig: " + fieldName);
+  public static AlloyModelError cantAtNonFieldOfThisSig(Pos pos, String fieldName) {
+    return new AlloyModelError(pos, "Can't @ non-field of this sig: " + fieldName);
   }
 
   public static AlloyModelError assertNameMustBeUnique(Pos pos, String name) {

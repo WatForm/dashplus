@@ -42,8 +42,8 @@ public class StatesDM extends TransDM {
   // so these have to be distinct per paramSig
   protected List<DashParam> allParams = new ArrayList<DashParam>();
 
-  public StatesDM() {
-    super();
+  public StatesDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   public StatesDM(DashFile d) {

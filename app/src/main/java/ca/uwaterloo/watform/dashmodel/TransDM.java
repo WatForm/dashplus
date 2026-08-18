@@ -29,8 +29,8 @@ public class TransDM extends InitsInvsDM {
 
   private HashMap<String, TransEntry> tt = new HashMap<String, TransEntry>();
 
-  protected TransDM() {
-    super();
+  protected TransDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   protected TransDM(DashFile d) {

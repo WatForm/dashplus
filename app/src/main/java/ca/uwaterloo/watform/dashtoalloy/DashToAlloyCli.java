@@ -84,22 +84,22 @@ public class DashToAlloyCli implements Callable<Integer> {
           break;
         }
         Reporter.INSTANCE.reset();
-        Reporter.INSTANCE.popPath();
-        Reporter.INSTANCE.pushPath(absolutePath);
+        // Reporter.INSTANCE.popPath();
+        // Reporter.INSTANCE.pushPath(absolutePath);
 
         if (fullFileName.endsWith(".dsh")) {
           dpOutput("Input: " + fullFileName);
           DashModel dm = (DashModel) dashParseToModel(fullFileName);
-          // dm.resolve();
+          dm.resolve();
           if (dm.getNumCmds() == 0 && cmd) {
             dpOutputBold(
                 "Warning: no command in input .dsh file -> using default scopes for run {}");
           }
+          // gets Alloy file name from dm filename
           AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
           if (writeOnly) {
-            String alloyFileName = outputFileNamePrefix + "-" + d2aOptions + ".als";
-            Files.writeString(fileFromString(alloyFileName), am.toString());
-            dpOutput("Output: " + alloyFileName);
+            Files.writeString(fileFromString(am.fullFileName), am.toString());
+            dpOutput("Output: " + am.fullFileName);
           } else {
             int num_cmds_in_file = dm.getNumCmds();
             if (cmdIdx < num_cmds_in_file) {

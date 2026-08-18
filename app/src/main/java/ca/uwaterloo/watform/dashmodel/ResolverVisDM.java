@@ -69,8 +69,8 @@ public class ResolverVisDM extends InitializeDM implements DashExprVis<AlloyExpr
   // bound variables of quantifiers
   private Deque<List<String>> scope = new ArrayDeque<>();
 
-  public ResolverVisDM() {
-    super();
+  public ResolverVisDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   public ResolverVisDM(DashFile d) {

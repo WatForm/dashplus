@@ -21,8 +21,8 @@ public class BuffersDM extends VarsDM {
   private HashMap<String, BufferEntry> bt = new HashMap<String, BufferEntry>();
   private Integer numBuffers = 0;
 
-  public BuffersDM() {
-    super();
+  public BuffersDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   public BuffersDM(DashFile d) {

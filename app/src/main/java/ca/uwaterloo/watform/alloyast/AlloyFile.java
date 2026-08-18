@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class AlloyFile extends AlloyASTNode {
-  public String fullFileName = ""; // set in AlloyParser.java
+  public String fullFileName = "";
   public final List<AlloyPara> paras;
 
   public AlloyFile(Pos pos, List<AlloyPara> paragraphs, String fullFileName) {
