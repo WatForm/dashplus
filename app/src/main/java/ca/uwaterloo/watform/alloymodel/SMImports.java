@@ -51,7 +51,7 @@ public class SMImports extends SMSigs {
       String potentialNameSpace;
       String fileName = "";
       ImportData id = new ImportData(pos, importName, sigParamValues);
-      this.debugSMImports();
+      // this.debugSMImports();
       if (asQname.isPresent()) {
         potentialNameSpace = asQname.get().getName();
         if (this.importTable.keySet().contains(potentialNameSpace)) {
