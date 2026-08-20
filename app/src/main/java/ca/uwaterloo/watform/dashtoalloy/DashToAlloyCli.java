@@ -90,7 +90,10 @@ public class DashToAlloyCli implements Callable<Integer> {
         if (fullFileName.endsWith(".dsh")) {
           dpOutput("Input: " + fullFileName);
           DashModel dm = (DashModel) dashParseToModel(fullFileName);
+
+          // NAD: does this also do am resolve????
           dm.resolve();
+
           if (dm.getNumCmds() == 0 && cmd) {
             dpOutputBold(
                 "Warning: no command in input .dsh file -> using default scopes for run {}");

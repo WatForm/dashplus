@@ -87,7 +87,10 @@ public class DashToAlloy extends StutterD2A {
     // System.out.println("---");
     // System.out.println("Before resolve");
     // am.debug();
-    this.am.resolve();
+
+    // NAD: turn this on/off for debugging!
+    // this.am.resolve();
+
     // System.out.println("---");
     // System.out.println("After resolve");
     // am.debug();
