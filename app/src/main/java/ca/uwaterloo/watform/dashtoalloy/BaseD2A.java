@@ -39,11 +39,15 @@ public class BaseD2A {
 
   protected BaseD2A(DashModel dm, Options opt) {
     this.dm = dm;
+    // copy all Alloy stuff from dm into am
+    this.am = dm.copy();
     // every AlloyModel has to have a file name
     String outputFileNamePrefix =
         dm.dashFullFileName.substring(0, dm.dashFullFileName.lastIndexOf("."));
     String alloyFullFileName = outputFileNamePrefix + "-" + opt + ".als";
-    this.am = new AlloyModel(alloyFullFileName);
+    this.am.fullFileName = alloyFullFileName;
+
+    // this.am is not created here
     switch (opt) {
       case Options.electrum:
         this.isElectrum = true;

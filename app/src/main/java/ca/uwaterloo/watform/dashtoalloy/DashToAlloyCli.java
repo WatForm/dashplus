@@ -91,7 +91,6 @@ public class DashToAlloyCli implements Callable<Integer> {
           dpOutput("Input: " + fullFileName);
           DashModel dm = (DashModel) dashParseToModel(fullFileName);
 
-          // NAD: does this also do am resolve????
           dm.resolve();
 
           if (dm.getNumCmds() == 0 && cmd) {
