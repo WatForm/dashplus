@@ -36,7 +36,7 @@ public sealed interface Atom permits LabelAtom, IntegerAtom, OverflowAtom {
   // Use this method to compare atoms
   public static ThreeVal threeLessThan(Atom a, Atom b) {
     if (a instanceof LabelAtom || b instanceof LabelAtom) {
-      throw AlloyEvaluatorImplError.comparisonError("Range-based comparison on a label");
+      throw AlloyEvaluatorImplError.orderedComparisonOnLabel(a, b);
     }
 
     if (a instanceof IntegerAtom ai) {
@@ -49,7 +49,7 @@ public sealed interface Atom permits LabelAtom, IntegerAtom, OverflowAtom {
         case OVERFLOW_DOWN -> FALSE;
         case OVERFLOW_UP -> TRUE;
         case OVERFLOW_UNKNOWN -> UNKNOWN;
-        default -> throw AlloyEvaluatorImplError.comparisonError("Unexpected atom b overflow");
+        default -> throw AlloyEvaluatorImplError.unexpectedOverflowDirection(b);
       };
     } else if (a instanceof OverflowAtom ao) {
       OverflowDirection da = ao.direction();
@@ -63,8 +63,7 @@ public sealed interface Atom permits LabelAtom, IntegerAtom, OverflowAtom {
       }
       return convertThree(da == OverflowDirection.OVERFLOW_DOWN);
     } else {
-      throw AlloyEvaluatorImplError.comparisonError(
-          "Unreachable: unexpected Atom a subtype " + a.getClass());
+      throw AlloyEvaluatorImplError.unexpectedAtomSubtype(a);
     }
   }
 
