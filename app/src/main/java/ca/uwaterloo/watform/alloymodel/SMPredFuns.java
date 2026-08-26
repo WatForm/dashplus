@@ -13,6 +13,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
@@ -298,7 +299,7 @@ public class SMPredFuns extends SMFields {
     return !funQnameMatches(qname).isEmpty();
   }
 
-  protected List<AlloyDecl> predFunArgDecls(Qname qname) {
+  public List<AlloyDecl> predFunArgDecls(Qname qname) {
     if (this.isPred(qname) || this.isFun(qname)) {
       // KENG TODO: I'm just returning the first match here
       // in both qname and in what matches qname
@@ -357,6 +358,17 @@ public class SMPredFuns extends SMFields {
 
   public List<Qname> allFuns() {
     return filterBy(setToList(this.predFunTable.keySet()), i -> this.isFun(i));
+  }
+
+  public AlloyBlock predFunBody(Qname qname) {
+    exists(qname);
+    Qname chosen = this.predFunQnameMatches(qname).getFirst();
+    PredFunData data = this.predFunTable.get(chosen).getFirst();
+    if (!data.isResolved) throw AlloyModelImplError.unresolvedPredFunDefinition(chosen);
+    if (!(data.body instanceof AlloyBlock block)) {
+      throw AlloyModelImplError.predFunBodyNotBlock(data.body.pos, data.body);
+    }
+    return block;
   }
 
   public void debugSMPredFuns() {

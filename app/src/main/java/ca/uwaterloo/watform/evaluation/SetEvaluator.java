@@ -3,59 +3,71 @@ package ca.uwaterloo.watform.evaluation;
 import static ca.uwaterloo.watform.evaluation.ThreeVal.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyStrings.Kind;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyFunPara;
-import ca.uwaterloo.watform.alloyinterface.Instance;
+import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.evaluation.OverflowAtom.OverflowDirection;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
 public class SetEvaluator implements AlloyExprVis<TupleSet> {
-  private final Instance instance;
+  private final EvaluationTable evaluationTable;
   private final FormulaEvaluator formulaEvaluator;
   private final EvalLogger logger;
-  private final List<AlloyFunPara> funs;
 
   public SetEvaluator(
-      Instance instance,
-      boolean debug,
-      FormulaEvaluator formulaEvaluator,
-      List<AlloyFunPara> funs) {
-    this.instance = instance;
+      EvaluationTable evaluationTable, boolean debug, FormulaEvaluator formulaEvaluator) {
+    this.evaluationTable = evaluationTable;
     this.logger = EvalLoggerFactory.make("evaluation", debug);
     this.formulaEvaluator = formulaEvaluator;
-    this.funs = funs;
+  }
+
+  private static Qname qnameOf(AlloyQnameExpr expr) {
+    return switch (expr.kind) {
+      case SIG, FIELD, PREDFUN -> Qname.alloyQnameExprToQname(expr);
+      case UNKNOWN_KIND -> Qname.unknownQname(expr.getName());
+    };
   }
 
   // Unimplemented — error message carries all needed detail
   public TupleSet visit(AlloyBinaryExpr binExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "SetEvaluator",
+        binExpr.pos,
         "AlloyBinaryExpr: " + binExpr + " " + binExpr.getClass().getName());
   }
 
   public TupleSet visit(AlloyUnaryExpr unaryExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "SetEvaluator",
+        unaryExpr.pos,
         "AlloyUnaryExpr: " + unaryExpr + " " + unaryExpr.getClass().getName());
   }
 
   public TupleSet visit(AlloyVarExpr varExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "SetEvaluator",
+        varExpr.pos,
         "AlloyVarExpr: " + varExpr + " " + varExpr.getClass().getName());
   }
 
   public TupleSet visit(AlloyBlock block) {
     throw AlloyEvaluatorImplError.missingVisitCase(
-        "AlloyBlock: " + block + " " + block.getClass().getName());
+        "SetEvaluator", block.pos, "AlloyBlock: " + block + " " + block.getClass().getName());
   }
 
   public TupleSet visit(AlloyCphExpr comprehensionExpr) {
     logger.enter("ComprehensionExpr " + comprehensionExpr);
     var valList = mapBy(comprehensionExpr.decls, d -> d.expr.accept(this));
-    var result = new TupleSet(collectTuples(comprehensionExpr, valList, 0, 0, emptyList()));
+    if (containsMatch(valList, TupleSet::isUnspecified)) {
+      logger.exit("ComprehensionExpr " + TupleSet.unspecified());
+      return TupleSet.unspecified();
+    }
+    var result = TupleSet.of(collectTuples(comprehensionExpr, valList, 0, 0, emptyList()));
     logger.exit("ComprehensionExpr " + result);
     return result;
   }
@@ -66,11 +78,11 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     if (idx1 == expr.decls.size() - 1 && idx2 == expr.decls.get(idx1).qnames.size() - 1) {
       List<AtomTuple> res = emptyList();
       for (var tuple : sets.get(idx1)) {
-        instance.addRelation(
-            expr.decls.get(idx1).qnames.get(idx2).label, new TupleSet(List.of(tuple)));
+        evaluationTable.addRelation(
+            qnameOf(expr.decls.get(idx1).qnames.get(idx2)), TupleSet.of(List.of(tuple)));
         current.add(tuple);
         var formEval = expr.body.isEmpty() ? TRUE : expr.body.get().accept(formulaEvaluator);
-        instance.removeRelation(expr.decls.get(idx1).qnames.get(idx2).label);
+        evaluationTable.removeRelation(qnameOf(expr.decls.get(idx1).qnames.get(idx2)));
         if (formEval == TRUE) {
           res.add(AtomTuple.concat(current));
         }
@@ -80,8 +92,8 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     } else {
       List<AtomTuple> res = emptyList();
       for (var tuple : sets.get(idx1)) {
-        instance.addRelation(
-            expr.decls.get(idx1).qnames.get(idx2).label, new TupleSet(List.of(tuple)));
+        evaluationTable.addRelation(
+            qnameOf(expr.decls.get(idx1).qnames.get(idx2)), TupleSet.of(List.of(tuple)));
         current.add(tuple);
         res.addAll(
             collectTuples(
@@ -90,7 +102,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
                 idx1 + ((idx2 + 1) / expr.decls.get(idx1).qnames.size()),
                 (idx2 + 1) % expr.decls.get(idx1).qnames.size(),
                 current));
-        instance.removeRelation(expr.decls.get(idx1).qnames.get(idx2).label);
+        evaluationTable.removeRelation(qnameOf(expr.decls.get(idx1).qnames.get(idx2)));
         current.removeLast();
       }
       return res;
@@ -99,24 +111,28 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
   public TupleSet visit(AlloyIteExpr iteExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "SetEvaluator",
+        iteExpr.pos,
         "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
   }
 
   // TODO: potentially review, may need changing
   public TupleSet visit(AlloyLetExpr letExpr) {
     logger.enter("LetExpr " + letExpr);
-    instance.addStackFrame();
+    evaluationTable.addStackFrame();
     for (var asn : letExpr.asns) {
-      instance.addRelation(asn.qname.label, asn.expr.accept(this));
+      evaluationTable.addRelation(qnameOf(asn.qname), asn.expr.accept(this));
     }
     var result = letExpr.body.accept(this);
-    instance.popStackFrame();
+    evaluationTable.popStackFrame();
     logger.enter("LetExpr " + result);
     return result;
   }
 
   public TupleSet visit(AlloyQuantificationExpr quantificationExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "SetEvaluator",
+        quantificationExpr.pos,
         "AlloyQuantificationExpr: "
             + quantificationExpr
             + " "
@@ -125,18 +141,24 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
   public TupleSet visit(AlloyDecl decl) {
     throw AlloyEvaluatorImplError.missingVisitCase(
-        "AlloyDecl: " + decl + " " + decl.getClass().getName());
+        "SetEvaluator", decl.pos, "AlloyDecl: " + decl + " " + decl.getClass().getName());
   }
 
   // TODO: review
   public TupleSet visit(AlloyQnameExpr qName) {
     logger.enter("QName: " + qName);
     if (qName.vars.isEmpty()) {
-      throw AlloyEvaluatorImplError.notSupported("A variable must exist to evaluate it");
+      throw AlloyEvaluatorImplError.unresolvedQname(qName.pos, qName.toString());
     }
-    var result = instance.get(qName.label);
+    if (qName.kind == Kind.PREDFUN) {
+      var result = createFunctionCall(qName);
+      logger.exit("QName = " + result);
+      return result;
+    }
+    Qname relation = qnameOf(qName);
+    var result = evaluationTable.get(relation);
     if (result.isEmpty()) {
-      throw AlloyEvaluatorImplError.relationNotInInstance(qName.label);
+      throw AlloyEvaluatorImplError.relationNotInInstance(qName.pos, relation);
     }
     logger.exit("QName = " + result.get());
     return result.get();
@@ -150,14 +172,14 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
   public TupleSet visit(AlloyIdenExpr expr) {
     logger.enter("Iden");
-    var result = instance.getIden();
+    var result = evaluationTable.getIden();
     logger.exit("Iden = " + result);
     return result;
   }
 
   public TupleSet visit(AlloyUnivExpr expr) {
     logger.enter("Univ");
-    var result = instance.getUniv();
+    var result = evaluationTable.getUniv();
     logger.exit("Univ = " + result);
     return result;
   }
@@ -197,80 +219,92 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     return result;
   }
 
-  // TODO: redo function calls
   public TupleSet visit(AlloyBracketExpr bracketExpr) {
-    if (bracketExpr.expr instanceof AlloyQnameExpr qExpr && isFuncionName(qExpr)) {
-      return processFunctionCall(qExpr, bracketExpr);
-    } else {
-      return processBoxJoin(bracketExpr);
+    logger.enter("BoxJoin: " + bracketExpr);
+    TupleSet result = bracketExpr.expr.accept(this);
+    for (var argument : bracketExpr.exprs) {
+      result = TupleSet.join(argument.accept(this), result);
     }
-  }
-
-  // TODO: redo function calls
-  private boolean isFuncionName(AlloyQnameExpr expr) {
-    return expr.vars.size() == 1
-        && (expr.label.equals("plus")
-            || expr.label.equals("minus")
-            || expr.label.equals("mul")
-            || expr.label.equals("div")
-            || expr.label.equals("rem")
-            || containsMatch(funs, f -> f.qname.label.equals(expr.label)));
-  }
-
-  // TODO: redo function calls
-  private TupleSet processFunctionCall(AlloyQnameExpr fun, AlloyBracketExpr bracketExpr) {
-    logger.enter("FunctionCall: " + bracketExpr);
-    var result =
-        switch (fun.label) {
-          case "plus" -> processPlus(bracketExpr);
-          case "minus" -> processMinus(bracketExpr);
-          case "mul" -> processMul(bracketExpr);
-          case "div" -> processDiv(bracketExpr);
-          case "rem" -> processRem(bracketExpr);
-          default -> processGenericFun(fun, bracketExpr);
-        };
-    logger.exit("FunctionCall = " + result);
+    logger.exit("BoxJoin = " + result);
     return result;
+  }
+
+  private TupleSet createFunctionCall(AlloyQnameExpr functionExpr) {
+    Qname function = qnameOf(functionExpr);
+    String functionName = function.name;
+    Pos pos = functionExpr.pos;
+
+    int expectedArguments;
+    java.util.function.Function<List<TupleSet>, TupleSet> evaluator;
+    if (isArithmeticFunction(functionName)) {
+      expectedArguments = 2;
+      evaluator = args -> evaluateArithmeticFunction(functionName, args, pos);
+    } else {
+      var funBody = evaluationTable.getCallableBody(function);
+      var funArguments = evaluationTable.getCallableArguments(function);
+      if (funBody.isEmpty() || funArguments.isEmpty()) {
+        throw AlloyEvaluatorImplError.functionNotInEvaluationTable(pos, function);
+      }
+      expectedArguments = flatten(mapBy(funArguments.get(), argument -> argument.qnames)).size();
+      evaluator = args -> processGenericFun(function, funArguments.get(), funBody.get(), args);
+    }
+
+    return TupleSet.partialFunction(function, expectedArguments, evaluator);
+  }
+
+  private static boolean isArithmeticFunction(String name) {
+    return name.equals("plus")
+        || name.equals("minus")
+        || name.equals("mul")
+        || name.equals("div")
+        || name.equals("rem");
+  }
+
+  private TupleSet evaluateArithmeticFunction(String name, List<TupleSet> args, Pos pos) {
+    return switch (name) {
+      case "plus" -> processPlus(args, pos);
+      case "minus" -> processMinus(args, pos);
+      case "mul" -> processMul(args, pos);
+      case "div" -> processDiv(args, pos);
+      case "rem" -> processRem(args, pos);
+      default -> throw AlloyEvaluatorImplError.unknownArithmeticFunction(pos, name);
+    };
   }
 
   // TODO: review
-  private TupleSet processGenericFun(AlloyQnameExpr fun, AlloyBracketExpr bracketExpr) {
-    List<TupleSet> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
-    var funBodyOpt = findFirst(funs, f -> f.qname.label.equals(fun.label));
-    if (funBodyOpt.isEmpty()) {
-      throw AlloyEvaluatorImplError.typeError("Function not found");
-    }
-    var funBody = funBodyOpt.get();
-    var argNames = flatten(mapBy(funBody.arguments, a -> a.qnames));
+  private TupleSet processGenericFun(
+      Qname function, List<AlloyDecl> argumentDecls, AlloyBlock body, List<TupleSet> args) {
+    var argNames = flatten(mapBy(argumentDecls, argument -> argument.qnames));
 
     if (args.size() != argNames.size()) {
-      throw AlloyEvaluatorImplError.arityError("Function argument list incorrect");
+      throw AlloyEvaluatorImplError.callableArgumentCount(
+          body.pos, "Function", function, argNames.size(), args.size());
     }
 
-    instance.addStackFrame();
-    for (int i = 0; i < args.size(); i++) {
-      instance.addRelation(argNames.get(i).label, args.get(i));
+    evaluationTable.addStackFrame();
+    try {
+      for (int i = 0; i < args.size(); i++) {
+        evaluationTable.addRelation(qnameOf(argNames.get(i)), args.get(i));
+      }
+      return body.exprs.getFirst().accept(this);
+    } finally {
+      evaluationTable.popStackFrame();
     }
-
-    var result = funBody.block.exprs.getLast().accept(this);
-
-    instance.popStackFrame();
-    return result;
   }
 
   // TODO: cleanup
-  private TupleSet processPlus(AlloyBracketExpr bracketExpr) {
-    List<TupleSet> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
+  private TupleSet processPlus(List<TupleSet> args, Pos pos) {
     if (args.size() != 2)
-      throw AlloyEvaluatorImplError.comparisonError("plus accepts 2 arguments only");
+      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "plus", args.size());
+    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
     var first = args.getFirst().getScalar();
     var second = args.getLast().getScalar();
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
-      throw AlloyEvaluatorImplError.typeError("Must be integers");
+      throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "plus", first, second);
 
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
-      return instance.getIntScalar(fi.value() + si.value(), bracketExpr.pos);
+      return evaluationTable.getIntScalar(fi.value() + si.value(), pos);
     }
 
     // at least one side has overflowed, so no concrete sum is available
@@ -278,13 +312,13 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     OverflowDirection db = Atom.directionOf(second);
 
     if (da == OverflowDirection.OVERFLOW_UNKNOWN || db == OverflowDirection.OVERFLOW_UNKNOWN) {
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
     if (da != null && db != null) {
       // both sides overflowed with a known direction
       OverflowDirection result = (da == db) ? da : OverflowDirection.OVERFLOW_UNKNOWN;
-      return instance.getOverflowScalar(result, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(result, pos);
     }
 
     // exactly one side overflowed with a known direction; the other is a concrete integer
@@ -296,8 +330,8 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
         (dir == OverflowDirection.OVERFLOW_UP && concreteVal >= 0)
             || (dir == OverflowDirection.OVERFLOW_DOWN && concreteVal <= 0);
 
-    return instance.getOverflowScalar(
-        sameDirection ? dir : OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+    return evaluationTable.getOverflowScalar(
+        sameDirection ? dir : OverflowDirection.OVERFLOW_UNKNOWN, pos);
   }
 
   private static OverflowDirection flip(OverflowDirection d) {
@@ -308,25 +342,25 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     };
   }
 
-  private TupleSet processMinus(AlloyBracketExpr bracketExpr) {
-    List<TupleSet> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
+  private TupleSet processMinus(List<TupleSet> args, Pos pos) {
     if (args.size() != 2)
-      throw AlloyEvaluatorImplError.comparisonError("minus accepts 2 arguments only");
+      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "minus", args.size());
+    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
     var first = args.getFirst().getScalar();
     var second = args.getLast().getScalar();
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
-      throw AlloyEvaluatorImplError.typeError("Must be integers");
+      throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "minus", first, second);
 
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
-      return instance.getIntScalar(fi.value() - si.value(), bracketExpr.pos);
+      return evaluationTable.getIntScalar(fi.value() - si.value(), pos);
     }
 
     OverflowDirection da = Atom.directionOf(first);
     OverflowDirection dbRaw = Atom.directionOf(second);
 
     if (da == OverflowDirection.OVERFLOW_UNKNOWN || dbRaw == OverflowDirection.OVERFLOW_UNKNOWN) {
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
     if (da != null && dbRaw != null) {
@@ -334,7 +368,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       // know the result overflows in that direction
       OverflowDirection db = flip(dbRaw);
       OverflowDirection result = (da == db) ? da : OverflowDirection.OVERFLOW_UNKNOWN;
-      return instance.getOverflowScalar(result, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(result, pos);
     }
 
     if (da != null) {
@@ -344,8 +378,8 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       boolean sameDirection =
           (da == OverflowDirection.OVERFLOW_UP && negSecond >= 0)
               || (da == OverflowDirection.OVERFLOW_DOWN && negSecond <= 0);
-      return instance.getOverflowScalar(
-          sameDirection ? da : OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(
+          sameDirection ? da : OverflowDirection.OVERFLOW_UNKNOWN, pos);
     } else {
       // b overflowed, a concrete: a - b == a + (-b), and b's magnitude is unbounded
       // here -- this is where the asymmetric two's-complement range actually bites.
@@ -355,48 +389,48 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
         // -b > maxInt unconditionally: minimal-magnitude down clears maxInt by a
         // full unit of cushion (|minInt| = |maxInt| + 1) -- no boundary risk.
         boolean sameDirection = firstVal >= 0;
-        return instance.getOverflowScalar(
+        return evaluationTable.getOverflowScalar(
             sameDirection ? OverflowDirection.OVERFLOW_UP : OverflowDirection.OVERFLOW_UNKNOWN,
-            bracketExpr.pos);
+            pos);
       } else {
         // dbRaw == OVERFLOW_UP: -b <= minInt, and the minimal-magnitude up value
         // negates to EXACTLY minInt -- in range, not overflow. Needs a strictly
         // negative concrete addend to guarantee clearing that boundary.
         boolean sameDirection = firstVal < 0;
-        return instance.getOverflowScalar(
+        return evaluationTable.getOverflowScalar(
             sameDirection ? OverflowDirection.OVERFLOW_DOWN : OverflowDirection.OVERFLOW_UNKNOWN,
-            bracketExpr.pos);
+            pos);
       }
     }
   }
 
   // TODO: cleanup
-  private TupleSet processMul(AlloyBracketExpr bracketExpr) {
-    List<TupleSet> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
+  private TupleSet processMul(List<TupleSet> args, Pos pos) {
     if (args.size() != 2)
-      throw AlloyEvaluatorImplError.comparisonError("mul accepts 2 arguments only");
+      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "mul", args.size());
+    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
     var first = args.getFirst().getScalar();
     var second = args.getLast().getScalar();
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
-      throw AlloyEvaluatorImplError.typeError("Must be integers");
+      throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "mul", first, second);
 
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
-      return instance.getIntScalar(fi.value() * si.value(), bracketExpr.pos);
+      return evaluationTable.getIntScalar(fi.value() * si.value(), pos);
     }
 
     // 0 * anything is exactly 0, even if "anything" is out of representable range --
     // this holds regardless of the other side's direction, even OVERFLOW_UNKNOWN
     if (first instanceof IntegerAtom fi0 && fi0.value() == 0)
-      return instance.getIntScalar(0, bracketExpr.pos);
+      return evaluationTable.getIntScalar(0, pos);
     if (second instanceof IntegerAtom si0 && si0.value() == 0)
-      return instance.getIntScalar(0, bracketExpr.pos);
+      return evaluationTable.getIntScalar(0, pos);
 
     OverflowDirection da = Atom.directionOf(first);
     OverflowDirection db = Atom.directionOf(second);
 
     if (da == OverflowDirection.OVERFLOW_UNKNOWN || db == OverflowDirection.OVERFLOW_UNKNOWN) {
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
     // unlike plus, a product's sign is fully determined by the two factors' signs alone,
@@ -411,31 +445,31 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       // negative * negative, or positive * positive: magnitude only grows,
       // always lands strictly past maxInt -- never ambiguous, due to the
       // asymmetric two's-complement range (|minInt| = |maxInt| + 1)
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UP, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UP, pos);
     } else {
       // one positive, one negative: the minimal-magnitude overflow-up value,
       // negated, lands exactly on minInt -- in range, not overflow -- so a
       // "down" result can never be asserted from direction alone
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
   }
 
   // TODO: cleanup
-  private TupleSet processDiv(AlloyBracketExpr bracketExpr) {
-    List<TupleSet> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
+  private TupleSet processDiv(List<TupleSet> args, Pos pos) {
     if (args.size() != 2)
-      throw AlloyEvaluatorImplError.comparisonError("div accepts 2 arguments only");
+      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "div", args.size());
+    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
     var first = args.getFirst().getScalar();
     var second = args.getLast().getScalar();
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
-      throw AlloyEvaluatorImplError.typeError("Must be integers");
+      throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "div", first, second);
 
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
       if (si.value() == 0) {
-        throw AlloyEvaluatorImplError.notSupported("Division by 0");
+        throw AlloyEvaluatorImplError.arithmeticDivisionByZero(pos, "div");
       }
-      return instance.getIntScalar(fi.value() / si.value(), bracketExpr.pos);
+      return evaluationTable.getIntScalar(fi.value() / si.value(), pos);
     }
 
     // Unless first in minInt, the resulting value must be 0
@@ -448,11 +482,11 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
         // knowing the divisor's exact magnitude. OVERFLOW_DOWN's minimal magnitude
         // (maxInt + 2) never collides, so it's unaffected.
         boolean boundaryRisk =
-            secondDir == OverflowDirection.OVERFLOW_UP && fi.value() == instance.minInt();
+            secondDir == OverflowDirection.OVERFLOW_UP && fi.value() == evaluationTable.minInt();
         if (boundaryRisk) {
-          return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+          return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
         }
-        return instance.getIntScalar(0, bracketExpr.pos);
+        return evaluationTable.getIntScalar(0, pos);
       }
     }
 
@@ -460,57 +494,57 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     OverflowDirection db = Atom.directionOf(second);
 
     if (da == OverflowDirection.OVERFLOW_UNKNOWN || db == OverflowDirection.OVERFLOW_UNKNOWN) {
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
     if (da != null && db != null) {
       // both out of range: the ratio of two unbounded magnitudes is unconstrained --
       // could land back in representable range -- so not even a direction is safe to assert
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
     // numerator overflowed, divisor concrete
     if (second instanceof IntegerAtom si) {
       if (si.value() == 1) {
         // identity: same direction, unchanged
-        return instance.getOverflowScalar(da, bracketExpr.pos);
+        return evaluationTable.getOverflowScalar(da, pos);
       }
       if (si.value() == -1) {
         // negation -- same boundary issue as mul: negating the minimal OVERFLOW_UP
         // value can land exactly on minInt (in range), so UP is never safe to assert;
         // negating OVERFLOW_DOWN always exceeds maxInt, so DOWN -> UP is always safe
-        return instance.getOverflowScalar(
+        return evaluationTable.getOverflowScalar(
             da == OverflowDirection.OVERFLOW_DOWN
                 ? OverflowDirection.OVERFLOW_UP
                 : OverflowDirection.OVERFLOW_UNKNOWN,
-            bracketExpr.pos);
+            pos);
       }
 
       // may or may not end up within the range
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
     // numerator overflowed, divisor concrete nonzero: sign is determined, but magnitude
     // depends on the numerator's unknown exact value, so it may or may not still overflow
-    return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+    return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
   }
 
   // TODO: cleanup
-  private TupleSet processRem(AlloyBracketExpr bracketExpr) {
-    List<TupleSet> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
+  private TupleSet processRem(List<TupleSet> args, Pos pos) {
     if (args.size() != 2)
-      throw AlloyEvaluatorImplError.comparisonError("rem accepts 2 arguments only");
+      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "rem", args.size());
+    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
     var first = args.getFirst().getScalar();
     var second = args.getLast().getScalar();
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
-      throw AlloyEvaluatorImplError.typeError("Must be integers");
+      throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "rem", first, second);
 
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
       if (si.value() == 0) {
-        throw AlloyEvaluatorImplError.notSupported("Division by 0");
+        throw AlloyEvaluatorImplError.arithmeticDivisionByZero(pos, "rem");
       }
-      return instance.getIntScalar(fi.value() % si.value(), bracketExpr.pos);
+      return evaluationTable.getIntScalar(fi.value() % si.value(), pos);
     }
 
     if (first instanceof IntegerAtom fi) {
@@ -520,40 +554,29 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
         // same boundary collision as div: at minInt / (minimal UP value), quotient is
         // -1 and remainder is 0, not minInt -- unresolvable, same reasoning as above.
         boolean boundaryRisk =
-            secondDir == OverflowDirection.OVERFLOW_UP && fi.value() == instance.minInt();
+            secondDir == OverflowDirection.OVERFLOW_UP && fi.value() == evaluationTable.minInt();
         if (boundaryRisk) {
-          return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+          return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
         }
-        return instance.getIntScalar(fi.value(), bracketExpr.pos);
+        return evaluationTable.getIntScalar(fi.value(), pos);
       }
-      return instance.getOverflowScalar(
-          OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos); // second overflow is unknown
+      return evaluationTable.getOverflowScalar(
+          OverflowDirection.OVERFLOW_UNKNOWN, pos); // second overflow is unknown
     }
 
     if (second instanceof IntegerAtom si) {
       // a % 1 == 0 and a % -1 == 0 for every integer a, regardless of first's
       // magnitude or direction -- must be checked ahead of any direction dispatch
       if (si.value() == 1 || si.value() == -1) {
-        return instance.getIntScalar(0, bracketExpr.pos);
+        return evaluationTable.getIntScalar(0, pos);
       }
       // numerator overflowed, |divisor| > 1: |remainder| < |divisor| so the true
       // exact value depends on the numerator's unresolved true value
-      return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
     // both overflowed. Cannot determine the exact value or if concretely overflows
-    return instance.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, bracketExpr.pos);
-  }
-
-  private TupleSet processBoxJoin(AlloyBracketExpr bracketExpr) {
-    logger.enter("BoxJoin: " + bracketExpr);
-    List<TupleSet> args = mapBy(bracketExpr.exprs, e -> e.accept(this));
-    var result = bracketExpr.expr.accept(this);
-    for (var arg : args) {
-      result = TupleSet.join(arg, result);
-    }
-    logger.exit("BoxJoin = " + result);
-    return result;
+    return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
   }
 
   public TupleSet visit(AlloyTransExpr expr) {
@@ -568,7 +591,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     var domain = expr.left.accept(this);
     var relation = expr.right.accept(this);
     TupleSet result =
-        TupleSet.filterBy(relation, t -> domain.contains(AtomTuple.tupleOfFirst(t)) == TRUE);
+        TupleSet.filterByThree(relation, t -> domain.contains(AtomTuple.tupleOfFirst(t)));
     logger.exit("DomainRestrict = " + result);
     return result;
   }
@@ -578,7 +601,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     var relation = expr.left.accept(this);
     var range = expr.right.accept(this);
     TupleSet result =
-        TupleSet.filterBy(relation, t -> range.contains(AtomTuple.tupleOfLast(t)) == TRUE);
+        TupleSet.filterByThree(relation, t -> range.contains(AtomTuple.tupleOfLast(t)));
     logger.exit("RangeRestrict = " + result);
     return result;
   }
@@ -591,17 +614,20 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     var domRight = TupleSet.mapBy(right, e -> AtomTuple.tupleOfFirst(e));
     TupleSet result =
         TupleSet.union(
-            TupleSet.filterBy(left, t -> domRight.contains(AtomTuple.tupleOfFirst(t)) == FALSE),
+            TupleSet.filterByThree(left, t -> domRight.contains(AtomTuple.tupleOfFirst(t)).not()),
             right);
     logger.exit("RelOverride = " + result);
     return result;
   }
 
   private TupleSet evalTransClosure(TupleSet base) {
+    if (base.isUnspecified()) return TupleSet.unspecified();
     var collect = base;
     var current = TupleSet.join(base, base);
 
-    while (!current.isEmpty()) {
+    while (true) {
+      if (current.isUnspecified()) return current;
+      if (current.isEmpty()) break;
       collect = TupleSet.union(collect, current);
       current = TupleSet.join(current, base);
     }
@@ -619,7 +645,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   public TupleSet visit(AlloyReflTransClosExpr expr) {
     logger.enter("TransClosure: " + expr);
     TupleSet result = evalTransClosure(expr.sub.accept(this));
-    result = TupleSet.union(result, instance.getIden());
+    result = TupleSet.union(result, evaluationTable.getIden());
     logger.exit("TransClosure = " + result);
     return result;
   }
@@ -627,21 +653,21 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   // TODO: Need to check for overflow in future
   public TupleSet visit(AlloyNumExpr expr) {
     logger.enter("NumExpr: " + expr);
-    TupleSet result = instance.getIntScalar(expr.value, expr.pos);
+    TupleSet result = evaluationTable.getIntScalar(expr.value, expr.pos);
     logger.exit("NumExpr = " + result);
     return result;
   }
 
   public TupleSet visit(AlloyCardExpr expr) {
     logger.enter("Cardinality: " + expr);
-    TupleSet result = instance.getCardinality(expr.sub.accept(this), expr.pos);
+    TupleSet result = evaluationTable.getCardinality(expr.sub.accept(this), expr.pos);
     logger.exit("Cardinality = " + result);
     return result;
   }
 
   public TupleSet visit(AlloySigIntExpr expr) {
     logger.enter("Int set: " + expr);
-    var result = instance.getIntSet();
+    var result = evaluationTable.getIntSet();
     logger.exit("Int set = " + result);
     return result;
   }
