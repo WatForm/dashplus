@@ -4,68 +4,123 @@ import static ca.uwaterloo.watform.evaluation.ThreeVal.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
+import ca.uwaterloo.watform.alloyast.AlloyStrings.Kind;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyQuantificationExpr.Quant;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyFunPara;
-import ca.uwaterloo.watform.alloyinterface.Instance;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
 public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
-  private final Instance instance;
+  private final EvaluationTable evaluationTable;
   private final AlloyExprVis<TupleSet> setEvaluator;
   private final EvalLogger logger;
 
-  public FormulaEvaluator(Instance instance, boolean debug, List<AlloyFunPara> funs) {
+  public FormulaEvaluator(EvaluationTable evaluationTable, boolean debug) {
     logger = EvalLoggerFactory.make("evaluation", debug);
-    setEvaluator = new SetEvaluator(instance, debug, this, funs);
-    this.instance = instance;
+    setEvaluator = new SetEvaluator(evaluationTable, debug, this);
+    this.evaluationTable = evaluationTable;
+  }
+
+  private static Qname qnameOf(AlloyQnameExpr expr) {
+    return switch (expr.kind) {
+      case SIG, FIELD, PREDFUN -> Qname.alloyQnameExprToQname(expr);
+      case UNKNOWN_KIND -> Qname.unknownQname(expr.getName());
+    };
   }
 
   // These visit cases are unimplemented; just note the type and let the error carry the detail
   public ThreeVal visit(AlloyBinaryExpr binExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "FormulaEvaluator",
+        binExpr.pos,
         "AlloyBinaryExpr: " + binExpr + " " + binExpr.getClass().getName());
   }
 
   public ThreeVal visit(AlloyUnaryExpr unaryExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "FormulaEvaluator",
+        unaryExpr.pos,
         "AlloyUnaryExpr: " + unaryExpr + " " + unaryExpr.getClass().getName());
   }
 
   public ThreeVal visit(AlloyVarExpr varExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "FormulaEvaluator",
+        varExpr.pos,
         "AlloyVarExpr: " + varExpr + " " + varExpr.getClass().getName());
   }
 
   public ThreeVal visit(AlloyBracketExpr bracketExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "AlloyBracketExpr: " + bracketExpr + " " + bracketExpr.getClass().getName());
+    if (!(bracketExpr.expr instanceof AlloyQnameExpr qnameExpr) || qnameExpr.kind != Kind.PREDFUN) {
+      throw AlloyEvaluatorImplError.missingVisitCase(
+          "FormulaEvaluator",
+          bracketExpr.pos,
+          "AlloyBracketExpr: " + bracketExpr + " " + bracketExpr.getClass().getName());
+    }
+    return evaluatePredicate(
+        qnameExpr, mapBy(bracketExpr.exprs, expr -> expr.accept(setEvaluator)));
+  }
+
+  public ThreeVal visit(AlloyQnameExpr qnameExpr) {
+    if (qnameExpr.kind != Kind.PREDFUN) {
+      return visit((AlloyVarExpr) qnameExpr);
+    }
+    return evaluatePredicate(qnameExpr, emptyList());
+  }
+
+  private ThreeVal evaluatePredicate(AlloyQnameExpr predicateExpr, List<TupleSet> arguments) {
+    Qname predicateName = qnameOf(predicateExpr);
+    var predicateBody = evaluationTable.getCallableBody(predicateName);
+    var predicateArguments = evaluationTable.getCallableArguments(predicateName);
+    if (predicateBody.isEmpty() || predicateArguments.isEmpty()) {
+      throw AlloyEvaluatorImplError.predicateNotInEvaluationTable(predicateExpr.pos, predicateName);
+    }
+
+    var argumentNames = flatten(mapBy(predicateArguments.get(), argument -> argument.qnames));
+    if (arguments.size() != argumentNames.size()) {
+      throw AlloyEvaluatorImplError.callableArgumentCount(
+          predicateExpr.pos, "Predicate", predicateName, argumentNames.size(), arguments.size());
+    }
+
+    evaluationTable.addStackFrame();
+    try {
+      for (int i = 0; i < arguments.size(); i++) {
+        evaluationTable.addRelation(qnameOf(argumentNames.get(i)), arguments.get(i));
+      }
+      return predicateBody.get().accept(this);
+    } finally {
+      evaluationTable.popStackFrame();
+    }
   }
 
   public ThreeVal visit(AlloyCphExpr comprehensionExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "FormulaEvaluator",
+        comprehensionExpr.pos,
         "AlloyCphExpr: " + comprehensionExpr + " " + comprehensionExpr.getClass().getName());
   }
 
   public ThreeVal visit(AlloyIteExpr iteExpr) {
     throw AlloyEvaluatorImplError.missingVisitCase(
+        "FormulaEvaluator",
+        iteExpr.pos,
         "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
   }
 
   // TODO: potentially review, may need changing
   public ThreeVal visit(AlloyLetExpr letExpr) {
     logger.enter("LetExpr " + letExpr);
-    instance.addStackFrame();
+    evaluationTable.addStackFrame();
     for (var asn : letExpr.asns) {
-      instance.addRelation(asn.qname.label, asn.expr.accept(setEvaluator));
+      evaluationTable.addRelation(qnameOf(asn.qname), asn.expr.accept(setEvaluator));
     }
     var result = letExpr.body.accept(this);
-    instance.popStackFrame();
+    evaluationTable.popStackFrame();
     logger.exit("LetExpr " + result);
     return result;
   }
@@ -74,6 +129,10 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
   public ThreeVal visit(AlloyQuantificationExpr quantificationExpr) {
     logger.enter("QuantificationExpr " + quantificationExpr);
     var valList = mapBy(quantificationExpr.decls, d -> d.expr.accept(setEvaluator));
+    if (containsMatch(valList, TupleSet::isUnspecified)) {
+      logger.exit("QuantificationExpr " + UNKNOWN);
+      return UNKNOWN;
+    }
     var resCount = countQuant(quantificationExpr, valList, 0, 0);
     var result =
         switch (quantificationExpr.quant) {
@@ -85,7 +144,8 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
                   ? FALSE
                   : (resCount.unkCnt > 0 ? UNKNOWN : convertThree(resCount.trueCnt == 1));
           case Quant.SOME -> resCount.trueCnt > 0 ? TRUE : (resCount.unkCnt > 0 ? UNKNOWN : FALSE);
-          default -> throw AlloyEvaluatorImplError.typeError("Sum In Boolean Context");
+          default ->
+              throw AlloyEvaluatorImplError.sumQuantifierInBooleanContext(quantificationExpr.pos);
         };
     logger.exit("QuantificationExpr " + result);
     return result;
@@ -99,10 +159,10 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
     if (idx1 == expr.decls.size() - 1 && idx2 == expr.decls.get(idx1).qnames.size() - 1) {
       int cntTrue = 0, cntFalse = 0, cntUnk = 0;
       for (var tuple : sets.get(idx1)) {
-        instance.addRelation(
-            expr.decls.get(idx1).qnames.get(idx2).label, new TupleSet(List.of(tuple)));
+        evaluationTable.addRelation(
+            qnameOf(expr.decls.get(idx1).qnames.get(idx2)), TupleSet.of(List.of(tuple)));
         var res = expr.body.accept(this);
-        instance.removeRelation(expr.decls.get(idx1).qnames.get(idx2).label);
+        evaluationTable.removeRelation(qnameOf(expr.decls.get(idx1).qnames.get(idx2)));
         switch (res) {
           case TRUE:
             cntTrue++;
@@ -119,15 +179,15 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
     } else {
       int cntTrue = 0, cntFalse = 0, cntUnk = 0;
       for (var tuple : sets.get(idx1)) {
-        instance.addRelation(
-            expr.decls.get(idx1).qnames.get(idx2).label, new TupleSet(List.of(tuple)));
+        evaluationTable.addRelation(
+            qnameOf(expr.decls.get(idx1).qnames.get(idx2)), TupleSet.of(List.of(tuple)));
         var res =
             countQuant(
                 expr,
                 sets,
                 idx1 + ((idx2 + 1) / expr.decls.get(idx1).qnames.size()),
                 (idx2 + 1) % expr.decls.get(idx1).qnames.size());
-        instance.removeRelation(expr.decls.get(idx1).qnames.get(idx2).label);
+        evaluationTable.removeRelation(qnameOf(expr.decls.get(idx1).qnames.get(idx2)));
         cntTrue += res.trueCnt;
         cntFalse += res.falseCnt;
         cntUnk += res.unkCnt;
@@ -138,7 +198,7 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
 
   public ThreeVal visit(AlloyDecl decl) {
     throw AlloyEvaluatorImplError.missingVisitCase(
-        "AlloyDecl: " + decl + " " + decl.getClass().getName());
+        "FormulaEvaluator", decl.pos, "AlloyDecl: " + decl + " " + decl.getClass().getName());
   }
 
   public ThreeVal visit(AlloyBlock block) {
@@ -156,6 +216,7 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
   }
 
   private ThreeVal isOne(TupleSet set) {
+    if (set.isUnspecified()) return UNKNOWN;
     if (set.size() != 1) return FALSE;
     return set.containsOverflow() ? UNKNOWN : TRUE;
   }
@@ -163,6 +224,10 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
   public ThreeVal visit(AlloyQtExpr qtExpr) {
     logger.enter("Multiplicity " + qtExpr.qt + ": " + qtExpr.sub);
     var set = qtExpr.sub.accept(setEvaluator);
+    if (set.isUnspecified()) {
+      logger.exit("Multiplicity " + qtExpr.qt + " = " + UNKNOWN);
+      return UNKNOWN;
+    }
     var result =
         switch (qtExpr.qt) {
           case AlloyQtEnum.NO -> convertThree(set.isEmpty());
@@ -171,7 +236,7 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
           case AlloyQtEnum.LONE -> convertThree(set.isEmpty()).or(isOne(set));
           default ->
               throw AlloyEvaluatorImplError.missingVisitCase(
-                  "AlloyQtEnum multiplicity: " + qtExpr.qt);
+                  "FormulaEvaluator", qtExpr.pos, "AlloyQtEnum multiplicity: " + qtExpr.qt);
         };
     logger.exit("Multiplicity " + qtExpr.qt + " = " + result);
     return result;
@@ -249,20 +314,24 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
     var left = expr.left.accept(setEvaluator);
     var right = expr.right.accept(setEvaluator);
     var result =
-        switch (expr.comp) {
-          case AlloyCmpExpr.Comp.IN -> TupleSet.threeSubset(left, right);
-          case AlloyCmpExpr.Comp.LESS_THAN ->
-              Atom.threeLessThan(left.getScalar(), right.getScalar());
-          case AlloyCmpExpr.Comp.GREATER_THAN ->
-              Atom.threeGreater(left.getScalar(), right.getScalar());
-          case AlloyCmpExpr.Comp.LESS_EQUAL ->
-              Atom.threeLessEqual(left.getScalar(), right.getScalar());
-          case AlloyCmpExpr.Comp.EQUAL_LESS ->
-              Atom.threeLessEqual(left.getScalar(), right.getScalar());
-          case AlloyCmpExpr.Comp.GREATER_EQUAL ->
-              Atom.threeGreaterEqual(left.getScalar(), right.getScalar());
-          default -> throw AlloyEvaluatorImplError.missingVisitCase("AlloyCmp comp: " + expr.comp);
-        };
+        left.isUnspecified() || right.isUnspecified()
+            ? UNKNOWN
+            : switch (expr.comp) {
+              case AlloyCmpExpr.Comp.IN -> TupleSet.threeSubset(left, right);
+              case AlloyCmpExpr.Comp.LESS_THAN ->
+                  Atom.threeLessThan(left.getScalar(), right.getScalar());
+              case AlloyCmpExpr.Comp.GREATER_THAN ->
+                  Atom.threeGreater(left.getScalar(), right.getScalar());
+              case AlloyCmpExpr.Comp.LESS_EQUAL ->
+                  Atom.threeLessEqual(left.getScalar(), right.getScalar());
+              case AlloyCmpExpr.Comp.EQUAL_LESS ->
+                  Atom.threeLessEqual(left.getScalar(), right.getScalar());
+              case AlloyCmpExpr.Comp.GREATER_EQUAL ->
+                  Atom.threeGreaterEqual(left.getScalar(), right.getScalar());
+              default ->
+                  throw AlloyEvaluatorImplError.missingVisitCase(
+                      "FormulaEvaluator", expr.pos, "AlloyCmp comp: " + expr.comp);
+            };
     if (expr.neg) result = result.not();
     logger.exit("CMP " + expr.comp + " = " + result);
     return result;

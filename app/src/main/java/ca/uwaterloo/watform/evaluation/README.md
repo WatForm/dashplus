@@ -32,22 +32,47 @@ An ordered, non-empty list of atoms.
 
 ## `TupleSet`
 
-A set of tuples (unordered, deduplicated).
+An evaluation value with three kinds: a concrete set of tuples, an unspecified set, and a partial
+function call.
+
+**Partial function calls** retain their resolved function name, expected arity, supplied argument
+sets, and completion logic. A function expression initially produces this value. Each join with the
+partial call on the right supplies one argument; once the declared arity is reached, the call is
+evaluated and replaced by its concrete or unspecified result. Any use of a partial call other than
+as the right operand of a join is an evaluator error. This representation also supports Alloy's
+receiver syntax: explicit bracket arguments can be retained until a preceding dot join supplies the
+remaining receiver argument.
+
+Bracket application uses the same set-join primitive as dot syntax. The bracket target is evaluated
+normally, then each argument is joined into the current result. If the target is a function QName,
+the QName visitor produces the partial function value before those joins occur.
+
+## Predicate and function bodies
+
+When `EvaluationTable` is created, it reads each resolved callable's arguments and body through the
+model API and stores predicates and functions together in callable symbol maps. The original
+paragraph AST is not used because it does not contain the rewritten QNames produced by model
+resolution. Table construction requires every function body to contain exactly one expression.
+Predicate bodies may contain multiple formula expressions, which are evaluated as a three-valued
+conjunction with the usual `FALSE` short circuit. The model's `predFunBody` accessor verifies that
+the resolved body is an `AlloyBlock` before exposing it to the evaluation table.
 
 **Deduplication merges by structural identity, not `threeEqual`** Two overflowed atoms with the same direction get merged even though their equality is technically `UNKNOWN`, because nothing in this evaluator can ever tell them apart — every comparison only looks at direction, so they're behaviorally identical no matter what. Atoms that overflowed in different directions are never merged, since they genuinely can be distinguished. One practical consequence: determining whether a set is a scalar can be imprecise. Multiple structurally identical tuples will be collapsed into one.
 
 **Membership** — a tuple is `TRUE`-in a set if it definitely matches something in it, `FALSE` if it's definitely absent, `UNKNOWN` if no match is confirmed but one can't be ruled out either.
 
-**Subset / equality** between sets follow directly: `A ⊆ B` is `TRUE`/`FALSE`/`UNKNOWN` depending on whether every element of `A` is confirmed, denied, or unresolved as a member of `B`; set equality is subset in both directions.
+**Subset / equality** between concrete sets follow directly: `A ⊆ B` is `TRUE`/`FALSE`/`UNKNOWN` depending on whether every element of `A` is confirmed, denied, or unresolved as a member of `B`; set equality is subset in both directions. Any comparison involving an unspecified set is `UNKNOWN`.
 
 **Set operations are conservative under uncertainty — this is the key semantic point.**
-- `union` — always exact; combines both sets and merges anything that's structurally the same.
-- `crossProduct` — always exact; pairs every element of one set with every element of the other, no comparisons involved.
-- `intersect(A, B)` — keeps only elements of `A` *confirmed* to be in `B`. An element whose membership in `B` is unresolved is left out, not included on the possibility that it belongs.
-- `diff(A, B)` — keeps only elements of `A` *confirmed absent* from `B`. An element with unresolved membership is left out of the difference too, not assumed absent.
-- `join(A, B)` — combines a tuple from `A` with a tuple from `B` only when their shared column is *confirmed* equal. A pair whose match is merely unresolved is dropped, not optimistically joined.
+- `union` and `crossProduct` remain concrete when both operands are concrete.
+- `intersect(A, B)` becomes unspecified if membership of any element of `A` in `B` is unresolved.
+- `diff(A, B)` becomes unspecified if membership of any element of `A` in `B` is unresolved.
+- `join(A, B)` becomes unspecified if equality of any candidate pair's shared columns is unresolved.
+- Any set-producing operation receiving an unspecified operand produces an unspecified result.
 
-The upshot: `intersect(A,B)` and `diff(A,B)` together don't necessarily reconstruct all of `A` when overflow makes some memberships unresolved — some elements simply don't appear in either result. The evaluator only reports what it can prove; it never guesses an element into a result on the possibility that it belongs there.
+This prevents a partial concrete result from leaking false information. For example, intersecting
+`{1, 9}` with itself when `maxInt` is 7 produces an unspecified set rather than `{1}`; comparing
+that result with any other set produces `UNKNOWN`.
 
 ## Arithmetic (`plus`, `minus`, `mul`, `div`, `rem`)
 
