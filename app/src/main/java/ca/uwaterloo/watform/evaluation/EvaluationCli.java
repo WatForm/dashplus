@@ -20,7 +20,7 @@ import picocli.CommandLine.Parameters;
 
 @Command(
     name = "java -ea -jar evaluation.jar",
-    description = "Dump Alloy instances or evaluate Alloy facts against an instance.",
+    description = "Dump Alloy instances or evaluate Alloy constraints against an instance.",
     mixinStandardHelpOptions = true,
     version = "evaluation 1.0",
     footer = {
@@ -30,8 +30,8 @@ import picocli.CommandLine.Parameters;
       "  @|bold java -ea -jar evaluation.jar f.als -dumpInstance < -dumpDir=dir > < -d >|@",
       "     (dump a satisfiable instance for the model and every satisfiable command)",
       "",
-      "  @|bold java -ea -jar evaluation.jar f.als -evalFacts -xml=instance.xml < -d >|@",
-      "     (evaluate the facts of f.als against the given XML instance)",
+      "  @|bold java -ea -jar evaluation.jar f.als -evalCosntraints -xml=instance.xml < -d >|@",
+      "     (evaluate the constraints of f.als against the given XML instance)",
       ""
     })
 public final class EvaluationCli implements Callable<Integer> {
@@ -42,8 +42,10 @@ public final class EvaluationCli implements Callable<Integer> {
   @Option(names = "-dumpInstance", description = "Dump satisfiable Alloy instances")
   private boolean dumpInstance;
 
-  @Option(names = "-evalFacts", description = "Evaluate model facts against an instance")
-  private boolean evalFacts;
+  @Option(
+      names = "-evalCosntraints",
+      description = "Evaluate model constraints against an instance")
+  private boolean evalCosntraints;
 
   @Option(
       names = "-dumpDir",
@@ -55,7 +57,7 @@ public final class EvaluationCli implements Callable<Integer> {
   @Option(
       names = "-xml",
       paramLabel = "<instance.xml>",
-      description = "Instance XML used by -evalFacts")
+      description = "Instance XML used by -evalCosntraints")
   private Path instancePath;
 
   @Option(
@@ -84,10 +86,10 @@ public final class EvaluationCli implements Callable<Integer> {
         var modelName = model.getFileName().toString();
         var prefix = modelName.substring(0, modelName.length() - ".als".length());
         dumpInstance(alloyModel, prefix, dumpDir);
-      } else if (evalFacts) {
-        runEvalFacts(alloyModel, instancePath.toAbsolutePath().normalize(), debug);
+      } else if (evalCosntraints) {
+        runEvalCosntraints(alloyModel, instancePath.toAbsolutePath().normalize(), debug);
       } else {
-        throw ImplementationError.shouldNotReach();
+        throw AlloyEvaluatorImplError.validatedCliWithoutMode();
       }
 
       Reporter.INSTANCE.print();
@@ -131,16 +133,16 @@ public final class EvaluationCli implements Callable<Integer> {
     if (!model.toString().endsWith(".als")) {
       Reporter.INSTANCE.addError(EvaluationCliError.invalidModel(model.toString()));
     }
-    if (!dumpInstance && !evalFacts) {
+    if (!dumpInstance && !evalCosntraints) {
       Reporter.INSTANCE.addError(EvaluationCliError.missingMode());
     }
-    if (dumpInstance && evalFacts) {
+    if (dumpInstance && evalCosntraints) {
       Reporter.INSTANCE.addError(EvaluationCliError.conflictingModes());
     }
-    if (evalFacts && instancePath == null) {
+    if (evalCosntraints && instancePath == null) {
       Reporter.INSTANCE.addError(EvaluationCliError.missingInstance());
     }
-    if (evalFacts
+    if (evalCosntraints
         && instancePath != null
         && !Files.isRegularFile(instancePath.toAbsolutePath().normalize())) {
       Reporter.INSTANCE.addError(
@@ -162,7 +164,7 @@ public final class EvaluationCli implements Callable<Integer> {
     }
   }
 
-  private static void runEvalFacts(AlloyModel alloyModel, Path instancePath, boolean debug) {
+  private static void runEvalCosntraints(AlloyModel alloyModel, Path instancePath, boolean debug) {
     // dpOutput("Checking instance for " + instancePath);
     Instance instance;
     try {
@@ -173,15 +175,16 @@ public final class EvaluationCli implements Callable<Integer> {
       Reporter.INSTANCE.exitIfHasErrors();
       return;
     }
-    instance.dumpEverything();
-    /*
-        var evaluator = new FormulaEvaluator(instance, debug, alloyModel.allFunParas());
-        var result = ThreeVal.TRUE;
-        for (var fact : alloyModel.allFactParas()) {
-          result = result.and(fact.block.accept(evaluator));
-          if (result.shortCircuitsAnd()) break;
-        }
-    */
+
+    // System.out.println(instance.allFieldQnames());
+    // System.out.println(instance.allSigQnames());
+    var evaluator = new FormulaEvaluator(new EvaluationTable(instance, alloyModel), debug);
+    var result = ThreeVal.TRUE;
+    for (var constraint : alloyModel.allConstraints()) {
+      result = result.and(constraint.accept(evaluator));
+      if (result.shortCircuitsAnd()) break;
+    }
+    System.out.println("Satisfied: " + result);
     // dpOutput("Satisfied: " + result);
   }
 

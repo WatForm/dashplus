@@ -45,7 +45,7 @@ public class AtomTuple {
   }
 
   public Atom first() {
-    return firstElement(atoms);
+    return atoms.getFirst();
   }
 
   public Atom last() {
@@ -54,7 +54,7 @@ public class AtomTuple {
 
   public Atom get(int idx) {
     if (idx < 0 || idx >= arity())
-      throw AlloyEvaluatorImplError.arityError("Accessing non-existing atom at index: " + idx);
+      throw AlloyEvaluatorImplError.tupleIndexOutOfBounds(idx, arity());
     return atoms.get(idx);
   }
 
@@ -95,8 +95,9 @@ public class AtomTuple {
   }
 
   public static AtomTuple join(AtomTuple a, AtomTuple b) {
-    if (Atom.threeEqual(a.last(), b.first()) != TRUE)
-      throw AlloyEvaluatorImplError.comparisonError("Join occurs on invalid tuples");
+    ThreeVal sharedAtomsEqual = Atom.threeEqual(a.last(), b.first());
+    if (sharedAtomsEqual != TRUE)
+      throw AlloyEvaluatorImplError.invalidTupleJoin(a, b, sharedAtomsEqual);
     List<Atom> left = GeneralUtil.allButLast(a.atoms);
     List<Atom> right = GeneralUtil.tail(b.atoms);
     return new AtomTuple(GeneralUtil.concat(left, right));

@@ -8,11 +8,11 @@ public final class EvaluationCliError extends UserError {
   }
 
   public static EvaluationCliError missingMode() {
-    return new EvaluationCliError("Specify either -dumpInstance or -evalFacts.");
+    return new EvaluationCliError("Specify either -dumpInstance or -evalCosntraints.");
   }
 
   public static EvaluationCliError conflictingModes() {
-    return new EvaluationCliError("-dumpInstance and -evalFacts cannot be combined.");
+    return new EvaluationCliError("-dumpInstance and -evalCosntraints cannot be combined.");
   }
 
   public static EvaluationCliError invalidModel(String modelPath) {
@@ -24,10 +24,10 @@ public final class EvaluationCliError extends UserError {
   }
 
   public static EvaluationCliError missingInstance() {
-    return new EvaluationCliError("-evalFacts requires -xml=<instance.xml>.");
+    return new EvaluationCliError("-evalCosntraints requires -xml=<instance.xml>.");
   }
 
   public static EvaluationCliError instanceNotAllowed() {
-    return new EvaluationCliError("-xml can only be used with -evalFacts.");
+    return new EvaluationCliError("-xml can only be used with -evalCosntraints.");
   }
 }

@@ -22,6 +22,18 @@ public final class AlloyModelImplError extends ImplementationError {
         "Trying to look up the arity of a symbol that is not a pred/fun: " + s);
   }
 
+  public static AlloyModelImplError unresolvedPredFunDefinition(Qname qname) {
+    return new AlloyModelImplError(
+        "Resolved predicate/function definitions were requested before model resolution: " + qname);
+  }
+
+  public static AlloyModelImplError predFunBodyNotBlock(Pos pos, Object body) {
+    return new AlloyModelImplError(
+        pos,
+        "Predicate/function body must be an AlloyBlock; received "
+            + (body == null ? "null" : body.getClass().getName()));
+  }
+
   public static AlloyModelImplError fcnNotFound(String s) {
     return new AlloyModelImplError(
         "Trying to look up the result of a symbol that is not a fcn: " + s);

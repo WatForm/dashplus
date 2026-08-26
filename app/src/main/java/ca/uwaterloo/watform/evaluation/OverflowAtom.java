@@ -14,9 +14,7 @@ public record OverflowAtom(OverflowDirection direction) implements Atom {
         case OVERFLOW_DOWN -> "Overflow Down";
         case OVERFLOW_UP -> "Overflow Up";
         case OVERFLOW_UNKNOWN -> "Overflow Unknown";
-        default ->
-            throw AlloyEvaluatorImplError.atomConstructionError(
-                "Overflowed atom constructed with unexpected value");
+        default -> throw AlloyEvaluatorImplError.unexpectedOverflowEnumValue(this);
       };
     }
   }
