@@ -12,10 +12,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public final class EvaluationTable {
   private final Deque<Map<Qname, TupleSet>> relations = new ArrayDeque<>();
@@ -25,6 +27,7 @@ public final class EvaluationTable {
   private final TupleSet iden;
   private final Map<Qname, List<AlloyDecl>> callableArguments = new LinkedHashMap<>();
   private final Map<Qname, AlloyBlock> callableBodies = new LinkedHashMap<>();
+  private final Set<Qname> predicates = new LinkedHashSet<>();
 
   public EvaluationTable(Instance instance, AlloyModel model) {
     Objects.requireNonNull(instance);
@@ -43,6 +46,7 @@ public final class EvaluationTable {
     for (Qname predicate : model.allPreds()) {
       callableArguments.put(predicate, List.copyOf(model.predFunArgDecls(predicate)));
       callableBodies.put(predicate, model.predFunBody(predicate));
+      predicates.add(predicate);
     }
 
     Map<Qname, TupleSet> base = new LinkedHashMap<>();
@@ -113,6 +117,10 @@ public final class EvaluationTable {
 
   public Optional<AlloyBlock> getCallableBody(Qname callable) {
     return Optional.ofNullable(callableBodies.get(callable));
+  }
+
+  public boolean isPredicate(Qname callable) {
+    return predicates.contains(callable);
   }
 
   public TupleSet getUniv() {

@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.evaluation;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import ca.uwaterloo.watform.utils.Pos;
@@ -43,6 +44,12 @@ public class AlloyEvaluatorImplError extends ImplementationError {
         pos, "Resolved function is absent from the evaluation symbol table: " + function);
   }
 
+  public static AlloyEvaluatorImplError callableNotInEvaluationTable(Pos pos, Qname callable) {
+    return new AlloyEvaluatorImplError(
+        pos,
+        "Resolved function or predicate is absent from the evaluation symbol table: " + callable);
+  }
+
   public static AlloyEvaluatorImplError callableArgumentCount(
       Pos pos, String kind, Qname name, int expected, int actual) {
     return new AlloyEvaluatorImplError(
@@ -60,15 +67,19 @@ public class AlloyEvaluatorImplError extends ImplementationError {
         pos, "SUM quantification reached FormulaEvaluator even though it produces a set value");
   }
 
-  public static AlloyEvaluatorImplError unknownArithmeticFunction(Pos pos, String name) {
+  public static AlloyEvaluatorImplError unsupportedDisjOnDomain(Pos pos, String declaration) {
     return new AlloyEvaluatorImplError(
-        pos, "Unknown arithmetic function reached evaluator: " + name);
+        pos, "Evaluation does not support 'disj' on a declaration domain: " + declaration);
   }
 
-  public static AlloyEvaluatorImplError arithmeticArgumentCount(
-      Pos pos, String operation, int actual) {
+  public static AlloyEvaluatorImplError unsupportedDeclarationMultiplicity(
+      Pos pos, String declaration, AlloyQtEnum multiplicity) {
     return new AlloyEvaluatorImplError(
-        pos, "Arithmetic function " + operation + " expects 2 arguments but received " + actual);
+        pos,
+        "Evaluation only supports declaration multiplicity 'one'; found '"
+            + multiplicity
+            + "' in "
+            + declaration);
   }
 
   public static AlloyEvaluatorImplError arithmeticOperandsNotIntegers(
@@ -117,9 +128,10 @@ public class AlloyEvaluatorImplError extends ImplementationError {
             + (tupleArity == null ? "" : " with arity " + tupleArity));
   }
 
-  public static AlloyEvaluatorImplError negativeFunctionArity(Qname function, int arity) {
+  public static AlloyEvaluatorImplError negativeCallableArity(
+      String kind, Qname callable, int arity) {
     return new AlloyEvaluatorImplError(
-        "Partial call for function " + function + " was created with negative arity " + arity);
+        kind + " call for " + callable + " was created with negative arity " + arity);
   }
 
   public static AlloyEvaluatorImplError nonConcreteTupleAccess(TupleSet.Kind kind) {
@@ -132,10 +144,39 @@ public class AlloyEvaluatorImplError extends ImplementationError {
         "An incomplete function call may only be used as the right operand of a join");
   }
 
-  public static AlloyEvaluatorImplError excessFunctionArguments(
-      Qname function, int expected, int actual) {
+  public static AlloyEvaluatorImplError excessCallableArguments(
+      String kind, Qname callable, int expected, int actual) {
     return new AlloyEvaluatorImplError(
-        "Function " + function + " expects " + expected + " arguments but received " + actual);
+        kind + " " + callable + " expects " + expected + " arguments but received " + actual);
+  }
+
+  public static AlloyEvaluatorImplError incompletePredicateCall(
+      Qname predicate, int expected, int actual) {
+    return new AlloyEvaluatorImplError(
+        "Predicate "
+            + predicate
+            + " cannot be evaluated until all "
+            + expected
+            + " arguments are supplied; received "
+            + actual);
+  }
+
+  public static AlloyEvaluatorImplError predicateCallMisuse(
+      Qname predicate, int actual, int expected) {
+    return new AlloyEvaluatorImplError(
+        "Predicate call "
+            + predicate
+            + " ("
+            + actual
+            + "/"
+            + expected
+            + " arguments) may only receive arguments through joins or be evaluated as a formula");
+  }
+
+  public static AlloyEvaluatorImplError predicateValueRequired(TupleSet.Kind actual) {
+    return new AlloyEvaluatorImplError(
+        "Predicate evaluation requires a predicate call, but received a TupleSet of kind "
+            + actual);
   }
 
   public static AlloyEvaluatorImplError partialFunctionResult(Qname function) {
