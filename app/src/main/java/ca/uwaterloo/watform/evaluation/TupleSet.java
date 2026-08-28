@@ -20,7 +20,8 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   public enum Kind {
     CONCRETE,
     UNSPECIFIED,
-    PARTIAL_FUNCTION
+    PARTIAL_FUNCTION,
+    PREDICATE_CALL
   }
 
   private static final TupleSet UNSPECIFIED = new UnspecifiedTupleSet();
@@ -41,6 +42,14 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
     return kind() == Kind.PARTIAL_FUNCTION;
   }
 
+  public final boolean isPredicateCall() {
+    return kind() == Kind.PREDICATE_CALL;
+  }
+
+  private boolean isPredFunCall() {
+    return this instanceof PredFunTupleSet;
+  }
+
   public Atom getScalar() {
     List<AtomTuple> tuples = concreteTuples();
     if (tuples.size() != 1 || tuples.getFirst().arity() != 1) {
@@ -51,7 +60,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   }
 
   public ThreeVal contains(AtomTuple check) {
-    rejectPartialFunction(this);
+    rejectPredFunCall(this);
     if (isUnspecified()) return UNKNOWN;
 
     ThreeVal result = FALSE;
@@ -63,7 +72,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   }
 
   public static ThreeVal threeSubset(TupleSet a, TupleSet b) {
-    rejectPartialFunction(a, b);
+    rejectPredFunCall(a, b);
     if (!a.isConcrete() || !b.isConcrete()) return UNKNOWN;
 
     ThreeVal result = TRUE;
@@ -75,7 +84,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   }
 
   public static ThreeVal threeEquals(TupleSet a, TupleSet b) {
-    rejectPartialFunction(a, b);
+    rejectPredFunCall(a, b);
     if (!a.isConcrete() || !b.isConcrete()) return UNKNOWN;
     return threeSubset(a, b).and(threeSubset(b, a));
   }
@@ -103,7 +112,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   public static TupleSet partialFunction(
       Qname function, int expectedArguments, Function<List<TupleSet>, TupleSet> evaluator) {
     if (expectedArguments < 0) {
-      throw AlloyEvaluatorImplError.negativeFunctionArity(function, expectedArguments);
+      throw AlloyEvaluatorImplError.negativeCallableArity("Function", function, expectedArguments);
     }
     PartialFunctionTupleSet partial =
         new PartialFunctionTupleSet(
@@ -111,20 +120,36 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
     return partial.completeIfReady();
   }
 
+  public static TupleSet predicateCall(
+      Qname predicate, int expectedArguments, Function<List<TupleSet>, ThreeVal> evaluator) {
+    if (expectedArguments < 0) {
+      throw AlloyEvaluatorImplError.negativeCallableArity(
+          "Predicate", predicate, expectedArguments);
+    }
+    return new PredicateTupleSet(predicate, expectedArguments, Collections.emptyList(), evaluator);
+  }
+
+  public final ThreeVal evaluatePredicate() {
+    if (!(this instanceof PredicateTupleSet predicate)) {
+      throw AlloyEvaluatorImplError.predicateValueRequired(kind());
+    }
+    return predicate.evaluate();
+  }
+
   public static TupleSet union(TupleSet a, TupleSet b) {
-    rejectPartialFunction(a, b);
+    rejectPredFunCall(a, b);
     if (!a.isConcrete() || !b.isConcrete()) return unspecified();
     return of(concat(a.tuples(), b.tuples()));
   }
 
   public static TupleSet intersect(TupleSet a, TupleSet b) {
-    rejectPartialFunction(a, b);
+    rejectPredFunCall(a, b);
     if (!a.isConcrete() || !b.isConcrete()) return unspecified();
     return filterByThree(a, b::contains);
   }
 
   public static TupleSet diff(TupleSet a, TupleSet b) {
-    rejectPartialFunction(a, b);
+    rejectPredFunCall(a, b);
     if (!a.isConcrete() || !b.isConcrete()) return unspecified();
     return filterByThree(a, tuple -> b.contains(tuple).not());
   }
@@ -134,7 +159,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   }
 
   public static TupleSet crossProduct(TupleSet a, TupleSet b) {
-    rejectPartialFunction(a, b);
+    rejectPredFunCall(a, b);
     if (!a.isConcrete() || !b.isConcrete()) return unspecified();
 
     List<AtomTuple> tuples = new ArrayList<>();
@@ -147,11 +172,11 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   }
 
   public static TupleSet join(TupleSet a, TupleSet b) {
-    if (a.isPartialFunction()) {
-      throw partialFunctionUsageError();
+    if (a instanceof PredFunTupleSet call) {
+      throw call.usageError();
     }
-    if (b instanceof PartialFunctionTupleSet partial) {
-      return partial.addArgument(a);
+    if (b instanceof PredFunTupleSet call) {
+      return call.addArgument(a);
     }
     if (!a.isConcrete() || !b.isConcrete()) return unspecified();
 
@@ -167,7 +192,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   }
 
   public static TupleSet filterByThree(TupleSet set, Function<AtomTuple, ThreeVal> filter) {
-    rejectPartialFunction(set);
+    rejectPredFunCall(set);
     if (!set.isConcrete()) return unspecified();
 
     List<AtomTuple> tuples = new ArrayList<>();
@@ -180,7 +205,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
   }
 
   public static TupleSet mapBy(TupleSet set, Function<AtomTuple, AtomTuple> map) {
-    rejectPartialFunction(set);
+    rejectPredFunCall(set);
     if (!set.isConcrete()) return unspecified();
     return of(GeneralUtil.mapBy(set.tuples(), map));
   }
@@ -196,15 +221,15 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
 
   private List<AtomTuple> concreteTuples() {
     if (!isConcrete()) {
-      if (isPartialFunction()) throw partialFunctionUsageError();
+      if (this instanceof PredFunTupleSet call) throw call.usageError();
       throw AlloyEvaluatorImplError.nonConcreteTupleAccess(kind());
     }
     return tuples();
   }
 
-  private static void rejectPartialFunction(TupleSet... sets) {
+  private static void rejectPredFunCall(TupleSet... sets) {
     for (TupleSet set : sets) {
-      if (set.isPartialFunction()) throw partialFunctionUsageError();
+      if (set instanceof PredFunTupleSet call) throw call.usageError();
     }
   }
 
@@ -263,10 +288,43 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
     }
   }
 
-  private static final class PartialFunctionTupleSet extends TupleSet {
-    private final Qname function;
-    private final int expectedArguments;
-    private final List<TupleSet> arguments;
+  private abstract static class PredFunTupleSet extends TupleSet {
+    protected final Qname callable;
+    protected final int expectedArguments;
+    protected final List<TupleSet> arguments;
+
+    private PredFunTupleSet(Qname callable, int expectedArguments, List<TupleSet> arguments) {
+      this.callable = Objects.requireNonNull(callable);
+      this.expectedArguments = expectedArguments;
+      this.arguments = List.copyOf(arguments);
+    }
+
+    private TupleSet addArgument(TupleSet argument) {
+      Objects.requireNonNull(argument);
+      if (argument.isPredFunCall()) throw argumentCallUsageError(argument);
+      if (arguments.size() >= expectedArguments) {
+        throw AlloyEvaluatorImplError.excessCallableArguments(
+            callableKind(), callable, expectedArguments, arguments.size() + 1);
+      }
+
+      List<TupleSet> updatedArguments = new ArrayList<>(arguments);
+      updatedArguments.add(argument);
+      return withArguments(updatedArguments);
+    }
+
+    protected abstract TupleSet withArguments(List<TupleSet> updatedArguments);
+
+    protected abstract String callableKind();
+
+    protected abstract AlloyEvaluatorImplError usageError();
+
+    @Override
+    protected final List<AtomTuple> tuples() {
+      throw usageError();
+    }
+  }
+
+  private static final class PartialFunctionTupleSet extends PredFunTupleSet {
     private final Function<List<TupleSet>, TupleSet> evaluator;
 
     private PartialFunctionTupleSet(
@@ -274,31 +332,21 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
         int expectedArguments,
         List<TupleSet> arguments,
         Function<List<TupleSet>, TupleSet> evaluator) {
-      this.function = Objects.requireNonNull(function);
-      this.expectedArguments = expectedArguments;
-      this.arguments = List.copyOf(arguments);
+      super(function, expectedArguments, arguments);
       this.evaluator = Objects.requireNonNull(evaluator);
     }
 
-    private TupleSet addArgument(TupleSet argument) {
-      Objects.requireNonNull(argument);
-      if (argument.isPartialFunction()) throw partialFunctionUsageError();
-      if (arguments.size() >= expectedArguments) {
-        throw AlloyEvaluatorImplError.excessFunctionArguments(
-            function, expectedArguments, arguments.size() + 1);
-      }
-
-      List<TupleSet> updatedArguments = new ArrayList<>(arguments);
-      updatedArguments.add(argument);
-      return new PartialFunctionTupleSet(function, expectedArguments, updatedArguments, evaluator)
+    @Override
+    protected TupleSet withArguments(List<TupleSet> updatedArguments) {
+      return new PartialFunctionTupleSet(callable, expectedArguments, updatedArguments, evaluator)
           .completeIfReady();
     }
 
     private TupleSet completeIfReady() {
       if (arguments.size() < expectedArguments) return this;
       TupleSet result = Objects.requireNonNull(evaluator.apply(arguments));
-      if (result.isPartialFunction()) {
-        throw AlloyEvaluatorImplError.partialFunctionResult(function);
+      if (result.isPredFunCall()) {
+        throw AlloyEvaluatorImplError.partialFunctionResult(callable);
       }
       return result;
     }
@@ -309,19 +357,77 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
     }
 
     @Override
-    protected List<AtomTuple> tuples() {
-      throw partialFunctionUsageError();
+    protected String callableKind() {
+      return "Function";
+    }
+
+    @Override
+    protected AlloyEvaluatorImplError usageError() {
+      return partialFunctionUsageError();
     }
 
     @Override
     public String toString() {
       return "<partial function "
-          + function
+          + callable
           + " ("
           + arguments.size()
           + "/"
           + expectedArguments
           + ")>";
     }
+  }
+
+  private static final class PredicateTupleSet extends PredFunTupleSet {
+    private final Function<List<TupleSet>, ThreeVal> evaluator;
+
+    private PredicateTupleSet(
+        Qname predicate,
+        int expectedArguments,
+        List<TupleSet> arguments,
+        Function<List<TupleSet>, ThreeVal> evaluator) {
+      super(predicate, expectedArguments, arguments);
+      this.evaluator = Objects.requireNonNull(evaluator);
+    }
+
+    @Override
+    protected TupleSet withArguments(List<TupleSet> updatedArguments) {
+      return new PredicateTupleSet(callable, expectedArguments, updatedArguments, evaluator);
+    }
+
+    private ThreeVal evaluate() {
+      if (arguments.size() != expectedArguments) {
+        throw AlloyEvaluatorImplError.incompletePredicateCall(
+            callable, expectedArguments, arguments.size());
+      }
+      return Objects.requireNonNull(evaluator.apply(arguments));
+    }
+
+    @Override
+    public Kind kind() {
+      return Kind.PREDICATE_CALL;
+    }
+
+    @Override
+    protected String callableKind() {
+      return "Predicate";
+    }
+
+    @Override
+    protected AlloyEvaluatorImplError usageError() {
+      return AlloyEvaluatorImplError.predicateCallMisuse(
+          callable, arguments.size(), expectedArguments);
+    }
+
+    @Override
+    public String toString() {
+      return "<predicate " + callable + " (" + arguments.size() + "/" + expectedArguments + ")>";
+    }
+  }
+
+  private static AlloyEvaluatorImplError argumentCallUsageError(TupleSet argument) {
+    return argument instanceof PredFunTupleSet call
+        ? call.usageError()
+        : partialFunctionUsageError();
   }
 }
