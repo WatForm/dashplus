@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.evaluation;
 import static ca.uwaterloo.watform.evaluation.ThreeVal.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
+import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.AlloyStrings.Kind;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
@@ -62,6 +63,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
   public TupleSet visit(AlloyCphExpr comprehensionExpr) {
     logger.enter("ComprehensionExpr " + comprehensionExpr);
+    validateDeclarations(comprehensionExpr.decls);
     var valList = mapBy(comprehensionExpr.decls, d -> d.expr.accept(this));
     if (containsMatch(valList, TupleSet::isUnspecified)) {
       logger.exit("ComprehensionExpr " + TupleSet.unspecified());
@@ -130,13 +132,63 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   }
 
   public TupleSet visit(AlloyQuantificationExpr quantificationExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "SetEvaluator",
-        quantificationExpr.pos,
-        "AlloyQuantificationExpr: "
-            + quantificationExpr
-            + " "
-            + quantificationExpr.getClass().getName());
+    if (quantificationExpr.quant != AlloyQuantificationExpr.Quant.SUM) {
+      throw AlloyEvaluatorImplError.missingVisitCase(
+          "SetEvaluator",
+          quantificationExpr.pos,
+          "AlloyQuantificationExpr: "
+              + quantificationExpr
+              + " "
+              + quantificationExpr.getClass().getName());
+    }
+
+    logger.enter("SumQuantificationExpr " + quantificationExpr);
+    validateDeclarations(quantificationExpr.decls);
+    var values = mapBy(quantificationExpr.decls, declaration -> declaration.expr.accept(this));
+    if (containsMatch(values, TupleSet::isUnspecified)) {
+      logger.exit("SumQuantificationExpr " + TupleSet.unspecified());
+      return TupleSet.unspecified();
+    }
+    TupleSet result = sumQuantification(quantificationExpr, values, 0, 0);
+    logger.exit("SumQuantificationExpr " + result);
+    return result;
+  }
+
+  private TupleSet sumQuantification(
+      AlloyQuantificationExpr expr, List<TupleSet> values, int declIndex, int nameIndex) {
+    TupleSet result = evaluationTable.getIntScalar(0, expr.pos);
+    boolean last =
+        declIndex == expr.decls.size() - 1
+            && nameIndex == expr.decls.get(declIndex).qnames.size() - 1;
+    Qname name = qnameOf(expr.decls.get(declIndex).qnames.get(nameIndex));
+    for (AtomTuple tuple : values.get(declIndex)) {
+      evaluationTable.addRelation(name, TupleSet.of(List.of(tuple)));
+      TupleSet value;
+      if (last) {
+        value = expr.body.accept(this);
+      } else {
+        int nextDecl = declIndex + ((nameIndex + 1) / expr.decls.get(declIndex).qnames.size());
+        int nextName = (nameIndex + 1) % expr.decls.get(declIndex).qnames.size();
+        value = sumQuantification(expr, values, nextDecl, nextName);
+      }
+      evaluationTable.removeRelation(name);
+      if (value.isUnspecified()) return TupleSet.unspecified();
+      result = processPlus(result.getScalar(), value.getScalar(), expr.pos);
+    }
+    return result;
+  }
+
+  static void validateDeclarations(List<AlloyDecl> declarations) {
+    for (AlloyDecl declaration : declarations) {
+      if (declaration.isDisj2) {
+        throw AlloyEvaluatorImplError.unsupportedDisjOnDomain(
+            declaration.pos, declaration.toString());
+      }
+      if (declaration.mul.isPresent() && declaration.mul.get() != AlloyQtEnum.ONE) {
+        throw AlloyEvaluatorImplError.unsupportedDeclarationMultiplicity(
+            declaration.pos, declaration.toString(), declaration.mul.get());
+      }
+    }
   }
 
   public TupleSet visit(AlloyDecl decl) {
@@ -151,7 +203,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       throw AlloyEvaluatorImplError.unresolvedQname(qName.pos, qName.toString());
     }
     if (qName.kind == Kind.PREDFUN) {
-      var result = createFunctionCall(qName);
+      var result = createPredFunCall(qName);
       logger.exit("QName = " + result);
       return result;
     }
@@ -205,6 +257,66 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     return result;
   }
 
+  public TupleSet visit(AlloyFunAddExpr expr) {
+    logger.enter("Integer addition: " + expr);
+    TupleSet left = expr.left.accept(this);
+    TupleSet right = expr.right.accept(this);
+    var result =
+        left.isUnspecified() || right.isUnspecified()
+            ? TupleSet.unspecified()
+            : processPlus(left.getScalar(), right.getScalar(), expr.pos);
+    logger.exit("Integer addition = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyFunSubExpr expr) {
+    logger.enter("Integer subtraction: " + expr);
+    TupleSet left = expr.left.accept(this);
+    TupleSet right = expr.right.accept(this);
+    var result =
+        left.isUnspecified() || right.isUnspecified()
+            ? TupleSet.unspecified()
+            : processMinus(left.getScalar(), right.getScalar(), expr.pos);
+    logger.exit("Integer subtraction = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyFunMulExpr expr) {
+    logger.enter("Integer multiplication: " + expr);
+    TupleSet left = expr.left.accept(this);
+    TupleSet right = expr.right.accept(this);
+    var result =
+        left.isUnspecified() || right.isUnspecified()
+            ? TupleSet.unspecified()
+            : processMul(left.getScalar(), right.getScalar(), expr.pos);
+    logger.exit("Integer multiplication = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyFunDivExpr expr) {
+    logger.enter("Integer division: " + expr);
+    TupleSet left = expr.left.accept(this);
+    TupleSet right = expr.right.accept(this);
+    var result =
+        left.isUnspecified() || right.isUnspecified()
+            ? TupleSet.unspecified()
+            : processDiv(left.getScalar(), right.getScalar(), expr.pos);
+    logger.exit("Integer division = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyFunRemExpr expr) {
+    logger.enter("Integer remainder: " + expr);
+    TupleSet left = expr.left.accept(this);
+    TupleSet right = expr.right.accept(this);
+    var result =
+        left.isUnspecified() || right.isUnspecified()
+            ? TupleSet.unspecified()
+            : processRem(left.getScalar(), right.getScalar(), expr.pos);
+    logger.exit("Integer remainder = " + result);
+    return result;
+  }
+
   public TupleSet visit(AlloyArrowExpr expr) {
     logger.enter("ArrowProduct: " + expr);
     var result = TupleSet.crossProduct(expr.left.accept(this), expr.right.accept(this));
@@ -229,46 +341,27 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     return result;
   }
 
-  private TupleSet createFunctionCall(AlloyQnameExpr functionExpr) {
-    Qname function = qnameOf(functionExpr);
-    String functionName = function.name;
-    Pos pos = functionExpr.pos;
+  private TupleSet createPredFunCall(AlloyQnameExpr callableExpr) {
+    Qname callable = qnameOf(callableExpr);
+    Pos pos = callableExpr.pos;
 
-    int expectedArguments;
-    java.util.function.Function<List<TupleSet>, TupleSet> evaluator;
-    if (isArithmeticFunction(functionName)) {
-      expectedArguments = 2;
-      evaluator = args -> evaluateArithmeticFunction(functionName, args, pos);
-    } else {
-      var funBody = evaluationTable.getCallableBody(function);
-      var funArguments = evaluationTable.getCallableArguments(function);
-      if (funBody.isEmpty() || funArguments.isEmpty()) {
-        throw AlloyEvaluatorImplError.functionNotInEvaluationTable(pos, function);
-      }
-      expectedArguments = flatten(mapBy(funArguments.get(), argument -> argument.qnames)).size();
-      evaluator = args -> processGenericFun(function, funArguments.get(), funBody.get(), args);
+    var body = evaluationTable.getCallableBody(callable);
+    var argumentDecls = evaluationTable.getCallableArguments(callable);
+    if (body.isEmpty() || argumentDecls.isEmpty()) {
+      throw AlloyEvaluatorImplError.callableNotInEvaluationTable(pos, callable);
     }
+    int expectedArguments = flatten(mapBy(argumentDecls.get(), argument -> argument.qnames)).size();
 
-    return TupleSet.partialFunction(function, expectedArguments, evaluator);
-  }
-
-  private static boolean isArithmeticFunction(String name) {
-    return name.equals("plus")
-        || name.equals("minus")
-        || name.equals("mul")
-        || name.equals("div")
-        || name.equals("rem");
-  }
-
-  private TupleSet evaluateArithmeticFunction(String name, List<TupleSet> args, Pos pos) {
-    return switch (name) {
-      case "plus" -> processPlus(args, pos);
-      case "minus" -> processMinus(args, pos);
-      case "mul" -> processMul(args, pos);
-      case "div" -> processDiv(args, pos);
-      case "rem" -> processRem(args, pos);
-      default -> throw AlloyEvaluatorImplError.unknownArithmeticFunction(pos, name);
-    };
+    if (evaluationTable.isPredicate(callable)) {
+      return TupleSet.predicateCall(
+          callable,
+          expectedArguments,
+          args -> processGenericPredicate(callable, argumentDecls.get(), body.get(), args));
+    }
+    return TupleSet.partialFunction(
+        callable,
+        expectedArguments,
+        args -> processGenericFun(callable, argumentDecls.get(), body.get(), args));
   }
 
   // TODO: review
@@ -292,13 +385,28 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     }
   }
 
+  private ThreeVal processGenericPredicate(
+      Qname predicate, List<AlloyDecl> argumentDecls, AlloyBlock body, List<TupleSet> args) {
+    var argNames = flatten(mapBy(argumentDecls, argument -> argument.qnames));
+
+    if (args.size() != argNames.size()) {
+      throw AlloyEvaluatorImplError.callableArgumentCount(
+          body.pos, "Predicate", predicate, argNames.size(), args.size());
+    }
+
+    evaluationTable.addStackFrame();
+    try {
+      for (int i = 0; i < args.size(); i++) {
+        evaluationTable.addRelation(qnameOf(argNames.get(i)), args.get(i));
+      }
+      return body.accept(formulaEvaluator);
+    } finally {
+      evaluationTable.popStackFrame();
+    }
+  }
+
   // TODO: cleanup
-  private TupleSet processPlus(List<TupleSet> args, Pos pos) {
-    if (args.size() != 2)
-      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "plus", args.size());
-    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
-    var first = args.getFirst().getScalar();
-    var second = args.getLast().getScalar();
+  private TupleSet processPlus(Atom first, Atom second, Pos pos) {
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
       throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "plus", first, second);
@@ -342,12 +450,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     };
   }
 
-  private TupleSet processMinus(List<TupleSet> args, Pos pos) {
-    if (args.size() != 2)
-      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "minus", args.size());
-    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
-    var first = args.getFirst().getScalar();
-    var second = args.getLast().getScalar();
+  private TupleSet processMinus(Atom first, Atom second, Pos pos) {
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
       throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "minus", first, second);
@@ -405,12 +508,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   }
 
   // TODO: cleanup
-  private TupleSet processMul(List<TupleSet> args, Pos pos) {
-    if (args.size() != 2)
-      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "mul", args.size());
-    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
-    var first = args.getFirst().getScalar();
-    var second = args.getLast().getScalar();
+  private TupleSet processMul(Atom first, Atom second, Pos pos) {
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
       throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "mul", first, second);
@@ -455,12 +553,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   }
 
   // TODO: cleanup
-  private TupleSet processDiv(List<TupleSet> args, Pos pos) {
-    if (args.size() != 2)
-      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "div", args.size());
-    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
-    var first = args.getFirst().getScalar();
-    var second = args.getLast().getScalar();
+  private TupleSet processDiv(Atom first, Atom second, Pos pos) {
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
       throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "div", first, second);
@@ -530,12 +623,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   }
 
   // TODO: cleanup
-  private TupleSet processRem(List<TupleSet> args, Pos pos) {
-    if (args.size() != 2)
-      throw AlloyEvaluatorImplError.arithmeticArgumentCount(pos, "rem", args.size());
-    if (containsMatch(args, TupleSet::isUnspecified)) return TupleSet.unspecified();
-    var first = args.getFirst().getScalar();
-    var second = args.getLast().getScalar();
+  private TupleSet processRem(Atom first, Atom second, Pos pos) {
 
     if (first instanceof LabelAtom || second instanceof LabelAtom)
       throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "rem", first, second);

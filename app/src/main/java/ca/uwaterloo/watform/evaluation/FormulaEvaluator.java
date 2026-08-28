@@ -4,7 +4,6 @@ import static ca.uwaterloo.watform.evaluation.ThreeVal.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
-import ca.uwaterloo.watform.alloyast.AlloyStrings.Kind;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyQuantificationExpr.Quant;
@@ -56,46 +55,15 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
   }
 
   public ThreeVal visit(AlloyBracketExpr bracketExpr) {
-    if (!(bracketExpr.expr instanceof AlloyQnameExpr qnameExpr) || qnameExpr.kind != Kind.PREDFUN) {
-      throw AlloyEvaluatorImplError.missingVisitCase(
-          "FormulaEvaluator",
-          bracketExpr.pos,
-          "AlloyBracketExpr: " + bracketExpr + " " + bracketExpr.getClass().getName());
-    }
-    return evaluatePredicate(
-        qnameExpr, mapBy(bracketExpr.exprs, expr -> expr.accept(setEvaluator)));
+    return bracketExpr.accept(setEvaluator).evaluatePredicate();
   }
 
   public ThreeVal visit(AlloyQnameExpr qnameExpr) {
-    if (qnameExpr.kind != Kind.PREDFUN) {
-      return visit((AlloyVarExpr) qnameExpr);
-    }
-    return evaluatePredicate(qnameExpr, emptyList());
+    return qnameExpr.accept(setEvaluator).evaluatePredicate();
   }
 
-  private ThreeVal evaluatePredicate(AlloyQnameExpr predicateExpr, List<TupleSet> arguments) {
-    Qname predicateName = qnameOf(predicateExpr);
-    var predicateBody = evaluationTable.getCallableBody(predicateName);
-    var predicateArguments = evaluationTable.getCallableArguments(predicateName);
-    if (predicateBody.isEmpty() || predicateArguments.isEmpty()) {
-      throw AlloyEvaluatorImplError.predicateNotInEvaluationTable(predicateExpr.pos, predicateName);
-    }
-
-    var argumentNames = flatten(mapBy(predicateArguments.get(), argument -> argument.qnames));
-    if (arguments.size() != argumentNames.size()) {
-      throw AlloyEvaluatorImplError.callableArgumentCount(
-          predicateExpr.pos, "Predicate", predicateName, argumentNames.size(), arguments.size());
-    }
-
-    evaluationTable.addStackFrame();
-    try {
-      for (int i = 0; i < arguments.size(); i++) {
-        evaluationTable.addRelation(qnameOf(argumentNames.get(i)), arguments.get(i));
-      }
-      return predicateBody.get().accept(this);
-    } finally {
-      evaluationTable.popStackFrame();
-    }
+  public ThreeVal visit(AlloyDotExpr dotExpr) {
+    return dotExpr.accept(setEvaluator).evaluatePredicate();
   }
 
   public ThreeVal visit(AlloyCphExpr comprehensionExpr) {
@@ -128,6 +96,7 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
   // TODO: cleanup, potentially add var handling or other edge cases
   public ThreeVal visit(AlloyQuantificationExpr quantificationExpr) {
     logger.enter("QuantificationExpr " + quantificationExpr);
+    SetEvaluator.validateDeclarations(quantificationExpr.decls);
     var valList = mapBy(quantificationExpr.decls, d -> d.expr.accept(setEvaluator));
     if (containsMatch(valList, TupleSet::isUnspecified)) {
       logger.exit("QuantificationExpr " + UNKNOWN);
