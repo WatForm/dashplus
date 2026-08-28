@@ -69,8 +69,8 @@ public final class EvaluationCli implements Callable<Integer> {
   public Integer call() {
     Path model = modelPath.toAbsolutePath().normalize();
     Reporter.INSTANCE.reset();
-    Reporter.INSTANCE.popPath();
-    Reporter.INSTANCE.pushPath(model);
+    // Reporter.INSTANCE.popPath(); TODO: fix once methods are added back
+    // Reporter.INSTANCE.pushPath(model);
     try {
       validateArguments(model);
 
