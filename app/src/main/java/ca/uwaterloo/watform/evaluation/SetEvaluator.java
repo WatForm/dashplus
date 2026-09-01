@@ -13,6 +13,7 @@ import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.evaluation.OverflowAtom.OverflowDirection;
 import ca.uwaterloo.watform.utils.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SetEvaluator implements AlloyExprVis<TupleSet> {
@@ -34,26 +35,17 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     };
   }
 
-  // Unimplemented — error message carries all needed detail
+  // Concrete AST nodes without a visitor below are deliberately unsupported by this evaluator.
   public TupleSet visit(AlloyBinaryExpr binExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "SetEvaluator",
-        binExpr.pos,
-        "AlloyBinaryExpr: " + binExpr + " " + binExpr.getClass().getName());
+    throw AlloyEvaluatorError.unsupportedExpression("SetEvaluator", binExpr.pos, binExpr);
   }
 
   public TupleSet visit(AlloyUnaryExpr unaryExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "SetEvaluator",
-        unaryExpr.pos,
-        "AlloyUnaryExpr: " + unaryExpr + " " + unaryExpr.getClass().getName());
+    throw AlloyEvaluatorError.unsupportedExpression("SetEvaluator", unaryExpr.pos, unaryExpr);
   }
 
   public TupleSet visit(AlloyVarExpr varExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "SetEvaluator",
-        varExpr.pos,
-        "AlloyVarExpr: " + varExpr + " " + varExpr.getClass().getName());
+    throw AlloyEvaluatorError.unsupportedExpression("SetEvaluator", varExpr.pos, varExpr);
   }
 
   public TupleSet visit(AlloyBlock block) {
@@ -112,13 +104,18 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   }
 
   public TupleSet visit(AlloyIteExpr iteExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "SetEvaluator",
-        iteExpr.pos,
-        "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
+    logger.enter("IfThenElse: " + iteExpr);
+    ThreeVal condition = iteExpr.cond.accept(formulaEvaluator);
+    TupleSet result =
+        switch (condition) {
+          case TRUE -> iteExpr.conseq.accept(this);
+          case FALSE -> iteExpr.alt.accept(this);
+          case UNKNOWN -> TupleSet.unspecified();
+        };
+    logger.exit("IfThenElse = " + result);
+    return result;
   }
 
-  // TODO: potentially review, may need changing
   public TupleSet visit(AlloyLetExpr letExpr) {
     logger.enter("LetExpr " + letExpr);
     evaluationTable.addStackFrame();
@@ -133,13 +130,8 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
   public TupleSet visit(AlloyQuantificationExpr quantificationExpr) {
     if (quantificationExpr.quant != AlloyQuantificationExpr.Quant.SUM) {
-      throw AlloyEvaluatorImplError.missingVisitCase(
-          "SetEvaluator",
-          quantificationExpr.pos,
-          "AlloyQuantificationExpr: "
-              + quantificationExpr
-              + " "
-              + quantificationExpr.getClass().getName());
+      throw AlloyEvaluatorError.unsupportedExpression(
+          "SetEvaluator", quantificationExpr.pos, quantificationExpr);
     }
 
     logger.enter("SumQuantificationExpr " + quantificationExpr);
@@ -181,11 +173,10 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   static void validateDeclarations(List<AlloyDecl> declarations) {
     for (AlloyDecl declaration : declarations) {
       if (declaration.isDisj2) {
-        throw AlloyEvaluatorImplError.unsupportedDisjOnDomain(
-            declaration.pos, declaration.toString());
+        throw AlloyEvaluatorError.unsupportedDisjOnDomain(declaration.pos, declaration.toString());
       }
       if (declaration.mul.isPresent() && declaration.mul.get() != AlloyQtEnum.ONE) {
-        throw AlloyEvaluatorImplError.unsupportedDeclarationMultiplicity(
+        throw AlloyEvaluatorError.unsupportedDeclarationMultiplicity(
             declaration.pos, declaration.toString(), declaration.mul.get());
       }
     }
@@ -196,7 +187,6 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
         "SetEvaluator", decl.pos, "AlloyDecl: " + decl + " " + decl.getClass().getName());
   }
 
-  // TODO: review
   public TupleSet visit(AlloyQnameExpr qName) {
     logger.enter("QName: " + qName);
     if (qName.vars.isEmpty()) {
@@ -220,6 +210,96 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     logger.enter("None");
     logger.exit("None = {}");
     return TupleSet.emptySet();
+  }
+
+  public TupleSet visit(AlloyPredTotOrdExpr expr) {
+    logger.enter("Total order predicate");
+    TupleSet result =
+        TupleSet.predicateCall(
+            Qname.unknownQname(expr.getName()), 3, this::processTotalOrderPredicate);
+    logger.exit("Total order predicate = " + result);
+    return result;
+  }
+
+  private ThreeVal processTotalOrderPredicate(List<TupleSet> arguments) {
+    TupleSet ordered = arguments.get(0);
+    TupleSet first = arguments.get(1);
+    TupleSet next = arguments.get(2);
+
+    if (!ordered.isConcrete() || !first.isConcrete() || !next.isConcrete()) return UNKNOWN;
+    if (!hasArity(ordered, 1) || !hasArity(first, 1) || !hasArity(next, 2)) return FALSE;
+    if (first.size() != 1) return FALSE;
+
+    Atom firstAtom = first.getScalar();
+    ThreeVal relationsWithinOrdered = containsAtom(ordered, firstAtom);
+    for (AtomTuple edge : next) {
+      relationsWithinOrdered =
+          relationsWithinOrdered
+              .and(containsAtom(ordered, edge.first()))
+              .and(containsAtom(ordered, edge.last()));
+      if (relationsWithinOrdered.shortCircuitsAnd()) return FALSE;
+    }
+    if (relationsWithinOrdered == UNKNOWN) return UNKNOWN;
+
+    List<Atom> visited = new ArrayList<>();
+    Atom current = firstAtom;
+    while (true) {
+      ThreeVal alreadyVisited = containsAtom(visited, current);
+      if (alreadyVisited == TRUE) return FALSE;
+      if (alreadyVisited == UNKNOWN) return UNKNOWN;
+      visited.add(current);
+
+      TupleSet successors = TupleSet.join(TupleSet.createScalar(current), next);
+      if (successors.isUnspecified()) return UNKNOWN;
+      if (successors.size() > 1) return FALSE;
+      if (successors.isEmpty()) break;
+      current = successors.getScalar();
+    }
+
+    List<AtomTuple> visitedTuples = new ArrayList<>();
+    for (Atom atom : visited) visitedTuples.add(new AtomTuple(List.of(atom)));
+    return TupleSet.threeEquals(ordered, TupleSet.of(visitedTuples));
+  }
+
+  private static boolean hasArity(TupleSet set, int expectedArity) {
+    for (AtomTuple tuple : set) {
+      if (tuple.arity() != expectedArity) return false;
+    }
+    return true;
+  }
+
+  private static ThreeVal containsAtom(TupleSet set, Atom atom) {
+    return set.contains(new AtomTuple(List.of(atom)));
+  }
+
+  private static ThreeVal containsAtom(List<Atom> atoms, Atom check) {
+    ThreeVal result = FALSE;
+    for (Atom atom : atoms) {
+      result = result.or(Atom.threeEqual(atom, check));
+      if (result.shortCircuitsOr()) return result;
+    }
+    return result;
+  }
+
+  public TupleSet visit(AlloyFunMinExpr expr) {
+    logger.enter("Minimum integer");
+    TupleSet result = evaluationTable.getIntScalar(evaluationTable.minInt(), expr.pos);
+    logger.exit("Minimum integer = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyFunMaxExpr expr) {
+    logger.enter("Maximum integer");
+    TupleSet result = evaluationTable.getIntScalar(evaluationTable.maxInt(), expr.pos);
+    logger.exit("Maximum integer = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyFunNextExpr expr) {
+    logger.enter("Integer successor relation");
+    TupleSet result = evaluationTable.getIntNext();
+    logger.exit("Integer successor relation = " + result);
+    return result;
   }
 
   public TupleSet visit(AlloyIdenExpr expr) {
@@ -314,6 +394,42 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
             ? TupleSet.unspecified()
             : processRem(left.getScalar(), right.getScalar(), expr.pos);
     logger.exit("Integer remainder = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyShLExpr expr) {
+    logger.enter("Integer left shift: " + expr);
+    TupleSet left = expr.left.accept(this);
+    TupleSet right = expr.right.accept(this);
+    var result =
+        left.isUnspecified() || right.isUnspecified()
+            ? TupleSet.unspecified()
+            : processShiftLeft(left.getScalar(), right.getScalar(), expr.pos);
+    logger.exit("Integer left shift = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyShAExpr expr) {
+    logger.enter("Integer arithmetic right shift: " + expr);
+    TupleSet left = expr.left.accept(this);
+    TupleSet right = expr.right.accept(this);
+    var result =
+        left.isUnspecified() || right.isUnspecified()
+            ? TupleSet.unspecified()
+            : processArithmeticShiftRight(left.getScalar(), right.getScalar(), expr.pos);
+    logger.exit("Integer arithmetic right shift = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyShRExpr expr) {
+    logger.enter("Integer logical right shift: " + expr);
+    TupleSet left = expr.left.accept(this);
+    TupleSet right = expr.right.accept(this);
+    var result =
+        left.isUnspecified() || right.isUnspecified()
+            ? TupleSet.unspecified()
+            : processLogicalShiftRight(left.getScalar(), right.getScalar(), expr.pos);
+    logger.exit("Integer logical right shift = " + result);
     return result;
   }
 
@@ -560,7 +676,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
       if (si.value() == 0) {
-        throw AlloyEvaluatorImplError.arithmeticDivisionByZero(pos, "div");
+        throw AlloyEvaluatorError.arithmeticDivisionByZero(pos, "div");
       }
       return evaluationTable.getIntScalar(fi.value() / si.value(), pos);
     }
@@ -630,7 +746,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
       if (si.value() == 0) {
-        throw AlloyEvaluatorImplError.arithmeticDivisionByZero(pos, "rem");
+        throw AlloyEvaluatorError.arithmeticDivisionByZero(pos, "rem");
       }
       return evaluationTable.getIntScalar(fi.value() % si.value(), pos);
     }
@@ -665,6 +781,79 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
     // both overflowed. Cannot determine the exact value or if concretely overflows
     return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
+  }
+
+  private int bitWidth() {
+    long integerCount = (long) evaluationTable.maxInt() - evaluationTable.minInt() + 1;
+    return Long.numberOfTrailingZeros(integerCount);
+  }
+
+  private Integer shiftDistance(Atom value, Atom distance, Pos pos, String operation) {
+    if (value instanceof LabelAtom || distance instanceof LabelAtom) {
+      throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, operation, value, distance);
+    }
+    if (distance instanceof OverflowAtom) return null;
+    int distanceBitCount = Integer.SIZE - Integer.numberOfLeadingZeros(bitWidth() - 1);
+    int distanceModulus = 1 << distanceBitCount;
+    return Math.floorMod(((IntegerAtom) distance).value(), distanceModulus);
+  }
+
+  private TupleSet processShiftLeft(Atom value, Atom distance, Pos pos) {
+    Integer amount = shiftDistance(value, distance, pos, "left shift");
+    if (amount == null) {
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
+    }
+
+    TupleSet result = TupleSet.createScalar(value);
+    Atom two = new IntegerAtom(2);
+    for (int i = 0; i < amount; i++) {
+      result = processMul(result.getScalar(), two, pos);
+    }
+    return result;
+  }
+
+  private TupleSet arithmeticShiftRightOnce(Atom value, Pos pos) {
+    TupleSet result = processDiv(value, new IntegerAtom(2), pos);
+    if (value instanceof IntegerAtom integer && integer.value() < 0 && integer.value() % 2 != 0) {
+      result = processMinus(result.getScalar(), new IntegerAtom(1), pos);
+    }
+    return result;
+  }
+
+  private TupleSet processArithmeticShiftRight(Atom value, Atom distance, Pos pos) {
+    Integer amount = shiftDistance(value, distance, pos, "arithmetic right shift");
+    if (amount == null) {
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
+    }
+
+    TupleSet result = TupleSet.createScalar(value);
+    for (int i = 0; i < amount; i++) {
+      result = arithmeticShiftRightOnce(result.getScalar(), pos);
+    }
+    return result;
+  }
+
+  private TupleSet processLogicalShiftRight(Atom value, Atom distance, Pos pos) {
+    Integer amount = shiftDistance(value, distance, pos, "logical right shift");
+    if (amount == null) {
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
+    }
+
+    TupleSet result = TupleSet.createScalar(value);
+    for (int i = 0; i < amount; i++) {
+      Atom current = result.getScalar();
+      result = arithmeticShiftRightOnce(current, pos);
+      if (current instanceof IntegerAtom integer && integer.value() < 0) {
+        // Zero-fill the sign bit without constructing the out-of-range value 2^bitwidth.
+        result =
+            processPlus(
+                processPlus(result.getScalar(), new IntegerAtom(evaluationTable.maxInt()), pos)
+                    .getScalar(),
+                new IntegerAtom(1),
+                pos);
+      }
+    }
+    return result;
   }
 
   public TupleSet visit(AlloyTransExpr expr) {
@@ -738,7 +927,6 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     return result;
   }
 
-  // TODO: Need to check for overflow in future
   public TupleSet visit(AlloyNumExpr expr) {
     logger.enter("NumExpr: " + expr);
     TupleSet result = evaluationTable.getIntScalar(expr.value, expr.pos);
@@ -750,6 +938,33 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     logger.enter("Cardinality: " + expr);
     TupleSet result = evaluationTable.getCardinality(expr.sub.accept(this), expr.pos);
     logger.exit("Cardinality = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyNumIntExpr expr) {
+    logger.enter("Integer cast: " + expr);
+    TupleSet result = processIntegerAggregation(expr.sub.accept(this), expr.pos, "Integer cast");
+    logger.exit("Integer cast = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyNumSumExpr expr) {
+    logger.enter("Integer sum: " + expr);
+    TupleSet result = processIntegerAggregation(expr.sub.accept(this), expr.pos, "Integer sum");
+    logger.exit("Integer sum = " + result);
+    return result;
+  }
+
+  private TupleSet processIntegerAggregation(TupleSet set, Pos pos, String operation) {
+    if (set.isUnspecified()) return TupleSet.unspecified();
+
+    TupleSet result = evaluationTable.getIntScalar(0, pos);
+    for (AtomTuple tuple : set) {
+      if (tuple.arity() != 1 || tuple.first() instanceof LabelAtom) {
+        throw AlloyEvaluatorError.integerAggregationRequiresUnaryIntegers(pos, operation, tuple);
+      }
+      result = processPlus(result.getScalar(), tuple.first(), pos);
+    }
     return result;
   }
 

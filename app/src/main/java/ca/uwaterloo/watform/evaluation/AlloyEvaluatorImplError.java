@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.evaluation;
 
-import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import ca.uwaterloo.watform.utils.Pos;
@@ -67,21 +66,6 @@ public class AlloyEvaluatorImplError extends ImplementationError {
         pos, "SUM quantification reached FormulaEvaluator even though it produces a set value");
   }
 
-  public static AlloyEvaluatorImplError unsupportedDisjOnDomain(Pos pos, String declaration) {
-    return new AlloyEvaluatorImplError(
-        pos, "Evaluation does not support 'disj' on a declaration domain: " + declaration);
-  }
-
-  public static AlloyEvaluatorImplError unsupportedDeclarationMultiplicity(
-      Pos pos, String declaration, AlloyQtEnum multiplicity) {
-    return new AlloyEvaluatorImplError(
-        pos,
-        "Evaluation only supports declaration multiplicity 'one'; found '"
-            + multiplicity
-            + "' in "
-            + declaration);
-  }
-
   public static AlloyEvaluatorImplError arithmeticOperandsNotIntegers(
       Pos pos, String operation, Atom first, Atom second) {
     return new AlloyEvaluatorImplError(
@@ -92,11 +76,6 @@ public class AlloyEvaluatorImplError extends ImplementationError {
             + first.getClass().getSimpleName()
             + " and "
             + second.getClass().getSimpleName());
-  }
-
-  public static AlloyEvaluatorImplError arithmeticDivisionByZero(Pos pos, String operation) {
-    return new AlloyEvaluatorImplError(
-        pos, "Arithmetic function " + operation + " does not yet support a zero divisor");
   }
 
   public static AlloyEvaluatorImplError tupleIndexOutOfBounds(int index, int arity) {

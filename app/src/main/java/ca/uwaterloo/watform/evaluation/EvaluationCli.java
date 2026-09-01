@@ -30,7 +30,7 @@ import picocli.CommandLine.Parameters;
       "  @|bold java -ea -jar evaluation.jar f.als -dumpInstance < -dumpDir=dir > < -d >|@",
       "     (dump a satisfiable instance for the model and every satisfiable command)",
       "",
-      "  @|bold java -ea -jar evaluation.jar f.als -evalCosntraints -xml=instance.xml < -d >|@",
+      "  @|bold java -ea -jar evaluation.jar f.als -evalConstraints -xml=instance.xml < -d >|@",
       "     (evaluate the constraints of f.als against the given XML instance)",
       ""
     })
@@ -43,9 +43,9 @@ public final class EvaluationCli implements Callable<Integer> {
   private boolean dumpInstance;
 
   @Option(
-      names = "-evalCosntraints",
+      names = "-evalConstraints",
       description = "Evaluate model constraints against an instance")
-  private boolean evalCosntraints;
+  private boolean evalConstraints;
 
   @Option(
       names = "-dumpDir",
@@ -57,7 +57,7 @@ public final class EvaluationCli implements Callable<Integer> {
   @Option(
       names = "-xml",
       paramLabel = "<instance.xml>",
-      description = "Instance XML used by -evalCosntraints")
+      description = "Instance XML used by -evalConstraints")
   private Path instancePath;
 
   @Option(
@@ -86,8 +86,13 @@ public final class EvaluationCli implements Callable<Integer> {
         var modelName = model.getFileName().toString();
         var prefix = modelName.substring(0, modelName.length() - ".als".length());
         dumpInstance(alloyModel, prefix, dumpDir);
-      } else if (evalCosntraints) {
-        runEvalCosntraints(alloyModel, instancePath.toAbsolutePath().normalize(), debug);
+      } else if (evalConstraints) {
+        try {
+          runEvalConstraints(alloyModel, instancePath.toAbsolutePath().normalize(), debug);
+        } catch (AlloyEvaluatorError error) {
+          Reporter.INSTANCE.addError(error);
+          Reporter.INSTANCE.exitIfHasErrors();
+        }
       } else {
         throw AlloyEvaluatorImplError.validatedCliWithoutMode();
       }
@@ -133,16 +138,16 @@ public final class EvaluationCli implements Callable<Integer> {
     if (!model.toString().endsWith(".als")) {
       Reporter.INSTANCE.addError(EvaluationCliError.invalidModel(model.toString()));
     }
-    if (!dumpInstance && !evalCosntraints) {
+    if (!dumpInstance && !evalConstraints) {
       Reporter.INSTANCE.addError(EvaluationCliError.missingMode());
     }
-    if (dumpInstance && evalCosntraints) {
+    if (dumpInstance && evalConstraints) {
       Reporter.INSTANCE.addError(EvaluationCliError.conflictingModes());
     }
-    if (evalCosntraints && instancePath == null) {
+    if (evalConstraints && instancePath == null) {
       Reporter.INSTANCE.addError(EvaluationCliError.missingInstance());
     }
-    if (evalCosntraints
+    if (evalConstraints
         && instancePath != null
         && !Files.isRegularFile(instancePath.toAbsolutePath().normalize())) {
       Reporter.INSTANCE.addError(
@@ -164,7 +169,7 @@ public final class EvaluationCli implements Callable<Integer> {
     }
   }
 
-  private static void runEvalCosntraints(AlloyModel alloyModel, Path instancePath, boolean debug) {
+  private static void runEvalConstraints(AlloyModel alloyModel, Path instancePath, boolean debug) {
     // dpOutput("Checking instance for " + instancePath);
     Instance instance;
     try {
