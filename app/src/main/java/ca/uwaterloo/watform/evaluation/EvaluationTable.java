@@ -23,6 +23,7 @@ public final class EvaluationTable {
   private final Deque<Map<Qname, TupleSet>> relations = new ArrayDeque<>();
   private final AtomFactory atomFactory;
   private final TupleSet intSet;
+  private final TupleSet intNext;
   private final TupleSet univ;
   private final TupleSet iden;
   private final Map<Qname, List<AlloyDecl>> callableArguments = new LinkedHashMap<>();
@@ -66,10 +67,17 @@ public final class EvaluationTable {
     }
 
     List<AtomTuple> intTuples = new ArrayList<>();
+    List<AtomTuple> intNextTuples = new ArrayList<>();
     for (int value = instance.minInt(); value <= instance.maxInt(); value++) {
       intTuples.add(tuple(atomFactory.createAtom(value)));
+      if (value < instance.maxInt()) {
+        intNextTuples.add(
+            new AtomTuple(
+                List.of(atomFactory.createAtom(value), atomFactory.createAtom(value + 1))));
+      }
     }
     this.intSet = TupleSet.of(intTuples);
+    this.intNext = TupleSet.of(intNextTuples);
     univTuples.addAll(intTuples);
 
     this.univ = TupleSet.of(univTuples);
@@ -133,6 +141,10 @@ public final class EvaluationTable {
 
   public TupleSet getIntSet() {
     return intSet;
+  }
+
+  public TupleSet getIntNext() {
+    return intNext;
   }
 
   public TupleSet getIntScalar(int value, Pos pos) {
