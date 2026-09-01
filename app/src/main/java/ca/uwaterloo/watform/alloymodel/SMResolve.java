@@ -400,26 +400,16 @@ public class SMResolve extends SMCmds {
         return new ResolveInfo(returnArity, resultExpr);
       } else {
         // a.b where b is a fun or pred so "a" is the arg to the fun/pred
-        if (rightResult.argArities.get(0).isPresent()) {
-          if (leftResult.arity.isPresent()) {
-            if (leftResult.arity.equals(rightResult.argArities.get(0))) {
-              // go up to look for another argument if needed
-              return new ResolveInfo(tail(rightResult.argArities), rightResult.arity, resultExpr);
-            } else {
-              throw AlloyModelError.arityMismatchPredFunCall(
-                  binExpr.left.pos,
-                  binExpr.right.toString(),
-                  binExpr.left.toString(),
-                  rightResult.argArities.get(0).get(),
-                  leftResult.arity.get());
-            }
-          } else {
-            throw AlloyModelError.unknownArity(binExpr.left.pos, binExpr.left.toString());
-          }
+        if (leftResult.arity.equals(rightResult.argArities.get(0))) {
+          // go up to look for another argument if needed
+          return new ResolveInfo(tail(rightResult.argArities), rightResult.arity, resultExpr);
         } else {
-          // lack of arity for an arg
-          // this should have been caught when resolving the PredFunTable
-          throw AlloyModelImplError.shouldNotReach();
+          throw AlloyModelError.arityMismatchPredFunCall(
+              binExpr.left.pos,
+              binExpr.right.toString(),
+              binExpr.left.toString(),
+              rightResult.argArities.get(0).get(),
+              leftResult.arity.get());
         }
       }
     }
@@ -727,6 +717,7 @@ public class SMResolve extends SMCmds {
         }
       }
       // p[a,b,c]
+      // (p[a])[b]
       ResolveInfo exprResult = visit(bracketExpr.expr);
       List<ResolveInfo> exprsResult = mapBy(bracketExpr.exprs, i -> this.visit(i));
       AlloyExpr resultExpr =
@@ -751,32 +742,37 @@ public class SMResolve extends SMCmds {
         return new ResolveInfo(rightArity, resultExpr);
       } else if (exprsResult.size() > exprResult.argArities.size()) {
         // too many args for the pred/fun
-        // can be smaller  c.b.p[a] is okay
+        // can be smaller  c.b.(p[a]) is okay
         throw AlloyModelError.wrongNumberArgs(
             bracketExpr.pos,
             bracketExpr.toString(),
             exprResult.argArities.size(),
             exprsResult.size());
       } else {
+        // we know there are at least as many
+        // args expected as the number provided
         // p[a,b,c]
+        // (p[a])[b]
         // walk over expected argArities and exprsResults together
         Integer i = 0;
-        for (Optional<Integer> argArity : exprResult.argArities) {
-          noArgArities(exprsResult.get(i));
+        // walk over arguments provided to compare
+        // with what is expected
+        for (ResolveInfo arg : exprsResult) {
+          noArgArities(arg);
           // notUnknown(exprsResult.get(i));
           // not possible for argArity to be UNKNOWN
-          if (argArity.equals(exprsResult.get(i).arity)) {
+          if (arg.arity.equals(exprResult.argArities.get(i))) {
             i++;
           } else {
             throw AlloyModelError.arityMismatchPredFunCall(
-                exprsResult.get(i).exp.pos,
+                arg.exp.pos,
                 bracketExpr.expr.toString(),
-                exprsResult.get(i).exp.toString(),
-                argArity.get(),
-                exprsResult.get(i).arity.get());
+                arg.exp.toString(),
+                exprResult.argArities.get(i).get(),
+                arg.arity.get());
           }
         }
-        if (i.equals(exprsResult.size())) {
+        if (i.equals(exprResult.argArities.size())) {
           // got all the needed args
           // KENG TODO: this might be the point to check against the expected returntype
           // of
@@ -784,8 +780,12 @@ public class SMResolve extends SMCmds {
           return new ResolveInfo(exprResult.arity, resultExpr);
         } else {
           // still waiting for some args
+          Optional<Integer> newArgArity = Optional.of(exprResult.arity.get() - i);
           return new ResolveInfo(
-              lastn(exprResult.argArities, exprsResult.size() - i), exprResult.arity, resultExpr);
+              // the ones still to match
+              lastn(exprResult.argArities, exprResult.argArities.size() - i),
+              exprResult.arity,
+              exprResult.exp);
         }
       }
     }
@@ -963,7 +963,8 @@ public class SMResolve extends SMCmds {
     @Override
     public ResolveInfo visit(AlloyParenExpr parenExpr) {
       ResolveInfo subResult = visit(parenExpr.sub);
-      return new ResolveInfo(subResult.arity, new AlloyParenExpr(parenExpr.pos, subResult.exp));
+      return new ResolveInfo(
+          subResult.argArities, subResult.arity, new AlloyParenExpr(parenExpr.pos, subResult.exp));
     }
 
     // expr.var ----------------------------
@@ -971,33 +972,7 @@ public class SMResolve extends SMCmds {
     @Override
     public ResolveInfo visit(AlloyVarExpr varExpr) {
       if (varExpr instanceof AlloyQnameExpr) {
-        Qname chosen;
-        // to avoid casting everywhere
-        AlloyQnameExpr qnameExpr = (AlloyQnameExpr) varExpr;
-        // KENG: revisions here
-        // System.out.println("looking up1: " + varExpr.toString());
 
-        // might already be resolved
-        if (qnameExpr.kind == Kind.SIG) {
-          return new ResolveInfo(Optional.of(1), qnameExpr);
-        } else if (qnameExpr.kind == Kind.FIELD) {
-          return new ResolveInfo(
-              SMResolve.this.fieldArity(alloyQnameExprToQname(qnameExpr)), qnameExpr);
-        } else if (qnameExpr.kind == Kind.PREDFUN) {
-          if (SMResolve.this.predFunQnameMatches(alloyQnameExprToQname(qnameExpr)).size() != 1) {
-            throw AlloyModelError.cannotResolveOverloadedName(varExpr.pos, varExpr.toString());
-          }
-          chosen = SMResolve.this.predFunQnameMatches(alloyQnameExprToQname(qnameExpr)).get(0);
-          Optional<Integer> returnArity = SMResolve.this.predFunReturnArity(chosen);
-          if (returnArity.isPresent()) {
-            List<Optional<Integer>> argsArities = SMResolve.this.predFunArgArities(chosen);
-            return new ResolveInfo(
-                argsArities, returnArity, chosen.toAlloyExpr(qnameExpr.pos, Kind.PREDFUN));
-          } else {
-            throw AlloyModelError.unknownName(qnameExpr.pos, qnameExpr.toString());
-          }
-        }
-        // it is not already resolved
         // local lookup takes precedence
         Optional<Integer> x = localLookup(unknownQname(varExpr.getName()));
         if (x.isPresent()) return new ResolveInfo(x, varExpr);
@@ -1022,6 +997,7 @@ public class SMResolve extends SMCmds {
         }
         // after this max one of the cases below will work
 
+        Qname chosen;
         if (SMResolve.this.isSig(qname)) {
           // System.out.println("looking up3: " + varExpr.toString());
           // KENG NOTE: I'm picking one for now
@@ -1064,12 +1040,6 @@ public class SMResolve extends SMCmds {
             return new ResolveInfo(
                 SMResolve.this.fieldArity(chosen), chosen.toAlloyExpr(varExpr.pos, Kind.FIELD));
           }
-          /*
-          } else if (Builtins.isBuiltin(qname)) {
-              // TODO: this will change once we can read imports
-              // case should be removed because Alloy built-ins seem to be specific AlloyVarExpr
-              return new ResolveInfo(Optional.of(Builtins.builtinArity(qname)), varExpr);
-          */
         } else if (SMResolve.this.usePredFun && (SMResolve.this.isPredFun(qname))) {
           // System.out.println("looking up6: " + varExpr.toString());
           // KENG NOTE: I'm picking one for now
@@ -1083,9 +1053,6 @@ public class SMResolve extends SMCmds {
             throw AlloyModelError.unknownName(varExpr.pos, varExpr.toString());
           }
         } else {
-          // System.out.println("looking up7: " + varExpr.toString());
-          // System.out.println("usePredFun: " + usePredFun);
-          // System.out.println("isPredFun: " + SMResolve.this.isPredFun(qname));
           throw AlloyModelError.unknownName(varExpr.pos, varExpr.toString());
         }
       } else {
