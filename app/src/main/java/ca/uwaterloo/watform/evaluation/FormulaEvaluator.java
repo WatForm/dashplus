@@ -32,26 +32,17 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
     };
   }
 
-  // These visit cases are unimplemented; just note the type and let the error carry the detail
+  // Concrete AST nodes without a visitor below are deliberately unsupported by this evaluator.
   public ThreeVal visit(AlloyBinaryExpr binExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "FormulaEvaluator",
-        binExpr.pos,
-        "AlloyBinaryExpr: " + binExpr + " " + binExpr.getClass().getName());
+    throw AlloyEvaluatorError.unsupportedExpression("FormulaEvaluator", binExpr.pos, binExpr);
   }
 
   public ThreeVal visit(AlloyUnaryExpr unaryExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "FormulaEvaluator",
-        unaryExpr.pos,
-        "AlloyUnaryExpr: " + unaryExpr + " " + unaryExpr.getClass().getName());
+    throw AlloyEvaluatorError.unsupportedExpression("FormulaEvaluator", unaryExpr.pos, unaryExpr);
   }
 
   public ThreeVal visit(AlloyVarExpr varExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "FormulaEvaluator",
-        varExpr.pos,
-        "AlloyVarExpr: " + varExpr + " " + varExpr.getClass().getName());
+    throw AlloyEvaluatorError.unsupportedExpression("FormulaEvaluator", varExpr.pos, varExpr);
   }
 
   public ThreeVal visit(AlloyBracketExpr bracketExpr) {
@@ -62,25 +53,32 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
     return qnameExpr.accept(setEvaluator).evaluatePredicate();
   }
 
+  public ThreeVal visit(AlloyPredTotOrdExpr totalOrderExpr) {
+    return totalOrderExpr.accept(setEvaluator).evaluatePredicate();
+  }
+
   public ThreeVal visit(AlloyDotExpr dotExpr) {
     return dotExpr.accept(setEvaluator).evaluatePredicate();
   }
 
   public ThreeVal visit(AlloyCphExpr comprehensionExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "FormulaEvaluator",
-        comprehensionExpr.pos,
-        "AlloyCphExpr: " + comprehensionExpr + " " + comprehensionExpr.getClass().getName());
+    throw AlloyEvaluatorError.unsupportedExpression(
+        "FormulaEvaluator", comprehensionExpr.pos, comprehensionExpr);
   }
 
   public ThreeVal visit(AlloyIteExpr iteExpr) {
-    throw AlloyEvaluatorImplError.missingVisitCase(
-        "FormulaEvaluator",
-        iteExpr.pos,
-        "AlloyIteExpr: " + iteExpr + " " + iteExpr.getClass().getName());
+    logger.enter("IfThenElse: " + iteExpr);
+    ThreeVal condition = iteExpr.cond.accept(this);
+    ThreeVal result =
+        switch (condition) {
+          case TRUE -> iteExpr.conseq.accept(this);
+          case FALSE -> iteExpr.alt.accept(this);
+          case UNKNOWN -> UNKNOWN;
+        };
+    logger.exit("IfThenElse = " + result);
+    return result;
   }
 
-  // TODO: potentially review, may need changing
   public ThreeVal visit(AlloyLetExpr letExpr) {
     logger.enter("LetExpr " + letExpr);
     evaluationTable.addStackFrame();
