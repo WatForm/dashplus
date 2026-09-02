@@ -20,17 +20,19 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.Reporter.*;
 
 import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
+import ca.uwaterloo.watform.alloyast.AlloyStrings.Kind;
 import ca.uwaterloo.watform.alloyast.AssumptionError;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
-import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 // import ca.uwaterloo.watform.dashast.dashref.DashRef;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import ca.uwaterloo.watform.utils.Reporter;
+import ca.uwaterloo.watform.utils.Reporter.WarningUser;
+
 import java.util.*;
 
 public class SMResolve extends SMCmds {
@@ -1091,9 +1093,10 @@ public class SMResolve extends SMCmds {
               new ResolveInfo(List.of(ONE_ARITY, ONE_ARITY, TWO_ARITY), ONE_ARITY, varExpr);
           case AlloyNumExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           case AlloyIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
-          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
+          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr); 
           case AlloyStringExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           // used a sig Int
+          case AlloyStrLiteralExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           // TODO: fix this! it does not cover enough cases
           default -> {
             System.out.println(varExpr.toString() + " of class " + varExpr.getClass().getName());

@@ -11,7 +11,7 @@ public sealed interface Atom permits LabelAtom, IntegerAtom, OverflowAtom {
   public static ThreeVal threeEqual(Atom a, Atom b) {
     if (a instanceof LabelAtom la) {
       if (b instanceof LabelAtom lb) {
-        return convertThree(la.label().equals(lb.label()));
+        return convertThree(la.getClass() == lb.getClass() && la.label().equals(lb.label()));
       }
       return FALSE;
     } else if (b instanceof LabelAtom) {
@@ -71,7 +71,7 @@ public sealed interface Atom permits LabelAtom, IntegerAtom, OverflowAtom {
   // semantically equal
   public static boolean structurallyIdentical(Atom a, Atom b) {
     if (a instanceof LabelAtom la && b instanceof LabelAtom lb) {
-      return la.label().equals(lb.label());
+      return la.getClass() == lb.getClass() && la.label().equals(lb.label());
     } else if (a instanceof IntegerAtom ia && b instanceof IntegerAtom ib) {
       return ia.value() == ib.value();
     } else if (a instanceof OverflowAtom oa && b instanceof OverflowAtom ob) {

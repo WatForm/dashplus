@@ -28,6 +28,7 @@ public class Instance {
   private Integer seqInt;
 
   private static String alloyName(String name) {
+    if (name.startsWith("\"") && name.endsWith("\"")) return name;
     if (name.contains("$")) {
       return name.replace("$", "ʃ");
     } else {
