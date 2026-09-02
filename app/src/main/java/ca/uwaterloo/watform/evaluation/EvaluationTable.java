@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.evaluation;
 
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyinterface.Instance;
@@ -24,8 +25,10 @@ public final class EvaluationTable {
   private final AtomFactory atomFactory;
   private final TupleSet intSet;
   private final TupleSet intNext;
+  private final TupleSet stringSet;
   private final TupleSet univ;
   private final TupleSet iden;
+  private final Set<String> stringLabels;
   private final Map<Qname, List<AlloyDecl>> callableArguments = new LinkedHashMap<>();
   private final Map<Qname, AlloyBlock> callableBodies = new LinkedHashMap<>();
   private final Set<Qname> predicates = new LinkedHashSet<>();
@@ -33,6 +36,11 @@ public final class EvaluationTable {
   public EvaluationTable(Instance instance, AlloyModel model) {
     Objects.requireNonNull(instance);
     Objects.requireNonNull(model);
+    Qname stringQname = Qname.thisQname(AlloyStrings.STRING);
+    this.stringLabels =
+        instance.allSigQnames().contains(stringQname)
+            ? Set.copyOf(instance.getAllSigValues(stringQname))
+            : Set.of();
     this.atomFactory = new AtomFactory(instance.minInt(), instance.maxInt());
 
     for (Qname function : model.allFuns()) {
@@ -54,9 +62,11 @@ public final class EvaluationTable {
     relations.addLast(base);
 
     List<AtomTuple> univTuples = new ArrayList<>();
+    TupleSet strings = TupleSet.emptySet();
     for (Qname sig : instance.allSigQnames()) {
       TupleSet value = sigValue(instance, sig);
       base.put(sig, value);
+      if (sig.equals(stringQname)) strings = value;
       for (AtomTuple tuple : value) {
         if (tuple.arity() == 1) univTuples.add(tuple);
       }
@@ -78,6 +88,7 @@ public final class EvaluationTable {
     }
     this.intSet = TupleSet.of(intTuples);
     this.intNext = TupleSet.of(intNextTuples);
+    this.stringSet = strings;
     univTuples.addAll(intTuples);
 
     this.univ = TupleSet.of(univTuples);
@@ -91,8 +102,9 @@ public final class EvaluationTable {
 
   private TupleSet sigValue(Instance instance, Qname sig) {
     List<AtomTuple> tuples = new ArrayList<>();
+    boolean isString = sig.equals(Qname.thisQname(AlloyStrings.STRING));
     for (String label : instance.getAllSigValues(sig)) {
-      tuples.add(tuple(atomFactory.createAtom(label)));
+      tuples.add(tuple(atomFactory.createAtom(label, isString)));
     }
     return TupleSet.of(tuples);
   }
@@ -101,7 +113,9 @@ public final class EvaluationTable {
     List<AtomTuple> tuples = new ArrayList<>();
     for (List<String> labels : instance.getAllFieldValues(field)) {
       List<Atom> atoms = new ArrayList<>();
-      for (String label : labels) atoms.add(atomFactory.createAtom(label));
+      for (String label : labels) {
+        atoms.add(atomFactory.createAtom(label, stringLabels.contains(label)));
+      }
       tuples.add(new AtomTuple(atoms));
     }
     return TupleSet.of(tuples);
@@ -145,6 +159,14 @@ public final class EvaluationTable {
 
   public TupleSet getIntNext() {
     return intNext;
+  }
+
+  public TupleSet getStringSet() {
+    return stringSet;
+  }
+
+  public TupleSet getStringScalar(String label) {
+    return TupleSet.createScalar(atomFactory.createAtom(label, true));
   }
 
   public TupleSet getIntScalar(int value, Pos pos) {

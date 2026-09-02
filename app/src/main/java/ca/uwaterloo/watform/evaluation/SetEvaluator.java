@@ -212,6 +212,20 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     return TupleSet.emptySet();
   }
 
+  public TupleSet visit(AlloyStringExpr expr) {
+    logger.enter("String set");
+    TupleSet result = evaluationTable.getStringSet();
+    logger.exit("String set = " + result);
+    return result;
+  }
+
+  public TupleSet visit(AlloyStrLiteralExpr expr) {
+    logger.enter("String literal: " + expr);
+    TupleSet result = evaluationTable.getStringScalar(expr.getName());
+    logger.exit("String literal = " + result);
+    return result;
+  }
+
   public TupleSet visit(AlloyPredTotOrdExpr expr) {
     logger.enter("Total order predicate");
     TupleSet result =

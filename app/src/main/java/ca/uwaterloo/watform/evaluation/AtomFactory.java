@@ -14,11 +14,12 @@ public class AtomFactory {
     this.max = max;
   }
 
-  public Atom createAtom(String label, Pos pos) {
+  public Atom createAtom(String label, boolean isString, Pos pos) {
+    if (isString) return new StringAtom(label);
     try {
       return createAtom(Integer.parseInt(label), pos);
     } catch (NumberFormatException e) {
-      return new LabelAtom(label);
+      return new GenericLabelAtom(label);
     }
   }
 
@@ -33,8 +34,8 @@ public class AtomFactory {
     return new OverflowAtom(direction);
   }
 
-  public Atom createAtom(String label) {
-    return createAtom(label, null);
+  public Atom createAtom(String label, boolean isString) {
+    return createAtom(label, isString, null);
   }
 
   public Atom createAtom(int value) {
