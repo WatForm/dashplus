@@ -785,7 +785,7 @@ public class SMResolve extends SMCmds {
               // the ones still to match
               lastn(exprResult.argArities, exprResult.argArities.size() - i),
               exprResult.arity,
-              exprResult.exp);
+              resultExpr);
         }
       }
     }
