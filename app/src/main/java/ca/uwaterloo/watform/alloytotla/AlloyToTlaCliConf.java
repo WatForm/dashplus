@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.alloytotla;
 
-
 import java.util.List;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -32,4 +31,3 @@ public class AlloyToTlaCliConf {
       description = "Print stack traces from exceptions.")
   public boolean debug = false;
 }
-
