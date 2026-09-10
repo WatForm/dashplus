@@ -4,13 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+
 public class CommandsA2T extends BoilerplateA2T {
-	public void addCommand(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
+	public CommandsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    super(alloyModel, verbose, debug);
+  }
+
+  public void addCommand(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
     tlaModel.addComment("command: " + cmdDecl.toString(), verbose);
     tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));
@@ -24,17 +33,30 @@ public class CommandsA2T extends BoilerplateA2T {
 
     l.info("computed scopes:" + alloyModel.getScopeLimits(cmdDecl).toString());
 
+    l.info("inner commandDecl:" + cmdDecl.toString());
+
     for (var s : alloyModel.topLevelSigs()) {
 
       var scope = scopeLimits.getTopLevelScope(s);
+      l.info("scope for sig: "+s+" is:"+scope.toString());
       int n = scope.map(sc -> sc.max()).orElse(DEFAULT_SCOPE);
       boolean exact = scope.map(sc -> sc.isExact()).orElse(false);
+      l.info(exact ? "scope is exact" : "scpoe is not exact");
+      l.info("number in scope data structure is:"+n);
 
       if (exact) clauses.add(TlaVar(s).EQUALS(sigAtoms(s, 0, n - 1)));
       else {
+        l.info("choosing path where scope is inexact");
         List<TlaExp> subClauses = new ArrayList<>();
-        for (int i = 0; i < n; i++) subClauses.add(TlaVar(s).EQUALS(sigAtoms(s, 0, i)));
+        StringBuilder innerClauses = new StringBuilder();
+        for (int i = 0; i < n; i++)
+        {
+          subClauses.add(TlaVar(s).EQUALS(sigAtoms(s, 0, i)));
+          innerClauses.append(subClauses.getLast().toString());
+        }
         clauses.add(repeatedOr(subClauses));
+        l.info("constructed sub-clauses: ");
+        l.info(subClauses.toString());
       }
     }
 
@@ -72,18 +94,31 @@ public class CommandsA2T extends BoilerplateA2T {
 
     boolean isRun = cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.RUN;
 
-    // var expect = cmdDecl.expect.map(e -> e.value).orElse(0);
-    // boolean is1 = expect == 1;
+    var expect = cmdDecl.expect.map(e -> e.value).orElse(0);
 
-    // if (!is1 && isRun || is1 && !isRun) block = TlaNot(block);
+    l.info(block.toString());
+
+    boolean is1 = expect == 1;
+
+    // todo this needs to be rewritten
+    boolean finalFlag = !is1 && isRun || is1 && !isRun;
+    l.info("final flag to determine negation: "+finalFlag);
+
+    
 
     // TODO invokeQname, which is an alternative for the block
 
     TlaExp block = cmdDecl.constrBlock.map(b -> (translateSnippet(b))).orElse(TlaTrue());
 
+    if (!is1 && isRun || is1 && !isRun) block = TlaNot(block);
+    l.info("augmented block: "+block.toString());
+
     block = block.AND(augmentedTrue());
     if (isRun) block = TlaNot(block);
 
-    return TlaDefn(COMMAND, block);
+    var answerFinal = TlaDefn(COMMAND, block);
+    l.info("final answer: "+answerFinal.toString());
+
+    return answerFinal;
   }
 }

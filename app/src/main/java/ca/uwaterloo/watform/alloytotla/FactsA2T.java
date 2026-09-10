@@ -8,6 +8,10 @@ import java.util.List;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+
 public class FactsA2T extends CustomModulesA2T {
 	protected void addFacts(TlaModel tlaModel) {
 

@@ -7,6 +7,10 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+
 public class InitA2T extends FieldsA2T {
 	protected void addInitDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 

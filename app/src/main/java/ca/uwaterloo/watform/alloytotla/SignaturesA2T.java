@@ -12,6 +12,10 @@ import ca.uwaterloo.watform.tlaast.TlaTypes;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+
 public class SignaturesA2T extends PredFunA2T {
 	protected void addSigConstraints(TlaModel tlaModel) {
 

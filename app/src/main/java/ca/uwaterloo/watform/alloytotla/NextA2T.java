@@ -6,6 +6,10 @@ import java.util.List;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+
 public class NextA2T extends FieldsA2T {
 	protected void addNextDefn(TlaModel tlaModel) {
 
