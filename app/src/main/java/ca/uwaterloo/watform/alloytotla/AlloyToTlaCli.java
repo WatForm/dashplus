@@ -5,18 +5,11 @@ import static ca.uwaterloo.watform.parser.AlloyParser.alloyParseToModel;
 import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
-import ca.uwaterloo.watform.alloyinterface.Solution;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.cli.CliConf;
-import ca.uwaterloo.watform.dashmodel.DashModel;
-import ca.uwaterloo.watform.dashtoalloy.DashToAlloy;
 import ca.uwaterloo.watform.utils.*;
 import edu.mit.csail.sdg.alloy4.Err;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
@@ -59,9 +52,7 @@ public class AlloyToTlaCli implements Callable<Integer> {
 
   @Mixin AlloyToTlaCliConf cliConf = AlloyToTlaCliConf.INSTANCE;
 
-  public void perFile(String fileName, AlloyToTlaCliConf CliConf) throws Exception
-  {
-
+  public void perFile(String fileName, AlloyToTlaCliConf CliConf) throws Exception {
 
     // Boolean verbose = cliConf.verbose;
     // CliUtils.debug = cliConf.debug;
@@ -71,8 +62,6 @@ public class AlloyToTlaCli implements Callable<Integer> {
     Boolean cmd = CliUtils.cmdPresent(cliConf.cmdIdx);
     Integer cmdIdx =
         (cmd && CliUtils.cmdIdxUseful(cliConf.cmdIdx)) ? cliConf.cmdIdx : CliUtils.noCmdValue;
-    
-    
 
     Path path = Paths.get(fileName);
     Path absolutePath = path.toAbsolutePath();
@@ -88,45 +77,44 @@ public class AlloyToTlaCli implements Callable<Integer> {
     Reporter.INSTANCE.popPath();
     Reporter.INSTANCE.pushPath(absolutePath);
 
-    if(fullFileName.endsWith(".als"))
-    {
+    if (fullFileName.endsWith(".als")) {
       AlloyModel alloyModel = alloyParseToModel(fullFileName);
-      AlloyToTla translator = new AlloyToTla(alloyModel,cliConf.verbose,cliConf.debug);
+      AlloyToTla translator = new AlloyToTla(alloyModel, cliConf.verbose, cliConf.debug);
       var tlaModel = translator.translate(outputFileNamePrefix, cmdIdx);
-      
-      Files.writeString(fileFromString(outputFileNamePrefix+".tla"), tlaModel.moduleCode());
-      Files.writeString(fileFromString(outputFileNamePrefix+".cfg"), tlaModel.configCode());
+
+      Files.writeString(fileFromString(outputFileNamePrefix + ".tla"), tlaModel.moduleCode());
+      Files.writeString(fileFromString(outputFileNamePrefix + ".cfg"), tlaModel.configCode());
     }
 
-        // if (fullFileName.endsWith(".dsh")) {
-        //   dpOutput("Input: " + fullFileName);
-        //   DashModel dm = (DashModel) dashParseToModel(fullFileName);
-        //   // dm.resolve();
-        //   if (dm.getNumCmds() == 0 && cmd) {
-        //     dpOutputBold(
-        //         "Warning: no command in input .dsh file -> using default scopes for run {}");
-        //   }
-        //   AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
-        //   if (writeOnly) {
-        //     String alloyFileName = outputFileNamePrefix + "-" + d2aOptions + ".als";
-        //     Files.writeString(fileFromString(alloyFileName), am.toString());
-        //     dpOutput("Output: " + alloyFileName);
-        //   } else {
-        //     int num_cmds_in_file = dm.getNumCmds();
-        //     if (cmdIdx < num_cmds_in_file) {
-        //       AlloyInterface.executeCommand(dm, cmdIdx);
-        //     } else if (num_cmds_in_file == 0) {
-        //       // if there are no commands in the file
-        //       // and there was no cmd arg
-        //       Solution soln = AlloyInterface.checkModelSatisfiability(dm);
-        //     } else {
-        //       // execute all commands if no value for cmd or cmd # out of range
-        //       for (int i = CliUtils.firstCmdIdx; i < num_cmds_in_file; i++) {
-        //         AlloyInterface.executeCommand(dm, i);
-        //       }
-        //     }
-        //   }
-        // }
+    // if (fullFileName.endsWith(".dsh")) {
+    //   dpOutput("Input: " + fullFileName);
+    //   DashModel dm = (DashModel) dashParseToModel(fullFileName);
+    //   // dm.resolve();
+    //   if (dm.getNumCmds() == 0 && cmd) {
+    //     dpOutputBold(
+    //         "Warning: no command in input .dsh file -> using default scopes for run {}");
+    //   }
+    //   AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
+    //   if (writeOnly) {
+    //     String alloyFileName = outputFileNamePrefix + "-" + d2aOptions + ".als";
+    //     Files.writeString(fileFromString(alloyFileName), am.toString());
+    //     dpOutput("Output: " + alloyFileName);
+    //   } else {
+    //     int num_cmds_in_file = dm.getNumCmds();
+    //     if (cmdIdx < num_cmds_in_file) {
+    //       AlloyInterface.executeCommand(dm, cmdIdx);
+    //     } else if (num_cmds_in_file == 0) {
+    //       // if there are no commands in the file
+    //       // and there was no cmd arg
+    //       Solution soln = AlloyInterface.checkModelSatisfiability(dm);
+    //     } else {
+    //       // execute all commands if no value for cmd or cmd # out of range
+    //       for (int i = CliUtils.firstCmdIdx; i < num_cmds_in_file; i++) {
+    //         AlloyInterface.executeCommand(dm, i);
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   @Override
@@ -172,5 +160,4 @@ public class AlloyToTlaCli implements Callable<Integer> {
       return 4;
     }
   }
-
 }

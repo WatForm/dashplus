@@ -1,21 +1,25 @@
 package ca.uwaterloo.watform.alloytotla;
 
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 
-import java.util.List;
-
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaDecl;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-
-import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
-import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import java.util.List;
 
 public class PredFunA2T extends NextA2T {
-	protected void addPredicatesFunctions(TlaModel tlaModel) {
+  public PredFunA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    super(alloyModel, verbose, debug);
+    // TODO Auto-generated constructor stub
+  }
+
+  protected void addPredicatesFunctions(TlaModel tlaModel) {
 
     tlaModel.addComment("Predicates and functions", verbose);
 

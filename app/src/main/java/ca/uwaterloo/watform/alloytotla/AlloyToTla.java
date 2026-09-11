@@ -2,12 +2,9 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 
-
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AlloyToTla extends BoilerplateA2T {
 
@@ -20,8 +17,6 @@ public class AlloyToTla extends BoilerplateA2T {
   }
 
   public TlaModel translate(String baseName, int cmdNum) {
-
-	
 
     // List<AlloyCmdPara> paras = alloyModel.allCmdParas();
 
@@ -46,7 +41,7 @@ public class AlloyToTla extends BoilerplateA2T {
 
   public void translate(TlaModel tlaModel, int cmdNum) {
 
-	// l.info("chosen command scope profile " + alloyModel.getCmdScopeProfile(cmdNum).toString());
+    // l.info("chosen command scope profile " + alloyModel.getCmdScopeProfile(cmdNum).toString());
     l.info("chosen command body: " + alloyModel.getCmdFormula(cmdNum).toString());
 
     // addStdLibsTla(tlaModel);

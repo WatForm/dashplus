@@ -1,23 +1,17 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
-import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaStdLibs;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-
 import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
 import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
+
 public class CommandsA2T extends BoilerplateA2T {
-	public CommandsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+  public CommandsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
   }
+
+  /*
 
   public void addCommand(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
@@ -26,6 +20,8 @@ public class CommandsA2T extends BoilerplateA2T {
     tlaModel.addDefn(scopeConstraints(tlaModel, cmdDecl));
     tlaModel.addInvariant(TlaAppl(COMMAND));
   }
+
+
 
   public TlaDefn scopeConstraints(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
     List<TlaExp> clauses = new ArrayList<>();
@@ -90,7 +86,7 @@ public class CommandsA2T extends BoilerplateA2T {
 
     exact -> A = {"a0"..."an"}
     not exact -> A = {"a0"..."an"} \/ ...
-    */
+
 
     boolean isRun = cmdDecl.cmdType == AlloyCmdPara.CommandDecl.CmdType.RUN;
 
@@ -104,7 +100,7 @@ public class CommandsA2T extends BoilerplateA2T {
     boolean finalFlag = !is1 && isRun || is1 && !isRun;
     l.info("final flag to determine negation: "+finalFlag);
 
-    
+
 
     // TODO invokeQname, which is an alternative for the block
 
@@ -121,4 +117,6 @@ public class CommandsA2T extends BoilerplateA2T {
 
     return answerFinal;
   }
+
+  */
 }

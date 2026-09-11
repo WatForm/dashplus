@@ -1,22 +1,24 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-import ca.uwaterloo.watform.tlaast.*;
-import ca.uwaterloo.watform.tlamodel.*;
-
-
 import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlamodel.*;
+import java.util.ArrayList;
+import java.util.List;
+
 // TODO rewrite without CmdPara as first-class object to refer to commands
 
-import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
-
 public class InitA2T extends FieldsA2T {
-	protected void addInitDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
+  public InitA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
+    super(alloyModel, verbose, debug);
+    // TODO Auto-generated constructor stub
+  }
+
+  protected void addInitDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
 
     tlaModel.addComment("Init", verbose);
 
