@@ -23,7 +23,7 @@ public class A2THelpers {
     return TlaAppl(SIG_SETS_UNPRIMED);
   }
 
-  public static String tlaQnameSig(Qname qname) {
+  public static String tlaQname(Qname qname) {
     return qname.nameSpace.replace("/", "_") + "_" + qname.name;
   }
 }

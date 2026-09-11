@@ -58,11 +58,6 @@ public class BaseA2T {
   commonly used functions:
   */
 
-  protected String tlaQname(Qname qname)
-  {
-    return qname.fullName().replace("/", "_");
-  }
-
   protected TlaStringLiteral sigAtomString(String signame, int n) {
     return TlaStringLiteral(signame + DOLLAR + n);
   }

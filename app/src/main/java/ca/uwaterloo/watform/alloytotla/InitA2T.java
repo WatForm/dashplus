@@ -15,7 +15,6 @@ import java.util.List;
 public class InitA2T extends FieldsA2T {
   public InitA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
-    // TODO Auto-generated constructor stub
   }
 
   protected void addInitDefn(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {

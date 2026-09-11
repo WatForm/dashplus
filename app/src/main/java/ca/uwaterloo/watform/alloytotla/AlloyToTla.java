@@ -8,7 +8,6 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class AlloyToTla extends StdLibsA2T {
 
-
   public AlloyToTla(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
   }
@@ -47,7 +46,7 @@ public class AlloyToTla extends StdLibsA2T {
 
     addStdLibsTla(tlaModel);
     addSigVars(tlaModel);
-    // addFieldVars(tlaModel);
+    addFieldVars(tlaModel);
     // addBoilerplate(tlaModel);
     // addStdLibsAlloy(tlaModel, cmdDecl);
     // addPredicatesFunctions(tlaModel);

@@ -2,8 +2,12 @@ package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
 import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.SIG_SETS_PRIMED;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.SIG_SETS_UNPRIMED;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
+import java.util.List;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.alloymodel.Qname;
@@ -16,16 +20,52 @@ public class SignaturesA2T extends PredFunA2T {
     super(alloyModel, verbose, debug);
   }
 
-
-  protected void addSigVars(TlaModel tlaModel)
-  {
-    for(Qname sig : alloyModel.allSigQnames())
-    {
-       String s = tlaQname(sig);
-       tlaModel.addVar(TlaVar(s), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
-       log("translated sig " + sig.fullName() + " into a VARIABLE "+s);
+  protected void addSigVars(TlaModel tlaModel) {
+    for (Qname sig : alloyModel.allSigQnames()) {
+      String s = tlaQname(sig);
+      tlaModel.addVar(TlaVar(s), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
+      log("translated sig " + sig.fullName() + " into a VARIABLE " + s);
     }
     l.info(dump());
+  }
+
+  private TlaExp sigSetClauseNonTopLevelUnprimed(Qname sig) {
+
+    TlaExp v = TlaVar(tlaQname(sig));
+    List<TlaExp> parents =
+        mapBy(alloyModel.allParents(sig), p -> TlaVar(tlaQname(p)));
+    return v.IN(TlaSubsetUnary(repeatedUnion(parents)));
+  }
+
+  private TlaExp sigSetClauseNonTopLevelPrimed(Qname sig) {
+
+    TlaExp v = TlaVar(tlaQname(sig)).PRIME();
+    List<TlaExp> parents =
+        mapBy(alloyModel.allParents(sig), p -> TlaVar(tlaQname(p)).PRIME());
+    return v.IN(TlaSubsetUnary(repeatedUnion(parents)));
+  }
+
+  protected void addSigHierarchy(TlaModel tlaModel)
+  {
+    tlaModel.addComment("signature hierarchy", verbose);
+
+    List<Qname> sortedSigs = alloyModel.topoSortedSigs();
+     List<Qname> sortedNonTopLevelSigs = filterBy(sortedSigs, s -> !alloyModel.isTopLevelSig(s));
+
+     log("toposorted non-top-level sigs: " + sortedNonTopLevelSigs);
+     for (var s : sortedNonTopLevelSigs) {
+       log("sig " + s.fullName() + " has parents: " + alloyModel.allParents(s));
+     }
+
+     var sigSetClausesUnprimed =
+         repeatedAnd(mapBy(sortedNonTopLevelSigs, sn -> sigSetClauseNonTopLevelUnprimed(sn)));
+     var sigSetClausesPrimed =
+         repeatedAnd(mapBy(sortedNonTopLevelSigs, sn -> sigSetClauseNonTopLevelPrimed(sn)));
+
+     tlaModel.addDefn(TlaDefn(SIG_SETS_UNPRIMED, sigSetClausesUnprimed));
+     tlaModel.addDefn(TlaDefn(SIG_SETS_PRIMED, sigSetClausesPrimed));
+
+     l.info(dump());
   }
 
   /*

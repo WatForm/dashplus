@@ -10,7 +10,6 @@ public class CustomModulesA2T extends CommandsA2T {
 
   public CustomModulesA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
-    // TODO Auto-generated constructor stub
   }
   // TODO: complete rewrite
 }

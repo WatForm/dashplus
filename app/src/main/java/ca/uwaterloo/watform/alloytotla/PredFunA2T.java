@@ -16,7 +16,6 @@ import java.util.List;
 public class PredFunA2T extends NextA2T {
   public PredFunA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
-    // TODO Auto-generated constructor stub
   }
 
   protected void addPredicatesFunctions(TlaModel tlaModel) {

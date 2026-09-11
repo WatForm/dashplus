@@ -13,7 +13,6 @@ import java.util.List;
 public class NextA2T extends FieldsA2T {
   public NextA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
-    // TODO Auto-generated constructor stub
   }
 
   protected void addNextDefn(TlaModel tlaModel) {
