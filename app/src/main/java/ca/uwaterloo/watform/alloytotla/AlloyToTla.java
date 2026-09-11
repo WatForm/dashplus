@@ -6,14 +6,15 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
-public class AlloyToTla extends BoilerplateA2T {
+public class AlloyToTla extends StdLibsA2T {
 
-  public static TlaModel getBlankModel(String moduleName) {
-    return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
-  }
 
   public AlloyToTla(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
+  }
+
+  public static TlaModel getBlankModel(String moduleName) {
+    return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
   }
 
   public TlaModel translate(String baseName, int cmdNum) {
@@ -44,8 +45,8 @@ public class AlloyToTla extends BoilerplateA2T {
     // l.info("chosen command scope profile " + alloyModel.getCmdScopeProfile(cmdNum).toString());
     l.info("chosen command body: " + alloyModel.getCmdFormula(cmdNum).toString());
 
-    // addStdLibsTla(tlaModel);
-    // addSigVars(tlaModel);
+    addStdLibsTla(tlaModel);
+    addSigVars(tlaModel);
     // addFieldVars(tlaModel);
     // addBoilerplate(tlaModel);
     // addStdLibsAlloy(tlaModel, cmdDecl);
