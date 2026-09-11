@@ -1,20 +1,18 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.utils.GeneralUtil.filterBy;
-import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.alloymodel.Qname;
+import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlamodel.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaTypes;
-import ca.uwaterloo.watform.tlaast.TlaVar;
-import ca.uwaterloo.watform.tlamodel.TlaModel;
-
-import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
-import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
-import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 public class SignaturesA2T extends PredFunA2T {
 	protected void addSigConstraints(TlaModel tlaModel) {
@@ -36,21 +34,21 @@ public class SignaturesA2T extends PredFunA2T {
     l.info(dump());
   }
 
-  private List<TlaExp> constraints(String sig, AlloyModel alloyModel) {
+  private List<TlaExp> constraints(Qname sig, AlloyModel alloyModel) {
 
     List<TlaExp> constraints = new ArrayList<>();
 
     if (alloyModel.isOneSig(sig)) {
       log("sig " + sig + " is a one sig");
-      constraints.add(_ONE(TlaVar(sig)));
+      constraints.add(_ONE(TlaVar(sig.name)));
     }
     if (alloyModel.isLoneSig(sig)) {
       log("sig " + sig + " is a lone sig");
-      constraints.add(_LONE(TlaVar(sig)));
+      constraints.add(_LONE(TlaVar(sig.name)));
     }
     if (alloyModel.isSomeSig(sig)) {
       log("sig " + sig + " is a some sig");
-      constraints.add(_SOME(TlaVar(sig)));
+      constraints.add(_SOME(TlaVar(sig.name)));
     }
 
     List<String> extendsChildNames = alloyModel.extendsChildren(sig);
