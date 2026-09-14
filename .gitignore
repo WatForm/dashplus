@@ -30,3 +30,14 @@ app/src/main/java/ca/uwaterloo/watform/test/catalyst/problemFiles
 
 # personal lists
 app/src/main/java/ca/uwaterloo/watform/nancy-list.md
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
