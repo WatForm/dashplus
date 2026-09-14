@@ -1,10 +1,8 @@
 package ca.uwaterloo.watform.utils;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 
 public final class Reporter {
   public static final Reporter INSTANCE = new Reporter();
@@ -13,6 +11,7 @@ public final class Reporter {
   private final List<WarningUser> warnings = new ArrayList<>();
   private final List<CommentUser> comments = new ArrayList<>();
 
+  /*
   private final Stack<Path> paths = new Stack<>();
 
   public void pushPath(Path filePath) {
@@ -23,6 +22,7 @@ public final class Reporter {
     if (paths.empty()) return;
     paths.pop();
   }
+  */
 
   public void addError(UserOrImplError error) {
     errors.add(error);
@@ -73,7 +73,7 @@ public final class Reporter {
   public void print() {
     if (!comments.isEmpty()) {
       for (CommentUser comment : comments) {
-        System.err.println(comment.toString(!paths.empty() ? paths.peek() : null));
+        System.err.println(comment.toString()); // !paths.empty() ? paths.peek() : null));
         if (CliUtils.debug) {
           comment.printStackTrace();
         }
@@ -82,7 +82,7 @@ public final class Reporter {
 
     if (!warnings.isEmpty()) {
       for (WarningUser warning : warnings) {
-        System.err.println(warning.toString(!paths.empty() ? paths.peek() : null));
+        System.err.println(warning.toString()); // !paths.empty() ? paths.peek() : null));
         if (CliUtils.debug) {
           warning.printStackTrace();
         }
@@ -91,7 +91,7 @@ public final class Reporter {
 
     if (!errors.isEmpty()) {
       for (DashPlusException error : errors) {
-        System.err.println(error.toString(!paths.empty() ? paths.peek() : null));
+        System.err.println(error.toString()); // !paths.empty() ? paths.peek() : null));
         if (CliUtils.debug) {
           error.printStackTrace();
         }

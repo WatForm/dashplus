@@ -26,8 +26,8 @@ public class VarsDM extends StatesDM {
 
   // private String tableName = "Var"; // TODO this is never used and is not visible anywhere else
 
-  public VarsDM() {
-    super();
+  public VarsDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   public VarsDM(DashFile d) {

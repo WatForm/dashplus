@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
+  // this is needed for calculating import paths
+  // so does not matter if .dsh or .als
   public final String fullFileName;
 
   public DashFileParseVis(String fullFileName) {
@@ -32,9 +34,9 @@ public final class DashFileParseVis extends DashBaseVisitor<DashFile> {
       }
     }
     if (paragraphs.isEmpty()) {
-      return new DashFile(paragraphs);
+      return new DashFile(paragraphs, this.fullFileName);
     } else {
-      return new DashFile(new Pos(ctx), paragraphs);
+      return new DashFile(new Pos(ctx), paragraphs, this.fullFileName);
     }
   }
 }

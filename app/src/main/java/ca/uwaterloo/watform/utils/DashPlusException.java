@@ -1,6 +1,5 @@
 package ca.uwaterloo.watform.utils;
 
-import java.nio.file.Path;
 import java.util.*;
 import java.util.Collections;
 
@@ -21,7 +20,7 @@ public abstract class DashPlusException extends RuntimeException {
   }
 
   // these could go to the Reporter if they are a user error
-  public String toString(Path filePath) {
+  public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(this.getClass().getSimpleName() + ": " + this.getMessage() + CommonStrings.NEWLINE);
     for (Pos pos : this.posList) {
@@ -29,10 +28,10 @@ public abstract class DashPlusException extends RuntimeException {
       sb.append(
           CommonStrings.TAB
               + "--> "
-              + (null != filePath ? filePath.toString() : "line")
-              + ":"
+              + pos.fullFileName
+              + " line: "
               + pos.rowStart
-              + ":"
+              + " column: "
               + pos.colStart
               + CommonStrings.NEWLINE);
     }

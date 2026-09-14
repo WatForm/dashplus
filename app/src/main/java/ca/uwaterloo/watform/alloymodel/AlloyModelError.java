@@ -94,10 +94,12 @@ public final class AlloyModelError extends UserOrImplError {
   }
 
   public static AlloyModelError arityMismatchReturnType(
-      Pos pos, Integer returnTypeArity, Integer bodyArity) {
+      Pos pos, String name, Integer returnTypeArity, Integer bodyArity) {
     return new AlloyModelError(
         pos,
-        "Arity of return type ("
+        "Arity of return type of "
+            + name
+            + " ("
             + Integer.toString(returnTypeArity)
             + ") does not match arity of body ("
             + Integer.toString(bodyArity)
@@ -195,8 +197,8 @@ public final class AlloyModelError extends UserOrImplError {
     return new AlloyModelError("Ordering module can only be applied to top-level sigs: " + sigName);
   }
 
-  public static AlloyModelError cantAtNonFieldOfThisSig(String fieldName) {
-    return new AlloyModelError("Can't @ non-field of this sig: " + fieldName);
+  public static AlloyModelError cantAtNonFieldOfThisSig(Pos pos, String fieldName) {
+    return new AlloyModelError(pos, "Can't @ non-field of this sig: " + fieldName);
   }
 
   public static AlloyModelError assertNameMustBeUnique(Pos pos, String name) {
@@ -232,7 +234,11 @@ public final class AlloyModelError extends UserOrImplError {
   }
 
   public static AlloyModelError cannotResolvePredFunName(Pos pos, String s) {
-    return new AlloyModelError(pos, "cannot resolve pred/fun name: " + s);
+    return new AlloyModelError(pos, "cannot resolve name: " + s);
+  }
+
+  public static AlloyModelError cannotResolveOverloadedName(Pos pos, String s) {
+    return new AlloyModelError(pos, "cannot resolve overloaded name: " + s);
   }
 
   public static AlloyModelError assertCanOnlyBeUsedWithCheck(Pos pos) {
@@ -257,5 +263,9 @@ public final class AlloyModelError extends UserOrImplError {
 
   public static AlloyModelError noScopeForNonSig(String s) {
     return new AlloyModelError("Asking for scope of a non-sig: " + s);
+  }
+
+  public static AlloyModelError duplicateAlias(Pos pos, String name) {
+    return new AlloyModelError(pos, "Cannot use same alias twice: " + name);
   }
 }

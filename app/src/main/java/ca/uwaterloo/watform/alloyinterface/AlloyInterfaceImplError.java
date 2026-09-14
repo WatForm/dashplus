@@ -15,4 +15,8 @@ public class AlloyInterfaceImplError extends ImplementationError {
   public static AlloyInterfaceImplError solutionEvalErr(Pos pos, String msg) {
     return new AlloyInterfaceImplError(pos, msg);
   }
+
+  public static AlloyInterfaceImplError cmdNumOutOfRange(Integer i) {
+    return new AlloyInterfaceImplError("Cmd number out of range: " + Integer.toString(i));
+  }
 }

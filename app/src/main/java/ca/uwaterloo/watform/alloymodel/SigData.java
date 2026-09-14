@@ -31,6 +31,12 @@ public class SigData {
     // returns a SigData with all the default values
   }
 
+  protected static SigData topLevelSigData(Pos pos) {
+    SigData sd = new SigData();
+    sd.isTopLevelSig = true;
+    return sd;
+  }
+
   // this is used when adding parts of an AlloyEnumPara
   protected static SigData abstractEnumSigData(Pos pos) {
     SigData sd = new SigData();

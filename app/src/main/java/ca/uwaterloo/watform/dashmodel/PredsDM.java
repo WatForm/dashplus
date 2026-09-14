@@ -16,8 +16,8 @@ public class PredsDM extends EventsDM {
 
   private HashMap<String, PredEntry> pt = new HashMap<String, PredEntry>();
 
-  public PredsDM() {
-    super();
+  public PredsDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   public PredsDM(DashFile d) {

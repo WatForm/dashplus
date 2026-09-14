@@ -5,6 +5,14 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.utils.Pos;
 
 public final class AlloySigQualParseVis extends DashBaseVisitor<AlloySigPara.Qual> {
+  /*
+  public final String fullFileName;
+
+  public AlloyCmdDeclParseVis(String fullFileName) {
+    this.fullFileName = fullFileName;
+  }
+  */
+
   @Override
   public AlloySigPara.Qual visitSigQualifier(DashParser.SigQualifierContext ctx) {
     if (null != ctx.VAR()) {

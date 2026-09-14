@@ -110,6 +110,7 @@ public final class AlloyStrings extends CommonStrings {
   public static final String FUNNEXT = "fun/next";
   public static final String RARROW = "->";
 
+  public static final String integerName = "integer";
   // standard modules
   // public static final String utilBooleanName = "util/boolean";
   public static final String utilName = "util";
@@ -130,6 +131,7 @@ public final class AlloyStrings extends CommonStrings {
   public static final String isFalse = "boolean/isFalse";
   public static final String shortIsFalse = "isFalse";
 
+  /*
   public static final String util_plus = "plus";
   public static final String util_minus = "minus";
   public static final String util_lt = "lt";
@@ -137,9 +139,11 @@ public final class AlloyStrings extends CommonStrings {
   public static final String shortMaxName = "max";
   public static final String shortMinName = "min";
 
+
   // util/sequniv.als
   // https://github.com/AlloyTools/org.alloytools.alloy/blob/master/org.alloytools.alloy.core/src/main/resources/models/util/sequniv.als
   public static final String shortSeqUnivDelete = "delete";
+  */
 
   public enum Kind {
     UNKNOWN_KIND,

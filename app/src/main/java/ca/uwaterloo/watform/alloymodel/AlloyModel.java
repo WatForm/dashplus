@@ -18,7 +18,18 @@ import java.util.*;
 
 public class AlloyModel extends AMThisModuleParas {
 
+  // fullFileName is needed to write file for AAInterface
+  // AA Interface needs to have a written to disk file in the correct place
+  // for user-defined imports to work correctly
+  // this is the top-level file only
+  public String fullFileName = null;
+
   public AlloyModel(AlloyFile alloyFile) {
+    this.fullFileName = alloyFile.fullFileName;
+    assert (this.fullFileName != null && this.fullFileName != "");
+    // add integer module as built-in
+    // but don't add it to list of paragraphs of AM
+    this.addSMPara(simpleUtilImportPara(AlloyStrings.integerName), THIS_NAMESPACE);
     for (AlloyPara alloyPara : alloyFile.paras) {
       // all are in THIS_NAMESPACE
       if (alloyPara instanceof AlloyEnumPara p) addPara(p);
@@ -34,10 +45,17 @@ public class AlloyModel extends AMThisModuleParas {
     }
   }
 
-  public AlloyModel() {}
+  public AlloyModel(String newFullFileName) {
+    // can create an AlloyModel from scratch and give it a fileName
+    // so imports will be relative to this fileName
+    this.fullFileName = newFullFileName;
+    this.addSMPara(simpleUtilImportPara(AlloyStrings.integerName), THIS_NAMESPACE);
+    assert (this.fullFileName != null && this.fullFileName != "");
+  }
 
   public AlloyModel(AlloyModel other) {
     super(other);
+    this.fullFileName = other.fullFileName;
   }
 
   public AlloyModel copy() {
@@ -49,7 +67,8 @@ public class AlloyModel extends AMThisModuleParas {
     paras.addAll(this.allModuleParas());
     paras.addAll(this.allImportParas());
     paras.addAll(this.allSigParas());
-    AlloyFile af = new AlloyFile(paras);
+    AlloyFile af = new AlloyFile(paras, this.fullFileName);
+    af.fullFileName = this.fullFileName;
     return new AlloyModel(af);
   }
 
@@ -72,15 +91,15 @@ public class AlloyModel extends AMThisModuleParas {
   }
 
   private AlloyFile toAlloyFile(boolean withCmds) {
-    return new AlloyFile(this.getAllParas(withCmds));
+    return new AlloyFile(this.getAllParas(withCmds), this.fullFileName);
   }
 
   public AlloyFile toAlloyFile() {
-    return new AlloyFile(this.getAllParas(true));
+    return new AlloyFile(this.getAllParas(true), this.fullFileName);
   }
 
   public AlloyFile toAlloyFileNoCmds() {
-    return new AlloyFile(this.getAllParas(false));
+    return new AlloyFile(this.getAllParas(false), this.fullFileName);
   }
 
   private String toString(boolean withCmds) {

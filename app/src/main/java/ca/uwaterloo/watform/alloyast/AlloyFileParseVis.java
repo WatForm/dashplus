@@ -27,9 +27,9 @@ public class AlloyFileParseVis extends DashBaseVisitor<AlloyFile> {
       }
     }
     if (paragraphs.isEmpty()) {
-      return new AlloyFile(paragraphs);
+      return new AlloyFile(paragraphs, fullFileName);
     } else {
-      return new AlloyFile(new Pos(ctx), paragraphs);
+      return new AlloyFile(new Pos(ctx), paragraphs, fullFileName);
     }
   }
 }

@@ -17,6 +17,13 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class AlloyExprParseVis extends DashBaseVisitor<AlloyExpr> {
+  // public final String fullFileName;
+
+  /*
+  public AlloyExprParseVis(String fullFileName) {
+    this.fullFileName = fullFileName;
+  }
+  */
 
   // ====================================================================================
   // Bind

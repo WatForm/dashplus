@@ -26,8 +26,16 @@ typescope       : EXACTLY? number (DOT DOT (number (COLON number)?)?)?
                     (qname | SIGINT | INT | SEQ | STRING | STEPS) ;
 */
 public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.CommandDecl> {
+  // public final String fullFileName;
+
   AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
   AlloyCmdDeclScopeParseVis typescopeParseVis = new AlloyCmdDeclScopeParseVis();
+
+  /*
+  public AlloyCmdDeclParseVis(String fullFileName) {
+    this.fullFileName = fullFileName;
+  }
+  */
 
   @Override
   public AlloyCmdPara.CommandDecl visitCommandDecl(DashParser.CommandDeclContext ctx) {
@@ -82,6 +90,14 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
     AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
     AlloyCmdDeclScopeTypescopeParseVis typescopeParseVis = new AlloyCmdDeclScopeTypescopeParseVis();
 
+    /*
+    public final String fullFileName;
+
+    public AlloyCmdDeclScopeParseVis(String fullFileName) {
+      this.fullFileName = fullFileName;
+    }
+    */
+
     @Override
     public AlloyCmdPara.CommandDecl.Scope visitScope(DashParser.ScopeContext ctx) {
       return new AlloyCmdPara.CommandDecl.Scope(
@@ -98,6 +114,14 @@ public final class AlloyCmdDeclParseVis extends DashBaseVisitor<AlloyCmdPara.Com
     public static final class AlloyCmdDeclScopeTypescopeParseVis
         extends DashBaseVisitor<AlloyCmdPara.CommandDecl.Scope.Typescope> {
       AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
+
+      /*
+      public final String fullFileName;
+
+      public AlloyCmdDeclScopeTypescopeParseVis(String fullFileName) {
+        this.fullFileName = fullFileName;
+      }
+      */
 
       @Override
       public AlloyCmdPara.CommandDecl.Scope.Typescope visitTypescope(

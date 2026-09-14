@@ -10,19 +10,22 @@ import java.util.List;
 
 public final class DashFile extends AlloyFile {
   public final DashState stateRoot;
+  public String dashFullFileName = "";
 
-  public DashFile(Pos pos, List<AlloyPara> paragraphs) {
-    super(pos, filterBy(paragraphs, alloyPara -> !(alloyPara instanceof DashPara)));
+  public DashFile(Pos pos, List<AlloyPara> paragraphs, String dashFullFileName) {
+    super(
+        pos, filterBy(paragraphs, alloyPara -> !(alloyPara instanceof DashPara)), dashFullFileName);
     List<DashPara> dashParas = extractItemsOfClass(paragraphs, DashPara.class);
     if (1 != dashParas.size()) {
       System.out.println(dashParas);
       throw DashASTError.exactlyOneStateRoot();
     }
     this.stateRoot = (DashState) dashParas.get(0);
+    this.dashFullFileName = dashFullFileName;
   }
 
-  public DashFile(List<AlloyPara> paragraphs) {
-    this(Pos.UNKNOWN, paragraphs);
+  public DashFile(List<AlloyPara> paragraphs, String dashFullFileName) {
+    this(Pos.UNKNOWN, paragraphs, dashFullFileName);
   }
 
   public List<AlloyPara> getAlloyParas() {

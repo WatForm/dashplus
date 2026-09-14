@@ -18,15 +18,16 @@ import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigQualParseVis;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigRelParseVis;
 import ca.uwaterloo.watform.utils.*;
+import java.io.*;
 import java.nio.file.*;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import org.antlr.v4.runtime.tree.*;
 
 public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   protected final AlloyExprParseVis exprParseVis = new AlloyExprParseVis();
   protected final AlloySigRefsParseVis sigRefsParseVis = new AlloySigRefsParseVis();
   public final String fullFileName;
+  public String moduleName = ""; // gets set when parse a ModulePara
 
   public AlloyParaParseVis(String fullFileName) {
     this.fullFileName = fullFileName;
@@ -42,10 +43,71 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   // ====================================================================================
   @Override
   public AlloyModulePara visitModulePara(DashParser.ModuleParaContext ctx) {
+    AlloyQnameExpr moduleNameExpr = (AlloyQnameExpr) exprParseVis.visit(ctx.qname());
+    this.moduleName = moduleNameExpr.getName();
     return new AlloyModulePara(
         new Pos(ctx),
-        (AlloyQnameExpr) exprParseVis.visit(ctx.qname()),
+        moduleNameExpr,
         visitAll(ctx.moduleArg(), new AlloyModuleArgParseVis(), AlloyModuleArg.class));
+  }
+
+  private String computeImportFileName(
+      String parentModuleName, String parentFileName, String importName) {
+
+    // System.out.println("parentModuleName = " + parentModuleName);
+    // System.out.println("parentFileName   = " + parentFileName);
+    // System.out.println("importName       = " + importName);
+
+    // for non-util files
+    // determine imported file name relative to the current path and parentModuleName
+
+    // from ChatGPT's decomposition of AA's CompUtil and my debugging it!
+
+    // Start with the parent module name and the import name.
+    String remainingParentModuleName = parentModuleName;
+    String remainingImportName = importName;
+
+    int parentSlash = remainingParentModuleName.indexOf('/');
+    int importSlash = remainingImportName.indexOf('/');
+
+    // cut off parts at the end up to a slash that match
+    while (parentSlash >= 0
+        && importSlash >= 0
+        && remainingParentModuleName
+            .substring(0, parentSlash)
+            .equals(remainingImportName.substring(0, importSlash))) {
+
+      remainingParentModuleName = remainingParentModuleName.substring(parentSlash + 1);
+
+      remainingImportName = remainingImportName.substring(importSlash + 1);
+
+      parentSlash = remainingParentModuleName.indexOf('/');
+      importSlash = remainingImportName.indexOf('/');
+    }
+
+    // System.out.println("remainingParentModuleName: " + remainingParentModuleName);
+    // System.out.println("remainingImportName: " + remainingImportName);
+
+    // Count the / characters in the original parentModuleName
+    int parentSlashCount = 0;
+    for (int i = 0; i < remainingParentModuleName.length(); i++) {
+      if (remainingParentModuleName.charAt(i) == '/') {
+        parentSlashCount++;
+      }
+    }
+
+    // Remove the filename, leaving the parent directory
+    String parentDirectory = parentFileName.substring(0, parentFileName.lastIndexOf('/'));
+
+    // Go upward from parentFileName by the number of slashes
+    for (int i = 0; i < parentSlashCount; i++) {
+      parentDirectory = parentDirectory.substring(0, parentDirectory.lastIndexOf('/'));
+    }
+
+    System.out.println("parentDirectory: " + parentDirectory);
+
+    // Append the complete importName plus .als.
+    return parentDirectory + "/" + remainingImportName + ".als";
   }
 
   // ====================================================================================
@@ -55,20 +117,33 @@ public class AlloyParaParseVis extends DashBaseVisitor<AlloyPara> {
   public AlloyImportPara visitImportPara(DashParser.ImportParaContext ctx) {
     String importName = exprParseVis.visit(ctx.qname(0)).toString();
     AlloyFile importedAlloyFile;
+    String parentModuleName = this.moduleName;
+    String parentFileName = this.fullFileName;
     if (importName.startsWith("util/")) {
+      // where the util files are stored in the jar
+      // if not found, error will be issued via alloyParseUtilFile
       importedAlloyFile = alloyParseUtilFile(new Pos(ctx), importName);
     } else {
-      // need to read this imported file relative to the current path
-      String importFullFileName =
-          Paths.get(this.fullFileName)
-              .getParent()
-              .resolve(importName + ".als")
-              .toAbsolutePath()
-              .normalize()
-              .toString();
-      importedAlloyFile = alloyParse(importFullFileName);
+      // have to check if it exists on disk before checking jar
+      String fullFileName = computeImportFileName(this.moduleName, this.fullFileName, importName);
+      if (Files.exists(Paths.get(fullFileName))) {
+        // file exists so parse the normal way
+        importedAlloyFile = alloyParse(fullFileName);
+      } else {
+        // see if it is in the Alloy jar
+        // System.out.println("import Name: " + importName);
+        InputStream in =
+            AlloyParaParseVis.class
+                .getClassLoader()
+                .getResourceAsStream("models/" + importName + ".als");
+        if (in != null) {
+          importedAlloyFile = alloyParseFromJar(new Pos(ctx), "models/" + importName + ".als");
+        } else {
+          // this will fail but will throw a standard error of file not found
+          importedAlloyFile = alloyParse(fullFileName);
+        }
+      }
     }
-
     // next we have to put this alloyFile into some part of the import
     return new AlloyImportPara(
         new Pos(ctx),

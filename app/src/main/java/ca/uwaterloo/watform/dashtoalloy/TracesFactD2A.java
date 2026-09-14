@@ -30,13 +30,14 @@
 package ca.uwaterloo.watform.dashtoalloy;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import static ca.uwaterloo.watform.parser.AlloyParser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.ImplementationError.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.dashmodel.DashModel;
-import java.util.List;
+import java.util.*;
 
 public class TracesFactD2A extends SmallStepD2A {
 
@@ -83,7 +84,10 @@ public class TracesFactD2A extends SmallStepD2A {
             // all s : __Snapshot - __Snapshot/last | __small_step[s, s.__Snapshot/next]
             AlloyAllVars(decls2, AlloyPredCall(D2AStrings.smallStepName, args))));
 
-    this.am.addFact(D2AStrings.tracesFactName, body);
+    // this.am.addFact(D2AStrings.tracesFactName, body);
+    this.am.addPred(D2AStrings.tracesFactName, this.dsl.emptyDeclList(), body);
+    // default command run { tracesFactName }
+    this.am.addCmdDecl(parseCmdDecl("run traces {__traces_fact} for 4 "));
   }
 
   public void addStrongNoStutterPred() {
@@ -106,6 +110,7 @@ public class TracesFactD2A extends SmallStepD2A {
     body.add(AlloyAllVars(decls, ex));
 
     List<AlloyDecl> emptyDeclList = this.dsl.emptyDeclList();
+    this.am.addPred(D2AStrings.strongNoStutterName, emptyDeclList, body);
     this.am.addPred(D2AStrings.strongNoStutterName, emptyDeclList, body);
   }
 }

@@ -29,6 +29,11 @@ import java.util.List;
 
 public class ResolveDM extends ResolverVisDM {
 
+  public ResolveDM(String dashFullFileName) {
+    super(dashFullFileName);
+    // everything added must be resolved
+  }
+
   public ResolveDM(DashFile d) {
     super(d);
     // myprint("==== BEFORE RESOLUTION ====");
@@ -44,11 +49,6 @@ public class ResolveDM extends ResolverVisDM {
     extraChecks();
     // myprint("==== AFTER RESOLUTION ====");
     // this.debug();
-  }
-
-  public ResolveDM() {
-    super();
-    // everything added must be resolved
   }
 
   private void resolveVarTable() {

@@ -20,8 +20,8 @@ public class EventsDM extends VarsBuffersDM {
 
   protected HashMap<String, EventEntry> et = new HashMap<String, EventEntry>();
 
-  protected EventsDM() {
-    super();
+  protected EventsDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   protected EventsDM(DashFile d) {

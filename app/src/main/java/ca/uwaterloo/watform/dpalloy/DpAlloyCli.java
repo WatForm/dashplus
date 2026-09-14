@@ -67,19 +67,20 @@ public class DpAlloyCli implements Callable<Integer> {
           break;
         }
         Reporter.INSTANCE.reset();
-        Reporter.INSTANCE.popPath();
-        Reporter.INSTANCE.pushPath(absolutePath);
+        // Reporter.INSTANCE.popPath();
+        // Reporter.INSTANCE.pushPath(absolutePath);
 
         if (fullFileName.endsWith(".als")) {
           dpOutput("Input: " + fullFileName);
           AlloyModel am = alloyParseToModel(fullFileName);
-          // System.out.println("---");
-          // System.out.println("Before resolve");
-          // am.debug();
+          System.out.println("---");
+          System.out.println("Before resolve");
+          am.debug(); // may not work before resolve if cmds have errors in them
           am.resolve();
-          // System.out.println("---");
-          // System.out.println("After resolve");
-          // am.debug();
+          am.debug();
+          System.out.println("---");
+          System.out.println("After resolve");
+          am.debug();
           int num_cmds_in_file = am.getNumCmds();
           if (cmdIdx < num_cmds_in_file) {
             AlloyInterface.executeCommand(am, cmdIdx);
@@ -105,13 +106,13 @@ public class DpAlloyCli implements Callable<Integer> {
     } catch (ImplementationError implError) {
       // Implementation Error exit code: 2
       if (cliConf.debug) implError.printStackTrace();
-      else System.err.println(implError);
+      else System.err.println(implError.toString());
       return 2;
     } catch (UserOrImplError implError) {
       // bubbled up here so these are ImplementationError
       // see ErrorHandling.md
       if (cliConf.debug) implError.printStackTrace();
-      else System.err.println(implError);
+      else System.err.println(implError.toString());
       return 2;
     } catch (Err e) {
       // error that comes from a call the Alloy Analyzer code base
