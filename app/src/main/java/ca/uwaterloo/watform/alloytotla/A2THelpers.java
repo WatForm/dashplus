@@ -7,8 +7,8 @@ import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 
 public class A2THelpers {
-  public static String sigConstraint(String sigName) {
-    return sigName + SIG_CONSTRAINT_SUFFIX;
+  public static String sigConstraint(Qname sigQname) {
+    return tlaQname(sigQname) + SIG_CONSTRAINT_SUFFIX;
   }
 
   public static String unnamedFact(int n) {

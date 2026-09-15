@@ -72,5 +72,4 @@ public class BaseA2T {
     }
     return TlaSet(atoms);
   }
-
 }

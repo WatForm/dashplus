@@ -22,8 +22,7 @@ public class PredFunA2T extends NextA2T {
 
     tlaModel.addComment("Predicates and functions", verbose);
 
-    for (var p : alloyModel.allPreds()) 
-    {
+    for (var p : alloyModel.allPreds()) {
 
       // TlaExp body = translateSnippet(p.block);
       // List<TlaVar> args = mapBy(p.arguments, decl -> TlaVar(decl.getName()));
