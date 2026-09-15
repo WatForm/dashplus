@@ -1,14 +1,15 @@
 package ca.uwaterloo.watform.tlamodel;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaast.SnowCatTypes.SCType;
 import ca.uwaterloo.watform.utils.*;
-import java.util.*;;
+import java.util.*;
 
 public class TlaModule {
 
-  public record TlaVarDecl(TlaVar var, TlaTypes.Type type) {}
+  public record TlaVarDecl(TlaVar var, SCType type) {}
 
-  public record TlaConstDecl(TlaConst var, TlaTypes.Type type) {}
+  public record TlaConstDecl(TlaConst var, SCType type) {}
 
   public final List<TlaConst> constants;
   public final List<TlaVarDecl> variables;

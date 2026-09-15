@@ -21,7 +21,7 @@ public class SignaturesA2T extends PredFunA2T {
   protected void addSigVars(TlaModel tlaModel) {
     for (Qname sig : alloyModel.allSigQnames()) {
       String s = tlaQname(sig);
-      tlaModel.addVar(TlaVar(s), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
+      tlaModel.addVar(TlaVar(s), relationType());
       log("translated sig " + sig.fullName() + " into a VARIABLE " + s);
     }
     l.info(dump());

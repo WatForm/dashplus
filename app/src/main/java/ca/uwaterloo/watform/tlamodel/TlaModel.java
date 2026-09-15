@@ -1,13 +1,7 @@
 package ca.uwaterloo.watform.tlamodel;
 
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaComment;
-import ca.uwaterloo.watform.tlaast.TlaConst;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaStdLibs;
-import ca.uwaterloo.watform.tlaast.TlaTypes;
-import ca.uwaterloo.watform.tlaast.TlaVar;
+import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaast.SnowCatTypes.SCType;
 
 public class TlaModel {
   // top-level class to handle modules and associated configs
@@ -33,7 +27,7 @@ public class TlaModel {
     this.module.extended_libraries.add(stl);
   }
 
-  public void addVar(TlaVar v, TlaTypes.Type t) {
+  public void addVar(TlaVar v, SCType t) {
     this.module.variables.add(new TlaModule.TlaVarDecl(v, t));
   }
 
