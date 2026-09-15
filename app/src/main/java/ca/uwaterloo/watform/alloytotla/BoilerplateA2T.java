@@ -160,12 +160,11 @@ public class BoilerplateA2T extends BaseA2T {
     SCType type = SnowCatTypes.OperatorTT2T(relationType());
     TlaDecl decl = TlaDecl(RANGE_RESTRICTION, Arrays.asList(R(), S()));
     TlaExp body =
-        TlaSetFilter(TlaQuantOpHead(X(), R()), TlaTuple(X().INDEX(TlaStdLibs.Len(X())).IN(S())));
+        TlaSetFilter(TlaQuantOpHead(X(), R()), TlaTuple(X().INDEX(TlaStdLibs.Len(X()))).IN(S()));
     return new TlaDefn(decl, body, type);
   }
 
   private static TlaDefn domain_restriction() {
-    
 
     //  (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
     // _domain_restriction(_S,_R) == {_x \in _R : <<_x[1]>> \in _S}
@@ -173,22 +172,21 @@ public class BoilerplateA2T extends BaseA2T {
     SCType type = SnowCatTypes.OperatorTT2T(relationType());
     TlaDecl decl = TlaDecl(DOMAIN_RESTRICTION, Arrays.asList(S(), R()));
     TlaExp body =
-        TlaSetFilter(TlaQuantOpHead(X(), R()), TlaTuple(X().INDEX(TlaIntLiteral(1)).IN(S())));
-    return new TlaDefn(decl,body,type);
+        TlaSetFilter(TlaQuantOpHead(X(), R()), TlaTuple(X().INDEX(TlaIntLiteral(1))).IN(S()));
+    return new TlaDefn(decl, body, type);
   }
-
-
 
   private static TlaDefn dot_filter() {
 
     //  ((Seq(Str)), (Seq(Str))) => Bool;
     // _dot_filter(_e1,_e2) == _e1[Len(_e1)] = _e2[1]
 
-    SCType type = SnowCatTypes.Operator(Arrays.asList(elementType(),elementType()), SnowCatTypes.Bool());
+    SCType type =
+        SnowCatTypes.Operator(Arrays.asList(elementType(), elementType()), SnowCatTypes.Bool());
     TlaDecl decl = TlaDecl(DOT_FILTER, Arrays.asList(E1(), E2()));
     TlaExp body = E1().INDEX(TlaStdLibs.Len(E1())).EQUALS(E2().INDEX(TlaIntLiteral(1)));
 
-    return new TlaDefn(decl,body,type);
+    return new TlaDefn(decl, body, type);
   }
 
   private static TlaDefn dot_map() {
@@ -203,14 +201,15 @@ public class BoilerplateA2T extends BaseA2T {
             E1(), TlaIntLiteral(1), TlaSubtract(TlaStdLibs.Len(E1()), TlaIntLiteral(1)));
     TlaExp right = TlaStdLibs.SubSeq(E2(), TlaIntLiteral(2), TlaStdLibs.Len(E2()));
     TlaExp body = TlaConcatSeq(left, right);
-    
-    return new TlaDefn(decl,body,type);
+
+    return new TlaDefn(decl, body, type);
   }
 
   private static TlaDefn dot() {
 
     //  (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
-    // _dot(_R1,_R2) == {_dot_map(_e1,_e2) : <<_e1,_e2>> \in {<<_f1,_f2>> \in _R1 \X _R2 : _dot_filter(_f1,_f2)}}
+    // _dot(_R1,_R2) == {_dot_map(_e1,_e2) : <<_e1,_e2>> \in {<<_f1,_f2>> \in _R1 \X _R2 :
+    // _dot_filter(_f1,_f2)}}
 
     SCType type = SnowCatTypes.OperatorTT2T(relationType());
     TlaDecl decl = TlaDecl(DOT_MACRO, Arrays.asList(R1(), R2()));
@@ -218,17 +217,19 @@ public class BoilerplateA2T extends BaseA2T {
         TlaSetFilter(
             TlaQuantOpHeadTuple(Arrays.asList(F1(), F2()), TlaProductSet(R1(), R2())),
             TlaAppl(DOT_FILTER, Arrays.asList(F1(), F2())));
-    TlaExp body = TlaSetMap(
+    TlaExp body =
+        TlaSetMap(
             TlaQuantOpHeadTuple(Arrays.asList(E1(), E2()), inner),
             TlaAppl(DOT_MAP, Arrays.asList(E1(), E2())));
 
-    return new TlaDefn(decl,body,type);
+    return new TlaDefn(decl, body, type);
   }
 
   private static TlaDefn relational_override() {
 
-// (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
-// _relational_override(_R1,_R2) == (_R1 \ {_x \in _R1 : \E _y \in _R2 : (_x[1] = _y[1])}) \\union _R2
+    // (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
+    // _relational_override(_R1,_R2) == (_R1 \ {_x \in _R1 : \E _y \in _R2 : (_x[1] = _y[1])})
+    // \\union _R2
 
     SCType type = SnowCatTypes.OperatorTT2T(relationType());
     TlaDecl decl = TlaDecl(RELATIONAL_OVERRIDE, Arrays.asList(R1(), R2()));
@@ -293,6 +294,4 @@ public class BoilerplateA2T extends BaseA2T {
     // _no(S)
     return new TlaDefn(TlaDecl(NO, Arrays.asList(S())), S().EQUALS(TlaNullSet()));
   }
-
-  
 }

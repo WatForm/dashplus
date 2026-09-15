@@ -1,8 +1,7 @@
 package ca.uwaterloo.watform.tlaast;
 
-import java.util.*;
-
 import ca.uwaterloo.watform.tlaast.SnowCatTypes.SCType;
+import java.util.*;
 
 public class TlaDefn extends TlaExp {
 
@@ -17,22 +16,23 @@ public class TlaDefn extends TlaExp {
   public final TlaDecl decl;
   public final TlaExp body;
 
-  public final Optional<SCType> signature;
+  public final Optional<SCType> type;
 
   public TlaDefn(TlaDecl decl, TlaExp body) {
     this.decl = decl;
     this.body = body;
-    this.signature = Optional.empty();
+    this.type = Optional.empty();
   }
 
-  public TlaDefn(TlaDecl decl, TlaExp body, SCType signature) {
+  public TlaDefn(TlaDecl decl, TlaExp body, SCType type) {
     this.decl = decl;
     this.body = body;
-    this.signature = Optional.of(signature);
+    this.type = Optional.of(type);
   }
 
   @Override
   public void toString(StringBuilder sb, int ident) {
+    sb.append(this.type.map(t -> t.annotation() + "\n").orElse(""));
     this.decl.toString(sb, ident);
     sb.append(TlaStrings.SPACE + TlaStrings.DEFINITION + TlaStrings.SPACE);
     this.body.toString(sb, ident);
@@ -47,7 +47,7 @@ public class TlaDefn extends TlaExp {
   public String toTLAPlusSnippetCore() {
 
     // precedence and associativity is never a problem with definitions
-    return this.signature.map(sign -> sign.annotation() + "\n").orElse("")
+    return this.type.map(t -> t.annotation() + "\n").orElse("testing 123")
         + this.decl.toTLAPlusSnippet(false)
         + TlaStrings.SPACE
         + TlaStrings.DEFINITION
