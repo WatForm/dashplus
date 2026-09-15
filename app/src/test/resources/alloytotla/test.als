@@ -1,15 +1,13 @@
-open input1 as X
-open input2 as Y
+sig A {}
+abstract sig X {}
 
-sig A {
- f : A -> A
-}
+sig B in A {}
+sig C in A+X {}
 
-sig B extends A {}
-sig C in A+B {}
-abstract sig D {}
-sig E extends D {}
-sig F extends D {}
+
+
+sig Y extends X {}
+sig Z extends X {}
 
 
 run {} for exactly 2 A

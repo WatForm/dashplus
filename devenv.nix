@@ -31,6 +31,10 @@
     java -jar ./app/build/libs/alloytotla.jar ./app/src/test/resources/alloytotla/"$1".als -v -d && cat ./AlloyToTla.log
   '';
 
+  scripts.a2tq.exec = ''
+    java -jar ./app/build/libs/alloytotla.jar ./app/src/test/resources/alloytotla/"$1".als -v -d && cat ./AlloyToTla.log
+  '';
+
   # https://devenv.sh/basics/
   enterShell = ''
     hello         # Run scripts directly
@@ -53,5 +57,4 @@
   # git-hooks.hooks.shellcheck.enable = true;
 
   # See full reference at https://devenv.sh/reference/options/
-
 }

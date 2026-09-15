@@ -25,12 +25,10 @@ public class FieldsA2T extends FactsA2T {
     l.info(dump());
   }
 
-  public void addFieldTypeConstraints(TlaModel tlaModel)
-  {
-    for(Qname f : alloyModel.allFieldQnames())
-    {
-       log("field expr of "+f.fullName()+" is " + alloyModel.fieldExpr(f));
-       log("field product of "+f.fullName()+" is "+alloyModel.fieldProduct(f));
+  public void addFieldTypeConstraints(TlaModel tlaModel) {
+    for (Qname f : alloyModel.allFieldQnames()) {
+      log("field expr of " + f.fullName() + " is " + alloyModel.fieldExpr(f));
+      log("field product of " + f.fullName() + " is " + alloyModel.fieldProduct(f));
     }
     l.info(dump());
   }

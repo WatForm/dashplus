@@ -50,11 +50,11 @@ public class AlloyToTla extends StdLibsA2T {
     addStdLibsTla(tlaModel);
     addSigVars(tlaModel);
     addFieldVars(tlaModel);
-    // addBoilerplate(tlaModel);
+    addBoilerplate(tlaModel);
     // addStdLibsAlloy(tlaModel, cmdDecl);
     // addPredicatesFunctions(tlaModel);
     addSigHierarchy(tlaModel);
-    // addFieldTypes(tlaModel);
+    addFieldTypeConstraints(tlaModel);
     addSigConstraints(tlaModel);
     // addFacts(tlaModel);
     // addCommand(tlaModel, cmdDecl);

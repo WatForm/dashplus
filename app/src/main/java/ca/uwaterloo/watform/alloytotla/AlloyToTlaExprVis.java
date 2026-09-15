@@ -13,8 +13,7 @@ import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result> {

@@ -251,3 +251,35 @@ public class BoilerplateA2T extends BaseA2T {
     return new TlaDefn(TlaDecl(NO, Arrays.asList(S())), S().EQUALS(TlaNullSet()));
   }
 }
+
+
+/*
+
+
+ Set(<<Str,Str>>) => Set(<<Str,Str>>);
+_transpose(_R) == {<<_y,_x>> : <<_x,_y>> \in _R}
+
+
+ ((Seq(Str)), (Seq(Str))) => Seq(Str);
+_dot_map(_e1,_e2) == SubSeq(_e1,1,Len(_e1) - 1) \o SubSeq(_e2,2,Len(_e2))
+
+ ((Seq(Str)), (Seq(Str))) => Bool;
+_dot_filter(_e1,_e2) == _e1[Len(_e1)] = _e2[1]
+
+ (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
+_dot(_R1,_R2) == {_dot_map(_e1,_e2) : <<_e1,_e2>> \in {<<_f1,_f2>> \in _R1 \X _R2 : _dot_filter(_f1,_f2)}}
+
+ (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
+_domain_restriction(_S,_R) == {_x \in _R : <<_x[1]>> \in _S}
+
+ (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
+_range_restriction(_R,_S) == {_x \in _R : <<_x[Len(_x)]>> \in _S}
+
+ (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
+_relational_override(_R1,_R2) == (_R1 \ {_x \in _R1 : \E _y \in _R2 : (_x[1] = _y[1])}) \\union _R2
+
+ (Set(Seq(Str)), Set(Seq(Str))) => Set(Seq(Str));
+_cross(_R1,_R2) == {_e1 \o _e2 : <<_e1,_e2>> \in _R1 \X _R2}
+
+
+*/
