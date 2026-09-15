@@ -148,14 +148,14 @@ public class BoilerplateA2T extends BaseA2T {
 
   private static TlaDefn range_restriction() {
 
-    // _range_restrict(R,S) : {e \in R : e[Len(e)] \in S}
-    TlaExp body = TlaSetFilter(TlaQuantOpHead(X(), R()), X().INDEX(TlaStdLibs.Len(X())).IN(S()));
+    // _range_restrict(R,S) : {e \in R : <<e[Len(e)]>> \in S}
+    TlaExp body = TlaSetFilter(TlaQuantOpHead(X(), R()), TlaTuple(X().INDEX(TlaStdLibs.Len(X())).IN(S())));
     return new TlaDefn(TlaDecl(RANGE_RESTRICTION, Arrays.asList(R(), S())), body);
   }
 
   private static TlaDefn domain_restriction() {
-    // _domain_restrict(S,R) : {x \in R : x[1] \in S}
-    TlaExp body = TlaSetFilter(TlaQuantOpHead(X(), R()), X().INDEX(TlaIntLiteral(1)).IN(S()));
+    // _domain_restrict(S,R) : {x \in R : <<x[1]>> \in S}
+    TlaExp body = TlaSetFilter(TlaQuantOpHead(X(), R()), TlaTuple(X().INDEX(TlaIntLiteral(1)).IN(S())));
     return new TlaDefn(TlaDecl(DOMAIN_RESTRICTION, Arrays.asList(S(), R())), body);
   }
 
