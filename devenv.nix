@@ -27,18 +27,8 @@
   '';
 
   scripts.a2t.exec = ''
-    if [ -z "$1" ]; then
-      echo "❌ Error: Please provide a file argument."
-      echo "Usage: xyz <filename>"
-      exit 1
-    fi
-    if [ ! -f "$1" ]; then
-      echo "❌ Error: File '$1' not found."
-      exit 1
-    fi
-
     ./gradlew alloytotla
-    java -jar ./app/build/libs/alloytotla.jar "$1" -v -d && cat ./AlloyToTla.log
+    java -jar ./app/build/libs/alloytotla.jar ./app/src/test/resources/alloytotla/"$1".als -v -d && cat ./AlloyToTla.log
   '';
 
   # https://devenv.sh/basics/
@@ -63,4 +53,5 @@
   # git-hooks.hooks.shellcheck.enable = true;
 
   # See full reference at https://devenv.sh/reference/options/
+
 }

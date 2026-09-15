@@ -1,5 +1,8 @@
-sig A {
+open input1 as X
+open input2 as Y
 
+sig A {
+ f : A -> A
 }
 
 

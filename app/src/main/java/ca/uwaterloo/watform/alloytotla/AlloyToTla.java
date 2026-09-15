@@ -36,7 +36,10 @@ public class AlloyToTla extends StdLibsA2T {
     //   ct += 1;
     // }
 
-    return new TlaModel(baseName, new TlaAppl(INIT), new TlaAppl(NEXT));
+    var answer = new TlaModel(baseName, new TlaAppl(INIT), new TlaAppl(NEXT));
+    translate(answer, cmdNum);
+
+    return answer;
   }
 
   public void translate(TlaModel tlaModel, int cmdNum) {
@@ -55,7 +58,7 @@ public class AlloyToTla extends StdLibsA2T {
     // addSigConstraints(tlaModel);
     // addFacts(tlaModel);
     // addCommand(tlaModel, cmdDecl);
-    // addInitDefn(tlaModel, cmdDecl);
-    // addNextDefn(tlaModel);
+    addInitDefn(tlaModel);
+    addNextDefn(tlaModel);
   }
 }

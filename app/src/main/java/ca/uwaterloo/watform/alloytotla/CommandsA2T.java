@@ -5,10 +5,24 @@ import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlamodel.TlaModel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandsA2T extends BoilerplateA2T {
   public CommandsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
+  }
+
+  public TlaExp placeholderScope(TlaModel tlaModel) {
+
+    List<TlaExp> clauses = new ArrayList<>();
+
+    for (var s : alloyModel.allSigQnames()) clauses.add(TlaVar(tlaQname(s)).EQUALS(TlaNullSet()));
+    for (var f : alloyModel.allFieldQnames()) clauses.add(TlaVar(tlaQname(f)).EQUALS(TlaNullSet()));
+
+    return repeatedAnd(clauses);
   }
 
   /*

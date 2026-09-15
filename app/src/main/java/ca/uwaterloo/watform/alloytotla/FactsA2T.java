@@ -5,7 +5,6 @@ import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 
-import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlamodel.*;
 import java.util.ArrayList;
@@ -22,9 +21,8 @@ public class FactsA2T extends CustomModulesA2T {
 
     List<String> factNames = new ArrayList<>();
     List<String> comments = new ArrayList<>();
-    List<AlloyFactPara> factParas = alloyModel.allFactParas();
 
-    for (var fp : factParas) {
+    for (var f : alloyModel.allFactParas()) {
       /*
       String factName = generateFactName();
       factNames.add(factName);

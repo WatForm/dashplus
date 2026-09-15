@@ -16,13 +16,12 @@ public class FieldsA2T extends FactsA2T {
   }
 
   public void addFieldVars(TlaModel tlaModel) {
-    for (Qname field : alloyModel.allFieldQnames()) {
-      String f = tlaQname(field);
-      tlaModel.addVar(TlaVar(f), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
-      log("translated sig " + field.fullName() + " into a VARIABLE " + f);
+
+    for (Qname f : alloyModel.allFieldQnames()) {
+
+      tlaModel.addVar(TlaVar(tlaQname(f)), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
+      log("translated field " + f.fullName() + " into a VARIABLE " + tlaQname(f));
     }
     l.info(dump());
   }
-
-  // todo: complete rewrite with new qname system
 }

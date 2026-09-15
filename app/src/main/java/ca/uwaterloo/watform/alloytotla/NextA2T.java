@@ -10,7 +10,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NextA2T extends FieldsA2T {
+public class NextA2T extends InitA2T {
   public NextA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
     super(alloyModel, verbose, debug);
   }
@@ -21,8 +21,8 @@ public class NextA2T extends FieldsA2T {
 
     List<TlaVar> unchanged = new ArrayList<>();
 
-    for (var s : alloyModel.allSigs()) unchanged.add(TlaVar(s));
-    // for (var f : alloyModel.allFields()) unchanged.add(TlaVar(f));
+    for (var s : alloyModel.allSigQnames()) unchanged.add(TlaVar(tlaQname(s)));
+    for (var f : alloyModel.allFieldQnames()) unchanged.add(TlaVar(tlaQname(f)));
 
     tlaModel.addDefn(TlaDefn(NEXT, TlaUnchanged(unchanged)));
   }

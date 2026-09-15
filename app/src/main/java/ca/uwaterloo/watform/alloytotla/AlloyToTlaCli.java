@@ -67,6 +67,9 @@ public class AlloyToTlaCli implements Callable<Integer> {
     Path absolutePath = path.toAbsolutePath();
     String fullFileName = absolutePath.toString();
     String outputFileNamePrefix = fullFileName.substring(0, fullFileName.lastIndexOf("."));
+    String outputFileName =
+        outputFileNamePrefix.substring(
+            outputFileNamePrefix.lastIndexOf("/") + 1, outputFileNamePrefix.length());
 
     if (!Files.exists(absolutePath)) {
       dpOutput("File does not exist: " + fullFileName);
@@ -80,7 +83,7 @@ public class AlloyToTlaCli implements Callable<Integer> {
     if (fullFileName.endsWith(".als")) {
       AlloyModel alloyModel = alloyParseToModel(fullFileName);
       AlloyToTla translator = new AlloyToTla(alloyModel, cliConf.verbose, cliConf.debug);
-      var tlaModel = translator.translate(outputFileNamePrefix, cmdIdx);
+      var tlaModel = translator.translate(outputFileName, 0);
 
       Files.writeString(fileFromString(outputFileNamePrefix + ".tla"), tlaModel.moduleCode());
       Files.writeString(fileFromString(outputFileNamePrefix + ".cfg"), tlaModel.configCode());
