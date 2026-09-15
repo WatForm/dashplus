@@ -2,8 +2,7 @@ package ca.uwaterloo.watform.tlamodel;
 
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;;
 
 public class TlaModule {
 

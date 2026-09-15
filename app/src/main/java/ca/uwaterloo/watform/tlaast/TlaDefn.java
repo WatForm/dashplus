@@ -1,7 +1,7 @@
 package ca.uwaterloo.watform.tlaast;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
 
 public class TlaDefn extends TlaExp {
 
@@ -16,9 +16,18 @@ public class TlaDefn extends TlaExp {
   public final TlaDecl decl;
   public final TlaExp body;
 
+  public final Optional<TlaTypes.Signature> signature;
+
   public TlaDefn(TlaDecl decl, TlaExp body) {
     this.decl = decl;
     this.body = body;
+    this.signature = Optional.empty();
+  }
+
+  public TlaDefn(TlaDecl decl, TlaExp body, TlaTypes.Signature signature) {
+    this.decl = decl;
+    this.body = body;
+    this.signature = Optional.of(signature);
   }
 
   @Override
@@ -37,7 +46,8 @@ public class TlaDefn extends TlaExp {
   public String toTLAPlusSnippetCore() {
 
     // precedence and associativity is never a problem with definitions
-    return this.decl.toTLAPlusSnippet(false)
+    return this.signature.map(sign -> sign.annotation()+"\n").orElse("")
+        + this.decl.toTLAPlusSnippet(false)
         + TlaStrings.SPACE
         + TlaStrings.DEFINITION
         + TlaStrings.SPACE

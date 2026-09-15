@@ -2,10 +2,8 @@ package ca.uwaterloo.watform.tlaast;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.tlaast.TlaTypes.Base;
-import ca.uwaterloo.watform.tlaast.TlaTypes.Compound;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.*;
 
 public class TlaTypes {
 
@@ -79,6 +77,21 @@ public class TlaTypes {
     @Override
     public String TlaSnippet() {
       return this.domain.TlaSnippet() + " -> " + this.range.TlaSnippet();
+    }
+  }
+
+  public static class Signature extends Type {
+    Compound arguments;
+    Type result;
+
+    public Signature(Compound arguments, Type result) {
+      this.arguments = arguments;
+      this.result = result;
+    }
+
+    @Override
+    public String TlaSnippet() {
+      return this.arguments.TlaSnippet() + " => " + this.result.TlaSnippet();
     }
   }
 }
