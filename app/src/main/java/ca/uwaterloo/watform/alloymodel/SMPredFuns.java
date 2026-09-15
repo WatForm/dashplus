@@ -298,7 +298,7 @@ public class SMPredFuns extends SMFields {
     return !funQnameMatches(qname).isEmpty();
   }
 
-  protected List<AlloyDecl> predFunArgDecls(Qname qname) {
+  public List<AlloyDecl> predFunArgDecls(Qname qname) {
     if (this.isPred(qname) || this.isFun(qname)) {
       // KENG TODO: I'm just returning the first match here
       // in both qname and in what matches qname
@@ -311,7 +311,7 @@ public class SMPredFuns extends SMFields {
     }
   }
 
-  protected List<Optional<Integer>> predFunArgArities(Qname qname) {
+  public List<Optional<Integer>> predFunArgArities(Qname qname) {
     if (this.isPred(qname) || this.isFun(qname)) {
       // KENG TODO: I'm just returning the first match here
       // in both qname and in what matches qname
@@ -324,7 +324,7 @@ public class SMPredFuns extends SMFields {
     }
   }
 
-  protected Optional<Integer> predFunReturnArity(Qname qname) {
+  public Optional<Integer> predFunReturnArity(Qname qname) {
     // KENG TODO: I'm just returning the first match here
     // in both qname and in what matches qname
     // there are two get(0)'s below
