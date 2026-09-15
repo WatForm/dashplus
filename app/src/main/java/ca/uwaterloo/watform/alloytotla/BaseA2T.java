@@ -73,19 +73,4 @@ public class BaseA2T {
     return TlaSet(atoms);
   }
 
-  /*
-  order:
-  StdLibs
-  Boilerplate
-  SigConsts
-  SigVars
-  FieldVars
-  SigHierarchy
-  SigConstraints
-  Facts
-  InitDefn
-  NextDefn
-
-  */
-
 }

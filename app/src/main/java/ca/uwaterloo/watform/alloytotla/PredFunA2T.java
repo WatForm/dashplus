@@ -22,13 +22,15 @@ public class PredFunA2T extends NextA2T {
 
     tlaModel.addComment("Predicates and functions", verbose);
 
-    for (var p : alloyModel.allPredParas()) {
-      TlaExp body = translateSnippet(p.block);
-      List<TlaVar> args = mapBy(p.arguments, decl -> TlaVar(decl.getName()));
-      TlaDefn defn = new TlaDefn(new TlaDecl(p.getName(), args), body);
-      tlaModel.addDefn(defn);
-      log("predicate detected: " + p.getName());
-      log(p.toString() + "\n↓\n" + defn.toTLAPlusSnippetCore());
+    for (var p : alloyModel.allPreds()) 
+    {
+
+      // TlaExp body = translateSnippet(p.block);
+      // List<TlaVar> args = mapBy(p.arguments, decl -> TlaVar(decl.getName()));
+      // TlaDefn defn = new TlaDefn(new TlaDecl(tlaQname(p), args), body);
+      // tlaModel.addDefn(defn);
+      log("predicate detected: " + p.fullName());
+      // log(p.toString() + "\n↓\n" + defn.toTLAPlusSnippetCore());
     }
 
     for (var p : alloyModel.allFunParas()) {
