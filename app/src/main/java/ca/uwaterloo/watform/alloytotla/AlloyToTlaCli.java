@@ -74,8 +74,8 @@ public class AlloyToTlaCli implements Callable<Integer> {
     }
 
     Reporter.INSTANCE.reset();
-    Reporter.INSTANCE.popPath();
-    Reporter.INSTANCE.pushPath(absolutePath);
+    // Reporter.INSTANCE.popPath();
+    // Reporter.INSTANCE.pushPath(absolutePath);
 
     if (fullFileName.endsWith(".als")) {
       AlloyModel alloyModel = alloyParseToModel(fullFileName);

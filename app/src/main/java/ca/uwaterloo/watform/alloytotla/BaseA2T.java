@@ -6,7 +6,6 @@ import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;

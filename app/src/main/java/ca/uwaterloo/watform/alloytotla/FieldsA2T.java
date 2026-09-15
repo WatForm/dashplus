@@ -15,8 +15,7 @@ public class FieldsA2T extends FactsA2T {
     super(alloyModel, verbose, debug);
   }
 
-  public void addFieldVars(TlaModel tlaModel)
-  {
+  public void addFieldVars(TlaModel tlaModel) {
     for (Qname field : alloyModel.allFieldQnames()) {
       String f = tlaQname(field);
       tlaModel.addVar(TlaVar(f), TlaTypes.Set(TlaTypes.Seq(TlaTypes.Str())));
