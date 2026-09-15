@@ -3,6 +3,9 @@
 build/
 bin/
 
+*.tla
+*.cfg
+
 # Logging
 *.log
 *.log.*
