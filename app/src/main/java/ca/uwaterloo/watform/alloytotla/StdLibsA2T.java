@@ -5,8 +5,11 @@ import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class StdLibsA2T extends SignaturesA2T {
-  public StdLibsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-    super(alloyModel, verbose, debug);
+  
+  
+
+  public StdLibsA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, optimization, verbose, debug);
   }
 
   protected void addStdLibsTla(TlaModel tlaModel) {

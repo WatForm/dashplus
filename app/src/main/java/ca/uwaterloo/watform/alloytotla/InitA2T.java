@@ -12,8 +12,10 @@ import java.util.List;
 // TODO rewrite without CmdPara as first-class object to refer to commands
 
 public class InitA2T extends FieldsA2T {
-  public InitA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-    super(alloyModel, verbose, debug);
+  
+
+  public InitA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, optimization, verbose, debug);
   }
 
   protected void addInitDefn(TlaModel tlaModel) {

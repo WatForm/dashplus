@@ -6,6 +6,7 @@ import static ca.uwaterloo.watform.utils.CommonStrings.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.alloytotla.BaseA2T.Optimization;
 import ca.uwaterloo.watform.utils.*;
 import edu.mit.csail.sdg.alloy4.Err;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class AlloyToTlaCli implements Callable<Integer> {
 
     if (fullFileName.endsWith(".als")) {
       AlloyModel alloyModel = alloyParseToModel(fullFileName);
-      AlloyToTla translator = new AlloyToTla(alloyModel, cliConf.verbose, cliConf.debug);
+      AlloyToTla translator = new AlloyToTla(alloyModel, new Optimization(true),cliConf.verbose, cliConf.debug);
       var tlaModel = translator.translate(outputFileName, 0);
 
       Files.writeString(fileFromString(outputFileNamePrefix + ".tla"), tlaModel.moduleCode());

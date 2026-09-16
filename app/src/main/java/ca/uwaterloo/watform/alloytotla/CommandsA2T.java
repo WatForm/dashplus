@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandsA2T extends BoilerplateA2T {
-  public CommandsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-    super(alloyModel, verbose, debug);
+  
+  
+
+  public CommandsA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, optimization, verbose, debug);
   }
 
   public TlaExp placeholderScope(TlaModel tlaModel) {

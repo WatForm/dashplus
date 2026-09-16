@@ -10,8 +10,10 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class FieldsA2T extends FactsA2T {
 
-  public FieldsA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-    super(alloyModel, verbose, debug);
+  
+
+  public FieldsA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, optimization, verbose, debug);
   }
 
   public void addFieldVars(TlaModel tlaModel) {

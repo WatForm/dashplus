@@ -8,8 +8,10 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class AlloyToTla extends StdLibsA2T {
 
-  public AlloyToTla(AlloyModel alloyModel, boolean verbose, boolean debug) {
-    super(alloyModel, verbose, debug);
+  
+
+  public AlloyToTla(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, optimization, verbose, debug);
   }
 
   public static TlaModel getBlankModel(String moduleName) {
