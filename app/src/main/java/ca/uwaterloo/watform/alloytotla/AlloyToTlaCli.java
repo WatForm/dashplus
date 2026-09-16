@@ -84,7 +84,7 @@ public class AlloyToTlaCli implements Callable<Integer> {
     if (fullFileName.endsWith(".als")) {
       AlloyModel alloyModel = alloyParseToModel(fullFileName);
       AlloyToTla translator =
-          new AlloyToTla(alloyModel, new Optimization(true), cliConf.verbose, cliConf.debug);
+          new AlloyToTla(alloyModel, new Optimization(true, true, true, true), cliConf.verbose, cliConf.debug);
       var tlaModel = translator.translate(outputFileName, 0);
 
       Files.writeString(fileFromString(outputFileNamePrefix + ".tla"), tlaModel.moduleCode());

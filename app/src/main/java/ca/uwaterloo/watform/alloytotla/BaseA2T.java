@@ -26,7 +26,7 @@ public class BaseA2T {
   public final Logger l;
   public final AlloyToTlaExprVis translator;
 
-  static record Optimization(boolean nonExactSymmetry) {}
+  static record Optimization(boolean nonExactSymmetry, boolean unusedMacros, boolean unusedSigs, boolean oneSigMacroSubstitution) {}
 
   public final Optimization optimization;
 
