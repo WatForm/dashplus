@@ -12,7 +12,6 @@ import java.util.List;
 // TODO rewrite without CmdPara as first-class object to refer to commands
 
 public class InitA2T extends FieldsA2T {
-  
 
   public InitA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
     super(alloyModel, optimization, verbose, debug);
@@ -24,12 +23,11 @@ public class InitA2T extends FieldsA2T {
 
     List<TlaExp> exps = new ArrayList<>();
 
-    // exps.add(TlaAppl(SCOPE));
+    exps.add(TlaAppl(SCOPE));
     // exps.add(TlaAppl(SIG_SETS_UNPRIMED));
     // exps.add(TlaAppl(FIELD_TYPES));
     // exps.add(TlaAppl(ALL_SIG_CONSTRAINTS));
     // exps.add(TlaAppl(ALL_FACTS));
-    exps.add(placeholderScope(tlaModel));
 
     tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
   }

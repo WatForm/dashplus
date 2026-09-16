@@ -5,27 +5,59 @@ import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.tlaast.TlaExp;
+import ca.uwaterloo.watform.tlaast.TlaStdLibs;
+import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
+import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
+import ca.uwaterloo.watform.tlaast.tlanaryops.TlaTuple;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandsA2T extends BoilerplateA2T {
-  
-  
+import org.alloytools.alloy.dto.Cardinality;
 
-  public CommandsA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+public class CommandsA2T extends BoilerplateA2T {
+
+  public CommandsA2T(
+      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
     super(alloyModel, optimization, verbose, debug);
   }
 
-  public TlaExp placeholderScope(TlaModel tlaModel) {
+  
+
+  public void addCommand(TlaModel tlaModel, int cmdNum) {
+
+    var cmdExpr = alloyModel.getCmdFormula(cmdNum);
+    boolean isRun = alloyModel.isRunCmd(cmdNum);
+    var cmdScopeProfile = alloyModel.getCmdScopeProfile(cmdNum);
+
+    log("command number -> " + cmdNum);
+    log("isRun: " + isRun);
+    log("scopeProfile: " + cmdScopeProfile.toString());
+    log("cmd expr -> " + cmdExpr.toString());
+    l.info(dump());
 
     List<TlaExp> clauses = new ArrayList<>();
 
-    for (var s : alloyModel.allSigQnames()) clauses.add(TlaVar(tlaQname(s)).EQUALS(TlaNullSet()));
-    for (var f : alloyModel.allFieldQnames()) clauses.add(TlaVar(tlaQname(f)).EQUALS(TlaNullSet()));
+    clauses.add(translateSnippet(cmdExpr));
 
-    return repeatedAnd(clauses);
+    for(Qname sig : cmdScopeProfile.getExplicitExtendsSigs())
+    {
+      int n = cmdScopeProfile.getTopLevelScope(sig).getValue();
+      TlaExp right = TlaStdLibs.Cardinality(TlaVar(tlaQname(sig)));
+      if(cmdScopeProfile.getTopLevelScope(sig).isExact())
+        clauses.add(right.EQUALS(TlaIntLiteral(n)));
+      else
+        clauses.add(TlaLesserEq(right, TlaIntLiteral(n)));
+
+    }
+      
+
+    // tlaModel.addComment("command: " + cmdDecl.toString(), verbose);
+    // tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));
+    // tlaModel.addDefn(scopeConstraints(tlaModel, cmdDecl));
+    // tlaModel.addInvariant(TlaAppl(COMMAND));
   }
 
   /*

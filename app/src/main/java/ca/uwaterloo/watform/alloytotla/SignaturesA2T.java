@@ -12,11 +12,10 @@ import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.tlamodel.*;
 import java.util.*;
 
-public class SignaturesA2T extends PredFunA2T {
+public class SignaturesA2T extends ScopesA2T {
 
-  
-
-  public SignaturesA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+  public SignaturesA2T(
+      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
     super(alloyModel, optimization, verbose, debug);
   }
 

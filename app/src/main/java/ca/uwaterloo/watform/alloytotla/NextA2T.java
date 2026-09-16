@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NextA2T extends InitA2T {
-  
-  
 
   public NextA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
     super(alloyModel, optimization, verbose, debug);

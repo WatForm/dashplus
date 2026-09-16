@@ -8,9 +8,8 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class AlloyToTla extends StdLibsA2T {
 
-  
-
-  public AlloyToTla(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+  public AlloyToTla(
+      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
     super(alloyModel, optimization, verbose, debug);
   }
 
@@ -59,7 +58,8 @@ public class AlloyToTla extends StdLibsA2T {
     addFieldTypeConstraints(tlaModel);
     addSigConstraints(tlaModel);
     // addFacts(tlaModel);
-    // addCommand(tlaModel, cmdDecl);
+    addCommand(tlaModel, cmdNum);
+    addScopes(tlaModel, cmdNum);
     addInitDefn(tlaModel);
     addNextDefn(tlaModel);
   }
