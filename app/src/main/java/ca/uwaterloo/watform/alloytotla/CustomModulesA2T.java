@@ -3,12 +3,12 @@ package ca.uwaterloo.watform.alloytotla;
 import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
 import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
@@ -45,7 +45,6 @@ public class CustomModulesA2T extends CommandsA2T {
                 // exactness is assumed here
                 orderingMacros(tlaModel, prefix, sig, n);
               });
->>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
     }
   }
 
@@ -91,7 +90,6 @@ public class CustomModulesA2T extends CommandsA2T {
                 TlaNullSet(),
                 TlaIfThenElse(TlaAppl(prefix + "gt", Arrays.asList(E1(), E2())), E1(), E2()))));
 
-<<<<<<< HEAD
     protected void integerModule(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
         var scopeLimits = alloyModel.getScopeLimits(cmdDecl);
         int n = 4;
@@ -103,7 +101,6 @@ public class CustomModulesA2T extends CommandsA2T {
     }
 
     protected void orderingModule(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
-=======
     // min(S) = {x : \A y \in S: lte(x,y)}
     var min =
         TlaSetFilter(
@@ -117,7 +114,6 @@ public class CustomModulesA2T extends CommandsA2T {
     tlaModel.addDefn(TlaDefn(TlaDecl(prefix + "min", Arrays.asList(S())), min));
     tlaModel.addDefn(TlaDefn(TlaDecl(prefix + "max", Arrays.asList(S())), max));
   }
->>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
 
   private TlaExp _next(String sig, int n) {
     List<TlaExp> elements = new ArrayList<>();
@@ -141,7 +137,6 @@ public class CustomModulesA2T extends CommandsA2T {
     return TlaSet(elements);
   }
 
-<<<<<<< HEAD
             String prefix = p.asQname.map(qn -> qn.getName()).orElse("") + SPECIAL;
             String sig = p.sigRefs.get(0).getName();
             log("implmenting ordering module for sig " + sig);
@@ -331,7 +326,6 @@ elem2int(s,next,e):
     */
 
 
-=======
   private TlaExp _prevs(String sig, int n) {
     List<TlaExp> elements = new ArrayList<>();
     for (int i = 1; i < n; i++)
@@ -339,5 +333,4 @@ elem2int(s,next,e):
         elements.add(TlaTuple(Arrays.asList(sigAtomString(sig, i), sigAtomString(sig, j))));
     return TlaSet(elements);
   }
->>>>>>> 241b219 (Generalized build to create multiple tools from same repo.)
 }

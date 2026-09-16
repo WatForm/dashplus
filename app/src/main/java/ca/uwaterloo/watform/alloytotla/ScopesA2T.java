@@ -31,22 +31,6 @@ public class ScopesA2T extends PredFunA2T {
     return repeatedAnd(clauses);
   }
 
-  protected TlaStringLiteral sigAtomString(String signame, int n) {
-    return TlaStringLiteral(signame + DOLLAR + n);
-  }
-
-  protected TlaTuple sigAtom(String signame, int n) {
-    return TlaTuple(sigAtomString(signame, n));
-  }
-
-  protected TlaSet sigAtoms(String signame, int start, int end) {
-    List<TlaTuple> atoms = new ArrayList<>();
-    for (int i = start; i <= end; i++) {
-      atoms.add(sigAtom(signame, i));
-    }
-    return TlaSet(atoms);
-  }
-
   public void addScopes(TlaModel tlaModel, int cmdNum) {
     var cmdScopeProfile = alloyModel.getCmdScopeProfile(cmdNum);
 
