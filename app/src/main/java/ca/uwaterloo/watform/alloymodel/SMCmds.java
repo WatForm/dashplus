@@ -574,7 +574,7 @@ public class SMCmds extends SMConstraints {
 
   private void existsCmd(int n) {
     // only used by impl
-    assert (n < 0 || n >= this.cmdTable.keySet().size());
+    assert (n >= 0 || n < this.cmdTable.keySet().size());
     /*
     if (n < 0 || n >= this.cmdDataList.size())
         throw AlloyModelImplError.noCmdAtThatPosition(Integer.toString(n));
