@@ -298,19 +298,6 @@ public class SMPredFuns extends SMFields {
     return !funQnameMatches(qname).isEmpty();
   }
 
-  public List<AlloyDecl> predFunArgDecls(Qname qname) {
-    if (this.isPred(qname) || this.isFun(qname)) {
-      // KENG TODO: I'm just returning the first match here
-      // in both qname and in what matches qname
-      // there are two get(0)'s below
-      Qname chosen = this.predFunQnameMatches(qname).get(0);
-      return mapBy(this.predFunTable.get(chosen).get(0).argInfoList, a -> a.decl);
-    } else {
-      // arity visitor determines if this is an error
-      return emptyList();
-    }
-  }
-
   public List<Optional<Integer>> predFunArgArities(Qname qname) {
     if (this.isPred(qname) || this.isFun(qname)) {
       // KENG TODO: I'm just returning the first match here
@@ -337,11 +324,6 @@ public class SMPredFuns extends SMFields {
       // arity visitor determines if this is an error
       return Optional.empty();
     }
-  }
-
-  private void exists(Qname qname) {
-    if (predFunQnameMatches(qname).isEmpty())
-      throw AlloyModelImplError.predFunNotFound(qname.toString());
   }
 
   // KENG: I'm not sure what info you want about args and return
@@ -388,9 +370,35 @@ public class SMPredFuns extends SMFields {
   }
   */
 
+  private void exists(Qname qname) {
+    if (predFunQnameMatches(qname).isEmpty())
+      throw AlloyModelImplError.predFunNotFound(qname.toString());
+  }
+
   public Integer numArgs(Qname predFunName) {
     exists(predFunName);
     // KENG: this chooses the first one
     return this.predFunTable.get(predFunName).get(0).argInfoList.size();
+  }
+
+  public AlloyExpr predFunBody(Qname qname) {
+    exists(qname);
+    // KENG: this chooses the first one
+    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    return this.predFunTable.get(chosen).get(0).body;
+  }
+
+  public List<AlloyDecl> predFunArgDecls(Qname qname) {
+    exists(qname);
+    // KENG: this chooses the first one
+    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    return mapBy(this.predFunTable.get(chosen).get(0).argInfoList, a -> a.decl);
+  }
+
+  public AlloyExpr funResultExpr(Qname qname) {
+    isFun(qname);
+    // KENG: this chooses the first one
+    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    return this.predFunTable.get(chosen).get(0).resultInfo.get().expr;
   }
 }
