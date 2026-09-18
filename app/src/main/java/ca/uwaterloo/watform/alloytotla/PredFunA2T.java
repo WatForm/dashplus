@@ -26,11 +26,13 @@ public class PredFunA2T extends NextA2T {
 
     for (var p : alloyModel.allPreds()) {
 
-      // TlaExp body = translateSnippet(p.block);
       // List<TlaVar> args = mapBy(p.arguments, decl -> TlaVar(decl.getName()));
       // TlaDefn defn = new TlaDefn(new TlaDecl(tlaQname(p), args), body);
       // tlaModel.addDefn(defn);
       log("predicate detected: " + p.fullName());
+      log("predicate decls: " + alloyModel.predFunArgDecls(p));
+      log("predicate arity: " + alloyModel.predFunArgArities(p));
+      log("predicate body:" + alloyModel.predFunDataBody(p));
       // log(p.toString() + "\n↓\n" + defn.toTLAPlusSnippetCore());
     }
 

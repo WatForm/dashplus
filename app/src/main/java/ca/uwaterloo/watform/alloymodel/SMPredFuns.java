@@ -311,6 +311,12 @@ public class SMPredFuns extends SMFields {
     }
   }
 
+  public Optional<AlloyExpr> predFunDataBody(Qname qname) {
+    if (!this.isPred(qname) && !this.isFun(qname)) return Optional.empty();
+    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    return Optional.of(this.predFunTable.get(chosen).get(0).body);
+  }
+
   public List<Optional<Integer>> predFunArgArities(Qname qname) {
     if (this.isPred(qname) || this.isFun(qname)) {
       // KENG TODO: I'm just returning the first match here

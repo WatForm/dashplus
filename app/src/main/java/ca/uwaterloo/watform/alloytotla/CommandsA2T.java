@@ -8,14 +8,9 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaStdLibs;
-import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
-import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
-import ca.uwaterloo.watform.tlaast.tlanaryops.TlaTuple;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.alloytools.alloy.dto.Cardinality;
 
 public class CommandsA2T extends BoilerplateA2T {
 
@@ -23,8 +18,6 @@ public class CommandsA2T extends BoilerplateA2T {
       AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
     super(alloyModel, optimization, verbose, debug);
   }
-
-  
 
   public void addCommand(TlaModel tlaModel, int cmdNum) {
 
@@ -42,17 +35,13 @@ public class CommandsA2T extends BoilerplateA2T {
 
     clauses.add(translateSnippet(cmdExpr));
 
-    for(Qname sig : cmdScopeProfile.getExplicitExtendsSigs())
-    {
+    for (Qname sig : cmdScopeProfile.getExplicitExtendsSigs()) {
       int n = cmdScopeProfile.getTopLevelScope(sig).getValue();
       TlaExp right = TlaStdLibs.Cardinality(TlaVar(tlaQname(sig)));
-      if(cmdScopeProfile.getTopLevelScope(sig).isExact())
+      if (cmdScopeProfile.getTopLevelScope(sig).isExact())
         clauses.add(right.EQUALS(TlaIntLiteral(n)));
-      else
-        clauses.add(TlaLesserEq(right, TlaIntLiteral(n)));
-
+      else clauses.add(TlaLesserEq(right, TlaIntLiteral(n)));
     }
-      
 
     // tlaModel.addComment("command: " + cmdDecl.toString(), verbose);
     // tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));

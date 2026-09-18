@@ -11,7 +11,6 @@ import ca.uwaterloo.watform.tlaast.tlaliterals.TlaStringLiteral;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaSet;
 import ca.uwaterloo.watform.tlaast.tlanaryops.TlaTuple;
 import ca.uwaterloo.watform.utils.CustomLoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -26,7 +25,11 @@ public class BaseA2T {
   public final Logger l;
   public final AlloyToTlaExprVis translator;
 
-  static record Optimization(boolean nonExactSymmetry, boolean unusedMacros, boolean unusedSigs, boolean oneSigMacroSubstitution) {}
+  static record Optimization(
+      boolean nonExactSymmetry,
+      boolean unusedMacros,
+      boolean unusedSigs,
+      boolean oneSigMacroSubstitution) {}
 
   public final Optimization optimization;
 

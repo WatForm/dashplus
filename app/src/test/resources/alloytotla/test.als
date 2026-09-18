@@ -1,5 +1,8 @@
 sig A {}
 
+pred p[a : A]
+{
+	some a
+}
 
-
-run {} for 2 this/A
+run {} for 2 A
