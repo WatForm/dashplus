@@ -77,13 +77,24 @@ public class DpAlloyCli implements Callable<Integer> {
           System.out.println("Before resolve");
           am.debug(); // may not work before resolve if cmds have errors in them
           am.resolve();
-          am.debug();
           System.out.println("---");
           System.out.println("After resolve");
           am.debug();
           int num_cmds_in_file = am.getNumCmds();
+          // System.out.println("cmdIdx: " + cmdIdx.toString());
           if (cmdIdx < num_cmds_in_file) {
-            AlloyInterface.executeCommand(am, cmdIdx);
+            Solution soln = AlloyInterface.executeCommand(am, cmdIdx);
+            /* for trying out multiple solutions
+            Integer count = 0;
+            if (soln.isSat) {
+              do {
+                count += 1;
+                //soln.instance.get().debug();
+                soln = soln.next();
+              } while (soln != null);
+            }
+            System.out.println("NUM SOLNS: " + count.toString());
+            */
           } else if (num_cmds_in_file == 0) {
             // if there are no commands in the file
             // and there was no cmd arg
@@ -91,7 +102,7 @@ public class DpAlloyCli implements Callable<Integer> {
           } else {
             // execute all commands if no value for cmd or cmd # out of range
             for (int i = CliUtils.firstCmdIdx; i < num_cmds_in_file; i++) {
-              AlloyInterface.executeCommand(am, i);
+              Solution soln = AlloyInterface.executeCommand(am, i);
             }
           }
         }
