@@ -798,20 +798,19 @@ public class SMResolve extends SMCmds {
       Integer declsArity = 0;
       List<AlloyDecl> newDecls = new ArrayList<AlloyDecl>();
       // these decls can never be an empty list
-      for (AlloyDecl d : comprehensionExpr.decls) {
-        for (AlloyDecl dd : d.expand()) {
-          ResolveInfo dResult = this.visit(dd.expr);
-          // System.out.println(d.expr.getClass().getName());
-          // System.out.println(dResult.exp.getClass().getName());
-          if (!dResult.arity.equals(ONE_ARITY)) {
-            throw AlloyModelError.mustBeUnary(dd.pos, dd.toString());
-          }
-          if (dd.mul.isPresent() && !dd.mul.get().equals(AlloyQtEnum.ONE)) {
-            throw AlloyModelError.mulOfDeclMustBeOne(dd.pos, dd.toString());
-          }
-          declsArity += 1;
-          newDecls.add(dd.rebuild(AlloyQtEnum.ONE, dResult.exp));
-          localPush(nameSpaceQname(SMResolve.this.nameSpace, dd.getName()), dResult.arity);
+      for (AlloyDecl ds : comprehensionExpr.decls) {
+        ResolveInfo dResult = this.visit(ds.expr);
+
+        if (!dResult.arity.equals(ONE_ARITY)) {
+          throw AlloyModelError.mustBeUnary(ds.pos, ds.toString());
+        }
+        if (ds.mul.isPresent() && !ds.mul.get().equals(AlloyQtEnum.ONE)) {
+          throw AlloyModelError.mulOfDeclMustBeOne(ds.pos, ds.toString());
+        }
+        declsArity += ds.qnames.size();
+        newDecls.add(ds.rebuild(AlloyQtEnum.ONE, dResult.exp));
+        for (AlloyDecl d : ds.expand()) {
+          localPush(nameSpaceQname(SMResolve.this.nameSpace, d.getName()), dResult.arity);
         }
       }
 
@@ -925,20 +924,22 @@ public class SMResolve extends SMCmds {
 
       List<AlloyDecl> newDecls = new ArrayList<AlloyDecl>();
       for (AlloyDecl ds : quantificationExpr.decls) {
+        // x,y:expr
+        ResolveInfo dResult = this.visit(ds.expr);
+        if (!dResult.arity.equals(ONE_ARITY)) { // !(dResult.arity.equals(UNKNOWN_ARITY) || )) {
+          // higher order warning
+          Reporter.INSTANCE.addWarning(
+              new WarningUser(
+                  ds.pos,
+                  ONE_ARITY.toString()
+                      + "Declaration is of arity "
+                      + dResult.arity.toString()
+                      + ", which is greater than 1: "
+                      + ds.toString()));
+        }
+        // x,y: resolvedExpr
+        newDecls.add(((AlloyDecl) ds.rebuild(dResult.exp)));
         for (AlloyDecl d : ds.expand()) {
-          ResolveInfo dResult = this.visit(d.expr);
-          if (!dResult.arity.equals(ONE_ARITY)) { // !(dResult.arity.equals(UNKNOWN_ARITY) || )) {
-            // higher order warning
-            Reporter.INSTANCE.addWarning(
-                new WarningUser(
-                    d.pos,
-                    ONE_ARITY.toString()
-                        + "Declaration is of arity "
-                        + dResult.arity.toString()
-                        + ", which is greater than 1: "
-                        + d.toString()));
-          }
-          newDecls.add(((AlloyDecl) d.rebuild(dResult.exp)));
           localPush(nameSpaceQname(SMResolve.this.nameSpace, d.getName()), dResult.arity);
         }
       }
