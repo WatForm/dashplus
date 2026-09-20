@@ -32,7 +32,7 @@ public class PredFunA2T extends NextA2T {
       log("predicate detected: " + p.fullName());
       log("predicate decls: " + alloyModel.predFunArgDecls(p));
       log("predicate arity: " + alloyModel.predFunArgArities(p));
-      log("predicate body:" + alloyModel.predFunDataBody(p));
+      log("predicate body:" + alloyModel.predFunBody(p));
       // log(p.toString() + "\n↓\n" + defn.toTLAPlusSnippetCore());
     }
 
