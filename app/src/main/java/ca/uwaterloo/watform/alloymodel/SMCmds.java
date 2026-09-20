@@ -234,6 +234,7 @@ public class SMCmds extends SMConstraints {
       return this.assertTable.get(cmdData.assertQname.get());
     } else if (cmdData.predFunQname.isPresent()) {
       Qname predFunQname = cmdData.predFunQname.get();
+      // I think resolve has already checked that predFunQname exists
       List<AlloyDecl> argDecls = this.predFunArgDecls(predFunQname);
       // p[a,b] or f[a,b]
       AlloyExpr predFunCall =
