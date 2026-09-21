@@ -1,11 +1,3 @@
-/*
-    Because Solution is a class (and A4Solution is a class inside our Solution class, only one solution can exist at any time, thus
-    getting a list of Solutions is not an option.  We can iterate
-    soln.next() and writeXML right away but we cannot get a list of
-    satisfying solutions by iterating soln.next() because it will just
-    be a list of the same objects.
-*/
-
 package ca.uwaterloo.watform.alloyinterface;
 
 import static ca.uwaterloo.watform.alloyinterface.Instance.*;
@@ -93,18 +85,13 @@ public class AlloyInterface {
         dpOutput("Executing cmd " + String.valueOf(cmdnum) + ": " + cmd.toString());
         // turn off kodkod stuff going to screen
         System.setProperty("org.slf4j.simpleLogger.log.kodkod.engine.config", "warn");
+        A4Options options = new A4Options();
+        options.symmetry = 20;
         A4Solution ans =
-            TranslateAlloyToKodkod.execute_command(
-                rep, alloy.getAllReachableSigs(), cmd, new A4Options());
+            TranslateAlloyToKodkod.execute_command(rep, alloy.getAllReachableSigs(), cmd, options);
         dpOutput("Solution is : " + (ans.satisfiable() ? "SAT" : "UNSAT"));
         if (ans.satisfiable()) {
-          StringWriter sw = new StringWriter();
-          PrintWriter pw = new PrintWriter(sw);
-          ans.writeXML(pw, alloy.getAllFunc(), Collections.emptyMap());
-          pw.flush();
-          String xml = sw.toString();
-          // System.out.println(xml);
-          return SatSolution(new Instance(xml));
+          return SatSolution(alloy, ans);
         } else {
           return UnsatSolution();
         }

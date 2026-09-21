@@ -243,8 +243,8 @@ public class Instance {
     return this.seqInt;
   }
 
-  public void debugInstance() {
-    System.out.println("Instance:");
+  public void debug() {
+    System.out.println("\nInstance:");
     System.out.println("Min int: " + this.minInt);
     System.out.println("Max int: " + this.maxInt);
     System.out.println("Seq int: " + this.seqInt);
