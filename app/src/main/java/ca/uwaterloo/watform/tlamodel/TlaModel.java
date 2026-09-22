@@ -6,13 +6,22 @@ import ca.uwaterloo.watform.tlaast.SnowCatTypes.SCType;
 public class TlaModel {
   // top-level class to handle modules and associated configs
   public final String name;
-  private TlaModule module;
-  private TlaConfig cfg;
+  public final TlaModule module;
+  public final TlaConfig cfg;
 
   public TlaModel(String name, TlaAppl init, TlaAppl next) {
     this.name = name;
     this.module = new TlaModule();
     this.cfg = new TlaConfig(init, next);
+  }
+
+  public TlaAppl getInit()
+  {
+    return this.cfg.init;
+  }
+  public TlaAppl getNext()
+  {
+    return this.cfg.next;
   }
 
   public String moduleCode() {
@@ -31,8 +40,8 @@ public class TlaModel {
     this.module.variables.add(new TlaModule.TlaVarDecl(v, t));
   }
 
-  public void addConst(TlaConst c, TlaExp value) {
-    this.module.constants.add(c);
+  public void addConst(TlaConst c, SCType t, TlaExp value) {
+    this.module.constants.add(new TlaModule.TlaConstDecl(c,t));
     this.cfg.constants.add(c.EQUALS(value));
   }
 

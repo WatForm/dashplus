@@ -11,7 +11,7 @@ public class TlaModule {
 
   public record TlaConstDecl(TlaConst var, SCType type) {}
 
-  public final List<TlaConst> constants;
+  public final List<TlaConstDecl> constants;
   public final List<TlaVarDecl> variables;
   public final List<TlaStdLibs> extended_libraries;
   public final List<ASTNode> body;
@@ -65,6 +65,18 @@ public class TlaModule {
     return sb.toString();
   }
 
+  private static String constantString(List<TlaConstDecl> constDecls) {
+    StringBuilder sb = new StringBuilder(TlaStrings.CONSTANTS + TlaStrings.NEWLINE);
+    for (int i = 0; i < constDecls.size(); i++) {
+      var v = constDecls.get(i);
+      sb.append(v.type.annotation() + TlaStrings.NEWLINE);
+      sb.append(v.var.toTLAPlusSnippetCore());
+      if (i != constDecls.size() - 1) sb.append(",");
+      sb.append(TlaStrings.NEWLINE);
+    }
+    return sb.toString();
+  }
+
   public String bodyString() {
     StringBuilder sb = new StringBuilder();
     for (ASTNode f : this.body) {
@@ -77,7 +89,7 @@ public class TlaModule {
   private String codeBody() {
     return TlaModule.simpleBuilder(TlaStrings.EXTENDS, this.extended_libraries)
         + "\n"
-        + TlaModule.simpleBuilder(TlaStrings.CONSTANTS, this.constants)
+        + TlaModule.constantString(this.constants)
         + "\n"
         + TlaModule.variableString(this.variables)
         + "\n"
