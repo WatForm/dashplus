@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast;
 
 import ca.uwaterloo.watform.tlaast.tlaunops.TlaPrime;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaVar extends TlaSimpleExp {
 
@@ -21,5 +22,10 @@ public class TlaVar extends TlaSimpleExp {
 
   public TlaPrime PRIME() {
     return new TlaPrime(this);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

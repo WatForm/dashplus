@@ -3,6 +3,7 @@ package ca.uwaterloo.watform.tlaast.tlaunops;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaFuncDomain extends TlaUnaryOp {
 
@@ -22,5 +23,10 @@ public class TlaFuncDomain extends TlaUnaryOp {
         + TlaStrings.SPACE
         + this.getTLASnippetOfChild(this.operand)
         + TlaStrings.PRIME;
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

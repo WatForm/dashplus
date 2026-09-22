@@ -11,6 +11,7 @@ import ca.uwaterloo.watform.tlaast.tlabinops.TlaNotInSet;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaOr;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaSubsetEq;
 import ca.uwaterloo.watform.tlaast.tlabinops.TlaUnionSet;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public abstract class TlaExp extends ASTNode {
       return TlaStrings.BRACKET_OPEN + toTLAPlusSnippetCore() + TlaStrings.BRACKET_CLOSE;
     return toTLAPlusSnippetCore();
   }
+
+  public abstract <T> T accept(TlaExpVis<T> visitor);
 
   @Override
   public String toString() {
@@ -40,6 +43,11 @@ public abstract class TlaExp extends ASTNode {
   public void pp(PrintContext pCtx) {
     // I added this here so my change that makes pp a mandatory
     // method can build successfully. - Jack
+  }
+
+  public boolean equals(TlaExp exp)
+  {
+    return this.toTLAPlusSnippetCore().equals(exp.toTLAPlusSnippetCore());
   }
 
   // convenience in writing

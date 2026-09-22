@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast.tlaunops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaNot extends TlaUnaryOp {
 
@@ -17,5 +18,10 @@ public class TlaNot extends TlaUnaryOp {
   @Override
   public String toTLAPlusSnippetCore() {
     return TlaStrings.NOT + this.getTLASnippetOfChild(this.operand);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

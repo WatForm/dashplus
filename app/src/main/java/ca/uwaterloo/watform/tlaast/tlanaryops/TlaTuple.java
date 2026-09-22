@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.tlaast.tlanaryops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
+
 import java.util.List;
 
 public class TlaTuple extends TlaNaryOp {
@@ -18,5 +20,10 @@ public class TlaTuple extends TlaNaryOp {
         TlaStrings.COMMA,
         children,
         TlaOperator.PrecedenceGroup.SAFE);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

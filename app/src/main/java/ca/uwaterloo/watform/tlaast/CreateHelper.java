@@ -36,21 +36,19 @@ public class CreateHelper {
   }
 
   public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
-    if (operands.size() == 0) return TlaTrue();
-    return TlaAndList(operands);
+    return foldLeft(operands, CreateHelper::TlaAnd, TlaTrue());
   }
 
   public static TlaExp repeatedAnd(TlaExp... operands) {
-    return TlaAndList(Arrays.asList(operands));
-  }
-
-  public static TlaExp repeatedOr(TlaExp... operands) {
-    return TlaOrList(Arrays.asList(operands));
+    return repeatedAnd(Arrays.asList(operands));
   }
 
   public static TlaExp repeatedOr(List<? extends TlaExp> operands) {
-    if (operands.size() == 0) return TlaFalse();
-    return TlaOrList(operands);
+    return foldLeft(operands, CreateHelper::TlaAnd, TlaFalse());
+  }
+
+  public static TlaExp repeatedOr(TlaExp... operands) {
+    return repeatedOr(Arrays.asList(operands));
   }
 
   // generic
@@ -327,13 +325,6 @@ public class CreateHelper {
   	return new Tla(children);
   }
   */
-  public static TlaAndList TlaAndList(List<? extends TlaExp> children) {
-    return new TlaAndList(children);
-  }
-
-  public static TlaOrList TlaOrList(List<? extends TlaExp> children) {
-    return new TlaOrList(children);
-  }
 
   public static TlaSeq TlaSeq(List<? extends TlaExp> children) {
     return new TlaSeq(children);

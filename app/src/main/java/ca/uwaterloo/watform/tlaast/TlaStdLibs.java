@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
+
 public class TlaStdLibs extends TlaExp { // enums used for extensibility
 
   /*
@@ -70,5 +72,10 @@ public class TlaStdLibs extends TlaExp { // enums used for extensibility
 
   public static TlaAppl SubSeq(TlaExp sequence, TlaExp start, TlaExp end) {
     return new TlaAppl(TlaStrings.SUBSEQ, Arrays.asList(sequence, start, end));
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

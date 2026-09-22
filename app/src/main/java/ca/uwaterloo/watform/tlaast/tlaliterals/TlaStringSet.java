@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.tlaast.tlaliterals;
 
 import ca.uwaterloo.watform.tlaast.TlaSimpleExp;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaStringSet extends TlaSimpleExp {
 
@@ -14,5 +15,10 @@ public class TlaStringSet extends TlaSimpleExp {
 
   public TlaStringSet() {
     super(TlaStrings.STRING_SET);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

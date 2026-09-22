@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast.tlaunops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaUnionUnary extends TlaUnaryOp {
 
@@ -18,5 +19,10 @@ public class TlaUnionUnary extends TlaUnaryOp {
   @Override
   public String toTLAPlusSnippetCore() {
     return TlaStrings.SET_UNION_UNARY + TlaStrings.SPACE + this.getTLASnippetOfChild(this.operand);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

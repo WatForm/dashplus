@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.tlaast.tlaquantops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
+
 import java.util.List;
 
 public class TlaExists extends TlaQuantOp {
@@ -20,5 +22,10 @@ public class TlaExists extends TlaQuantOp {
   @Override
   public String toTLAPlusSnippetCore() {
     return TlaQuantOp.predicateSnippetCore(this, TlaStrings.EXISTS);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

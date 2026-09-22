@@ -1,6 +1,8 @@
 package ca.uwaterloo.watform.tlaast;
 
 import ca.uwaterloo.watform.tlaast.SnowCatTypes.SCType;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
+
 import java.util.*;
 
 public class TlaDefn extends TlaExp {
@@ -53,5 +55,10 @@ public class TlaDefn extends TlaExp {
         + TlaStrings.DEFINITION
         + TlaStrings.SPACE
         + this.body.toTLAPlusSnippet(false);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

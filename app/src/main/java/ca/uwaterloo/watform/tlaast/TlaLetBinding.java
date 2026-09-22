@@ -5,6 +5,8 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
+
 public class TlaLetBinding extends TlaOperator {
 
   /*
@@ -37,5 +39,10 @@ public class TlaLetBinding extends TlaOperator {
         + TlaStrings.IN
         + TlaStrings.SPACE
         + this.getTLASnippetOfChild(expression);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

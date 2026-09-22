@@ -6,6 +6,8 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.strCommaList;
 import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
+
 import java.util.List;
 
 public class TlaSetFilter extends TlaQuantOp {
@@ -41,5 +43,10 @@ public class TlaSetFilter extends TlaQuantOp {
         + TlaStrings.SPACE
         + this.getTLASnippetOfChild(this.expression)
         + TlaStrings.SET_END;
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }
