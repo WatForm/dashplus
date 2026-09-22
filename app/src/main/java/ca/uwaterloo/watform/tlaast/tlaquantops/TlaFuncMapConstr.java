@@ -7,7 +7,6 @@ import ca.uwaterloo.watform.tlaast.TlaExp;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaStrings;
 import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
-
 import java.util.List;
 
 public class TlaFuncMapConstr extends TlaQuantOp {

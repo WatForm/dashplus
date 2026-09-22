@@ -2,10 +2,9 @@ package ca.uwaterloo.watform.tlaast;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
 
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 import java.util.ArrayList;
 import java.util.List;
-
-import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaLetBinding extends TlaOperator {
 

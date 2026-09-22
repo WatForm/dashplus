@@ -1,8 +1,6 @@
-sig X {}
-
-
-sig A {
-	f : X
+sig A 
+{
+	f : set A
 }
 
 run {}

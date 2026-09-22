@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.tlaast.tlaquantops;
 
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
-
 import java.util.List;
 
 public class TlaForAll extends TlaQuantOp {

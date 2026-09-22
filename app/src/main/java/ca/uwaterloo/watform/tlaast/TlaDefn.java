@@ -2,7 +2,6 @@ package ca.uwaterloo.watform.tlaast;
 
 import ca.uwaterloo.watform.tlaast.SnowCatTypes.SCType;
 import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
-
 import java.util.*;
 
 public class TlaDefn extends TlaExp {

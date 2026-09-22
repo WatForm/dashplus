@@ -45,8 +45,7 @@ public abstract class TlaExp extends ASTNode {
     // method can build successfully. - Jack
   }
 
-  public boolean equals(TlaExp exp)
-  {
+  public boolean equals(TlaExp exp) {
     return this.toTLAPlusSnippetCore().equals(exp.toTLAPlusSnippetCore());
   }
 

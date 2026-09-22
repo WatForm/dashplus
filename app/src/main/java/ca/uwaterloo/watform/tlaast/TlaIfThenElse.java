@@ -1,9 +1,8 @@
 package ca.uwaterloo.watform.tlaast;
 
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 import java.util.Arrays;
 import java.util.List;
-
-import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaIfThenElse extends TlaOperator {
 
