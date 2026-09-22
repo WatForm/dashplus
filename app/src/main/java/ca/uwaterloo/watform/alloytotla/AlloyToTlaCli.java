@@ -30,17 +30,7 @@ import picocli.CommandLine.Mixin;
       "@|cyan /_____/\\__,_/____/_/_/_/   /_/\\__,_/___/____/    |@",
       ""
     },
-    footer = {
-      "",
-      "@|bold,underline USAGE MODES|@",
-      "",
-      // Dash -> Alloy
-      "  @|bold 1) dashplus f.dsh -alloy=< traces | tcmc | electrum >|@",
-      "              @|bold < -cmd | -cmd=n | -write  < -v > < -d > |@",
-      "     (translate dash to alloy, execute cmd(s) or -write .als file in same dir)",
-      "     @|italic DEFAULT:|@ dashplus f.dsh means dashplus f.dsh -alloy=traces ",
-      "",
-    },
+    footer = {},
     // Optional: Customize section headings
     optionListHeading = "%n@|bold Options:|@%n",
     parameterListHeading = "%n@|bold Parameters:|@%n")
@@ -64,67 +54,35 @@ public class AlloyToTlaCli implements Callable<Integer> {
     Integer cmdIdx =
         (cmd && CliUtils.cmdIdxUseful(cliConf.cmdIdx)) ? cliConf.cmdIdx : CliUtils.noCmdValue;
 
-    Path path = Paths.get(fileName);
-    Path absolutePath = path.toAbsolutePath();
-    String fullFileName = absolutePath.toString();
-    String outputFileNamePrefix = fullFileName.substring(0, fullFileName.lastIndexOf("."));
-    String outputFileName =
-        outputFileNamePrefix.substring(
-            outputFileNamePrefix.lastIndexOf("/") + 1, outputFileNamePrefix.length());
+    Optimization optimization =
+        new Optimization(
+            cliConf.optimizeSyntactic,
+            cliConf.optimizeSemantic,
+            cliConf.optimizeScopeExact,
+            cliConf.optimizeOneSig);
+
+    Path absolutePath = Paths.get(fileName).toAbsolutePath();
+
+    String t = absolutePath.getFileName().toString();
+    String outputFileName = t.substring(0, t.lastIndexOf("."));
 
     if (!Files.exists(absolutePath)) {
-      dpOutput("File does not exist: " + fullFileName);
+      dpOutput("File does not exist: " + absolutePath.toString());
       return;
     }
 
     Reporter.INSTANCE.reset();
-    // Reporter.INSTANCE.popPath();
-    // Reporter.INSTANCE.pushPath(absolutePath);
 
-    if (fullFileName.endsWith(".als")) {
-      AlloyModel alloyModel = alloyParseToModel(fullFileName);
+    if (absolutePath.endsWith(".als")) {
+      AlloyModel alloyModel = alloyParseToModel(absolutePath.toString());
       alloyModel.resolve();
       AlloyToTla translator =
-          new AlloyToTla(
-              alloyModel,
-              new Optimization(true, true, true, true, true),
-              cliConf.verbose,
-              cliConf.debug);
+          new AlloyToTla(alloyModel, optimization, cliConf.verbose, cliConf.debug);
       var tlaModel = translator.translate(outputFileName, 0);
 
-      Files.writeString(fileFromString(outputFileNamePrefix + ".tla"), tlaModel.moduleCode());
-      Files.writeString(fileFromString(outputFileNamePrefix + ".cfg"), tlaModel.configCode());
+      Files.writeString(fileFromString(outputFileName + ".tla"), tlaModel.moduleCode());
+      Files.writeString(fileFromString(outputFileName + ".cfg"), tlaModel.configCode());
     }
-
-    // if (fullFileName.endsWith(".dsh")) {
-    //   dpOutput("Input: " + fullFileName);
-    //   DashModel dm = (DashModel) dashParseToModel(fullFileName);
-    //   // dm.resolve();
-    //   if (dm.getNumCmds() == 0 && cmd) {
-    //     dpOutputBold(
-    //         "Warning: no command in input .dsh file -> using default scopes for run {}");
-    //   }
-    //   AlloyModel am = new DashToAlloy(dm, d2aOptions).translate();
-    //   if (writeOnly) {
-    //     String alloyFileName = outputFileNamePrefix + "-" + d2aOptions + ".als";
-    //     Files.writeString(fileFromString(alloyFileName), am.toString());
-    //     dpOutput("Output: " + alloyFileName);
-    //   } else {
-    //     int num_cmds_in_file = dm.getNumCmds();
-    //     if (cmdIdx < num_cmds_in_file) {
-    //       AlloyInterface.executeCommand(dm, cmdIdx);
-    //     } else if (num_cmds_in_file == 0) {
-    //       // if there are no commands in the file
-    //       // and there was no cmd arg
-    //       Solution soln = AlloyInterface.checkModelSatisfiability(dm);
-    //     } else {
-    //       // execute all commands if no value for cmd or cmd # out of range
-    //       for (int i = CliUtils.firstCmdIdx; i < num_cmds_in_file; i++) {
-    //         AlloyInterface.executeCommand(dm, i);
-    //       }
-    //     }
-    //   }
-    // }
   }
 
   @Override

@@ -4,6 +4,7 @@ import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlaast.TlaComment;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaexpvisitor.TlaApplCollector;
+import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class TreeShaker {
     var collector = new TlaApplCollector();
     usedAppls.addAll(collector.visit(tlaModel.getInit()));
     usedAppls.addAll(collector.visit(tlaModel.getNext()));
+    if (usedAppls.size() != 2) throw new ImplementationError("unexpected problem in tree-shaking");
     for (var prop : tlaModel.cfg.properties) usedAppls.addAll(collector.visit(prop));
     for (var inv : tlaModel.cfg.invariants) usedAppls.addAll(collector.visit(inv));
     for (var c : tlaModel.cfg.properties) usedAppls.addAll(collector.visit(c));
@@ -49,7 +51,7 @@ public class TreeShaker {
       for (var defn : tlaModel.module.getFormulaDefinitions()) {
         for (var a : usedAppls) {
           if (defn.decl.name.equals(a.name)) {
-            if (!answer.contains(defn) && toAddDefns.contains(defn)) toAddDefns.add(defn);
+            if (!answer.contains(defn) && !toAddDefns.contains(defn)) toAddDefns.add(defn);
           }
         }
       }

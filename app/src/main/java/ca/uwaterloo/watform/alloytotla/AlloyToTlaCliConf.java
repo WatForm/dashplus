@@ -30,4 +30,24 @@ public class AlloyToTlaCliConf {
       names = {"-d", "--debug", "-debug"},
       description = "Print stack traces from exceptions.")
   public boolean debug = false;
+
+  @Option(
+      names = {"-osx", "--optimize-syntactic"},
+      description = "Syntactic Tree Shaking")
+  public boolean optimizeSyntactic = false;
+
+  @Option(
+      names = {"-osm", "--optimize-semantic"},
+      description = "Semantic Tree Shaking")
+  public boolean optimizeSemantic = false;
+
+  @Option(
+      names = {"-oos", "--optimize-one-sig"},
+      description = "Semantic Tree Shaking")
+  public boolean optimizeOneSig = false;
+
+  @Option(
+      names = {"-ose", "--optimize-scope-exact"},
+      description = "Symmetry Breaking for Exact Scopes")
+  public boolean optimizeScopeExact = false;
 }

@@ -5,7 +5,7 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 
 public class PostProcessing {
   public static void main(TlaModel tlaModel, Optimization optimization) {
-    if (optimization.unusedMacros()) {
+    if (optimization.syntacticTreeShaking()) {
       removeUnusedMacros(tlaModel);
     }
     if (optimization.semanticTreeShaking()) {

@@ -43,6 +43,9 @@ public class CommandsA2T extends BoilerplateA2T {
       else clauses.add(TlaLesserEq(right, TlaIntLiteral(n)));
     }
 
+    tlaModel.addDefn(TlaDefn(COMMAND, repeatedAnd(clauses)));
+    tlaModel.addInvariant(TlaAppl(COMMAND));
+
     // tlaModel.addComment("command: " + cmdDecl.toString(), verbose);
     // tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));
     // tlaModel.addDefn(scopeConstraints(tlaModel, cmdDecl));
