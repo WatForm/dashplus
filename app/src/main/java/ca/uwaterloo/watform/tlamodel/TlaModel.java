@@ -15,12 +15,11 @@ public class TlaModel {
     this.cfg = new TlaConfig(init, next);
   }
 
-  public TlaAppl getInit()
-  {
+  public TlaAppl getInit() {
     return this.cfg.init;
   }
-  public TlaAppl getNext()
-  {
+
+  public TlaAppl getNext() {
     return this.cfg.next;
   }
 
@@ -41,7 +40,7 @@ public class TlaModel {
   }
 
   public void addConst(TlaConst c, SCType t, TlaExp value) {
-    this.module.constants.add(new TlaModule.TlaConstDecl(c,t));
+    this.module.constants.add(new TlaModule.TlaConstDecl(c, t));
     this.cfg.constants.add(c.EQUALS(value));
   }
 
@@ -55,5 +54,9 @@ public class TlaModel {
 
   public void addComment(String c, boolean verbose) {
     if (verbose) this.module.body.add(new TlaComment(c));
+  }
+
+  public void addComment(TlaComment c) {
+    this.module.body.add(c);
   }
 }

@@ -23,7 +23,6 @@ public interface TlaExpVis<T> {
 
   // Abstract ones that need implementation in extensions
 
-
   public default T visit(TlaBinOp binOpExp) {
     return visit((TlaOperator) binOpExp);
   }
@@ -39,7 +38,6 @@ public interface TlaExpVis<T> {
   public default T visit(TlaNaryOp NaryOpExp) {
     return visit((TlaOperator) NaryOpExp);
   }
-
 
   // default implementations
 

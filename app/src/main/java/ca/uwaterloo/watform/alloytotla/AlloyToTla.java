@@ -5,6 +5,7 @@ import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
+import ca.uwaterloo.watform.tlamodel.TreeShaker;
 
 public class AlloyToTla extends StdLibsA2T {
 
@@ -39,6 +40,8 @@ public class AlloyToTla extends StdLibsA2T {
 
     var answer = new TlaModel(baseName, new TlaAppl(INIT), new TlaAppl(NEXT));
     translate(answer, cmdNum);
+
+    if (optimization.syntacticTreeShaking()) return TreeShaker.removeUnusedDefns(answer);
 
     return answer;
   }

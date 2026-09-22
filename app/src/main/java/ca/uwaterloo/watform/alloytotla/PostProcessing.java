@@ -8,7 +8,7 @@ public class PostProcessing {
     if (optimization.unusedMacros()) {
       removeUnusedMacros(tlaModel);
     }
-    if (optimization.unusedSigs()) {
+    if (optimization.semanticTreeShaking()) {
       removeUnusedVars(tlaModel);
     }
   }

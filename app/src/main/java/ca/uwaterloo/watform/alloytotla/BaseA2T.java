@@ -28,7 +28,8 @@ public class BaseA2T {
   static record Optimization(
       boolean nonExactSymmetry,
       boolean unusedMacros,
-      boolean unusedSigs,
+      boolean syntacticTreeShaking,
+      boolean semanticTreeShaking,
       boolean oneSigMacroSubstitution) {}
 
   public final Optimization optimization;

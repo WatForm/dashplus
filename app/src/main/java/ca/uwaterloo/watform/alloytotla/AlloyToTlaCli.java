@@ -86,7 +86,10 @@ public class AlloyToTlaCli implements Callable<Integer> {
       alloyModel.resolve();
       AlloyToTla translator =
           new AlloyToTla(
-              alloyModel, new Optimization(true, true, true, true), cliConf.verbose, cliConf.debug);
+              alloyModel,
+              new Optimization(true, true, true, true, true),
+              cliConf.verbose,
+              cliConf.debug);
       var tlaModel = translator.translate(outputFileName, 0);
 
       Files.writeString(fileFromString(outputFileNamePrefix + ".tla"), tlaModel.moduleCode());
