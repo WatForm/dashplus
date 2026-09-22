@@ -978,6 +978,15 @@ public class SMResolve extends SMCmds {
         Optional<Integer> x = localLookup(unknownQname(varExpr.getName()));
         if (x.isPresent()) return new ResolveInfo(x, varExpr);
 
+        if (((AlloyQnameExpr) varExpr).kind == Kind.FIELD) {
+          // already fully resolved
+          // varExpr has the qname of the form "nameSpace/sigParentName/fieldName"
+          // as in "this/A/f"
+          // must exist
+          // make it [this,A,f] so we can lookup its arity
+          Qname qname = fieldExprQname((AlloyQnameExpr) varExpr);
+          return new ResolveInfo(SMResolve.this.fieldArity(qname), varExpr);
+        }
         // this qname may have UNKNOWN_NAMESPACE in it and should only be used for lookups
         Qname qname = unknownQname(varExpr.getName());
         // KENG TODO: sigs don't have priority over fields in disambiguation so order of ite

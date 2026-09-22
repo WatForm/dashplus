@@ -66,6 +66,12 @@ public class Qname {
     return new Qname(nameSpace, null, name);
   }
 
+  public static Qname fieldExprQname(AlloyQnameExpr expr) {
+    assert (expr.kind == Kind.FIELD); // means it is already resolved
+    return new Qname(
+        expr.vars.get(0).getName(), expr.vars.get(1).getName(), expr.vars.get(2).getName());
+  }
+
   public static Qname fieldQname(String nameSpace, String sigParent, String name) {
     if (name.contains(AlloyStrings.SLASH)) {
       throw AlloyModelImplError.qnameNameCannotHaveSlash(name);

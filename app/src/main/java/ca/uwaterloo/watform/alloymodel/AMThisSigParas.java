@@ -174,10 +174,10 @@ public class AMThisSigParas extends AMThisEnumParas {
       }
     } else if (e instanceof AlloyQnameExpr) {
       // we know it is a field from this sig b/c of test
-      // replace any field (that is not with @ on the outside) with this_var.((resolvedSigParent)
-      // <: f)
+      // replace any field (that is not with @ on the outside) with
+      // this_var.((resolvedSigParent) <: f)
       Qname fieldQname = fieldQname(nameSpace, sigParent.name, ((AlloyQnameExpr) e).getName());
-      // AlloyExpr sig = sigParent.toAlloyExpr(e.pos, Kind.SIG);
+      // (resolvedSigParent) <: f
       AlloyExpr field = fieldQname.toAlloyExpr(e.pos, Kind.FIELD);
       return AlloyJoin(AlloyVar(THIS_VAR), field);
     } else {
