@@ -5,6 +5,8 @@
 package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloymodel.AlloyModelError.*;
+import static ca.uwaterloo.watform.alloymodel.Qname.*;
+import static ca.uwaterloo.watform.alloymodel.SigData.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.var.AlloyQnameExpr;
@@ -27,8 +29,19 @@ public class AMThisModuleParas extends AMThisImportParas {
   protected void addPara(AlloyModulePara modulePara) {
     // no need to set default multiplicities
     // can't be more than one modulePara
+
+    // this will only be called at the top-level
+    // o/w imports directly deal with the modulePara in the import and do substitutions
+    // and thereafter ignore moduleParas in the imported file
     if (this.modules.size() == 1) {
-      throw moduleMustBeUnique(this.modules.get(0).pos, this.modules.get(0).pos);
+      throw moduleMustBeUnique(modulePara.pos, modulePara.pos);
+    }
+    if (!modulePara.moduleArgs.isEmpty()) {
+      // declare args as sigs
+      for (AlloyModulePara.AlloyModuleArg modArg : modulePara.moduleArgs) {
+        this.createSig(
+            modulePara.pos, thisQname(modArg.qname.getName()), topLevelSigData(modulePara.pos));
+      }
     }
     this.modules.add(modulePara);
   }

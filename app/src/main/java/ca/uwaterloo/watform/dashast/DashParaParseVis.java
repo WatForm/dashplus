@@ -8,6 +8,11 @@ import ca.uwaterloo.watform.alloyast.paragraph.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class DashParaParseVis extends AlloyParaParseVis {
+
+  public DashParaParseVis(String fullFileName) {
+    super(fullFileName);
+  }
+
   @Override
   public DashState visitDashParagraph(DashParser.DashParagraphContext ctx) {
     return (DashState) this.visit(ctx.stateRoot());

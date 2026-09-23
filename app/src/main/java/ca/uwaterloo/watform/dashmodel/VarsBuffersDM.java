@@ -14,8 +14,8 @@ import java.util.List;
 
 public class VarsBuffersDM extends BuffersDM {
 
-  protected VarsBuffersDM() {
-    super();
+  protected VarsBuffersDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   protected VarsBuffersDM(DashFile d) {

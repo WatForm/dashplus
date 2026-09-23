@@ -1,3 +1,16 @@
+/*
+  CLI
+  - calls AlloyModel = alloyParseToModel(fullFileName)
+    - calls AlloyFile = alloyParse(fullFileName)
+      - AlloyParaParseVis on an import
+        - calls alloyParseUtilFile (no .als added)
+          - calls alloyParseFromJar(with "models/"+importName+".als")
+        - calls alloyParseFromJar (has .als added)
+          - calls alloyParseFromCharStream(CharStream, FFN)
+        - calls alloyParse (.als and fullFileName determined from parent)
+          - calls alloyParseFromCharStream(CharStream, FFN)
+*/
+
 package ca.uwaterloo.watform.parser;
 
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
@@ -17,19 +30,23 @@ import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.utils.*;
 import java.io.*;
-import java.nio.file.Files;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.tree.*;
 
 public class AlloyParser {
   // currently unused
+  /*
   public static List<Path> recurGetFiles(Path dir, String filter) {
     List<Path> filePaths = new ArrayList<>();
     try (Stream<Path> stream = Files.walk(dir)) {
@@ -45,7 +62,7 @@ public class AlloyParser {
     }
     return filePaths;
   }
-
+  */
   /**
    * This method will catch AlloyCtorError and store them in Reporter
    *
@@ -53,8 +70,9 @@ public class AlloyParser {
    * @return
    */
   public static AlloyFile alloyParse(String fullFileName) {
-    // expects .als extension is in fullFileName
-    System.out.println("in alloyParse: " + fullFileName);
+    // could be a top-level call or a call to parse a user-defined import
+    // expects .als extension is already in fullFileName
+    System.out.println("Reading: " + fullFileName);
     Path filePath = Paths.get(fullFileName);
     if (!fullFileName.endsWith(".als")) {
       throw new Reporter.ErrorUser("File extension must be .als, given: " + fullFileName);
@@ -63,47 +81,63 @@ public class AlloyParser {
     try {
       input = CharStreams.fromPath(filePath);
     } catch (IOException ioException) {
-      throw new Reporter.ErrorUser("Input file cannot be found. ");
+      throw new Reporter.ErrorUser("Input file cannot be found: " + fullFileName);
     }
     return alloyParseFromCharStream(input, fullFileName);
   }
 
-  public static AlloyFile parseUtilFile(Pos pos, String utilFileName) {
-    // System.out.println("Imported: " + utilFileName);
-    if (!utilFileName.startsWith("util/")) {
-      throw ParserError.notUtilFile(pos, utilFileName);
-    } else {
-      // TODO: that string should not be hardcoded
-      // this is where the util files are store in the jar
-      String fileName = "models/" + utilFileName;
-      // System.out.println(fileName);
-      InputStream in = Parser.class.getClassLoader().getResourceAsStream(fileName);
-      // InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
-      // otherwise the lines below throws a null pointer exception
-      try {
-        CharStream input = CharStreams.fromStream(in);
-        // creation of an AlloyFile checks that there is only one modulePara
-        // in the AlloyFile
-        AlloyFile importedAlloyFile = alloyParseFromCharStream(input, fileName);
-        // System.out.println("Imported: " + fileName);
-        // System.out.println(importedAlloyFile);
-        return importedAlloyFile;
-      } catch (IOException e) {
-        throw ParserError.utilFileNotFound(pos, fileName);
-        // can continue parsing although there will be errors
-      } catch (NullPointerException e) {
-        // if in is null
-        throw ParserError.utilFileNotFound(pos, fileName);
-      }
+  public static AlloyFile alloyParseUtilFile(Pos pos, String utilName) {
+    return alloyParseFromJar(pos, "models/" + utilName + ".als");
+  }
+
+  public static AlloyFile alloyParseFromJar(Pos pos, String fileName) {
+    // this includes utils and other examples in the Alloy jar
+    // System.out.println("Importing: " + fileName);
+    // util file will never import a user-defined file
+    // if (!utilFileName.startsWith("util/")) {
+    //  throw ParserError.notUtilFile(pos, fileName);
+    // } else {
+    // TODO: that string should not be hardcoded
+    // this is where the util files are store in the jar
+    // String fileName = "models/" + fFileName + ".als";
+    // System.out.println(fileName);
+    InputStream in = Parser.class.getClassLoader().getResourceAsStream(fileName);
+    // InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
+    // otherwise the lines below throws a null pointer exception
+    if (in == null) {
+      throw ParserError.utilFileNotFound(pos, fileName);
+    }
+    try {
+      ReadableByteChannel channel = Channels.newChannel(in);
+      CharStream input =
+          CharStreams.fromChannel(
+              channel, StandardCharsets.UTF_8, 4096, CodingErrorAction.REPLACE, fileName, -1);
+
+      // CharStream input = CharStreams.fromStream(in, StandardCharsets.UTF_8, fileName);
+      // creation of an AlloyFile checks that there is only one modulePara
+      // in the AlloyFile
+      AlloyFile importedAlloyFile = alloyParseFromCharStream(input, fileName);
+      // System.out.println("Imported: " + fileName);
+      // System.out.println(importedAlloyFile);
+      return importedAlloyFile;
+    } catch (IOException e) {
+      throw ParserError.utilFileNotFound(pos, fileName);
+      // can continue parsing although there will be errors
+    } catch (NullPointerException e) {
+      // if in is null
+      throw ParserError.utilFileNotFound(pos, fileName);
     }
   }
 
-  // this is used for importing util files
+  // }
+
+  // this is used by alloyParse and alloyParseUtilFile
   public static AlloyFile alloyParseFromCharStream(CharStream input, String fullFileName) {
     BailLexer lexer = new BailLexer(input);
     if (fullFileName.endsWith(".dsh")) {
       lexer.dashMode = true;
     }
+    assert (fullFileName.endsWith(".dsh") || fullFileName.endsWith(".als"));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     BailParser parser = new BailParser(tokens);
     // Remove default console error listener
@@ -130,36 +164,27 @@ public class AlloyParser {
           }
         });
 
-    // if (fullFileName.endsWith(".als")) {
     ParseTree antlrAST = parser.alloyFile();
     Reporter.INSTANCE.exitIfHasErrors();
     AlloyFileParseVis afpv = new AlloyFileParseVis(fullFileName);
     AlloyFile alloyFile = null;
     alloyFile = afpv.visit(antlrAST);
-    alloyFile.filename = fullFileName;
+    // alloyFile.fullFilename = fullFileName;
     return alloyFile;
-    // } else {
-    /*
-    ParseTree antlrAST = parser.dashFile();
-    DashFileParseVis dfpv = new DashFileParseVis(fullFileName);
-    DashFile dashFile = null;
-    dashFile = dfpv.visit(antlrAST);
-    dashFile.filename = fullFileName;
-    return dashFile;
-    */
-    // }
   }
 
-  public static AlloyFile parseImport(Pos pos, String fileName) {
+  /*
+  put into visitImportPara
+  public static AlloyFile alloyParseImport(Pos pos, String importFullFileName) {
     AlloyFile importedAlloyFile;
-    if (fileName.startsWith("util/")) {
-      importedAlloyFile = parseUtilFile(pos, fileName + ".als");
+    if (importName.startsWith("util/")) {
+      importedAlloyFile = alloyParseUtilFile(pos, importName);
     } else {
-      String fullFileName = Paths.get(fileName).toAbsolutePath().toString();
-      importedAlloyFile = alloyParse(fullFileName + ".als");
+      importedAlloyFile = alloyParse(importFullFileName);
     }
     return importedAlloyFile;
   }
+  */
 
   // Use this function for parsing both dash and alloy files
   public static AlloyModel alloyParseToModel(String fullFileName) {
@@ -262,7 +287,9 @@ public class AlloyParser {
   public static AlloyPara parsePara(String s) {
     BailParser parser = stringParser(s);
     ParseTree antlrAST = parser.paragraph();
-    AlloyParaParseVis afpv = new AlloyParaParseVis();
+    // current directory is parent of an import
+    // unlikely to work well to create a user-defined import here
+    AlloyParaParseVis afpv = new AlloyParaParseVis(null);
     AlloyPara para = null;
     try {
       para = afpv.visitParagraph((DashParser.ParagraphContext) antlrAST);

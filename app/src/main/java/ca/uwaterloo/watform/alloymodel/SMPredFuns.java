@@ -10,7 +10,6 @@ import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.alloymodel.ResolveInfo.*;
 // import static ca.uwaterloo.watform.parser.AlloyParser.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
-import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
@@ -40,6 +39,8 @@ public class SMPredFuns extends SMFields {
       this.predFunTable
           .computeIfAbsent(predName, k -> new ArrayList())
           .add(PredData(p, argDeclList, body));
+      // System.out.println("at creation: " + predName.toString());
+      // System.out.println(this.predFunTable.get(predName));
     }
   }
 
@@ -50,6 +51,8 @@ public class SMPredFuns extends SMFields {
       this.predFunTable
           .computeIfAbsent(funName, k -> new ArrayList())
           .add(FunData(p, argDeclList, resultExpr, body));
+      // System.out.println("at creation: " + funName.toString());
+      // System.out.println(this.predFunTable.get(funName));
     }
   }
 
@@ -101,14 +104,14 @@ public class SMPredFuns extends SMFields {
   private String limitedNameSpace;
   private Set<Qname> resolved = new HashSet<>();
   private Set<Qname> visiting = new HashSet<>();
-  private TriFunction<AlloyExpr, String, Optional<String>, ResolveInfo> resolve1;
+  private QuadFunction<AlloyExpr, String, Optional<String>, List<AlloyDecl>, ResolveInfo> resolve1;
   private TriFunction<AlloyExpr, String, List<AlloyDecl>, ResolveInfo> resolve2;
 
   // have to put them in def-use order
   private CollectExprVis<Qname> getDepsVis = new CollectExprVis<>(this::collectUsedPredFuns);
 
   protected void resolveSMPredFuns(
-      TriFunction<AlloyExpr, String, Optional<String>, ResolveInfo> resolve1,
+      QuadFunction<AlloyExpr, String, Optional<String>, List<AlloyDecl>, ResolveInfo> resolve1,
       TriFunction<AlloyExpr, String, List<AlloyDecl>, ResolveInfo> resolve2) {
     this.resolved = new HashSet<>();
     this.visiting = new HashSet<>();
@@ -121,8 +124,12 @@ public class SMPredFuns extends SMFields {
     // do this loop first to make sure there is no overloading left
     for (Qname qname : this.predFunTable.keySet()) {
       // list of items for each qname
-
-      if (this.predFunTable.get(qname).size() != 1) {
+      // for now allow multiple to exist if they have different number of args:
+      if (this.predFunTable.get(qname).size()
+          != new HashSet<>(mapBy(this.predFunTable.get(qname), x -> x.argInfoList.size())).size()) {
+        // System.out.println("overloading: " + qname.toString());
+        // System.out.println(this.predFunTable.get(qname));
+        // System.out.println(this.predFunTable.get(qname).size());
         PredFunData first = this.predFunTable.get(qname).get(0);
         throw AlloyModelError.overloadingPredFunNotSupported(first.pos, qname.toString());
       }
@@ -142,83 +149,100 @@ public class SMPredFuns extends SMFields {
 
     visiting.add(qname);
 
-    PredFunData predFunData = this.predFunTable.get(qname).get(0);
-    // filter by this nameSpace
-    this.limitedNameSpace = qname.nameSpace;
-    for (Qname dep : getDepsVis.visit(predFunData.body)) {
-      // recursive call: depth first
-      this.resolvePredFunData(dep);
-    }
+    // may be multiple associated with same qname
+    for (PredFunData predFunData : this.predFunTable.get(qname)) {
 
-    // now to the resolution of the predFunData
-    // determine the arites and set multiplicities
-    // within args/returntype/body
-
-    // 1) resolve the args by themselves and record their arities
-    // these work with pointers
-    for (PredFunData.ArgInfo argInfo : predFunData.argInfoList) {
-      // have to check the whole decl
-      // because "a: seq X" is ("a", SEQ, "X")
-      // i.e. the mul of "SEQ" is in the decl not the expr
-      // of the decl
-      ResolveInfo argResolveInfo = resolve1.apply(argInfo.decl, qname.nameSpace, Optional.empty());
-      if (argResolveInfo.arity.isPresent()) {
-        // put it back in the table
-        argInfo.decl = (AlloyDecl) argResolveInfo.exp;
-        argInfo.arity = argResolveInfo.arity;
-      } else {
-        throw AlloyModelError.unknownArity(argResolveInfo.exp.pos, argResolveInfo.exp.toString());
+      // filter by this nameSpace
+      this.limitedNameSpace = qname.nameSpace;
+      for (Qname dep : getDepsVis.visit(predFunData.body)) {
+        // recursive call: depth first
+        this.resolvePredFunData(dep);
       }
-    }
-    // System.out.println(this.predFunTable.get(qname));
 
-    // 2) resolve the body of the pred/fun defn
-    // args should have arity now
-    // System.out.println(mapBy(predFunData.argInfoList, x -> x.decl));
-    // System.out.println(qname);
-    // System.out.println(predFunData.body);
-    ResolveInfo bodyResolveInfo =
-        resolve2.apply(
-            predFunData.body,
-            qname.nameSpace,
-            // push the resolved args into the local context
-            mapBy(predFunData.argInfoList, x -> x.decl));
-    if (bodyResolveInfo.arity.isPresent()) {
-      predFunData.body = bodyResolveInfo.exp;
-    } else {
-      throw AlloyModelError.unknownArity(bodyResolveInfo.exp.pos, bodyResolveInfo.exp.toString());
-    }
+      // now to the resolution of the predFunData
+      // determine the arites and set multiplicities
+      // within args/returntype/body
 
-    // 3) resolve the returnType by itself and record its arity
-    Optional<PredFunData.ResultInfo> resultInfo = predFunData.resultInfo;
-
-    if (resultInfo.isPresent()) {
-      ResolveInfo resultResolveInfo =
-          resolve1.apply(resultInfo.get().expr, qname.nameSpace, Optional.empty());
-      // put it back in the table
-      if (resultResolveInfo.arity.isPresent()) {
-        predFunData.resultInfo =
-            Optional.of(new PredFunData.ResultInfo(resultResolveInfo.exp, resultResolveInfo.arity));
-        // 4a) check body arity matches return type arity
-        if (bodyResolveInfo.arity.get() != resultResolveInfo.arity.get()) {
-          throw AlloyModelError.arityMismatchReturnType(
-              predFunData.body.pos, resultResolveInfo.arity.get(), bodyResolveInfo.arity.get());
+      // 1) resolve the args by themselves and record their arities
+      // these work with pointers
+      for (PredFunData.ArgInfo argInfo : predFunData.argInfoList) {
+        // have to check the whole decl
+        // because "a: seq X" is ("a", SEQ, "X")
+        // i.e. the mul of "SEQ" is in the decl not the expr
+        // of the decl
+        ResolveInfo argResolveInfo =
+            resolve1.apply(argInfo.decl, qname.nameSpace, Optional.empty(), emptyList());
+        if (argResolveInfo.arity.isPresent()) {
+          // put it back in the table
+          argInfo.decl = (AlloyDecl) argResolveInfo.exp;
+          argInfo.arity = argResolveInfo.arity;
+        } else {
+          throw AlloyModelError.unknownArity(argResolveInfo.exp.pos, argResolveInfo.exp.toString());
         }
+      }
+      // System.out.println(this.predFunTable.get(qname));
+
+      // 2) resolve the body of the pred/fun defn
+      // args should have arity now
+      // System.out.println(mapBy(predFunData.argInfoList, x -> x.decl));
+      // System.out.println(qname);
+      // System.out.println(predFunData.body);
+      // System.out.println("resolving: " + predFunData.toString());
+      ResolveInfo bodyResolveInfo =
+          resolve2.apply(
+              predFunData.body,
+              qname.nameSpace,
+              // push the resolved args into the local context
+              mapBy(predFunData.argInfoList, x -> x.decl));
+      if (bodyResolveInfo.arity.isPresent()) {
+        predFunData.body = bodyResolveInfo.exp;
       } else {
-        throw AlloyModelError.unknownArity(
-            resultResolveInfo.exp.pos, resultResolveInfo.exp.toString());
+        throw AlloyModelError.unknownArity(bodyResolveInfo.exp.pos, bodyResolveInfo.exp.toString());
       }
 
-    } else {
-      // it is a predicate
-      // 4b) check body arity matches return type arity
-      if (bodyResolveInfo.arity.get() != 1) {
-        throw AlloyModelError.arityMismatchReturnType(
-            predFunData.body.pos, 1, bodyResolveInfo.arity.get());
+      // 3) resolve the returnType by itself and record its arity
+      Optional<PredFunData.ResultInfo> resultInfo = predFunData.resultInfo;
+
+      if (resultInfo.isPresent()) {
+        // System.out.println(qname);
+        // System.out.println(resultInfo.get().expr);
+        ResolveInfo resultResolveInfo =
+            resolve1.apply(
+                resultInfo.get().expr,
+                qname.nameSpace,
+                Optional.empty(),
+                mapBy(predFunData.argInfoList, x -> x.decl));
+        // put it back in the table
+        if (resultResolveInfo.arity.isPresent()) {
+          predFunData.resultInfo =
+              Optional.of(
+                  new PredFunData.ResultInfo(resultResolveInfo.exp, resultResolveInfo.arity));
+          // 4a) check body arity matches return type arity
+          if (bodyResolveInfo.arity.get() != resultResolveInfo.arity.get()) {
+            System.out.println("body: " + predFunData.body.toString());
+            System.out.println("result: " + resultResolveInfo.exp.toString());
+            throw AlloyModelError.arityMismatchReturnType(
+                predFunData.body.pos,
+                qname.toString(),
+                resultResolveInfo.arity.get(),
+                bodyResolveInfo.arity.get());
+          }
+        } else {
+          throw AlloyModelError.unknownArity(
+              resultResolveInfo.exp.pos, resultResolveInfo.exp.toString());
+        }
+
+      } else {
+        // it is a predicate
+        // 4b) check body arity matches return type arity
+        if (bodyResolveInfo.arity.get() != 1) {
+          throw AlloyModelError.arityMismatchReturnType(
+              predFunData.body.pos, qname.toString(), 1, bodyResolveInfo.arity.get());
+        }
       }
+
+      predFunData.isResolved = true;
     }
-
-    predFunData.isResolved = true;
     this.visiting.remove(qname);
     this.resolved.add(qname);
   }
@@ -274,20 +298,7 @@ public class SMPredFuns extends SMFields {
     return !funQnameMatches(qname).isEmpty();
   }
 
-  protected List<AlloyDecl> predFunArgDecls(Qname qname) {
-    if (this.isPred(qname) || this.isFun(qname)) {
-      // KENG TODO: I'm just returning the first match here
-      // in both qname and in what matches qname
-      // there are two get(0)'s below
-      Qname chosen = this.predFunQnameMatches(qname).get(0);
-      return mapBy(this.predFunTable.get(chosen).get(0).argInfoList, a -> a.decl);
-    } else {
-      // arity visitor determines if this is an error
-      return emptyList();
-    }
-  }
-
-  protected List<Optional<Integer>> predFunArgArities(Qname qname) {
+  public List<Optional<Integer>> predFunArgArities(Qname qname) {
     if (this.isPred(qname) || this.isFun(qname)) {
       // KENG TODO: I'm just returning the first match here
       // in both qname and in what matches qname
@@ -300,7 +311,7 @@ public class SMPredFuns extends SMFields {
     }
   }
 
-  protected Optional<Integer> predFunReturnArity(Qname qname) {
+  public Optional<Integer> predFunReturnArity(Qname qname) {
     // KENG TODO: I'm just returning the first match here
     // in both qname and in what matches qname
     // there are two get(0)'s below
@@ -313,11 +324,6 @@ public class SMPredFuns extends SMFields {
       // arity visitor determines if this is an error
       return Optional.empty();
     }
-  }
-
-  private void exists(Qname qname) {
-    if (predFunQnameMatches(qname).isEmpty())
-      throw AlloyModelImplError.predFunNotFound(qname.toString());
   }
 
   // KENG: I'm not sure what info you want about args and return
@@ -362,11 +368,37 @@ public class SMPredFuns extends SMFields {
           throw AlloyModelImplError.tryingToAccessNonExistentPredFun(predFunName);
       }
   }
-
-  public Integer numArgs(Qname predFunName) {
-      existsPredFun(predFunName);
-      return this.predFunTable.get(predFunName).argInfoList.size();
-  }
   */
 
+  private void exists(Qname qname) {
+    if (predFunQnameMatches(qname).isEmpty())
+      throw AlloyModelImplError.predFunNotFound(qname.toString());
+  }
+
+  public Integer numArgs(Qname predFunName) {
+    exists(predFunName);
+    // KENG: this chooses the first one
+    return this.predFunTable.get(predFunName).get(0).argInfoList.size();
+  }
+
+  public AlloyExpr predFunBody(Qname qname) {
+    exists(qname);
+    // KENG: this chooses the first one
+    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    return this.predFunTable.get(chosen).get(0).body;
+  }
+
+  public List<AlloyDecl> predFunArgDecls(Qname qname) {
+    exists(qname);
+    // KENG: this chooses the first one
+    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    return mapBy(this.predFunTable.get(chosen).get(0).argInfoList, a -> a.decl);
+  }
+
+  public AlloyExpr funResultExpr(Qname qname) {
+    isFun(qname);
+    // KENG: this chooses the first one
+    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    return this.predFunTable.get(chosen).get(0).resultInfo.get().expr;
+  }
 }

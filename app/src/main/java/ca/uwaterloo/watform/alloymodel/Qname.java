@@ -66,6 +66,16 @@ public class Qname {
     return new Qname(nameSpace, null, name);
   }
 
+  public static Qname fieldExprQname(AlloyQnameExpr expr) {
+    assert (expr.kind == Kind.FIELD); // means it is already resolved
+    // varExpr has the qname of the form "nameSpace/sigParentName/fieldName"
+    // as in "this/A/f"
+    // we need to tease this apart to be a Qname again
+    // as in [this, A, f]
+    return new Qname(
+        expr.vars.get(0).getName(), expr.vars.get(1).getName(), expr.vars.get(2).getName());
+  }
+
   public static Qname fieldQname(String nameSpace, String sigParent, String name) {
     if (name.contains(AlloyStrings.SLASH)) {
       throw AlloyModelImplError.qnameNameCannotHaveSlash(name);
@@ -169,7 +179,7 @@ public class Qname {
       return false;
     }
     return Objects.equals(nameSpace, other.nameSpace)
-        && Objects.equals(sigParent, other.sigParent)
+        && Objects.equals(sigParent, other.sigParent) // could both be null
         && Objects.equals(name, other.name);
   }
 

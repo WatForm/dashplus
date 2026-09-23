@@ -46,9 +46,9 @@ public class PredFunData {
     }
   }
 
-  protected Pos pos;
-  protected List<ArgInfo> argInfoList = emptyList();
-  protected Optional<ResultInfo> resultInfo;
+  public Pos pos;
+  public List<ArgInfo> argInfoList = emptyList();
+  public Optional<ResultInfo> resultInfo;
   public AlloyExpr body;
   public Boolean isResolved = false;
 

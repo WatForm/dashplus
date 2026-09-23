@@ -8,6 +8,14 @@ import ca.uwaterloo.watform.alloyast.paragraph.module.AlloyModulePara.AlloyModul
 import ca.uwaterloo.watform.utils.Pos;
 
 public final class AlloyModuleArgParseVis extends DashBaseVisitor<AlloyModuleArg> {
+  // public final String fullFileName;
+
+  /*
+  public AlloyModuleArgParseVis(String fullFileName) {
+    this.fullFileName = fullFileName;
+  }
+  */
+
   @Override
   public AlloyModuleArg visitModuleArg(DashParser.ModuleArgContext ctx) {
     return new AlloyModuleArg(

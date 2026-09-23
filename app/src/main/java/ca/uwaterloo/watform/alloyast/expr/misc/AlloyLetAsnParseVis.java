@@ -7,6 +7,14 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyLetAsnParseVis extends DashBaseVisitor<AlloyLetAsn> {
+  // public final String fullFileName;
+
+  /*
+  public AlloyLetAsnParseVis(String fullFileName) {
+    this.fullFileName = fullFileName;
+  }
+  */
+
   @Override
   public AlloyLetAsn visitAssignment(DashParser.AssignmentContext ctx) {
     AlloyExprParseVis exprParseVis = new AlloyExprParseVis();

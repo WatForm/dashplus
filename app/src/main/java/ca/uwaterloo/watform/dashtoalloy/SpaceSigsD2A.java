@@ -183,9 +183,9 @@ public class SpaceSigsD2A extends BaseD2A {
           this.am.addSig(this.dsl.bufferIndexSig(this.dm.bufferIndex(bfqn)));
 
         // import util/buffer[BufIdx, elem]
-        this.am.addImport(
+        this.am.addUtilImport(
             // util/buffer
-            List.of(D2AStrings.utilName, D2AStrings.utilBufferName),
+            D2AStrings.utilBufferName,
             // [BufIdx, elem]
             List.of(
                 this.dsl.bufferIndexVar(this.dm.bufferIndex(bfqn)),

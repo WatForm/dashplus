@@ -5,46 +5,56 @@ import java.util.*;
 public class SigScope {
 
   // optional b/c imports set exactly without a value
-  Optional<Integer> max;
-  Boolean isExact;
+  Optional<Integer> value;
+  Optional<Boolean> isExact;
 
-  private SigScope(int max, boolean isExact) {
-    this.max = Optional.of(max);
-    this.isExact = isExact;
+  private SigScope(int value, boolean isExact) {
+    this.value = Optional.of(value);
+    this.isExact = Optional.of(isExact);
   }
 
   private SigScope(boolean isExact) {
-    this.max = Optional.empty();
-    this.isExact = isExact;
+    this.value = Optional.empty();
+    this.isExact = Optional.of(isExact);
+  }
+
+  private SigScope() {
+    this.value = Optional.empty();
+    this.isExact = Optional.empty();
   }
 
   public boolean isExact() {
-    return this.isExact;
+    return this.isExact.isPresent() && this.isExact.get();
   }
 
   public boolean hasValue() {
-    return this.max.isPresent();
+    return this.value.isPresent();
   }
 
-  public Integer max() {
-    return this.max.get();
+  public Integer getValue() {
+    return this.value.get();
   }
 
-  public static SigScope ExactScope(int max) {
-    return new SigScope(max, true);
+  public static SigScope ExactScope(int value) {
+    return new SigScope(value, true);
   }
 
   public static SigScope ExactNoValue() {
     return new SigScope(true);
   }
 
-  public static SigScope NonExactScope(int max) {
-    return new SigScope(max, false);
+  public static SigScope NonExactScope(int value) {
+    return new SigScope(value, false);
+  }
+
+  public static SigScope NoScope() {
+    return new SigScope();
   }
 
   @Override
   public String toString() {
-    return (isExact ? "e" : "") + (max.isPresent() ? max.get() : "?");
+    if (!isExact.isPresent()) return "No Scope";
+    return (isExact.get() ? "e" : "") + (value.isPresent() ? value.get() : "?");
   }
 
   @Override
@@ -58,12 +68,12 @@ public class SigScope {
     }
 
     SigScope other = (SigScope) obj;
-    return isExact == other.isExact && Objects.equals(max, other.max);
+    return isExact == other.isExact && Objects.equals(value, other.value);
   }
 
   @Override
   public int hashCode() {
     // written by ChatGPT
-    return Objects.hash(max, isExact);
+    return Objects.hash(value, isExact);
   }
 }

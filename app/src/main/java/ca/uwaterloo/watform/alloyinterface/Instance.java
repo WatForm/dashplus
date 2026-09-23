@@ -25,6 +25,7 @@ public class Instance {
   private Map<Qname, FieldValue> fields = new HashMap<>();
   private Integer maxInt;
   private Integer minInt;
+  private Integer seqInt;
 
   private static String alloyName(String name) {
     if (name.contains("$")) {
@@ -60,18 +61,24 @@ public class Instance {
 
       NodeList instance = doc.getElementsByTagName("instance");
       // expect only one instance
+
       Integer bitwidth = Integer.parseInt(((Element) instance.item(0)).getAttribute("bitwidth"));
       this.minInt = -(1 << (bitwidth - 1)); // 2^(bitWidth-1)
       this.maxInt = (1 << (bitwidth - 1)) - 1; // 2^(bitWidth-1) - 1
+
+      // a positive number (greater than 0?)
+      this.seqInt = Integer.parseInt(((Element) instance.item(0)).getAttribute("maxseq"));
+
       NodeList sigs = doc.getElementsByTagName("sig");
       Qname qname;
       for (int i = 0; i < sigs.getLength(); i++) {
         Element sig = (Element) sigs.item(i);
         String label = sig.getAttribute("label");
-        if (label.equals("Int") || (label.equals("univ"))) {
-          // TODO: not sure how to handle this
-          // possibly just ignore?  what about univ?
+        if (label.equals("Int") || label.equals("seq/Int")) {
+          // ignore
         } else {
+          // this handles univ/String also
+          // univ has no parentID
           Integer id = Integer.parseInt(sig.getAttribute("ID"));
           Integer parentId;
           if (sig.getAttribute("parentID") != "") {
@@ -152,7 +159,7 @@ public class Instance {
         this.fields.put(qname, new FieldValue(tupleSet));
       }
 
-      this.debugInstance();
+      // this.debugInstance();
       instanceChecks();
     } catch (Exception e) {
       // sends it up to main
@@ -168,18 +175,27 @@ public class Instance {
     this.minInt = minInt;
   }
 
-  public Set<List<String>> getAllValues(Qname qname) {
+  public Set<String> getAllSigValues(Qname qname) {
+
+    if (this.sigs.keySet().contains(qname)) {
+      Set<String> ret = this.sigs.get(qname).values();
+
+      // recursion ends when no children
+      for (Qname k : this.sigs.get(qname).extendsChildren()) {
+        ret.addAll(getAllSigValues(k));
+      }
+      return ret;
+    } else {
+      // can't just return emptySet() b/c a found qname could be empty
+      throw ImplementationError.shouldNotReach();
+    }
+  }
+
+  public Set<List<String>> getAllFieldValues(Qname qname) {
     // qname could be a sig or a field
     // if a sig, collect
     if (qname.isFieldQname() && this.fields.keySet().contains(qname)) {
       return this.fields.get(qname).values();
-    } else if (this.sigs.keySet().contains(qname)) {
-      Set<List<String>> ret = this.fields.get(qname).values();
-      // recursion ends when no children
-      for (Qname k : this.sigs.get(qname).extendsChildren()) {
-        ret.addAll(getAllValues(k));
-      }
-      return ret;
     } else {
       // can't just return emptySet() b/c a found qname could be empty
       throw ImplementationError.shouldNotReach();
@@ -207,17 +223,40 @@ public class Instance {
   // we might add types later?
   public record FieldValue(Set<List<String>> values) {}
 
-  public void debugInstance() {
-    System.out.println("Instance:");
-    System.out.println("Min int " + this.minInt);
-    System.out.println("Max int " + this.maxInt);
-    System.out.println("Sigs");
+  public Set<Qname> allSigQnames() {
+    return this.sigs.keySet();
+  }
+
+  public Set<Qname> allFieldQnames() {
+    return this.fields.keySet();
+  }
+
+  public Integer minInt() {
+    return this.minInt;
+  }
+
+  public Integer maxInt() {
+    return this.maxInt;
+  }
+
+  public Integer seqInt() {
+    return this.seqInt;
+  }
+
+  public void debug() {
+    System.out.println("\nInstance:");
+    System.out.println("Min int: " + this.minInt);
+    System.out.println("Max int: " + this.maxInt);
+    System.out.println("Seq int: " + this.seqInt);
+    System.out.println("Sigs:");
     for (Qname qname : this.sigs.keySet()) {
       System.out.println(qname + " -> " + this.sigs.get(qname));
     }
-    System.out.println("Fields");
+    System.out.println("Fields:");
     for (Qname qname : this.fields.keySet()) {
       System.out.println(qname + " -> " + this.fields.get(qname));
     }
+    System.out.println("All values:");
+    System.out.println(this.getAllSigValues(thisQname("univ")));
   }
 }

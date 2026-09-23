@@ -272,6 +272,11 @@ public class SMSigs extends SMBase {
     return this.sigTable.get(sigName).isLoneSig;
   }
 
+  public boolean isEnumSig(Qname sigName) {
+    sigExists(sigName);
+    return this.sigTable.get(sigName).isEnumSig;
+  }
+
   public void debugSMSigs() {
     // written by ChatGPT
     StringBuilder sb = new StringBuilder("SMSigs:\n");

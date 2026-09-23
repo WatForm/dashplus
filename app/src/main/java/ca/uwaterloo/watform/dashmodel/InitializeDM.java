@@ -40,8 +40,8 @@ public class InitializeDM extends PredsDM {
   // because these tables might change
   // and might get out of sync with the DashFile
 
-  public InitializeDM() {
-    super();
+  public InitializeDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   public InitializeDM(DashFile d) {

@@ -94,10 +94,12 @@ public final class AlloyModelError extends UserOrImplError {
   }
 
   public static AlloyModelError arityMismatchReturnType(
-      Pos pos, Integer returnTypeArity, Integer bodyArity) {
+      Pos pos, String name, Integer returnTypeArity, Integer bodyArity) {
     return new AlloyModelError(
         pos,
-        "Arity of return type ("
+        "Arity of return type of "
+            + name
+            + " ("
             + Integer.toString(returnTypeArity)
             + ") does not match arity of body ("
             + Integer.toString(bodyArity)
@@ -149,17 +151,33 @@ public final class AlloyModelError extends UserOrImplError {
             + sigParent);
   }
 
-  public static AlloyModelError nonOneScopeForOneSig(Pos pos, String cmd) {
-    return new AlloyModelError(pos, "Scopes for one sigs must be one: " + cmd);
+  // public static AlloyModelError nonOneScopeForOneSig(Pos pos, String cmd) {
+  //  return new AlloyModelError(pos, "Scopes for one sigs must be one: " + cmd);
+  // }
+
+  public static AlloyModelError cantSetScopeOfInEqualsChild(Pos pos, String sigName) {
+    return new AlloyModelError(pos, "Can't set scope of 'in/equals' child: " + sigName);
   }
 
-  public static AlloyModelError cantSetScopeOfInChild(Pos pos, String cmd) {
-    return new AlloyModelError(pos, "Can't set scope of 'in' child: " + cmd);
+  public static AlloyModelError cantSetScopeOfEnum(Pos pos, String sigName) {
+    return new AlloyModelError(pos, "Can't set scope of enum: " + sigName);
   }
 
-  public static AlloyModelError scopeOfTopLevelSigMustBeGiven(Pos pos, String cmd) {
+  public static AlloyModelError loneSigMustBeNonExactOne(Pos pos, String sigName) {
+    return new AlloyModelError(pos, "Scope of lone sig must be <=1: " + sigName);
+  }
+
+  public static AlloyModelError someSigMustBeOneAndUp(Pos pos, String sigName) {
+    return new AlloyModelError(pos, "Scope of some sig must be >=1: " + sigName);
+  }
+
+  public static AlloyModelError noScopeForNone(Pos pos) {
+    return new AlloyModelError(pos, "Cannot set a scope for 'none'");
+  }
+
+  public static AlloyModelError scopeOfTopLevelSigMustBeGiven(Pos pos, String sigName) {
     return new AlloyModelError(
-        pos, "Can't set scope of 'extends' child when no scope for its top-level sig: " + cmd);
+        pos, "Can't set scope of 'extends' child when no scope for its top-level sig: " + sigName);
   }
 
   public static AlloyModelError subsetSigsCannotBeAbstrast(Pos pos, String sigPara) {
@@ -179,8 +197,8 @@ public final class AlloyModelError extends UserOrImplError {
     return new AlloyModelError("Ordering module can only be applied to top-level sigs: " + sigName);
   }
 
-  public static AlloyModelError cantAtNonFieldOfThisSig(String fieldName) {
-    return new AlloyModelError("Can't @ non-field of this sig: " + fieldName);
+  public static AlloyModelError cantAtNonFieldOfThisSig(Pos pos, String fieldName) {
+    return new AlloyModelError(pos, "Can't @ non-field of this sig: " + fieldName);
   }
 
   public static AlloyModelError assertNameMustBeUnique(Pos pos, String name) {
@@ -216,7 +234,11 @@ public final class AlloyModelError extends UserOrImplError {
   }
 
   public static AlloyModelError cannotResolvePredFunName(Pos pos, String s) {
-    return new AlloyModelError(pos, "cannot resolve pred/fun name: " + s);
+    return new AlloyModelError(pos, "cannot resolve name: " + s);
+  }
+
+  public static AlloyModelError cannotResolveOverloadedName(Pos pos, String s) {
+    return new AlloyModelError(pos, "cannot resolve overloaded name: " + s);
   }
 
   public static AlloyModelError assertCanOnlyBeUsedWithCheck(Pos pos) {
@@ -233,5 +255,17 @@ public final class AlloyModelError extends UserOrImplError {
 
   public static AlloyModelError ambiguousSigRef(Pos p, String name) {
     return new AlloyModelError(p, "ambiguous sig arg to import" + name);
+  }
+
+  public static AlloyModelError exactScopeForOrderedMustBeGreaterThanZero(String name) {
+    return new AlloyModelError("ordered sig must have scope > 0" + name);
+  }
+
+  public static AlloyModelError noScopeForNonSig(String s) {
+    return new AlloyModelError("Asking for scope of a non-sig: " + s);
+  }
+
+  public static AlloyModelError duplicateAlias(Pos pos, String name) {
+    return new AlloyModelError(pos, "Cannot use same alias twice: " + name);
   }
 }

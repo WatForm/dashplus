@@ -93,6 +93,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
 
       // need to resolve these also!
       Qname sigQname = unknownQname(sigName);
+
       if (cd.cmdScopes.keySet().contains(sigQname)) {
         throw AlloyModelError.multipleScopeValuesForSameSig(cmdDecl.pos, sigName);
       }
@@ -103,6 +104,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
               : NonExactScope(typeScope.start.value));
     }
     // cd.expect
+
     cd.expect = cmdDecl.expect.map(e -> Integer.valueOf(e.value));
 
     if (cd.expect.isPresent())
@@ -120,6 +122,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
       cd.block = Optional.of(cmdDecl.constrBlock.get());
     }
     cd.isResolved = false;
+
     return cd;
   }
 
@@ -139,9 +142,9 @@ public class AMThisCmdParas extends AMThisAssertParas {
       typeScopes.add(
           new Typescope(
               sc.isExact(), // isExactly
-              sc.max.get(), // start
+              sc.value.get(), // start
               false, // hasDotDot
-              sc.max.get(), // end
+              sc.value.get(), // end
               0, // increment
               ((AlloyScopableExpr) name.toAlloyExpr(Kind.SIG))));
     }

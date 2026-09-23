@@ -118,7 +118,8 @@ public class GeneralUtil {
 
   public static <T> List<T> tail(List<T> ll) {
     if (ll.isEmpty()) return ll;
-    return ll.subList(1, ll.size());
+    List<T> tail = new ArrayList<T>(ll.subList(1, ll.size()));
+    return tail;
   }
 
   public static <T> List<T> lastn(List<T> ll, Integer n) {

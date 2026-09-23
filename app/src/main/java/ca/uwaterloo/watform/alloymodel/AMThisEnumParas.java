@@ -53,9 +53,10 @@ public class AMThisEnumParas extends SMResolve {
     // create the sig of the parent
     String parent = enumPara.qname.getName();
     Qname parentQname = nameSpaceQname(nameSpace, parent);
-    this.createSig(enumPara.pos, parentQname, SigData.abstractSigData(enumPara.pos));
+    this.createSig(enumPara.pos, parentQname, SigData.abstractEnumSigData(enumPara.pos));
 
     // create the sigs of the children
+
     for (AlloyQnameExpr enumValue : enumPara.qnames) {
       Qname valQname = nameSpaceQname(nameSpace, enumValue.getName());
       this.createSig(enumPara.pos, valQname, SigData.oneSigData(enumPara.pos, parentQname));

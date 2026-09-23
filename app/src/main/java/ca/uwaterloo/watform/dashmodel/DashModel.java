@@ -25,11 +25,14 @@ import java.util.List;
 public class DashModel extends DashFileDM {
 
   public DashModel(DashFile dashFile) {
+    // created from parsing
+    // this.dashFullFileName comes from dashFile.fullFileName
     super(dashFile);
   }
 
-  public DashModel() {
-    super();
+  public DashModel(String dashFullFileName) {
+    // created from scratch through API
+    super(dashFullFileName);
   }
 
   // a couple of cross-table functions

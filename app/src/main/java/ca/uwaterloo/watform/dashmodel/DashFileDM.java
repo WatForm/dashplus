@@ -35,8 +35,8 @@ import java.util.List;
 
 public class DashFileDM extends ResolveDM {
 
-  protected DashFileDM() {
-    super();
+  protected DashFileDM(String dashFullFileName) {
+    super(dashFullFileName);
   }
 
   protected DashFileDM(DashFile d) {
@@ -47,7 +47,7 @@ public class DashFileDM extends ResolveDM {
     List<AlloyPara> ap = this.getAllParas(true);
     DashState ds = stateRecurse(this.rootName);
     ap.add(ds);
-    return new DashFile(ap);
+    return new DashFile(ap, this.dashFullFileName);
   }
 
   private DashState stateRecurse(String sfqn) {

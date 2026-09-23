@@ -21,8 +21,7 @@ public class DashToAlloy extends StutterD2A {
 
   public AlloyModel translate() {
 
-    // copy all Alloy stuff from dm into am
-    this.am = dm.copy();
+    // Alloy stuff from dm copied to am in BaseD2A
 
     // System.out.println(this.am);
 
@@ -87,7 +86,10 @@ public class DashToAlloy extends StutterD2A {
     // System.out.println("---");
     // System.out.println("Before resolve");
     // am.debug();
-    this.am.resolve();
+
+    // NAD: turn this on/off for debugging!
+    // this.am.resolve();
+
     // System.out.println("---");
     // System.out.println("After resolve");
     // am.debug();
