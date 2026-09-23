@@ -4,19 +4,21 @@
 
 Building from source requires the java version to be >= 25. The java version can be verified by running `java --version`. 
 
-To build the .jar file, run the following:
+To build the .jar file for a particular cli, run the following:
 
 ```
 git clone https://github.com/WatForm/dashplus
 cd ./dashplus
-./gradlew releaseJar
+./gradlew <cli>
 ```
+
+There are several cli tools available: dpalloy, dashtoalloy, etc.
 
 The generated .jar file is located at `dashplus/app/build/libs/watform-dashplus.jar`
 
 The build process uses gradle version 9.1.0. However, installing this globally is unnecessary, since it is downloaded as part of the build process.
 
-The build process is the same for Linux, MacOS and Windows powershell. On Windows cmd, `./gradlew releaseJar` is replaced by `gradlew releaseJar`.
+The build process is the same for Linux, MacOS and Windows powershell. On Windows cmd, `./gradlew <cli>` is replaced by `gradlew <cli>`.
 
 Run with the desired entry point: 
 - Execute command in Dash/Alloy file: `java -jar app/build/libs/watform-dashplus.jar <args>`

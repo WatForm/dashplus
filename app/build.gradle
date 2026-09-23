@@ -62,7 +62,7 @@ def tools = [
         mainClass: "ca.uwaterloo.watform.dpalloycli.DpAlloyCli",
         excludes: [
             'ca/uwaterloo/watform/alloytotla/**',
-            'ca/uwaterloo/watform/cli/**',
+            'ca/uwaterloo/watform/cli-no-longer-used/**',
             'ca/uwaterloo/watform/dashast/**',
             'ca/uwaterloo/watform/dashmodel/**',
             'ca/uwaterloo/watform/dashexprvisitor/**',
@@ -77,7 +77,7 @@ def tools = [
        mainClass: "ca.uwaterloo.watform.dashtoalloy.DashToAlloyCli",
        excludes: [
             'ca/uwaterloo/watform/alloytotla/**',
-            'ca/uwaterloo/watform/cli/**',
+            'ca/uwaterloo/watform/cli-no-longer-used/**',
             'ca/uwaterloo/watform/dashtotla/**',
             'ca/uwaterloo/watform/dpalloy/**',
             'ca/uwaterloo/watform/predabstraction/**',
@@ -88,16 +88,12 @@ def tools = [
     alloytotla: [
        mainClass: "ca.uwaterloo.watform.alloytotla.DashToAlloyCli",
        excludes: [
-            'ca/uwaterloo/watform/cli/**',
+            'ca/uwaterloo/watform/cli-no-longer-used/**',
             'ca/uwaterloo/watform/dashtotla/**',
             'ca/uwaterloo/watform/dpalloy/**',
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/dashtoalloy/**',
         ]
-    ],
-    releaseJar: [
-       mainClass: "ca.uwaterloo.watform.cli.Main",
-       excludes: []
     ]
 ]
 
