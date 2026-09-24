@@ -15,8 +15,8 @@ import java.util.List;
 public class CommandsA2T extends BoilerplateA2T {
 
   public CommandsA2T(
-      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
-    super(alloyModel, optimization, verbose, debug);
+      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
   }
 
   public void addCommand(TlaModel tlaModel, int cmdNum) {

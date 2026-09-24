@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloytotla;
 
 import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
@@ -10,8 +11,8 @@ import ca.uwaterloo.watform.tlamodel.TreeShaker;
 public class AlloyToTla extends StdLibsA2T {
 
   public AlloyToTla(
-      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
-    super(alloyModel, optimization, verbose, debug);
+      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
   }
 
   public static TlaModel getBlankModel(String moduleName) {
@@ -50,6 +51,8 @@ public class AlloyToTla extends StdLibsA2T {
 
     // l.info("chosen command scope profile " + alloyModel.getCmdScopeProfile(cmdNum).toString());
     l.info("chosen command body: " + alloyModel.getCmdFormula(cmdNum).toString());
+    l.info("this is a test: " + repeatedAnd(TlaVar("A"), TlaVar("B")));
+    l.info("this is a test to see if logging works properly, asdf");
 
     addStdLibsTla(tlaModel);
     addSigVars(tlaModel);

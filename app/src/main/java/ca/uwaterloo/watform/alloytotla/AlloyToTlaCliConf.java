@@ -22,6 +22,16 @@ public class AlloyToTlaCliConf {
   public int cmdIdx;
 
   @Option(
+      names = "-scheme",
+      arity = "0..1", // Makes it optional (0 or 1 occurrence)
+      defaultValue = "0", // Constants.intArgNotPresent value if -cmd
+      // is not on the cmd line
+      fallbackValue = "0", // Constants.noCmdValue value if -cmd is on the cmd line w/o a value
+      paramLabel = "<scheme>",
+      description = "Translation scheme to use:\n0 - (default) Command in Init\n1 - Command as Invariant")
+  public int scheme;
+
+  @Option(
       names = {"-v", "--verbose", "-verbose"},
       description = "Verbose output.")
   public boolean verbose = false;

@@ -15,8 +15,8 @@ import java.util.*;
 public class SignaturesA2T extends ScopesA2T {
 
   public SignaturesA2T(
-      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
-    super(alloyModel, optimization, verbose, debug);
+      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
   }
 
   protected void addSigVars(TlaModel tlaModel) {

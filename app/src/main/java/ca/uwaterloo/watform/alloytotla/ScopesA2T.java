@@ -14,8 +14,8 @@ import java.util.List;
 public class ScopesA2T extends PredFunA2T {
 
   public ScopesA2T(
-      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
-    super(alloyModel, optimization, verbose, debug);
+      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
   }
 
   public TlaExp placeholderScope(TlaModel tlaModel) {

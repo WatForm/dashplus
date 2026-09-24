@@ -13,8 +13,9 @@ import java.util.List;
 
 public class InitA2T extends FieldsA2T {
 
-  public InitA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
-    super(alloyModel, optimization, verbose, debug);
+  public InitA2T(
+      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
   }
 
   protected void addInitDefn(TlaModel tlaModel) {

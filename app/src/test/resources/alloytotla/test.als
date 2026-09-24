@@ -1,8 +1,9 @@
 sig A {}
+sig B {}
 
-pred p[a : A]
-{
-	some a
-}
-
-run {} for 2 A
+run {
+	some A
+} for 2 A, 2 B
+check {
+	some B
+} for 1 A, 1 B

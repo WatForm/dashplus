@@ -25,18 +25,23 @@ public class BaseA2T {
   public final Logger l;
   public final AlloyToTlaExprVis translator;
 
-  static record Optimization(
+  public static record Optimization(
       boolean syntacticTreeShaking,
       boolean semanticTreeShaking,
       boolean nonExactSymmetry,
       boolean oneSigMacroSubstitution) {}
+
+  public static enum Scheme {
+    INIT_COMMAND,
+    INVARIANT_COMMAND
+  }
 
   public final Optimization optimization;
 
   // this is a buffer to hold debug data from the ExpressionVisitor
   private final StringBuilder transcriptBuffer;
 
-  public BaseA2T(AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
+  public BaseA2T(AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
     this.alloyModel = alloyModel;
     this.verbose = verbose;
     this.debug = debug;

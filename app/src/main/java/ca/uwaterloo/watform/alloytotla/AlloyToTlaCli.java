@@ -7,6 +7,7 @@ import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.alloytotla.BaseA2T.Optimization;
+import ca.uwaterloo.watform.alloytotla.BaseA2T.Scheme;
 import ca.uwaterloo.watform.utils.*;
 import edu.mit.csail.sdg.alloy4.Err;
 import java.io.IOException;
@@ -54,6 +55,9 @@ public class AlloyToTlaCli implements Callable<Integer> {
     Integer cmdIdx =
         (cmd && CliUtils.cmdIdxUseful(cliConf.cmdIdx)) ? cliConf.cmdIdx : CliUtils.noCmdValue;
 
+    Scheme scheme = cliConf.scheme == 1 ? Scheme.INVARIANT_COMMAND : Scheme.INIT_COMMAND;
+    
+
     Optimization optimization =
         new Optimization(
             cliConf.optimizeSyntactic,
@@ -77,7 +81,7 @@ public class AlloyToTlaCli implements Callable<Integer> {
       AlloyModel alloyModel = alloyParseToModel(absolutePath.toString());
       alloyModel.resolve();
       AlloyToTla translator =
-          new AlloyToTla(alloyModel, optimization, cliConf.verbose, cliConf.debug);
+          new AlloyToTla(alloyModel, scheme, optimization, cliConf.verbose, cliConf.debug);
       var tlaModel = translator.translate(outputFileName, 0);
 
       Files.writeString(fileFromString(outputFileName + ".tla"), tlaModel.moduleCode());

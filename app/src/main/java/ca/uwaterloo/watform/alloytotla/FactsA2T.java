@@ -13,10 +13,10 @@ import java.util.List;
 public class FactsA2T extends CustomModulesA2T {
 
   public FactsA2T(
-      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
-    super(alloyModel, optimization, verbose, debug);
+      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
   }
-
+  
   protected void addFacts(TlaModel tlaModel) {
 
     tlaModel.addComment("facts", verbose);

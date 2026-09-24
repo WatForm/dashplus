@@ -10,8 +10,8 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 public class CustomModulesA2T extends CommandsA2T {
 
   public CustomModulesA2T(
-      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
-    super(alloyModel, optimization, verbose, debug);
+      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
   }
 
   /*

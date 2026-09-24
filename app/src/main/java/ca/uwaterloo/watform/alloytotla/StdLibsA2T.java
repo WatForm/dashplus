@@ -7,8 +7,8 @@ import ca.uwaterloo.watform.tlamodel.TlaModel;
 public class StdLibsA2T extends SignaturesA2T {
 
   public StdLibsA2T(
-      AlloyModel alloyModel, Optimization optimization, boolean verbose, boolean debug) {
-    super(alloyModel, optimization, verbose, debug);
+      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
   }
 
   protected void addStdLibsTla(TlaModel tlaModel) {
