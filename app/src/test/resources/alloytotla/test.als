@@ -1,5 +1,8 @@
 sig A {}
 sig B {}
+sig C in A {}
+sig D extends B {}
+sig E extends B {}
 
 run {
 	some A

@@ -16,7 +16,11 @@ import java.util.List;
 public class PredFunA2T extends NextA2T {
 
   public PredFunA2T(
-      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+      AlloyModel alloyModel,
+      Scheme scheme,
+      Optimization optimization,
+      boolean verbose,
+      boolean debug) {
     super(alloyModel, scheme, optimization, verbose, debug);
   }
 

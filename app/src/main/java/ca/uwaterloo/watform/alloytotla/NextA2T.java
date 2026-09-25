@@ -13,7 +13,11 @@ import java.util.List;
 public class NextA2T extends InitA2T {
 
   public NextA2T(
-      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+      AlloyModel alloyModel,
+      Scheme scheme,
+      Optimization optimization,
+      boolean verbose,
+      boolean debug) {
     super(alloyModel, scheme, optimization, verbose, debug);
   }
 

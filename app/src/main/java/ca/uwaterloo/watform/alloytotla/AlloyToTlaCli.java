@@ -46,18 +46,10 @@ public class AlloyToTlaCli implements Callable<Integer> {
 
   public void perFile(String fileName, AlloyToTlaCliConf CliConf) throws Exception {
 
-    // Boolean verbose = cliConf.verbose;
-    // CliUtils.debug = cliConf.debug;
-    // set a default value for cmd in case this arg is not given
-    // cmdIdx = CliUtils.noCmdValue means no cmd value given so run all commands
-    // cmdIdx = CliUtils.intArgNotPresent means no cmd so run for satisfiability only
-    Boolean cmd = CliUtils.cmdPresent(cliConf.cmdIdx);
-    Integer cmdIdx =
-        (cmd && CliUtils.cmdIdxUseful(cliConf.cmdIdx)) ? cliConf.cmdIdx : CliUtils.noCmdValue;
-
+    Integer cmdIdx = cliConf.cmdIdx;
     Scheme scheme = cliConf.scheme == 1 ? Scheme.INVARIANT_COMMAND : Scheme.INIT_COMMAND;
-    
-
+    Boolean verbose = cliConf.verbose;
+    Boolean debug = cliConf.debug;
     Optimization optimization =
         new Optimization(
             cliConf.optimizeSyntactic,
@@ -68,7 +60,9 @@ public class AlloyToTlaCli implements Callable<Integer> {
     Path absolutePath = Paths.get(fileName).toAbsolutePath();
 
     String t = absolutePath.getFileName().toString();
-    String outputFileName = t.substring(0, t.lastIndexOf("."));
+    String baseName = t.substring(0, t.lastIndexOf("."));
+    Path tlaFilePath = absolutePath.getParent().resolve(baseName + ".tla");
+    Path cfgFilePath = absolutePath.getParent().resolve(baseName + ".cfg");
 
     if (!Files.exists(absolutePath)) {
       dpOutput("File does not exist: " + absolutePath.toString());
@@ -77,15 +71,14 @@ public class AlloyToTlaCli implements Callable<Integer> {
 
     Reporter.INSTANCE.reset();
 
-    if (absolutePath.endsWith(".als")) {
+    if (absolutePath.toString().endsWith(".als")) {
       AlloyModel alloyModel = alloyParseToModel(absolutePath.toString());
       alloyModel.resolve();
-      AlloyToTla translator =
-          new AlloyToTla(alloyModel, scheme, optimization, cliConf.verbose, cliConf.debug);
-      var tlaModel = translator.translate(outputFileName, 0);
+      AlloyToTla translator = new AlloyToTla(alloyModel, scheme, optimization, verbose, debug);
+      var tlaModel = translator.translate(baseName, cmdIdx);
 
-      Files.writeString(fileFromString(outputFileName + ".tla"), tlaModel.moduleCode());
-      Files.writeString(fileFromString(outputFileName + ".cfg"), tlaModel.configCode());
+      Files.writeString(tlaFilePath, tlaModel.moduleCode());
+      Files.writeString(cfgFilePath, tlaModel.configCode());
     }
   }
 

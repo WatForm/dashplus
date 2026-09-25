@@ -38,6 +38,7 @@ public class CreateHelper {
   public static TlaExp repeatedAnd(List<? extends TlaExp> operands) {
     if (operands.size() > 1)
       return foldLeft(operands.subList(1, operands.size()), CreateHelper::TlaAnd, operands.get(0));
+    if (operands.size() == 1) return operands.get(0);
     return foldLeft(operands, CreateHelper::TlaAnd, TlaTrue());
   }
 
@@ -48,6 +49,7 @@ public class CreateHelper {
   public static TlaExp repeatedOr(List<? extends TlaExp> operands) {
     if (operands.size() > 1)
       return foldLeft(operands.subList(1, operands.size()), CreateHelper::TlaOr, operands.get(0));
+    if (operands.size() == 1) return operands.get(0);
     return foldLeft(operands, CreateHelper::TlaOr, TlaFalse());
   }
 

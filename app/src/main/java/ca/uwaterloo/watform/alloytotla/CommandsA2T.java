@@ -4,18 +4,19 @@ import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
 import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
-import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloymodel.Qname;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaStdLibs;
+import ca.uwaterloo.watform.alloymodel.*;
+import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CommandsA2T extends BoilerplateA2T {
 
   public CommandsA2T(
-      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+      AlloyModel alloyModel,
+      Scheme scheme,
+      Optimization optimization,
+      boolean verbose,
+      boolean debug) {
     super(alloyModel, scheme, optimization, verbose, debug);
   }
 

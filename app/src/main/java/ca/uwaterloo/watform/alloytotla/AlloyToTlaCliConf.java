@@ -7,28 +7,26 @@ import picocli.CommandLine.Parameters;
 public class AlloyToTlaCliConf {
   public static final AlloyToTlaCliConf INSTANCE = new AlloyToTlaCliConf();
 
-  @Parameters(index = "0", arity = "1..*", description = "Dash file names")
+  @Parameters(index = "0", arity = "1..*", description = "Alloy file names")
   public List<String> fileNames;
 
-  // 0 indexed
   @Option(
       names = "-cmd",
       arity = "0..1", // Makes it optional (0 or 1 occurrence)
-      defaultValue = "-100", // Constants.intArgNotPresent value if -cmd
-      // is not on the cmd line
-      fallbackValue = "-1", // Constants.noCmdValue value if -cmd is on the cmd line w/o a value
+      defaultValue = "0", // 0-indexed
+      fallbackValue = "0",
       paramLabel = "<cmdIdx>",
-      description = "Index of the command to execute (-cmd w/o index means execute all).")
+      description = "Index of the command to execute (-cmd w/o index means run first command).")
   public int cmdIdx;
 
   @Option(
       names = "-scheme",
       arity = "0..1", // Makes it optional (0 or 1 occurrence)
-      defaultValue = "0", // Constants.intArgNotPresent value if -cmd
-      // is not on the cmd line
-      fallbackValue = "0", // Constants.noCmdValue value if -cmd is on the cmd line w/o a value
+      defaultValue = "0",
+      fallbackValue = "0",
       paramLabel = "<scheme>",
-      description = "Translation scheme to use:\n0 - (default) Command in Init\n1 - Command as Invariant")
+      description =
+          "Translation scheme to use:\n0 - (default) Command in Init\n1 - Command as Invariant")
   public int scheme;
 
   @Option(

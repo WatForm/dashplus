@@ -7,11 +7,16 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
 import ca.uwaterloo.watform.tlamodel.TreeShaker;
+import java.time.LocalDateTime;
 
 public class AlloyToTla extends StdLibsA2T {
 
   public AlloyToTla(
-      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+      AlloyModel alloyModel,
+      Scheme scheme,
+      Optimization optimization,
+      boolean verbose,
+      boolean debug) {
     super(alloyModel, scheme, optimization, verbose, debug);
   }
 
@@ -20,24 +25,6 @@ public class AlloyToTla extends StdLibsA2T {
   }
 
   public TlaModel translate(String baseName, int cmdNum) {
-
-    // List<AlloyCmdPara> paras = alloyModel.allCmdParas();
-
-    // List<AlloyCmdPara.CommandDecl> cmdDecls = new ArrayList<>();
-    // for (var p : paras) {
-    //   cmdDecls.addAll(p.cmdDecls);
-    // }
-
-    // List<TlaModel> tlaModels = new ArrayList<>();
-
-    // int ct = 0;
-    // for (var cmdDecl : cmdDecls) {
-    //   String name = ct == 0 ? baseName : baseName + ct;
-    //   TlaModel tlaModel = getBlankModel(name);
-    //   translate(tlaModel, cmdDecl);
-    //   tlaModels.add(tlaModel);
-    //   ct += 1;
-    // }
 
     var answer = new TlaModel(baseName, new TlaAppl(INIT), new TlaAppl(NEXT));
     translate(answer, cmdNum);
@@ -49,11 +36,7 @@ public class AlloyToTla extends StdLibsA2T {
 
   public void translate(TlaModel tlaModel, int cmdNum) {
 
-    // l.info("chosen command scope profile " + alloyModel.getCmdScopeProfile(cmdNum).toString());
-    l.info("chosen command body: " + alloyModel.getCmdFormula(cmdNum).toString());
-    l.info("this is a test: " + repeatedAnd(TlaVar("A"), TlaVar("B")));
-    l.info("this is a test to see if logging works properly, asdf");
-
+    tlaModel.addComment("Translated at " + LocalDateTime.now().toString(), true);
     addStdLibsTla(tlaModel);
     addSigVars(tlaModel);
     addFieldVars(tlaModel);

@@ -14,7 +14,11 @@ import java.util.*;
 public class BoilerplateA2T extends BaseA2T {
 
   public BoilerplateA2T(
-      AlloyModel alloyModel, Scheme scheme, Optimization optimization, boolean verbose, boolean debug) {
+      AlloyModel alloyModel,
+      Scheme scheme,
+      Optimization optimization,
+      boolean verbose,
+      boolean debug) {
     super(alloyModel, scheme, optimization, verbose, debug);
   }
 

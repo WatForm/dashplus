@@ -26,13 +26,13 @@
     echo hello from $GREET
   '';
 
-  scripts.a2t.exec = ''
+  scripts.a2t_build_run.exec = ''
     ./gradlew alloytotla
-    java -jar ./app/build/libs/alloytotla.jar ./app/src/test/resources/alloytotla/"$1".als -v -d && cat ./AlloyToTla.log
+    java -jar ./app/build/libs/alloytotla.jar ./app/src/test/resources/alloytotla/"$1".als -v -d "$''+''{@:2}" && cat ./AlloyToTla.log
   '';
 
-  scripts.a2tq.exec = ''
-    java -jar ./app/build/libs/alloytotla.jar ./app/src/test/resources/alloytotla/"$1".als -v -d && cat ./AlloyToTla.log
+  scripts.a2t_run.exec = ''
+    java -jar ./app/build/libs/alloytotla.jar ./app/src/test/resources/alloytotla/"$1".als -v -d "$''+''{@:2}" && cat ./AlloyToTla.log
   '';
 
   # https://devenv.sh/basics/
