@@ -93,7 +93,7 @@ public class SMResolve extends SMCmds {
     else this.sigParentOfField = Optional.empty();
     this.nameSpace = nameSpace;
     this.usePredFun = false;
-    ResolveVis resolveVis = new ResolveVis();
+    ResolveVis resolveVis = new ResolveVis(this.nameSpace);
     for (AlloyDecl arg : args) {
       for (AlloyDecl d : arg.expand()) {
         ResolveInfo dResult = resolveVis.visit(d.expr);
@@ -112,7 +112,7 @@ public class SMResolve extends SMCmds {
     this.nameSpace = nameSpace;
     this.usePredFun = true;
 
-    ResolveVis resolveVis = new ResolveVis();
+    ResolveVis resolveVis = new ResolveVis(this.nameSpace);
     for (AlloyDecl arg : args) {
       for (AlloyDecl d : arg.expand()) {
         ResolveInfo dResult = resolveVis.visit(d.expr);
@@ -145,8 +145,12 @@ public class SMResolve extends SMCmds {
 
 
     */
-    ResolveVis() {
+
+    String nameSpaceWithin;
+
+    ResolveVis(String nameSpaceWithin) {
       this.localArities = new ArrayDeque<>();
+      this.nameSpaceWithin = nameSpaceWithin;
     }
 
     // need a context of arities for let expressions, quantified variables, etc.
@@ -993,9 +997,10 @@ public class SMResolve extends SMCmds {
         // needs fixing
         // System.out.println("looking up2: " + varExpr.toString());
 
-        List<Qname> sigMatches = SMResolve.this.sigQnameMatches(qname);
-        List<Qname> fieldMatches = SMResolve.this.fieldQnameMatches(qname);
-        List<Qname> predFunMatches = SMResolve.this.predFunQnameMatches(qname);
+        List<Qname> sigMatches = SMResolve.this.sigQnameMatches(qname, this.nameSpaceWithin);
+        List<Qname> fieldMatches = SMResolve.this.fieldQnameMatches(qname, this.nameSpaceWithin);
+        List<Qname> predFunMatches =
+            SMResolve.this.predFunQnameMatches(qname, this.nameSpaceWithin);
 
         // KENG: in order to ensure that incorrect resolutions are not chosen
         // throw an error now if it is overloaded between all three of sigs/fields/predFuns
@@ -1008,18 +1013,18 @@ public class SMResolve extends SMCmds {
         // after this max one of the cases below will work
 
         Qname chosen;
-        if (SMResolve.this.isSig(qname)) {
+        if (SMResolve.this.isSig(qname, this.nameSpaceWithin)) {
           // System.out.println("looking up3: " + varExpr.toString());
           // KENG NOTE: I'm picking one for now
 
-          chosen = SMResolve.this.sigQnameMatches(qname).get(0);
+          chosen = SMResolve.this.sigQnameMatches(qname, this.nameSpaceWithin).get(0);
           // KENG TODO may be multiple matches in different namespaces
           // for now I'm just saying the arity is 1
           return new ResolveInfo(Optional.of(1), chosen.toAlloyExpr(varExpr.pos, Kind.SIG));
 
-        } else if (SMResolve.this.isField(qname)) {
+        } else if (SMResolve.this.isField(qname, this.nameSpaceWithin)) {
           // KENG NOTE: I'm picking one for now
-          chosen = SMResolve.this.fieldQnameMatches(qname).get(0);
+          chosen = SMResolve.this.fieldQnameMatches(qname, this.nameSpaceWithin).get(0);
 
           if (SMResolve.this.sigParentOfField.isPresent()) {
             // we are checking a bounding expression of a field
@@ -1046,14 +1051,14 @@ public class SMResolve extends SMCmds {
             // sigParent is absent meaning we are not checking a bounding
             // expression of a field
             // KENG NOTE: I'm picking one for now
-            chosen = SMResolve.this.fieldQnameMatches(qname).get(0);
+            chosen = SMResolve.this.fieldQnameMatches(qname, this.nameSpaceWithin).get(0);
             return new ResolveInfo(
                 SMResolve.this.fieldArity(chosen), chosen.toAlloyExpr(varExpr.pos, Kind.FIELD));
           }
         } else if (SMResolve.this.usePredFun && (SMResolve.this.isPredFun(qname))) {
           // System.out.println("looking up6: " + varExpr.toString());
           // KENG NOTE: I'm picking one for now
-          chosen = SMResolve.this.predFunQnameMatches(qname).get(0);
+          chosen = SMResolve.this.predFunQnameMatches(qname, this.nameSpaceWithin).get(0);
           Optional<Integer> returnArity = SMResolve.this.predFunReturnArity(chosen);
           if (returnArity.isPresent()) {
             List<Optional<Integer>> argsArities = SMResolve.this.predFunArgArities(chosen);

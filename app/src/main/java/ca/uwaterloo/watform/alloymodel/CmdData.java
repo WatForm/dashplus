@@ -12,6 +12,7 @@ public class CmdData {
   public Optional<Integer> defaultScope;
   public HashMap<Qname, SigScope> cmdScopes = new HashMap<>();
   public Optional<Integer> expect; // 1 or 0
+  public String nameSpaceWithin;
 
   // cannot have both of the following:
   // 1) run p { block } or check p {block} -- 'p is optional unused name of command

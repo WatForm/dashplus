@@ -198,4 +198,8 @@ public class Qname {
                         || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
         .toList();
   }
+
+  public Boolean isFullQname() {
+    return !this.nameSpace.equals(UNKNOWN_NAMESPACE);
+  }
 }

@@ -7,10 +7,13 @@ public class ImportData {
   public Pos pos;
   public String importedModule;
   public List<Qname> sigParamValues;
+  public String parentNameSpace;
 
-  public ImportData(Pos p, String importedModule, List<Qname> sigParamValues) {
+  public ImportData(
+      Pos p, String importedModule, List<Qname> sigParamValues, String parentNameSpace) {
     this.pos = p;
     this.importedModule = importedModule;
+    this.parentNameSpace = parentNameSpace; // needed for resolution of args passed
     this.sigParamValues = sigParamValues;
   }
 

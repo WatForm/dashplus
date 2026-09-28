@@ -48,9 +48,9 @@ public class SMFields extends SMImports {
     return setToList(this.fieldTable.keySet());
   }
 
-  public List<Qname> fieldQnameMatches(Qname qname) {
-    // either matches exactly (which would mean only one match)
-    // or could match on multiple of UNKNOWN_NAMESPACE
+  // does not depend on context
+  // full qname may not be unknown
+  private List<Qname> possibleMatches(Qname qname) {
     return fieldTable.keySet().stream()
         .filter(
             q ->
@@ -61,8 +61,30 @@ public class SMFields extends SMImports {
         .toList();
   }
 
-  public Boolean isField(Qname qname) {
-    return !fieldQnameMatches(qname).isEmpty();
+  public List<Qname> fieldQnameMatches(Qname qname, String nameSpaceWithin) {
+    // either matches exactly (which would mean only one match)
+    // or could match on multiple of UNKNOWN_NAMESPACE
+    // does not depend on context of nameSpaceWithin
+    List<Qname> possibleMatches = possibleMatches(qname);
+
+    // now let's look at contextWithin to disambiguate
+    if (possibleMatches.size() > 1 && !nameSpaceWithin.equals(THIS_NAMESPACE)) {
+      // favour currentNameSpace if currentNameSpace is not THIS_NAMESPACE
+      List<Qname> nameSpaceWithinMatches =
+          filterBy(possibleMatches, q -> q.nameSpace.equals(nameSpaceWithin));
+      if (nameSpaceWithinMatches.size() == 0) {
+        throw AlloyModelError.fieldNotRecognizedWithImport(qname.toString());
+      } else {
+        return nameSpaceWithinMatches;
+      }
+    } else {
+      return possibleMatches;
+    }
+  }
+
+  // used externally when not sure if qname is complete
+  public Boolean isField(Qname qname, String nameSpaceWithin) {
+    return !fieldQnameMatches(qname, nameSpaceWithin).isEmpty();
   }
 
   // sets arities in fieldTable and default mul in field Types
@@ -74,7 +96,7 @@ public class SMFields extends SMImports {
       // throws an error if it can't calculate it and set defaults
       ResolveInfo resolveInfo =
           resolve1.apply(
-              this.fieldExpr(fieldQname),
+              this.fieldExpr(fieldQname, fieldQname.nameSpace),
               fieldQname.nameSpace,
               Optional.of(fieldQname.sigParent),
               emptyList());
@@ -93,11 +115,11 @@ public class SMFields extends SMImports {
   // individual getters
 
   private void existsField(Qname fieldQname) {
-    if (!this.isField(fieldQname))
+    if (possibleMatches(fieldQname).size() != 1)
       throw AlloyModelImplError.tryingToAccessNonExistentField(fieldQname.toString());
   }
 
-  public AlloyExpr fieldExpr(Qname fieldQname) {
+  public AlloyExpr fieldExpr(Qname fieldQname, String nameSpaceWithin) {
     existsField(fieldQname);
     return this.fieldTable.get(fieldQname).expr;
   }

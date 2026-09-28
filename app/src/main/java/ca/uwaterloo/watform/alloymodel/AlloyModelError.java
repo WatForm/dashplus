@@ -268,4 +268,12 @@ public final class AlloyModelError extends UserOrImplError {
   public static AlloyModelError duplicateAlias(Pos pos, String name) {
     return new AlloyModelError(pos, "Cannot use same alias twice: " + name);
   }
+
+  public static AlloyModelError sigNotRecognizedWithImport(String name) {
+    return new AlloyModelError("Sig not recognized within imported file: " + name);
+  }
+
+  public static AlloyModelError fieldNotRecognizedWithImport(String name) {
+    return new AlloyModelError("Field not recognized within imported file: " + name);
+  }
 }
