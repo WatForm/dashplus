@@ -1,10 +1,12 @@
 package ca.uwaterloo.watform.evaluation;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyBlock;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyinterface.Instance;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.alloymodel.AlloyModelImplError;
 import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.evaluation.OverflowAtom.OverflowDirection;
 import ca.uwaterloo.watform.utils.Pos;
@@ -44,7 +46,7 @@ public final class EvaluationTable {
     this.atomFactory = new AtomFactory(instance.minInt(), instance.maxInt());
 
     for (Qname function : model.allFuns()) {
-      AlloyBlock body = model.predFunBody(function);
+      AlloyBlock body = callableBody(model, function);
       if (body.exprs.size() != 1) {
         throw AlloyEvaluatorImplError.functionBodyExpressionCount(
             body.pos, function, body.exprs.size());
@@ -54,7 +56,7 @@ public final class EvaluationTable {
     }
     for (Qname predicate : model.allPreds()) {
       callableArguments.put(predicate, List.copyOf(model.predFunArgDecls(predicate)));
-      callableBodies.put(predicate, model.predFunBody(predicate));
+      callableBodies.put(predicate, callableBody(model, predicate));
       predicates.add(predicate);
     }
 
@@ -98,6 +100,14 @@ public final class EvaluationTable {
       idenTuples.add(AtomTuple.concat(value, value));
     }
     this.iden = TupleSet.of(idenTuples);
+  }
+
+  private static AlloyBlock callableBody(AlloyModel model, Qname callable) {
+    AlloyExpr body = model.predFunBody(callable);
+    if (!(body instanceof AlloyBlock block)) {
+      throw AlloyModelImplError.predFunBodyNotBlock(body.pos, body);
+    }
+    return block;
   }
 
   private TupleSet sigValue(Instance instance, Qname sig) {
