@@ -12,6 +12,7 @@ import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloymodel.Qname;
 import ca.uwaterloo.watform.utils.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
@@ -100,7 +101,11 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
       logger.exit("QuantificationExpr " + UNKNOWN);
       return UNKNOWN;
     }
-    var resCount = countQuant(quantificationExpr, valList, 0, 0);
+    var resCount = countQuant(quantificationExpr, valList, 0, 0, List.of());
+    if (resCount.unknownDisjointness) {
+      logger.exit("QuantificationExpr " + UNKNOWN);
+      return UNKNOWN;
+    }
     var result =
         switch (quantificationExpr.quant) {
           case Quant.ALL -> resCount.falseCnt > 0 ? FALSE : (resCount.unkCnt > 0 ? UNKNOWN : TRUE);
@@ -118,49 +123,63 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
     return result;
   }
 
-  private static record ResCount(int trueCnt, int falseCnt, int unkCnt) {}
-
-  // TODO: review
-  private ResCount countQuant(
-      AlloyQuantificationExpr expr, List<TupleSet> sets, int idx1, int idx2) {
-    if (idx1 == expr.decls.size() - 1 && idx2 == expr.decls.get(idx1).qnames.size() - 1) {
-      int cntTrue = 0, cntFalse = 0, cntUnk = 0;
-      for (var tuple : sets.get(idx1)) {
-        evaluationTable.addRelation(
-            qnameOf(expr.decls.get(idx1).qnames.get(idx2)), TupleSet.of(List.of(tuple)));
-        var res = expr.body.accept(this);
-        evaluationTable.removeRelation(qnameOf(expr.decls.get(idx1).qnames.get(idx2)));
-        switch (res) {
-          case TRUE:
-            cntTrue++;
-            break;
-          case FALSE:
-            cntFalse++;
-            break;
-          default:
-            cntUnk++;
-            break;
-        }
-      }
-      return new ResCount(cntTrue, cntFalse, cntUnk);
-    } else {
-      int cntTrue = 0, cntFalse = 0, cntUnk = 0;
-      for (var tuple : sets.get(idx1)) {
-        evaluationTable.addRelation(
-            qnameOf(expr.decls.get(idx1).qnames.get(idx2)), TupleSet.of(List.of(tuple)));
-        var res =
-            countQuant(
-                expr,
-                sets,
-                idx1 + ((idx2 + 1) / expr.decls.get(idx1).qnames.size()),
-                (idx2 + 1) % expr.decls.get(idx1).qnames.size());
-        evaluationTable.removeRelation(qnameOf(expr.decls.get(idx1).qnames.get(idx2)));
-        cntTrue += res.trueCnt;
-        cntFalse += res.falseCnt;
-        cntUnk += res.unkCnt;
-      }
-      return new ResCount(cntTrue, cntFalse, cntUnk);
+  private static record ResCount(
+      int trueCnt, int falseCnt, int unkCnt, boolean unknownDisjointness) {
+    private static ResCount of(ThreeVal value) {
+      return switch (value) {
+        case TRUE -> new ResCount(1, 0, 0, false);
+        case FALSE -> new ResCount(0, 1, 0, false);
+        case UNKNOWN -> new ResCount(0, 0, 1, false);
+      };
     }
+
+    private static ResCount withUnknownDisjointness() {
+      return new ResCount(0, 0, 0, true);
+    }
+
+    private ResCount plus(ResCount other) {
+      return new ResCount(
+          trueCnt + other.trueCnt,
+          falseCnt + other.falseCnt,
+          unkCnt + other.unkCnt,
+          unknownDisjointness || other.unknownDisjointness);
+    }
+  }
+
+  private ResCount countQuant(
+      AlloyQuantificationExpr expr,
+      List<TupleSet> sets,
+      int declIndex,
+      int nameIndex,
+      List<AtomTuple> pickedInDecl) {
+    if (declIndex == expr.decls.size()) return ResCount.of(expr.body.accept(this));
+
+    AlloyDecl declaration = expr.decls.get(declIndex);
+    Qname name = qnameOf(declaration.qnames.get(nameIndex));
+    ResCount result = new ResCount(0, 0, 0, false);
+    for (AtomTuple tuple : sets.get(declIndex)) {
+      ThreeVal disjointness = SetEvaluator.disjointnessOf(declaration, pickedInDecl, tuple);
+      if (disjointness == FALSE) continue;
+      if (disjointness == UNKNOWN) return ResCount.withUnknownDisjointness();
+
+      evaluationTable.addRelation(name, TupleSet.of(List.of(tuple)));
+      ResCount branch;
+      try {
+        boolean blockComplete = nameIndex == declaration.qnames.size() - 1;
+        if (blockComplete) {
+          branch = countQuant(expr, sets, declIndex + 1, 0, List.of());
+        } else {
+          List<AtomTuple> nextPicked = new ArrayList<>(pickedInDecl);
+          nextPicked.add(tuple);
+          branch = countQuant(expr, sets, declIndex, nameIndex + 1, nextPicked);
+        }
+      } finally {
+        evaluationTable.removeRelation(name);
+      }
+      if (branch.unknownDisjointness) return branch;
+      result = result.plus(branch);
+    }
+    return result;
   }
 
   public ThreeVal visit(AlloyDecl decl) {

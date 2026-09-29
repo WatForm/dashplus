@@ -100,6 +100,7 @@ def tools = [
        excludes: [
             'ca/uwaterloo/watform/alloytotla/**',
             'ca/uwaterloo/watform/cli/**',
+            'ca/uwaterloo/watform/cli-no-longer-used/**',
             'ca/uwaterloo/watform/dashast/**',
             'ca/uwaterloo/watform/dashmodel/**',
             'ca/uwaterloo/watform/dashexprvisitor/**',
