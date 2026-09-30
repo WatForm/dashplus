@@ -198,11 +198,12 @@ public class SMCmds extends SMConstraints {
                   cmdData.pos, cmdData.assertOrPredFunQname.toString());
             }
           } else {
-            // its a check -- name can only be an assert
+            // it's a check -- name can only be an assert
             // either matches exactly (which would mean only one match)
             // or could match on multiple of UNKNOWN_NAMESPACE
             List<Qname> possibleMatches =
-                possibleMatches(new ArrayList<>(assertTable.keySet()), cmdData.assertQname.get());
+                possibleMatches(
+                    new ArrayList<>(assertTable.keySet()), cmdData.assertOrPredFunQname.get());
             if (possibleMatches.size() == 1) {
               cmdData.assertQname = Optional.of(possibleMatches.get(0));
             } else {
