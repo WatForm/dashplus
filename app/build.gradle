@@ -128,11 +128,33 @@ sourceSets {
             }
         }
     }
+
+    evaluationTest {
+        java {
+            srcDirs = ["src/test/java"]
+            include 'ca/uwaterloo/watform/evaluation/**'
+        }
+        resources {
+            srcDirs = ["src/test/resources"]
+        }
+    }
 }
 
 tools.each { name, tool ->
     configurations["${name}Implementation"].extendsFrom(configurations.implementation)
 }
+
+configurations.evaluationTestImplementation.extendsFrom(
+    configurations.testImplementation,
+    configurations.evaluationImplementation
+)
+configurations.evaluationTestRuntimeOnly.extendsFrom(
+    configurations.testRuntimeOnly,
+    configurations.evaluationRuntimeOnly
+)
+
+sourceSets.evaluationTest.compileClasspath += sourceSets.evaluation.output
+sourceSets.evaluationTest.runtimeClasspath += sourceSets.evaluation.output
 
 // different tools to build
 tools.each { name, tool ->
@@ -207,6 +229,20 @@ tasks.named('test') {
 
     if (project.hasProperty('stopOnFirstFail')) {
         systemProperty 'stopOnFirstFail', project.property('stopOnFirstFail').toString()
+    }
+}
+
+tasks.register('evaluationTest', Test) {
+    group = 'verification'
+    description = 'Runs the evaluation component unit tests.'
+    dependsOn tasks.named('evaluationTestClasses')
+
+    testClassesDirs = sourceSets.evaluationTest.output.classesDirs
+    classpath = sourceSets.evaluationTest.runtimeClasspath
+    useJUnitPlatform()
+
+    testLogging {
+        showStandardStreams = true
     }
 }
 
