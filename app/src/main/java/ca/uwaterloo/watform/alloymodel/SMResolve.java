@@ -1090,7 +1090,9 @@ public class SMResolve extends SMCmds {
               new ResolveInfo(List.of(ONE_ARITY, ONE_ARITY, TWO_ARITY), ONE_ARITY, varExpr);
           case AlloyNumExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           case AlloyIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
-          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr); // used a sig Int
+          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
+          case AlloyStringExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
+          // used a sig Int
           // TODO: fix this! it does not cover enough cases
           default -> {
             System.out.println(varExpr.toString() + " of class " + varExpr.getClass().getName());
