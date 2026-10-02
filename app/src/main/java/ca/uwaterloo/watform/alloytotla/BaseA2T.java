@@ -37,6 +37,7 @@ public class BaseA2T {
   }
 
   public final Optimization optimization;
+  public final Scheme scheme;
 
   // this is a buffer to hold debug data from the ExpressionVisitor
   private final StringBuilder transcriptBuffer;
@@ -50,6 +51,7 @@ public class BaseA2T {
     this.alloyModel = alloyModel;
     this.verbose = verbose;
     this.debug = debug;
+    this.scheme = scheme;
     this.optimization = optimization;
     this.l = CustomLoggerFactory.make("AlloyToTla", debug);
     this.translator = new AlloyToTlaExprVis(alloyModel, l);

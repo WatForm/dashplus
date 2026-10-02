@@ -5,8 +5,8 @@ sig D extends B {}
 sig E extends B {}
 
 run {
-	some A
+	some univ
 } for 2 A, 2 B
 check {
-	some B
+	no univ
 } for 1 A, 1 B

@@ -29,10 +29,12 @@ public class InitA2T extends FieldsA2T {
     List<TlaExp> exps = new ArrayList<>();
 
     exps.add(TlaAppl(SCOPE));
-    // exps.add(TlaAppl(SIG_SETS_UNPRIMED));
+    exps.add(TlaAppl(SIG_SETS_UNPRIMED));
     // exps.add(TlaAppl(FIELD_TYPES));
-    // exps.add(TlaAppl(ALL_SIG_CONSTRAINTS));
+    exps.add(TlaAppl(ALL_SIG_CONSTRAINTS));
     // exps.add(TlaAppl(ALL_FACTS));
+
+    if (scheme.equals(Scheme.INIT_COMMAND)) exps.add(TlaAppl(COMMAND));
 
     tlaModel.addDefn(TlaDefn(INIT, repeatedAnd(exps)));
   }

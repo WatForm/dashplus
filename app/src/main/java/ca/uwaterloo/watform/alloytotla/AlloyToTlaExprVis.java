@@ -136,6 +136,8 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
   public Result translateQnameExpr(AlloyQnameExpr exp) {
 
+    // TODO rewrite all of this with new interface
+
     if (!am.allPreds().contains(exp.label)) return new TlaExpResult(TlaAppl(exp.label));
 
     // TODO FIX THIS
@@ -258,7 +260,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
   public Result visit(AlloyLetExpr letExpr) {
 
     /*
-    note that let expressions in TLA+ can have params, but cannot in ALloy
+    note that let expressions in TLA+ can have params, but cannot in Alloy
     let expressions are translated directly, since TLA+ has a more expressive system for let expressions
     no de-sugaring-via-substitution occurs
     */
@@ -268,7 +270,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     var body = extract(visit(letExpr.body));
     var answer = new TlaLetBinding(asns, body);
     return new TlaExpResult(answer);
-    // throw ImplementationError.notSupported("Unimplemented method 'visit' for let");
   }
 
   @Override

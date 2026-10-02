@@ -54,6 +54,7 @@ public class TlaModule {
   }
 
   private static String variableString(List<TlaVarDecl> varDecls) {
+    if (varDecls.size() == 0) return "";
     StringBuilder sb = new StringBuilder(TlaStrings.VARIABLES + TlaStrings.NEWLINE);
     for (int i = 0; i < varDecls.size(); i++) {
       var v = varDecls.get(i);
@@ -66,6 +67,7 @@ public class TlaModule {
   }
 
   private static String constantString(List<TlaConstDecl> constDecls) {
+    if (constDecls.size() == 0) return "";
     StringBuilder sb = new StringBuilder(TlaStrings.CONSTANTS + TlaStrings.NEWLINE);
     for (int i = 0; i < constDecls.size(); i++) {
       var v = constDecls.get(i);
