@@ -170,7 +170,7 @@ public class SMCmds extends SMConstraints {
           if (sigQname.name.equals(AlloyStrings.SIGINT)) {
             newCmdScopes.put(sigQname, cmdData.cmdScopes.get(sigQname));
           } else {
-            List<Qname> matches = this.sigQnameMatches(sigQname);
+            List<Qname> matches = this.sigQnameMatches(sigQname, cmdData.nameSpaceWithin);
             if (matches.size() == 0) {
               throw AlloyModelError.unknownName(cmdData.pos, sigQname.name);
             } else if (matches.size() == 1) {
@@ -189,7 +189,8 @@ public class SMCmds extends SMConstraints {
             // either matches exactly (which would mean only one match)
             // or could match on multiple of UNKNOWN_NAMESPACE
             Qname predFunQname = cmdData.assertOrPredFunQname.get();
-            List<Qname> possibleMatches = predFunQnameMatches(predFunQname);
+            List<Qname> possibleMatches =
+                predFunQnameMatches(predFunQname, cmdData.nameSpaceWithin);
             if (possibleMatches.size() == 1) {
               cmdData.predFunQname = Optional.of(possibleMatches.get(0));
             } else {
@@ -197,11 +198,12 @@ public class SMCmds extends SMConstraints {
                   cmdData.pos, cmdData.assertOrPredFunQname.toString());
             }
           } else {
-            // its a check -- name can only be an assert
+            // it's a check -- name can only be an assert
             // either matches exactly (which would mean only one match)
             // or could match on multiple of UNKNOWN_NAMESPACE
             List<Qname> possibleMatches =
-                possibleMatches(new ArrayList<>(assertTable.keySet()), cmdData.assertQname.get());
+                possibleMatches(
+                    new ArrayList<>(assertTable.keySet()), cmdData.assertOrPredFunQname.get());
             if (possibleMatches.size() == 1) {
               cmdData.assertQname = Optional.of(possibleMatches.get(0));
             } else {
@@ -315,7 +317,7 @@ public class SMCmds extends SMConstraints {
     this.scopeProfile = new CmdScopeProfile();
     this.pos = this.cd.pos;
 
-    checkForErrorsInGivenScopes();
+    checkForErrorsInGivenScopes(cd.nameSpaceWithin);
 
     Integer parentSigScope;
     // modifies the scopeProfile
@@ -513,7 +515,7 @@ public class SMCmds extends SMConstraints {
     }
   }
 
-  private void checkForErrorsInGivenScopes() {
+  private void checkForErrorsInGivenScopes(String nameSpaceWithin) {
 
     // trying to match what AA considers errors
 
@@ -522,7 +524,7 @@ public class SMCmds extends SMConstraints {
 
       // every sig given an explicit scope size is a sigName in the model
 
-      if (this.isSig(sigName)) {
+      if (this.isSig(sigName, nameSpaceWithin)) {
 
         if (!this.isExtendsChild(sigName) && !this.isTopLevelSig(sigName)) {
           // "in" or "equals" sigs cannot be given scopes in the command

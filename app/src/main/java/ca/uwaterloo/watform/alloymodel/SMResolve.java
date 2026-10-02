@@ -93,7 +93,7 @@ public class SMResolve extends SMCmds {
     else this.sigParentOfField = Optional.empty();
     this.nameSpace = nameSpace;
     this.usePredFun = false;
-    ResolveVis resolveVis = new ResolveVis();
+    ResolveVis resolveVis = new ResolveVis(this.nameSpace);
     for (AlloyDecl arg : args) {
       for (AlloyDecl d : arg.expand()) {
         ResolveInfo dResult = resolveVis.visit(d.expr);
@@ -112,7 +112,7 @@ public class SMResolve extends SMCmds {
     this.nameSpace = nameSpace;
     this.usePredFun = true;
 
-    ResolveVis resolveVis = new ResolveVis();
+    ResolveVis resolveVis = new ResolveVis(this.nameSpace);
     for (AlloyDecl arg : args) {
       for (AlloyDecl d : arg.expand()) {
         ResolveInfo dResult = resolveVis.visit(d.expr);
@@ -145,8 +145,12 @@ public class SMResolve extends SMCmds {
 
 
     */
-    ResolveVis() {
+
+    String nameSpaceWithin;
+
+    ResolveVis(String nameSpaceWithin) {
       this.localArities = new ArrayDeque<>();
+      this.nameSpaceWithin = nameSpaceWithin;
     }
 
     // need a context of arities for let expressions, quantified variables, etc.
@@ -978,15 +982,25 @@ public class SMResolve extends SMCmds {
         Optional<Integer> x = localLookup(unknownQname(varExpr.getName()));
         if (x.isPresent()) return new ResolveInfo(x, varExpr);
 
+        if (((AlloyQnameExpr) varExpr).kind == Kind.FIELD) {
+          // already fully resolved
+          // varExpr has the qname of the form "nameSpace/sigParentName/fieldName"
+          // as in "this/A/f"
+          // must exist
+          // make it [this,A,f] so we can lookup its arity
+          Qname qname = fieldExprQname((AlloyQnameExpr) varExpr);
+          return new ResolveInfo(SMResolve.this.fieldArity(qname), varExpr);
+        }
         // this qname may have UNKNOWN_NAMESPACE in it and should only be used for lookups
         Qname qname = unknownQname(varExpr.getName());
         // KENG TODO: sigs don't have priority over fields in disambiguation so order of ite
         // needs fixing
         // System.out.println("looking up2: " + varExpr.toString());
 
-        List<Qname> sigMatches = SMResolve.this.sigQnameMatches(qname);
-        List<Qname> fieldMatches = SMResolve.this.fieldQnameMatches(qname);
-        List<Qname> predFunMatches = SMResolve.this.predFunQnameMatches(qname);
+        List<Qname> sigMatches = SMResolve.this.sigQnameMatches(qname, this.nameSpaceWithin);
+        List<Qname> fieldMatches = SMResolve.this.fieldQnameMatches(qname, this.nameSpaceWithin);
+        List<Qname> predFunMatches =
+            SMResolve.this.predFunQnameMatches(qname, this.nameSpaceWithin);
 
         // KENG: in order to ensure that incorrect resolutions are not chosen
         // throw an error now if it is overloaded between all three of sigs/fields/predFuns
@@ -999,18 +1013,18 @@ public class SMResolve extends SMCmds {
         // after this max one of the cases below will work
 
         Qname chosen;
-        if (SMResolve.this.isSig(qname)) {
+        if (SMResolve.this.isSig(qname, this.nameSpaceWithin)) {
           // System.out.println("looking up3: " + varExpr.toString());
           // KENG NOTE: I'm picking one for now
 
-          chosen = SMResolve.this.sigQnameMatches(qname).get(0);
+          chosen = SMResolve.this.sigQnameMatches(qname, this.nameSpaceWithin).get(0);
           // KENG TODO may be multiple matches in different namespaces
           // for now I'm just saying the arity is 1
           return new ResolveInfo(Optional.of(1), chosen.toAlloyExpr(varExpr.pos, Kind.SIG));
 
-        } else if (SMResolve.this.isField(qname)) {
+        } else if (SMResolve.this.isField(qname, this.nameSpaceWithin)) {
           // KENG NOTE: I'm picking one for now
-          chosen = SMResolve.this.fieldQnameMatches(qname).get(0);
+          chosen = SMResolve.this.fieldQnameMatches(qname, this.nameSpaceWithin).get(0);
 
           if (SMResolve.this.sigParentOfField.isPresent()) {
             // we are checking a bounding expression of a field
@@ -1037,14 +1051,14 @@ public class SMResolve extends SMCmds {
             // sigParent is absent meaning we are not checking a bounding
             // expression of a field
             // KENG NOTE: I'm picking one for now
-            chosen = SMResolve.this.fieldQnameMatches(qname).get(0);
+            chosen = SMResolve.this.fieldQnameMatches(qname, this.nameSpaceWithin).get(0);
             return new ResolveInfo(
                 SMResolve.this.fieldArity(chosen), chosen.toAlloyExpr(varExpr.pos, Kind.FIELD));
           }
         } else if (SMResolve.this.usePredFun && (SMResolve.this.isPredFun(qname))) {
           // System.out.println("looking up6: " + varExpr.toString());
           // KENG NOTE: I'm picking one for now
-          chosen = SMResolve.this.predFunQnameMatches(qname).get(0);
+          chosen = SMResolve.this.predFunQnameMatches(qname, this.nameSpaceWithin).get(0);
           Optional<Integer> returnArity = SMResolve.this.predFunReturnArity(chosen);
           if (returnArity.isPresent()) {
             List<Optional<Integer>> argsArities = SMResolve.this.predFunArgArities(chosen);
@@ -1076,7 +1090,9 @@ public class SMResolve extends SMCmds {
               new ResolveInfo(List.of(ONE_ARITY, ONE_ARITY, TWO_ARITY), ONE_ARITY, varExpr);
           case AlloyNumExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           case AlloyIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
-          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr); // used a sig Int
+          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
+          case AlloyStringExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
+          // used a sig Int
           // TODO: fix this! it does not cover enough cases
           default -> {
             System.out.println(varExpr.toString() + " of class " + varExpr.getClass().getName());

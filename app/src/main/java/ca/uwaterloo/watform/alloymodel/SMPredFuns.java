@@ -249,7 +249,9 @@ public class SMPredFuns extends SMFields {
 
   // lookups -------------------------------
 
-  public List<Qname> predFunQnameMatches(Qname qname) {
+  // does not depend on context
+  // full qname may not be known
+  private List<Qname> possibleMatches(Qname qname) {
     return this.predFunTable.keySet().stream()
         .filter(
             q ->
@@ -259,6 +261,28 @@ public class SMPredFuns extends SMFields {
         .toList();
   }
 
+  public List<Qname> predFunQnameMatches(Qname qname, String nameSpaceWithin) {
+    // either matches exactly (which would mean only one match)
+    // or could match on multiple of UNKNOWN_NAMESPACE
+    // does not depend on context of nameSpaceWithin
+    List<Qname> possibleMatches = possibleMatches(qname);
+
+    // now let's look at the context it is within to disambiguate
+    if (possibleMatches.size() > 1 && !nameSpaceWithin.equals(THIS_NAMESPACE)) {
+      // favour currentNameSpace if currentNameSpace is not THIS_NAMESPACE
+      List<Qname> nameSpaceWithinMatches =
+          filterBy(possibleMatches, q -> q.nameSpace.equals(nameSpaceWithin));
+      if (nameSpaceWithinMatches.size() == 0) {
+        throw AlloyModelError.fieldNotRecognizedWithImport(qname.toString());
+      } else {
+        return nameSpaceWithinMatches;
+      }
+    } else {
+      return possibleMatches;
+    }
+  }
+
+  /*
   // if unknown only consider matches within a certain nameSpace
   public List<Qname> predFunQnameMatches(Qname qname, String limitedNameSpace) {
     return this.predFunTable.keySet().stream()
@@ -270,22 +294,23 @@ public class SMPredFuns extends SMFields {
                             & q.nameSpace.equals(limitedNameSpace))))
         .toList();
   }
+  */
 
   public List<Qname> funQnameMatches(Qname qname) {
     return filterBy(
-        this.predFunQnameMatches(qname),
+        this.possibleMatches(qname),
         q -> this.predFunTable.get(q).stream().anyMatch(j -> j.resultInfo.isPresent()));
   }
 
   public List<Qname> predQnameMatches(Qname qname) {
     return filterBy(
-        this.predFunQnameMatches(qname),
+        this.possibleMatches(qname),
         q -> this.predFunTable.get(q).stream().anyMatch(j -> !j.resultInfo.isPresent()));
   }
 
   // matches something, possibly more than one item
   public boolean isPredFun(Qname qname) {
-    return !predFunQnameMatches(qname).isEmpty();
+    return !possibleMatches(qname).isEmpty();
   }
 
   // matches something, possibly more than one item
@@ -299,11 +324,12 @@ public class SMPredFuns extends SMFields {
   }
 
   public List<Optional<Integer>> predFunArgArities(Qname qname) {
+    assert (qname.isFullQname());
     if (this.isPred(qname) || this.isFun(qname)) {
       // KENG TODO: I'm just returning the first match here
       // in both qname and in what matches qname
       // there are two get(0)'s below
-      Qname chosen = this.predFunQnameMatches(qname).get(0);
+      Qname chosen = this.possibleMatches(qname).get(0);
       return mapBy(this.predFunTable.get(chosen).get(0).argInfoList, a -> a.arity);
     } else {
       // arity visitor determines if this is an error
@@ -315,10 +341,11 @@ public class SMPredFuns extends SMFields {
     // KENG TODO: I'm just returning the first match here
     // in both qname and in what matches qname
     // there are two get(0)'s below
+    assert (qname.isFullQname());
     if (this.isPred(qname)) {
       return ONE_ARITY;
     } else if (this.isFun(qname)) {
-      Qname chosen = this.predFunQnameMatches(qname).get(0);
+      Qname chosen = this.possibleMatches(qname).get(0);
       return this.predFunTable.get(chosen).get(0).resultInfo.get().arity;
     } else {
       // arity visitor determines if this is an error
@@ -371,7 +398,8 @@ public class SMPredFuns extends SMFields {
   */
 
   private void exists(Qname qname) {
-    if (predFunQnameMatches(qname).isEmpty())
+    assert (qname.isFullQname());
+    if (possibleMatches(qname).isEmpty())
       throw AlloyModelImplError.predFunNotFound(qname.toString());
   }
 
@@ -384,21 +412,21 @@ public class SMPredFuns extends SMFields {
   public AlloyExpr predFunBody(Qname qname) {
     exists(qname);
     // KENG: this chooses the first one
-    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    Qname chosen = this.possibleMatches(qname).get(0);
     return this.predFunTable.get(chosen).get(0).body;
   }
 
   public List<AlloyDecl> predFunArgDecls(Qname qname) {
     exists(qname);
     // KENG: this chooses the first one
-    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    Qname chosen = this.possibleMatches(qname).get(0);
     return mapBy(this.predFunTable.get(chosen).get(0).argInfoList, a -> a.decl);
   }
 
   public AlloyExpr funResultExpr(Qname qname) {
     isFun(qname);
     // KENG: this chooses the first one
-    Qname chosen = this.predFunQnameMatches(qname).get(0);
+    Qname chosen = this.possibleMatches(qname).get(0);
     return this.predFunTable.get(chosen).get(0).resultInfo.get().expr;
   }
 }

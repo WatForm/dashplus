@@ -73,13 +73,13 @@ public class DpAlloyCli implements Callable<Integer> {
         if (fullFileName.endsWith(".als")) {
           dpOutput("Input: " + fullFileName);
           AlloyModel am = alloyParseToModel(fullFileName);
-          System.out.println("---");
-          System.out.println("Before resolve");
-          am.debug(); // may not work before resolve if cmds have errors in them
+          // System.out.println("---");
+          // System.out.println("Before resolve");
+          // am.debug(); // may not work before resolve if cmds have errors in them
           am.resolve();
-          System.out.println("---");
-          System.out.println("After resolve");
-          am.debug();
+          // System.out.println("---");
+          // System.out.println("After resolve");
+          // am.debug();
           int num_cmds_in_file = am.getNumCmds();
           // System.out.println("cmdIdx: " + cmdIdx.toString());
           if (cmdIdx < num_cmds_in_file) {

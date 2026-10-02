@@ -73,7 +73,9 @@ public class ResolveDM extends ResolverVisDM {
   private void resolveBufferTable() {
     for (String bfqn : allBufferNames()) {
       // no resolving needed, but it must be a sig in Alloy
-      if (!this.isSig(unknownQname(this.bufferElement(bfqn)))) {
+      // Dash names are always within this namespace
+      // TODO: check this
+      if (!this.isSig(unknownQname(this.bufferElement(bfqn)), THIS_NAMESPACE)) {
         Error.bufferElementMustBeSig(this.bufferPos(bfqn), this.bufferElement(bfqn));
       }
     }

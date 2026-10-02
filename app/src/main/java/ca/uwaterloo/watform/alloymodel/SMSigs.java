@@ -64,9 +64,10 @@ public class SMSigs extends SMBase {
       SigData sd = this.sigTable.get(sigQname);
       List<Qname> resolvedInParents = emptyList();
       for (Qname parentQname : sd.inParents) {
-        if (this.sigQnameMatches(parentQname).size() == 1) {
-          resolvedInParents.add(this.sigQnameMatches(parentQname).get(0));
-        } else if (this.sigQnameMatches(parentQname).size() == 0) {
+        List<Qname> possibleMatches = this.sigQnameMatches(parentQname, sigQname.nameSpace);
+        if (possibleMatches.size() == 1) {
+          resolvedInParents.add(possibleMatches.get(0));
+        } else if (possibleMatches.size() == 0) {
           throw AlloyModelError.unknownName(sd.pos, parentQname.toString());
         } else {
           throw AlloyModelError.nameCouldBeMultipleSigs(sd.pos, parentQname.toString());
@@ -75,9 +76,10 @@ public class SMSigs extends SMBase {
       sd.inParents = resolvedInParents;
       if (sd.extendsParent.isPresent()) {
         Qname parentQname = sd.extendsParent.get();
-        if (this.sigQnameMatches(parentQname).size() == 1) {
-          sd.extendsParent = Optional.of(this.sigQnameMatches(parentQname).get(0));
-        } else if (this.sigQnameMatches(parentQname).size() == 0) {
+        List<Qname> possibleMatches = this.sigQnameMatches(parentQname, sigQname.nameSpace);
+        if (possibleMatches.size() == 1) {
+          sd.extendsParent = Optional.of(possibleMatches.get(0));
+        } else if (possibleMatches.size() == 0) {
           throw AlloyModelError.unknownName(sd.pos, parentQname.toString());
         } else {
           throw AlloyModelError.nameCouldBeMultipleSigs(sd.pos, parentQname.toString());
@@ -139,21 +141,36 @@ public class SMSigs extends SMBase {
 
   // lookup ------------------
 
-  public List<Qname> sigQnameMatches(Qname qname) {
+  public List<Qname> sigQnameMatches(Qname qname, String nameSpaceWithin) {
     // either matches exactly (which would mean only one match)
     // or could match on multiple of UNKNOWN_NAMESPACE
-    return sigTable.keySet().stream()
-        .filter(
-            q ->
-                q.name.equals(qname.name)
-                    & (q.nameSpace.equals(qname.nameSpace)
-                        || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
-        .toList();
+    List<Qname> possibleMatches =
+        sigTable.keySet().stream()
+            .filter(
+                q ->
+                    q.name.equals(qname.name)
+                        & (q.nameSpace.equals(qname.nameSpace)
+                            || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
+            .toList();
+
+    // now let's look at context it is within to disambiguate
+    if (possibleMatches.size() > 1 && !nameSpaceWithin.equals(THIS_NAMESPACE)) {
+      // favour currentNameSpace if currentNameSpace is not THIS_NAMESPACE
+      List<Qname> nameSpaceWithinMatches =
+          filterBy(possibleMatches, q -> q.nameSpace.equals(nameSpaceWithin));
+      if (nameSpaceWithinMatches.size() == 0) {
+        throw AlloyModelError.sigNotRecognizedWithImport(qname.toString());
+      } else {
+        return nameSpaceWithinMatches;
+      }
+    } else {
+      return possibleMatches;
+    }
   }
 
-  public boolean isSig(Qname qname) {
+  public boolean isSig(Qname qname, String nameSpaceWithin) {
     // System.out.println(this.sigQnameMatches(qname));
-    return !this.sigQnameMatches(qname).isEmpty();
+    return !this.sigQnameMatches(qname, nameSpaceWithin).isEmpty();
   }
 
   /*
