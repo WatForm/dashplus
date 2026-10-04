@@ -59,6 +59,7 @@ public class SMResolve extends SMCmds {
   public void resolve() {
     if (this.createSM) {
       // order here matters
+      System.out.println("Resolving Alloy Model");
       this.resolveSMSigs(); // includes resolving sigs passed to imports
       this.resolveSMImports(); // check sig names substituted for parameters
       // will be used in expressions
