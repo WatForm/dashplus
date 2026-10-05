@@ -62,6 +62,7 @@ def tools = [
         mainClass: "ca.uwaterloo.watform.dpalloycli.DpAlloyCli",
         excludes: [
             'ca/uwaterloo/watform/alloytotla/**',
+            'ca/uwaterloo/watform/tlaexpvisitor/**',
             'ca/uwaterloo/watform/cli-no-longer-used/**',
             'ca/uwaterloo/watform/dashast/**',
             'ca/uwaterloo/watform/dashmodel/**',
@@ -77,6 +78,7 @@ def tools = [
        mainClass: "ca.uwaterloo.watform.dashtoalloy.DashToAlloyCli",
        excludes: [
             'ca/uwaterloo/watform/alloytotla/**',
+            'ca/uwaterloo/watform/tlaexpvisitor/**',
             'ca/uwaterloo/watform/cli-no-longer-used/**',
             'ca/uwaterloo/watform/dashtotla/**',
             'ca/uwaterloo/watform/dpalloy/**',

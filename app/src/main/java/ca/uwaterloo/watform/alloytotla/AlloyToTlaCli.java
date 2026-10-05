@@ -75,10 +75,52 @@ public class AlloyToTlaCli implements Callable<Integer> {
       AlloyModel alloyModel = alloyParseToModel(absolutePath.toString());
       alloyModel.resolve();
       AlloyToTla translator = new AlloyToTla(alloyModel, scheme, optimization, verbose, debug);
-      var tlaModel = translator.translate(baseName, cmdIdx);
+      var tlaModel = translator.translate(baseName, 0); // cmdIdx = 0
 
       Files.writeString(tlaFilePath, tlaModel.moduleCode());
       Files.writeString(cfgFilePath, tlaModel.configCode());
+    }
+  }
+
+  // for us at API
+  // returns an error code
+  public Integer alloyToTlaDefaultOptions(String fileName) throws Exception {
+
+    Optimization optimization =
+        new Optimization(
+            true, // optimize syntactic
+            true, // optimizeSemantic,
+            true, // optimizeScopeExact,
+            true); // optimizeOneSig);
+    Scheme scheme = Scheme.INVARIANT_COMMAND; // Scheme.INIT_COMMAND
+    Boolean verbose = false; // verbose;
+    Boolean debug = false; // cliConf.debug
+
+    Path absolutePath = Paths.get(fileName).toAbsolutePath();
+    String t = absolutePath.getFileName().toString();
+    String baseName = t.substring(0, t.lastIndexOf("."));
+    Path tlaFilePath = absolutePath.getParent().resolve(baseName + ".tla");
+    Path cfgFilePath = absolutePath.getParent().resolve(baseName + ".cfg");
+
+    if (!Files.exists(absolutePath)) {
+      dpOutput("File does not exist: " + absolutePath.toString());
+      return 1;
+    }
+
+    Reporter.INSTANCE.reset();
+
+    if (absolutePath.toString().endsWith(".als")) {
+      AlloyModel alloyModel = alloyParseToModel(absolutePath.toString());
+      alloyModel.resolve();
+      AlloyToTla translator = new AlloyToTla(alloyModel, scheme, optimization, verbose, debug);
+      var tlaModel = translator.translate(baseName, 0); // cmdIdx = 0
+
+      Files.writeString(tlaFilePath, tlaModel.moduleCode());
+      Files.writeString(cfgFilePath, tlaModel.configCode());
+      return 0; // correct completion
+    } else {
+      dpOutput("File is not .als file: " + absolutePath.toString());
+      return 1;
     }
   }
 
