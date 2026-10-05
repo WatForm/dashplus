@@ -25,35 +25,56 @@ public class BaseA2T {
   public final Logger l;
   public final AlloyToTlaExprVis translator;
 
-  public final StringBuilder transcript;
+  public static record Optimization(
+      boolean syntacticTreeShaking,
+      boolean semanticTreeShaking,
+      boolean nonExactSymmetry,
+      boolean oneSigMacroSubstitution) {}
+
+  public static enum Scheme {
+    INIT_COMMAND,
+    INVARIANT_COMMAND
+  }
+
+  public final Optimization optimization;
+  public final Scheme scheme;
+
+  // this is a buffer to hold debug data from the ExpressionVisitor
+  private final StringBuilder transcriptBuffer;
+
+  public BaseA2T(
+      AlloyModel alloyModel,
+      Scheme scheme,
+      Optimization optimization,
+      boolean verbose,
+      boolean debug) {
+    this.alloyModel = alloyModel;
+    this.verbose = verbose;
+    this.debug = debug;
+    this.scheme = scheme;
+    this.optimization = optimization;
+    this.l = CustomLoggerFactory.make("AlloyToTla", debug);
+    this.translator = new AlloyToTlaExprVis(alloyModel, l);
+    this.transcriptBuffer = new StringBuilder("");
+  }
 
   public TlaExp translateSnippet(AlloyExpr e) {
     return translator.extract(translator.visit(e));
   }
 
+  // this clears the transcriptBuffer and returns the contents
   public String dump() {
-    String answer = transcript.toString();
-    transcript.setLength(0);
+    String answer = transcriptBuffer.toString();
+    transcriptBuffer.setLength(0);
     return answer;
   }
 
+  // this adds contents to the transcriptBuffer
   public void log(String s) {
-    transcript.append("\n" + s);
+    transcriptBuffer.append("\n" + s);
   }
 
-  public BaseA2T(AlloyModel alloyModel, boolean verbose, boolean debug) {
-    this.alloyModel = alloyModel;
-    this.verbose = verbose;
-    this.debug = debug;
-    this.l = CustomLoggerFactory.make("AlloyToTla", debug);
-    this.translator = new AlloyToTlaExprVis(alloyModel, l);
-    this.transcript = new StringBuilder("");
-  }
-
-  /*
-  commonly used functions:
-  */
-
+  // used in both Ordering and for Commands
   protected TlaStringLiteral sigAtomString(String signame, int n) {
     return TlaStringLiteral(signame + DOLLAR + n);
   }
@@ -69,36 +90,4 @@ public class BaseA2T {
     }
     return TlaSet(atoms);
   }
-
-  /*
-  order:
-  StdLibs
-  Boilerplate
-  SigConsts
-  SigVars
-  FieldVars
-  SigHierarchy
-  SigConstraints
-  Facts
-  InitDefn
-  NextDefn
-
-  */
-
-  /*
-  public (AlloyModel alloyModel, String moduleName, boolean verbose, boolean debug) {
-  	super(alloyModel, moduleName, verbose, debug);
-  	translate();
-  }
-  public (AlloyModel alloyModel, boolean verbose, boolean debug) {
-  	super(alloyModel,verbose, debug);
-  	translate();
-  }
-
-  public void translate()
-  {
-
-  }
-  */
-
 }

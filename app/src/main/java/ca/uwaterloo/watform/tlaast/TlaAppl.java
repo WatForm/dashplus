@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.tlaast;
 
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 import ca.uwaterloo.watform.utils.GeneralUtil;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,5 +47,10 @@ public class TlaAppl extends TlaOperator {
     }
     sb.append(TlaStrings.BRACKET_CLOSE);
     return sb.toString();
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

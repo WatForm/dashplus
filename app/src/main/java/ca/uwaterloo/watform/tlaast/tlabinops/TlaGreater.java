@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast.tlabinops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaGreater extends TlaInfixBinOp {
 
@@ -15,5 +16,10 @@ public class TlaGreater extends TlaInfixBinOp {
         operandTwo,
         TlaOperator.Associativity.LEFT,
         TlaOperator.PrecedenceGroup.COMPARISON);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

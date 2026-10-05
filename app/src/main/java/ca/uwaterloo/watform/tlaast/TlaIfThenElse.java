@@ -1,5 +1,6 @@
 package ca.uwaterloo.watform.tlaast;
 
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,5 +39,10 @@ public class TlaIfThenElse extends TlaOperator {
         + TlaStrings.ELSE
         + TlaStrings.SPACE
         + this.getTLASnippetOfChild(elseExpression);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

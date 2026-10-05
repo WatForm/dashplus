@@ -32,6 +32,14 @@ public class CmdScopeProfile {
     this.explicitExtends = new HashMap<>();
   }
 
+  public List<Qname> getTopLevelSigs() {
+    return new ArrayList<>(this.topLevel.keySet());
+  }
+
+  public List<Qname> getExplicitExtendsSigs() {
+    return new ArrayList<>(this.explicitExtends.keySet());
+  }
+
   public SigScope getTopLevelScope(Qname sigName) {
     if (!this.topLevel.keySet().contains(sigName)) {
       throw ImplementationError.shouldNotReach();

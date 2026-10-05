@@ -86,13 +86,13 @@ def tools = [
         ]
     ],
     alloytotla: [
-       mainClass: "ca.uwaterloo.watform.alloytotla.DashToAlloyCli",
+       mainClass: "ca.uwaterloo.watform.alloytotla.AlloyToTlaCli",
        excludes: [
             'ca/uwaterloo/watform/cli-no-longer-used/**',
             'ca/uwaterloo/watform/dashtotla/**',
+            'ca/uwaterloo/watform/dashtoalloy/**',
             'ca/uwaterloo/watform/dpalloy/**',
             'ca/uwaterloo/watform/predabstraction/**',
-            'ca/uwaterloo/watform/dashtoalloy/**',
         ]
     ]
 ]

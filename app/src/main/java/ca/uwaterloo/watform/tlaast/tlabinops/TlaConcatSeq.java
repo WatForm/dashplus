@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast.tlabinops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaConcatSeq extends TlaInfixBinOp {
 
@@ -19,5 +20,10 @@ public class TlaConcatSeq extends TlaInfixBinOp {
         operandTwo,
         TlaOperator.Associativity.IRRELEVANT,
         TlaOperator.PrecedenceGroup.CONCAT);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }
