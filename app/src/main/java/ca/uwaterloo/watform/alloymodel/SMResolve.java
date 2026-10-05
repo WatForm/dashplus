@@ -989,7 +989,7 @@ public class SMResolve extends SMCmds {
           // as in "this/A/f"
           // must exist
           // make it [this,A,f] so we can lookup its arity
-          Qname qname = fieldExprQname((AlloyQnameExpr) varExpr);
+          Qname qname = alloyQnameExprToQname((AlloyQnameExpr) varExpr);
           return new ResolveInfo(SMResolve.this.fieldArity(qname), varExpr);
         }
         // this qname may have UNKNOWN_NAMESPACE in it and should only be used for lookups

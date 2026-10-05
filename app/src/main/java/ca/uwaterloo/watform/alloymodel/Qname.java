@@ -66,14 +66,22 @@ public class Qname {
     return new Qname(nameSpace, null, name);
   }
 
-  public static Qname fieldExprQname(AlloyQnameExpr expr) {
-    assert (expr.kind == Kind.FIELD); // means it is already resolved
-    // varExpr has the qname of the form "nameSpace/sigParentName/fieldName"
-    // as in "this/A/f"
-    // we need to tease this apart to be a Qname again
-    // as in [this, A, f]
-    return new Qname(
-        expr.vars.get(0).getName(), expr.vars.get(1).getName(), expr.vars.get(2).getName());
+  public static Qname alloyQnameExprToQname(AlloyQnameExpr qnameExpr) {
+    // must already be resolved because it has a kind
+    assert (qnameExpr.vars.size() == 2 || qnameExpr.vars.size() == 3);
+    List<AlloyVarExpr> vars = qnameExpr.vars;
+    if (qnameExpr.kind == Kind.SIG || qnameExpr.kind == Kind.PREDFUN) {
+      return nameSpaceQname(vars.get(0).label, vars.get(1).label);
+    } else if (qnameExpr.kind == Kind.FIELD) {
+      // has the sigParent in it also
+      // varExpr has the qname of the form "nameSpace/sigParentName/fieldName"
+      // as in "this/A/f"
+      // we need to tease this apart to be a Qname again
+      // as in [this, A, f]
+      return fieldQname(vars.get(0).getName(), vars.get(1).getName(), vars.get(2).getName());
+    } else {
+      throw ImplementationError.shouldNotReach();
+    }
   }
 
   public static Qname fieldQname(String nameSpace, String sigParent, String name) {
@@ -136,19 +144,6 @@ public class Qname {
       return AlloyVar(p, List.of(this.nameSpace, this.name), Kind.PREDFUN);
     } else {
       // can't handle Kind.UNKNOWN
-      throw ImplementationError.shouldNotReach();
-    }
-  }
-
-  public static Qname alloyQnameExprToQname(AlloyQnameExpr qnameExpr) {
-    assert (qnameExpr.vars.size() == 2 || qnameExpr.vars.size() == 3);
-    List<AlloyVarExpr> vars = qnameExpr.vars;
-    if (qnameExpr.kind == Kind.SIG || qnameExpr.kind == Kind.PREDFUN) {
-      return nameSpaceQname(vars.get(0).label, vars.get(1).label);
-    } else if (qnameExpr.kind == Kind.FIELD) {
-      // has the sigParent in it also
-      return fieldQname(vars.get(0).label, vars.get(1).label, vars.get(2).label);
-    } else {
       throw ImplementationError.shouldNotReach();
     }
   }
