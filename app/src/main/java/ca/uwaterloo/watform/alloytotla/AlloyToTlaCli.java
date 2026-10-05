@@ -84,7 +84,7 @@ public class AlloyToTlaCli implements Callable<Integer> {
 
   // for us at API
   // returns an error code
-  public Integer alloyToTlaDefaultOptions(String fileName) throws Exception {
+  public static Integer alloyToTlaDefaultOptions(String fileName) throws Exception {
 
     Optimization optimization =
         new Optimization(
