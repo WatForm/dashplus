@@ -13,6 +13,8 @@ public class TreeShaker {
 
     TlaModel answer = new TlaModel(tlaModel.name, tlaModel.getInit(), tlaModel.getNext());
 
+    // test commit
+
     for (var v : tlaModel.module.variables) answer.addVar(v.var(), v.type());
     for (var l : tlaModel.module.extended_libraries) answer.addSTL(l);
 

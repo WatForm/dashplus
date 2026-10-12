@@ -3,6 +3,8 @@
 build/
 bin/
 
+# tlc
+**/resources/alloytotla/states/
 *.tla
 *.cfg
 

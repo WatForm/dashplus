@@ -41,16 +41,17 @@ public class CommandsA2T extends BoilerplateA2T {
       TlaExp right = TlaStdLibs.Cardinality(TlaVar(tlaQname(sig)));
       if (cmdScopeProfile.getTopLevelScope(sig).isExact())
         clauses.add(right.EQUALS(TlaIntLiteral(n)));
-      else clauses.add(TlaLesserEq(right, TlaIntLiteral(n)));
+      else {
+        clauses.add(TlaLesserEq(right, TlaIntLiteral(n)));
+      }
     }
 
     tlaModel.addDefn(TlaDefn(COMMAND, repeatedAnd(clauses)));
-    tlaModel.addInvariant(TlaAppl(COMMAND));
 
-    // tlaModel.addComment("command: " + cmdDecl.toString(), verbose);
-    // tlaModel.addDefn(cmdConstraints(tlaModel, cmdDecl));
-    // tlaModel.addDefn(scopeConstraints(tlaModel, cmdDecl));
-    // tlaModel.addInvariant(TlaAppl(COMMAND));
+    if (scheme == Scheme.INVARIANT_COMMAND) {
+      tlaModel.addDefn(TlaDefn(COMMAND_INVARIANT, TlaNot(TlaAppl(COMMAND))));
+      tlaModel.addInvariant(TlaAppl(COMMAND_INVARIANT));
+    }
   }
 
   /*

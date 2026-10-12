@@ -1,5 +1,5 @@
 sig A {
-	f : A
+	
 }
 
-run {}
+run {} for exactly 2 A
