@@ -1,19 +1,21 @@
 package ca.uwaterloo.watform.tlamodel;
 
-import ca.uwaterloo.watform.tlaast.TlaAppl;
+import static ca.uwaterloo.watform.utils.GeneralUtil.filterBy;
+import static ca.uwaterloo.watform.utils.GeneralUtil.mapBy;
+
 import ca.uwaterloo.watform.tlaast.TlaComment;
 import ca.uwaterloo.watform.tlaast.TlaDefn;
 import ca.uwaterloo.watform.tlaexpvisitor.TlaApplCollector;
-import ca.uwaterloo.watform.utils.ImplementationError;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Stack;
 
 public class TreeShaker {
   public static TlaModel removeUnusedDefns(TlaModel tlaModel) {
 
     TlaModel answer = new TlaModel(tlaModel.name, tlaModel.getInit(), tlaModel.getNext());
-
-    // test commit
 
     for (var v : tlaModel.module.variables) answer.addVar(v.var(), v.type());
     for (var l : tlaModel.module.extended_libraries) answer.addSTL(l);
@@ -32,36 +34,66 @@ public class TreeShaker {
     return answer;
   }
 
-  private static List<TlaDefn> actuallyUsed(TlaModel tlaModel) {
+  private static <T> List<T> closure(HashMap<T, List<T>> mapping, List<T> initial) {
+    // HashSet keeps track of visited nodes to handle cycles safely
+    HashSet<T> visited = new HashSet<>();
+    // Stack facilitates the Depth-First Search traversal
+    Stack<T> stack = new Stack<>();
 
-    List<TlaDefn> answer = new ArrayList<>();
+    // Initialize the stack and visited set with the initial elements
+    if (initial != null) {
+      for (T element : initial) {
+        if (element != null && visited.add(element)) {
+          stack.push(element);
+        }
+      }
+    }
 
-    List<TlaAppl> usedAppls = new ArrayList<>();
-    // add Init and Next and constants and invariants and properties
-    var collector = new TlaApplCollector();
-    usedAppls.addAll(collector.visit(tlaModel.getInit()));
-    usedAppls.addAll(collector.visit(tlaModel.getNext()));
-    if (usedAppls.size() != 2) throw new ImplementationError("unexpected problem in tree-shaking");
-    for (var prop : tlaModel.cfg.properties) usedAppls.addAll(collector.visit(prop));
-    for (var inv : tlaModel.cfg.invariants) usedAppls.addAll(collector.visit(inv));
-    for (var c : tlaModel.cfg.properties) usedAppls.addAll(collector.visit(c));
+    while (!stack.isEmpty()) {
+      T current = stack.pop();
 
-    boolean changes;
-    do {
-      changes = false;
-      List<TlaDefn> toAddDefns = new ArrayList<>();
-      for (var defn : tlaModel.module.getFormulaDefinitions()) {
-        for (var a : usedAppls) {
-          if (defn.decl.name.equals(a.name)) {
-            if (!answer.contains(defn) && !toAddDefns.contains(defn)) toAddDefns.add(defn);
+      // Get the neighbors of the current node from the mapping map
+      List<T> neighbors = mapping.get(current);
+      if (neighbors != null) {
+        for (T neighbor : neighbors) {
+          // If the neighbor hasn't been visited yet, mark it visited and push to stack
+          if (neighbor != null && visited.add(neighbor)) {
+            stack.push(neighbor);
           }
         }
       }
-      if (toAddDefns.size() != 0) changes = true;
-      answer.addAll(toAddDefns);
+    }
 
-    } while (changes);
+    return new ArrayList<>(visited);
+  }
 
-    return answer;
+  private static List<TlaDefn> actuallyUsed(TlaModel tlaModel) {
+
+    // returns a list of tlaModel defns that are actually used
+    // if the body of a TlaDefn A uses a TlaAppl whose name matches the TlaDefn B, then A uses B
+    // Init and Next are always used
+    // all invariants and properties are also used
+
+    TlaApplCollector collector = new TlaApplCollector();
+
+    HashMap<String, List<String>> useMap = new HashMap<>();
+    for (var defn : tlaModel.module.getFormulaDefinitions())
+      useMap.put(defn.decl.name, mapBy(collector.visit(defn.body), a -> a.name));
+
+    List<String> initUsed = new ArrayList<>();
+    initUsed.add(tlaModel.getInit().name);
+    initUsed.add(tlaModel.getNext().name);
+    for (var prop : tlaModel.cfg.properties) {
+      List<String> usedNames = mapBy(collector.visit(prop), appl -> appl.name);
+      for (var s : usedNames) initUsed.add(s);
+    }
+    for (var inv : tlaModel.cfg.invariants) {
+      List<String> usedNames = mapBy(collector.visit(inv), appl -> appl.name);
+      for (var s : usedNames) initUsed.add(s);
+    }
+
+    List<String> answerFilter = closure(useMap, initUsed);
+    return filterBy(
+        tlaModel.module.getFormulaDefinitions(), defn -> answerFilter.contains(defn.decl.name));
   }
 }
