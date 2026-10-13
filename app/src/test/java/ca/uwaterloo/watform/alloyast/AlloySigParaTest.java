@@ -100,28 +100,28 @@ public class AlloySigParaTest {
         assertEquals(sigABC.rel, expanded.get(2).rel);
         assertEquals(sigABC.block, expanded.get(2).block);
 
-        assertEquals("f1", expanded.get(0).fields.get(0).getName().get());
-        assertEquals("f2", expanded.get(0).fields.get(1).getName().get());
-        assertEquals("f3", expanded.get(0).fields.get(2).getName().get());
-        assertEquals("f4", expanded.get(0).fields.get(3).getName().get());
+        assertEquals("f1", expanded.get(0).fields.get(0).getName());
+        assertEquals("f2", expanded.get(0).fields.get(1).getName());
+        assertEquals("f3", expanded.get(0).fields.get(2).getName());
+        assertEquals("f4", expanded.get(0).fields.get(3).getName());
         assertEquals(new AlloyQnameExpr("F12"), expanded.get(0).fields.get(0).expr);
         assertEquals(new AlloyQnameExpr("F12"), expanded.get(0).fields.get(1).expr);
         assertEquals(new AlloyQnameExpr("F34"), expanded.get(0).fields.get(2).expr);
         assertEquals(new AlloyQnameExpr("F34"), expanded.get(0).fields.get(3).expr);
 
-        assertEquals("f1", expanded.get(1).fields.get(0).getName().get());
-        assertEquals("f2", expanded.get(1).fields.get(1).getName().get());
-        assertEquals("f3", expanded.get(1).fields.get(2).getName().get());
-        assertEquals("f4", expanded.get(1).fields.get(3).getName().get());
+        assertEquals("f1", expanded.get(1).fields.get(0).getName());
+        assertEquals("f2", expanded.get(1).fields.get(1).getName());
+        assertEquals("f3", expanded.get(1).fields.get(2).getName());
+        assertEquals("f4", expanded.get(1).fields.get(3).getName());
         assertEquals(new AlloyQnameExpr("F12"), expanded.get(1).fields.get(0).expr);
         assertEquals(new AlloyQnameExpr("F12"), expanded.get(1).fields.get(1).expr);
         assertEquals(new AlloyQnameExpr("F34"), expanded.get(1).fields.get(2).expr);
         assertEquals(new AlloyQnameExpr("F34"), expanded.get(1).fields.get(3).expr);
 
-        assertEquals("f1", expanded.get(2).fields.get(0).getName().get());
-        assertEquals("f2", expanded.get(2).fields.get(1).getName().get());
-        assertEquals("f3", expanded.get(2).fields.get(2).getName().get());
-        assertEquals("f4", expanded.get(2).fields.get(3).getName().get());
+        assertEquals("f1", expanded.get(2).fields.get(0).getName());
+        assertEquals("f2", expanded.get(2).fields.get(1).getName());
+        assertEquals("f3", expanded.get(2).fields.get(2).getName());
+        assertEquals("f4", expanded.get(2).fields.get(3).getName());
         assertEquals(new AlloyQnameExpr("F12"), expanded.get(2).fields.get(0).expr);
         assertEquals(new AlloyQnameExpr("F12"), expanded.get(2).fields.get(1).expr);
         assertEquals(new AlloyQnameExpr("F34"), expanded.get(2).fields.get(2).expr);

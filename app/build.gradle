@@ -64,6 +64,7 @@ def tools = [
             'ca/uwaterloo/watform/alloytotla/**',
             'ca/uwaterloo/watform/tlaexpvisitor/**',
             'ca/uwaterloo/watform/cli-no-longer-used/**',
+            'ca/uwaterloo/watform/cli/**',
             'ca/uwaterloo/watform/dashast/**',
             'ca/uwaterloo/watform/dashmodel/**',
             'ca/uwaterloo/watform/dashexprvisitor/**',
@@ -72,6 +73,10 @@ def tools = [
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/tlaast/**',
             'ca/uwaterloo/watform/tlamodel/**',
+        ],
+        testExcludes: [
+            // imports ca.uwaterloo.watform.parser.Parser, which doesn't exist in src/main
+            'ca/uwaterloo/watform/alloymodel/AlloyModelTest.java',
         ]
     ],
     dashtoalloy: [
@@ -80,6 +85,7 @@ def tools = [
             'ca/uwaterloo/watform/alloytotla/**',
             'ca/uwaterloo/watform/tlaexpvisitor/**',
             'ca/uwaterloo/watform/cli-no-longer-used/**',
+            'ca/uwaterloo/watform/cli/**',
             'ca/uwaterloo/watform/dashtotla/**',
             'ca/uwaterloo/watform/dpalloy/**',
             'ca/uwaterloo/watform/predabstraction/**',
@@ -90,12 +96,18 @@ def tools = [
     alloytotla: [
        mainClass: "ca.uwaterloo.watform.alloytotla.AlloyToTlaCli",
        excludes: [
+            'ca/uwaterloo/watform/cli/**',
             'ca/uwaterloo/watform/cli-no-longer-used/**',
             'ca/uwaterloo/watform/dashtotla/**',
-            'ca/uwaterloo/watform/dashtoalloy/**',
+			'ca/uwaterloo/watform/dashtoalloy/**',
             'ca/uwaterloo/watform/dpalloy/**',
             'ca/uwaterloo/watform/predabstraction/**',
+            'ca/uwaterloo/watform/dashtoalloy/**',
         ]
+    ],
+    releaseJar: [
+       mainClass: "ca.uwaterloo.watform.cli.Main",
+       excludes: []
     ]
 ]
 
@@ -116,6 +128,50 @@ sourceSets {
 
 tools.each { name, tool ->
     configurations["${name}Implementation"].extendsFrom(configurations.implementation)
+}
+
+// per-tool test source sets: src/test/java filtered the same way as the tool's main sources
+tools.each { name, tool ->
+    def cap = name.capitalize()
+
+    def testExcludes = tool.excludes + (tool.testExcludes ?: [])
+    def testSet = sourceSets.create(name + "Test")
+    testSet.java.setSrcDirs(["src/test/java"])
+    testSet.java.exclude(testExcludes)
+    testSet.resources.setSrcDirs(["src/test/resources"])
+
+    // tests see the tool's dependencies + its compiled classes + JUnit
+    configurations.getByName(name + "TestImplementation").extendsFrom(
+        configurations.testImplementation,
+        configurations.getByName(name + "Implementation")
+    )
+    configurations.getByName(name + "TestRuntimeOnly").extendsFrom(configurations.testRuntimeOnly)
+    dependencies.add(name + "TestImplementation", sourceSets.getByName(name).output)
+
+    tasks.named("compile" + cap + "TestJava", JavaCompile) {
+        options.sourcepath = files("src/main/java")
+    }
+
+    tasks.named("process" + cap + "TestResources") {
+        dependsOn tasks.named('generateGrammarSource')
+    }
+
+    // ./gradlew testDpalloy, testDashtoalloy, ...
+    tasks.register("test" + cap, Test) {
+        group = 'verification'
+        description = "Runs the tests that go with the " + name + " tool"
+        dependsOn tasks.named('generateGrammarSource')
+
+        testClassesDirs = testSet.output.classesDirs
+        classpath = testSet.runtimeClasspath
+
+        useJUnitPlatform()
+        testLogging { showStandardStreams = true }
+
+        if (project.hasProperty('stopOnFirstFail')) {
+            systemProperty 'stopOnFirstFail', project.property('stopOnFirstFail').toString()
+        }
+    }
 }
 
 // different tools to build
@@ -182,9 +238,9 @@ tasks.named("processTestResources") {
 
 tasks.named('test') {
     dependsOn tasks.named('generateGrammarSource')
-    
+
     useJUnitPlatform()
-    
+
     testLogging {
         showStandardStreams = true
     }
@@ -199,4 +255,3 @@ tasks.named('test') {
 tasks.named("check") {
     dependsOn.removeIf { it.name == "test" }
 }
-

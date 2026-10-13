@@ -24,13 +24,11 @@ public class AlloyDeclTest {
         assertEquals(2, expandedDecls.size());
 
         AlloyDecl aDecl = expandedDecls.get(0);
-        assertTrue(aDecl.getName().isPresent());
-        assertEquals("a", aDecl.getName().get());
+        assertEquals("a", aDecl.getName());
         assertEquals(new AlloySigIntExpr(), aDecl.expr);
 
         AlloyDecl bDecl = expandedDecls.get(1);
-        assertTrue(bDecl.getName().isPresent());
-        assertEquals("b", bDecl.getName().get());
+        assertEquals("b", bDecl.getName());
         assertEquals(new AlloySigIntExpr(), bDecl.expr);
     }
 }

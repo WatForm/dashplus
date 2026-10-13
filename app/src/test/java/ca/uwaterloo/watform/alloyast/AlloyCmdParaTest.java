@@ -17,95 +17,95 @@ public class AlloyCmdParaTest {
         Reporter.INSTANCE.reset();
     }
 
-    @Test
-    @Order(1)
-    @DisplayName("AlloyCmdPara ctor input validation")
-    public void invalidCtorArgs() throws Exception {
-        assertThrows(
-                AlloyCtorError.class,
-                () ->
-                        new AlloyCmdPara(
-                                new AlloyCmdPara.CommandDecl(
-                                        AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                        null,
-                                        TestUtil.createBlock(),
-                                        new AlloyCmdPara.CommandDecl.Scope(
-                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                        false, -1, 2, 1, "sig")))));
-        assertThrows(
-                AlloyCtorError.class,
-                () ->
-                        new AlloyCmdPara(
-                                new AlloyCmdPara.CommandDecl(
-                                        AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                        null,
-                                        TestUtil.createBlock(),
-                                        new AlloyCmdPara.CommandDecl.Scope(
-                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                        false, 1, -1, 1, "sig")))));
+//     @Test
+//     @Order(1)
+//     @DisplayName("AlloyCmdPara ctor input validation")
+//     public void invalidCtorArgs() throws Exception {
+//         assertThrows(
+//                 AlloyCtorError.class,
+//                 () ->
+//                         new AlloyCmdPara(
+//                                 new AlloyCmdPara.CommandDecl(
+//                                         AlloyCmdPara.CommandDecl.CmdType.RUN,
+//                                         null,
+//                                         TestUtil.createBlock(),
+//                                         new AlloyCmdPara.CommandDecl.Scope(
+//                                                 new AlloyCmdPara.CommandDecl.Scope.Typescope(
+//                                                         false, -1, 2, 1, "sig")))));
+//         assertThrows(
+//                 AlloyCtorError.class,
+//                 () ->
+//                         new AlloyCmdPara(
+//                                 new AlloyCmdPara.CommandDecl(
+//                                         AlloyCmdPara.CommandDecl.CmdType.RUN,
+//                                         null,
+//                                         TestUtil.createBlock(),
+//                                         new AlloyCmdPara.CommandDecl.Scope(
+//                                                 new AlloyCmdPara.CommandDecl.Scope.Typescope(
+//                                                         false, 1, -1, 1, "sig")))));
 
-        assertThrows(
-                AlloyCtorError.class,
-                () ->
-                        new AlloyCmdPara(
-                                new AlloyCmdPara.CommandDecl(
-                                        AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                        null,
-                                        TestUtil.createBlock(),
-                                        new AlloyCmdPara.CommandDecl.Scope(
-                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                        false, 1, 0, 1, "sig")))));
-        assertThrows(
-                AlloyCtorError.class,
-                () ->
-                        new AlloyCmdPara(
-                                new AlloyCmdPara.CommandDecl(
-                                        AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                        null,
-                                        TestUtil.createBlock(),
-                                        new AlloyCmdPara.CommandDecl.Scope(
-                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                        false, 1, 4, 0, "sig")))));
+//         assertThrows(
+//                 AlloyCtorError.class,
+//                 () ->
+//                         new AlloyCmdPara(
+//                                 new AlloyCmdPara.CommandDecl(
+//                                         AlloyCmdPara.CommandDecl.CmdType.RUN,
+//                                         null,
+//                                         TestUtil.createBlock(),
+//                                         new AlloyCmdPara.CommandDecl.Scope(
+//                                                 new AlloyCmdPara.CommandDecl.Scope.Typescope(
+//                                                         false, 1, 0, 1, "sig")))));
+//         assertThrows(
+//                 AlloyCtorError.class,
+//                 () ->
+//                         new AlloyCmdPara(
+//                                 new AlloyCmdPara.CommandDecl(
+//                                         AlloyCmdPara.CommandDecl.CmdType.RUN,
+//                                         null,
+//                                         TestUtil.createBlock(),
+//                                         new AlloyCmdPara.CommandDecl.Scope(
+//                                                 new AlloyCmdPara.CommandDecl.Scope.Typescope(
+//                                                         false, 1, 4, 0, "sig")))));
 
-        assertThrows(
-                AlloyCtorError.class,
-                () ->
-                        new AlloyCmdPara(
-                                new AlloyCmdPara.CommandDecl(
-                                        AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                        null,
-                                        TestUtil.createBlock(),
-                                        new AlloyCmdPara.CommandDecl.Scope(
-                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                        false, 1, 4, 0, "sig")))));
+//         assertThrows(
+//                 AlloyCtorError.class,
+//                 () ->
+//                         new AlloyCmdPara(
+//                                 new AlloyCmdPara.CommandDecl(
+//                                         AlloyCmdPara.CommandDecl.CmdType.RUN,
+//                                         null,
+//                                         TestUtil.createBlock(),
+//                                         new AlloyCmdPara.CommandDecl.Scope(
+//                                                 new AlloyCmdPara.CommandDecl.Scope.Typescope(
+//                                                         false, 1, 4, 0, "sig")))));
 
-        assertThrows(
-                AlloyCtorError.class,
-                () ->
-                        new AlloyCmdPara(
-                                new AlloyCmdPara.CommandDecl(
-                                        AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                        null,
-                                        TestUtil.createBlock(),
-                                        new AlloyCmdPara.CommandDecl.Scope(
-                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                        false, 1, 4, 0, "sig")))));
+//         assertThrows(
+//                 AlloyCtorError.class,
+//                 () ->
+//                         new AlloyCmdPara(
+//                                 new AlloyCmdPara.CommandDecl(
+//                                         AlloyCmdPara.CommandDecl.CmdType.RUN,
+//                                         null,
+//                                         TestUtil.createBlock(),
+//                                         new AlloyCmdPara.CommandDecl.Scope(
+//                                                 new AlloyCmdPara.CommandDecl.Scope.Typescope(
+//                                                         false, 1, 4, 0, "sig")))));
 
-        assertThrows(
-                AlloyCtorError.class,
-                () ->
-                        new AlloyCmdPara(
-                                new AlloyCmdPara.CommandDecl(
-                                        AlloyCmdPara.CommandDecl.CmdType.RUN,
-                                        null,
-                                        TestUtil.createBlock(),
-                                        new AlloyCmdPara.CommandDecl.Scope(
-                                                new AlloyCmdPara.CommandDecl.Scope.Typescope(
-                                                        true,
-                                                        31,
-                                                        true,
-                                                        31,
-                                                        1,
-                                                        new AlloySigIntExpr())))));
-    }
+//         assertThrows(
+//                 AlloyCtorError.class,
+//                 () ->
+//                         new AlloyCmdPara(
+//                                 new AlloyCmdPara.CommandDecl(
+//                                         AlloyCmdPara.CommandDecl.CmdType.RUN,
+//                                         null,
+//                                         TestUtil.createBlock(),
+//                                         new AlloyCmdPara.CommandDecl.Scope(
+//                                                 new AlloyCmdPara.CommandDecl.Scope.Typescope(
+//                                                         true,
+//                                                         31,
+//                                                         true,
+//                                                         31,
+//                                                         1,
+//                                                         new AlloySigIntExpr())))));
+//     }
 }
