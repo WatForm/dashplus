@@ -1,10 +1,13 @@
 package ca.uwaterloo.watform.alloytotla;
 
+import static ca.uwaterloo.watform.alloymodel.Qname.alloyQnameExprToQname;
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
 import static ca.uwaterloo.watform.alloytotla.BoilerplateA2T.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.AlloyStrings.Kind;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -136,18 +139,35 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
   public Result translateQnameExpr(AlloyQnameExpr exp) {
 
-    // TODO rewrite all of this with new interface
+    Result answer =
+        switch (exp.kind) {
+          case Kind.SIG -> new TlaExpResult(TlaAppl(tlaQname(alloyQnameExprToQname(exp))));
+          case Kind.FIELD -> new TlaExpResult(TlaAppl(tlaQname(alloyQnameExprToQname(exp))));
+          case Kind.PREDFUN -> null;
+          case Kind.UNKNOWN_KIND -> null;
+        };
 
-    if (!am.allPreds().contains(exp.label)) return new TlaExpResult(TlaAppl(exp.label));
+    if (answer == null)
+      throw ImplementationError.notSupported(
+          "unsupported kind: " + exp.toString() + " of kind " + exp.kind);
 
-    // TODO FIX THIS
-    int numArgs = 4; // am.numArgs(exp.label);
+    return answer;
 
-    l.info("translating macro " + exp.label + " with " + numArgs + " args ");
+    // if(exp.kind == Kind.SIG || exp.kind == Kind.FIELD)
 
-    if (numArgs == 0) return new TlaExpResult(TlaAppl(exp.label));
+    // // TODO rewrite all of this with new interface
 
-    return new MacroResult(numArgs, exp.label, new ArrayList<TlaExp>());
+    // if (!am.allPreds().contains(exp.label))
+    //   return new TlaExpResult(TlaAppl(exp.label));
+
+    // // TODO FIX THIS
+    // int numArgs = 4; // am.numArgs(exp.label);
+
+    // l.info("translating macro " + exp.label + " with " + numArgs + " args ");
+
+    // if (numArgs == 0) return new TlaExpResult(TlaAppl(exp.label));
+
+    // return new MacroResult(numArgs, exp.label, new ArrayList<TlaExp>());
   }
 
   @Override

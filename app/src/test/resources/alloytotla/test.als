@@ -1,5 +1,9 @@
+
+
 sig A {
 	
 }
 
-run {} for exactly 2 A
+run {
+	some A
+} for exactly 2 A

@@ -33,6 +33,7 @@ public class FieldsA2T extends FactsA2T {
     for (Qname f : alloyModel.allFieldQnames()) {
       // log("field expr of " + f.fullName() + " is " + alloyModel.fieldExpr(f));
       log("field product of " + f.fullName() + " is " + alloyModel.fieldProduct(f));
+      log("field unresolved product is:" + alloyModel.fieldExpr(f, ""));
     }
     l.info(dump());
   }
