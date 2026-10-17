@@ -50,7 +50,7 @@ public class SMImports extends SMSigs {
     if (this.createSM) {
       String potentialNameSpace;
       String fileName = "";
-      ImportData id = new ImportData(pos, importName, sigParamValues);
+      ImportData id = new ImportData(pos, importName, sigParamValues, parentNameSpace);
       // this.debugSMImports();
       if (asQname.isPresent()) {
         potentialNameSpace = asQname.get().getName();
@@ -122,7 +122,7 @@ public class SMImports extends SMSigs {
       resolvedSigParamValues = emptyList();
       for (Qname sigName : id.sigParamValues) {
         // System.out.println("sigName: " + sigName);
-        List<Qname> possibleMatches = this.sigQnameMatches(sigName);
+        List<Qname> possibleMatches = this.sigQnameMatches(sigName, id.parentNameSpace);
         if (possibleMatches.size() != 1) {
           throw AlloyModelError.ambiguousSigRef(id.pos, sigName.toString());
         } else {

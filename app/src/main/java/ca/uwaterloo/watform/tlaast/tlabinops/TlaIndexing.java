@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast.tlabinops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaIndexing extends TlaBinOp {
 
@@ -23,6 +24,11 @@ public class TlaIndexing extends TlaBinOp {
         + this.getTLASnippetOfChild(this.operandTwo)
         + TlaStrings.SQUARE_BRACKET_CLOSE;
     // TODO fix this
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 
   /*

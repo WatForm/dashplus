@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.tlaast.tlabinops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaRange extends TlaInfixBinOp {
 
@@ -18,5 +19,10 @@ public class TlaRange extends TlaInfixBinOp {
         operandTwo,
         TlaOperator.Associativity.UNSAFE,
         PrecedenceGroup.RANGE);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
   }
 }

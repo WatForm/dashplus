@@ -188,14 +188,20 @@ public class Qname {
     return Objects.hash(nameSpace, sigParent, name);
   }
 
+  // determine if anything in keys could match qname
   public static List<Qname> possibleMatches(List<Qname> keys, Qname qname) {
     return keys.stream()
         .filter(
             q ->
                 q.name.equals(qname.name)
-                    & (q.sigParent.equals(qname.sigParent) || qname.sigParent == null)
+                    & ((q.sigParent == null && qname.sigParent == null)
+                        || (qname.sigParent == null))
                     & (q.nameSpace.equals(qname.nameSpace)
                         || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
         .toList();
+  }
+
+  public Boolean isFullQname() {
+    return !this.nameSpace.equals(UNKNOWN_NAMESPACE);
   }
 }

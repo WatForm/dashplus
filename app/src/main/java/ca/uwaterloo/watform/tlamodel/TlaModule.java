@@ -1,17 +1,17 @@
 package ca.uwaterloo.watform.tlamodel;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaast.SnowCatTypes.SCType;
 import ca.uwaterloo.watform.utils.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class TlaModule {
 
-  public record TlaVarDecl(TlaVar var, TlaTypes.Type type) {}
+  public record TlaVarDecl(TlaVar var, SCType type) {}
 
-  public record TlaConstDecl(TlaConst var, TlaTypes.Type type) {}
+  public record TlaConstDecl(TlaConst var, SCType type) {}
 
-  public final List<TlaConst> constants;
+  public final List<TlaConstDecl> constants;
   public final List<TlaVarDecl> variables;
   public final List<TlaStdLibs> extended_libraries;
   public final List<ASTNode> body;
@@ -54,12 +54,26 @@ public class TlaModule {
   }
 
   private static String variableString(List<TlaVarDecl> varDecls) {
+    if (varDecls.size() == 0) return "";
     StringBuilder sb = new StringBuilder(TlaStrings.VARIABLES + TlaStrings.NEWLINE);
     for (int i = 0; i < varDecls.size(); i++) {
       var v = varDecls.get(i);
       sb.append(v.type.annotation() + TlaStrings.NEWLINE);
       sb.append(v.var.toTLAPlusSnippetCore());
       if (i != varDecls.size() - 1) sb.append(",");
+      sb.append(TlaStrings.NEWLINE);
+    }
+    return sb.toString();
+  }
+
+  private static String constantString(List<TlaConstDecl> constDecls) {
+    if (constDecls.size() == 0) return "";
+    StringBuilder sb = new StringBuilder(TlaStrings.CONSTANTS + TlaStrings.NEWLINE);
+    for (int i = 0; i < constDecls.size(); i++) {
+      var v = constDecls.get(i);
+      sb.append(v.type.annotation() + TlaStrings.NEWLINE);
+      sb.append(v.var.toTLAPlusSnippetCore());
+      if (i != constDecls.size() - 1) sb.append(",");
       sb.append(TlaStrings.NEWLINE);
     }
     return sb.toString();
@@ -77,7 +91,7 @@ public class TlaModule {
   private String codeBody() {
     return TlaModule.simpleBuilder(TlaStrings.EXTENDS, this.extended_libraries)
         + "\n"
-        + TlaModule.simpleBuilder(TlaStrings.CONSTANTS, this.constants)
+        + TlaModule.constantString(this.constants)
         + "\n"
         + TlaModule.variableString(this.variables)
         + "\n"

@@ -43,6 +43,7 @@ public class A2TStrings {
   public static final String SIG_CONSTRAINT_SUFFIX = SPECIAL + "sig" + SPECIAL + "constraints";
   public static final String UNNAMED_FACT_PREFIX = SPECIAL + "fact" + SPECIAL;
   public static final String COMMAND = SPECIAL + "command";
+  public static final String COMMAND_INVARIANT = SPECIAL + "command" + SPECIAL + "invariant";
   public static final String SCOPE = SPECIAL + "scope";
 
   public static final String ORDERING_MODULE_ALLOY = "util/ordering";

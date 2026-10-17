@@ -52,7 +52,7 @@ public class AMThisCmdParas extends AMThisAssertParas {
                   : "run$" + Integer.toString(cmdNum));
     }
 
-    return this.createCmd(qname, cmdDeclCmdData(cmdDecl));
+    return this.createCmd(qname, cmdDeclCmdData(cmdDecl, nameSpace));
   }
 
   /*
@@ -74,11 +74,12 @@ public class AMThisCmdParas extends AMThisAssertParas {
     }
   }
 
-  public CmdData cmdDeclCmdData(CommandDecl cmdDecl) {
+  public CmdData cmdDeclCmdData(CommandDecl cmdDecl, String nameSpaceWithin) {
 
     CmdData cd = new CmdData();
     cd.pos = cmdDecl.pos;
     cd.cmdType = cmdDecl.cmdType; // run or check
+    cd.nameSpaceWithin = nameSpaceWithin;
 
     // Optional.of(n.value) or Optional.empty()
     cd.defaultScope = cmdDecl.scope.flatMap(s -> s.num.map(n -> n.value));

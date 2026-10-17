@@ -1,10 +1,13 @@
 package ca.uwaterloo.watform.alloytotla;
 
+import static ca.uwaterloo.watform.alloymodel.Qname.alloyQnameExprToQname;
+import static ca.uwaterloo.watform.alloytotla.A2THelpers.*;
 import static ca.uwaterloo.watform.alloytotla.BoilerplateA2T.*;
 import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.*;
+import ca.uwaterloo.watform.alloyast.AlloyStrings.Kind;
 import ca.uwaterloo.watform.alloyast.expr.binary.*;
 import ca.uwaterloo.watform.alloyast.expr.misc.*;
 import ca.uwaterloo.watform.alloyast.expr.unary.*;
@@ -13,8 +16,7 @@ import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.*;
 import ca.uwaterloo.watform.utils.ImplementationError;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result> {
@@ -137,16 +139,35 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
 
   public Result translateQnameExpr(AlloyQnameExpr exp) {
 
-    if (!am.allPreds().contains(exp.label)) return new TlaExpResult(TlaAppl(exp.label));
+    Result answer =
+        switch (exp.kind) {
+          case Kind.SIG -> new TlaExpResult(TlaAppl(tlaQname(alloyQnameExprToQname(exp))));
+          case Kind.FIELD -> new TlaExpResult(TlaAppl(tlaQname(alloyQnameExprToQname(exp))));
+          case Kind.PREDFUN -> null;
+          case Kind.UNKNOWN_KIND -> null;
+        };
 
-    // TODO FIX THIS
-    int numArgs = 4; // am.numArgs(exp.label);
+    if (answer == null)
+      throw ImplementationError.notSupported(
+          "unsupported kind: " + exp.toString() + " of kind " + exp.kind);
 
-    l.info("translating macro " + exp.label + " with " + numArgs + " args ");
+    return answer;
 
-    if (numArgs == 0) return new TlaExpResult(TlaAppl(exp.label));
+    // if(exp.kind == Kind.SIG || exp.kind == Kind.FIELD)
 
-    return new MacroResult(numArgs, exp.label, new ArrayList<TlaExp>());
+    // // TODO rewrite all of this with new interface
+
+    // if (!am.allPreds().contains(exp.label))
+    //   return new TlaExpResult(TlaAppl(exp.label));
+
+    // // TODO FIX THIS
+    // int numArgs = 4; // am.numArgs(exp.label);
+
+    // l.info("translating macro " + exp.label + " with " + numArgs + " args ");
+
+    // if (numArgs == 0) return new TlaExpResult(TlaAppl(exp.label));
+
+    // return new MacroResult(numArgs, exp.label, new ArrayList<TlaExp>());
   }
 
   @Override
@@ -259,7 +280,7 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
   public Result visit(AlloyLetExpr letExpr) {
 
     /*
-    note that let expressions in TLA+ can have params, but cannot in ALloy
+    note that let expressions in TLA+ can have params, but cannot in Alloy
     let expressions are translated directly, since TLA+ has a more expressive system for let expressions
     no de-sugaring-via-substitution occurs
     */
@@ -269,7 +290,6 @@ public class AlloyToTlaExprVis implements AlloyExprVis<AlloyToTlaExprVis.Result>
     var body = extract(visit(letExpr.body));
     var answer = new TlaLetBinding(asns, body);
     return new TlaExpResult(answer);
-    // throw ImplementationError.notSupported("Unimplemented method 'visit' for let");
   }
 
   @Override
