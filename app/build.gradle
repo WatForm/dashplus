@@ -71,6 +71,7 @@ def tools = [
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/tlaast/**',
             'ca/uwaterloo/watform/tlamodel/**',
+            'ca/uwaterloo/watform/tlaexpvisitor/**',
         ]
     ],
     dashtoalloy: [
@@ -83,6 +84,7 @@ def tools = [
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/tlaast/**',
             'ca/uwaterloo/watform/tlamodel/**',
+            'ca/uwaterloo/watform/tlaexpvisitor/**',
         ]
     ],
     alloytotla: [
