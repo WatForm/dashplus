@@ -20,27 +20,26 @@ import java.util.List;
 
 public class ReachabilityD2A extends ElectrumFactD2A {
 
-    protected ReachabilityD2A(DashModel dm, Options opt) {
-        super(dm, opt);
-    }
+  protected ReachabilityD2A(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
 
-    public void addReachability() {
-        assert (!this.isElectrum && !this.isTraces);
-        AlloyExpr b =
-                AlloyAllVars(
-                        this.dsl.curDecls(),
-                        AlloyIn(
-                                this.dsl.curVar(),
-                                AlloyJoin(
-                                        AlloyVar(D2AStrings.snapshotName),
-                                        AlloyDomainRes(
-                                                AlloyVar(D2AStrings.tcmcInitialStateName),
-                                                new AlloyReflTransClosExpr(
-                                                        AlloyVar(D2AStrings.tcmcSigmaName))))));
+  public void addReachability() {
+    assert (!this.isElectrum && !this.isTraces);
+    AlloyExpr b =
+        AlloyAllVars(
+            this.dsl.curDecls(),
+            AlloyIn(
+                this.dsl.curVar(),
+                AlloyJoin(
+                    AlloyVar(D2AStrings.snapshotName),
+                    AlloyDomainRes(
+                        AlloyVar(D2AStrings.tcmcInitialStateName),
+                        new AlloyReflTransClosExpr(AlloyVar(D2AStrings.tcmcSigmaName))))));
 
-        List<AlloyExpr> body = this.dsl.emptyExprList();
-        body.add(b);
-        // this.am.addPred(D2AStrings.reachabilityName, this.dsl.emptyDeclList(), body);
-        this.am.addFact(D2AStrings.reachabilityName, body);
-    }
+    List<AlloyExpr> body = this.dsl.emptyExprList();
+    body.add(b);
+    // this.am.addPred(D2AStrings.reachabilityName, this.dsl.emptyDeclList(), body);
+    this.am.addFact(D2AStrings.reachabilityName, body);
+  }
 }

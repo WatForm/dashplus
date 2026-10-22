@@ -4,15 +4,19 @@ import ca.uwaterloo.watform.utils.*;
 
 public class AlloyInterfaceImplError extends ImplementationError {
 
-    private AlloyInterfaceImplError(Pos pos, String msg) {
-        super(pos, msg);
-    }
+  private AlloyInterfaceImplError(Pos pos, String msg) {
+    super(pos, msg);
+  }
 
-    private AlloyInterfaceImplError(String msg) {
-        super(msg);
-    }
+  private AlloyInterfaceImplError(String msg) {
+    super(msg);
+  }
 
-    public static AlloyInterfaceImplError solutionEvalErr(Pos pos, String msg) {
-        return new AlloyInterfaceImplError(pos, msg);
-    }
+  public static AlloyInterfaceImplError solutionEvalErr(Pos pos, String msg) {
+    return new AlloyInterfaceImplError(pos, msg);
+  }
+
+  public static AlloyInterfaceImplError cmdNumOutOfRange(Integer i) {
+    return new AlloyInterfaceImplError("Cmd number out of range: " + Integer.toString(i));
+  }
 }

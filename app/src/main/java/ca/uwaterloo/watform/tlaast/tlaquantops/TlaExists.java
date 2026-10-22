@@ -1,24 +1,30 @@
 package ca.uwaterloo.watform.tlaast.tlaquantops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 import java.util.List;
 
 public class TlaExists extends TlaQuantOp {
 
-    /*
-    \E v \in S : exp
+  /*
+  \E v \in S : exp
 
-    variable: v
-    set: S  (can be an expression that evaluates to a set)
-    expression: exp  (boolean expression)
-    */
+  variable: v
+  set: S  (can be an expression that evaluates to a set)
+  expression: exp  (boolean expression)
+  */
 
-    public TlaExists(List<TlaQuantOpHead> heads, TlaExp expression) {
-        super(heads, expression, TlaOperator.PrecedenceGroup.UNSAFE);
-    }
+  public TlaExists(List<TlaQuantOpHead> heads, TlaExp expression) {
+    super(heads, expression, TlaOperator.PrecedenceGroup.UNSAFE);
+  }
 
-    @Override
-    public String toTLAPlusSnippetCore() {
-        return TlaQuantOp.predicateSnippetCore(this, TlaStrings.EXISTS);
-    }
+  @Override
+  public String toTLAPlusSnippetCore() {
+    return TlaQuantOp.predicateSnippetCore(this, TlaStrings.EXISTS);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
+  }
 }

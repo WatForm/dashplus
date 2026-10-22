@@ -16,37 +16,41 @@ import ca.uwaterloo.watform.dashast.DashFile;
 
 public class BaseDM extends AlloyModel {
 
-    public BaseDM() {
-        super();
-    }
+  public String dashFullFileName;
 
-    public BaseDM(DashFile d) {
-        super((AlloyFile) d);
-    }
+  public BaseDM(String dashFullFileName) {
+    super(dashFullFileName);
+    this.dashFullFileName = dashFullFileName;
+  }
 
-    public static boolean supportedBuiltinVarExpr(AlloyVarExpr varExpr) {
-        // these aren't supported in Dash
-        return !(
-        // this aren't supported in Dash Expr
-        varExpr instanceof AlloyAtNameExpr
-                || varExpr instanceof AlloyNameExpr
-                || varExpr instanceof AlloyThisExpr);
-    }
+  public BaseDM(DashFile d) {
+    super((AlloyFile) d);
+    this.dashFullFileName = d.fullFileName;
+  }
 
-    public static boolean supportedUnaryExpr(AlloyUnaryExpr unaryExpr) {
-        // these aren't supported in Dash
-        return !(unaryExpr instanceof AlloyAfterExpr
-                || unaryExpr instanceof AlloyAlwaysExpr
-                || unaryExpr instanceof AlloyBeforeExpr
-                || unaryExpr instanceof AlloyEventuallyExpr
-                || unaryExpr instanceof AlloyHistoricallyExpr
-                || unaryExpr instanceof AlloyOnceExpr);
-    }
+  public static boolean supportedBuiltinVarExpr(AlloyVarExpr varExpr) {
+    // these aren't supported in Dash
+    return !(
+    // this aren't supported in Dash Expr
+    varExpr instanceof AlloyAtNameExpr
+        || varExpr instanceof AlloyNameExpr
+        || varExpr instanceof AlloyThisExpr);
+  }
 
-    public static boolean supportedBinaryExpr(AlloyBinaryExpr binExpr) {
-        // these aren't supported in Dash
-        return !(binExpr instanceof AlloyReleasesExpr
-                || binExpr instanceof AlloySinceExpr
-                || binExpr instanceof AlloyUntilExpr);
-    }
+  public static boolean supportedUnaryExpr(AlloyUnaryExpr unaryExpr) {
+    // these aren't supported in Dash
+    return !(unaryExpr instanceof AlloyAfterExpr
+        || unaryExpr instanceof AlloyAlwaysExpr
+        || unaryExpr instanceof AlloyBeforeExpr
+        || unaryExpr instanceof AlloyEventuallyExpr
+        || unaryExpr instanceof AlloyHistoricallyExpr
+        || unaryExpr instanceof AlloyOnceExpr);
+  }
+
+  public static boolean supportedBinaryExpr(AlloyBinaryExpr binExpr) {
+    // these aren't supported in Dash
+    return !(binExpr instanceof AlloyReleasesExpr
+        || binExpr instanceof AlloySinceExpr
+        || binExpr instanceof AlloyUntilExpr);
+  }
 }

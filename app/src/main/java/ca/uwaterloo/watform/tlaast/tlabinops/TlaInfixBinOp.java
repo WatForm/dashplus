@@ -6,29 +6,29 @@ import ca.uwaterloo.watform.tlaast.TlaStrings;
 
 public abstract class TlaInfixBinOp extends TlaBinOp {
 
-    /*
-    subtype of Binary operators where the operator appears between the operands when printed
-    */
+  /*
+  subtype of Binary operators where the operator appears between the operands when printed
+  */
 
-    private final String infixOperator;
+  private final String infixOperator;
 
-    public TlaInfixBinOp(
-            String infixOperator,
-            TlaExp operandOne,
-            TlaExp operandTwo,
-            TlaOperator.Associativity associativity,
-            TlaOperator.PrecedenceGroup precedenceGroup) {
+  public TlaInfixBinOp(
+      String infixOperator,
+      TlaExp operandOne,
+      TlaExp operandTwo,
+      TlaOperator.Associativity associativity,
+      TlaOperator.PrecedenceGroup precedenceGroup) {
 
-        super(operandOne, operandTwo, associativity, precedenceGroup);
-        this.infixOperator = infixOperator;
-    }
+    super(operandOne, operandTwo, associativity, precedenceGroup);
+    this.infixOperator = infixOperator;
+  }
 
-    @Override
-    public String toTLAPlusSnippetCore() {
-        return this.getTLASnippetOfChild(this.operandOne)
-                + TlaStrings.SPACE
-                + this.infixOperator
-                + TlaStrings.SPACE
-                + this.getTLASnippetOfChild(this.operandTwo);
-    }
+  @Override
+  public String toTLAPlusSnippetCore() {
+    return this.getTLASnippetOfChild(this.operandOne)
+        + TlaStrings.SPACE
+        + this.infixOperator
+        + TlaStrings.SPACE
+        + this.getTLASnippetOfChild(this.operandTwo);
+  }
 }

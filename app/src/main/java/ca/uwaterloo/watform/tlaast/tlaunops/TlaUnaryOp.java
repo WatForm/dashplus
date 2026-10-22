@@ -6,15 +6,15 @@ import java.util.List;
 
 public abstract class TlaUnaryOp extends TlaOperator {
 
-    public final TlaExp operand;
+  public final TlaExp operand;
 
-    public TlaUnaryOp(TlaExp operand, TlaOperator.PrecedenceGroup precedenceGroup) {
+  public TlaUnaryOp(TlaExp operand, TlaOperator.PrecedenceGroup precedenceGroup) {
 
-        super(TlaOperator.Associativity.IRRELEVANT, precedenceGroup);
-        this.operand = operand;
-    }
+    super(TlaOperator.Associativity.IRRELEVANT, precedenceGroup);
+    this.operand = operand;
+  }
 
-    public List<TlaExp> getChildren() {
-        return Arrays.asList(this.operand);
-    }
+  public List<TlaExp> getChildren() {
+    return Arrays.asList(this.operand);
+  }
 }

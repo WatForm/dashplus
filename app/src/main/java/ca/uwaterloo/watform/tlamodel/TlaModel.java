@@ -1,56 +1,62 @@
 package ca.uwaterloo.watform.tlamodel;
 
-import ca.uwaterloo.watform.tlaast.TlaAppl;
-import ca.uwaterloo.watform.tlaast.TlaComment;
-import ca.uwaterloo.watform.tlaast.TlaConst;
-import ca.uwaterloo.watform.tlaast.TlaDefn;
-import ca.uwaterloo.watform.tlaast.TlaExp;
-import ca.uwaterloo.watform.tlaast.TlaStdLibs;
-import ca.uwaterloo.watform.tlaast.TlaTypes;
-import ca.uwaterloo.watform.tlaast.TlaVar;
+import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaast.SnowCatTypes.SCType;
 
 public class TlaModel {
-    // top-level class to handle modules and associated configs
-    public final String name;
-    private TlaModule module;
-    private TlaConfig cfg;
+  // top-level class to handle modules and associated configs
+  public final String name;
+  public final TlaModule module;
+  public final TlaConfig cfg;
 
-    public TlaModel(String name, TlaAppl init, TlaAppl next) {
-        this.name = name;
-        this.module = new TlaModule();
-        this.cfg = new TlaConfig(init, next);
-    }
+  public TlaModel(String name, TlaAppl init, TlaAppl next) {
+    this.name = name;
+    this.module = new TlaModule();
+    this.cfg = new TlaConfig(init, next);
+  }
 
-    public String moduleCode() {
-        return this.module.code(this.name);
-    }
+  public TlaAppl getInit() {
+    return this.cfg.init;
+  }
 
-    public String configCode() {
-        return this.cfg.code();
-    }
+  public TlaAppl getNext() {
+    return this.cfg.next;
+  }
 
-    public void addSTL(TlaStdLibs stl) {
-        this.module.extended_libraries.add(stl);
-    }
+  public String moduleCode() {
+    return this.module.code(this.name);
+  }
 
-    public void addVar(TlaVar v, TlaTypes.Type t) {
-        this.module.variables.add(new TlaModule.TlaVarDecl(v, t));
-    }
+  public String configCode() {
+    return this.cfg.code();
+  }
 
-    public void addConst(TlaConst c, TlaExp value) {
-        this.module.constants.add(c);
-        this.cfg.constants.add(c.EQUALS(value));
-    }
+  public void addSTL(TlaStdLibs stl) {
+    this.module.extended_libraries.add(stl);
+  }
 
-    public void addDefn(TlaDefn d) {
-        this.module.body.add(d);
-    }
+  public void addVar(TlaVar v, SCType t) {
+    this.module.variables.add(new TlaModule.TlaVarDecl(v, t));
+  }
 
-    public void addInvariant(TlaAppl d) {
-        this.cfg.invariants.add(d);
-    }
+  public void addConst(TlaConst c, SCType t, TlaExp value) {
+    this.module.constants.add(new TlaModule.TlaConstDecl(c, t));
+    this.cfg.constants.add(c.EQUALS(value));
+  }
 
-    public void addComment(String c, boolean verbose) {
-        if (verbose) this.module.body.add(new TlaComment(c));
-    }
+  public void addDefn(TlaDefn d) {
+    this.module.body.add(d);
+  }
+
+  public void addInvariant(TlaAppl d) {
+    this.cfg.invariants.add(d);
+  }
+
+  public void addComment(String c, boolean verbose) {
+    if (verbose) this.module.body.add(new TlaComment(c));
+  }
+
+  public void addComment(TlaComment c) {
+    this.module.body.add(c);
+  }
 }

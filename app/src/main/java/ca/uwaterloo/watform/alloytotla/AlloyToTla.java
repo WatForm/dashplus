@@ -1,63 +1,55 @@
 package ca.uwaterloo.watform.alloytotla;
 
-import static ca.uwaterloo.watform.alloytotla.AlloyToTlaStrings.*;
+import static ca.uwaterloo.watform.alloytotla.A2TStrings.*;
+import static ca.uwaterloo.watform.tlaast.CreateHelper.*;
 
-import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import ca.uwaterloo.watform.tlaast.TlaAppl;
 import ca.uwaterloo.watform.tlamodel.TlaModel;
-import java.util.ArrayList;
-import java.util.List;
+import ca.uwaterloo.watform.tlamodel.TreeShaker;
+import java.time.LocalDateTime;
 
-public class AlloyToTla extends StdLibsTlaA2T {
+public class AlloyToTla extends StdLibsA2T {
 
-    public static TlaModel getBlankModel(String moduleName) {
-        return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
-    }
+  public AlloyToTla(
+      AlloyModel alloyModel,
+      Scheme scheme,
+      Optimization optimization,
+      boolean verbose,
+      boolean debug) {
+    super(alloyModel, scheme, optimization, verbose, debug);
+  }
 
-    public AlloyToTla(AlloyModel alloyModel, boolean verbose, boolean debug) {
-        super(alloyModel, verbose, debug);
-    }
+  public static TlaModel getBlankModel(String moduleName) {
+    return new TlaModel(moduleName, new TlaAppl(INIT), new TlaAppl(NEXT));
+  }
 
-    public List<TlaModel> translate(String baseName) {
+  public TlaModel translate(String baseName, int cmdNum) {
 
-        List<AlloyCmdPara> paras = alloyModel.allCmdParas();
+    var answer = new TlaModel(baseName, new TlaAppl(INIT), new TlaAppl(NEXT));
+    translate(answer, cmdNum);
 
-        List<AlloyCmdPara.CommandDecl> cmdDecls = new ArrayList<>();
-        for (var p : paras) {
-            cmdDecls.addAll(p.cmdDecls);
-        }
+    if (optimization.syntacticTreeShaking()) return TreeShaker.removeUnusedDefns(answer);
 
-        List<TlaModel> tlaModels = new ArrayList<>();
+    return answer;
+  }
 
-        int ct = 0;
-        for (var cmdDecl : cmdDecls) {
-            String name = ct == 0 ? baseName : baseName + ct;
-            TlaModel tlaModel = getBlankModel(name);
-            translate(tlaModel, cmdDecl);
-            tlaModels.add(tlaModel);
-            ct += 1;
-        }
+  public void translate(TlaModel tlaModel, int cmdNum) {
 
-        return tlaModels;
-    }
-
-    public void translate(TlaModel tlaModel, AlloyCmdPara.CommandDecl cmdDecl) {
-
-        l.info("chosen command: " + cmdDecl.toString());
-
-        addStdLibsTla(tlaModel);
-        addSigVars(tlaModel);
-        addFieldVars(tlaModel);
-        addBoilerplate(tlaModel);
-        addStdLibsAlloy(tlaModel, cmdDecl);
-        addPredicatesFunctions(tlaModel);
-        addSigHierarchy(tlaModel);
-        addFieldTypes(tlaModel);
-        addSigConstraints(tlaModel);
-        addFacts(tlaModel);
-        addCommand(tlaModel, cmdDecl);
-        addInitDefn(tlaModel, cmdDecl);
-        addNextDefn(tlaModel);
-    }
+    tlaModel.addComment("Translated at " + LocalDateTime.now().toString(), true);
+    addStdLibsTla(tlaModel);
+    addSigVars(tlaModel);
+    addFieldVars(tlaModel);
+    addBoilerplate(tlaModel);
+    // addStdLibsAlloy(tlaModel, cmdDecl);
+    addPredicatesFunctions(tlaModel);
+    addSigHierarchy(tlaModel);
+    addFieldTypeConstraints(tlaModel);
+    addSigConstraints(tlaModel);
+    // addFacts(tlaModel);
+    addCommand(tlaModel, cmdNum);
+    addScopes(tlaModel, cmdNum);
+    addInitDefn(tlaModel);
+    addNextDefn(tlaModel);
+  }
 }

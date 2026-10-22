@@ -35,65 +35,62 @@ import java.util.List;
 */
 public class TransTestIfNextStableD2A extends TransIsEnabledAfterStepD2A {
 
-    protected TransTestIfNextStableD2A(DashModel dm, Options opt) {
-        super(dm, opt);
+  protected TransTestIfNextStableD2A(DashModel dm, Options opt) {
+    super(dm, opt);
+  }
+
+  // only one of these predicates per model
+  public void addTestIfNextStable() {
+
+    List<AlloyExpr> body = this.dsl.emptyExprList();
+    List<AlloyDecl> decls = this.dsl.emptyDeclList();
+
+    if (!this.isElectrum) {
+      decls.addAll(this.dsl.curNextDecls());
     }
 
-    // only one of these predicates per model
-    public void addTestIfNextStable() {
-
-        List<AlloyExpr> body = this.dsl.emptyExprList();
-        List<AlloyDecl> decls = this.dsl.emptyDeclList();
-
-        if (!this.isElectrum) {
-            decls.addAll(this.dsl.curNextDecls());
-        }
-
-        /*
-        for (DashParam p : this.dm.allParams()) {
-            decls.add(p.asAlloyDecl());
-        }
-        */
-
-        Integer maxDepthParams = this.dm.maxDepthParams();
-        for (int i = 0; i <= maxDepthParams; i++) {
-            decls.add(this.dsl.scopeDecl(i));
-            if (this.dm.hasEventsAti(i)) {
-                decls.add(this.dsl.genEventDecl(i));
-            }
-        }
-
-        List<AlloyExpr> args;
-        // this will include transition tfqn itself
-        for (String tfqn : this.dm.allTransNames()) {
-
-            args = this.dsl.emptyExprList();
-            if (!this.isElectrum) args.addAll(this.dsl.curNextVars());
-
-            for (DashParam p : this.dm.transParams(tfqn)) {
-                args.add(p.asIndexValue());
-            }
-
-            for (int i = 0; i <= maxDepthParams; i++) {
-                args.add(this.dsl.scopeVar(i));
-                if (this.dm.hasEventsAti(i)) {
-                    args.add(this.dsl.genEventVar(i));
-                }
-            }
-
-            String tout = DashFQN.translateFQN(tfqn);
-            body.add(AlloyNot(AlloyPredCall(D2AStrings.enabledAfterStepName(tout), args)));
-        }
-
-        if (this.dm.allParams().isEmpty())
-            this.am.addPred(D2AStrings.testIfNextStableName, decls, body);
-        else
-            this.am.addPred(
-                    D2AStrings.testIfNextStableName,
-                    decls,
-                    List.of(
-                            AlloyAllVars(
-                                    this.dsl.paramDecls(this.dm.allParams()),
-                                    new AlloyBlock(body))));
+    /*
+    for (DashParam p : this.dm.allParams()) {
+        decls.add(p.asAlloyDecl());
     }
+    */
+
+    Integer maxDepthParams = this.dm.maxDepthParams();
+    for (int i = 0; i <= maxDepthParams; i++) {
+      decls.add(this.dsl.scopeDecl(i));
+      if (this.dm.hasEventsAti(i)) {
+        decls.add(this.dsl.genEventDecl(i));
+      }
+    }
+
+    List<AlloyExpr> args;
+    // this will include transition tfqn itself
+    for (String tfqn : this.dm.allTransNames()) {
+
+      args = this.dsl.emptyExprList();
+      if (!this.isElectrum) args.addAll(this.dsl.curNextVars());
+
+      for (DashParam p : this.dm.transParams(tfqn)) {
+        args.add(p.asIndexValue());
+      }
+
+      for (int i = 0; i <= maxDepthParams; i++) {
+        args.add(this.dsl.scopeVar(i));
+        if (this.dm.hasEventsAti(i)) {
+          args.add(this.dsl.genEventVar(i));
+        }
+      }
+
+      String tout = DashFQN.translateFQN(tfqn);
+      body.add(AlloyNot(AlloyPredCall(D2AStrings.enabledAfterStepName(tout), args)));
+    }
+
+    if (this.dm.allParams().isEmpty())
+      this.am.addPred(D2AStrings.testIfNextStableName, decls, body);
+    else
+      this.am.addPred(
+          D2AStrings.testIfNextStableName,
+          decls,
+          List.of(AlloyAllVars(this.dsl.paramDecls(this.dm.allParams()), new AlloyBlock(body))));
+  }
 }

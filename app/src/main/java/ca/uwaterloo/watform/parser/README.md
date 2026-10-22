@@ -1,3 +1,5 @@
+// all parsing is Dash parsing so these are needed even for Alloy only
+
 # What this CLI does in sequence
 ## Antlr parse
 - Depending on the extension (either .als or .dsh) we start parsing at AlloyFile or DashFile

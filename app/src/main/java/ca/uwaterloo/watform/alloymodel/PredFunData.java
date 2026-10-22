@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import static ca.uwaterloo.watform.alloymodel.ResolveInfo.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.reqNonNull;
 import static ca.uwaterloo.watform.utils.ImplementationError.nullField;
@@ -12,81 +13,111 @@ import java.util.*;
 
 public class PredFunData {
 
-    public class ArgInfo {
-        public AlloyDecl decl;
-        public Optional<Integer> arity;
+  // arity is not initialized as UNKNOWN on creation
+  // b/c we may be creating these in resolve
+  public static class ArgInfo {
+    public AlloyDecl decl;
+    public Optional<Integer> arity;
 
-        ArgInfo(AlloyDecl decl, Optional<Integer> arity) {
-            this.decl = decl;
-            this.arity = arity;
-        }
+    ArgInfo(AlloyDecl decl, Optional<Integer> arity) {
+      this.decl = decl;
+      this.arity = arity;
     }
 
-    public class ResultInfo {
-        public AlloyExpr expr;
-        public Optional<Integer> arity;
+    public String toString() {
+      return "{" + decl + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
+    }
+  }
 
-        ResultInfo(AlloyExpr expr, Optional<Integer> arity) {
-            this.expr = expr;
-            this.arity = arity;
-        }
+  public static class ResultInfo {
+    public AlloyExpr expr;
+    public Optional<Integer> arity;
+
+    ResultInfo(AlloyExpr expr, Optional<Integer> arity) {
+      this.expr = expr;
+      this.arity = arity;
     }
 
-    public String name;
-    protected List<ArgInfo> argInfoList = emptyList();
-    protected Optional<ResultInfo> resultInfo;
-
-    private PredFunData(
-            String name, List<AlloyDecl> argsDeclList, Optional<AlloyExpr> optionalResultExpr) {
-        this.name = name;
-        for (AlloyDecl decl : argsDeclList) {
-            this.argInfoList.add(new ArgInfo(decl, Builtins.UNKNOWN_ARITY));
-        }
-        if (optionalResultExpr.isPresent())
-            this.resultInfo =
-                    Optional.of(new ResultInfo(optionalResultExpr.get(), Builtins.UNKNOWN_ARITY));
-        else this.resultInfo = Optional.empty();
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("{");
+      expr.toString(sb, 0);
+      return "{" + sb.toString() + "(" + arity.map(a -> Integer.toString(a)).orElse("?") + ")}";
     }
+  }
 
-    public static PredFunData PredData(String name, List<AlloyDecl> argsDeclList) {
-        // Boolean return value
-        return new PredFunData(name, argsDeclList, Optional.empty());
-    }
+  public Pos pos;
+  public List<ArgInfo> argInfoList = emptyList();
+  public Optional<ResultInfo> resultInfo;
+  public AlloyExpr body;
+  public Boolean isResolved = false;
 
-    public static PredFunData FunData(
-            String name, List<AlloyDecl> argsDeclList, AlloyExpr resultExpr) {
-        reqNonNull(nullField(Pos.UNKNOWN, resultExpr), resultExpr);
-        return new PredFunData(name, argsDeclList, Optional.of(resultExpr));
-    }
+  private PredFunData(
+      Pos p, List<AlloyDecl> argsDeclList, Optional<AlloyExpr> optionalResultExpr, AlloyExpr body) {
 
-    public Integer numArgs() {
-        return argInfoList.size();
+    for (AlloyDecl decl : argsDeclList) {
+      this.argInfoList.add(new ArgInfo(decl, UNKNOWN_ARITY));
     }
+    if (optionalResultExpr.isPresent())
+      this.resultInfo = Optional.of(new ResultInfo(optionalResultExpr.get(), UNKNOWN_ARITY));
+    else this.resultInfo = Optional.empty();
+    this.body = body;
+    this.pos = p;
+  }
 
-    public List<AlloyDecl> argDecls() {
-        return mapBy(this.argInfoList, a -> a.decl);
-    }
+  public static PredFunData PredData(Pos p, List<AlloyDecl> argsDeclList, AlloyExpr body) {
+    // Boolean return value
+    return new PredFunData(p, argsDeclList, Optional.empty(), body);
+  }
 
-    public Boolean isPred() {
-        return !this.resultInfo.isPresent();
-    }
+  public static PredFunData FunData(
+      Pos p, List<AlloyDecl> argsDeclList, AlloyExpr resultExpr, AlloyExpr body) {
+    reqNonNull(nullField(Pos.UNKNOWN, resultExpr), resultExpr);
+    return new PredFunData(p, argsDeclList, Optional.of(resultExpr), body);
+  }
 
-    public Boolean isFun() {
-        return this.resultInfo.isPresent();
-    }
+  @Override
+  public String toString() {
+    String s = argInfoList + ", " + resultInfo + ", ";
+    StringBuilder sb = new StringBuilder("");
+    body.toString(sb, 0);
+    s += body.toString() + " (resolved=" + isResolved + ")";
+    return s;
+  }
 
-    public AlloyExpr resultExpr() {
-        if (!this.isFun()) throw AlloyModelImplError.fcnNotFound(this.name);
-        else return this.resultInfo.get().expr;
-    }
+  /*
+  public Integer numArgs() {
+      return argInfoList.size();
+  }
 
-    /*
-    public void setArgArity(Integer index, Integer arity) {
-        this.args.get(index).arity = Optional.of(arity);
-    }
+  public List<AlloyDecl> argDecls() {
+      return mapBy(this.argInfoList, a -> a.decl);
+  }
 
-    public void setResultArity(Integer arity) {
-        this.result.get().arity = Optional.of(arity);
-    }
-    */
+  public Boolean isPred() {
+      return !this.resultInfo.isPresent();
+  }
+
+  public Boolean isFun() {
+      return this.resultInfo.isPresent();
+  }
+
+  public AlloyExpr resultExpr() {
+      if (!this.isFun()) throw AlloyModelImplError.fcnNotFound(this.name);
+      else return this.resultInfo.get().expr;
+  }
+
+  public AlloyExpr body() {
+      return this.body;
+  }
+
+  /*
+  public void setArgArity(Integer index, Integer arity) {
+      this.args.get(index).arity = Optional.of(arity);
+  }
+
+  public void setResultArity(Integer arity) {
+      this.result.get().arity = Optional.of(arity);
+  }
+  */
 }

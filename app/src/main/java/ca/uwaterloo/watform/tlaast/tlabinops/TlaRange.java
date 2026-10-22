@@ -1,22 +1,28 @@
 package ca.uwaterloo.watform.tlaast.tlabinops;
 
 import ca.uwaterloo.watform.tlaast.*;
+import ca.uwaterloo.watform.tlaexpvisitor.TlaExpVis;
 
 public class TlaRange extends TlaInfixBinOp {
 
-    /*
-    a..b
+  /*
+  a..b
 
-    returns the set of all numbers in the range a to b
-    a and b can be expressions that evaluate to integers
-    */
+  returns the set of all numbers in the range a to b
+  a and b can be expressions that evaluate to integers
+  */
 
-    public TlaRange(TlaExp operandOne, TlaExp operandTwo) {
-        super(
-                TlaStrings.RANGE,
-                operandOne,
-                operandTwo,
-                TlaOperator.Associativity.UNSAFE,
-                PrecedenceGroup.RANGE);
-    }
+  public TlaRange(TlaExp operandOne, TlaExp operandTwo) {
+    super(
+        TlaStrings.RANGE,
+        operandOne,
+        operandTwo,
+        TlaOperator.Associativity.UNSAFE,
+        PrecedenceGroup.RANGE);
+  }
+
+  @Override
+  public <T> T accept(TlaExpVis<T> visitor) {
+    return visitor.visit(this);
+  }
 }

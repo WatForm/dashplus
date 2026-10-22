@@ -1,0 +1,207 @@
+package ca.uwaterloo.watform.alloymodel;
+
+import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
+import ca.uwaterloo.watform.alloyast.AlloyStrings;
+import ca.uwaterloo.watform.alloyast.AlloyStrings.Kind;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.var.*;
+import ca.uwaterloo.watform.utils.*;
+import java.util.*;
+
+public class Qname {
+
+  public final String nameSpace;
+  public final String sigParent;
+  public final String name;
+
+  private Qname(String nameSpace, String sigParent, String name) {
+
+    // nameSpace can be empty -> that means UNKNOWN
+    if (name.isBlank()) {
+      throw AlloyModelImplError.blankStringNotAllowed();
+    }
+    this.nameSpace = nameSpace;
+    // sigParent is only used for fields
+    this.sigParent = sigParent;
+    this.name = name;
+  }
+
+  // if name has a nameSpace use that nameSpace
+  // o/w use THIS_NAMESPACE
+  public static Qname thisQname(String name) {
+    String newName;
+    String nameSpace;
+    if (name.contains(AlloyStrings.SLASH)) {
+      newName = name(name);
+      nameSpace = nameSpace(name);
+    } else {
+      newName = name;
+      nameSpace = THIS_NAMESPACE;
+    }
+    return new Qname(nameSpace, null, newName);
+  }
+
+  // if name has a nameSpace use that nameSpace
+  // o/w use UNKNOWN_NAMESPACE
+  public static Qname unknownQname(String name) {
+    String newName;
+    String nameSpace;
+    if (name.contains(AlloyStrings.SLASH)) {
+      newName = name(name);
+      nameSpace = nameSpace(name);
+    } else {
+      newName = name;
+      nameSpace = UNKNOWN_NAMESPACE;
+    }
+
+    return new Qname(nameSpace, null, newName);
+  }
+
+  public static Qname nameSpaceQname(String nameSpace, String name) {
+    if (name.contains(AlloyStrings.SLASH)) {
+      throw AlloyModelImplError.qnameNameCannotHaveSlash(name);
+    }
+    return new Qname(nameSpace, null, name);
+  }
+
+  public static Qname fieldExprQname(AlloyQnameExpr expr) {
+    assert (expr.kind == Kind.FIELD); // means it is already resolved
+    // varExpr has the qname of the form "nameSpace/sigParentName/fieldName"
+    // as in "this/A/f"
+    // we need to tease this apart to be a Qname again
+    // as in [this, A, f]
+    return new Qname(
+        expr.vars.get(0).getName(), expr.vars.get(1).getName(), expr.vars.get(2).getName());
+  }
+
+  public static Qname fieldQname(String nameSpace, String sigParent, String name) {
+    if (name.contains(AlloyStrings.SLASH)) {
+      throw AlloyModelImplError.qnameNameCannotHaveSlash(name);
+    }
+    return new Qname(nameSpace, sigParent, name);
+  }
+
+  // only works for sigs/pred/funs -- not fields
+  public String fullName() {
+    assert (this.sigParent == null);
+    return this.nameSpace + "/" + this.name;
+  }
+
+  /*
+  @Override
+  String toString() {
+      return this.fullName();
+  }
+  */
+
+  protected static String UNKNOWN_NAMESPACE = "?";
+  public static String THIS_NAMESPACE = AlloyStrings.THIS;
+  public static String LOCAL_NAMESPACE = "local";
+
+  protected static String[] splitAtLastSlash(String s) {
+    int i = s.lastIndexOf('/');
+    if (i == -1) {
+      return new String[] {UNKNOWN_NAMESPACE, s};
+    }
+    return new String[] {s.substring(0, i), s.substring(i + 1)};
+  }
+
+  private static String nameSpace(String s) {
+    String[] parts = splitAtLastSlash(s);
+    return parts[0];
+  }
+
+  private static String name(String s) {
+    String[] parts = splitAtLastSlash(s);
+    return parts[1];
+  }
+
+  public boolean isUnknownNameSpace() {
+    return this.nameSpace.equals(UNKNOWN_NAMESPACE);
+  }
+
+  public AlloyExpr toAlloyExpr(Pos p, Kind k) {
+    assert (this.nameSpace != UNKNOWN_NAMESPACE);
+    if (k == Kind.SIG) {
+      assert (this.sigParent == null);
+      return AlloyVar(p, List.of(this.nameSpace, this.name), Kind.SIG);
+    } else if (k == Kind.FIELD) {
+      return AlloyVar(p, List.of(this.nameSpace, this.sigParent, this.name), Kind.FIELD);
+
+      //  AlloyDomainRes(
+      //    SigVar(p, List.of(this.nameSpace, this.sigParent)), FieldVar(p, List.of(this.name)));
+    } else if (k == Kind.PREDFUN) {
+      return AlloyVar(p, List.of(this.nameSpace, this.name), Kind.PREDFUN);
+    } else {
+      // can't handle Kind.UNKNOWN
+      throw ImplementationError.shouldNotReach();
+    }
+  }
+
+  public static Qname alloyQnameExprToQname(AlloyQnameExpr qnameExpr) {
+    assert (qnameExpr.vars.size() == 2 || qnameExpr.vars.size() == 3);
+    List<AlloyVarExpr> vars = qnameExpr.vars;
+    if (qnameExpr.kind == Kind.SIG || qnameExpr.kind == Kind.PREDFUN) {
+      return nameSpaceQname(vars.get(0).label, vars.get(1).label);
+    } else if (qnameExpr.kind == Kind.FIELD) {
+      // has the sigParent in it also
+      return fieldQname(vars.get(0).label, vars.get(1).label, vars.get(2).label);
+    } else {
+      throw ImplementationError.shouldNotReach();
+    }
+  }
+
+  public Boolean isFieldQname() {
+    return this.sigParent != null;
+  }
+
+  public AlloyExpr toAlloyExpr(Kind k) {
+    return this.toAlloyExpr(Pos.UNKNOWN, k);
+  }
+
+  @Override
+  public String toString() {
+    return "["
+        + ((sigParent == null)
+            ? nameSpace + ", " + name
+            : nameSpace + ", " + sigParent + ", " + name)
+        + "]";
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof Qname other)) {
+      return false;
+    }
+    return Objects.equals(nameSpace, other.nameSpace)
+        && Objects.equals(sigParent, other.sigParent) // could both be null
+        && Objects.equals(name, other.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(nameSpace, sigParent, name);
+  }
+
+  // determine if anything in keys could match qname
+  public static List<Qname> possibleMatches(List<Qname> keys, Qname qname) {
+    return keys.stream()
+        .filter(
+            q ->
+                q.name.equals(qname.name)
+                    & ((q.sigParent == null && qname.sigParent == null)
+                        || (qname.sigParent == null))
+                    & (q.nameSpace.equals(qname.nameSpace)
+                        || qname.nameSpace.equals(UNKNOWN_NAMESPACE)))
+        .toList();
+  }
+
+  public Boolean isFullQname() {
+    return !this.nameSpace.equals(UNKNOWN_NAMESPACE);
+  }
+}

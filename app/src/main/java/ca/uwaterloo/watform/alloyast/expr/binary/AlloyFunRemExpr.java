@@ -2,30 +2,30 @@ package ca.uwaterloo.watform.alloyast.expr.binary;
 
 import ca.uwaterloo.watform.alloyast.AlloyStrings;
 import ca.uwaterloo.watform.alloyast.expr.*;
-import ca.uwaterloo.watform.exprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
 public final class AlloyFunRemExpr extends AlloyBinaryExpr {
-    public AlloyFunRemExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
-        super(pos, left, right, AlloyStrings.FUNREM);
-    }
+  public AlloyFunRemExpr(Pos pos, AlloyExpr left, AlloyExpr right) {
+    super(pos, left, right, AlloyStrings.FUNREM);
+  }
 
-    public AlloyFunRemExpr(AlloyExpr left, AlloyExpr right) {
-        super(left, right, AlloyStrings.FUNREM);
-    }
+  public AlloyFunRemExpr(AlloyExpr left, AlloyExpr right) {
+    super(left, right, AlloyStrings.FUNREM);
+  }
 
-    @Override
-    public <T> T accept(AlloyExprVis<T> visitor) {
-        return visitor.visit(this);
-    }
+  @Override
+  public <T> T accept(AlloyExprVis<T> visitor) {
+    return visitor.visit(this);
+  }
 
-    @Override
-    public AlloyFunRemExpr rebuild(AlloyExpr left, AlloyExpr right) {
-        return new AlloyFunRemExpr(this.pos, left, right);
-    }
+  @Override
+  public AlloyFunRemExpr rebuild(AlloyExpr left, AlloyExpr right) {
+    return new AlloyFunRemExpr(this.pos, left, right);
+  }
 
-    @Override
-    public int getPrec() {
-        return AlloyExpr.MUL_DIV_REM_PREC;
-    }
+  @Override
+  public int getPrec() {
+    return AlloyExpr.MUL_DIV_REM_PREC;
+  }
 }

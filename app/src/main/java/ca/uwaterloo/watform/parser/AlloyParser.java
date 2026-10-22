@@ -1,0 +1,302 @@
+/*
+  CLI
+  - calls AlloyModel = alloyParseToModel(fullFileName)
+    - calls AlloyFile = alloyParse(fullFileName)
+      - AlloyParaParseVis on an import
+        - calls alloyParseUtilFile (no .als added)
+          - calls alloyParseFromJar(with "models/"+importName+".als")
+        - calls alloyParseFromJar (has .als added)
+          - calls alloyParseFromCharStream(CharStream, FFN)
+        - calls alloyParse (.als and fullFileName determined from parent)
+          - calls alloyParseFromCharStream(CharStream, FFN)
+*/
+
+package ca.uwaterloo.watform.parser;
+
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
+
+import antlr.generated.DashBaseVisitor;
+import antlr.generated.DashParser;
+import ca.uwaterloo.watform.alloyast.AlloyCtorError;
+import ca.uwaterloo.watform.alloyast.AlloyFile;
+import ca.uwaterloo.watform.alloyast.AlloyFileParseVis;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
+import ca.uwaterloo.watform.alloyast.expr.AlloyExprParseVis;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyPara;
+import ca.uwaterloo.watform.alloyast.paragraph.AlloyParaParseVis;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdDeclParseVis;
+import ca.uwaterloo.watform.alloyast.paragraph.command.AlloyCmdPara;
+import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import ca.uwaterloo.watform.utils.*;
+import java.io.*;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.tree.*;
+
+public class AlloyParser {
+  // currently unused
+  /*
+  public static List<Path> recurGetFiles(Path dir, String filter) {
+    List<Path> filePaths = new ArrayList<>();
+    try (Stream<Path> stream = Files.walk(dir)) {
+      stream
+          .filter(Files::isRegularFile)
+          .filter(path -> path.toString().endsWith(filter))
+          .forEach(
+              filePath -> {
+                filePaths.add(filePath);
+              });
+    } catch (IOException e) {
+      System.err.println("Dir not found");
+    }
+    return filePaths;
+  }
+  */
+  /**
+   * This method will catch AlloyCtorError and store them in Reporter
+   *
+   * @param filePath
+   * @return
+   */
+  public static AlloyFile alloyParse(String fullFileName) {
+    // could be a top-level call or a call to parse a user-defined import
+    // expects .als extension is already in fullFileName
+    System.out.println("Reading: " + fullFileName);
+    Path filePath = Paths.get(fullFileName);
+    if (!fullFileName.endsWith(".als")) {
+      throw new Reporter.ErrorUser("File extension must be .als, given: " + fullFileName);
+    }
+    CharStream input = null;
+    try {
+      input = CharStreams.fromPath(filePath);
+    } catch (IOException ioException) {
+      throw new Reporter.ErrorUser("Input file cannot be found: " + fullFileName);
+    }
+    return alloyParseFromCharStream(input, fullFileName);
+  }
+
+  public static AlloyFile alloyParseUtilFile(Pos pos, String utilName) {
+    return alloyParseFromJar(pos, "models/" + utilName + ".als");
+  }
+
+  public static AlloyFile alloyParseFromJar(Pos pos, String fileName) {
+    // this includes utils and other examples in the Alloy jar
+    // System.out.println("Importing: " + fileName);
+    // util file will never import a user-defined file
+    // if (!utilFileName.startsWith("util/")) {
+    //  throw ParserError.notUtilFile(pos, fileName);
+    // } else {
+    // TODO: that string should not be hardcoded
+    // this is where the util files are store in the jar
+    // String fileName = "models/" + fFileName + ".als";
+    // System.out.println(fileName);
+    InputStream in = Parser.class.getClassLoader().getResourceAsStream(fileName);
+    // InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
+    // otherwise the lines below throws a null pointer exception
+    if (in == null) {
+      throw ParserError.utilFileNotFound(pos, fileName);
+    }
+    try {
+      ReadableByteChannel channel = Channels.newChannel(in);
+      CharStream input =
+          CharStreams.fromChannel(
+              channel, StandardCharsets.UTF_8, 4096, CodingErrorAction.REPLACE, fileName, -1);
+
+      // CharStream input = CharStreams.fromStream(in, StandardCharsets.UTF_8, fileName);
+      // creation of an AlloyFile checks that there is only one modulePara
+      // in the AlloyFile
+      AlloyFile importedAlloyFile = alloyParseFromCharStream(input, fileName);
+      // System.out.println("Imported: " + fileName);
+      // System.out.println(importedAlloyFile);
+      return importedAlloyFile;
+    } catch (IOException e) {
+      throw ParserError.utilFileNotFound(pos, fileName);
+      // can continue parsing although there will be errors
+    } catch (NullPointerException e) {
+      // if in is null
+      throw ParserError.utilFileNotFound(pos, fileName);
+    }
+  }
+
+  // }
+
+  // this is used by alloyParse and alloyParseUtilFile
+  public static AlloyFile alloyParseFromCharStream(CharStream input, String fullFileName) {
+    BailLexer lexer = new BailLexer(input);
+    if (fullFileName.endsWith(".dsh")) {
+      lexer.dashMode = true;
+    }
+    assert (fullFileName.endsWith(".dsh") || fullFileName.endsWith(".als"));
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    BailParser parser = new BailParser(tokens);
+    // Remove default console error listener
+    parser.removeErrorListeners();
+
+    // Add custom one
+    parser.addErrorListener(
+        new BaseErrorListener() {
+          @Override
+          public void syntaxError(
+              Recognizer<?, ?> recognizer,
+              Object offendingSymbol,
+              int line,
+              int charPositionInLine,
+              String msg,
+              RecognitionException e) {
+
+            Token t = (Token) offendingSymbol;
+
+            System.err.println("Error at line " + line + ":" + charPositionInLine);
+            System.err.println("Found token: " + t.getText());
+            System.err.println("Expected: " + msg);
+            Reporter.INSTANCE.addError(new UserError("Parsing stopped."));
+          }
+        });
+
+    ParseTree antlrAST = parser.alloyFile();
+    Reporter.INSTANCE.exitIfHasErrors();
+    AlloyFileParseVis afpv = new AlloyFileParseVis(fullFileName);
+    AlloyFile alloyFile = null;
+    alloyFile = afpv.visit(antlrAST);
+    // alloyFile.fullFilename = fullFileName;
+    return alloyFile;
+  }
+
+  /*
+  put into visitImportPara
+  public static AlloyFile alloyParseImport(Pos pos, String importFullFileName) {
+    AlloyFile importedAlloyFile;
+    if (importName.startsWith("util/")) {
+      importedAlloyFile = alloyParseUtilFile(pos, importName);
+    } else {
+      importedAlloyFile = alloyParse(importFullFileName);
+    }
+    return importedAlloyFile;
+  }
+  */
+
+  // Use this function for parsing both dash and alloy files
+  public static AlloyModel alloyParseToModel(String fullFileName) {
+    // Path filePath = Paths.get(fullFileName);
+    AlloyModel model = null;
+    try {
+      // this could be errors in the Reporter
+      // but continues on after these errors
+      AlloyFile file = alloyParse(fullFileName);
+      if (null == file) {
+        // This happens when
+        // 1) Parser.parse found UserError
+        // 2) Reporter.INSTANCE.exitFunction has been swapped for testing
+        // We don't want to continue
+        return null;
+      }
+      // if (file instanceof DashFile) {
+      // System.out.println(file);
+      //    model = new DashModel((DashFile) file);
+      // } else {
+      model = new AlloyModel(file);
+      // }
+    } catch (UserOrImplError error) {
+      // this is an error from the phase of putting
+      // the AST into the AlloyModel or DashModel
+      Reporter.INSTANCE.addError(error);
+    }
+    // could have errors that are caught at parser
+    // so can continue parsing
+    Reporter.INSTANCE.exitIfHasErrors();
+    return model;
+  }
+
+  public static <C extends ParseTree, T> List<T> visitAll(
+      List<C> contexts, DashBaseVisitor<?> visitor, Class<T> targetType) {
+    if (contexts == null || contexts.isEmpty()) {
+      return Collections.emptyList();
+    }
+    try {
+      return contexts.stream()
+          .map(visitor::visit)
+          .map(targetType::cast)
+          .collect(Collectors.toList());
+    } catch (ClassCastException e) {
+      throw ImplementationError.failedCast(
+          "Failed to cast an item to " + targetType.getSimpleName() + " in visitAll.");
+    }
+  }
+
+  private static BailParser stringParser(String s) {
+    CharStream input = CharStreams.fromString(s);
+    BailLexer lexer = new BailLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    BailParser parser = new BailParser(tokens);
+    return parser;
+  }
+
+  public static AlloyCmdPara.CommandDecl parseCmdDecl(String s) {
+    BailParser parser = stringParser(s);
+    ParseTree antlrAST = parser.commandDecl();
+    AlloyCmdDeclParseVis afpv = new AlloyCmdDeclParseVis();
+    AlloyCmdPara.CommandDecl cmd = null;
+    try {
+      cmd = afpv.visitCommandDecl((DashParser.CommandDeclContext) antlrAST);
+    } catch (AlloyCtorError alloyCtorError) {
+      Reporter.INSTANCE.addError(alloyCtorError);
+    }
+    Reporter.INSTANCE.exitIfHasErrors();
+    return cmd;
+  }
+
+  public static AlloyExpr parseExpr(String s) {
+    BailParser parser = stringParser(s);
+    ParseTree antlrAST = parser.expr1();
+    AlloyExprParseVis afpv = new AlloyExprParseVis();
+    AlloyExpr expr = null;
+    try {
+      expr = afpv.visit((DashParser.Expr1Context) antlrAST);
+    } catch (AlloyCtorError alloyCtorError) {
+      Reporter.INSTANCE.addError(alloyCtorError);
+    }
+    Reporter.INSTANCE.exitIfHasErrors();
+    return expr;
+  }
+
+  public static AlloyDecl parseDecl(String s) {
+    BailParser parser = stringParser(s);
+    ParseTree antlrAST = parser.decl();
+    AlloyExprParseVis afpv = new AlloyExprParseVis();
+    AlloyDecl decl = null;
+    try {
+      decl = afpv.visitDecl((DashParser.DeclContext) antlrAST);
+    } catch (AlloyCtorError alloyCtorError) {
+      Reporter.INSTANCE.addError(alloyCtorError);
+    }
+    Reporter.INSTANCE.exitIfHasErrors();
+    return decl;
+  }
+
+  public static AlloyPara parsePara(String s) {
+    BailParser parser = stringParser(s);
+    ParseTree antlrAST = parser.paragraph();
+    // current directory is parent of an import
+    // unlikely to work well to create a user-defined import here
+    AlloyParaParseVis afpv = new AlloyParaParseVis(null);
+    AlloyPara para = null;
+    try {
+      para = afpv.visitParagraph((DashParser.ParagraphContext) antlrAST);
+    } catch (AlloyCtorError alloyCtorError) {
+      Reporter.INSTANCE.addError(alloyCtorError);
+    }
+    Reporter.INSTANCE.exitIfHasErrors();
+    return para;
+  }
+}

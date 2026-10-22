@@ -9,26 +9,26 @@ import ca.uwaterloo.watform.utils.*;
 
 public final class DashInv extends DashNamedExpr implements DashStateItem {
 
-    public final String name;
+  public final String name;
 
-    public DashInv(Pos p, AlloyExpr inv) {
-        super(p, inv);
-        this.name = "";
-    }
+  public DashInv(Pos p, AlloyExpr inv) {
+    super(p, inv);
+    this.name = "";
+  }
 
-    public DashInv(Pos p, String n, AlloyExpr inv) {
-        super(p, inv);
-        assert (n != "");
-        assert (n != null);
-        this.name = n;
-    }
+  public DashInv(Pos p, String n, AlloyExpr inv) {
+    super(p, inv);
+    assert (n != "");
+    assert (n != null);
+    this.name = n;
+  }
 
-    @Override
-    public void pp(PrintContext pCtx) {
-        String s = invName + SPACE;
-        if (!this.name.isEmpty()) {
-            s += name + SPACE;
-        }
-        super.pp(pCtx, s);
+  @Override
+  public void pp(PrintContext pCtx) {
+    String s = invName + SPACE;
+    if (!this.name.isEmpty()) {
+      s += name + SPACE;
     }
+    super.pp(pCtx, s);
+  }
 }

@@ -12,44 +12,43 @@ import java.util.Collections;
 import java.util.List;
 
 public class StateDefns {
-    // this class adds in formulae for every state in the dash model
-    // leaf states are singleton sets that contain the fully qualified names as strings
-    // non-leaf states are the union of the leaf states they contain
-    public static void translate(DashModel dashModel, TlaModel tlaModel) {
+  // this class adds in formulae for every state in the dash model
+  // leaf states are singleton sets that contain the fully qualified names as strings
+  // non-leaf states are the union of the leaf states they contain
+  public static void translate(DashModel dashModel, TlaModel tlaModel) {
 
-        if (dashModel.hasOnlyOneState()) return;
-        List<String> stateFQNs = dashModel.allStateNames(); // dashModel.st.getAllNames();
+    if (dashModel.hasOnlyOneState()) return;
+    List<String> stateFQNs = dashModel.allStateNames(); // dashModel.st.getAllNames();
 
-        depthSort(stateFQNs);
-        /* sorts it based on depth, thus all ancestors lie to the left and all descendants lie to the right, for every state */
+    depthSort(stateFQNs);
+    /* sorts it based on depth, thus all ancestors lie to the left and all descendants lie to the right, for every state */
 
-        stateFQNs
-                .reversed()
-                .forEach(
-                        stateFQN -> {
-                            if (dashModel.isLeaf(stateFQN)) LeafStateDefn(stateFQN, tlaModel);
-                            else nonLeafStateDefn(stateFQN, dashModel, tlaModel);
-                        });
-    }
+    stateFQNs
+        .reversed()
+        .forEach(
+            stateFQN -> {
+              if (dashModel.isLeaf(stateFQN)) LeafStateDefn(stateFQN, tlaModel);
+              else nonLeafStateDefn(stateFQN, dashModel, tlaModel);
+            });
+  }
 
-    public static void depthSort(List<String> stateFQNs) {
-        Collections.sort(
-                stateFQNs, (a, b) -> occurrences(a, QUALIFIER) - occurrences(b, QUALIFIER));
-    }
+  public static void depthSort(List<String> stateFQNs) {
+    Collections.sort(stateFQNs, (a, b) -> occurrences(a, QUALIFIER) - occurrences(b, QUALIFIER));
+  }
 
-    public static void LeafStateDefn(String stateFQN, TlaModel tlaModel) {
+  public static void LeafStateDefn(String stateFQN, TlaModel tlaModel) {
 
-        tlaModel.addDefn(
-                // <state-formula-name> == {"<state FQN>"}
-                TlaDefn(tlaFQN(stateFQN), TlaSet(TlaStringLiteral(stateFQN))));
-    }
+    tlaModel.addDefn(
+        // <state-formula-name> == {"<state FQN>"}
+        TlaDefn(tlaFQN(stateFQN), TlaSet(TlaStringLiteral(stateFQN))));
+  }
 
-    public static void nonLeafStateDefn(String stateFQN, DashModel dashModel, TlaModel tlaModel) {
+  public static void nonLeafStateDefn(String stateFQN, DashModel dashModel, TlaModel tlaModel) {
 
-        List<TlaAppl> childStates = mapBy(dashModel.immChildren(stateFQN), s -> TlaAppl(tlaFQN(s)));
+    List<TlaAppl> childStates = mapBy(dashModel.immChildren(stateFQN), s -> TlaAppl(tlaFQN(s)));
 
-        tlaModel.addDefn(
-                // <state-formula-name> = union <child_i-formula-name>...
-                TlaDefn(tlaFQN(stateFQN), repeatedUnion(childStates)));
-    }
+    tlaModel.addDefn(
+        // <state-formula-name> = union <child_i-formula-name>...
+        TlaDefn(tlaFQN(stateFQN), repeatedUnion(childStates)));
+  }
 }
