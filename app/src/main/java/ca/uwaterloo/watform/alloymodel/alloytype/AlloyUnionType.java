@@ -1,25 +1,33 @@
 package ca.uwaterloo.watform.alloymodel.alloytype;
 
-import static ca.uwaterloo.watform.alloymodel.Builtins.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import java.util.*;
 
 public class AlloyUnionType {
-    // each member of the set is a possible overload
-    private Set<AlloyRelationType> type;
+    // certain strings are fixed and represent known types
+    public static final String VARIABLE_TYPE_STR = "[Variable]";
+    public static final String FORMULA_TYPE_STR = "[Formula]";
+    public static final String NONE_TYPE_STR = "[None]";
+    public static final String INTEGER_TYPE_STR = "[String]";
+    public static final String UNIV_TYPE_STR = "[Univ]";
+    public static final String IDEN_TYPE_STR = "[Iden]";
+    public static final String INVALID_TYPE_STR = "[Invalid]";
+
+    // each member of the list is a possible overload
+    private List<AlloyRelationType> type;
 
     // constructors
     AlloyUnionType() {
-        this.type = emptySet();
+        this.type = emptyList();
     }
 
     public AlloyUnionType(String s) {
-        this.type = new HashSet<>(Set.of(new AlloyRelationType(s)));
+        this.type = new ArrayList<>(List.of(new AlloyRelationType(s)));
     }
 
-    AlloyUnionType(Set<AlloyRelationType> typeSet) {
-        this.type = typeSet;
+    AlloyUnionType(List<AlloyRelationType> typeList) {
+        this.type = typeList;
     }
 
     // used for building the type
@@ -56,28 +64,89 @@ public class AlloyUnionType {
     }
 
     public boolean isBoolean() {
-        return this.type.equals(BOOLEAN_TYPE);
+        return this.equals(new AlloyUnionType(FORMULA_TYPE_STR));
     }
 
     public boolean isInt() {
-        return this.type.equals(INTEGER_TYPE);
+        return this.equals(new AlloyUnionType(INTEGER_TYPE_STR));
     }
 
     public boolean isNone() {
-        return this.type.equals(NONE_TYPE);
+        return this.equals(new AlloyUnionType(NONE_TYPE_STR));
     }
 
     public boolean isUniverse() {
-        return this.type.equals(UNIVERSE_TYPE);
+        return this.equals(new AlloyUnionType(UNIV_TYPE_STR));
     }
 
     // type computations
+    public AlloyUnionType satisfyParam(AlloyBasicType b) {
+        AlloyUnionType res = new AlloyUnionType();
+        for (AlloyRelationType meType : this.type) {
+            Optional<AlloyRelationType> newType = meType.satisfyParam(b);
+            if (newType.isPresent()) res.addOverload(newType.get());
+        }
+        return res;
+    }
+
+    public void applyArity(int arity) {
+        AlloyUnionType res = new AlloyUnionType();
+        for (AlloyRelationType t : this.type) {
+            if (t.getArity() == arity) res.addOverload(t);
+        }
+    }
+
+    public void applyEqualArity(AlloyUnionType o) {
+        AlloyUnionType meNew = new AlloyUnionType();
+        AlloyUnionType oNew = new AlloyUnionType();
+        for (AlloyRelationType meType : this.type) {
+            for (AlloyRelationType oType : o.type) {
+                if (meType.getArity() == oType.getArity()) {
+                    meNew.addOverload(meType);
+                    break;
+                }
+            }
+        }
+        for (AlloyRelationType oType : o.type) {
+            for (AlloyRelationType meType : this.type) {
+                if (meType.getArity() == oType.getArity()) {
+                    oNew.addOverload(meType);
+                    break;
+                }
+            }
+        }
+        this.type = meNew.type;
+        o.type = oNew.type;
+    }
+
     // ^this
     public AlloyUnionType closure() {
         AlloyUnionType res = new AlloyUnionType();
         for (AlloyRelationType t : this.type) {
             Optional<AlloyRelationType> closureT = t.closure();
             if (closureT.isPresent()) res.addOverload(closureT.get());
+        }
+        return res;
+    }
+
+    // *this
+    public AlloyUnionType closureRefl() {
+        AlloyUnionType res = new AlloyUnionType();
+        for (AlloyRelationType t : this.type) {
+            Optional<AlloyRelationType> closureT = t.closureRefl();
+            if (closureT.isPresent()) res.addOverload(closureT.get());
+        }
+        return res;
+    }
+
+    // this.o
+    public AlloyUnionType compose(AlloyUnionType o) {
+        AlloyUnionType res = new AlloyUnionType();
+        for (AlloyRelationType meType : this.type) {
+            for (AlloyRelationType oType : o.type) {
+                Optional<AlloyRelationType> newType = meType.compose(oType);
+                if (newType.isPresent()) res.addOverload(newType.get());
+            }
         }
         return res;
     }
@@ -97,9 +166,15 @@ public class AlloyUnionType {
     // this -> o
     public AlloyUnionType extend(AlloyUnionType o) {
         AlloyUnionType res = new AlloyUnionType();
-        for (AlloyRelationType meType : this.type) {
-            for (AlloyRelationType oType : o.type) {
-                res.addOverload(meType.extend(oType));
+        if (this.type.size() == 0) {
+            res = o; // KSE: is this actually supposed to be valid?
+        } else if (o.type.size() == 0) {
+            res.type = this.type;
+        } else {
+            for (AlloyRelationType meType : this.type) {
+                for (AlloyRelationType oType : o.type) {
+                    res.addOverload(meType.extend(oType));
+                }
             }
         }
         return res;
@@ -109,8 +184,7 @@ public class AlloyUnionType {
     public AlloyUnionType iden() {
         AlloyUnionType res = new AlloyUnionType();
         for (AlloyRelationType t : this.type) {
-            Optional<AlloyRelationType> idenT = t.iden();
-            if (idenT.isPresent()) res.addOverload(idenT.get());
+            res.addOverload(t.duplicate());
         }
         return res;
     }
@@ -127,12 +201,32 @@ public class AlloyUnionType {
         return res;
     }
 
+    public AlloyUnionType omitFirst() {
+        AlloyUnionType res = new AlloyUnionType();
+        for (AlloyRelationType t : this.type) {
+            Optional<AlloyRelationType> newType = t.omitFirst();
+            if (newType.isPresent()) res.addOverload(newType.get());
+        }
+        return res;
+    }
+
     // this :> o
     public AlloyUnionType rangeRestrict(AlloyUnionType o) {
         AlloyUnionType res = new AlloyUnionType();
         for (AlloyRelationType meType : this.type) {
             for (AlloyRelationType oType : o.type) {
                 Optional<AlloyRelationType> newType = meType.rangeRestrict(oType);
+                if (newType.isPresent()) res.addOverload(newType.get());
+            }
+        }
+        return res;
+    }
+
+    public AlloyUnionType remove(AlloyUnionType o) {
+        AlloyUnionType res = new AlloyUnionType();
+        for (AlloyRelationType meType : this.type) {
+            for (AlloyRelationType oType : o.type) {
+                Optional<AlloyRelationType> newType = meType.remove(oType);
                 if (newType.isPresent()) res.addOverload(newType.get());
             }
         }
@@ -154,7 +248,8 @@ public class AlloyUnionType {
         AlloyUnionType res = new AlloyUnionType();
         for (AlloyRelationType oType : o.type) {
             for (AlloyRelationType meType : this.type) {
-                res.addOverload(meType.union(oType));
+                Optional<AlloyRelationType> unionT = meType.union(oType);
+                if (unionT.isPresent()) res.addOverload(unionT.get());
             }
         }
         return res;

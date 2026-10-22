@@ -41,6 +41,8 @@ public abstract class AlloyExpr extends AlloyASTNode {
 
     public static final int ALWAYS_PAREN = 150;
 
+    public AlloyRelationType type;
+
     public AlloyExpr(Pos pos) {
         super(pos);
     }
