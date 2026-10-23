@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Map;
+import java.util.OptionalInt;
 
 public final class XmlDumper {
 
@@ -50,19 +52,54 @@ public final class XmlDumper {
     }
   }
 
+  /** Dump exactly one execution, preserving the legacy dump-all entry point. */
+  public static void dumpInstance(
+      AlloyModel model, String prefix, Path dumpDir, OptionalInt index) {
+    try {
+      Files.createDirectories(dumpDir);
+    } catch (IOException error) {
+      throw UtilsUserError.outputDirectory(dumpDir.toString(), error.getMessage());
+    }
+    if (index.isEmpty()) {
+      CompModule module =
+          AlloyInterface.parse(model.toStringNoCmds() + System.lineSeparator() + "run {}");
+      executeAndDump(
+          module,
+          module.getAllCommands().getFirst(),
+          dumpDir.resolve(prefix + "-instance.xml"),
+          "default scope");
+    } else {
+      CompModule module = AlloyInterface.parse(model.toString());
+      executeAndDump(
+          module,
+          module.getAllCommands().get(index.getAsInt()),
+          dumpDir.resolve(prefix + "-instance-cmd" + index.getAsInt() + ".xml"),
+          "command " + index.getAsInt());
+    }
+  }
+
   private static void executeAndDump(
       CompModule alloyModule, Command command, Path outputPath, String context) {
     dpOutput("Executing " + context + ": " + command);
-    A4Solution solution =
-        TranslateAlloyToKodkod.execute_command(
-            new A4Reporter(), alloyModule.getAllReachableSigs(), command, new A4Options());
+    long start = System.nanoTime();
+    try {
+      A4Solution solution =
+          TranslateAlloyToKodkod.execute_command(
+              new A4Reporter(), alloyModule.getAllReachableSigs(), command, new A4Options());
 
-    if (!solution.satisfiable()) {
-      dpOutput("UNSAT — no instance to dump for: " + context);
-      return;
+      CollectionTelemetry.emit("instance", Map.of("bitwidth", solution.getBitwidth()));
+      if (!solution.satisfiable()) {
+        CollectionTelemetry.emit("result", Map.of("status", "unsat"));
+        dpOutput("UNSAT — no instance to dump for: " + context);
+        return;
+      }
+
+      solution.writeXML(outputPath.toString(), alloyModule.getAllFunc(), Collections.emptyMap());
+      dpOutput("SAT — dumped instance to: " + outputPath);
+      CollectionTelemetry.emit("result", Map.of("status", "sat", "xml", outputPath.toString()));
+    } finally {
+      CollectionTelemetry.emit(
+          "timing", Map.of("phase", "generation", "seconds", (System.nanoTime() - start) / 1e9));
     }
-
-    solution.writeXML(outputPath.toString(), alloyModule.getAllFunc(), Collections.emptyMap());
-    dpOutput("SAT — dumped instance to: " + outputPath);
   }
 }

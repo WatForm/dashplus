@@ -1,6 +1,7 @@
 package ca.uwaterloo.watform.evaluation;
 
 import ca.uwaterloo.watform.evaluation.OverflowAtom.OverflowDirection;
+import ca.uwaterloo.watform.utils.CollectionTelemetry;
 import ca.uwaterloo.watform.utils.Pos;
 import ca.uwaterloo.watform.utils.Reporter;
 import ca.uwaterloo.watform.utils.Reporter.WarningUser;
@@ -26,11 +27,15 @@ public class AtomFactory {
   public Atom createAtom(int value, Pos pos) {
     if (value > max) return createAtom(OverflowDirection.OVERFLOW_UP, pos);
     if (value < min) return createAtom(OverflowDirection.OVERFLOW_DOWN, pos);
+    if (CollectionTelemetry.enabled()) CollectionTelemetry.integer();
+    else System.out.println("Creating integer atom");
     return new IntegerAtom(value);
   }
 
   public Atom createAtom(OverflowDirection direction, Pos pos) {
-    Reporter.INSTANCE.addWarning(new WarningUser(pos, "Created overflowing atom: " + direction));
+    if (CollectionTelemetry.enabled()) CollectionTelemetry.overflow(direction.name(), pos);
+    else
+      Reporter.INSTANCE.addWarning(new WarningUser(pos, "Created overflowing atom: " + direction));
     return new OverflowAtom(direction);
   }
 
