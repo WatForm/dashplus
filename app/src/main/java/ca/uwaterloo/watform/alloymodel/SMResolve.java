@@ -32,7 +32,6 @@ import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.ImplementationError;
 import ca.uwaterloo.watform.utils.Reporter;
 import ca.uwaterloo.watform.utils.Reporter.WarningUser;
-
 import java.util.*;
 
 public class SMResolve extends SMCmds {
@@ -1093,7 +1092,7 @@ public class SMResolve extends SMCmds {
               new ResolveInfo(List.of(ONE_ARITY, ONE_ARITY, TWO_ARITY), ONE_ARITY, varExpr);
           case AlloyNumExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           case AlloyIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
-          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr); 
+          case AlloySigIntExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           case AlloyStringExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
           // used a sig Int
           case AlloyStrLiteralExpr q -> new ResolveInfo(ONE_ARITY, varExpr);
