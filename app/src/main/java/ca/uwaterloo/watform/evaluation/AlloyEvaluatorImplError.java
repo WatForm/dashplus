@@ -83,6 +83,10 @@ public class AlloyEvaluatorImplError extends ImplementationError {
         "Tuple index " + index + " is outside the valid range [0, " + arity + ")");
   }
 
+  public static AlloyEvaluatorImplError emptyAtomTuple() {
+    return new AlloyEvaluatorImplError("An AtomTuple must contain at least one atom");
+  }
+
   public static AlloyEvaluatorImplError invalidTupleJoin(
       AtomTuple left, AtomTuple right, ThreeVal sharedAtomsEqual) {
     return new AlloyEvaluatorImplError(

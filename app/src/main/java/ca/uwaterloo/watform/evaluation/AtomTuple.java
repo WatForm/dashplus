@@ -12,6 +12,7 @@ public class AtomTuple {
 
   public AtomTuple(List<Atom> atoms) {
     Objects.requireNonNull(atoms);
+    if (atoms.isEmpty()) throw AlloyEvaluatorImplError.emptyAtomTuple();
     this.atoms = new ArrayList<>(atoms);
     this.overflows = containsMatch(this.atoms, a -> a instanceof OverflowAtom);
   }
