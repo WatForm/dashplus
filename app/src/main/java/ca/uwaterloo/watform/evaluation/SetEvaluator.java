@@ -710,12 +710,24 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       // always lands strictly past maxInt -- never ambiguous, due to the
       // asymmetric two's-complement range (|minInt| = |maxInt| + 1)
       return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UP, pos);
-    } else {
-      // one positive, one negative: the minimal-magnitude overflow-up value,
-      // negated, lands exactly on minInt -- in range, not overflow -- so a
-      // "down" result can never be asserted from direction alone
-      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
+
+    // The product is negative. An already-downward-overflowing factor has magnitude strictly
+    // greater than |minInt|, so multiplying it by any nonzero positive factor remains DOWN.
+    if (da == OverflowDirection.OVERFLOW_DOWN || db == OverflowDirection.OVERFLOW_DOWN) {
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_DOWN, pos);
+    }
+
+    // Otherwise this is OVERFLOW_UP times a concrete negative integer. Multiplication by -1
+    // has a boundary collision: -(maxInt + 1) is exactly minInt and therefore still in range.
+    // A multiplier of at most -2 clears that boundary and guarantees downward overflow.
+    IntegerAtom negative =
+        first instanceof IntegerAtom fi && fi.value() < 0 ? fi : (IntegerAtom) second;
+    return evaluationTable.getOverflowScalar(
+        negative.value() < -1
+            ? OverflowDirection.OVERFLOW_DOWN
+            : OverflowDirection.OVERFLOW_UNKNOWN,
+        pos);
   }
 
   // TODO: cleanup
@@ -724,10 +736,11 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     if (first instanceof LabelAtom || second instanceof LabelAtom)
       throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "div", first, second);
 
+    if (second instanceof IntegerAtom si && si.value() == 0) {
+      throw AlloyEvaluatorError.arithmeticDivisionByZero(pos, "div");
+    }
+
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
-      if (si.value() == 0) {
-        throw AlloyEvaluatorError.arithmeticDivisionByZero(pos, "div");
-      }
       return evaluationTable.getIntScalar(fi.value() / si.value(), pos);
     }
 
@@ -794,10 +807,11 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     if (first instanceof LabelAtom || second instanceof LabelAtom)
       throw AlloyEvaluatorImplError.arithmeticOperandsNotIntegers(pos, "rem", first, second);
 
+    if (second instanceof IntegerAtom si && si.value() == 0) {
+      throw AlloyEvaluatorError.arithmeticDivisionByZero(pos, "rem");
+    }
+
     if (first instanceof IntegerAtom fi && second instanceof IntegerAtom si) {
-      if (si.value() == 0) {
-        throw AlloyEvaluatorError.arithmeticDivisionByZero(pos, "rem");
-      }
       return evaluationTable.getIntScalar(fi.value() % si.value(), pos);
     }
 
@@ -854,12 +868,21 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
-    TupleSet result = TupleSet.createScalar(value);
-    Atom two = new IntegerAtom(2);
-    for (int i = 0; i < amount; i++) {
-      result = processMul(result.getScalar(), two, pos);
+    if (amount == 0) return TupleSet.createScalar(value);
+    if (amount >= bitWidth()) return evaluationTable.getIntScalar(0, pos);
+    if (value instanceof OverflowAtom) {
+      // Shifts operate on the finite-width bit pattern. An overflow atom no longer carries
+      // those bits, so a nonzero shift cannot recover a concrete result or its direction.
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
-    return result;
+
+    int width = bitWidth();
+    long modulus = 1L << width;
+    long mask = modulus - 1;
+    long shiftedBits = (((IntegerAtom) value).value() & mask) << amount & mask;
+    long signBit = 1L << (width - 1);
+    long signedResult = (shiftedBits & signBit) == 0 ? shiftedBits : shiftedBits - modulus;
+    return evaluationTable.getIntScalar((int) signedResult, pos);
   }
 
   private TupleSet arithmeticShiftRightOnce(Atom value, Pos pos) {
@@ -876,6 +899,13 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 
+    if (amount == 0) return TupleSet.createScalar(value);
+    if (value instanceof OverflowAtom) {
+      // Shifts operate on the finite-width bit pattern. An overflow atom no longer carries
+      // those bits, so a nonzero shift cannot recover a concrete result or its direction.
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
+    }
+
     TupleSet result = TupleSet.createScalar(value);
     for (int i = 0; i < amount; i++) {
       result = arithmeticShiftRightOnce(result.getScalar(), pos);
@@ -886,6 +916,14 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   private TupleSet processLogicalShiftRight(Atom value, Atom distance, Pos pos) {
     Integer amount = shiftDistance(value, distance, pos, "logical right shift");
     if (amount == null) {
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
+    }
+
+    if (amount == 0) return TupleSet.createScalar(value);
+    if (amount >= bitWidth()) return evaluationTable.getIntScalar(0, pos);
+    if (value instanceof OverflowAtom) {
+      // Shifts operate on the finite-width bit pattern. An overflow atom no longer carries
+      // those bits, so a nonzero shift cannot recover a concrete result or its direction.
       return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, pos);
     }
 

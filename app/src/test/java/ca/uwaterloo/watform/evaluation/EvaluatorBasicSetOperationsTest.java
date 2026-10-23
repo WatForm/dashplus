@@ -1,9 +1,13 @@
 package ca.uwaterloo.watform.evaluation;
 
+import static ca.uwaterloo.watform.evaluation.OverflowAtom.OverflowDirection.OVERFLOW_DOWN;
+import static ca.uwaterloo.watform.evaluation.OverflowAtom.OverflowDirection.OVERFLOW_UP;
 import static ca.uwaterloo.watform.evaluation.ThreeVal.FALSE;
 import static ca.uwaterloo.watform.evaluation.ThreeVal.TRUE;
 import static ca.uwaterloo.watform.evaluation.ThreeVal.UNKNOWN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.binary.AlloyDiffExpr;
@@ -17,12 +21,23 @@ import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import org.junit.jupiter.api.Test;
 
 public class EvaluatorBasicSetOperationsTest {
-  private static FormulaEvaluator evaluator() {
+  private static EvaluationTable evaluationTable() {
+    // Bitwidth is 4, all numbers are in range [-8, 7]
     String xml =
         "<alloy><instance bitwidth=\"4\" maxseq=\"4\"><sig label=\"univ\" ID=\"0\" builtin=\"yes\"/></instance></alloy>";
     var model = new AlloyModel("basic-set-operations-test.als");
     model.resolve();
-    return new FormulaEvaluator(new EvaluationTable(new Instance(xml), model), false);
+    return new EvaluationTable(new Instance(xml), model);
+  }
+
+  private static FormulaEvaluator evaluator() {
+    return new FormulaEvaluator(evaluationTable(), false);
+  }
+
+  private static TupleSet evaluateSet(AlloyExpr expression) {
+    EvaluationTable table = evaluationTable();
+    FormulaEvaluator formulaEvaluator = new FormulaEvaluator(table, false);
+    return expression.accept(new SetEvaluator(table, false, formulaEvaluator));
   }
 
   private static AlloyExpr set(int... values) {
@@ -81,11 +96,37 @@ public class EvaluatorBasicSetOperationsTest {
   }
 
   @Test
+  public void intersectionRemainsConcreteForOppositeOverflowDirections() {
+    AlloyExpr intersection = new AlloyIntersExpr(set(1, 2, -10), set(1, 2, 9));
+    TupleSet result = evaluateSet(intersection);
+
+    assertTrue(result.isConcrete());
+    assertEquals(2, result.size());
+    assertEquals(TRUE, equals(intersection, set(1, 2)));
+  }
+
+  @Test
   public void differenceDoesNotChooseAResultWhenOverflowMembershipIsAmbiguous() {
     AlloyExpr values = set(1, 8);
     AlloyExpr difference = new AlloyDiffExpr(values, values);
 
     assertEquals(UNKNOWN, equals(difference, set()));
     assertEquals(UNKNOWN, equals(difference, values));
+  }
+
+  @Test
+  public void differenceKeepsOverflowAbsentFromTheOppositeDirection() {
+    TupleSet downResult = evaluateSet(new AlloyDiffExpr(set(1, 2, -10), set(1, 2, 9)));
+    TupleSet upResult = evaluateSet(new AlloyDiffExpr(set(1, 2, 9), set(1, 2, -10)));
+
+    assertTrue(downResult.isConcrete());
+    assertEquals(1, downResult.size());
+    assertEquals(
+        OVERFLOW_DOWN, assertInstanceOf(OverflowAtom.class, downResult.getScalar()).direction());
+
+    assertTrue(upResult.isConcrete());
+    assertEquals(1, upResult.size());
+    assertEquals(
+        OVERFLOW_UP, assertInstanceOf(OverflowAtom.class, upResult.getScalar()).direction());
   }
 }
