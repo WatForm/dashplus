@@ -52,7 +52,7 @@ public final class XmlDumper {
     }
   }
 
-  /** Dump exactly one execution, preserving the legacy dump-all entry point. */
+  // Dump exactly one execution
   public static void dumpInstance(
       AlloyModel model, String prefix, Path dumpDir, OptionalInt index) {
     try {
