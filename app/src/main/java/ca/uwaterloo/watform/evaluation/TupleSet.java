@@ -160,6 +160,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
 
   public static TupleSet crossProduct(TupleSet a, TupleSet b) {
     rejectPredFunCall(a, b);
+    if ((a.isConcrete() && a.isEmpty()) || (b.isConcrete() && b.isEmpty())) return emptySet();
     if (!a.isConcrete() || !b.isConcrete()) return unspecified();
 
     List<AtomTuple> tuples = new ArrayList<>();
@@ -178,6 +179,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
     if (b instanceof PredFunTupleSet call) {
       return call.addArgument(a);
     }
+    if ((a.isConcrete() && a.isEmpty()) || (b.isConcrete() && b.isEmpty())) return emptySet();
     if (!a.isConcrete() || !b.isConcrete()) return unspecified();
 
     List<AtomTuple> tuples = new ArrayList<>();

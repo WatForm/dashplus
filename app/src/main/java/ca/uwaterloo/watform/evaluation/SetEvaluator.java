@@ -56,14 +56,9 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
   public TupleSet visit(AlloyCphExpr comprehensionExpr) {
     logger.enter("ComprehensionExpr " + comprehensionExpr);
     validateDeclarations(comprehensionExpr.decls);
-    var valList = mapBy(comprehensionExpr.decls, d -> d.expr.accept(this));
-    if (containsMatch(valList, TupleSet::isUnspecified)) {
-      logger.exit("ComprehensionExpr " + TupleSet.unspecified());
-      return TupleSet.unspecified();
-    }
     List<AtomTuple> tuples = new ArrayList<>();
     boolean determined =
-        collectTuples(comprehensionExpr, valList, 0, 0, List.of(), new ArrayList<>(), tuples);
+        collectTuples(comprehensionExpr, 0, 0, List.of(), null, new ArrayList<>(), tuples);
     var result = determined ? TupleSet.of(tuples) : TupleSet.unspecified();
     logger.exit("ComprehensionExpr " + result);
     return result;
@@ -71,41 +66,46 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
   private boolean collectTuples(
       AlloyCphExpr expr,
-      List<TupleSet> sets,
       int declIndex,
       int nameIndex,
       List<AtomTuple> pickedInDecl,
+      TupleSet values,
       List<AtomTuple> current,
       List<AtomTuple> result) {
     if (declIndex == expr.decls.size()) {
       ThreeVal body = expr.body.isEmpty() ? TRUE : expr.body.get().accept(formulaEvaluator);
       if (body == TRUE) result.add(AtomTuple.concat(current));
-      return true;
+      return body != UNKNOWN;
     }
 
     AlloyDecl declaration = expr.decls.get(declIndex);
+    if (nameIndex == 0) {
+      values = declaration.expr.accept(this);
+      if (values.isUnspecified()) return false;
+    }
     Qname name = qnameOf(declaration.qnames.get(nameIndex));
-    for (AtomTuple tuple : sets.get(declIndex)) {
+    for (AtomTuple tuple : values) {
       ThreeVal disjointness = disjointnessOf(declaration, pickedInDecl, tuple);
       if (disjointness == FALSE) continue;
       if (disjointness == UNKNOWN) return false;
 
+      evaluationTable.addStackFrame();
       evaluationTable.addRelation(name, TupleSet.of(List.of(tuple)));
       current.add(tuple);
       boolean determined;
       try {
         boolean blockComplete = nameIndex == declaration.qnames.size() - 1;
         if (blockComplete) {
-          determined = collectTuples(expr, sets, declIndex + 1, 0, List.of(), current, result);
+          determined = collectTuples(expr, declIndex + 1, 0, List.of(), null, current, result);
         } else {
           List<AtomTuple> nextPicked = new ArrayList<>(pickedInDecl);
           nextPicked.add(tuple);
           determined =
-              collectTuples(expr, sets, declIndex, nameIndex + 1, nextPicked, current, result);
+              collectTuples(expr, declIndex, nameIndex + 1, nextPicked, values, current, result);
         }
       } finally {
         current.removeLast();
-        evaluationTable.removeRelation(name);
+        evaluationTable.popStackFrame();
       }
       if (!determined) return false;
     }
@@ -145,52 +145,119 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
     logger.enter("SumQuantificationExpr " + quantificationExpr);
     validateDeclarations(quantificationExpr.decls);
-    var values = mapBy(quantificationExpr.decls, declaration -> declaration.expr.accept(this));
-    if (containsMatch(values, TupleSet::isUnspecified)) {
-      logger.exit("SumQuantificationExpr " + TupleSet.unspecified());
-      return TupleSet.unspecified();
-    }
-    TupleSet result = sumQuantification(quantificationExpr, values, 0, 0, List.of());
+    var usedNames = FormulaEvaluator.usedDeclarationNames(quantificationExpr);
+    TupleSet result = sumQuantification(quantificationExpr, usedNames, 0, 0, List.of(), null);
     logger.exit("SumQuantificationExpr " + result);
     return result;
   }
 
   private TupleSet sumQuantification(
       AlloyQuantificationExpr expr,
-      List<TupleSet> values,
+      List<boolean[]> usedNames,
       int declIndex,
       int nameIndex,
-      List<AtomTuple> pickedInDecl) {
+      List<AtomTuple> pickedInDecl,
+      TupleSet values) {
     if (declIndex == expr.decls.size()) return expr.body.accept(this);
 
     TupleSet result = evaluationTable.getIntScalar(0, expr.pos);
     AlloyDecl declaration = expr.decls.get(declIndex);
+    if (nameIndex == 0) {
+      values = declaration.expr.accept(this);
+    }
+
+    boolean[] declarationUsage = usedNames.get(declIndex);
+    boolean wholeDisjointBlockUnused = declaration.isDisj1 && !containsTrue(declarationUsage);
+    if (wholeDisjointBlockUnused) {
+      if (values.isConcrete()
+          && !values.containsOverflow()
+          && disjointBindingCount(values.size(), declaration.qnames.size()) == 0) {
+        return evaluationTable.getIntScalar(0, expr.pos);
+      }
+      TupleSet branch = sumQuantification(expr, usedNames, declIndex + 1, 0, List.of(), null);
+      if (isConcreteZero(branch)) return branch;
+      if (values.isUnspecified()) return TupleSet.unspecified();
+      if (declaration.qnames.size() > 1 && values.containsOverflow()) {
+        return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, expr.pos);
+      }
+      return repeatSum(
+          branch, disjointBindingCount(values.size(), declaration.qnames.size()), expr.pos);
+    }
+
+    if (!declarationUsage[nameIndex]) {
+      if (values.isConcrete() && values.isEmpty()) {
+        return evaluationTable.getIntScalar(0, expr.pos);
+      }
+      boolean blockComplete = nameIndex == declaration.qnames.size() - 1;
+      TupleSet branch =
+          blockComplete
+              ? sumQuantification(expr, usedNames, declIndex + 1, 0, List.of(), null)
+              : sumQuantification(expr, usedNames, declIndex, nameIndex + 1, pickedInDecl, values);
+      if (isConcreteZero(branch)) return branch;
+      if (values.isUnspecified()) return TupleSet.unspecified();
+      return repeatSum(branch, values.size(), expr.pos);
+    }
+
+    if (values.isUnspecified()) return TupleSet.unspecified();
     Qname name = qnameOf(declaration.qnames.get(nameIndex));
-    for (AtomTuple tuple : values.get(declIndex)) {
+    for (AtomTuple tuple : values) {
       ThreeVal disjointness = disjointnessOf(declaration, pickedInDecl, tuple);
       if (disjointness == FALSE) continue;
       if (disjointness == UNKNOWN) {
         return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, expr.pos);
       }
 
+      evaluationTable.addStackFrame();
       evaluationTable.addRelation(name, TupleSet.of(List.of(tuple)));
       TupleSet value;
       try {
         boolean blockComplete = nameIndex == declaration.qnames.size() - 1;
         if (blockComplete) {
-          value = sumQuantification(expr, values, declIndex + 1, 0, List.of());
+          value = sumQuantification(expr, usedNames, declIndex + 1, 0, List.of(), null);
         } else {
           List<AtomTuple> nextPicked = new ArrayList<>(pickedInDecl);
           nextPicked.add(tuple);
-          value = sumQuantification(expr, values, declIndex, nameIndex + 1, nextPicked);
+          value = sumQuantification(expr, usedNames, declIndex, nameIndex + 1, nextPicked, values);
         }
       } finally {
-        evaluationTable.removeRelation(name);
+        evaluationTable.popStackFrame();
       }
       if (value.isUnspecified()) return TupleSet.unspecified();
       result = processPlus(result.getScalar(), value.getScalar(), expr.pos);
     }
     return result;
+  }
+
+  private TupleSet repeatSum(TupleSet value, int count, Pos pos) {
+    if (value.isUnspecified()) return value;
+    TupleSet result = evaluationTable.getIntScalar(0, pos);
+    for (int index = 0; index < count; index++) {
+      result = processPlus(result.getScalar(), value.getScalar(), pos);
+    }
+    return result;
+  }
+
+  private static boolean isConcreteZero(TupleSet value) {
+    return value.isConcrete()
+        && value.getScalar() instanceof IntegerAtom integer
+        && integer.value() == 0;
+  }
+
+  private static int disjointBindingCount(int domainSize, int nameCount) {
+    int result = 1;
+    for (int index = 0; index < nameCount; index++) {
+      int choices = domainSize - index;
+      if (choices <= 0) return 0;
+      result = Math.multiplyExact(result, choices);
+    }
+    return result;
+  }
+
+  private static boolean containsTrue(boolean[] values) {
+    for (boolean value : values) {
+      if (value) return true;
+    }
+    return false;
   }
 
   static ThreeVal disjointnessOf(
@@ -956,7 +1023,9 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     var domain = expr.left.accept(this);
     var relation = expr.right.accept(this);
     TupleSet result =
-        TupleSet.filterByThree(relation, t -> domain.contains(AtomTuple.tupleOfFirst(t)));
+        domain.isConcrete() && domain.isEmpty()
+            ? TupleSet.emptySet()
+            : TupleSet.filterByThree(relation, t -> domain.contains(AtomTuple.tupleOfFirst(t)));
     logger.exit("DomainRestrict = " + result);
     return result;
   }
@@ -966,7 +1035,9 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     var relation = expr.left.accept(this);
     var range = expr.right.accept(this);
     TupleSet result =
-        TupleSet.filterByThree(relation, t -> range.contains(AtomTuple.tupleOfLast(t)));
+        range.isConcrete() && range.isEmpty()
+            ? TupleSet.emptySet()
+            : TupleSet.filterByThree(relation, t -> range.contains(AtomTuple.tupleOfLast(t)));
     logger.exit("RangeRestrict = " + result);
     return result;
   }
@@ -993,7 +1064,9 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     while (true) {
       if (current.isUnspecified()) return current;
       if (current.isEmpty()) break;
-      collect = TupleSet.union(collect, current);
+      TupleSet expanded = TupleSet.union(collect, current);
+      if (expanded.size() == collect.size()) break;
+      collect = expanded;
       current = TupleSet.join(current, base);
     }
 
