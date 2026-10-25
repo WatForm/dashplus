@@ -162,8 +162,9 @@ public class EvaluatorIntegerAggregationTest {
   }
 
   @Test
-  public void sumQuantificationMakesUnknownDisjointnessUnknown() {
-    assertEquals(UNKNOWN, evaluateFact("(sum disj x, y: 8 | 0) = 0"));
+  public void sumQuantificationOnlyIgnoresUnknownDisjointnessForZeroContributions() {
+    assertEquals(TRUE, evaluateFact("(sum disj x, y: 8 | 0) = 0"));
+    assertEquals(UNKNOWN, evaluateFact("(sum disj x, y: 8 | 1) = 0"));
   }
 
   @Test
