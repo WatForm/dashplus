@@ -33,13 +33,26 @@ import picocli.CommandLine.Parameters;
       "",
       "@|bold USAGE MODES|@",
       "",
-      "  @|bold java -ea -jar evaluation.jar f.als -dumpInstance < -dumpDir=dir > < -d >|@",
-      "     (dump a satisfiable instance for the model and every satisfiable command)",
+      "  @|bold java -ea -jar evaluation.jar f.als|@",
+      "      @|bold -dumpInstance < -dumpDir=dir >|@",
+      "      @|bold < -cmd=N | --default-only > < --telemetry=file > < -d >|@",
+      "     Dump satisfiable instances. By default, dump the synthetic default",
+      "     run and every model command. -cmd selects one zero-based model",
+      "     command. --default-only selects only the synthetic default run.",
       "",
-      "  @|bold java -ea -jar evaluation.jar f.als -evalConstraints -xml=instance.xml < -cmd=N > <"
-          + " -d >|@",
-      "     (evaluate the constraints of f.als against the given XML instance;",
-      "      -cmd optionally includes the selected zero-based model command)",
+      "  @|bold java -ea -jar evaluation.jar f.als|@",
+      "      @|bold -evalConstraints -xml=instance.xml < -cmd=N >|@",
+      "      @|bold < --telemetry=file > < -d >|@",
+      "     Evaluate model constraints against the XML instance. -cmd also",
+      "     evaluates the selected zero-based model command.",
+      "",
+      "  @|bold java -ea -jar evaluation.jar f.als|@",
+      "      @|bold --list-commands --telemetry=file < -d >|@",
+      "     Write the synthetic default run and all zero-based model commands",
+      "     to the telemetry JSONL file without solving the model.",
+      "",
+      "  @|bold --telemetry=file|@ may also be used with dump or evaluation mode",
+      "  to write compact JSONL settings, timing, result, and failure records.",
       ""
     })
 public final class EvaluationCli implements Callable<Integer> {
@@ -81,13 +94,18 @@ public final class EvaluationCli implements Callable<Integer> {
 
   @Option(
       names = "--list-commands",
-      description = "Discover commands without solving (use --telemetry)")
+      description = "List commands without solving; requires --telemetry")
   private boolean listCommands;
 
-  @Option(names = "--default-only", description = "Dump only the synthetic default run")
+  @Option(
+      names = "--default-only",
+      description = "With -dumpInstance, dump only the synthetic default run")
   private boolean defaultOnly;
 
-  @Option(names = "--telemetry", description = "Write compact JSONL collection telemetry")
+  @Option(
+      names = "--telemetry",
+      paramLabel = "<file>",
+      description = "Write compact JSONL collection telemetry to this file")
   private Path telemetryPath;
 
   @Override

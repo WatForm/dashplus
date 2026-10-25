@@ -110,7 +110,8 @@ def tools = [
             'ca/uwaterloo/watform/predabstraction/**',
             'ca/uwaterloo/watform/tlaast/**',
             'ca/uwaterloo/watform/tlamodel/**',
-            'ca/uwaterloo/watform/alloytotla-legacy/**'
+            'ca/uwaterloo/watform/alloytotla-legacy/**',
+            'ca/uwaterloo/watform/tlaexpvisitor/**'
         ]
     ]
 ]

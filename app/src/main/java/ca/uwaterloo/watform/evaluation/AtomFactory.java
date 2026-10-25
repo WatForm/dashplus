@@ -27,8 +27,7 @@ public class AtomFactory {
   public Atom createAtom(int value, Pos pos) {
     if (value > max) return createAtom(OverflowDirection.OVERFLOW_UP, pos);
     if (value < min) return createAtom(OverflowDirection.OVERFLOW_DOWN, pos);
-    if (CollectionTelemetry.enabled()) CollectionTelemetry.integer();
-    else System.out.println("Creating integer atom");
+    CollectionTelemetry.integer();
     return new IntegerAtom(value);
   }
 
