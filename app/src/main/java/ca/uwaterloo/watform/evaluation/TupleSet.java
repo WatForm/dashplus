@@ -73,6 +73,7 @@ public abstract class TupleSet implements Iterable<AtomTuple> {
 
   public static ThreeVal threeSubset(TupleSet a, TupleSet b) {
     rejectPredFunCall(a, b);
+    if (a.isConcrete() && a.isEmpty()) return TRUE;
     if (!a.isConcrete() || !b.isConcrete()) return UNKNOWN;
 
     ThreeVal result = TRUE;
