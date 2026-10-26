@@ -473,7 +473,12 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
 
   public ThreeVal visit(AlloyIffExpr expr) {
     logger.enter("IFF: " + expr);
-    var result = expr.left.accept(this).iff(expr.right.accept(this));
+    var leftResult = expr.left.accept(this);
+    if (leftResult == UNKNOWN) {
+      logger.exit("IFF = " + UNKNOWN + " (short-circuit)");
+      return UNKNOWN;
+    }
+    var result = leftResult.iff(expr.right.accept(this));
     logger.exit("IFF = " + result);
     return result;
   }
@@ -489,25 +494,29 @@ public class FormulaEvaluator implements AlloyExprVis<ThreeVal> {
     logger.enter("CMP " + expr.comp + ": " + expr);
     var left = expr.left.accept(setEvaluator);
     var right = expr.right.accept(setEvaluator);
-    var result =
-        left.isUnspecified() || right.isUnspecified()
-            ? UNKNOWN
-            : switch (expr.comp) {
-              case AlloyCmpExpr.Comp.IN -> TupleSet.threeSubset(left, right);
-              case AlloyCmpExpr.Comp.LESS_THAN ->
-                  Atom.threeLessThan(left.getScalar(), right.getScalar());
-              case AlloyCmpExpr.Comp.GREATER_THAN ->
-                  Atom.threeGreater(left.getScalar(), right.getScalar());
-              case AlloyCmpExpr.Comp.LESS_EQUAL ->
-                  Atom.threeLessEqual(left.getScalar(), right.getScalar());
-              case AlloyCmpExpr.Comp.EQUAL_LESS ->
-                  Atom.threeLessEqual(left.getScalar(), right.getScalar());
-              case AlloyCmpExpr.Comp.GREATER_EQUAL ->
-                  Atom.threeGreaterEqual(left.getScalar(), right.getScalar());
-              default ->
-                  throw AlloyEvaluatorImplError.missingVisitCase(
-                      "FormulaEvaluator", expr.pos, "AlloyCmp comp: " + expr.comp);
-            };
+    ThreeVal result;
+    if (expr.comp == AlloyCmpExpr.Comp.IN) {
+      result = TupleSet.threeSubset(left, right);
+    } else {
+      result =
+          left.isUnspecified() || right.isUnspecified()
+              ? UNKNOWN
+              : switch (expr.comp) {
+                case AlloyCmpExpr.Comp.LESS_THAN ->
+                    Atom.threeLessThan(left.getScalar(), right.getScalar());
+                case AlloyCmpExpr.Comp.GREATER_THAN ->
+                    Atom.threeGreater(left.getScalar(), right.getScalar());
+                case AlloyCmpExpr.Comp.LESS_EQUAL ->
+                    Atom.threeLessEqual(left.getScalar(), right.getScalar());
+                case AlloyCmpExpr.Comp.EQUAL_LESS ->
+                    Atom.threeLessEqual(left.getScalar(), right.getScalar());
+                case AlloyCmpExpr.Comp.GREATER_EQUAL ->
+                    Atom.threeGreaterEqual(left.getScalar(), right.getScalar());
+                default ->
+                    throw AlloyEvaluatorImplError.missingVisitCase(
+                        "FormulaEvaluator", expr.pos, "AlloyCmp comp: " + expr.comp);
+              };
+    }
     if (expr.neg) result = result.not();
     logger.exit("CMP " + expr.comp + " = " + result);
     return result;
