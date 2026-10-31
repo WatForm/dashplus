@@ -2,11 +2,10 @@ package ca.uwaterloo.watform.utils;
 
 import static ca.uwaterloo.watform.utils.CommonStrings.dpOutput;
 
-import ca.uwaterloo.watform.alloyinterface.AlloyInterface;
-import ca.uwaterloo.watform.alloymodel.AlloyModel;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.ast.Command;
 import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
@@ -15,61 +14,54 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.OptionalInt;
 
 public final class XmlDumper {
 
   private XmlDumper() {}
 
-  /**
-   * Dumps a native Alloy XML instance for the model's default scope and for every command.
-   * Unsatisfiable executions are reported but do not produce files.
-   */
-  public static void dumpInstances(AlloyModel alloyModel, String fileNamePrefix, Path dumpDir) {
-    try {
-      Files.createDirectories(dumpDir);
-    } catch (IOException error) {
-      throw UtilsUserError.outputDirectory(dumpDir.toString(), error.getMessage());
-    }
+  /** Parse original source with a final synthetic default run, retaining the import base. */
+  public static CompModule parseForDump(Path modelPath) throws IOException {
+    // Alloy canonicalizes paths before looking up source overrides (including macOS /var).
+    String filename = modelPath.toRealPath().toString();
+    Map<String, String> sources = new HashMap<>();
+    // The newline also terminates any trailing line comment in the original source.
+    sources.put(filename, Files.readString(Path.of(filename)) + "\nrun {}\n");
+    return CompUtil.parseEverything_fromFile(new A4Reporter(), sources, filename);
+  }
 
-    CompModule defaultModule =
-        AlloyInterface.parse(alloyModel.toStringNoCmds() + System.lineSeparator() + "run {}");
-    executeAndDump(
-        defaultModule,
-        defaultModule.getAllCommands().getFirst(),
-        dumpDir.resolve(fileNamePrefix + "-instance.xml"),
-        "default scope (no commands in file)");
+  /** Exclude the synthetic default command appended by parseForDump. */
+  public static int commandCount(CompModule module) {
+    return module.getAllCommands().size() - 1;
+  }
 
-    if (alloyModel.getNumCmds() == 0) return;
-
-    CompModule commandModule = AlloyInterface.parse(alloyModel.toString());
-    for (int commandIndex = 0; commandIndex < alloyModel.getNumCmds(); commandIndex++) {
-      executeAndDump(
-          commandModule,
-          commandModule.getAllCommands().get(commandIndex),
-          dumpDir.resolve(fileNamePrefix + "-instance-cmd" + commandIndex + ".xml"),
-          "command " + commandIndex);
+  /** Dump the default run followed by each original command, keeping their original indices. */
+  public static void dumpInstances(CompModule module, String prefix, Path dumpDir) {
+    dumpInstance(module, prefix, dumpDir, OptionalInt.empty());
+    for (int index = 0; index < commandCount(module); index++) {
+      dumpInstance(module, prefix, dumpDir, OptionalInt.of(index));
     }
   }
 
-  // Dump exactly one execution
+  /** Dump exactly one execution from a module returned by parseForDump. */
   public static void dumpInstance(
-      AlloyModel model, String prefix, Path dumpDir, OptionalInt index) {
+      CompModule module, String prefix, Path dumpDir, OptionalInt index) {
+    if (index.isPresent() && (index.getAsInt() < 0 || index.getAsInt() >= commandCount(module))) {
+      throw new IllegalArgumentException("Command index out of range: " + index.getAsInt());
+    }
     try {
       Files.createDirectories(dumpDir);
     } catch (IOException error) {
       throw UtilsUserError.outputDirectory(dumpDir.toString(), error.getMessage());
     }
     if (index.isEmpty()) {
-      CompModule module =
-          AlloyInterface.parse(model.toStringNoCmds() + System.lineSeparator() + "run {}");
       executeAndDump(
           module,
-          module.getAllCommands().getFirst(),
+          module.getAllCommands().getLast(),
           dumpDir.resolve(prefix + "-instance.xml"),
           "default scope");
     } else {
-      CompModule module = AlloyInterface.parse(model.toString());
       executeAndDump(
           module,
           module.getAllCommands().get(index.getAsInt()),
