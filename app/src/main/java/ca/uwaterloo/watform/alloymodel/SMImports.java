@@ -48,32 +48,28 @@ public class SMImports extends SMSigs {
       Optional<AlloyQnameExpr> asQname,
       List<Qname> sigParamValues) {
     if (this.createSM) {
-      String potentialNameSpace;
-      String fileName = "";
+      String fileName = importName.substring(importName.lastIndexOf('/') + 1);
+      String localNameSpace;
       ImportData id = new ImportData(pos, importName, sigParamValues, parentNameSpace);
       // this.debugSMImports();
       if (asQname.isPresent()) {
-        potentialNameSpace = asQname.get().getName();
+        localNameSpace = asQname.get().getName();
+        String potentialNameSpace = qualifyImportNameSpace(parentNameSpace, localNameSpace);
         if (this.importTable.keySet().contains(potentialNameSpace)) {
-          throw AlloyModelError.duplicateAlias(pos, potentialNameSpace);
+          throw AlloyModelError.duplicateAlias(pos, localNameSpace);
         }
       } else {
         // System.out.println("parentNameSpace: " + parentNameSpace);
         if (importName.startsWith("util/") && sigParamValues.isEmpty()) {
           // don't import same non-parameterized util module multiple times
-          potentialNameSpace = importName.substring(importName.lastIndexOf('/') + 1);
+          localNameSpace = fileName;
           // will issue a warning if imported twice, but not reimport it
         } else {
-          String prefix = (parentNameSpace.equals(THIS_NAMESPACE)) ? "" : parentNameSpace;
-          // return the whole name if no slash
-          // importedFileName is the filename of the import used in the
-          // open statement (NOT the module name of the import)
-          fileName = importName.substring(importName.lastIndexOf('/') + 1);
-          potentialNameSpace = prefix + fileName;
-          // System.out.println("fileName: " + fileName);
-          // System.out.println("prefix: " + prefix);
+          localNameSpace = fileName;
         }
       }
+
+      String potentialNameSpace = qualifyImportNameSpace(parentNameSpace, localNameSpace);
 
       // System.out.println("potential nameSpace: " + potentialNameSpace);
 
@@ -99,7 +95,8 @@ public class SMImports extends SMSigs {
           // potentialNameSpace is already in use so we have to create
           // a new name
           Integer currentCount = this.importCount.get(parentNameSpace);
-          newNameSpace = "open$" + Integer.toString(currentCount) + "/" + fileName;
+          newNameSpace =
+              qualifyImportNameSpace(parentNameSpace, "open$" + Integer.toString(currentCount));
           this.importTable.put(newNameSpace, id);
           this.importCount.put(newNameSpace, STARTING_OPEN_VALUE);
           this.importCount.put(parentNameSpace, currentCount + 1);
@@ -111,6 +108,12 @@ public class SMImports extends SMSigs {
     } else {
       return null;
     }
+  }
+
+  private static String qualifyImportNameSpace(String parentNameSpace, String localNameSpace) {
+    return parentNameSpace.equals(THIS_NAMESPACE)
+        ? localNameSpace
+        : parentNameSpace + "/" + localNameSpace;
   }
 
   protected void resolveSMImports() {
