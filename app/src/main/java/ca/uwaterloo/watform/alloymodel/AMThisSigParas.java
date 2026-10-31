@@ -87,6 +87,37 @@ public class AMThisSigParas extends AMThisEnumParas {
     }
   }
 
+  private Map<String, Qname> inheritedFields(Qname sigQname) {
+    Set<Qname> ancestors = new LinkedHashSet<>();
+    Deque<Qname> remaining = new ArrayDeque<>();
+    remaining.add(sigQname);
+
+    while (!remaining.isEmpty()) {
+      Qname current = remaining.removeFirst();
+      if (!ancestors.add(current)) continue;
+
+      SigData sigData = this.sigTable.get(current);
+      if (sigData == null) continue;
+      List<Qname> unresolvedParents = new ArrayList<>(sigData.inParents);
+      sigData.extendsParent.ifPresent(unresolvedParents::add);
+      for (Qname parent : unresolvedParents) {
+        remaining.addAll(this.sigQnameMatches(parent, current.nameSpace));
+      }
+    }
+
+    Map<String, Qname> fields = new LinkedHashMap<>();
+    for (Qname field : this.allFieldQnames()) {
+      boolean inherited =
+          ancestors.stream()
+              .anyMatch(
+                  ancestor ->
+                      ancestor.nameSpace.equals(field.nameSpace)
+                          && ancestor.name.equals(field.sigParent));
+      if (inherited) fields.put(field.name, field);
+    }
+    return fields;
+  }
+
   private SigData sigParaSigData(AlloySigPara p, String nameSpace) {
     // this is data for a single sigPara
     SigData sd = new SigData();
