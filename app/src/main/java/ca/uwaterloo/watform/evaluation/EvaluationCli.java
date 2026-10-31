@@ -136,6 +136,28 @@ public final class EvaluationCli implements Callable<Integer> {
     try {
       validateArguments(model);
 
+      if (dumpInstance) {
+        var module = XmlDumper.parseForDump(model);
+        int commandCount = XmlDumper.commandCount(module);
+        if (commandIndex != null && commandIndex >= commandCount) {
+          Reporter.INSTANCE.addError(
+              EvaluationCliError.commandIndexOutOfRange(commandIndex, commandCount));
+          Reporter.INSTANCE.exitIfHasErrors();
+        }
+        String modelName = model.getFileName().toString();
+        String prefix = modelName.substring(0, modelName.length() - ".als".length());
+        Path outputDirectory = dumpDir.toAbsolutePath().normalize();
+        if (defaultOnly || commandIndex != null) {
+          XmlDumper.dumpInstance(
+              module, prefix, outputDirectory,
+              commandIndex == null ? OptionalInt.empty() : OptionalInt.of(commandIndex));
+        } else {
+          XmlDumper.dumpInstances(module, prefix, outputDirectory);
+        }
+        Reporter.INSTANCE.print();
+        return 0;
+      }
+
       AlloyModel alloyModel = alloyParseToModel(model.toString());
       if (listCommands) {
         var commands = new ArrayList<Map<String, Object>>();
@@ -172,17 +194,7 @@ public final class EvaluationCli implements Callable<Integer> {
         Reporter.INSTANCE.exitIfHasErrors();
       }
 
-      if (dumpInstance) {
-        var modelName = model.getFileName().toString();
-        var prefix = modelName.substring(0, modelName.length() - ".als".length());
-        if (defaultOnly || commandIndex != null) {
-          XmlDumper.dumpInstance(
-              alloyModel,
-              prefix,
-              dumpDir.toAbsolutePath().normalize(),
-              commandIndex == null ? OptionalInt.empty() : OptionalInt.of(commandIndex));
-        } else dumpInstance(alloyModel, prefix, dumpDir);
-      } else if (evalConstraints) {
+      if (evalConstraints) {
         long evaluationStart = System.nanoTime();
         try {
           OptionalInt selectedCommand =
@@ -292,15 +304,6 @@ public final class EvaluationCli implements Callable<Integer> {
           new ca.uwaterloo.watform.utils.UserError("--list-commands requires --telemetry=<path>"));
     }
     Reporter.INSTANCE.exitIfHasErrors();
-  }
-
-  private static void dumpInstance(AlloyModel model, String prefix, Path dumpDir) {
-    try {
-      XmlDumper.dumpInstances(model, prefix, dumpDir.toAbsolutePath().normalize());
-    } catch (UtilsUserError error) {
-      Reporter.INSTANCE.addError(error);
-      Reporter.INSTANCE.exitIfHasErrors();
-    }
   }
 
   private static void runEvalConstraints(
