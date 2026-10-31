@@ -64,11 +64,12 @@ public class AMThisSigParas extends AMThisEnumParas {
       if (sigPara.quals.contains(AlloySigPara.Qual.ONE))
         this.createNonOrderedSigWithExactScopeValue(sigQname, 1);
 
-      // get all the field names of this sig (needed for desugaring)
-      List<String> allFieldNames = emptyList();
+      // Get every field visible from this sig, including fields inherited from its parents.
+      // Signature facts implicitly join bare field names with `this`; @field suppresses that join.
+      Map<String, Qname> visibleFields = inheritedFields(sigQname);
       for (AlloyDecl field : sigPara.fields) {
         for (AlloyQnameExpr qname : field.qnames) {
-          allFieldNames.add(qname.getName());
+          visibleFields.put(qname.getName(), fieldQname(nameSpace, sigName, qname.getName()));
         }
       }
 
@@ -90,17 +91,47 @@ public class AMThisSigParas extends AMThisEnumParas {
               this.desugar(
                   AlloyIn(new AlloyQnameExpr(fieldName), fieldExpr),
                   sigQname,
-                  allFieldNames,
-                  nameSpace));
+                  visibleFields));
         }
       }
       if (sigPara.block.isPresent()) {
         for (AlloyExpr sigFact : sigPara.block.get().exprs) {
           // can fields from other sigs appear in these?
-          this.createConstraint(nameSpace, desugar(sigFact, sigQname, allFieldNames, nameSpace));
+          this.createConstraint(nameSpace, desugar(sigFact, sigQname, visibleFields));
         }
       }
     }
+  }
+
+  private Map<String, Qname> inheritedFields(Qname sigQname) {
+    Set<Qname> ancestors = new LinkedHashSet<>();
+    Deque<Qname> remaining = new ArrayDeque<>();
+    remaining.add(sigQname);
+
+    while (!remaining.isEmpty()) {
+      Qname current = remaining.removeFirst();
+      if (!ancestors.add(current)) continue;
+
+      SigData sigData = this.sigTable.get(current);
+      if (sigData == null) continue;
+      List<Qname> unresolvedParents = new ArrayList<>(sigData.inParents);
+      sigData.extendsParent.ifPresent(unresolvedParents::add);
+      for (Qname parent : unresolvedParents) {
+        remaining.addAll(this.sigQnameMatches(parent, current.nameSpace));
+      }
+    }
+
+    Map<String, Qname> fields = new LinkedHashMap<>();
+    for (Qname field : this.allFieldQnames()) {
+      boolean inherited =
+          ancestors.stream()
+              .anyMatch(
+                  ancestor ->
+                      ancestor.nameSpace.equals(field.nameSpace)
+                          && ancestor.name.equals(field.sigParent));
+      if (inherited) fields.put(field.name, field);
+    }
+    return fields;
   }
 
   private SigData sigParaSigData(AlloySigPara p, String nameSpace) {
@@ -141,10 +172,11 @@ public class AMThisSigParas extends AMThisEnumParas {
     return sd;
   }
 
-  private static Boolean desugarTest(AlloyExpr e, List<String> allFieldNames) {
+  private static Boolean desugarTest(AlloyExpr e, Map<String, Qname> visibleFields) {
     return (e instanceof AlloyThisExpr
         || e instanceof AlloyAtNameExpr
-        || (e instanceof AlloyQnameExpr && allFieldNames.contains(((AlloyQnameExpr) e).getName())));
+        || (e instanceof AlloyQnameExpr
+            && visibleFields.containsKey(((AlloyQnameExpr) e).getName())));
   }
 
   private static String THIS_VAR = "this_var";
@@ -153,15 +185,14 @@ public class AMThisSigParas extends AMThisEnumParas {
     return thisQname(THIS_VAR).toAlloyExpr(p, Kind.SIG);
   }
 
-  private static AlloyExpr desugarReplace(
-      AlloyExpr e, Qname sigParent, List<String> allFieldNames, String nameSpace) {
+  private static AlloyExpr desugarReplace(AlloyExpr e, Map<String, Qname> visibleFields) {
     if (e instanceof AlloyThisExpr) {
       // TODO: perhaps not a great choice?
       return AlloyVar(THIS_VAR);
     } else if (e instanceof AlloyAtNameExpr) {
       String atName = ((AlloyAtNameExpr) e).getName();
       // @f becomes resolvedSigParent <: f if it is a field of this sig
-      if (!allFieldNames.contains(atName)) {
+      if (!visibleFields.containsKey(atName)) {
         // this is tricky because @ is allowed on non-field of this sig names
         // could be a field of some other sig or some parent sig
         // lets try just removing the at since this formula
@@ -169,14 +200,13 @@ public class AMThisSigParas extends AMThisEnumParas {
         return ((AlloyAtNameExpr) e).name; // this is a AlloyQnameExpr
         // throw AlloyModelError.cantAtNonFieldOfThisSig(e.pos, atName);
       } else {
-        return fieldQname(sigParent.nameSpace, sigParent.name, atName)
-            .toAlloyExpr(e.pos, Kind.FIELD);
+        return visibleFields.get(atName).toAlloyExpr(e.pos, Kind.FIELD);
       }
     } else if (e instanceof AlloyQnameExpr) {
       // we know it is a field from this sig b/c of test
       // replace any field (that is not with @ on the outside) with
       // this_var.((resolvedSigParent) <: f)
-      Qname fieldQname = fieldQname(nameSpace, sigParent.name, ((AlloyQnameExpr) e).getName());
+      Qname fieldQname = visibleFields.get(((AlloyQnameExpr) e).getName());
       // (resolvedSigParent) <: f
       AlloyExpr field = fieldQname.toAlloyExpr(e.pos, Kind.FIELD);
       return AlloyJoin(AlloyVar(THIS_VAR), field);
@@ -186,12 +216,12 @@ public class AMThisSigParas extends AMThisEnumParas {
   }
 
   static AlloyExpr desugar(
-      AlloyExpr expr, Qname sigParent, List<String> allFieldNames, String nameSpace) {
+      AlloyExpr expr, Qname sigParent, Map<String, Qname> visibleFields) {
     // note: leaves uses of "this" inside expression as they are
     AlloyExpr newExpr =
         new ReplaceExprVis(
-                e -> desugarTest(e, allFieldNames),
-                e -> desugarReplace(e, sigParent, allFieldNames, nameSpace))
+                e -> desugarTest(e, visibleFields),
+                e -> desugarReplace(e, visibleFields))
             .visit(expr);
     // put "all AlloyThisExpr:A |"" on outside
     AlloyExpr e =
