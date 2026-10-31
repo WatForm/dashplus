@@ -149,7 +149,9 @@ public final class EvaluationCli implements Callable<Integer> {
         Path outputDirectory = dumpDir.toAbsolutePath().normalize();
         if (defaultOnly || commandIndex != null) {
           XmlDumper.dumpInstance(
-              module, prefix, outputDirectory,
+              module,
+              prefix,
+              outputDirectory,
               commandIndex == null ? OptionalInt.empty() : OptionalInt.of(commandIndex));
         } else {
           XmlDumper.dumpInstances(module, prefix, outputDirectory);

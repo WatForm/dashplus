@@ -89,9 +89,7 @@ public class AMThisSigParas extends AMThisEnumParas {
           this.createConstraint(
               nameSpace,
               this.desugar(
-                  AlloyIn(new AlloyQnameExpr(fieldName), fieldExpr),
-                  sigQname,
-                  visibleFields));
+                  AlloyIn(new AlloyQnameExpr(fieldName), fieldExpr), sigQname, visibleFields));
         }
       }
       if (sigPara.block.isPresent()) {
@@ -215,13 +213,11 @@ public class AMThisSigParas extends AMThisEnumParas {
     }
   }
 
-  static AlloyExpr desugar(
-      AlloyExpr expr, Qname sigParent, Map<String, Qname> visibleFields) {
+  static AlloyExpr desugar(AlloyExpr expr, Qname sigParent, Map<String, Qname> visibleFields) {
     // note: leaves uses of "this" inside expression as they are
     AlloyExpr newExpr =
         new ReplaceExprVis(
-                e -> desugarTest(e, visibleFields),
-                e -> desugarReplace(e, visibleFields))
+                e -> desugarTest(e, visibleFields), e -> desugarReplace(e, visibleFields))
             .visit(expr);
     // put "all AlloyThisExpr:A |"" on outside
     AlloyExpr e =
