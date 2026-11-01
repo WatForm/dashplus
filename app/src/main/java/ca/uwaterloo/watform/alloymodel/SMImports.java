@@ -20,15 +20,13 @@ public class SMImports extends SMSigs {
 
   // map from nameSpace to info about import that created that nameSpace
   protected HashMap<String, ImportData> importTable = new LinkedHashMap<>();
-  // map from nameSpace to how man imports in that nameSpace so far
-  // used for making open$X nameSpaces
-  // count seems to start at 3
+  // Next import position in each namespace, used for Alloy's open$X aliases.
+  // Every import occupies a position, including imports with explicit aliases.
   protected HashMap<String, Integer> importCount = new LinkedHashMap<>();
 
-  Integer STARTING_OPEN_VALUE = 3;
-
   protected SMImports() {
-    this.importCount.put(THIS_NAMESPACE, STARTING_OPEN_VALUE);
+    // AlloyModel loads the implicit integer import through createImport itself.
+    this.importCount.put(THIS_NAMESPACE, 1);
   }
 
   protected SMImports(SMImports other) {
@@ -48,32 +46,23 @@ public class SMImports extends SMSigs {
       Optional<AlloyQnameExpr> asQname,
       List<Qname> sigParamValues) {
     if (this.createSM) {
-      String potentialNameSpace;
-      String fileName = "";
+      int importPosition = this.importCount.get(parentNameSpace);
+      this.importCount.put(parentNameSpace, importPosition + 1);
+      String fileName = importName.substring(importName.lastIndexOf('/') + 1);
+      String localNameSpace;
       ImportData id = new ImportData(pos, importName, sigParamValues, parentNameSpace);
       // this.debugSMImports();
       if (asQname.isPresent()) {
-        potentialNameSpace = asQname.get().getName();
+        localNameSpace = asQname.get().getName();
+        String potentialNameSpace = qualifyImportNameSpace(parentNameSpace, localNameSpace);
         if (this.importTable.keySet().contains(potentialNameSpace)) {
-          throw AlloyModelError.duplicateAlias(pos, potentialNameSpace);
+          throw AlloyModelError.duplicateAlias(pos, localNameSpace);
         }
       } else {
-        // System.out.println("parentNameSpace: " + parentNameSpace);
-        if (importName.startsWith("util/") && sigParamValues.isEmpty()) {
-          // don't import same non-parameterized util module multiple times
-          potentialNameSpace = importName.substring(importName.lastIndexOf('/') + 1);
-          // will issue a warning if imported twice, but not reimport it
-        } else {
-          String prefix = (parentNameSpace.equals(THIS_NAMESPACE)) ? "" : parentNameSpace;
-          // return the whole name if no slash
-          // importedFileName is the filename of the import used in the
-          // open statement (NOT the module name of the import)
-          fileName = importName.substring(importName.lastIndexOf('/') + 1);
-          potentialNameSpace = prefix + fileName;
-          // System.out.println("fileName: " + fileName);
-          // System.out.println("prefix: " + prefix);
-        }
+        localNameSpace = fileName;
       }
+
+      String potentialNameSpace = qualifyImportNameSpace(parentNameSpace, localNameSpace);
 
       // System.out.println("potential nameSpace: " + potentialNameSpace);
 
@@ -82,7 +71,9 @@ public class SMImports extends SMSigs {
         // aliases will always land here
         newNameSpace = potentialNameSpace;
         this.importTable.put(newNameSpace, id);
-        this.importCount.put(newNameSpace, STARTING_OPEN_VALUE);
+        // Nested modules also have an implicit integer import, but we do not
+        // recursively load that built-in module into every namespace.
+        this.importCount.put(newNameSpace, 2);
         // System.out.println("importName: " + importName);
         // System.out.println("nameSpace: " + newNameSpace);
         return newNameSpace;
@@ -98,11 +89,10 @@ public class SMImports extends SMSigs {
         } else {
           // potentialNameSpace is already in use so we have to create
           // a new name
-          Integer currentCount = this.importCount.get(parentNameSpace);
-          newNameSpace = "open$" + Integer.toString(currentCount) + "/" + fileName;
+          newNameSpace =
+              qualifyImportNameSpace(parentNameSpace, "open$" + importPosition);
           this.importTable.put(newNameSpace, id);
-          this.importCount.put(newNameSpace, STARTING_OPEN_VALUE);
-          this.importCount.put(parentNameSpace, currentCount + 1);
+          this.importCount.put(newNameSpace, 2);
           // System.out.println("importName: " + importName);
           // System.out.println("nameSpace: " + newNameSpace);
           return newNameSpace;
@@ -111,6 +101,12 @@ public class SMImports extends SMSigs {
     } else {
       return null;
     }
+  }
+
+  private static String qualifyImportNameSpace(String parentNameSpace, String localNameSpace) {
+    return parentNameSpace.equals(THIS_NAMESPACE)
+        ? localNameSpace
+        : parentNameSpace + "/" + localNameSpace;
   }
 
   protected void resolveSMImports() {
