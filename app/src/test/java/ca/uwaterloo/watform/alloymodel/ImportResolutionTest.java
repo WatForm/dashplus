@@ -1,12 +1,10 @@
-package ca.uwaterloo.watform.evaluation;
+package ca.uwaterloo.watform.alloymodel;
 
 import static ca.uwaterloo.watform.parser.AlloyParser.alloyParse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ca.uwaterloo.watform.alloymodel.AlloyModel;
-import ca.uwaterloo.watform.alloymodel.Qname;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.parser.CompUtil;
 import java.nio.file.Path;
@@ -14,7 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.junit.jupiter.api.Test;
 
-public class EvaluatorImportResolutionTest {
+public class ImportResolutionTest {
   @Test
   public void repeatedTopLevelImportsUseAlloysGeneratedAliases() throws Exception {
     AlloyModel model = model("repeated-ordering.als");
@@ -41,28 +39,28 @@ public class EvaluatorImportResolutionTest {
   @Test
   public void unrelatedImportsAdvanceGeneratedAliases() throws Exception {
     assertOrderingNamesMatchAnalyzer(
-        Path.of("src/test/resources/evaluation/imports/ImportsMixedOrdering.als"),
+        Path.of("src/test/resources/alloymodel/imports/ImportsMixedOrdering.als"),
         Set.of("ordering", "open$4", "open$5"));
   }
 
   @Test
   public void explicitAliasesAlsoAdvanceGeneratedAliases() throws Exception {
     assertOrderingNamesMatchAnalyzer(
-        Path.of("src/test/resources/evaluation/imports/ImportsInterleavedAliases.als"),
+        Path.of("src/test/resources/alloymodel/imports/ImportsInterleavedAliases.als"),
         Set.of("ordering", "named", "open$5", "open$6"));
   }
 
   @Test
   public void repeatedInstantiationsShareNamesButStillOccupyImportPositions() throws Exception {
     assertOrderingNamesMatchAnalyzer(
-        Path.of("src/test/resources/evaluation/imports/ImportsRepeatedInstantiation.als"),
+        Path.of("src/test/resources/alloymodel/imports/ImportsRepeatedInstantiation.als"),
         Set.of("ordering", "open$6"));
   }
 
   @Test
   public void transitiveImportsKeepIndependentCountersAndLocalAliases() throws Exception {
     assertOrderingNamesMatchAnalyzer(
-        Path.of("src/test/resources/evaluation/imports/ImportsTransitive.als"),
+        Path.of("src/test/resources/alloymodel/imports/ImportsTransitive.als"),
         Set.of(
             "left/ord",
             "left/ordering",
@@ -107,7 +105,7 @@ public class EvaluatorImportResolutionTest {
   }
 
   private static AlloyModel model(String filename) throws Exception {
-    Path path = Path.of("src/test/resources/evaluation/imports", filename);
+    Path path = Path.of("src/test/resources/alloymodel/imports", filename);
     AlloyModel model = new AlloyModel(alloyParse(path.toString()));
     model.resolve();
     return model;
