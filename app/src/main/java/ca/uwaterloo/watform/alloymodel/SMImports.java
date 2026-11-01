@@ -89,8 +89,7 @@ public class SMImports extends SMSigs {
         } else {
           // potentialNameSpace is already in use so we have to create
           // a new name
-          newNameSpace =
-              qualifyImportNameSpace(parentNameSpace, "open$" + importPosition);
+          newNameSpace = qualifyImportNameSpace(parentNameSpace, "open$" + importPosition);
           this.importTable.put(newNameSpace, id);
           this.importCount.put(newNameSpace, 2);
           // System.out.println("importName: " + importName);
