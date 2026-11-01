@@ -21,22 +21,16 @@ import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-import ca.uwaterloo.watform.alloyexprvisitor.ReplaceExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
 public class AMThisSigParas extends AMThisEnumParas {
 
   protected List<AlloySigPara> sigs = emptyList();
-
-  private record SignatureConstraint(Qname sig, AlloyExpr expr) {}
-
-  private List<SignatureConstraint> pendingSignatureConstraints = new ArrayList<>();
 
   // init ------------------
 
@@ -45,7 +39,6 @@ public class AMThisSigParas extends AMThisEnumParas {
   protected AMThisSigParas(AMThisSigParas other) {
     super(other);
     this.sigs = new ArrayList<AlloySigPara>(other.sigs);
-    this.pendingSignatureConstraints = new ArrayList<>(other.pendingSignatureConstraints);
   }
 
   /*
@@ -94,48 +87,6 @@ public class AMThisSigParas extends AMThisEnumParas {
     }
   }
 
-  private void deferSignatureConstraint(Qname sig, AlloyExpr expr) {
-    if (this.createSM) pendingSignatureConstraints.add(new SignatureConstraint(sig, expr));
-  }
-
-  @Override
-  protected void resolveSMConstraints(
-      TriFunction<AlloyExpr, String, List<AlloyDecl>, ResolveInfo> resolve2) {
-    // All signatures, fields and parent links are available now, regardless of declaration order.
-    for (SignatureConstraint constraint : pendingSignatureConstraints) {
-      createConstraint(
-          constraint.sig.nameSpace,
-          desugar(constraint.expr, constraint.sig, inheritedFields(constraint.sig)));
-    }
-    pendingSignatureConstraints.clear();
-    super.resolveSMConstraints(resolve2);
-  }
-
-  private Map<String, Qname> inheritedFields(Qname sigQname) {
-    Set<Qname> ancestors = new LinkedHashSet<>();
-    Deque<Qname> remaining = new ArrayDeque<>();
-    remaining.add(sigQname);
-
-    while (!remaining.isEmpty()) {
-      Qname current = remaining.removeFirst();
-      if (!ancestors.add(current)) continue;
-
-      remaining.addAll(this.allParents(current));
-    }
-
-    Map<String, Qname> fields = new LinkedHashMap<>();
-    for (Qname field : this.allFieldQnames()) {
-      boolean inherited =
-          ancestors.stream()
-              .anyMatch(
-                  ancestor ->
-                      ancestor.nameSpace.equals(field.nameSpace)
-                          && ancestor.name.equals(field.sigParent));
-      if (inherited) fields.put(field.name, field);
-    }
-    return fields;
-  }
-
   private SigData sigParaSigData(AlloySigPara p, String nameSpace) {
     // this is data for a single sigPara
     SigData sd = new SigData();
@@ -172,119 +123,6 @@ public class AMThisSigParas extends AMThisEnumParas {
     if (p.quals.contains(AlloySigPara.Qual.SOME)) sd.isSomeSig = true;
     if (p.quals.contains(AlloySigPara.Qual.LONE)) sd.isLoneSig = true;
     return sd;
-  }
-
-  private static Boolean desugarTest(AlloyExpr e, Map<String, Qname> visibleFields) {
-    return (e instanceof AlloyThisExpr
-        || e instanceof AlloyAtNameExpr
-        || (e instanceof AlloyQnameExpr
-            && visibleFields.containsKey(((AlloyQnameExpr) e).getName())));
-  }
-
-  private static String THIS_VAR = "this_var";
-
-  private static AlloyExpr THIS_REPLACEMENT(Pos p) {
-    return thisQname(THIS_VAR).toAlloyExpr(p, Kind.SIG);
-  }
-
-  private static AlloyExpr desugarReplace(AlloyExpr e, Map<String, Qname> visibleFields) {
-    if (e instanceof AlloyThisExpr) {
-      // TODO: perhaps not a great choice?
-      return AlloyVar(THIS_VAR);
-    } else if (e instanceof AlloyAtNameExpr) {
-      String atName = ((AlloyAtNameExpr) e).getName();
-      // @f becomes resolvedSigParent <: f if it is a field of this sig
-      if (!visibleFields.containsKey(atName)) {
-        // this is tricky because @ is allowed on non-field of this sig names
-        // could be a field of some other sig or some parent sig
-        // lets try just removing the at since this formula
-        // will be put in a regular constraint not in a sig fact anymore
-        return ((AlloyAtNameExpr) e).name; // this is a AlloyQnameExpr
-        // throw AlloyModelError.cantAtNonFieldOfThisSig(e.pos, atName);
-      } else {
-        return visibleFields.get(atName).toAlloyExpr(e.pos, Kind.FIELD);
-      }
-    } else if (e instanceof AlloyQnameExpr) {
-      // we know it is a field from this sig b/c of test
-      // replace any field (that is not with @ on the outside) with
-      // this_var.((resolvedSigParent) <: f)
-      Qname fieldQname = visibleFields.get(((AlloyQnameExpr) e).getName());
-      // (resolvedSigParent) <: f
-      AlloyExpr field = fieldQname.toAlloyExpr(e.pos, Kind.FIELD);
-      return AlloyJoin(AlloyVar(THIS_VAR), field);
-    } else {
-      throw ImplementationError.shouldNotReach();
-    }
-  }
-
-  static AlloyExpr desugar(AlloyExpr expr, Qname sigParent, Map<String, Qname> visibleFields) {
-    AlloyExpr newExpr = new SignatureFactDesugarVis(visibleFields).visit(expr);
-    // put "all AlloyThisExpr:A |"" on outside
-    AlloyExpr e =
-        AlloyAllVars(
-            AlloyDecl(THIS_VAR, AlloyQtEnum.ONE, sigParent.toAlloyExpr(expr.pos, Kind.SIG)),
-            newExpr);
-    // System.out.println(e);
-    return e;
-  }
-
-  private static final class SignatureFactDesugarVis extends ReplaceExprVis {
-    private Set<String> boundNames = new HashSet<>();
-
-    SignatureFactDesugarVis(Map<String, Qname> visibleFields) {
-      super(e -> false, e -> desugarReplace(e, visibleFields));
-      this.test =
-          e ->
-              desugarTest(e, visibleFields)
-                  && !(e instanceof AlloyQnameExpr name && boundNames.contains(name.getName()));
-    }
-
-    private List<AlloyDecl> visitDeclarations(List<AlloyDecl> declarations) {
-      List<AlloyDecl> result = new ArrayList<>();
-      for (AlloyDecl declaration : declarations) {
-        // A binding is visible in subsequent domains and the body, but not its own domain.
-        result.add(declaration.rebuild(visit(declaration.expr)));
-        for (AlloyQnameExpr name : declaration.qnames) boundNames.add(name.getName());
-      }
-      return result;
-    }
-
-    @Override
-    public AlloyExpr visit(AlloyQuantificationExpr expr) {
-      Set<String> outerNames = new HashSet<>(boundNames);
-      try {
-        List<AlloyDecl> declarations = visitDeclarations(expr.decls);
-        return expr.rebuild(declarations, visit(expr.body));
-      } finally {
-        boundNames = outerNames;
-      }
-    }
-
-    @Override
-    public AlloyExpr visit(AlloyCphExpr expr) {
-      Set<String> outerNames = new HashSet<>(boundNames);
-      try {
-        List<AlloyDecl> declarations = visitDeclarations(expr.decls);
-        return expr.rebuild(declarations, expr.body.map(this::visit).orElse(null));
-      } finally {
-        boundNames = outerNames;
-      }
-    }
-
-    @Override
-    public AlloyExpr visit(AlloyLetExpr expr) {
-      Set<String> outerNames = new HashSet<>(boundNames);
-      try {
-        List<AlloyLetExpr.AlloyLetAsn> assignments = new ArrayList<>();
-        for (AlloyLetExpr.AlloyLetAsn assignment : expr.asns) {
-          assignments.add(assignment.rebuild(visit(assignment.expr)));
-          boundNames.add(assignment.qname.getName());
-        }
-        return expr.rebuild(assignments, visit(expr.body));
-      } finally {
-        boundNames = outerNames;
-      }
-    }
   }
 
   // API ---------------------
