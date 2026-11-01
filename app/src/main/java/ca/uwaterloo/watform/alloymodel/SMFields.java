@@ -48,6 +48,31 @@ public class SMFields extends SMImports {
     return setToList(this.fieldTable.keySet());
   }
 
+  protected Map<String, Qname> inheritedFields(Qname sigQname) {
+    Set<Qname> ancestors = new LinkedHashSet<>();
+    Deque<Qname> remaining = new ArrayDeque<>();
+    remaining.add(sigQname);
+
+    while (!remaining.isEmpty()) {
+      Qname current = remaining.removeFirst();
+      if (!ancestors.add(current)) continue;
+
+      remaining.addAll(this.allParents(current));
+    }
+
+    Map<String, Qname> fields = new LinkedHashMap<>();
+    for (Qname field : this.allFieldQnames()) {
+      boolean inherited =
+          containsMatch(
+              setToList(ancestors),
+              ancestor ->
+                  ancestor.nameSpace.equals(field.nameSpace)
+                      && ancestor.name.equals(field.sigParent));
+      if (inherited) fields.put(field.name, field);
+    }
+    return fields;
+  }
+
   // does not depend on context
   // full qname may not be unknown
   private List<Qname> possibleMatches(Qname qname) {
