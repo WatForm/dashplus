@@ -22,7 +22,7 @@ import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
-import ca.uwaterloo.watform.alloyast.expr.misc.*;
+import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
 import ca.uwaterloo.watform.utils.*;
@@ -32,10 +32,6 @@ public class AMThisSigParas extends AMThisEnumParas {
 
   protected List<AlloySigPara> sigs = emptyList();
 
-  private record SignatureConstraint(Qname sig, AlloyExpr expr) {}
-
-  private List<SignatureConstraint> pendingSignatureConstraints = new ArrayList<>();
-
   // init ------------------
 
   protected AMThisSigParas() {}
@@ -43,7 +39,6 @@ public class AMThisSigParas extends AMThisEnumParas {
   protected AMThisSigParas(AMThisSigParas other) {
     super(other);
     this.sigs = new ArrayList<AlloySigPara>(other.sigs);
-    this.pendingSignatureConstraints = new ArrayList<>(other.pendingSignatureConstraints);
   }
 
   /*
@@ -90,48 +85,6 @@ public class AMThisSigParas extends AMThisEnumParas {
         }
       }
     }
-  }
-
-  private void deferSignatureConstraint(Qname sig, AlloyExpr expr) {
-    if (this.createSM) pendingSignatureConstraints.add(new SignatureConstraint(sig, expr));
-  }
-
-  @Override
-  protected void resolveSMConstraints(
-      TriFunction<AlloyExpr, String, List<AlloyDecl>, ResolveInfo> resolve2) {
-    // All signatures, fields and parent links are available now, regardless of declaration order.
-    for (SignatureConstraint constraint : pendingSignatureConstraints) {
-      createConstraint(
-          constraint.sig.nameSpace,
-          desugar(constraint.expr, constraint.sig, inheritedFields(constraint.sig)));
-    }
-    pendingSignatureConstraints.clear();
-    super.resolveSMConstraints(resolve2);
-  }
-
-  private Map<String, Qname> inheritedFields(Qname sigQname) {
-    Set<Qname> ancestors = new LinkedHashSet<>();
-    Deque<Qname> remaining = new ArrayDeque<>();
-    remaining.add(sigQname);
-
-    while (!remaining.isEmpty()) {
-      Qname current = remaining.removeFirst();
-      if (!ancestors.add(current)) continue;
-
-      remaining.addAll(this.allParents(current));
-    }
-
-    Map<String, Qname> fields = new LinkedHashMap<>();
-    for (Qname field : this.allFieldQnames()) {
-      boolean inherited =
-          ancestors.stream()
-              .anyMatch(
-                  ancestor ->
-                      ancestor.nameSpace.equals(field.nameSpace)
-                          && ancestor.name.equals(field.sigParent));
-      if (inherited) fields.put(field.name, field);
-    }
-    return fields;
   }
 
   private SigData sigParaSigData(AlloySigPara p, String nameSpace) {

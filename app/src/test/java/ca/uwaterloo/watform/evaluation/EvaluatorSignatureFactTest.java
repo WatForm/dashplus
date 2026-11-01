@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.evaluation;
 
 import static ca.uwaterloo.watform.parser.AlloyParser.alloyParse;
 import static ca.uwaterloo.watform.parser.AlloyParser.alloyParseFromCharStream;
+import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,14 +31,11 @@ public class EvaluatorSignatureFactTest {
     model.resolve();
 
     AlloyQuantificationExpr rootFact =
-        model.allConstraints().stream()
-            .filter(AlloyQuantificationExpr.class::isInstance)
-            .map(AlloyQuantificationExpr.class::cast)
-            .filter(
+        findFirst(
+                extractItemsOfClass(model.allConstraints(), AlloyQuantificationExpr.class),
                 quantification ->
-                    quantification.decls.stream()
-                        .anyMatch(decl -> decl.expr.toString().equals("this/Root")))
-            .findFirst()
+                    containsMatch(
+                        quantification.decls, decl -> decl.expr.toString().equals("this/Root")))
             .orElseThrow();
 
     AlloyQtExpr noParent = assertInstanceOf(AlloyQtExpr.class, rootFact.body);
@@ -163,10 +161,9 @@ public class EvaluatorSignatureFactTest {
     if (copy) model = model.copy();
     model.resolve();
     assertTrue(
-        model.allConstraints().stream()
-            .filter(AlloyQuantificationExpr.class::isInstance)
-            .map(AlloyQuantificationExpr.class::cast)
-            .anyMatch(q -> q.decls.stream().anyMatch(d -> d.expr.toString().equals("this/Root"))),
+        containsMatch(
+            extractItemsOfClass(model.allConstraints(), AlloyQuantificationExpr.class),
+            q -> containsMatch(q.decls, d -> d.expr.toString().equals("this/Root"))),
         "Root signature constraints must survive deferred desugaring and copying");
     // Valid Analyzer instances must remain valid after translating the signature facts.
     for (int i = 0; i < 5 && solution.satisfiable(); i++, solution = solution.next()) {
