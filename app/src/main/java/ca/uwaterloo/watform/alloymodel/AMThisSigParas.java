@@ -124,6 +124,7 @@ public class AMThisSigParas extends AMThisEnumParas {
         // sig A in B + C {}
         // fact { A = B + C }
         // it is not extends
+        sd.isExact = true;
         sd.extendsParent = Optional.empty();
         sd.inParents = mapBy(e.sigRefs, s -> unknownQname(s.getName()));
       } else {

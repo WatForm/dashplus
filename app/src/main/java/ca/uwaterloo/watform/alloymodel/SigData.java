@@ -13,6 +13,7 @@ public class SigData {
   protected Boolean isSomeSig = false;
   protected Boolean isLoneSig = false;
   protected Boolean isEnumSig = false;
+  protected Boolean isExact = false;
   protected Pos pos = Pos.UNKNOWN;
 
   // created on initialization and never modified
