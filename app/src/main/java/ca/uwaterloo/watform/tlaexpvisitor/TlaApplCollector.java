@@ -8,6 +8,7 @@ import ca.uwaterloo.watform.tlaast.TlaIfThenElse;
 import ca.uwaterloo.watform.tlaast.TlaLetBinding;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaRecord;
+import ca.uwaterloo.watform.tlaast.TlaSimpleExp;
 import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import java.util.ArrayList;
@@ -66,6 +67,11 @@ public class TlaApplCollector implements TlaExpVis<List<TlaAppl>> {
 
   @Override
   public List<TlaAppl> visit(TlaVar varExp) {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<TlaAppl> visit(TlaSimpleExp SimpleExp) {
     return new ArrayList<>();
   }
 

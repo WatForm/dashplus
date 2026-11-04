@@ -2,6 +2,7 @@ package ca.uwaterloo.watform.alloyast.expr;
 
 import ca.uwaterloo.watform.alloyast.AlloyASTNode;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
+import ca.uwaterloo.watform.alloymodel.alloytype.AlloyRelationType;
 import ca.uwaterloo.watform.utils.*;
 
 public abstract class AlloyExpr extends AlloyASTNode {
@@ -40,6 +41,8 @@ public abstract class AlloyExpr extends AlloyASTNode {
   public static final int TRANS_PREC = 145;
 
   public static final int ALWAYS_PAREN = 150;
+
+  public AlloyRelationType type;
 
   public AlloyExpr(Pos pos) {
     super(pos);

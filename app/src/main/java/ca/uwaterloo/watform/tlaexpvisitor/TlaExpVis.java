@@ -8,6 +8,7 @@ import ca.uwaterloo.watform.tlaast.TlaIfThenElse;
 import ca.uwaterloo.watform.tlaast.TlaLetBinding;
 import ca.uwaterloo.watform.tlaast.TlaOperator;
 import ca.uwaterloo.watform.tlaast.TlaRecord;
+import ca.uwaterloo.watform.tlaast.TlaSimpleExp;
 import ca.uwaterloo.watform.tlaast.TlaStdLibs;
 import ca.uwaterloo.watform.tlaast.TlaVar;
 import ca.uwaterloo.watform.tlaast.tlabinops.*;
@@ -40,6 +41,8 @@ public interface TlaExpVis<T> {
   }
 
   // default implementations
+
+  // simple
 
   // binary
   public default T visit(TlaAdd exp) {
@@ -195,6 +198,8 @@ public interface TlaExpVis<T> {
   }
 
   T visit(TlaOperator OperatorExp);
+
+  T visit(TlaSimpleExp SimpleExp);
 
   T visit(TlaAppl ApplExp);
 

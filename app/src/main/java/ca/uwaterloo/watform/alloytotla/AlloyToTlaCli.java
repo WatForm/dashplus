@@ -79,6 +79,8 @@ public class AlloyToTlaCli implements Callable<Integer> {
 
       Files.writeString(tlaFilePath, tlaModel.moduleCode());
       Files.writeString(cfgFilePath, tlaModel.configCode());
+
+      System.out.println("successful translation");
     }
   }
 
