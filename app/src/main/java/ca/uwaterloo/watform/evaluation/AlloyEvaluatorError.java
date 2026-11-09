@@ -11,6 +11,14 @@ public final class AlloyEvaluatorError extends UserOrImplError {
     super(pos, message);
   }
 
+  public static AlloyEvaluatorError unsupportedTemporalTrace(int instanceCount) {
+    return new AlloyEvaluatorError(
+        Pos.UNKNOWN,
+        "Constraint evaluation does not support temporal traces: XML contains "
+            + instanceCount
+            + " instances; only a single instance is supported");
+  }
+
   public static AlloyEvaluatorError unsupportedExpression(
       String evaluator, Pos pos, AlloyExpr expression) {
     return new AlloyEvaluatorError(

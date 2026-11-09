@@ -26,6 +26,7 @@ public class Instance {
   private Integer maxInt;
   private Integer minInt;
   private Integer seqInt;
+  private int instanceCount;
 
   private static String alloyName(String name) {
     if (name.startsWith("\"") && name.endsWith("\"")) return name;
@@ -62,7 +63,7 @@ public class Instance {
       Document doc = builder.parse(new InputSource(new StringReader(xml)));
 
       NodeList instance = doc.getElementsByTagName("instance");
-      // expect only one instance
+      this.instanceCount = instance.getLength();
 
       Integer bitwidth = Integer.parseInt(((Element) instance.item(0)).getAttribute("bitwidth"));
       this.minInt = -(1 << (bitwidth - 1)); // 2^(bitWidth-1)
@@ -243,6 +244,10 @@ public class Instance {
 
   public Integer seqInt() {
     return this.seqInt;
+  }
+
+  public int instanceCount() {
+    return this.instanceCount;
   }
 
   public void debug() {

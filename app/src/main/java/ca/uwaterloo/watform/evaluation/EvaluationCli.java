@@ -338,6 +338,9 @@ public final class EvaluationCli implements Callable<Integer> {
 
   static ThreeVal evaluateConstraints(
       AlloyModel alloyModel, Instance instance, OptionalInt commandIndex, boolean debug) {
+    if (instance.instanceCount() > 1) {
+      throw AlloyEvaluatorError.unsupportedTemporalTrace(instance.instanceCount());
+    }
     var evaluator = new FormulaEvaluator(new EvaluationTable(instance, alloyModel), debug);
     CollectionTelemetry.phase("constraints");
     var result = ThreeVal.TRUE;
