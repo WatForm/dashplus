@@ -21,12 +21,10 @@ import static ca.uwaterloo.watform.alloyast.expr.AlloyExprFactory.*;
 import static ca.uwaterloo.watform.alloymodel.Qname.*;
 import static ca.uwaterloo.watform.utils.GeneralUtil.*;
 
-import ca.uwaterloo.watform.alloyast.AlloyQtEnum;
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
 import ca.uwaterloo.watform.alloyast.expr.misc.AlloyDecl;
 import ca.uwaterloo.watform.alloyast.expr.var.*;
 import ca.uwaterloo.watform.alloyast.paragraph.sig.AlloySigPara;
-import ca.uwaterloo.watform.alloyexprvisitor.ReplaceExprVis;
 import ca.uwaterloo.watform.utils.*;
 import java.util.*;
 
@@ -64,14 +62,6 @@ public class AMThisSigParas extends AMThisEnumParas {
       if (sigPara.quals.contains(AlloySigPara.Qual.ONE))
         this.createNonOrderedSigWithExactScopeValue(sigQname, 1);
 
-      // get all the field names of this sig (needed for desugaring)
-      List<String> allFieldNames = emptyList();
-      for (AlloyDecl field : sigPara.fields) {
-        for (AlloyQnameExpr qname : field.qnames) {
-          allFieldNames.add(qname.getName());
-        }
-      }
-
       for (AlloyDecl field : sigPara.fields) {
         AlloyExpr fieldExpr = field.expr;
         // may be multiple decls x,y: ... in a field
@@ -85,19 +75,13 @@ public class AMThisSigParas extends AMThisEnumParas {
           // desugar (f in fieldExpr)
           // fields from other sigs cannot appear here in AA
           // but they won't be removed here so they could be allowed past resolve
-          this.createConstraint(
-              nameSpace,
-              this.desugar(
-                  AlloyIn(new AlloyQnameExpr(fieldName), fieldExpr),
-                  sigQname,
-                  allFieldNames,
-                  nameSpace));
+          deferSignatureConstraint(sigQname, AlloyIn(new AlloyQnameExpr(fieldName), fieldExpr));
         }
       }
       if (sigPara.block.isPresent()) {
         for (AlloyExpr sigFact : sigPara.block.get().exprs) {
           // can fields from other sigs appear in these?
-          this.createConstraint(nameSpace, desugar(sigFact, sigQname, allFieldNames, nameSpace));
+          deferSignatureConstraint(sigQname, sigFact);
         }
       }
     }
@@ -140,67 +124,6 @@ public class AMThisSigParas extends AMThisEnumParas {
     if (p.quals.contains(AlloySigPara.Qual.SOME)) sd.isSomeSig = true;
     if (p.quals.contains(AlloySigPara.Qual.LONE)) sd.isLoneSig = true;
     return sd;
-  }
-
-  private static Boolean desugarTest(AlloyExpr e, List<String> allFieldNames) {
-    return (e instanceof AlloyThisExpr
-        || e instanceof AlloyAtNameExpr
-        || (e instanceof AlloyQnameExpr && allFieldNames.contains(((AlloyQnameExpr) e).getName())));
-  }
-
-  private static String THIS_VAR = "this_var";
-
-  private static AlloyExpr THIS_REPLACEMENT(Pos p) {
-    return thisQname(THIS_VAR).toAlloyExpr(p, Kind.SIG);
-  }
-
-  private static AlloyExpr desugarReplace(
-      AlloyExpr e, Qname sigParent, List<String> allFieldNames, String nameSpace) {
-    if (e instanceof AlloyThisExpr) {
-      // TODO: perhaps not a great choice?
-      return AlloyVar(THIS_VAR);
-    } else if (e instanceof AlloyAtNameExpr) {
-      String atName = ((AlloyAtNameExpr) e).getName();
-      // @f becomes resolvedSigParent <: f if it is a field of this sig
-      if (!allFieldNames.contains(atName)) {
-        // this is tricky because @ is allowed on non-field of this sig names
-        // could be a field of some other sig or some parent sig
-        // lets try just removing the at since this formula
-        // will be put in a regular constraint not in a sig fact anymore
-        return ((AlloyAtNameExpr) e).name; // this is a AlloyQnameExpr
-        // throw AlloyModelError.cantAtNonFieldOfThisSig(e.pos, atName);
-      } else {
-        return fieldQname(sigParent.nameSpace, sigParent.name, atName)
-            .toAlloyExpr(e.pos, Kind.FIELD);
-      }
-    } else if (e instanceof AlloyQnameExpr) {
-      // we know it is a field from this sig b/c of test
-      // replace any field (that is not with @ on the outside) with
-      // this_var.((resolvedSigParent) <: f)
-      Qname fieldQname = fieldQname(nameSpace, sigParent.name, ((AlloyQnameExpr) e).getName());
-      // (resolvedSigParent) <: f
-      AlloyExpr field = fieldQname.toAlloyExpr(e.pos, Kind.FIELD);
-      return AlloyJoin(AlloyVar(THIS_VAR), field);
-    } else {
-      throw ImplementationError.shouldNotReach();
-    }
-  }
-
-  static AlloyExpr desugar(
-      AlloyExpr expr, Qname sigParent, List<String> allFieldNames, String nameSpace) {
-    // note: leaves uses of "this" inside expression as they are
-    AlloyExpr newExpr =
-        new ReplaceExprVis(
-                e -> desugarTest(e, allFieldNames),
-                e -> desugarReplace(e, sigParent, allFieldNames, nameSpace))
-            .visit(expr);
-    // put "all AlloyThisExpr:A |"" on outside
-    AlloyExpr e =
-        AlloyAllVars(
-            AlloyDecl(THIS_VAR, AlloyQtEnum.ONE, sigParent.toAlloyExpr(expr.pos, Kind.SIG)),
-            newExpr);
-    // System.out.println(e);
-    return e;
   }
 
   // API ---------------------
