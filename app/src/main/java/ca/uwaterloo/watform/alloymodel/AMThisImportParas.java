@@ -160,7 +160,15 @@ public class AMThisImportParas extends AMThisCmdParas {
       }
 
       for (int i = 0; i < modArgs.size(); i++) {
-        substMap.put(modArgs.get(i).qname, valsToSubstitute.get(i));
+        AlloySigRefExpr value = valsToSubstitute.get(i);
+        // An unqualified argument belongs to the importing module. Preserve
+        // that context when inserting it into the imported module's body.
+        if (!parentNameSpace.equals(THIS_NAMESPACE)
+            && value instanceof AlloyQnameExpr qname
+            && !qname.getName().contains("/")) {
+          value = new AlloyQnameExpr(qname.pos, parentNameSpace + "/" + qname.getName());
+        }
+        substMap.put(modArgs.get(i).qname, value);
       }
       // 1) this only makes sense of a imported module has a modulePara
       // set what is "isExactly"
