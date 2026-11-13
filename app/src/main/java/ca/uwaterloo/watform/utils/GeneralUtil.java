@@ -291,22 +291,19 @@ public class GeneralUtil {
     }
   }
 
-  public static <T> List<List<T>> getNonEmptySubsets(Set<T> set) {
-    List<T> elements = new ArrayList<>(set);
+  /** Preserves input positions without comparing, hashing, or deduplicating elements. */
+  public static <T> List<List<T>> getNonEmptySubsets(Iterable<T> elements) {
     List<List<T>> result = new ArrayList<>();
-
-    int n = elements.size();
-    int total = 1 << n; // 2^n
-
-    for (int k = 1; k < total; k++) {
-      List<T> subset = new ArrayList<>();
-
-      for (int i = 0; i < n; i++) {
-        if ((k & (1 << i)) != 0) {
-          subset.add(elements.get(i));
-        }
+    for (T element : elements) {
+      int previousSize = result.size();
+      List<T> singleton = new ArrayList<>();
+      singleton.add(element);
+      result.add(singleton);
+      for (int index = 0; index < previousSize; index++) {
+        List<T> subset = new ArrayList<>(result.get(index));
+        subset.add(element);
+        result.add(subset);
       }
-      result.add(subset);
     }
 
     result.sort(Comparator.comparingInt(List::size));

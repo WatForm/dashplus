@@ -20,7 +20,8 @@ public class EvaluatorQuantifierComprehensionTest {
 
   private static Evaluators evaluators() {
     String xml =
-        "<alloy><instance bitwidth=\"4\" maxseq=\"4\"><sig label=\"univ\" ID=\"0\" builtin=\"yes\"/></instance></alloy>";
+        "<alloy><instance bitwidth=\"4\" maxseq=\"4\"><sig label=\"univ\" ID=\"0\""
+            + " builtin=\"yes\"/></instance></alloy>";
     var model = new AlloyModel("quantifier-comprehension-test.als");
     model.resolve();
     var table = new EvaluationTable(new Instance(xml), model);
@@ -83,22 +84,12 @@ public class EvaluatorQuantifierComprehensionTest {
   }
 
   @Test
-  public void unusedVariablesCanMakeUnspecifiedDomainsIrrelevant() {
+  public void unspecifiedDomainsStayUnknownEvenWhenVariablesAreUnused() {
     String unspecified = "(0 + 8) & (0 + 8)";
-
-    assertFormula(TRUE, "all x: " + unspecified + " | 0 = 0");
-    assertFormula(FALSE, "some x: " + unspecified + " | 0 = 1");
-    assertFormula(TRUE, "no x: " + unspecified + " | 0 = 1");
-    assertFormula(FALSE, "one x: " + unspecified + " | 0 = 1");
-    assertFormula(TRUE, "lone x: " + unspecified + " | 0 = 1");
-
-    // These would have concrete results for every nonempty domain, but the vacuous result for an
-    // empty domain is different. Skipping the unused variable must therefore retain UNKNOWN.
-    assertFormula(UNKNOWN, "all x: " + unspecified + " | 0 = 1");
-    assertFormula(UNKNOWN, "some x: " + unspecified + " | 0 = 0");
-    assertFormula(UNKNOWN, "no x: " + unspecified + " | 0 = 0");
-    assertFormula(UNKNOWN, "one x: " + unspecified + " | 0 = 0");
-    assertFormula(UNKNOWN, "lone x: " + unspecified + " | 0 = 0");
+    for (String quantifier : List.of("all", "some", "no", "one", "lone")) {
+      assertFormula(UNKNOWN, quantifier + " x: " + unspecified + " | 0 = 0");
+      assertFormula(UNKNOWN, quantifier + " x: " + unspecified + " | 0 = 1");
+    }
   }
 
   @Test
@@ -125,40 +116,24 @@ public class EvaluatorQuantifierComprehensionTest {
   public void laterDeclarationDomainsCanUseEarlierBindings() {
     assertFormula(TRUE, "all x: 0 + 1, y: x | y = x");
     assertFormula(TRUE, "one x: 0 + 1, y: x | y = 1");
-    assertSet(
-        tuples(tuple(0, 0), tuple(1, 1)),
-        evaluateSet("{x: 0 + 1, y: x | y = x}"));
+    assertSet(tuples(tuple(0, 0), tuple(1, 1)), evaluateSet("{x: 0 + 1, y: x | y = x}"));
   }
 
   @Test
   public void nestedQuantifiersPreserveOuterBindingsWhenNamesAreShadowed() {
-    assertFormula(
-        TRUE,
-        "all x: 0 + 1 | (some x: 0 + 1 | x = 1) and x in 0 + 1");
-    assertFormula(
-        TRUE,
-        "all x: 0 + 1 | (all y: x | y = x) and x in 0 + 1");
+    assertFormula(TRUE, "all x: 0 + 1 | (some x: 0 + 1 | x = 1) and x in 0 + 1");
+    assertFormula(TRUE, "all x: 0 + 1 | (all y: x | y = x) and x in 0 + 1");
   }
 
   @Test
-  public void usageAnalysisRespectsShadowingAndDeclarationDomains() {
+  public void unspecifiedDomainsAreNotSkippedThroughShadowing() {
     String unspecified = "(0 + 8) & (0 + 8)";
 
-    assertFormula(
-        TRUE,
-        "all x: " + unspecified + " | some x: 0 | x = 0");
-    assertFormula(
-        UNKNOWN,
-        "some x: " + unspecified + " | some x: x | 0 = 0");
-    assertFormula(
-        UNKNOWN,
-        "some x: " + unspecified + ", y: x | 0 = 0");
-    assertFormula(
-        TRUE,
-        "all x: " + unspecified + " | let x = 0, y = x | y = 0");
-    assertFormula(
-        UNKNOWN,
-        "some x: " + unspecified + " | let y = x | y = y");
+    assertFormula(UNKNOWN, "all x: " + unspecified + " | some x: 0 | x = 0");
+    assertFormula(UNKNOWN, "some x: " + unspecified + " | some x: x | 0 = 0");
+    assertFormula(UNKNOWN, "some x: " + unspecified + ", y: x | 0 = 0");
+    assertFormula(UNKNOWN, "all x: " + unspecified + " | let x = 0, y = x | y = 0");
+    assertFormula(UNKNOWN, "some x: " + unspecified + " | let y = x | y = y");
   }
 
   @Test
@@ -167,12 +142,8 @@ public class EvaluatorQuantifierComprehensionTest {
 
     assertThrows(
         AlloyEvaluatorError.class,
-        () ->
-            parseExpr("some x: 0 + 1 | (1 fun/div 0) = 0")
-                .accept(evaluators.formula()));
-    assertThrows(
-        AlloyEvaluatorImplError.class,
-        () -> parseExpr("x").accept(evaluators.set()));
+        () -> resolvedExpr("some x: 0 + 1 | (1 fun/div 0) = 0").accept(evaluators.formula()));
+    assertThrows(AlloyEvaluatorImplError.class, () -> parseExpr("x").accept(evaluators.set()));
   }
 
   @Test
@@ -229,51 +200,43 @@ public class EvaluatorQuantifierComprehensionTest {
   @Test
   public void comprehensionsBuildUnaryAndMultiAritySets() {
     assertSet(tuples(tuple(1)), evaluateSet("{x: 0 + 1 | x = 1}"));
-    assertSet(
-        tuples(tuple(0, 1), tuple(1, 0)),
-        evaluateSet("{x, y: 0 + 1 | x != y}"));
-    assertSet(
-        tuples(tuple(0, 1), tuple(1, 0)),
-        evaluateSet("{x: 0 + 1, y: 0 + 1 | x != y}"));
-    assertSet(
-        tuples(tuple(0, 1), tuple(1, 0)),
-        evaluateSet("{disj x, y: 0 + 1 | 0 = 0}"));
+    assertSet(tuples(tuple(0, 1), tuple(1, 0)), evaluateSet("{x, y: 0 + 1 | x != y}"));
+    assertSet(tuples(tuple(0, 1), tuple(1, 0)), evaluateSet("{x: 0 + 1, y: 0 + 1 | x != y}"));
+    assertSet(tuples(tuple(0, 1), tuple(1, 0)), evaluateSet("{disj x, y: 0 + 1 | 0 = 0}"));
     assertSet(tuples(tuple(0), tuple(1)), evaluateSet("{x: 0 + 1}"));
     assertSet(TupleSet.emptySet(), evaluateSet("{x: none | x = x}"));
   }
 
   @Test
-  public void tupleValuedDomainsPreserveTupleArity() {
+  public void relationDomainsEnumerateSubrelations() {
     String pairs = "(0 -> 1) + (1 -> 0)";
     assertFormula(TRUE, "all pair: " + pairs + " | pair in " + pairs);
-    assertSet(tuples(tuple(0, 1), tuple(1, 0)), evaluateSet("{pair: " + pairs + "}"));
+    assertFormula(TRUE, "some pair: " + pairs + " | pair = " + pairs);
+    assertFormula(TRUE, "one pair: " + pairs + " | no pair");
+    assertFormula(FALSE, "one pair: " + pairs + " | some pair");
   }
 
   @Test
   public void uncertainComprehensionMembershipMakesTheWholeSetUnspecified() {
     assertTrue(evaluateSet("{x: 0 + 8 | x = x}").isUnspecified());
     assertTrue(evaluateSet("{disj x, y: 8 | 0 = 0}").isUnspecified());
-    assertTrue(
-        evaluateSet("{x: (0 + 8) & (0 + 8) | x = 0}").isUnspecified());
-    assertTrue(
-        evaluateSet("{x: (0 + 8) & (0 + 8) | 0 = 0}").isUnspecified());
+    assertTrue(evaluateSet("{x: (0 + 8) & (0 + 8) | x = 0}").isUnspecified());
+    assertTrue(evaluateSet("{x: (0 + 8) & (0 + 8) | 0 = 0}").isUnspecified());
   }
 
   @Test
   public void sumSupportsDependentBlocksAndDisjointMultiDeclarationEnumeration() {
     assertFormula(TRUE, "(sum x: 1 + 2, y: x | y) = 3");
-    assertFormula(
-        TRUE,
-        "(sum disj x, y: 0 + 1, z: 0 + 1 | x fun/add y fun/add z) = 6");
+    assertFormula(TRUE, "(sum disj x, y: 0 + 1, z: 0 + 1 | x fun/add y fun/add z) = 6");
   }
 
   @Test
-  public void unusedSumVariablesPreserveMultiplicityAndCanIgnoreUnknownDomainsForZero() {
+  public void unusedSumVariablesAreEnumeratedAndUnspecifiedDomainsStayUnknown() {
     String unspecified = "(0 + 8) & (0 + 8)";
 
     assertFormula(TRUE, "(sum x: 0 + 1 | 1) = 2");
     assertFormula(TRUE, "(sum disj x, y: 0 + 1 | 1) = 2");
-    assertFormula(TRUE, "(sum x: " + unspecified + " | 0) = 0");
+    assertFormula(UNKNOWN, "(sum x: " + unspecified + " | 0) = 0");
     assertFormula(UNKNOWN, "(sum x: " + unspecified + " | 1) = 0");
   }
 
@@ -281,18 +244,187 @@ public class EvaluatorQuantifierComprehensionTest {
   public void unsupportedDeclarationFormsFailExplicitly() {
     assertThrows(
         AlloyEvaluatorError.class,
-        () -> parseExpr("all x: set (0 + 1) | x = x").accept(evaluators().formula()));
-    assertThrows(
-        AlloyEvaluatorError.class,
         () -> parseExpr("{x: disj (0 + 1) | x = x}").accept(evaluators().set()));
   }
 
+  @Test
+  public void declarationMultiplicitiesSelectTheirBindingSets() {
+    assertFormula(TRUE, "one x: one (0 + 1) | x = 0");
+    assertFormula(FALSE, "some x: one (0 + 1) | no x");
+    assertFormula(TRUE, "one x: lone (0 + 1) | no x");
+    assertFormula(FALSE, "some x: lone (0 + 1) | x = 0 + 1");
+    assertFormula(TRUE, "some x: some (0 + 1) | x = 0 + 1");
+    assertFormula(FALSE, "some x: some (0 + 1) | no x");
+    assertFormula(TRUE, "one x: set (0 + 1) | x = 0 + 1");
+    assertFormula(TRUE, "one x: set (0 + 1) | no x");
+    assertFormula(FALSE, "one x: set (0 + 1) | x = x");
+    assertFormula(FALSE, "lone x: some (0 + 1) | x = x");
+    assertFormula(TRUE, "no x: set (0 + 1) | x not in 0 + 1");
+  }
+
+  @Test
+  public void emptyDomainsStillHaveAnEmptyBindingForSetAndLone() {
+    for (String multiplicity : List.of("set", "lone")) {
+      assertFormula(TRUE, "one x: " + multiplicity + " none | no x");
+      assertFormula(FALSE, "all x: " + multiplicity + " none | some x");
+      assertFormula(TRUE, "one x: " + multiplicity + " none | 0 = 0");
+    }
+    for (String multiplicity : List.of("one", "some")) {
+      assertFormula(FALSE, "some x: " + multiplicity + " none | 0 = 0");
+      assertFormula(TRUE, "all x: " + multiplicity + " none | 0 = 1");
+    }
+  }
+
+  @Test
+  public void unusedVariablesCountSubsetBindingsRatherThanDomainTuples() {
+    assertFormula(FALSE, "one x: set 0 | 0 = 0");
+    assertFormula(FALSE, "lone x: lone 0 | 0 = 0");
+    assertFormula(TRUE, "one x: some 0 | 0 = 0");
+    assertFormula(FALSE, "one x: some (0 + 1) | 0 = 0");
+  }
+
+  @Test
+  public void higherOrderBindingsSupportDependentDomainsAndShadowing() {
+    assertFormula(TRUE, "one x: set (0 + 1), y: set x | x = 0 + 1 and y = 0");
+    assertFormula(TRUE, "all x: set (0 + 1) | all y: set x | y in x");
+    assertFormula(TRUE, "all x: set (0 + 1) | (some x: set 2 | x = 2) and x in 0 + 1");
+    assertSet(tuples(tuple(0), tuple(1)), evaluateSet("{x: 0 + 1 | some y: set (0 + 1) | y = x}"));
+  }
+
+  @Test
+  public void disjointSetBindingsCannotOverlapButCanBothBeEmpty() {
+    assertFormula(FALSE, "some disj x, y: set (0 + 1) | x = 0 + 1 and y = 1");
+    assertFormula(TRUE, "one disj x, y: set (0 + 1) | x = 0 and y = 1");
+    assertFormula(TRUE, "one disj x, y: set (0 + 1) | no x and no y");
+    assertFormula(TRUE, "one disj x, y: set none | 0 = 0");
+    assertFormula(FALSE, "one disj x, y: set 0 | 0 = 0");
+    assertFormula(FALSE, "some disj x, y: some 0 | 0 = 0");
+    assertFormula(TRUE, "one disj x, y: lone 0 | x = 0");
+    assertFormula(TRUE, "some x: set 0, y: set 0 | x = y and some x");
+  }
+
+  @Test
+  public void uncertainDomainsRetainGuaranteedSubsetBindings() {
+    String unspecified = "(0 + 8) & (0 + 8)";
+    assertFormula(TRUE, "some x: set " + unspecified + " | no x");
+    assertFormula(FALSE, "all x: lone " + unspecified + " | some x");
+    assertFormula(UNKNOWN, "one x: set " + unspecified + " | 0 = 0");
+    assertFormula(UNKNOWN, "all x: set " + unspecified + " | 0 = 0");
+    assertFormula(UNKNOWN, "some x: some " + unspecified + " | 0 = 1");
+    assertFormula(TRUE, "some x: set (0 + 8) | x = 0");
+    assertFormula(FALSE, "all x: set (0 + 8) | some x");
+    assertFormula(UNKNOWN, "one x: some 8 | 0 = 0");
+  }
+
+  @Test
+  public void overflowRepresentativesParticipateInEveryBindingMode() {
+    for (String multiplicity : List.of("one", "lone", "some", "set")) {
+      assertFormula(TRUE, "some x: " + multiplicity + " (8 + 9) | some x");
+      assertFormula(FALSE, "no x: " + multiplicity + " (8 + 9) | some x");
+      assertFormula(TRUE, "all x: " + multiplicity + " 8 | no x or x > 7");
+    }
+    assertFormula(TRUE, "all x: some 8 | x > 7");
+    assertFormula(TRUE, "no x: some 8 | x < 0");
+    assertFormula(TRUE, "some x: set (0 + 8) | 0 in x and some (x - 0)");
+    assertFormula(UNKNOWN, "some x: lone 8 | x = 8");
+  }
+
+  @Test
+  public void overflowWitnessesDoNotEstablishAnExactConcreteBindingCount() {
+    assertFormula(UNKNOWN, "one x: some (8 + 9) | 0 = 0");
+    assertFormula(UNKNOWN, "lone x: some (8 + 9) | 0 = 0");
+    assertFormula(UNKNOWN, "one x: lone 8 | 0 = 0");
+    assertFormula(UNKNOWN, "lone x: set 8 | 0 = 0");
+    assertFormula(TRUE, "one x: set 8 | no x");
+    assertFormula(TRUE, "lone x: some 8 | 0 = 1");
+    assertFormula(UNKNOWN, "one x: some (0 + 8) | some x");
+    // OVERFLOW_UNKNOWN can alias the known value or another abstract candidate.
+    assertFormula(UNKNOWN, "one x: some (0 + (8 fun/add -9)) | some x");
+    assertFormula(UNKNOWN, "lone x: some (0 + (8 fun/add -9)) | some x");
+  }
+
+  @Test
+  public void overflowBindingsEvaluateBodiesAndRestoreFramesAfterErrors() {
+    Evaluators evaluators = evaluators();
+    // The empty binding short-circuits; the overflow binding must reach the division.
+    assertThrows(
+        AlloyEvaluatorError.class,
+        () ->
+            resolvedExpr("all x: lone 8 | no x or (1 fun/div 0) = 0").accept(evaluators.formula()));
+    assertThrows(AlloyEvaluatorImplError.class, () -> parseExpr("x").accept(evaluators.set()));
+  }
+
+  @Test
+  public void higherOrderBindingsAreRemovedWhenTheBodyThrows() {
+    Evaluators evaluators = evaluators();
+    assertThrows(
+        AlloyEvaluatorError.class,
+        () -> resolvedExpr("some x: set 0 | (1 fun/div 0) = 0").accept(evaluators.formula()));
+    assertThrows(AlloyEvaluatorImplError.class, () -> parseExpr("x").accept(evaluators.set()));
+  }
+
+  @Test
+  public void unresolvedMultiplicitiesAndHigherOrderSetDeclarationsAreImplementationErrors() {
+    assertThrows(
+        AlloyEvaluatorImplError.class,
+        () -> parseExpr("some x: 0 | x = x").accept(evaluators().formula()));
+    for (String multiplicity : List.of("set", "some", "lone")) {
+      assertThrows(
+          AlloyEvaluatorImplError.class,
+          () -> parseExpr("{x: " + multiplicity + " 0 | x = x}").accept(evaluators().set()));
+      assertThrows(
+          AlloyEvaluatorImplError.class,
+          () -> parseExpr("sum x: " + multiplicity + " 0 | 1").accept(evaluators().set()));
+    }
+    assertThrows(AlloyEvaluatorImplError.class, () -> evaluateSet("sum r: 0 -> 1 | 1"));
+  }
+
+  @Test
+  public void settledQuantifiersSkipLaterBodiesAndRestoreBindings() {
+    String throwsIfReached = "(1 fun/div 0) = 0";
+    String[][] cases = {
+      {"all x: 0 + 1 | x = 1 and " + throwsIfReached, "FALSE"},
+      {"some x: 0 + 1 | x = 0 or " + throwsIfReached, "TRUE"},
+      {"no x: 0 + 1 | x = 0 or " + throwsIfReached, "FALSE"},
+      {"one x: 0 + 1 + 2 | x in 0 + 1 or " + throwsIfReached, "FALSE"},
+      {"lone x: 0 + 1 + 2 | x in 0 + 1 or " + throwsIfReached, "FALSE"}
+    };
+    for (String[] test : cases) {
+      Evaluators evaluators = evaluators();
+      assertEquals(
+          ThreeVal.valueOf(test[1]), resolvedExpr(test[0]).accept(evaluators.formula()), test[0]);
+      assertThrows(AlloyEvaluatorImplError.class, () -> parseExpr("x").accept(evaluators.set()));
+    }
+    // A previous UNKNOWN must not prevent later decisive evidence from terminating traversal.
+    assertFormula(TRUE, "some x: 8 + 0 + 1 | x = 1 => " + throwsIfReached + " else x = x");
+    assertFormula(FALSE, "all x: 8 + 0 + 1 | x = 1 => " + throwsIfReached + " else x != x");
+  }
+
+  @Test
+  public void completeAssignmentsAreCountedAcrossAllDeclarationBlocks() {
+    assertFormula(FALSE, "one x: 0, y: 0 + 1 | 0 = 0");
+    assertFormula(TRUE, "one x: 0 + 1, y: x | y = 1");
+    assertFormula(TRUE, "one x: 0, y: set 1 | no y");
+    assertFormula(UNKNOWN, "one x: 8, y: 0 | 0 = 0");
+    assertFormula(UNKNOWN, "one a: 1 + 15 + 16 + 2 | a > 3");
+    assertFormula(FALSE, "one x: 8 + 0 + 1 | 0 = 0");
+    assertFormula(FALSE, "some disj x, y: 0 | 0 = 0");
+    assertFormula(UNKNOWN, "some disj x, y: 8 | 0 = 1");
+  }
+
   private static void assertFormula(ThreeVal expected, String source) {
-    assertEquals(expected, parseExpr(source).accept(evaluators().formula()), source);
+    assertEquals(expected, resolvedExpr(source).accept(evaluators().formula()), source);
   }
 
   private static TupleSet evaluateSet(String source) {
-    return parseExpr(source).accept(evaluators().set());
+    return resolvedExpr(source).accept(evaluators().set());
+  }
+
+  private static AlloyExpr resolvedExpr(String source) {
+    var model = new AlloyModel("quantifier-expression-test.als");
+    model.createConstraint("this", parseExpr(source));
+    model.resolve();
+    return model.allConstraints().getFirst();
   }
 
   private static TupleSet tuples(AtomTuple... tuples) {

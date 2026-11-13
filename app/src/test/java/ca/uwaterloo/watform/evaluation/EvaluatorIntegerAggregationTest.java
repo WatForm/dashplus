@@ -5,8 +5,11 @@ import static ca.uwaterloo.watform.evaluation.OverflowAtom.OverflowDirection.OVE
 import static ca.uwaterloo.watform.evaluation.OverflowAtom.OverflowDirection.OVERFLOW_UP;
 import static ca.uwaterloo.watform.evaluation.ThreeVal.TRUE;
 import static ca.uwaterloo.watform.evaluation.ThreeVal.UNKNOWN;
+import static ca.uwaterloo.watform.parser.AlloyParser.parseExpr;
 import static ca.uwaterloo.watform.parser.AlloyParser.parsePara;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ca.uwaterloo.watform.alloyast.expr.AlloyExpr;
@@ -21,6 +24,10 @@ import ca.uwaterloo.watform.alloyast.expr.var.AlloyNumExpr;
 import ca.uwaterloo.watform.alloyast.paragraph.AlloyFactPara;
 import ca.uwaterloo.watform.alloyinterface.Instance;
 import ca.uwaterloo.watform.alloymodel.AlloyModel;
+import edu.mit.csail.sdg.alloy4.A4Reporter;
+import edu.mit.csail.sdg.alloy4.ErrorType;
+import edu.mit.csail.sdg.parser.CompUtil;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class EvaluatorIntegerAggregationTest {
@@ -31,7 +38,8 @@ public class EvaluatorIntegerAggregationTest {
 
   private static EvaluationTable table() {
     String xml =
-        "<alloy><instance bitwidth=\"4\" maxseq=\"4\"><sig label=\"univ\" ID=\"0\" builtin=\"yes\"/></instance></alloy>";
+        "<alloy><instance bitwidth=\"4\" maxseq=\"4\"><sig label=\"univ\" ID=\"0\""
+            + " builtin=\"yes\"/></instance></alloy>";
     var model = new AlloyModel("integer-aggregation-test.als");
     model.resolve();
     return new EvaluationTable(new Instance(xml), model);
@@ -101,8 +109,7 @@ public class EvaluatorIntegerAggregationTest {
     assertAggregations(new OverflowAtom(OVERFLOW_UNKNOWN), integers(1, -9));
     assertAggregations(new OverflowAtom(OVERFLOW_UNKNOWN), integers(8, -9));
 
-    AlloyExpr unknownOverflow =
-        new AlloyFunAddExpr(new AlloyNumExpr(8), new AlloyNumExpr(-9));
+    AlloyExpr unknownOverflow = new AlloyFunAddExpr(new AlloyNumExpr(8), new AlloyNumExpr(-9));
     assertAggregations(new OverflowAtom(OVERFLOW_UNKNOWN), unknownOverflow);
   }
 
@@ -155,28 +162,50 @@ public class EvaluatorIntegerAggregationTest {
   }
 
   @Test
-  public void sumQuantificationPropagatesAnUnspecifiedDomain() {
-    assertEquals(
-        UNKNOWN,
-        evaluateFact("(sum value: (1 + 8) & (1 + 8) | value) = 0"));
+  public void sumQuantificationKeepsAnUnspecifiedDomainsNumericValueUnknown() {
+    assertEquals(UNKNOWN, evaluateFact("(sum value: (1 + 8) & (1 + 8) | value) = 0"));
   }
 
   @Test
-  public void sumQuantificationOnlyIgnoresUnknownDisjointnessForZeroContributions() {
-    assertEquals(TRUE, evaluateFact("(sum disj x, y: 8 | 0) = 0"));
+  public void sumQuantificationPropagatesUnknownDisjointness() {
+    assertEquals(UNKNOWN, evaluateFact("(sum disj x, y: 8 | 0) = 0"));
     assertEquals(UNKNOWN, evaluateFact("(sum disj x, y: 8 | 1) = 0"));
   }
 
   @Test
   public void sumQuantificationPropagatesAnUnspecifiedBody() {
-    assertEquals(
-        UNKNOWN,
-        evaluateFact("(sum value: 1 + 2 | sum ((1 + 8) & (1 + 8))) = 0"));
+    assertEquals(UNKNOWN, evaluateFact("(sum value: 1 + 2 | sum ((1 + 8) & (1 + 8))) = 0"));
+  }
+
+  @Test
+  public void quantifiedSumsWithUnspecifiedInputsReturnUnknownIntegerScalars() {
+    String unspecified = "(1 + 8) & (1 + 8)";
+    for (String expression :
+        List.of(
+            "sum value: " + unspecified + " | value",
+            "sum value: 1 + 2 | sum (" + unspecified + ")",
+            "sum x: 0 + 1, y: " + unspecified + " | y",
+            "sum x: 0 + 1 | sum y: " + unspecified + " | y")) {
+      var model = new AlloyModel("unknown-sum-expression-test.als");
+      model.createConstraint("this", parseExpr(expression));
+      model.resolve();
+      TupleSet result = model.allConstraints().getFirst().accept(setEvaluator());
+      assertTrue(result.isConcrete(), expression);
+      assertEquals(
+          OVERFLOW_UNKNOWN,
+          assertInstanceOf(OverflowAtom.class, result.getScalar()).direction(),
+          expression);
+      assertEquals(TRUE, evaluateFact("(" + expression + ") fun/mul 0 = 0"));
+    }
+    assertEquals(TRUE, evaluateFact("(sum value: none | sum (" + unspecified + ")) = 0"));
   }
 
   private static ThreeVal evaluateFact(String expression) {
     AlloyFactPara fact = (AlloyFactPara) parsePara("fact { " + expression + " }");
-    return fact.block.accept(evaluator());
+    var model = new AlloyModel("integer-aggregation-expression-test.als");
+    model.createConstraint("this", fact.block);
+    model.resolve();
+    return model.allConstraints().getFirst().accept(evaluator());
   }
 
   private static TupleSet aggregate(Aggregation aggregation, AlloyExpr values) {

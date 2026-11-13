@@ -66,6 +66,19 @@ public class AlloyEvaluatorImplError extends ImplementationError {
         pos, "SUM quantification reached FormulaEvaluator even though it produces a set value");
   }
 
+  public static AlloyEvaluatorImplError unresolvedDeclarationMultiplicity(
+      Pos pos, String declaration) {
+    return new AlloyEvaluatorImplError(
+        pos, "Declaration reached evaluation without a resolved multiplicity: " + declaration);
+  }
+
+  public static AlloyEvaluatorImplError higherOrderDeclaration(
+      Pos pos, String context, String declaration) {
+    return new AlloyEvaluatorImplError(
+        pos,
+        context + " requires first-order declarations with multiplicity 'one': " + declaration);
+  }
+
   public static AlloyEvaluatorImplError arithmeticOperandsNotIntegers(
       Pos pos, String operation, Atom first, Atom second) {
     return new AlloyEvaluatorImplError(
