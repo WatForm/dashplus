@@ -55,7 +55,7 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
 
   public TupleSet visit(AlloyCphExpr comprehensionExpr) {
     logger.enter("ComprehensionExpr " + comprehensionExpr);
-    validateDeclarations(comprehensionExpr.decls);
+    validateFirstOrderDeclarations(comprehensionExpr.decls, "Comprehension");
     List<AtomTuple> tuples = new ArrayList<>();
     boolean determined =
         collectTuples(comprehensionExpr, 0, 0, List.of(), null, new ArrayList<>(), tuples);
@@ -144,16 +144,19 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
     }
 
     logger.enter("SumQuantificationExpr " + quantificationExpr);
-    validateDeclarations(quantificationExpr.decls);
-    var usedNames = FormulaEvaluator.usedDeclarationNames(quantificationExpr);
-    TupleSet result = sumQuantification(quantificationExpr, usedNames, 0, 0, List.of(), null);
+    validateFirstOrderDeclarations(quantificationExpr.decls, "Sum quantification");
+    TupleSet result = sumQuantification(quantificationExpr, 0, 0, List.of(), null);
+    if (result.isUnspecified()) {
+      result =
+          evaluationTable.getOverflowScalar(
+              OverflowDirection.OVERFLOW_UNKNOWN, quantificationExpr.pos);
+    }
     logger.exit("SumQuantificationExpr " + result);
     return result;
   }
 
   private TupleSet sumQuantification(
       AlloyQuantificationExpr expr,
-      List<boolean[]> usedNames,
       int declIndex,
       int nameIndex,
       List<AtomTuple> pickedInDecl,
@@ -166,39 +169,8 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       values = declaration.expr.accept(this);
     }
 
-    boolean[] declarationUsage = usedNames.get(declIndex);
-    boolean wholeDisjointBlockUnused = declaration.isDisj1 && !containsTrue(declarationUsage);
-    if (wholeDisjointBlockUnused) {
-      if (values.isConcrete()
-          && !values.containsOverflow()
-          && disjointBindingCount(values.size(), declaration.qnames.size()) == 0) {
-        return evaluationTable.getIntScalar(0, expr.pos);
-      }
-      TupleSet branch = sumQuantification(expr, usedNames, declIndex + 1, 0, List.of(), null);
-      if (isConcreteZero(branch)) return branch;
-      if (values.isUnspecified()) return TupleSet.unspecified();
-      if (declaration.qnames.size() > 1 && values.containsOverflow()) {
-        return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, expr.pos);
-      }
-      return repeatSum(
-          branch, disjointBindingCount(values.size(), declaration.qnames.size()), expr.pos);
-    }
-
-    if (!declarationUsage[nameIndex]) {
-      if (values.isConcrete() && values.isEmpty()) {
-        return evaluationTable.getIntScalar(0, expr.pos);
-      }
-      boolean blockComplete = nameIndex == declaration.qnames.size() - 1;
-      TupleSet branch =
-          blockComplete
-              ? sumQuantification(expr, usedNames, declIndex + 1, 0, List.of(), null)
-              : sumQuantification(expr, usedNames, declIndex, nameIndex + 1, pickedInDecl, values);
-      if (isConcreteZero(branch)) return branch;
-      if (values.isUnspecified()) return TupleSet.unspecified();
-      return repeatSum(branch, values.size(), expr.pos);
-    }
-
-    if (values.isUnspecified()) return TupleSet.unspecified();
+    if (values.isUnspecified())
+      return evaluationTable.getOverflowScalar(OverflowDirection.OVERFLOW_UNKNOWN, expr.pos);
     Qname name = qnameOf(declaration.qnames.get(nameIndex));
     for (AtomTuple tuple : values) {
       ThreeVal disjointness = disjointnessOf(declaration, pickedInDecl, tuple);
@@ -213,11 +185,11 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       try {
         boolean blockComplete = nameIndex == declaration.qnames.size() - 1;
         if (blockComplete) {
-          value = sumQuantification(expr, usedNames, declIndex + 1, 0, List.of(), null);
+          value = sumQuantification(expr, declIndex + 1, 0, List.of(), null);
         } else {
           List<AtomTuple> nextPicked = new ArrayList<>(pickedInDecl);
           nextPicked.add(tuple);
-          value = sumQuantification(expr, usedNames, declIndex, nameIndex + 1, nextPicked, values);
+          value = sumQuantification(expr, declIndex, nameIndex + 1, nextPicked, values);
         }
       } finally {
         evaluationTable.popStackFrame();
@@ -226,38 +198,6 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       result = processPlus(result.getScalar(), value.getScalar(), expr.pos);
     }
     return result;
-  }
-
-  private TupleSet repeatSum(TupleSet value, int count, Pos pos) {
-    if (value.isUnspecified()) return value;
-    TupleSet result = evaluationTable.getIntScalar(0, pos);
-    for (int index = 0; index < count; index++) {
-      result = processPlus(result.getScalar(), value.getScalar(), pos);
-    }
-    return result;
-  }
-
-  private static boolean isConcreteZero(TupleSet value) {
-    return value.isConcrete()
-        && value.getScalar() instanceof IntegerAtom integer
-        && integer.value() == 0;
-  }
-
-  private static int disjointBindingCount(int domainSize, int nameCount) {
-    int result = 1;
-    for (int index = 0; index < nameCount; index++) {
-      int choices = domainSize - index;
-      if (choices <= 0) return 0;
-      result = Math.multiplyExact(result, choices);
-    }
-    return result;
-  }
-
-  private static boolean containsTrue(boolean[] values) {
-    for (boolean value : values) {
-      if (value) return true;
-    }
-    return false;
   }
 
   static ThreeVal disjointnessOf(
@@ -278,9 +218,20 @@ public class SetEvaluator implements AlloyExprVis<TupleSet> {
       if (declaration.isDisj2) {
         throw AlloyEvaluatorError.unsupportedDisjOnDomain(declaration.pos, declaration.toString());
       }
-      if (declaration.mul.isPresent() && declaration.mul.get() != AlloyQtEnum.ONE) {
-        throw AlloyEvaluatorError.unsupportedDeclarationMultiplicity(
-            declaration.pos, declaration.toString(), declaration.mul.get());
+      AlloyQtEnum multiplicity = QuantifierBindings.multiplicity(declaration);
+      if (!AlloyQtEnum.MUL.contains(multiplicity)) {
+        throw AlloyEvaluatorImplError.missingVisitCase(
+            "Declaration", declaration.pos, "multiplicity " + multiplicity);
+      }
+    }
+  }
+
+  private static void validateFirstOrderDeclarations(List<AlloyDecl> declarations, String context) {
+    validateDeclarations(declarations);
+    for (AlloyDecl declaration : declarations) {
+      if (QuantifierBindings.multiplicity(declaration) != AlloyQtEnum.ONE) {
+        throw AlloyEvaluatorImplError.higherOrderDeclaration(
+            declaration.pos, context, declaration.toString());
       }
     }
   }

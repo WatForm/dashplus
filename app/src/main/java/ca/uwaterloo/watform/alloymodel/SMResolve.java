@@ -943,8 +943,14 @@ public class SMResolve extends SMCmds {
                       + ", which is greater than 1: "
                       + ds.toString()));
         }
-        // x,y: resolvedExpr
-        newDecls.add(((AlloyDecl) ds.rebuild(dResult.exp)));
+        // Make the binding multiplicity explicit without lowering arrow constraints yet.
+        AlloyDecl resolvedDecl = ds.rebuild(dResult.exp);
+        if (ds.mul.isEmpty() && !isSeq(dResult.exp)) {
+          AlloyQtEnum defaultMul =
+              dResult.arity.equals(ONE_ARITY) ? AlloyQtEnum.ONE : AlloyQtEnum.SET;
+          resolvedDecl = ds.rebuild(defaultMul, dResult.exp);
+        }
+        newDecls.add(resolvedDecl);
         for (AlloyDecl d : ds.expand()) {
           localPush(nameSpaceQname(SMResolve.this.nameSpace, d.getName()), dResult.arity);
         }
