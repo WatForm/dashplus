@@ -37,16 +37,17 @@ public final class XmlDumper {
   }
 
   /** Dump the default run followed by each original command, keeping their original indices. */
-  public static void dumpInstances(CompModule module, String prefix, Path dumpDir) {
-    dumpInstance(module, prefix, dumpDir, OptionalInt.empty());
+  public static void dumpInstances(
+      CompModule module, String prefix, Path dumpDir, A4Options options) {
+    dumpInstance(module, prefix, dumpDir, OptionalInt.empty(), options);
     for (int index = 0; index < commandCount(module); index++) {
-      dumpInstance(module, prefix, dumpDir, OptionalInt.of(index));
+      dumpInstance(module, prefix, dumpDir, OptionalInt.of(index), options);
     }
   }
 
   /** Dump exactly one execution from a module returned by parseForDump. */
   public static void dumpInstance(
-      CompModule module, String prefix, Path dumpDir, OptionalInt index) {
+      CompModule module, String prefix, Path dumpDir, OptionalInt index, A4Options options) {
     if (index.isPresent() && (index.getAsInt() < 0 || index.getAsInt() >= commandCount(module))) {
       throw new IllegalArgumentException("Command index out of range: " + index.getAsInt());
     }
@@ -60,24 +61,26 @@ public final class XmlDumper {
           module,
           module.getAllCommands().getLast(),
           dumpDir.resolve(prefix + "-instance.xml"),
-          "default scope");
+          "default scope",
+          options);
     } else {
       executeAndDump(
           module,
           module.getAllCommands().get(index.getAsInt()),
           dumpDir.resolve(prefix + "-instance-cmd" + index.getAsInt() + ".xml"),
-          "command " + index.getAsInt());
+          "command " + index.getAsInt(),
+          options);
     }
   }
 
   private static void executeAndDump(
-      CompModule alloyModule, Command command, Path outputPath, String context) {
+      CompModule alloyModule, Command command, Path outputPath, String context, A4Options options) {
     dpOutput("Executing " + context + ": " + command);
     long start = System.nanoTime();
     try {
       A4Solution solution =
           TranslateAlloyToKodkod.execute_command(
-              new A4Reporter(), alloyModule.getAllReachableSigs(), command, new A4Options());
+              new A4Reporter(), alloyModule.getAllReachableSigs(), command, options);
 
       CollectionTelemetry.emit("instance", Map.of("bitwidth", solution.getBitwidth()));
       if (!solution.satisfiable()) {

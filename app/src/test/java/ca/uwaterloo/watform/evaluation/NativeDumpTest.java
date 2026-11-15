@@ -19,12 +19,43 @@ class NativeDumpTest {
   }
 
   private int dump(Path model, String... selection) {
+    return dumpTo(model, temp.resolve("out"), selection);
+  }
+
+  private int dumpTo(Path model, Path output, String... selection) {
     var args = new java.util.ArrayList<String>();
     args.add(model.toString());
     args.add("-dumpInstance");
-    args.add("-dumpDir=" + temp.resolve("out"));
+    args.add("-dumpDir=" + output);
     args.addAll(java.util.List.of(selection));
     return new CommandLine(new EvaluationCli()).execute(args.toArray(String[]::new));
+  }
+
+  @Test
+  void noOverflowRejectsWraparoundForEveryDumpSelection() throws Exception {
+    Path file = model("fact { some x: Int | add[x, 1] < x }\nrun {} for 3 Int");
+    for (String selection : new String[] {"all", "--default-only", "-cmd=0"}) {
+      String[] selected = selection.equals("all") ? new String[0] : new String[] {selection};
+      assertEquals(0, dump(file, selected));
+      String filename =
+          selection.equals("-cmd=0") ? "model-instance-cmd0.xml" : "model-instance.xml";
+      assertTrue(Files.exists(temp.resolve("out").resolve(filename)));
+      if (selection.equals("all")) {
+        assertTrue(Files.exists(temp.resolve("out/model-instance-cmd0.xml")));
+      }
+
+      Path output = temp.resolve("no-overflow-" + selection);
+      Path telemetry = temp.resolve("no-overflow-" + selection + ".jsonl");
+      var args = new java.util.ArrayList<String>(java.util.List.of(selected));
+      args.add("--no-overflow");
+      args.add("--telemetry=" + telemetry);
+      assertEquals(0, dumpTo(file, output, args.toArray(String[]::new)));
+      assertFalse(Files.exists(output.resolve("model-instance.xml")));
+      assertFalse(Files.exists(output.resolve("model-instance-cmd0.xml")));
+      String records = Files.readString(telemetry);
+      assertTrue(records.contains("\"no_overflow\":true"));
+      assertTrue(records.contains("\"status\":\"unsat\""));
+    }
   }
 
   @Test void noCommandsProducesOnlyDefaultEvenWithTrailingComment() throws Exception {

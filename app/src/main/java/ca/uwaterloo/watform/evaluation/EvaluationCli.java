@@ -35,6 +35,7 @@ import picocli.CommandLine.Parameters;
       "",
       "  @|bold java -ea -jar evaluation.jar f.als|@",
       "      @|bold -dumpInstance < -dumpDir=dir >|@",
+      "      @|bold < --no-overflow >|@",
       "      @|bold < -cmd=N | --default-only > < --telemetry=file > < -d >|@",
       "     Dump satisfiable instances. By default, dump the synthetic default",
       "     run and every model command. -cmd selects one zero-based model",
@@ -62,6 +63,12 @@ public final class EvaluationCli implements Callable<Integer> {
 
   @Option(names = "-dumpInstance", description = "Dump satisfiable Alloy instances")
   private boolean dumpInstance;
+
+  @Option(
+      names = "--no-overflow",
+      description =
+          "With -dumpInstance, forbid integer overflow (default: two's complement wraparound)")
+  private boolean noOverflow;
 
   @Option(
       names = "-evalConstraints",
@@ -113,9 +120,10 @@ public final class EvaluationCli implements Callable<Integer> {
     try {
       if (telemetryPath != null) CollectionTelemetry.open(telemetryPath);
       A4Options options = new A4Options();
+      options.noOverflow = noOverflow;
       CollectionTelemetry.emit(
           "settings", Map.of("solver", options.solver.id(), "no_overflow", options.noOverflow));
-      return execute();
+      return execute(options);
     } catch (java.io.IOException error) {
       System.err.println("Telemetry I/O error: " + error.getMessage());
       return 4;
@@ -128,7 +136,7 @@ public final class EvaluationCli implements Callable<Integer> {
     }
   }
 
-  private Integer execute() {
+  private Integer execute(A4Options options) {
     Path model = modelPath.toAbsolutePath().normalize();
     Reporter.INSTANCE.reset();
     // Reporter.INSTANCE.popPath(); TODO: fix once methods are added back
@@ -152,9 +160,10 @@ public final class EvaluationCli implements Callable<Integer> {
               module,
               prefix,
               outputDirectory,
-              commandIndex == null ? OptionalInt.empty() : OptionalInt.of(commandIndex));
+              commandIndex == null ? OptionalInt.empty() : OptionalInt.of(commandIndex),
+              options);
         } else {
-          XmlDumper.dumpInstances(module, prefix, outputDirectory);
+          XmlDumper.dumpInstances(module, prefix, outputDirectory, options);
         }
         Reporter.INSTANCE.print();
         return 0;
