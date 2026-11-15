@@ -250,10 +250,11 @@ public class SMCmds extends SMConstraints {
         if (argDecls.isEmpty()) return predFunCall;
         else return AlloySomeVars(argDecls, predFunCall);
       } else {
-        // run f,  where f is a function that takes arg a: A becomes:
-        // run { some a:A | some f[a] }
-        if (argDecls.isEmpty()) return AlloySome(predFunCall);
-        else return AlloySomeVars(argDecls, AlloySome(predFunCall));
+        // run f checks that the function result satisfies its declared return bound.
+        // A set return bound permits an empty result.
+        AlloyExpr resultConstraint = AlloyIn(predFunCall, this.funResultExpr(predFunQname));
+        if (argDecls.isEmpty()) return resultConstraint;
+        else return AlloySomeVars(argDecls, resultConstraint);
       }
     } else {
       // can be a check or run
