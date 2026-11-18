@@ -24,10 +24,22 @@ public class ReplaceExprVis implements AlloyExprVis<AlloyExpr> {
 
   protected Function<AlloyExpr, Boolean> test;
   protected Function<AlloyExpr, AlloyExpr> replace;
+  private final boolean respectLocalBindings;
+  private Set<String> boundNames = new HashSet<>();
 
   public ReplaceExprVis(Function<AlloyExpr, Boolean> test, Function<AlloyExpr, AlloyExpr> replace) {
+    this(test, replace, false);
+  }
+
+  // Existing callers perform structural replacements. Enable this option to replace only free
+  // names.
+  public ReplaceExprVis(
+      Function<AlloyExpr, Boolean> test,
+      Function<AlloyExpr, AlloyExpr> replace,
+      boolean respectLocalBindings) {
     this.test = test;
     this.replace = replace;
+    this.respectLocalBindings = respectLocalBindings;
   }
 
   // all binary expressions
@@ -46,6 +58,9 @@ public class ReplaceExprVis implements AlloyExprVis<AlloyExpr> {
 
   @Override
   public AlloyExpr visit(AlloyVarExpr varExpr) {
+    if (respectLocalBindings
+        && varExpr instanceof AlloyQnameExpr name
+        && boundNames.contains(name.getName())) return varExpr;
     if (this.test.apply(varExpr)) return this.replace.apply(varExpr);
     else return varExpr;
   }
@@ -70,10 +85,17 @@ public class ReplaceExprVis implements AlloyExprVis<AlloyExpr> {
   @Override
   public AlloyExpr visit(AlloyCphExpr comprehensionExpr) {
     if (this.test.apply(comprehensionExpr)) return this.replace.apply(comprehensionExpr);
-    else {
+    Set<String> outerNames = new HashSet<>(boundNames);
+    try {
+      List<AlloyDecl> declarations = emptyList();
+      for (AlloyDecl declaration : comprehensionExpr.decls) {
+        declarations.add((AlloyDecl) this.visit(declaration));
+        bindNames(declaration);
+      }
       return comprehensionExpr.rebuild(
-          mapBy(comprehensionExpr.decls, i -> (AlloyDecl) this.visit(i)),
-          comprehensionExpr.body.map(value -> this.visit(value)).orElse(null));
+          declarations, comprehensionExpr.body.map(this::visit).orElse(null));
+    } finally {
+      boundNames = outerNames;
     }
   }
 
@@ -89,10 +111,16 @@ public class ReplaceExprVis implements AlloyExprVis<AlloyExpr> {
   @Override
   public AlloyExpr visit(AlloyLetExpr letExpr) {
     if (this.test.apply(letExpr)) return this.replace.apply(letExpr);
-    // TODO: rule out var names that are bound
-    else {
-      return letExpr.rebuild(
-          mapBy(letExpr.asns, i -> i.rebuild(this.visit(i.expr))), this.visit(letExpr.body));
+    Set<String> outerNames = new HashSet<>(boundNames);
+    try {
+      List<AlloyLetExpr.AlloyLetAsn> assignments = emptyList();
+      for (AlloyLetExpr.AlloyLetAsn assignment : letExpr.asns) {
+        assignments.add(assignment.rebuild(this.visit(assignment.expr)));
+        boundNames.add(assignment.qname.getName());
+      }
+      return letExpr.rebuild(assignments, this.visit(letExpr.body));
+    } finally {
+      boundNames = outerNames;
     }
   }
 
@@ -105,11 +133,22 @@ public class ReplaceExprVis implements AlloyExprVis<AlloyExpr> {
   @Override
   public AlloyExpr visit(AlloyQuantificationExpr quantificationExpr) {
     if (this.test.apply(quantificationExpr)) return this.replace.apply(quantificationExpr);
-    else {
-      return quantificationExpr.rebuild(
-          mapBy(quantificationExpr.decls, i -> i.rebuild(this.visit(i.expr))),
-          this.visit(quantificationExpr.body));
+    Set<String> outerNames = new HashSet<>(boundNames);
+    try {
+      List<AlloyDecl> declarations = emptyList();
+      for (AlloyDecl declaration : quantificationExpr.decls) {
+        declarations.add(declaration.rebuild(this.visit(declaration.expr)));
+        bindNames(declaration);
+      }
+      return quantificationExpr.rebuild(declarations, this.visit(quantificationExpr.body));
+    } finally {
+      boundNames = outerNames;
     }
+  }
+
+  private void bindNames(AlloyDecl declaration) {
+    // A name is bound only after visiting its domain; later domains can use earlier bindings.
+    for (AlloyQnameExpr name : declaration.qnames) boundNames.add(name.getName());
   }
 
   @Override
