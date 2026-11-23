@@ -7,6 +7,11 @@ import ca.uwaterloo.watform.alloyast.expr.*;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
+// int <expr>. Line 196, 197 in Dash.g4.
+// See 4.8 Integers and Arithmetic in https://www.cin.ufpe.br/~if721/intranet/AlloyBook.pdf
+// Given an expression e denoting a set of integer atoms, the integer-valued expression int e
+// denotes the sum of the integer values of those atoms.
+
 public final class AlloyNumIntExpr extends AlloyUnaryExpr {
   public AlloyNumIntExpr(Pos pos, AlloyExpr sub) {
     super(pos, sub, AlloyStrings.INT);

@@ -3,6 +3,8 @@ package ca.uwaterloo.watform.alloyast.expr.var;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
+// Integer literals like 1, 42
+
 public final class AlloyNumExpr extends AlloyVarExpr {
   public final int value;
 

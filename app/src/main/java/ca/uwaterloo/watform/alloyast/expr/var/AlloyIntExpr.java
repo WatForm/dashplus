@@ -4,7 +4,8 @@ import ca.uwaterloo.watform.alloyast.*;
 import ca.uwaterloo.watform.alloyexprvisitor.AlloyExprVis;
 import ca.uwaterloo.watform.utils.*;
 
-// an actually number such as 1
+// The grammar token “int”. Example: run foo for 4 int
+
 public final class AlloyIntExpr extends AlloyVarExpr implements AlloyScopableExpr {
   public AlloyIntExpr(Pos pos) {
     super(pos, AlloyStrings.INT);
