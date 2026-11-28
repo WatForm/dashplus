@@ -45,7 +45,7 @@ public class AlloyCmdParaTest {
                                                         false, 1, -1, 1, "sig")))));
 
         assertThrows(
-                AlloyCtorError.class,
+                AssumptionError.class,
                 () ->
                         new AlloyCmdPara(
                                 new AlloyCmdPara.CommandDecl(
@@ -56,7 +56,7 @@ public class AlloyCmdParaTest {
                                                 new AlloyCmdPara.CommandDecl.Scope.Typescope(
                                                         false, 1, 0, 1, "sig")))));
         assertThrows(
-                AlloyCtorError.class,
+                AssumptionError.class,
                 () ->
                         new AlloyCmdPara(
                                 new AlloyCmdPara.CommandDecl(
@@ -68,7 +68,7 @@ public class AlloyCmdParaTest {
                                                         false, 1, 4, 0, "sig")))));
 
         assertThrows(
-                AlloyCtorError.class,
+                AssumptionError.class,
                 () ->
                         new AlloyCmdPara(
                                 new AlloyCmdPara.CommandDecl(
@@ -80,7 +80,7 @@ public class AlloyCmdParaTest {
                                                         false, 1, 4, 0, "sig")))));
 
         assertThrows(
-                AlloyCtorError.class,
+                AssumptionError.class,
                 () ->
                         new AlloyCmdPara(
                                 new AlloyCmdPara.CommandDecl(

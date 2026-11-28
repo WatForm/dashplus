@@ -42,7 +42,7 @@ public class SignatureFactTest {
     AlloyQnameExpr field = assertInstanceOf(AlloyQnameExpr.class, access.right);
 
     assertEquals("this_var", receiver.getName());
-    Qname fieldQname = Qname.fieldExprQname(field);
+    Qname fieldQname = Qname.alloyQnameExprToQname(field);
     assertEquals("this", fieldQname.nameSpace);
     assertEquals("Dir", fieldQname.sigParent);
     assertEquals("parent", fieldQname.name);
